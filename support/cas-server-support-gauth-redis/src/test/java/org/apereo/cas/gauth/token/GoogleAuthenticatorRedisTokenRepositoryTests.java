@@ -82,8 +82,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "cas.authn.mfa.gauth.redis.host=localhost",
     "cas.authn.mfa.gauth.redis.port=6379"
 })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 6379)
@@ -91,6 +91,7 @@ public class GoogleAuthenticatorRedisTokenRepositoryTests extends BaseOneTimeTok
 
     @BeforeEach
     public void initialize() {
+        super.initialize();
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 }

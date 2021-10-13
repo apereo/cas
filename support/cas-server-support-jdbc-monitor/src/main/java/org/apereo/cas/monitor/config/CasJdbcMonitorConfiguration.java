@@ -16,6 +16,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import javax.sql.DataSource;
@@ -27,33 +28,35 @@ import java.util.concurrent.ExecutorService;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casJdbcMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "casJdbcMonitorConfiguration", proxyBeanMethods = false)
 public class CasJdbcMonitorConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Lazy
     @Bean
-    public ThreadPoolExecutorFactoryBean pooledJdbcMonitorExecutorService() {
+    @Autowired
+    public ThreadPoolExecutorFactoryBean pooledJdbcMonitorExecutorService(final CasConfigurationProperties casProperties) {
         return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
     }
 
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("dataSourceHealthIndicator")
-    public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
+    public HealthIndicator dataSourceHealthIndicator(
+        @Qualifier("pooledJdbcMonitorExecutorService")
+        final ExecutorService executor, final CasConfigurationProperties casProperties,
+        @Qualifier("monitorDataSource")
+        final DataSource monitorDataSource) {
         val jdbc = casProperties.getMonitor().getJdbc();
-        return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
-            monitorDataSource(), executor, jdbc.getValidationQuery());
+        return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(), monitorDataSource, executor, jdbc.getValidationQuery());
     }
 
     @ConditionalOnMissingBean(name = "monitorDataSource")
     @Bean
-    @RefreshScope
-    public DataSource monitorDataSource() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public DataSource monitorDataSource(final CasConfigurationProperties casProperties) {
         return JpaBeans.newDataSource(casProperties.getMonitor().getJdbc());
     }
 }

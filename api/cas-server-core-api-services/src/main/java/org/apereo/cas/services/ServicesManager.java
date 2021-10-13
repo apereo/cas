@@ -21,6 +21,11 @@ import java.util.stream.Stream;
  */
 public interface ServicesManager extends Ordered {
     /**
+     * Implementation bean name.
+     */
+    String BEAN_NAME = "servicesManager";
+
+    /**
      * Save.
      *
      * @param toSave the services to import and save
@@ -271,6 +276,5 @@ public interface ServicesManager extends Ordered {
      * @return list of services
      */
     Collection<RegisteredService> getServicesForDomain(String domain);
-
-
+    
 }

@@ -39,7 +39,7 @@ public abstract class BaseRedisSamlMetadataTests {
     protected SamlRegisteredServiceMetadataResolver resolver;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

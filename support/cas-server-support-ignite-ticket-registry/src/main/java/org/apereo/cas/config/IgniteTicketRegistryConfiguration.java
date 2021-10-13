@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -43,89 +44,22 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite,
-                                                                          final TicketCatalog ticketCatalog) {
+    private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite, final TicketCatalog ticketCatalog) {
         val definitions = ticketCatalog.findAll();
-        return definitions
-            .stream()
-            .map(t -> {
-                val ticketsCache = new CacheConfiguration();
-                ticketsCache.setName(t.getProperties().getStorageName());
-                ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
-                ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
-                val writeSync =
-                    CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
-                ticketsCache.setWriteSynchronizationMode(writeSync);
-                val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
-                ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
-                return ticketsCache;
-            })
-            .collect(Collectors.toSet());
+        return definitions.stream().map(t -> {
+            val ticketsCache = new CacheConfiguration();
+            ticketsCache.setName(t.getProperties().getStorageName());
+            ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
+            ticketsCache.setAtomicityMode(CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
+            val writeSync = CacheWriteSynchronizationMode.valueOf(ignite.getTicketsCache().getWriteSynchronizationMode());
+            ticketsCache.setWriteSynchronizationMode(writeSync);
+            val duration = new Duration(TimeUnit.SECONDS, t.getProperties().getStorageTimeout());
+            ticketsCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(duration));
+            return ticketsCache;
+        }).collect(Collectors.toSet());
     }
 
-    @Autowired
-    @RefreshScope
-    @Bean
-    public IgniteConfiguration igniteConfiguration(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val ignite = casProperties.getTicket().getRegistry().getIgnite();
-
-        val config = new IgniteConfiguration();
-        val spi = new TcpDiscoverySpi();
-
-        if (StringUtils.hasLength(ignite.getLocalAddress())) {
-            spi.setLocalAddress(ignite.getLocalAddress());
-        }
-        if (ignite.getLocalPort() != -1) {
-            spi.setLocalPort(ignite.getLocalPort());
-        }
-        spi.setJoinTimeout(Beans.newDuration(ignite.getJoinTimeout()).toMillis());
-        spi.setAckTimeout(Beans.newDuration(ignite.getAckTimeout()).toMillis());
-        spi.setNetworkTimeout(Beans.newDuration(ignite.getNetworkTimeout()).toMillis());
-        spi.setSocketTimeout(Beans.newDuration(ignite.getSocketTimeout()).toMillis());
-        spi.setThreadPriority(ignite.getThreadPriority());
-        spi.setForceServerMode(ignite.isForceServerMode());
-
-        val finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(ignite.getIgniteAddress());
-        spi.setIpFinder(finder);
-        config.setDiscoverySpi(spi);
-        val cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
-        config.setCacheConfiguration(cacheConfigurations.toArray(CacheConfiguration[]::new));
-        config.setClientMode(ignite.isClientMode());
-
-        val factory = buildSecureTransportForIgniteConfiguration();
-        if (factory != null) {
-            config.setSslContextFactory(factory);
-        }
-
-        val dataStorageConfiguration = new DataStorageConfiguration();
-        val dataRegionConfiguration = new DataRegionConfiguration();
-        dataRegionConfiguration.setName("DefaultRegion");
-        dataRegionConfiguration.setMaxSize(ignite.getDefaultRegionMaxSize());
-        dataRegionConfiguration.setPersistenceEnabled(ignite.isDefaultPersistenceEnabled());
-        dataStorageConfiguration.setDefaultDataRegionConfiguration(dataRegionConfiguration);
-
-        dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
-        config.setDataStorageConfiguration(dataStorageConfiguration);
-        return config;
-    }
-
-    @Autowired
-    @Bean
-    @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
-        val igniteConfiguration = igniteConfiguration(ticketCatalog);
-        val r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
-        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
-        r.initialize();
-        return r;
-    }
-
-    protected SslContextFactory buildSecureTransportForIgniteConfiguration() {
+    protected static SslContextFactory buildSecureTransportForIgniteConfiguration(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getTicket().getRegistry().getIgnite();
         val nullKey = "NULL";
         if (StringUtils.hasText(properties.getKeyStoreFilePath()) && StringUtils.hasText(properties.getKeyStorePassword())
@@ -156,4 +90,61 @@ public class IgniteTicketRegistryConfiguration {
         return null;
     }
 
+    @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    public IgniteConfiguration igniteConfiguration(
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties) {
+        val ignite = casProperties.getTicket().getRegistry().getIgnite();
+        val config = new IgniteConfiguration();
+        val spi = new TcpDiscoverySpi();
+        if (StringUtils.hasLength(ignite.getLocalAddress())) {
+            spi.setLocalAddress(ignite.getLocalAddress());
+        }
+        if (ignite.getLocalPort() != -1) {
+            spi.setLocalPort(ignite.getLocalPort());
+        }
+        spi.setJoinTimeout(Beans.newDuration(ignite.getJoinTimeout()).toMillis());
+        spi.setAckTimeout(Beans.newDuration(ignite.getAckTimeout()).toMillis());
+        spi.setNetworkTimeout(Beans.newDuration(ignite.getNetworkTimeout()).toMillis());
+        spi.setSocketTimeout(Beans.newDuration(ignite.getSocketTimeout()).toMillis());
+        spi.setThreadPriority(ignite.getThreadPriority());
+        spi.setForceServerMode(ignite.isForceServerMode());
+        val finder = new TcpDiscoveryVmIpFinder();
+        finder.setAddresses(ignite.getIgniteAddress());
+        spi.setIpFinder(finder);
+        config.setDiscoverySpi(spi);
+        val cacheConfigurations = buildIgniteTicketCaches(ignite, ticketCatalog);
+        config.setCacheConfiguration(cacheConfigurations.toArray(CacheConfiguration[]::new));
+        config.setClientMode(ignite.isClientMode());
+        val factory = buildSecureTransportForIgniteConfiguration(casProperties);
+        if (factory != null) {
+            config.setSslContextFactory(factory);
+        }
+        val dataStorageConfiguration = new DataStorageConfiguration();
+        val dataRegionConfiguration = new DataRegionConfiguration();
+        dataRegionConfiguration.setName("DefaultRegion");
+        dataRegionConfiguration.setMaxSize(ignite.getDefaultRegionMaxSize());
+        dataRegionConfiguration.setPersistenceEnabled(ignite.isDefaultPersistenceEnabled());
+        dataStorageConfiguration.setDefaultDataRegionConfiguration(dataRegionConfiguration);
+        dataStorageConfiguration.setSystemRegionMaxSize(ignite.getDefaultRegionMaxSize());
+        config.setDataStorageConfiguration(dataStorageConfiguration);
+        return config;
+    }
+
+    @Autowired
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketRegistry ticketRegistry(
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
+        @Qualifier("igniteConfiguration")
+        final IgniteConfiguration igniteConfiguration) {
+        val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
+        val r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration, igniteProperties);
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
+        r.initialize();
+        return r;
+    }
 }

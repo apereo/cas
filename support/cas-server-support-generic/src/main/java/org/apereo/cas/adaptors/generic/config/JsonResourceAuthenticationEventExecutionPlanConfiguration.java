@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,6 +22,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link JsonResourceAuthenticationEventExecutionPlanConfiguration}.
@@ -31,23 +31,10 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("jsonResourceAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "jsonResourceAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
     @Bean
@@ -55,12 +42,16 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AuthenticationHandler jsonResourceAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler jsonResourceAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                   @Qualifier("jsonPrincipalFactory")
+                                                                   final PrincipalFactory jsonPrincipalFactory,
+                                                                   @Qualifier(ServicesManager.BEAN_NAME)
+                                                                   final ServicesManager servicesManager) {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getObject(), jsonPrincipalFactory(),
-            null, jsonProps.getLocation());
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager, jsonPrincipalFactory, null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder(), applicationContext));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
             h.setPasswordPolicyConfiguration(new PasswordPolicyContext(jsonProps.getPasswordPolicy()));
@@ -72,12 +63,17 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
+                                                                                                             @Qualifier("jsonResourceAuthenticationHandler")
+                                                                                                             final AuthenticationHandler jsonResourceAuthenticationHandler,
+                                                                                                             @Qualifier("defaultPrincipalResolver")
+                                                                                                             final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
                 LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getFilename());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getObject());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler, defaultPrincipalResolver);
             }
         };
     }

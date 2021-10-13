@@ -3,10 +3,11 @@ dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-audit")
-    
 
     implementation libraries.nimbus
 
+    compileOnlyApi project(":core:cas-server-core-services")
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")

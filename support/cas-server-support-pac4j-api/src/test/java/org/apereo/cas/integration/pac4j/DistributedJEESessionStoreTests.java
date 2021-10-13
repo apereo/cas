@@ -35,7 +35,7 @@ public class DistributedJEESessionStoreTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired

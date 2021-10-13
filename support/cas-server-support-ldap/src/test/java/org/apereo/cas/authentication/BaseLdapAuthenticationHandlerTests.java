@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -22,6 +23,7 @@ import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -35,9 +37,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Arrays;
-import java.util.Collection;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -74,19 +76,24 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
-    protected Collection<AuthenticationHandler> ldapAuthenticationHandlers;
+    protected BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers;
+
+    static String getFailurePassword() {
+        return "bad";
+    }
 
     @Test
     public void verifyAuthenticateFailure() {
         assertNotEquals(ldapAuthenticationHandlers.size(), 0);
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
-            () -> this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
+            () -> ldapAuthenticationHandlers.toList()
+                .forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(getUsername(), getFailurePassword())))));
     }
 
     @Test
     public void verifyAuthenticateSuccess() {
         assertNotEquals(ldapAuthenticationHandlers.size(), 0);
-        this.ldapAuthenticationHandlers.forEach(Unchecked.consumer(h -> {
+        ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
             val result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
@@ -106,9 +113,5 @@ public abstract class BaseLdapAuthenticationHandlerTests {
 
     String getSuccessPassword() {
         return "password";
-    }
-
-    String getFailurePassword() {
-        return "bad";
     }
 }

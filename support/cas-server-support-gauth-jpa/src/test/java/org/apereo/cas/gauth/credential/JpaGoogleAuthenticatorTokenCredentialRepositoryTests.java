@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.jdbc.show-sql=false",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Getter
 @Tag("JDBC")

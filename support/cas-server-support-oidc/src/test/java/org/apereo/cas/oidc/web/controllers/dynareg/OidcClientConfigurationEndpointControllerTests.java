@@ -31,6 +31,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
     @Test
     public void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
         assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());

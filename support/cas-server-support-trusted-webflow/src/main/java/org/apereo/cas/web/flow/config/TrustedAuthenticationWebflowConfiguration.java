@@ -2,10 +2,10 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -24,35 +24,42 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("trustedAuthenticationWebflowConfiguration")
+@Configuration(value = "trustedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TrustedAuthenticationWebflowConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
+    @Configuration(value = "TrustedAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationWebflowBaseConfiguration {
+        @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public CasWebflowConfigurer trustedWebflowConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices,
+                loginFlowRegistry,
+                applicationContext, casProperties);
+        }
 
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
-    @Bean
-    @RefreshScope
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer trustedWebflowConfigurer() {
-        return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            applicationContext, casProperties);
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(trustedWebflowConfigurer());
+    @Configuration(value = "TrustedAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationWebflowPlanConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer(
+            @Qualifier("trustedWebflowConfigurer")
+            final CasWebflowConfigurer trustedWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(trustedWebflowConfigurer);
+        }
     }
 }

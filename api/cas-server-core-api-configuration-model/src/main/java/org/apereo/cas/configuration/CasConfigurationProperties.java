@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration;
 
-import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -173,12 +172,6 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasServerProperties server = new CasServerProperties();
-
-    /**
-     * Settings that configure the Java CAS client instance used internally for validation ops, etc.
-     */
-    @NestedConfigurationProperty
-    private CasJavaClientProperties client = new CasJavaClientProperties();
 
     /**
      * Service registry functionality.

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -13,11 +12,14 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +31,15 @@ import java.util.List;
  * @since 6.4.0
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.json[0]", value = "location")
-@Configuration("CasPersonDirectoryJsonConfiguration")
+@Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
 @Slf4j
-public class CasPersonDirectoryJsonConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryJsonConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
     @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
     @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> jsonAttributeRepositories() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public List<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getJson()
             .stream()
@@ -60,9 +61,11 @@ public class CasPersonDirectoryJsonConfiguration implements PersonDirectoryAttri
         return list;
     }
 
-
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(jsonAttributeRepositories());
+    @Bean
+    @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("jsonAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> jsonAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.getObject());
     }
 }

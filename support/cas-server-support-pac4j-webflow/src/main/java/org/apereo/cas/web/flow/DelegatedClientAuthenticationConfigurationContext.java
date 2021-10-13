@@ -50,8 +50,6 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;

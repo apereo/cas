@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasAcceptableUsagePolicyCouchDbConfiguration} that stores AUP decisions in a CouchDb database.
@@ -29,40 +29,38 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyCouchDbConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "aupCouchDbFactory")
     @Bean
-    @RefreshScope
-    public CouchDbConnectorFactory aupCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getObject());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public CouchDbConnectorFactory aupCouchDbFactory(final CasConfigurationProperties casProperties,
+                                                     @Qualifier("defaultObjectMapperFactory")
+                                                     final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")
     @Bean
-    @RefreshScope
-    public ProfileCouchDbRepository aupCouchDbRepository(@Qualifier("aupCouchDbFactory") final CouchDbConnectorFactory aupCouchDbFactory) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public ProfileCouchDbRepository aupCouchDbRepository(
+        @Qualifier("aupCouchDbFactory")
+        final CouchDbConnectorFactory aupCouchDbFactory, final CasConfigurationProperties casProperties) {
         val couchDb = casProperties.getAcceptableUsagePolicy().getCouchDb();
         return new ProfileCouchDbRepository(aupCouchDbFactory.getCouchDbConnector(), couchDb.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbAcceptableUsagePolicyRepository")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
-        @Qualifier("aupCouchDbRepository") final ProfileCouchDbRepository profileCouchDbRepository) {
-        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(),
-            casProperties.getAcceptableUsagePolicy(),
-            profileCouchDbRepository,
+        @Qualifier("aupCouchDbRepository")
+        final ProfileCouchDbRepository profileCouchDbRepository, final CasConfigurationProperties casProperties,
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
+        final TicketRegistrySupport ticketRegistrySupport) {
+        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(), profileCouchDbRepository,
             casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());
     }
 }

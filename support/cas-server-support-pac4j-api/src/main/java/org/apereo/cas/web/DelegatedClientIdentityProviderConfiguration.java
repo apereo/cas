@@ -24,13 +24,13 @@ public class DelegatedClientIdentityProviderConfiguration implements Serializabl
 
     private final String name;
 
-    private final String redirectUrl;
+    private String redirectUrl;
 
     private final String type;
 
-    private final String cssClass;
+    private String cssClass;
 
     private boolean autoRedirect;
 
-    private final String title;
+    private String title;
 }

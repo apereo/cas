@@ -6,14 +6,13 @@ import org.apereo.cas.web.support.CouchDbThrottledSubmissionHandlerInterceptorAd
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCouchDbThrottlingConfiguration}.
@@ -24,20 +23,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casCouchDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCouchDbThrottlingConfiguration {
-    
-    @Autowired
-    @Qualifier("auditActionContextCouchDbRepository")
-    private ObjectProvider<AuditActionContextCouchDbRepository> couchDbRepository;
-
-    @Autowired
-    @Qualifier("authenticationThrottlingConfigurationContext")
-    private ObjectProvider<ThrottledSubmissionHandlerConfigurationContext> authenticationThrottlingConfigurationContext;
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationThrottle")
     @Bean
-    @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
-        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(
-            authenticationThrottlingConfigurationContext.getObject(), couchDbRepository.getObject());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
+        @Qualifier("auditActionContextCouchDbRepository")
+        final AuditActionContextCouchDbRepository couchDbRepository,
+        @Qualifier("authenticationThrottlingConfigurationContext")
+        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {
+        return new CouchDbThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, couchDbRepository);
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.Collection;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationEventListener {
+public class CasConfigurationEventListener implements CasEventListener {
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 

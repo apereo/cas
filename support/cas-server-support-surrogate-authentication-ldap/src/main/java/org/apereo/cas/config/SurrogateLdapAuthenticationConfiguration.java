@@ -9,7 +9,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateLdapAuthenticationConfiguration}.
@@ -24,32 +24,32 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "surrogateLdapAuthenticationConfiguration", proxyBeanMethods = true)
+@Configuration(value = "surrogateLdapAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateLdapAuthenticationConfiguration {
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "surrogateLdapConnectionFactory")
-    public ConnectionFactory surrogateLdapConnectionFactory() {
+    @Autowired
+    public ConnectionFactory surrogateLdapConnectionFactory(final CasConfigurationProperties casProperties) {
         val su = casProperties.getAuthn().getSurrogate();
         return LdapUtils.newLdaptiveConnectionFactory(su.getLdap());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService() {
+    @Autowired
+    public SurrogateAuthenticationService surrogateAuthenticationService(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("surrogateLdapConnectionFactory")
+        final ConnectionFactory surrogateLdapConnectionFactory,
+        final CasConfigurationProperties casProperties) {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
             su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
-        return new SurrogateLdapAuthenticationService(surrogateLdapConnectionFactory(), su.getLdap(), servicesManager.getObject());
+        return new SurrogateLdapAuthenticationService(surrogateLdapConnectionFactory, su.getLdap(), servicesManager);
     }
 }

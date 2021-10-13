@@ -11,7 +11,6 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -21,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link MemcachedMonitorConfiguration}.
@@ -28,41 +28,44 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("memcachedMonitorConfiguration")
+@Configuration(value = "memcachedMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MemcachedMonitorConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("componentSerializationPlan")
-    private ObjectProvider<ComponentSerializationPlan> componentSerializationPlan;
-
     @Bean
     @ConditionalOnMissingBean(name = "memcachedMonitorTranscoder")
-    @RefreshScope
-    public Transcoder memcachedMonitorTranscoder() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public Transcoder memcachedMonitorTranscoder(final CasConfigurationProperties casProperties,
+                                                 @Qualifier("componentSerializationPlan")
+                                                 final ComponentSerializationPlan componentSerializationPlan) {
         val memcached = casProperties.getMonitor().getMemcached();
-        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getObject().getRegisteredClasses());
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
     }
 
     @Bean
     @ConditionalOnEnabledHealthIndicator("memcachedHealthIndicator")
     @ConditionalOnMissingBean(name = "memcachedHealthIndicator")
-    public HealthIndicator memcachedHealthIndicator() {
+    @Autowired
+    public HealthIndicator memcachedHealthIndicator(
+        @Qualifier("memcachedHealthClientPool")
+        final ObjectPool<MemcachedClientIF> memcachedHealthClientPool,
+        final CasConfigurationProperties casProperties) {
         val warn = casProperties.getMonitor().getWarn();
-        return new MemcachedHealthIndicator(memcachedHealthClientPool(),
-            warn.getEvictionThreshold(),
-            warn.getThreshold());
+        return new MemcachedHealthIndicator(memcachedHealthClientPool,
+            warn.getEvictionThreshold(), warn.getThreshold());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "memcachedHealthClientPool")
-    public ObjectPool<MemcachedClientIF> memcachedHealthClientPool() {
+    @Autowired
+    public ObjectPool<MemcachedClientIF> memcachedHealthClientPool(
+        @Qualifier("memcachedMonitorTranscoder")
+        final Transcoder memcachedMonitorTranscoder,
+        final CasConfigurationProperties casProperties) {
         val memcached = casProperties.getMonitor().getMemcached();
-        val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
+        val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder);
         return new GenericObjectPool<>(factory);
     }
 }

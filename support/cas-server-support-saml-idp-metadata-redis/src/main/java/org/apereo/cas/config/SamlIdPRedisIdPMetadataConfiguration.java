@@ -15,7 +15,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -24,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -33,64 +33,64 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration("SamlIdPRedisIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnExpression(value = "${cas.authn.saml-idp.metadata.redis.idp-metadata-enabled:false} and ${cas.authn.saml-idp.metadata.redis.enabled:true}")
 @Slf4j
+@Configuration(value = "SamlIdPRedisIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRedisIdPMetadataConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
 
     @Bean
-    @RefreshScope
-    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getRedis().getCrypto();
-
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, RedisSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("Redis SAML IdP metadata encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "metadata artifacts");
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataConnectionFactory")
-    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getSamlIdp().getMetadata().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataTemplate")
     @Bean
-    @RefreshScope
-    public RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisSamlIdPMetadataConnectionFactory());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate(
+        @Qualifier("redisSamlIdPMetadataConnectionFactory")
+        final RedisConnectionFactory redisSamlIdPMetadataConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisSamlIdPMetadataConnectionFactory);
     }
 
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        return new RedisSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext.getObject(), redisSamlIdPMetadataTemplate());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        @Qualifier("redisSamlIdPMetadataTemplate")
+        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
+        return new RedisSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, redisSamlIdPMetadataTemplate);
     }
 
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new RedisSamlIdPMetadataLocator(
-            samlIdPMetadataGeneratorCipherExecutor(),
-            samlIdPMetadataCache.getObject(),
-            redisSamlIdPMetadataTemplate());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
+        @Qualifier("redisSamlIdPMetadataTemplate")
+        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate) {
+        return new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, redisSamlIdPMetadataTemplate);
     }
 }

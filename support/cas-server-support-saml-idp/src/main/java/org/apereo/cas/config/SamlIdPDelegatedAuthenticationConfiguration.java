@@ -8,8 +8,6 @@ import org.apereo.cas.support.saml.web.idp.delegation.SamlIdPDelegatedClientAuth
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,17 +26,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
 public class SamlIdPDelegatedAuthenticationConfiguration {
 
-    @Autowired
-    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
-    private ObjectProvider<SessionStore> sessionStore;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
     @Bean
     @ConditionalOnMissingBean(name = "saml2DelegatedClientAuthenticationRequestCustomizer")
-    public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer() {
-        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(sessionStore.getObject(), openSamlConfigBean.getObject());
+    public DelegatedClientAuthenticationRequestCustomizer saml2DelegatedClientAuthenticationRequestCustomizer(
+        @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
+        final SessionStore sessionStore,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
+        return new SamlIdPDelegatedClientAuthenticationRequestCustomizer(sessionStore, openSamlConfigBean);
     }
 }

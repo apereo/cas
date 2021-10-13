@@ -1,6 +1,8 @@
 package org.apereo.cas.pm.rest;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -55,6 +57,8 @@ public class RestPasswordManagementServiceTests {
         RestPasswordManagementConfiguration.class,
         PasswordManagementConfiguration.class,
         RestTemplateAutoConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

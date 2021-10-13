@@ -18,7 +18,7 @@ package org.apereo.cas.support;
 public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
   @Bean
-  @RefreshScope
+  @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
   public ServiceRegistryDao serviceRegistry() {
       ...
   }

@@ -36,7 +36,7 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     private Action action;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @BeforeEach

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,7 +45,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
         new File("/var/cas/config")
     };
 
-    private final @NonNull ConfigurationPropertiesBindingPostProcessor binder;
+    private final ConfigurationPropertiesBindingPostProcessor binder;
 
     private final Environment environment;
 
@@ -59,12 +58,11 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
         final ApplicationContext applicationContext) {
 
-        val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        val name = map.keySet().iterator().next();
-        LOGGER.trace("Reloading CAS configuration via [{}]", name);
-        val e = applicationContext.getBean(name);
-        binder.postProcessBeforeInitialization(e, name);
-        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        val appName = applicationContext.getEnvironment().getProperty("spring.application.name");
+        val config = applicationContext.getBean(CasConfigurationProperties.class);
+        val name = String.format("%s-%s", appName, config.getClass().getName());
+        binder.postProcessBeforeInitialization(config, name);
+        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(config, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.debug("Reloaded CAS configuration [{}]", name);
     }
@@ -123,6 +121,6 @@ public class CasConfigurationPropertiesEnvironmentManager {
     }
 
     public String getApplicationName() {
-        return environment.getRequiredProperty("spring.application.name");
+        return environment.getProperty("spring.application.name", "cas");
     }
 }

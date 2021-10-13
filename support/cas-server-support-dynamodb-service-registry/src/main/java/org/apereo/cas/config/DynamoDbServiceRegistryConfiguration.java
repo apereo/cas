@@ -18,9 +18,12 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link DynamoDbServiceRegistryConfiguration}.
@@ -28,44 +31,46 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "dynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class DynamoDbServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator() {
+    @Autowired
+    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(final CasConfigurationProperties casProperties,
+                                                                                 @Qualifier("amazonDynamoDbServiceRegistryClient")
+                                                                                 final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
         val db = casProperties.getServiceRegistry().getDynamoDb();
-        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient());
+        return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
-    public ServiceRegistry dynamoDbServiceRegistry() {
-        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator(), serviceRegistryListeners.getObject());
+    @Autowired
+    public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
+                                                   final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+                                                   @Qualifier("dynamoDbServiceRegistryFacilitator")
+                                                   final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
+        return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ServiceRegistryExecutionPlanConfigurer dynamoDbServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("dynamoDbServiceRegistry")
+        final ServiceRegistry dynamoDbServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(dynamoDbServiceRegistry);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
-    public DynamoDbClient amazonDynamoDbServiceRegistryClient() {
+    @Autowired
+    public DynamoDbClient amazonDynamoDbServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);

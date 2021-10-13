@@ -60,7 +60,7 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 public class SoapAuthenticationHandlerTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

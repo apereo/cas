@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -41,9 +43,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private final PersistentIdGenerator persistentIdGenerator;
 
-    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator) {
+    private final MetadataResolver samlIdPMetadataResolver;
+
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean,
+                                        final PersistentIdGenerator persistentIdGenerator,
+                                        final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
+        this.samlIdPMetadataResolver = samlIdPMetadataResolver;
     }
 
     /**
@@ -71,7 +78,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
-        val fmt = service.getRequiredNameIdFormat().trim();
+        val fmt = StringUtils.defaultString(service.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED).trim();
         LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
 
         if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
@@ -150,8 +157,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         val supportedNameFormats = getSupportedNameIdFormats(service, adaptor);
         val requiredNameFormat = getRequiredNameIdFormatIfAny(authnRequest);
         validateRequiredNameIdFormatIfAny(authnRequest, adaptor, supportedNameFormats, requiredNameFormat);
-        val nameid = determineNameId(authnRequest, assertion, supportedNameFormats, service, adaptor);
-        return finalizeNameId(nameid, authnRequest, assertion, supportedNameFormats, service, adaptor);
+        val nameID = determineNameId(authnRequest, assertion, supportedNameFormats, service, adaptor);
+        return finalizeNameId(nameID, authnRequest, assertion, supportedNameFormats, service, adaptor);
     }
 
     /**
@@ -176,13 +183,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
                 nameid.setNameQualifier(service.getNameIdQualifier());
             } else {
-                val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-                nameid.setNameQualifier(issuer);
-            }
-            if (StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier())) {
-                nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier());
-            } else {
-                nameid.setSPNameQualifier(adaptor.getEntityId());
+                nameid.setNameQualifier(SamlIdPUtils.determineNameIdNameQualifier(service, samlIdPMetadataResolver));
+                FunctionUtils.doIf(StringUtils.isNotBlank(service.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(service.getServiceProviderNameIdQualifier()),
+                        value -> nameid.setSPNameQualifier(adaptor.getEntityId()))
+                    .accept(service);
             }
         }
         return nameid;
@@ -202,9 +207,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                      final String requiredNameFormat) {
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]. "
-                    + "The requested NameID format may not be honored. You should consult the metadata for this service "
-                    + "and ensure the requested NameID format is present in the collection of supported "
-                    + "metadata formats in the metadata, which are the following: [{}]",
+                        + "The requested NameID format may not be honored. You should consult the metadata for this service "
+                        + "and ensure the requested NameID format is present in the collection of supported "
+                        + "metadata formats in the metadata, which are the following: [{}]",
                 requiredNameFormat, SamlIdPUtils.getIssuerFromSamlObject(authnRequest),
                 adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
         }
@@ -227,10 +232,10 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         for (val nameFormat : supportedNameFormats) {
             LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
-            val nameid = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat, service, adaptor);
-            if (nameid != null) {
-                LOGGER.debug("Determined NameID based on format [{}] to be [{}]", nameFormat, nameid.getValue());
-                return nameid;
+            val nameId = encodeNameIdBasedOnNameFormat(authnRequest, assertion, nameFormat, service, adaptor);
+            if (nameId != null) {
+                LOGGER.debug("Determined NameID based on format [{}] to be [{}]", nameFormat, nameId.getValue());
+                return nameId;
             }
         }
         LOGGER.warn("No NameID could be determined based on the supported formats [{}]", supportedNameFormats);

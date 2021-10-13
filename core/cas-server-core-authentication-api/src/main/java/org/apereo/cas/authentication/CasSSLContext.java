@@ -115,11 +115,13 @@ public interface CasSSLContext {
     TrustManagerFactory getTrustManagerFactory();
 
     class DisabledCasSslContext implements CasSSLContext {
+        private static final X509Certificate[] ACCEPTED_ISSUERS = {};
+
         private static X509TrustManager getDisabledTrustedManager() {
             return new X509TrustManager() {
                 @Override
                 public X509Certificate[] getAcceptedIssuers() {
-                    return null;
+                    return ACCEPTED_ISSUERS;
                 }
 
                 @Override

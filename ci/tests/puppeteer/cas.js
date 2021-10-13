@@ -215,14 +215,17 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
     });
 }
 
-exports.doGet = async (url, successHandler, failureHandler) => {
+exports.doGet = async (url, successHandler, failureHandler, headers = {}) => {
     const instance = axios.create({
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
     });
+    let config = {
+      headers: headers
+    };
     await instance
-        .get(url)
+        .get(url, config)
         .then(res => {
             console.log(res.data);
             successHandler(res);
@@ -360,6 +363,7 @@ exports.decodeJwt = async (token, complete = false) => {
 
 exports.uploadSamlMetadata = async (page, metadata) => {
     await page.goto("https://samltest.id/upload.php");
+    console.log(`Uploading metadata file ${metadata} to ${await page.url()}`);
     await page.waitForTimeout(1000)
     const fileElement = await page.$("input[type=file]");
     console.log(`Metadata file: ${metadata}`);
@@ -434,7 +438,7 @@ exports.loginDuoSecurityBypassCode = async (page, type) => {
         await page.keyboard.down('Enter');
         await page.keyboard.up('Enter');
         await this.screenshot(page);
-        console.log(`Waiting for Duo Security to accept bypass code...`);
+        console.log(`Waiting for Duo Security to accept bypass code for ${type}...`);
         await page.waitForTimeout(15000);
     } else {
         let i = 0;

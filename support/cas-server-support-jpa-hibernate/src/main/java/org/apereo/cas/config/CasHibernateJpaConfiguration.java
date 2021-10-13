@@ -10,6 +10,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasHibernateJpaConfiguration}.
@@ -21,12 +22,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasHibernateJpaConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public JpaBeanFactory jpaBeanFactory() {
+    @Autowired
+    public JpaBeanFactory jpaBeanFactory(final ConfigurableApplicationContext applicationContext) {
         return new CasHibernateJpaBeanFactory(applicationContext);
     }
 }

@@ -374,7 +374,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val resultBuilder = new DefaultAuthenticationResultBuilder();
         resultBuilder.collect(transaction.getAuthentications());
         resultBuilder.collect(authentication);
-        val principalElectionStrategy = authenticationEventExecutionPlan.getAuthenticationSystemSupport().getPrincipalElectionStrategy();
+
+        val authenticationSystemSupport = applicationContext.getBean(AuthenticationSystemSupport.BEAN_NAME, AuthenticationSystemSupport.class);
+        val principalElectionStrategy = authenticationSystemSupport.getPrincipalElectionStrategy();
         val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
         
@@ -386,7 +388,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     .stream()
                     .filter(handler -> transaction.getCredentials().stream().anyMatch(handler::supports))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                val result = policy.isSatisfiedBy(resultAuthentication, supportingHandlers, this.applicationContext, Optional.empty());
+                val result = policy.isSatisfiedBy(resultAuthentication, supportingHandlers, applicationContext, Optional.empty());
                 executionResult.getResults().add(result);
                 if (!result.isSuccess()) {
                     executionResult.getFailures()
@@ -411,18 +413,17 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * @param builder the builder
      */
     protected void handleAuthenticationException(final Throwable ex, final String name, final AuthenticationBuilder builder) {
-        var e = ex;
-        LOGGER.trace(e.getMessage(), e);
-        val msg = new StringBuilder(StringUtils.defaultString(e.getMessage()));
-        if (e.getCause() != null) {
-            msg.append(" / ").append(e.getCause().getMessage());
+        LOGGER.trace(ex.getMessage(), ex);
+        val msg = new StringBuilder(StringUtils.defaultString(ex.getMessage()));
+        if (ex.getCause() != null) {
+            msg.append(" / ").append(ex.getCause().getMessage());
         }
-        if (e instanceof GeneralSecurityException) {
+        if (ex instanceof GeneralSecurityException) {
             LOGGER.info("[{}] exception details: [{}].", name, msg);
-            builder.addFailure(name, e);
+            builder.addFailure(name, ex);
         } else {
             LOGGER.error("[{}]: [{}]", name, msg);
-            builder.addFailure(name, e);
+            builder.addFailure(name, ex);
         }
     }
 

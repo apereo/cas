@@ -7,7 +7,6 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
 import org.apereo.cas.web.UrlValidator;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,23 +23,20 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenTicketsConfiguration {
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("tokenTicketBuilder")
-    private ObjectProvider<TokenTicketBuilder> tokenTicketBuilder;
-
-
-    @Autowired
-    @Qualifier("urlValidator")
-    private ObjectProvider<UrlValidator> urlValidator;
-
-    @Bean
-    public ResponseBuilder webApplicationServiceResponseBuilder() {
-        return new TokenWebApplicationServiceResponseBuilder(servicesManager.getObject(),
-            tokenTicketBuilder.getObject(), urlValidator.getObject());
+    @Configuration(value = "TokenTicketsBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenTicketsBuilderConfiguration {
+        @Autowired
+        @Bean
+        public ResponseBuilder webApplicationServiceResponseBuilder(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("tokenTicketBuilder")
+            final TokenTicketBuilder tokenTicketBuilder,
+            @Qualifier("urlValidator")
+            final UrlValidator urlValidator) {
+            return new TokenWebApplicationServiceResponseBuilder(servicesManager, tokenTicketBuilder, urlValidator);
+        }
     }
 
 }

@@ -73,7 +73,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
         var shire = request.getParameter(SamlIdPConstants.SHIRE);
         val facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
-            LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
+            LOGGER.info("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             shire = acs != null
@@ -128,17 +128,21 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
 
         val pair = Pair.<RequestAbstractType, MessageContext>of(authnRequest, ctx);
         val modelAndView = initiateAuthenticationRequest(pair, response, request);
-        val view = (RedirectView) modelAndView.getView();
-        val urlBuilder = new URIBuilder(Objects.requireNonNull(view).getUrl());
-        val paramNames = request.getParameterNames();
-        while (paramNames.hasMoreElements()) {
-            val parameterName = paramNames.nextElement();
-            if (!parameterName.equalsIgnoreCase(SamlIdPConstants.TARGET) && !parameterName.equalsIgnoreCase(SamlIdPConstants.TIME)
-                && !parameterName.equalsIgnoreCase(SamlIdPConstants.SHIRE) && !parameterName.equalsIgnoreCase(SamlIdPConstants.PROVIDER_ID)) {
-                urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
+        if (modelAndView != null) {
+            val view = (RedirectView) modelAndView.getView();
+            val urlBuilder = new URIBuilder(Objects.requireNonNull(view).getUrl());
+            val paramNames = request.getParameterNames();
+            while (paramNames.hasMoreElements()) {
+                val parameterName = paramNames.nextElement();
+                if (!parameterName.equalsIgnoreCase(SamlIdPConstants.TARGET)
+                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.TIME)
+                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.SHIRE)
+                    && !parameterName.equalsIgnoreCase(SamlIdPConstants.PROVIDER_ID)) {
+                    urlBuilder.addParameter(parameterName, request.getParameter(parameterName));
+                }
             }
+            view.setUrl(urlBuilder.build().toString());
         }
-        view.setUrl(urlBuilder.build().toString());
         return modelAndView;
     }
 }

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @Getter
 public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(1)

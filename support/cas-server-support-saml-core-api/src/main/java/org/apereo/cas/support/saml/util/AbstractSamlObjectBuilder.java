@@ -35,6 +35,7 @@ import org.opensaml.core.xml.schema.impl.XSIntegerBuilder;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.core.xml.schema.impl.XSURIBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -252,6 +253,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
         LOGGER.trace("Creating new attribute value XMLObject for value: [{}], value type: [{}], QName: [{}]", value, valueType, elementName);
+
+        if (value instanceof NameIDType) {
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
+            ((NameIDType) value).detach();
+            return (NameIDType) value;
+        }
+        
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSStringBuilder();
             val attrValueObj = builder.buildObject(elementName, XSString.TYPE_NAME);

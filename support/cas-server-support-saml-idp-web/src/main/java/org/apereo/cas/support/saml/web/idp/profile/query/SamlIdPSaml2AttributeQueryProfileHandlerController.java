@@ -28,8 +28,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class SamlIdPSaml2AttributeQueryProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
-    public SamlIdPSaml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
-        super(samlProfileHandlerConfigurationContext);
+    public SamlIdPSaml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
+        super(context);
     }
 
     /**

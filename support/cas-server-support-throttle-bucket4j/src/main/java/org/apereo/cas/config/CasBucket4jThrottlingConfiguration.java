@@ -19,11 +19,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casBucket4jThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasBucket4jThrottlingConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public ThrottledRequestExecutor throttledRequestExecutor() {
+    @Autowired
+    public ThrottledRequestExecutor throttledRequestExecutor(final CasConfigurationProperties casProperties) {
         val throttle = casProperties.getAuthn().getThrottle();
         return new Bucket4jThrottledRequestExecutor(throttle.getBucket4j());
     }

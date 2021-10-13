@@ -10,11 +10,13 @@ import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchbaseTicketRegistryConfiguration}.
@@ -22,26 +24,27 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("couchbaseTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "couchbaseTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CouchbaseTicketRegistryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchbaseClientFactory")
-    public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
+    @Autowired
+    public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val cb = casProperties.getTicket().getRegistry().getCouchbase();
         return new CouchbaseClientFactory(cb);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public TicketRegistry ticketRegistry() {
+    @Autowired
+    public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
+                                         @Qualifier("ticketRegistryCouchbaseClientFactory")
+                                         final CouchbaseClientFactory ticketRegistryCouchbaseClientFactory) {
         val couchbase = casProperties.getTicket().getRegistry().getCouchbase();
-        val c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory());
+        val c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory);
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         return c;
     }

@@ -16,7 +16,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,6 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPGitIdPMetadataConfiguration}.
@@ -32,57 +32,53 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPGitIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = { "idp-metadata-enabled", "repository-url" })
+@ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = {"idp-metadata-enabled", "repository-url"})
+@Configuration(value = "samlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPGitIdPMetadataConfiguration {
-    @Autowired
-    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
 
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
-    @RefreshScope
-    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getGit().getCrypto();
-
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, GitSamlIdPMetadataCipherExecutor.class);
         }
-        LOGGER.info("Git SAML IdP metadata encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "metadata artifacts");
+        LOGGER.info("Git SAML IdP metadata encryption/signing is turned off and MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitIdPMetadataRepositoryInstance")
-    public GitRepository gitIdPMetadataRepositoryInstance() {
+    @Autowired
+    public GitRepository gitIdPMetadataRepositoryInstance(final CasConfigurationProperties casProperties) {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();
     }
 
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        return new GitSamlIdPMetadataGenerator(
-            samlIdPMetadataGeneratorConfigurationContext.getObject(), gitIdPMetadataRepositoryInstance());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        @Qualifier("gitIdPMetadataRepositoryInstance")
+        final GitRepository gitIdPMetadataRepositoryInstance,
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
+        return new GitSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, gitIdPMetadataRepositoryInstance);
     }
 
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance(), samlIdPMetadataCache.getObject());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        @Qualifier("gitIdPMetadataRepositoryInstance")
+        final GitRepository gitIdPMetadataRepositoryInstance) {
+        return new GitSamlIdPMetadataLocator(gitIdPMetadataRepositoryInstance, samlIdPMetadataCache);
     }
 }

@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -32,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 /**
@@ -40,93 +40,109 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("tokenCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
+@Configuration(value = "tokenCoreConfiguration", proxyBeanMethods = false)
 public class TokenCoreConfiguration {
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("authenticationAttributeReleasePolicy")
-    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "tokenCipherExecutor")
-    public CipherExecutor tokenCipherExecutor() {
-        val crypto = casProperties.getAuthn().getToken().getCrypto();
-
-        val enabled = FunctionUtils.doIf(
-            !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
-            () -> {
-                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
-                    + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
-                return Boolean.TRUE;
-            },
-            crypto::isEnabled)
-            .get();
-
-        if (enabled) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, JwtTicketCipherExecutor.class);
+    @Configuration(value = "TokenCoreValidatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenCoreValidatorConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "tokenTicketValidator")
+        public TicketValidator tokenTicketValidator(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new InternalTicketValidator(centralAuthenticationService,
+                webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
         }
-        LOGGER.info("Token cookie encryption/signing is turned off. This "
-            + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
-            + "signing and verification of generated tokens.");
-        return CipherExecutor.noOp();
+
+    }
+    
+    @Configuration(value = "TokenCoreJwtConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenCoreJwtConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "tokenCipherExecutor")
+        @Autowired
+        public CipherExecutor tokenCipherExecutor(final CasConfigurationProperties casProperties) {
+            val crypto = casProperties.getAuthn().getToken().getCrypto();
+            val enabled = FunctionUtils.doIf(!crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                                             && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+                () -> {
+                    LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                                + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
+                    return Boolean.TRUE;
+                }, crypto::isEnabled).get();
+            if (enabled) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, JwtTicketCipherExecutor.class);
+            }
+            LOGGER.info("Token cookie encryption/signing is turned off. This "
+                        + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                        + "signing and verification of generated tokens.");
+            return CipherExecutor.noOp();
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
+        public JwtBuilder tokenTicketJwtBuilder(
+            @Qualifier("tokenCipherExecutor")
+            final CipherExecutor tokenCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new JwtBuilder(tokenCipherExecutor, servicesManager, new RegisteredServiceJwtTicketCipherExecutor());
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "tokenTicketValidator")
-    public TicketValidator tokenTicketValidator() {
-        return new InternalTicketValidator(centralAuthenticationService.getObject(),
-            webApplicationServiceFactory.getObject(), authenticationAttributeReleasePolicy.getObject(), servicesManager.getObject());
-    }
+    @Configuration(value = "TokenCoreBuilderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenCoreBuilderConfiguration {
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "tokenTicketBuilder")
-    public TokenTicketBuilder tokenTicketBuilder() {
-        return new JwtTokenTicketBuilder(tokenTicketValidator(),
-            grantingTicketExpirationPolicy.getObject(),
-            tokenTicketJwtBuilder(),
-            servicesManager.getObject(),
-            casProperties);
-    }
 
-    @RefreshScope
-    @Bean
-    @ConditionalOnMissingBean(name = "tokenTicketJwtBuilder")
-    public JwtBuilder tokenTicketJwtBuilder() {
-        return new JwtBuilder(
-            tokenCipherExecutor(),
-            servicesManager.getObject(),
-            new RegisteredServiceJwtTicketCipherExecutor());
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "tokenTicketBuilder")
+        @Autowired
+        public TokenTicketBuilder tokenTicketBuilder(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("tokenTicketValidator")
+            final TicketValidator tokenTicketValidator,
+            @Qualifier("tokenTicketJwtBuilder")
+            final JwtBuilder tokenTicketJwtBuilder,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
+            return new JwtTokenTicketBuilder(tokenTicketValidator,
+                grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
+        }
     }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint() {
-        return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
-            tokenCipherExecutor(),
-            servicesManager.getObject(),
-            webApplicationServiceFactory.getObject());
+    
+    @Configuration(value = "TokenCoreWebConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TokenCoreWebConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @Autowired
+        public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("tokenCipherExecutor")
+            final CipherExecutor tokenCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
+                tokenCipherExecutor, servicesManager, webApplicationServiceFactory);
+        }
     }
 }

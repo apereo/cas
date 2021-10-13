@@ -123,8 +123,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @param context    the context
      */
     protected void prepareConsentableAttributes(final Map<String, List<Object>> attributes, final RequestContext context) {
-        val builders = new ArrayList<>(applicationContext.getBeansOfType(
-            ConsentableAttributeBuilder.class, false, true).values());
+        val builders = new ArrayList<>(applicationContext.getBeansOfType(ConsentableAttributeBuilder.class).values());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
 
         val consentableAttributes = new ArrayList<CasConsentableAttribute>();

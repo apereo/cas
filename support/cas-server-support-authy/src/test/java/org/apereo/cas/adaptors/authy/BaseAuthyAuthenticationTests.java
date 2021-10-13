@@ -5,14 +5,17 @@ import org.apereo.cas.adaptors.authy.config.AuthyConfiguration.AuthyMultifactorT
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationComponentSerializationConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.adaptors.authy.config.support.authentication.AuthyAuthenticationMultifactorProviderBypassConfiguration;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -57,7 +60,9 @@ public abstract class BaseAuthyAuthenticationTests {
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreHttpConfiguration.class,
@@ -66,6 +71,7 @@ public abstract class BaseAuthyAuthenticationTests {
         CasCoreWebflowConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasCoreAuditConfiguration.class,
 
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,

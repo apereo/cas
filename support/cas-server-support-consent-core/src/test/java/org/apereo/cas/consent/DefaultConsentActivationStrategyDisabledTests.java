@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 public class DefaultConsentActivationStrategyDisabledTests {
 
     @Autowired
-    @Qualifier("consentActivationStrategy")
+    @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
@@ -52,7 +52,7 @@ public class DefaultConsentActivationStrategyDisabledTests {
             CoreAuthenticationTestUtils.getService(),
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
-            context));
+            new MockHttpServletRequest()));
 
     }
 

@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Deprecated(since = "6.2.0")
 public class EhCacheHealthIndicatorTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired

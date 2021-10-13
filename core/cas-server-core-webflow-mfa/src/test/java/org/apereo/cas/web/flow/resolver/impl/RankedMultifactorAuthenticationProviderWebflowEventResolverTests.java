@@ -47,13 +47,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowEvents")
 @Import(RankedMultifactorAuthenticationProviderWebflowEventResolverTests.MultifactorTestConfiguration.class)
-public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
+    extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasDelegatingWebflowEventResolver resolver;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService cas;
 
     @BeforeEach

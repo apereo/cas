@@ -1,0 +1,25 @@
+{
+  "dependencies": "discovery-profile,pac4j-webflow,oidc,simple-mfa",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    
+    "--management.endpoints.web.exposure.include=discoveryProfile",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}
+
+
+

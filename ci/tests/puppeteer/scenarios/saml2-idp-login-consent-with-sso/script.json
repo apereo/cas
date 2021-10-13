@@ -1,0 +1,29 @@
+{
+  "dependencies": "saml-idp,consent-webflow",
+  "properties": [
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.uid=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.displayName=CAS",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+    "--cas.audit.engine.enabled=false",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=attributeConsent",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

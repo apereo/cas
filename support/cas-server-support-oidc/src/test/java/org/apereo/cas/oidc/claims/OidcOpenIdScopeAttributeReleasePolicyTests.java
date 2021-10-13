@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -24,7 +25,9 @@ public class OidcOpenIdScopeAttributeReleasePolicyTests extends AbstractOidcTest
         val policy = new OidcOpenIdScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.OPENID.getScope(), policy.getScopeType());
         assertTrue(policy.getAllowedAttributes().isEmpty());
-        assertTrue(policy.determineRequestedAttributeDefinitions().isEmpty());
+        assertTrue(policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()).isEmpty());
     }
 
     @Test

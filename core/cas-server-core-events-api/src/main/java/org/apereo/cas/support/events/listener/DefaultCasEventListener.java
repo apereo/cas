@@ -11,6 +11,8 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.serialization.MessageSanitizationUtils;
+import org.apereo.cas.util.spring.CasEventListener;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class DefaultCasEventListener {
+public class DefaultCasEventListener implements CasEventListener {
 
     private final CasEventRepository casEventRepository;
 

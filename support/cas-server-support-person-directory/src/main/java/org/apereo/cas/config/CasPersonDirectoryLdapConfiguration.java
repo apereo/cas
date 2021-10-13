@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -15,12 +14,15 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
@@ -33,18 +35,16 @@ import java.util.List;
  * @since 6.4.0
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.ldap[0]", value = "ldap-url")
-@Configuration("CasPersonDirectoryLdapConfiguration")
+@Configuration(value = "CasPersonDirectoryLdapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
+public class CasPersonDirectoryLdapConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
     @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
     @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> ldapAttributeRepositories() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public List<IPersonAttributeDao> ldapAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getLdap()
@@ -105,9 +105,12 @@ public class CasPersonDirectoryLdapConfiguration implements PersonDirectoryAttri
         return list;
     }
 
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(ldapAttributeRepositories());
+    @Bean
+    @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PersonDirectoryAttributeRepositoryPlanConfigurer ldapPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("ldapAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> ldapAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories.getObject());
     }
 }
 

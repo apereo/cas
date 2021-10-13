@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +36,48 @@ public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPCo
     @Autowired
     @Qualifier("samlProfileSamlAttributeStatementBuilder")
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
+
+    @Test
+    public void verifyAttributeAsNameIDPersistent() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.getAttributeValueTypes().put("customNameId", NameIDType.PERSISTENT);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
+            getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString()))),
+            service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+
+        val attributes = statement.getAttributes();
+        assertFalse(attributes.isEmpty());
+        val result = attributes.stream().filter(a -> a.getName().equals("customNameId")).findFirst();
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getAttributeValues().get(0) instanceof NameIDType);
+    }
+
+    @Test
+    public void verifyAttributeAsNameIDSameAsSubject() {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.getAttributeValueTypes().put("customNameId", NameIDType.class.getSimpleName());
+        
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
+            .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
+        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
+            getAssertion(Map.of("customNameId", List.of(UUID.randomUUID().toString()))),
+            service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+
+        val attributes = statement.getAttributes();
+        assertFalse(attributes.isEmpty());
+        val result = attributes.stream().filter(a -> a.getName().equals("customNameId")).findFirst();
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getAttributeValues().get(0) instanceof NameIDType);
+    }
 
     @Test
     public void verifyTestAttributeDefns() {

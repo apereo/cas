@@ -29,7 +29,7 @@ public class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecu
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

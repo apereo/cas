@@ -76,7 +76,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService, final RegisteredService registeredService) {
+    public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService,
+                                                   final RegisteredService registeredService) {
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
             principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.trace("Locating principal attributes for [{}]", principal.getId());
@@ -121,8 +122,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     @Override
-    public Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-        val attributes = getAttributes(p, selectedService, service);
+    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+        val attributes = getAttributes(principal, selectedService, service);
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
         if (this.consentPolicy != null) {
             LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, service);
@@ -148,6 +149,18 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     }
 
     /**
+     * Gets the attributes internally from the implementation.
+     *
+     * @param principal       the principal
+     * @param attributes      the principal attributes
+     * @param service         the service
+     * @param selectedService the selected service
+     * @return the attributes allowed for release
+     */
+    public abstract Map<String, List<Object>> getAttributesInternal(Principal principal, Map<String, List<Object>> attributes,
+                                                                    RegisteredService service, Service selectedService);
+
+    /**
      * Resolve attributes from attribute definition store and provide map.
      *
      * @param principal           the principal
@@ -167,7 +180,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                     LOGGER.trace("No attribute definitions are defined in the attribute definition store");
                     return attributesToResolve;
                 }
-                val requestedDefinitions = determineRequestedAttributeDefinitions();
+                val requestedDefinitions = determineRequestedAttributeDefinitions(principal, registeredService, selectedService);
                 if (!requestedDefinitions.isEmpty()) {
                     LOGGER.trace("Finding requested attribute definitions [{}]", requestedDefinitions);
                     requestedDefinitions.stream()
@@ -199,11 +212,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             .orElseGet(principal::getAttributes);
     }
 
-    private Optional<RegisteredServicePrincipalAttributesRepository> getRegisteredServicePrincipalAttributesRepository() {
-        return Optional.ofNullable(principalAttributesRepository)
-            .or(ApplicationContextProvider::getPrincipalAttributesRepository);
-    }
-
     /**
      * Release principal id as attribute if needed.
      *
@@ -233,7 +241,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @param service             the service
      * @return the map
      */
-    protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease, final RegisteredService service) {
+    protected Map<String, List<Object>> returnFinalAttributesCollection(final Map<String, List<Object>> attributesToRelease,
+                                                                        final RegisteredService service) {
         LOGGER.debug("Final collection of attributes allowed are: [{}]", attributesToRelease);
         return attributesToRelease;
     }
@@ -242,7 +251,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Determines a default bundle of attributes that may be released to all services
      * without the explicit mapping for each service.
      *
-     * @param principal          the principal
+     * @param principal  the principal
      * @param attributes the attributes
      * @return the released by default attributes
      */
@@ -268,21 +277,20 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * released in the policy.  This method should return the list of definitions keys that need to be resolved by the
      * definition store so the can be resolved and released to the client.
      *
+     * @param principal         the principal
+     * @param registeredService the registered service
+     * @param selectedService   the selected service
      * @return - List of requested attribute definitions to be released.
      */
-    protected List<String> determineRequestedAttributeDefinitions() {
+    protected List<String> determineRequestedAttributeDefinitions(
+        final Principal principal,
+        final RegisteredService registeredService,
+        final Service selectedService) {
         return new ArrayList<>();
     }
 
-    /**
-     * Gets the attributes internally from the implementation.
-     *
-     * @param principal       the principal
-     * @param attributes      the principal attributes
-     * @param service         the service
-     * @param selectedService the selected service
-     * @return the attributes allowed for release
-     */
-    public abstract Map<String, List<Object>> getAttributesInternal(Principal principal, Map<String, List<Object>> attributes,
-                                                                    RegisteredService service, Service selectedService);
+    private Optional<RegisteredServicePrincipalAttributesRepository> getRegisteredServicePrincipalAttributesRepository() {
+        return Optional.ofNullable(principalAttributesRepository)
+            .or(ApplicationContextProvider::getPrincipalAttributesRepository);
+    }
 }

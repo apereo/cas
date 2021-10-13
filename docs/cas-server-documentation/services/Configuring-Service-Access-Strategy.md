@@ -123,6 +123,10 @@ To access the service, the principal must have a `cn` attribute whose value is e
 }
 ```
 
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for 
+a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
+require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
+
 #### Static Unauthorized Redirect URL
 
 Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`. If so,
@@ -255,6 +259,10 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
   }
 }
 ```
+
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Rejected values for 
+a given attribute support regular expression patterns. For example, a <code>role</code> attribute could
+be designed with a value value pattern of <code>admin-.*</code>.</p></div>
 
 ## Time-Based
 

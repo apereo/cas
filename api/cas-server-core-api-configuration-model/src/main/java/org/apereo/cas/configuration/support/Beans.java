@@ -52,11 +52,11 @@ public class Beans {
      */
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         val dao = new NamedStubPersonAttributeDao();
-        val pdirMap = new LinkedHashMap<String, List<Object>>();
+        val backingMap = new LinkedHashMap<String, List<Object>>();
         val stub = p.getStub();
         stub.getAttributes().forEach((key, value) -> {
             val vals = StringUtils.commaDelimitedListToStringArray(value);
-            pdirMap.put(key, Arrays.stream(vals)
+            backingMap.put(key, Arrays.stream(vals)
                 .map(v -> {
                     val bool = BooleanUtils.toBooleanObject(v);
                     if (bool != null) {
@@ -66,7 +66,7 @@ public class Beans {
                 })
                 .collect(Collectors.toList()));
         });
-        dao.setBackingMap(pdirMap);
+        dao.setBackingMap(backingMap);
         dao.setOrder(stub.getOrder());
         if (StringUtils.hasText(stub.getId())) {
             dao.setId(stub.getId());

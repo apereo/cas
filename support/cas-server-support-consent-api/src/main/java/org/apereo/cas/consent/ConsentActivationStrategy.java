@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
-import org.springframework.webflow.execution.RequestContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link ConsentActivationStrategy}.
@@ -14,6 +14,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @FunctionalInterface
 public interface ConsentActivationStrategy {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "consentActivationStrategy";
 
     /**
      * Determine if consent is required.
@@ -21,11 +25,11 @@ public interface ConsentActivationStrategy {
      * @param service           the service
      * @param registeredService the registered service
      * @param authentication    the authentication
-     * @param requestContext    the request context
-     * @return the boolean
+     * @param request           the request
+     * @return true/false
      */
     boolean isConsentRequired(Service service,
                               RegisteredService registeredService,
                               Authentication authentication,
-                              RequestContext requestContext);
+                              HttpServletRequest request);
 }

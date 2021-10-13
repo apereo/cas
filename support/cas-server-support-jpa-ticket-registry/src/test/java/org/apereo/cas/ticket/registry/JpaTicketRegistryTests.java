@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
-        "cas.jdbc.show-sql=true",
+        "cas.jdbc.show-sql=false",
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
 @Tag("JDBC")
@@ -71,7 +71,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     protected OAuth20CodeFactory oAuthCodeFactory;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry newTicketRegistry;
 
     @Autowired

@@ -40,6 +40,8 @@ public class DefaultConsentEngine implements ConsentEngine {
 
     private final CasConfigurationProperties casProperties;
 
+    private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
+    
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)
@@ -51,8 +53,21 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final ChronoUnit reminderTimeUnit,
                                                 final ConsentReminderOptions options) {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-        val principalId = authentication.getPrincipal().getId();
+        attributes.replaceAll((key, value) -> {
+            var attr = CasConsentableAttribute.builder()
+                .name(key)
+                .values(value)
+                .build();
 
+            for (val builder : this.consentableAttributeBuilders) {
+                LOGGER.trace("Preparing to build consentable attribute [{}] via [{}]", attr, builder.getName());
+                attr = builder.build(attr);
+                LOGGER.trace("Finalized consentable attribute [{}]", attr);
+            }
+            return attr.getValues();
+        });
+
+        val principalId = authentication.getPrincipal().getId();
         val decisionFound = findConsentDecision(service, registeredService, authentication);
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),

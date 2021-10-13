@@ -1,8 +1,9 @@
 description = "Apereo CAS Support for Thymeleaf Template Engine"
 dependencies {
     api libraries.thymeleaf
+    runtimeOnly libraries.webjars
 
-    implementation libraries.webjars
+    compileOnlyApi project(":core:cas-server-core-services")
 
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")

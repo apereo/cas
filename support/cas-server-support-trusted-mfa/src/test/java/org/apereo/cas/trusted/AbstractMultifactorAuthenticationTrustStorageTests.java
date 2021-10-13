@@ -1,6 +1,9 @@
 package org.apereo.cas.trusted;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -28,7 +31,9 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
 
@@ -37,6 +42,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -114,10 +120,23 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreHttpConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
+        GeoLocationServiceTestConfiguration.class,
         MultifactorAuthnTrustWebflowConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
     })
     public static class SharedTestConfiguration {
+    }
+
+    @TestConfiguration("GeoLocationServiceTestConfiguration")
+    public static class GeoLocationServiceTestConfiguration {
+        @Bean
+        public GeoLocationService geoLocationService() {
+            val service = mock(GeoLocationService.class);
+            val response = new GeoLocationResponse();
+            response.addAddress("MSIE");
+            when(service.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(response);
+            return service;
+        }
     }
 }

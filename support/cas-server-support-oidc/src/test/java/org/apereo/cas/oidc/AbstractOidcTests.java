@@ -270,11 +270,11 @@ public abstract class AbstractOidcTests {
     protected OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

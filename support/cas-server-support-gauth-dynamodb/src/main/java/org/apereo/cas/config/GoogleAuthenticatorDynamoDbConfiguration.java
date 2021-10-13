@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -27,36 +28,49 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("googleAuthenticatorDynamoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "googleAuthenticatorDynamoDbConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorDynamoDbConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Bean
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
-                                                                               final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                                               @Qualifier("googleAuthenticatorAccountCipherExecutor")
-                                                                               final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
-        return new DynamoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
-            googleAuthenticatorAccountCipherExecutor,
-            googleAuthenticatorTokenCredentialRepositoryFacilitator());
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+        @Qualifier("googleAuthenticatorInstance")
+        final IGoogleAuthenticator googleAuthenticatorInstance,
+        @Qualifier("googleAuthenticatorAccountCipherExecutor")
+        final CipherExecutor googleAuthenticatorAccountCipherExecutor,
+        @Qualifier("googleAuthenticatorTokenCredentialRepositoryFacilitator")
+        final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator) {
+        return new DynamoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor,
+            googleAuthenticatorTokenCredentialRepositoryFacilitator);
     }
 
     @Bean
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        return new GoogleAuthenticatorDynamoDbTokenRepository(googleAuthenticatorDynamoDbTokenRepositoryFacilitator(),
-            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
+    @Autowired
+    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
+        final GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator) {
+        return new GoogleAuthenticatorDynamoDbTokenRepository(googleAuthenticatorDynamoDbTokenRepositoryFacilitator, casProperties.getAuthn()
+            .getMfa()
+            .getGauth()
+            .getCore()
+            .getTimeStepSize());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
-    @RefreshScope
-    public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator() {
-        val dynamoDbProperties = casProperties.getAuthn().getMfa().getGauth().getDynamoDb();
-        val facilitator = new GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator(
-            dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("amazonDynamoDbGoogleAuthenticatorClient")
+        final DynamoDbClient amazonDynamoDbGoogleAuthenticatorClient) {
+        val dynamoDbProperties = casProperties.getAuthn()
+            .getMfa()
+            .getGauth()
+            .getDynamoDb();
+        val facilitator = new GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator(dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient);
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
             facilitator.createTable(dynamoDbProperties.isDropTablesOnStartup());
         }
@@ -64,22 +78,33 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorTokenCredentialRepositoryFacilitator")
-    public DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator() {
-        val dynamoDbProperties = casProperties.getAuthn().getMfa().getGauth().getDynamoDb();
-        val facilitator = new DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator(dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient());
+    @Autowired
+    public DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("amazonDynamoDbGoogleAuthenticatorClient")
+        final DynamoDbClient amazonDynamoDbGoogleAuthenticatorClient) {
+        val dynamoDbProperties = casProperties.getAuthn()
+            .getMfa()
+            .getGauth()
+            .getDynamoDb();
+        val facilitator = new DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator(dynamoDbProperties, amazonDynamoDbGoogleAuthenticatorClient);
         if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
             facilitator.createTable(dynamoDbProperties.isDropTablesOnStartup());
         }
         return facilitator;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbGoogleAuthenticatorClient")
-    public DynamoDbClient amazonDynamoDbGoogleAuthenticatorClient() {
-        val dynamoDbProperties = casProperties.getAuthn().getMfa().getGauth().getDynamoDb();
+    @Autowired
+    public DynamoDbClient amazonDynamoDbGoogleAuthenticatorClient(final CasConfigurationProperties casProperties) {
+        val dynamoDbProperties = casProperties.getAuthn()
+            .getMfa()
+            .getGauth()
+            .getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(dynamoDbProperties);
     }

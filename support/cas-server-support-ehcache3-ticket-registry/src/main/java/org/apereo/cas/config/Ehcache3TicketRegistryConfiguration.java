@@ -42,9 +42,10 @@ import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
+import javax.cache.CacheManager;
 import javax.cache.Caching;
-
 import java.io.File;
 import java.net.URI;
 import java.time.Duration;
@@ -62,24 +63,21 @@ import java.util.HashMap;
 @Slf4j
 public class Ehcache3TicketRegistryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @ConditionalOnMissingBean(name = "ehcache3CacheManagerConfiguration")
-    public ServiceCreationConfiguration ehcache3CacheManagerConfiguration() {
+    @Autowired
+    public ServiceCreationConfiguration ehcache3CacheManagerConfiguration(final CasConfigurationProperties casProperties) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
         if (StringUtils.isNotBlank(terracottaClusterUri)) {
             val resourcePoolCapacity = Capacity.parse(ehcacheProperties.getResourcePoolSize());
-            val clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri))
-                .timeouts(TimeoutsBuilder.timeouts()
-                    .connection(Duration.ofSeconds(ehcacheProperties.getClusterConnectionTimeout()))
-                    .read(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout()))
-                    .write(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout())).build())
+            val clusterConfigBuilder = ClusteringServiceConfigurationBuilder.cluster(URI.create(terracottaClusterUri)).timeouts(
+                    TimeoutsBuilder.timeouts().connection(Duration.ofSeconds(ehcacheProperties.getClusterConnectionTimeout()))
+                        .read(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout()))
+                        .write(Duration.ofSeconds(ehcacheProperties.getClusterReadWriteTimeout())).build())
                 .autoCreate(s -> s.defaultServerResource(ehcacheProperties.getDefaultServerResource())
-                    .resourcePool(ehcacheProperties.getResourcePoolName(), resourcePoolCapacity.getSize().longValue(),
-                        MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name())));
+                    .resourcePool(ehcacheProperties.getResourcePoolName(),
+                        resourcePoolCapacity.getSize().longValue(), MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name())));
             return clusterConfigBuilder.build();
         }
         val rootDirectory = ehcacheProperties.getRootDirectory();
@@ -97,90 +95,46 @@ public class Ehcache3TicketRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ehcache3TicketCacheManager")
     @Autowired
-    public javax.cache.CacheManager ehcache3TicketCacheManager(@Qualifier("ehcache3CacheManagerConfiguration")
-                                                               final ServiceCreationConfiguration ehcache3CacheManagerConfiguration) {
+    public CacheManager ehcache3TicketCacheManager(
+        @Qualifier("ehcache3CacheManagerConfiguration")
+        final ServiceCreationConfiguration ehcache3CacheManagerConfiguration, final CasConfigurationProperties casProperties) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val ehcacheProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
         val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
         val managementAllAllEnabled = ehcacheProperties.isEnableManagement() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
-        val jsr107Config = new Jsr107Configuration(null, new HashMap<>(),
-            false, managementAllAllEnabled, statisticsAllEnabled);
-        val configuration = new DefaultConfiguration(ehcacheProvider.getDefaultClassLoader(),
-            ehcache3CacheManagerConfiguration,
-            jsr107Config);
+        val jsr107Config = new Jsr107Configuration(null, new HashMap<>(), false, managementAllAllEnabled, statisticsAllEnabled);
+        val configuration = new DefaultConfiguration(ehcacheProvider.getDefaultClassLoader(), ehcache3CacheManagerConfiguration, jsr107Config);
         return ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), configuration);
     }
 
-    private CacheConfiguration<String, Ticket> buildCacheConfiguration(final TicketDefinition ticketDefinition) {
-        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
-        val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
-
-        val cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
-            .newEventListenerConfiguration(new CasCacheEventListener(),
-                EventType.CREATED, EventType.UPDATED, EventType.EXPIRED, EventType.REMOVED, EventType.EVICTED)
-            .ordered().asynchronous();
-
-        val storageTimeout = ticketDefinition.getProperties().getStorageTimeout();
-        val expiryPolicy = ehcacheProperties.isEternal() ? ExpiryPolicyBuilder.noExpiration()
-            : ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(storageTimeout));
-
-        var resourcePools = ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory());
-        if (StringUtils.isNotBlank(terracottaClusterUri)) {
-            resourcePools = resourcePools.with(
-                ClusteredResourcePoolBuilder.clusteredShared(ehcacheProperties.getResourcePoolName()));
-        }
-
-        val resourcePoolCapacity = Capacity.parse(ehcacheProperties.getResourcePoolSize());
-        resourcePools = resourcePools
-            .offheap(resourcePoolCapacity.getSize().longValue(), MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name()));
-
-        if (StringUtils.isBlank(terracottaClusterUri)) {
-            val perCacheCapacity = Capacity.parse(ehcacheProperties.getPerCacheSizeOnDisk());
-            val persistOnDisk = ehcacheProperties.isPersistOnDisk();
-            resourcePools = resourcePools.disk(perCacheCapacity.getSize().longValue(),
-                MemoryUnit.valueOf(perCacheCapacity.getUnitOfMeasure().name()), persistOnDisk);
-        }
-
-        var cacheConfigBuilder = CacheConfigurationBuilder.newCacheConfigurationBuilder(
-            String.class, Ticket.class, resourcePools)
-            .withExpiry(expiryPolicy)
-            .withService(cacheEventListenerConfiguration);
-
-        if (StringUtils.isNotBlank(terracottaClusterUri)) {
-            cacheConfigBuilder = cacheConfigBuilder.withService(
-                ClusteredStoreConfigurationBuilder.withConsistency(Consistency.valueOf(ehcacheProperties.getClusteredCacheConsistency().name())));
-        }
-
-        return cacheConfigBuilder.build();
-    }
-
     /**
-     * Create ticket registry bean with all nececessary caches.
+     * Create ticket registry bean with all necessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
      *
      * @param ehcacheManager Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
      * @param ticketCatalog  Ticket Catalog
+     * @param casProperties  the cas properties
      * @return Ticket Registry
      */
     @Autowired
     @Bean
-    @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ehcache3TicketCacheManager") final javax.cache.CacheManager ehcacheManager,
-                                         @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketRegistry ticketRegistry(
+        @Qualifier("ehcache3TicketCacheManager")
+        final CacheManager ehcacheManager,
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val crypto = ehcacheProperties.getCrypto();
-
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
             val cacheName = t.getProperties().getStorageName();
             if (ehcacheManager.getCache(cacheName, String.class, Ticket.class) == null) {
-                val ehcacheConfiguration = buildCacheConfiguration(t);
+                val ehcacheConfiguration = buildCacheConfiguration(t, casProperties);
                 ehcacheManager.createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(ehcacheConfiguration));
             }
         });
-
-        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager,
-            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
+        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
     }
 
     /**
@@ -191,14 +145,50 @@ public class Ehcache3TicketRegistryConfiguration {
      * @return Spring EhCacheCacheManager that wraps EhCache JSR107 CacheManager
      */
     @Bean
-    public JCacheCacheManager ehCacheJCacheCacheManager(@Qualifier("ehcache3TicketCacheManager") final javax.cache.CacheManager ehcache3TicketCacheManager) {
+    public JCacheCacheManager ehCacheJCacheCacheManager(
+        @Qualifier("ehcache3TicketCacheManager")
+        final CacheManager ehcache3TicketCacheManager) {
         return new JCacheCacheManager(ehcache3TicketCacheManager);
     }
 
     private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
+
         @Override
         public void onEvent(final CacheEvent<? extends String, ? extends Ticket> event) {
             LOGGER.trace("Event Type: [{}], Ticket Id: [{}]", event.getType().name(), event.getKey());
         }
+    }
+
+    private CacheConfiguration<String, Ticket> buildCacheConfiguration(final TicketDefinition ticketDefinition,
+                                                                       final CasConfigurationProperties casProperties) {
+        val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
+        val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
+        val cacheEventListenerConfiguration =
+            CacheEventListenerConfigurationBuilder.newEventListenerConfiguration(new CasCacheEventListener(),
+                EventType.CREATED, EventType.UPDATED, EventType.EXPIRED, EventType.REMOVED,
+                EventType.EVICTED).ordered().asynchronous();
+        val storageTimeout = ticketDefinition.getProperties().getStorageTimeout();
+        val expiryPolicy = ehcacheProperties.isEternal()
+            ? ExpiryPolicyBuilder.noExpiration() : ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(storageTimeout));
+        var resourcePools = ResourcePoolsBuilder.heap(ehcacheProperties.getMaxElementsInMemory());
+        if (StringUtils.isNotBlank(terracottaClusterUri)) {
+            resourcePools = resourcePools.with(ClusteredResourcePoolBuilder.clusteredShared(ehcacheProperties.getResourcePoolName()));
+        }
+        val resourcePoolCapacity = Capacity.parse(ehcacheProperties.getResourcePoolSize());
+        resourcePools = resourcePools.offheap(resourcePoolCapacity.getSize().longValue(), MemoryUnit.valueOf(resourcePoolCapacity.getUnitOfMeasure().name()));
+        if (StringUtils.isBlank(terracottaClusterUri)) {
+            val perCacheCapacity = Capacity.parse(ehcacheProperties.getPerCacheSizeOnDisk());
+            val persistOnDisk = ehcacheProperties.isPersistOnDisk();
+            resourcePools = resourcePools.disk(perCacheCapacity.getSize().longValue(), MemoryUnit.valueOf(perCacheCapacity.getUnitOfMeasure().name()), persistOnDisk);
+        }
+        var cacheConfigBuilder =
+            CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, Ticket.class, resourcePools)
+                .withExpiry(expiryPolicy)
+                .withService(cacheEventListenerConfiguration);
+        if (StringUtils.isNotBlank(terracottaClusterUri)) {
+            cacheConfigBuilder = cacheConfigBuilder.withService(ClusteredStoreConfigurationBuilder.withConsistency(
+                Consistency.valueOf(ehcacheProperties.getClusteredCacheConsistency().name())));
+        }
+        return cacheConfigBuilder.build();
     }
 }

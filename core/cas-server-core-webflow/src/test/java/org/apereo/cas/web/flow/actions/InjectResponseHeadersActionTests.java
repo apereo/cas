@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 public class InjectResponseHeadersActionTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

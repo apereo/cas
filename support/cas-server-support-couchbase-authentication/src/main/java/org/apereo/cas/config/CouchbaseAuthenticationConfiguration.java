@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CouchbaseAuthenticationConfiguration}.
@@ -32,23 +32,10 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration("couchbaseAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "couchbaseAuthenticationConfiguration", proxyBeanMethods = false)
 public class CouchbaseAuthenticationConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")
     @Bean
@@ -57,22 +44,27 @@ public class CouchbaseAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchbaseClientFactory")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchbaseClientFactory authenticationCouchbaseClientFactory() {
+    @Autowired
+    public CouchbaseClientFactory authenticationCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
     }
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")
     @Bean
-    @RefreshScope
-    public AuthenticationHandler couchbaseAuthenticationHandler() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public AuthenticationHandler couchbaseAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                @Qualifier("couchbasePrincipalFactory")
+                                                                final PrincipalFactory couchbasePrincipalFactory,
+                                                                @Qualifier("authenticationCouchbaseClientFactory")
+                                                                final CouchbaseClientFactory authenticationCouchbaseClientFactory,
+                                                                @Qualifier(ServicesManager.BEAN_NAME)
+                                                                final ServicesManager servicesManager) {
         val couchbase = casProperties.getAuthn().getCouchbase();
-        val handler = new CouchbaseAuthenticationHandler(
-            servicesManager.getObject(), couchbasePrincipalFactory(),
-            authenticationCouchbaseClientFactory(),
-            couchbase);
+        val handler = new CouchbaseAuthenticationHandler(servicesManager, couchbasePrincipalFactory, authenticationCouchbaseClientFactory, couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder(), applicationContext));
         return handler;
@@ -80,12 +72,17 @@ public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
+                                                                                                          @Qualifier("couchbaseAuthenticationHandler")
+                                                                                                          final AuthenticationHandler couchbaseAuthenticationHandler,
+                                                                                                          @Qualifier("defaultPrincipalResolver")
+                                                                                                          final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getObject());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler, defaultPrincipalResolver);
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
             }

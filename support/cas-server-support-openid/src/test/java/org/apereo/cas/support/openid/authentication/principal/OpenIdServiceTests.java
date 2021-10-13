@@ -68,11 +68,11 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private OpenIdServiceFactory openIdServiceFactory;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     private OpenIdService openIdService;

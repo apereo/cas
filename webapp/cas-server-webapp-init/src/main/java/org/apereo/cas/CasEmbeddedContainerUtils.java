@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -43,8 +42,8 @@ public class CasEmbeddedContainerUtils {
         val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
         val reflections = new Reflections(new ConfigurationBuilder()
             .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setUrls(ClasspathHelper.forPackage(packageName))
-            .setScanners(new SubTypesScanner(true)));
+            .setUrls(ClasspathHelper.forPackage(packageName)));
+        
         val subTypes = reflections.getSubTypesOf(LoggingInitialization.class);
         return subTypes.isEmpty()
             ? Optional.empty()
@@ -60,9 +59,9 @@ public class CasEmbeddedContainerUtils {
         val packageName = CasEmbeddedContainerUtils.class.getPackage().getName();
         val reflections = new Reflections(new ConfigurationBuilder()
             .filterInputsBy(new FilterBuilder().includePackage(packageName))
-            .setUrls(ClasspathHelper.forPackage(packageName))
-            .setScanners(new SubTypesScanner(true)));
-
+            .setExpandSuperTypes(true)
+            .setUrls(ClasspathHelper.forPackage(packageName)));
+        
         val subTypes = reflections.getSubTypesOf(AbstractCasBanner.class);
         subTypes.remove(DefaultCasBanner.class);
 

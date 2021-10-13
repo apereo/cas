@@ -48,7 +48,7 @@ public class WsFederationServicesManagerRegisteredServiceLocatorTests extends Ba
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @BeforeEach

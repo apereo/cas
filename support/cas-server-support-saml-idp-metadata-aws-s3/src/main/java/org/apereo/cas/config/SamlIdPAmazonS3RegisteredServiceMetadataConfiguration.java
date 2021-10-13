@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
@@ -23,32 +23,28 @@ import software.amazon.awssdk.services.s3.S3Client;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("samlIdPAmazonS3RegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlIdPAmazonS3RegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Autowired
-    @Qualifier("amazonS3Client")
-    private ObjectProvider<S3Client> amazonS3Client;
-
     @Bean
-    @RefreshScope
-    public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
+                                                                                               @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+                                                                                               final OpenSamlConfigBean openSamlConfigBean,
+                                                                                               @Qualifier("amazonS3Client")
+                                                                                               final S3Client amazonS3Client) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject(), amazonS3Client.getObject());
+        return new AmazonS3SamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, amazonS3Client);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer")
-    public SamlRegisteredServiceMetadataResolutionPlanConfigurer amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer() {
-        return plan -> plan.registerMetadataResolver(amazonS3SamlRegisteredServiceMetadataResolver());
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer amazonS3SamlRegisteredServiceMetadataResolutionPlanConfigurer(
+        @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")
+        final SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver) {
+        return plan -> plan.registerMetadataResolver(amazonS3SamlRegisteredServiceMetadataResolver);
     }
 }

@@ -58,6 +58,6 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
      * @since 4.2
      */
     default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredService registeredService) {
-        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes.", id, getClass().getSimpleName());
+        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes [{}]", id, getClass().getSimpleName(), attributes);
     }
 }

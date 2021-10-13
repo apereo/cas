@@ -54,7 +54,7 @@ package org.apereo.cas.support.oauth;
 public class MyOAuthConfiguration {
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer() {
         ...
     }

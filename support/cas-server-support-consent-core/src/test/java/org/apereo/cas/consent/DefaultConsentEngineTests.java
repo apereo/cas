@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 public class DefaultConsentEngineTests {
     @Autowired
-    @Qualifier("consentEngine")
+    @Qualifier(ConsentEngine.BEAN_NAME)
     private ConsentEngine consentEngine;
 
     @BeforeAll

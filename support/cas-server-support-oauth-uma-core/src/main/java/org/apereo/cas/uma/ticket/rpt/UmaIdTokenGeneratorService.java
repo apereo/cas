@@ -4,9 +4,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -26,8 +27,8 @@ import java.util.UUID;
  * @since 6.0.0
  */
 @Slf4j
-public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<OAuth20ConfigurationContext> {
-    public UmaIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
+public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaConfigurationContext> {
+    public UmaIdTokenGeneratorService(final ObjectProvider<UmaConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

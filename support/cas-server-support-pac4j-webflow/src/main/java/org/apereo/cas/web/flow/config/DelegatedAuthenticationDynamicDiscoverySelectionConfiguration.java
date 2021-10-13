@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -22,29 +23,30 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration("DelegatedAuthenticationDynamicDiscoverySelectionConfiguration")
 @ConditionalOnProperty(prefix = "cas.authn.pac4j.core.discovery-selection", name = "selection-type", havingValue = "DYNAMIC")
+@Configuration(value = "DelegatedAuthenticationDynamicDiscoverySelectionConfiguration", proxyBeanMethods = false)
 public class DelegatedAuthenticationDynamicDiscoverySelectionConfiguration {
-    @Autowired
-    @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
-    private DelegatedClientAuthenticationConfigurationContext configContext;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedAuthenticationDynamicDiscoveryProviderLocator")
-    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator() {
-        return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(
-            configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
+    @Autowired
+    public DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator(
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        final DelegatedClientAuthenticationConfigurationContext configContext,
+        final CasConfigurationProperties casProperties) {
+        return new DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator(configContext.getDelegatedClientIdentityProvidersProducer(), configContext.getClients(), casProperties);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_DYNAMIC_DISCOVERY_EXECUTION)
     @Bean
-    public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction() {
-        return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext,
-            delegatedAuthenticationDynamicDiscoveryProviderLocator());
+    public Action delegatedAuthenticationProviderDynamicDiscoveryExecutionAction(
+        @Qualifier(DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
+        final DelegatedClientAuthenticationConfigurationContext configContext,
+        @Qualifier("delegatedAuthenticationDynamicDiscoveryProviderLocator")
+        final DelegatedAuthenticationDynamicDiscoveryProviderLocator delegatedAuthenticationDynamicDiscoveryProviderLocator) {
+        return new DelegatedClientAuthenticationDynamicDiscoveryExecutionAction(configContext, delegatedAuthenticationDynamicDiscoveryProviderLocator);
     }
 }

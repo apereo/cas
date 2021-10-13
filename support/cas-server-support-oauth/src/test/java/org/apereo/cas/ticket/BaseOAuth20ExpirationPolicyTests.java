@@ -100,7 +100,7 @@ public abstract class BaseOAuth20ExpirationPolicyTests {
     protected OAuth20RefreshTokenFactory defaultRefreshTokenFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     protected static TicketGrantingTicket newTicketGrantingTicket() {

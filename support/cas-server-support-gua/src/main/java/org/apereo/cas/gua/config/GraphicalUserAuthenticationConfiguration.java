@@ -9,6 +9,7 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
@@ -19,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +28,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -42,56 +42,38 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "graphicalUserAuthenticationConfiguration", proxyBeanMethods = false)
 public class GraphicalUserAuthenticationConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
-        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Autowired
+    public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
-    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
+    @Autowired
+    public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
         val gua = casProperties.getAuthn().getGua();
         if (!gua.getSimple().isEmpty()) {
-            val accounts = gua.getSimple().entrySet()
-                .stream()
-                .map(Unchecked.function(entry -> {
-                    val res = ResourceUtils.getResourceFrom(entry.getValue());
-                    return Pair.of(entry.getKey(), (Resource) res);
-                }))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            val accounts = gua.getSimple().entrySet().stream().map(Unchecked.function(entry -> {
+                val res = ResourceUtils.getResourceFrom(entry.getValue());
+                return Pair.of(entry.getKey(), (Resource) res);
+            })).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
             return new StaticUserGraphicalAuthenticationRepository(accounts);
         }
-
         val ldap = gua.getLdap();
-        if (StringUtils.isNotBlank(ldap.getLdapUrl())
-            && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && StringUtils.isNotBlank(ldap.getBaseDn())
-            && StringUtils.isNotBlank(ldap.getImageAttribute())) {
+        if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getImageAttribute())) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(gua.getLdap());
             return new LdapUserGraphicalAuthenticationRepository(casProperties, connectionFactory);
         }
@@ -100,27 +82,34 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action acceptUserGraphicsForAuthenticationAction() {
         return new AcceptUserGraphicsForAuthenticationAction();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
-    public Action displayUserGraphicsBeforeAuthenticationAction() {
-        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository());
+    public Action displayUserGraphicsBeforeAuthenticationAction(
+        @Qualifier("userGraphicalAuthenticationRepository")
+        final UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository) {
+        return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository);
     }
 
     @Bean
-    @RefreshScope
-    public Action initializeLoginAction() {
-        return new PrepareForGraphicalAuthenticationAction(servicesManager.getObject(), casProperties);
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public Action initializeLoginAction(final CasConfigurationProperties casProperties,
+                                        @Qualifier(ServicesManager.BEAN_NAME)
+                                        final ServicesManager servicesManager) {
+        return new PrepareForGraphicalAuthenticationAction(servicesManager, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer graphicalUserAuthenticationCasWebflowExecutionPlanConfigurer(
+        @Qualifier("graphicalUserAuthenticationWebflowConfigurer")
+        final CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer);
     }
 }

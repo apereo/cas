@@ -14,6 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-cookie")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-cassandra-core")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -24,7 +25,6 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")

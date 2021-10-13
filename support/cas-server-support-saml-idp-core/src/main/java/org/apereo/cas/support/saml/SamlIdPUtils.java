@@ -2,18 +2,22 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -21,6 +25,7 @@ import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
@@ -33,6 +38,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
@@ -40,6 +46,7 @@ import org.pac4j.core.context.session.SessionStore;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.Inflater;
@@ -158,12 +165,12 @@ public class SamlIdPUtils {
         }
         if (endpoint == null) {
             throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
-                + " is not available or does not define a binding for " + binding);
+                                    + " is not available or does not define a binding for " + binding);
         }
         val missingLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
         if (StringUtils.isBlank(endpoint.getBinding()) || missingLocation) {
             throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
-                + " does not define a binding or location for binding " + binding);
+                                    + " does not define a binding or location for binding " + binding);
         }
         return endpoint;
     }
@@ -176,7 +183,7 @@ public class SamlIdPUtils {
                                                                         final MessageContext authenticationContext) {
         LOGGER.trace("ACS from authentication request is [{}], ACS from metadata is [{}] with binding [{}]",
             acsFromRequest, acsFromMetadata, binding);
-        
+
         if (acsFromRequest != null) {
             if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
                 val locations = StringUtils.isNotBlank(binding)
@@ -369,6 +376,33 @@ public class SamlIdPUtils {
             val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
             sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
         }
+    }
+
+    /**
+     * Determine name id name qualifier string.
+     *
+     * @param samlRegisteredService   the saml registered service
+     * @param samlIdPMetadataResolver the saml id p metadata resolver
+     * @return the string
+     */
+    public static String determineNameIdNameQualifier(final SamlRegisteredService samlRegisteredService,
+                                                      final MetadataResolver samlIdPMetadataResolver) {
+        if (StringUtils.isNotBlank(samlRegisteredService.getNameIdQualifier())) {
+            return samlRegisteredService.getNameIdQualifier();
+        }
+        val nameQualifier = FunctionUtils.doIf(StringUtils.isNotBlank(samlRegisteredService.getIssuerEntityId()),
+                samlRegisteredService::getIssuerEntityId,
+                Unchecked.supplier(() -> {
+                    val criteriaSet = new CriteriaSet(
+                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                        new SamlIdPSamlRegisteredServiceCriterion(samlRegisteredService));
+                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", samlRegisteredService.getName());
+                    val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                    return entityDescriptor.getEntityID();
+                }))
+            .get();
+        LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
+        return nameQualifier;
     }
 }
 

@@ -21,20 +21,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Authentication")
-@SpringBootTest(classes = BaseOktaTests.SharedTestConfiguration.class, properties = {
-    "cas.authn.okta.proxy-host=localhost",
-    "cas.authn.okta.proxy-port=8516",
-    "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com",
+@SpringBootTest(classes = BaseOktaTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.okta.proxy-host=localhost",
+        "cas.authn.okta.proxy-port=8516",
+        "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com",
 
-    "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
-    "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa",
-    "cas.authn.attribute-repository.okta.proxy-host=localhost",
-    "cas.authn.attribute-repository.okta.proxy-port=8923",
-    "cas.authn.attribute-repository.okta.proxy-username=user",
-    "cas.authn.attribute-repository.okta.proxy-password=pass",
-    "cas.authn.attribute-repository.okta.client-id=dummy-client",
-    "cas.authn.attribute-repository.okta.private-key.location=classpath:okta-private-key.pem"
-})
+        "cas.authn.attribute-repository.okta.organization-url=https://dev-668371.oktapreview.com",
+        "cas.authn.attribute-repository.okta.api-token=0030j4HfPHEIQG39pl0nNacnx2bqqZMqDq6Hk5wfNa",
+        "cas.authn.attribute-repository.okta.proxy-host=localhost",
+        "cas.authn.attribute-repository.okta.proxy-port=8923",
+        "cas.authn.attribute-repository.okta.proxy-username=user",
+        "cas.authn.attribute-repository.okta.proxy-password=pass",
+        "cas.authn.attribute-repository.okta.client-id=dummy-client",
+        "cas.authn.attribute-repository.okta.private-key.location=classpath:okta-private-key.pem"
+    })
 public class OktaConfigurationFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,7 +45,8 @@ public class OktaConfigurationFactoryTests {
         try (val webServer = new MockWebServer(8923, HttpStatus.OK)) {
             webServer.start();
             assertNotNull(OktaConfigurationFactory.buildAuthenticationClient(casProperties.getAuthn().getOkta()));
-            assertThrows(OAuth2TokenRetrieverException.class, () -> OktaConfigurationFactory.buildClient(casProperties.getAuthn().getAttributeRepository().getOkta()));
+            assertThrows(OAuth2TokenRetrieverException.class,
+                () -> OktaConfigurationFactory.buildClient(casProperties.getAuthn().getAttributeRepository().getOkta()));
         }
 
     }

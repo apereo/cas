@@ -23,7 +23,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerEvents")
 @ToString
 public class JpaCasEventRepository extends AbstractCasEventRepository {

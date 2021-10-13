@@ -39,7 +39,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test

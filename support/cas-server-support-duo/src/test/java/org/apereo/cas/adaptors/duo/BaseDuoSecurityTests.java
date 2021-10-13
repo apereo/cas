@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.config.DuoSecurityComponentSerializationConfi
 import org.apereo.cas.adaptors.duo.config.DuoSecurityConfiguration;
 import org.apereo.cas.adaptors.duo.config.DuoSecurityMultifactorProviderBypassConfiguration;
 import org.apereo.cas.adaptors.duo.config.DuoSecurityRestConfiguration;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -134,6 +135,7 @@ public abstract class BaseDuoSecurityTests {
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,
         CasMultifactorAuthenticationWebflowConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,

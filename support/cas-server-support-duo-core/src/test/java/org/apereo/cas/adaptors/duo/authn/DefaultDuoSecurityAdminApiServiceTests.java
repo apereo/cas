@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreHttpConfiguration.class},
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("MFAProvider")
 public class DefaultDuoSecurityAdminApiServiceTests {
     @Autowired
     @Qualifier("noRedirectHttpClient")

@@ -2,10 +2,10 @@ package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.authentication.principal.Principal;
 
+import lombok.RequiredArgsConstructor;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,21 +14,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@RequiredArgsConstructor
 public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegatedClientUserProfileProvisioner {
-    private final List<DelegatedClientUserProfileProvisioner> provisioners = new ArrayList<>(0);
+    private final List<DelegatedClientUserProfileProvisioner> provisioners;
 
     @Override
     public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
         provisioners.forEach(provisioner -> provisioner.execute(principal, profile, client));
-    }
-
-    /**
-     * Add policy.
-     *
-     * @param policy the policy
-     */
-    public void addProvisioner(final DelegatedClientUserProfileProvisioner policy) {
-        this.provisioners.add(policy);
     }
 
     /**

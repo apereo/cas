@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,38 +23,49 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("samlIdPAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    @Configuration(value = "SamlIdPAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPAuthenticationServiceSelectionConfiguration {
+        @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
+        @Bean
+        @Autowired
+        public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager,
+                samlIdPServiceFactory, casProperties.getServer().getPrefix());
+        }
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
-    @Bean
-    public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        return new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(
-            servicesManager.getObject(),
-            samlIdPServiceFactory(),
-            casProperties.getServer().getPrefix());
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPAuthenticationServiceSelectionStrategyConfigurer")
+        public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer(
+            @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
+            final AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy) {
+            return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy);
+        }
     }
 
-    @Bean
-    public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer() {
-        return plan -> plan.registerStrategy(samlIdPEntityIdValidationServiceSelectionStrategy());
-    }
+    @Configuration(value = "SamlIdPAuthenticationServiceFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPAuthenticationServiceFactoryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPServiceFactory")
+        public ServiceFactory samlIdPServiceFactory() {
+            return new SamlIdPServiceFactory();
+        }
 
-    @Bean
-    public ServiceFactory samlIdPServiceFactory() {
-        return new SamlIdPServiceFactory();
-    }
-
-    @Bean
-    public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer() {
-        return () -> CollectionUtils.wrap(samlIdPServiceFactory());
+        @Bean
+        public ServiceFactoryConfigurer samlIdPServiceFactoryConfigurer(
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory) {
+            return () -> CollectionUtils.wrap(samlIdPServiceFactory);
+        }
     }
 }

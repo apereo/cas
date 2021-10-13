@@ -27,7 +27,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link TrustedAuthenticationConfiguration}.
@@ -43,135 +43,205 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("trustedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "trustedAuthenticationConfiguration", proxyBeanMethods = false)
 public class TrustedAuthenticationConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("principalElectionStrategy")
-    private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    private ObjectProvider<IPersonAttributeDao> attributeRepository;
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
-    public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
-        val trusted = casProperties.getAuthn().getTrusted();
-        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
-            servicesManager.getObject(), trustedPrincipalFactory(),
-            trusted.getOrder());
+    @Configuration(value = "TrustedAuthenticationHandlerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationHandlerConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
+        @Autowired
+        public AuthenticationHandler principalBearingCredentialsAuthenticationHandler(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            val trusted = casProperties.getAuthn().getTrusted();
+            return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
+                servicesManager,
+                trustedPrincipalFactory,
+                trusted.getOrder());
+        }
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
-    public PrincipalResolver trustedPrincipalResolver() {
-        val resolver = new ChainingPrincipalResolver(this.principalElectionStrategy.getObject(), casProperties);
-        val personDirectory = casProperties.getPersonDirectory();
-        val trusted = casProperties.getAuthn().getTrusted();
+    @Configuration(value = "TrustedAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationPrincipalConfiguration {
+        @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
+        @Bean
+        public PrincipalFactory trustedPrincipalFactory() {
+            return PrincipalFactoryUtils.newPrincipalFactory();
+        }
 
-        val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory(),
-            attributeRepository.getObject(),
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            PrincipalBearingPrincipalResolver.class,
-            trusted, personDirectory);
-        resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
-        return resolver;
     }
 
-    @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
-    @Bean
-    public PrincipalFactory trustedPrincipalFactory() {
-        return PrincipalFactoryUtils.newPrincipalFactory();
+    @Configuration(value = "TrustedAuthenticationPrincipalResolutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationPrincipalResolutionConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
+        @Autowired
+        public PrincipalResolver trustedPrincipalResolver(
+            @Qualifier("principalElectionStrategy")
+            final PrincipalElectionStrategy principalElectionStrategy,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier("attributeRepository")
+            final IPersonAttributeDao attributeRepository) {
+            val resolver = new ChainingPrincipalResolver(principalElectionStrategy,
+                casProperties);
+            val personDirectory = casProperties.getPersonDirectory();
+            val trusted = casProperties.getAuthn().getTrusted();
+            val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,
+                attributeRepository,
+                CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
+                PrincipalBearingPrincipalResolver.class,
+                trusted,
+                personDirectory);
+            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(),
+                bearingPrincipalResolver));
+            return resolver;
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
-    @Bean
-    @RefreshScope
-    public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
-        return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
+    @Configuration(value = "TrustedAuthenticationExtractorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationExtractorConfiguration {
+        @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor() {
+            return new ShibbolethServiceProviderRequestPrincipalAttributesExtractor();
+        }
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "principalFromRemoteUserAction")
-    public PrincipalFromRequestExtractorAction principalFromRemoteUserAction() {
-        return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            trustedPrincipalFactory(),
-            remoteRequestPrincipalAttributesExtractor());
+    @Configuration(value = "TrustedAuthenticationExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationExecutionPlanConfiguration {
+
+        @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer trustedAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("principalBearingCredentialsAuthenticationHandler")
+            final AuthenticationHandler principalBearingCredentialsAuthenticationHandler,
+            @Qualifier("trustedPrincipalResolver")
+            final PrincipalResolver trustedPrincipalResolver) {
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler,
+                trustedPrincipalResolver);
+        }
+
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "principalFromRemoteUserPrincipalAction")
-    public PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction() {
-        return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            trustedPrincipalFactory(),
-            remoteRequestPrincipalAttributesExtractor());
-    }
+    @Configuration(value = "TrustedAuthenticationActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class TrustedAuthenticationActionConfiguration {
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
-    public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction() {
-        val trusted = casProperties.getAuthn().getTrusted();
-        return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            trustedPrincipalFactory(),
-            remoteRequestPrincipalAttributesExtractor(),
-            trusted.getRemotePrincipalHeader());
-    }
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalFromRemoteUserAction")
+        public PrincipalFromRequestExtractorAction principalFromRemoteUserAction(
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier("remoteRequestPrincipalAttributesExtractor")
+            final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
+            @Qualifier("adaptiveAuthenticationPolicy")
+            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+            return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory,
+                remoteRequestPrincipalAttributesExtractor);
+        }
 
-    @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
-    @Bean
-    @RefreshScope
-    public PrincipalFromRequestExtractorAction remoteUserAuthenticationAction() {
-        val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(
-            initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            trustedPrincipalFactory(),
-            remoteRequestPrincipalAttributesExtractor());
-        chain.addAction(principalFromRemoteUserAction());
-        chain.addAction(principalFromRemoteUserPrincipalAction());
-        chain.addAction(principalFromRemoteHeaderPrincipalAction());
-        return chain;
-    }
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalFromRemoteUserPrincipalAction")
+        public PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction(
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier("remoteRequestPrincipalAttributesExtractor")
+            final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
+            @Qualifier("adaptiveAuthenticationPolicy")
+            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+            return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory,
+                remoteRequestPrincipalAttributesExtractor);
+        }
 
-    @ConditionalOnMissingBean(name = "trustedAuthenticationEventExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer trustedAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(principalBearingCredentialsAuthenticationHandler(), trustedPrincipalResolver());
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
+        @Autowired
+        public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier("remoteRequestPrincipalAttributesExtractor")
+            final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
+            @Qualifier("adaptiveAuthenticationPolicy")
+            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+            val trusted = casProperties.getAuthn().getTrusted();
+            return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory,
+                remoteRequestPrincipalAttributesExtractor,
+                trusted.getRemotePrincipalHeader());
+        }
+
+        @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PrincipalFromRequestExtractorAction remoteUserAuthenticationAction(
+            @Qualifier("trustedPrincipalFactory")
+            final PrincipalFactory trustedPrincipalFactory,
+            @Qualifier("remoteRequestPrincipalAttributesExtractor")
+            final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
+            @Qualifier("principalFromRemoteUserAction")
+            final PrincipalFromRequestExtractorAction principalFromRemoteUserAction,
+            @Qualifier("principalFromRemoteUserPrincipalAction")
+            final PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction,
+            @Qualifier("principalFromRemoteHeaderPrincipalAction")
+            final PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction,
+            @Qualifier("adaptiveAuthenticationPolicy")
+            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+            val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory,
+                remoteRequestPrincipalAttributesExtractor);
+            chain.addAction(principalFromRemoteUserAction);
+            chain.addAction(principalFromRemoteUserPrincipalAction);
+            chain.addAction(principalFromRemoteHeaderPrincipalAction);
+            return chain;
+        }
+
     }
 }
