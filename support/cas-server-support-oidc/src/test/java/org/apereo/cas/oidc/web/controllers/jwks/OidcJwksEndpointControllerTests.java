@@ -43,6 +43,7 @@ public class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     public void verifyBadEndpointRequest() {
         val model = new ExtendedModelMap();
         val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcJwksEndpointController.handleRequestInternal(request, response, model);
         assertEquals(HttpStatus.NOT_FOUND, mv.getStatusCode());

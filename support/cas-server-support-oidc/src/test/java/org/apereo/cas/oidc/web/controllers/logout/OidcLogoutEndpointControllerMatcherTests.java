@@ -35,6 +35,7 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
     @Test
     public void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
             StringUtils.EMPTY, request, response);
