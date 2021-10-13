@@ -259,17 +259,14 @@ public class OidcRequestSupport {
      */
     public boolean isValidIssuerForEndpoint(final JEEContext webContext, final String endpoint) {
         val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
-        val issuer = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
-        val definedIssuer = this.oidcIssuerService.determineIssuer(Optional.empty());
+        val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
+        val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
 
-        val issuerPattern = StringUtils.appendIfMissing(definedIssuer, "/")
-            .concat("(")
-            .concat(PATTERN_VALID_ISSUER_ENDPOINTS)
-            .concat(")");
-        val result = definedIssuer.equalsIgnoreCase(issuer) || issuer.matches(issuerPattern);
-        FunctionUtils.doIf(!result,
-                o -> LOGGER.trace("Issuer [{}] defined in CAS configuration does not match the request issuer [{}]", o, issuer))
-            .accept(definedIssuer);
+        val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
+        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) 
+                     || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
+        FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
+            o, issuerFromRequestUrl)).accept(definedIssuer);
         return result;
     }
 }
