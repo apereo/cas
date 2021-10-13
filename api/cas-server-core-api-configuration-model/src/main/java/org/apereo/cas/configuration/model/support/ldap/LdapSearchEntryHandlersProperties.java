@@ -68,7 +68,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     /**
      * The enum Search entry handler types.
      */
-    public enum SearchEntryHandlerTypes {
+    public enum SearchEntryHandlerTypes implements Serializable {
         /**
          * Process the entry results fetched from active directory and
          * check for account status controls for disabled/expired accounts, etc.

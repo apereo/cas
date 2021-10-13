@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.io.File;
 import java.io.Serializable;
@@ -59,17 +60,10 @@ public class ConfigurationMetadataClassSourceLocator {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
         }
-
         val urls = new ArrayList<>(ClasspathHelper.forPackage("org.apereo.cas"));
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
-                .setUrls(urls)
-                .setScanners(new TypeElementsScanner()
-                    .includeFields(false)
-                    .includeMethods(false)
-                    .includeAnnotations(false)
-                    .filterResultsBy(s -> s != null && s.endsWith(type.getNameAsString()))));
+        val reflections = new Reflections(new ConfigurationBuilder()
+            .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
+            .setUrls(urls));
         val clz = reflections.getSubTypesOf(Serializable.class)
             .stream()
             .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
