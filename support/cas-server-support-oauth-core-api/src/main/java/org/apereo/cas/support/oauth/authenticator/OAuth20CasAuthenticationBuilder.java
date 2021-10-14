@@ -110,12 +110,16 @@ public class OAuth20CasAuthenticationBuilder {
         val nonce = context.getRequestParameter(OAuth20Constants.NONCE).map(String::valueOf).orElse(StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 
+        val builder = DefaultAuthenticationBuilder.newInstance();
+        val authenticationAttributes = profile.getAuthenticationAttributes();
+        authenticationAttributes.forEach((k, v) -> builder.addAttribute(k, v));
+
         /*
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
          * happily serializes to json but is unable to deserialize.
          * We have to transform those to HashSet to avoid such a problem
          */
-        return DefaultAuthenticationBuilder.newInstance()
+        return builder
             .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
             .addAttribute("scopes", scopes)
