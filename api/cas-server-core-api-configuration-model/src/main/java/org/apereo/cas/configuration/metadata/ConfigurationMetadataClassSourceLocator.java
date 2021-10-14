@@ -3,10 +3,8 @@ package org.apereo.cas.configuration.metadata;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import lombok.val;
 import org.reflections.Reflections;
-import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import java.io.File;
 import java.io.Serializable;
