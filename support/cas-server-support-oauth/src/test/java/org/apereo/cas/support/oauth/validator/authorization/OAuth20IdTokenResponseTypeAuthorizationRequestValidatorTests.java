@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -41,7 +42,7 @@ public class OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests {
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
         when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
         val v = new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer());
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

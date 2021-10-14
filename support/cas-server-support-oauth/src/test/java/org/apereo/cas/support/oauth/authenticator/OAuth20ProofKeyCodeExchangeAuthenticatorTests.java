@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,7 +42,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     @BeforeEach
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry,
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
             new OAuth20RegisteredServiceCipherExecutor(),
             defaultPrincipalResolver);
     }

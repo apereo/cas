@@ -155,8 +155,8 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditableExecution registeredServiceAccessStrategyEnforcer() {
-            return new RegisteredServiceAccessStrategyAuditableEnforcer();
+        public AuditableExecution registeredServiceAccessStrategyEnforcer(final CasConfigurationProperties casProperties) {
+            return new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties);
         }
 
     }

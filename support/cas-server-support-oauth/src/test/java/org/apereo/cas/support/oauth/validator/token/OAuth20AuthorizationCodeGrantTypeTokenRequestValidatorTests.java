@@ -88,7 +88,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             .sessionStore(JEESessionStore.INSTANCE)
             .ticketRegistry(this.ticketRegistry)
             .webApplicationServiceServiceFactory(serviceFactory)
-            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()))
             .build();
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }

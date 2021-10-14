@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -67,7 +68,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         val context = OAuth20ConfigurationContext.builder()
             .servicesManager(serviceManager)
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
-            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer())
+            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()))
             .sessionStore(JEESessionStore.INSTANCE)
             .build();
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
