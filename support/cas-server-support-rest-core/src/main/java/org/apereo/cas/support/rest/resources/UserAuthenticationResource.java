@@ -9,6 +9,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -72,10 +73,10 @@ public class UserAuthenticationResource {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
