@@ -267,7 +267,11 @@ be designed with a value value pattern of <code>admin-.*</code>.</p></div>
 ## Groovy Script
 
 Access strategy and authorization decision can be carried using a Groovy script for all services and applications. This policy
-is not tied to a specific application and is invoked for all services and integrations. The outline of the script is as follows:
+is not tied to a specific application and is invoked for all services and integrations. 
+
+{% include_cached casproperties.html properties="cas.access-strategy.groovy" %}
+
+The outline of the script is as follows:
 
 ```groovy
 import org.apereo.cas.audit.*
@@ -289,6 +293,7 @@ The following parameters are passed to the script:
 |-------------|---------------------------------------------------------------------------------
 | `context`   | An `AuditableContext` object that carries auditable data such as registered services, authentication, etc. 
 | `logger`    | The object responsible for issuing log messages such as `logger.info(...)`.
+  
 
 ## Time-Based
 
