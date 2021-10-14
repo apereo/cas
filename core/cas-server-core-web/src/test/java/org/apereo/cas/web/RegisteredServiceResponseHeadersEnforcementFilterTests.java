@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
@@ -236,6 +237,6 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
         return new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new RegisteredServiceAccessStrategyAuditableEnforcer());
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
     }
 }

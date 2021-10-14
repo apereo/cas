@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -51,7 +52,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
     private static OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer());
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
     }
 
     private static OAuthRegisteredService buildRegisteredService(final ServicesManager serviceManager) {

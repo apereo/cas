@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authz.AccessStrategyProperties;
 import org.apereo.cas.configuration.model.core.config.cloud.SpringCloudConfigurationProperties;
 import org.apereo.cas.configuration.model.core.config.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
@@ -100,6 +101,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
+
+    /**
+     * Access Strategy and authorization-related functionality.
+     */
+    @NestedConfigurationProperty
+    private AccessStrategyProperties accessStrategy = new AccessStrategyProperties();
 
     /**
      * ACME functionality.
