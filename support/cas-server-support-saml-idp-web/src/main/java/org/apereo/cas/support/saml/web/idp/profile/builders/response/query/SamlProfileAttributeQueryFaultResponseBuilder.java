@@ -12,7 +12,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlPr
 public class SamlProfileAttributeQueryFaultResponseBuilder extends SamlProfileSamlSoap11FaultResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 
-    public SamlProfileAttributeQueryFaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+    public SamlProfileAttributeQueryFaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 }
