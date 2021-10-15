@@ -56,7 +56,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         if (request == null || selectedService == null) {
             LOGGER.debug("No http request could be identified to locate the entity id");
-            return null;          
+            return null;
         }
         LOGGER.debug("Attempting to determine entity id for service [{}]", selectedService);
         val entityIdAttribute = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
@@ -178,12 +178,13 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
      * @param selectedService    the selected service
      * @return the attributes for saml registered service
      */
-    protected abstract Map<String, List<Object>> getAttributesForSamlRegisteredService(Map<String, List<Object>> attributes,
-                                                                                       SamlRegisteredService registeredService,
-                                                                                       ApplicationContext applicationContext,
-                                                                                       SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                       SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                                       EntityDescriptor entityDescriptor,
-                                                                                       Principal principal,
-                                                                                       Service selectedService);
+    protected abstract Map<String, List<Object>> getAttributesForSamlRegisteredService(
+        Map<String, List<Object>> attributes,
+        SamlRegisteredService registeredService,
+        ApplicationContext applicationContext,
+        SamlRegisteredServiceCachingMetadataResolver resolver,
+        SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        EntityDescriptor entityDescriptor,
+        Principal principal,
+        Service selectedService);
 }

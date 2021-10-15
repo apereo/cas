@@ -76,5 +76,20 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         val strategyRead = MAPPER.readValue(JSON_FILE, InCommonRSAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
     }
+
+    @Test
+    public void verifyAttributeDefinitions() {
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val policy = new InCommonRSAttributeReleasePolicy();
+        policy.setUseUniformResourceName(true);
+        var definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
+        assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.values()));
+
+        policy.setUseUniformResourceName(false);
+        definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
+            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
+        assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.keySet()));
+    }
 }
 
