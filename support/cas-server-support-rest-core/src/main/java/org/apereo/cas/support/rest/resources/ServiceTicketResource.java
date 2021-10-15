@@ -72,12 +72,14 @@ public class ServiceTicketResource {
         consumes = {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
-            MediaType.TEXT_HTML_VALUE
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
         },
         produces = {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
-            MediaType.TEXT_HTML_VALUE
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
         })
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
                                                       @RequestBody(required = false) final MultiValueMap<String, String> requestBody,
