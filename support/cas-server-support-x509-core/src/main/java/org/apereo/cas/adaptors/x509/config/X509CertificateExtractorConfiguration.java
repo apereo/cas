@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This class configures the {@link X509CertificateExtractor} for the x509 webflow and x509 rest
@@ -23,13 +24,11 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509CertificateExtractorConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
-    @RefreshScope
-    public X509CertificateExtractor x509CertificateExtractor() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public X509CertificateExtractor x509CertificateExtractor(final CasConfigurationProperties casProperties) {
         val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }

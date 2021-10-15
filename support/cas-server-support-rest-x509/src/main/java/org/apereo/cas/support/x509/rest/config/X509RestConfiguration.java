@@ -19,78 +19,92 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * X509 Rest configuration class.
- * 
+ *
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@Configuration("x509RestConfiguration")
+@Configuration(value = "x509RestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class X509RestConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    @Configuration(value = "X509RestCredentialFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class X509RestCredentialFactoryConfiguration {
 
-    @Autowired
-    @Qualifier("x509CertificateExtractor")
-    @Lazy
-    private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "x509RestMultipartBody")
+        public RestHttpRequestCredentialFactory x509RestMultipartBody() {
+            return new X509RestMultipartBodyCredentialFactory();
+        }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "x509RestMultipartBody")
-    public RestHttpRequestCredentialFactory x509RestMultipartBody() {
-        return new X509RestMultipartBodyCredentialFactory();
+        @Bean
+        @ConditionalOnMissingBean(name = "x509RestRequestHeader")
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RestHttpRequestCredentialFactory x509RestRequestHeader(
+            @Qualifier("x509CertificateExtractor")
+            final X509CertificateExtractor x509CertificateExtractor) {
+            return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor);
+        }
+
+        @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
+            return new X509RestTlsClientCertCredentialFactory();
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "x509RestRequestHeader")
-    public RestHttpRequestCredentialFactory x509RestRequestHeader() {
-        return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
+    @Configuration(value = "X509RestCredentialFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class X509RestCredentialFactoryPlanConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
+        public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer(
+            @Qualifier("x509RestTlsClientCert")
+            final ObjectProvider<RestHttpRequestCredentialFactory> x509RestTlsClientCert,
+            @Qualifier("x509RestMultipartBody")
+            final ObjectProvider<RestHttpRequestCredentialFactory> x509RestMultipartBody,
+            @Qualifier("x509RestRequestHeader")
+            final ObjectProvider<RestHttpRequestCredentialFactory> x509RestRequestHeader,
+            @Qualifier("x509CertificateExtractor")
+            final X509CertificateExtractor x509CertificateExtractor,
+            final CasConfigurationProperties casProperties) {
+            return factory -> {
+                val restProperties = casProperties.getRest().getX509();
+                val headerAuth = restProperties.isHeaderAuth();
+                val bodyAuth = restProperties.isBodyAuth();
+                val tlsClientAuth = restProperties.isTlsClientAuth();
+
+                if (tlsClientAuth && (headerAuth || bodyAuth)) {
+                    LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
+                                + "convenient target for claiming user identities or obtaining TGTs without proof of private "
+                                + "key ownership. To securely use this feature, network configuration MUST allow connections "
+                                + "to the CAS server only from trusted hosts which in turn have strict security limitations "
+                                + "and logging. Thus, \"tlsClientAuth\" shouldn't be activated together with \"headerAuth\" "
+                                + "or \"bodyAuth\"");
+                }
+
+                if (headerAuth) {
+                    x509RestRequestHeader.ifAvailable(factory::registerCredentialFactory);
+                }
+                if (bodyAuth) {
+                    x509RestRequestHeader.ifAvailable(factory::registerCredentialFactory);
+                }
+                if (tlsClientAuth) {
+                    x509RestTlsClientCert.ifAvailable(factory::registerCredentialFactory);
+                }
+            };
+        }
+
     }
-
-    @ConditionalOnProperty(prefix = "cas.rest.x509", name = "tls-client-auth", havingValue = "true")
-    @Bean
-    @RefreshScope
-    public RestHttpRequestCredentialFactory x509RestTlsClientCert() {
-        return new X509RestTlsClientCertCredentialFactory();
-    }
-
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
-    public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer() {
-        return factory -> {
-            val restProperties = casProperties.getRest().getX509();
-            val extractor = x509CertificateExtractor.getObject();
-            val headerAuth = restProperties.isHeaderAuth();
-            val bodyAuth = restProperties.isBodyAuth();
-            val tlsClientAuth = restProperties.isTlsClientAuth();
-            LOGGER.trace("Is certificate extractor available? = [{}], headerAuth = [{}], bodyAuth = [{}], tlsClientAuth = [{}]",
-                extractor, headerAuth, bodyAuth, tlsClientAuth);
-
-            if (tlsClientAuth && (headerAuth || bodyAuth)) {
-                LOGGER.warn("The X.509 feature over REST using \"headerAuth\" or \"bodyAuth\" provides a tremendously "
-                    + "convenient target for claiming user identities or obtaining TGTs without proof of private "
-                    + "key ownership. To securely use this feature, network configuration MUST allow connections "
-                    + "to the CAS server only from trusted hosts which in turn have strict security limitations "
-                    + "and logging. Thus, \"tlsClientAuth\" shouldn't be activated together with \"headerAuth\" "
-                    + "or \"bodyAuth\"");
-            }
-
-            if (headerAuth) {
-                factory.registerCredentialFactory(x509RestRequestHeader());
-            }
-            if (bodyAuth) {
-                factory.registerCredentialFactory(x509RestMultipartBody());
-            }
-            if (tlsClientAuth) {
-                factory.registerCredentialFactory(x509RestTlsClientCert());
-            }
-        };
-    }
-
 }

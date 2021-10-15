@@ -78,7 +78,7 @@ public class ServiceThemeResolverTests {
     private static final String DEFAULT_THEME_NAME = "test";
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

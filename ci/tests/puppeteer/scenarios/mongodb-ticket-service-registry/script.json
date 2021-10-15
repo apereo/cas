@@ -1,0 +1,44 @@
+{
+  "dependencies": "mongo-ticket-registry,mongo-service-registry,mongo-monitor",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--management.health.mongoHealthIndicator.enabled=true",
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.service-registry.mongo.database-name=service-registry",
+    "--cas.service-registry.mongo.host=localhost",
+    "--cas.service-registry.mongo.port=27017",
+    "--cas.service-registry.mongo.user-id=root",
+    "--cas.service-registry.mongo.password=secret",
+    "--cas.service-registry.mongo.authentication-database-name=admin",
+    "--cas.service-registry.mongo.drop-collection=true",
+    
+    "--cas.ticket.registry.mongo.database-name=ticket-registry",
+    "--cas.ticket.registry.mongo.authentication-database-name=admin",
+    "--cas.ticket.registry.mongo.host=localhost",
+    "--cas.ticket.registry.mongo.port=27017",
+    "--cas.ticket.registry.mongo.drop-collection=true",
+    "--cas.ticket.registry.mongo.user-id=root",
+    "--cas.ticket.registry.mongo.password=secret",
+
+    "--cas.monitor.mongo[0].user-id=root",
+    "--cas.monitor.mongo[0].password=secret",
+    "--cas.monitor.mongo[0].host=localhost",
+    "--cas.monitor.mongo[0].port=27017",
+    "--cas.monitor.mongo[0].authentication-database-name=admin",
+    "--cas.monitor.mongo[0].database-name=ticket-registry",
+
+    "--cas.monitor.mongo[1].user-id=root",
+    "--cas.monitor.mongo[1].password=secret",
+    "--cas.monitor.mongo[1].host=localhost",
+    "--cas.monitor.mongo[1].port=27017",
+    "--cas.monitor.mongo[1].authentication-database-name=admin",
+    "--cas.monitor.mongo[1].database-name=service-registry"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

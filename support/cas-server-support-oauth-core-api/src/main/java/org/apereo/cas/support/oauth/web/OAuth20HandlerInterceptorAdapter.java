@@ -12,15 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -42,13 +41,13 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      */
     protected final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor;
 
-    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
+    private final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors;
 
     private final ServicesManager servicesManager;
 
     private final SessionStore sessionStore;
 
-    private final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators;
+    private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
@@ -212,7 +211,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return whether the authorize request is valid
      */
     protected boolean isValidAuthorizeRequest(final JEEContext context) {
-        val validator = oauthAuthorizationRequestValidators
+        val validator = oauthAuthorizationRequestValidators.getObject()
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
@@ -221,7 +220,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     }
 
     private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(final HttpServletRequest request) {
-        return this.accessTokenGrantRequestExtractors
+        return accessTokenGrantRequestExtractors.getObject()
             .stream()
             .filter(ext -> ext.supports(request))
             .findFirst();

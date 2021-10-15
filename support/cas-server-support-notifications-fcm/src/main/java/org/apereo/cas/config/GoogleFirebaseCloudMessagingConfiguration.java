@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.io.FileInputStream;
 
@@ -28,42 +29,38 @@ import java.io.FileInputStream;
 @Configuration(value = "googleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleFirebaseCloudMessagingConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
 
     @Bean
     @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSenderExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public NotificationSenderExecutionPlanConfigurer firebaseCloudMessagingNotificationSenderExecutionPlanConfigurer(
-        @Qualifier("firebaseCloudMessagingNotificationSender") final NotificationSender firebaseCloudMessagingNotificationSender) {
+        @Qualifier("firebaseCloudMessagingNotificationSender")
+        final NotificationSender firebaseCloudMessagingNotificationSender) {
         return () -> firebaseCloudMessagingNotificationSender;
     }
 
-    private GoogleCredentials getCredentials() throws Exception {
-        try {
-            return GoogleCredentials.getApplicationDefault();
-        } catch (final Exception e) {
-            val firebase = casProperties.getGoogleFirebaseMessaging();
-            val keyPath = firebase.getServiceAccountKey().getLocation().getFile().getCanonicalPath();
-            return GoogleCredentials
-                .fromStream(new FileInputStream(keyPath))
-                .createScoped(firebase.getScopes());
-        }
-    }
 
     @Configuration(value = "GoogleFirebaseCloudMessagingInternalConfiguration", proxyBeanMethods = false)
-    public class GoogleFirebaseCloudMessagingInternalConfiguration {
+    public static class GoogleFirebaseCloudMessagingInternalConfiguration {
+
+        private static GoogleCredentials getCredentials(final CasConfigurationProperties casProperties) throws Exception {
+            try {
+                return GoogleCredentials.getApplicationDefault();
+            } catch (final Exception e) {
+                val firebase = casProperties.getGoogleFirebaseMessaging();
+                val keyPath = firebase.getServiceAccountKey().getLocation().getFile().getCanonicalPath();
+                return GoogleCredentials.fromStream(new FileInputStream(keyPath)).createScoped(firebase.getScopes());
+            }
+        }
+
         @Bean
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
-        public NotificationSender firebaseCloudMessagingNotificationSender() throws Exception {
+        public NotificationSender firebaseCloudMessagingNotificationSender(final CasConfigurationProperties casProperties) throws Exception {
             val firebase = casProperties.getGoogleFirebaseMessaging();
-            val options = new FirebaseOptions.Builder()
-                .setCredentials(getCredentials())
-                .setDatabaseUrl(firebase.getDatabaseUrl())
-                .build();
+            val options = FirebaseOptions.builder().setCredentials(getCredentials(casProperties))
+                .setDatabaseUrl(firebase.getDatabaseUrl()).build();
             FirebaseApp.initializeApp(options);
             return new GoogleFirebaseCloudMessagingNotificationSender(firebase);
         }

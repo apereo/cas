@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -84,7 +85,11 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes().keySet()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(
+            p,
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()
+        ).containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
@@ -108,7 +113,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(p,
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService()).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
@@ -286,8 +293,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             private static final long serialVersionUID = 6118477243447737445L;
 
             @Override
-            public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-                return p.getAttributes();
+            public Map<String, List<Object>> getAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+                return principal.getAttributes();
             }
         };
         assertNull(policy.getConsentPolicy());

@@ -100,7 +100,7 @@ import static org.mockito.Mockito.*;
     CasCoreValidationConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.GeoLocationServiceTestConfiguration.class
 })
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableScheduling
 public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
@@ -109,11 +109,11 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @BeforeEach
@@ -135,7 +135,6 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     }
 
     @TestConfiguration("GeoLocationServiceTestConfiguration")
-    @Lazy(false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {

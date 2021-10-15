@@ -3,6 +3,7 @@ dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-mongo-core")
     

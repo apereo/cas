@@ -19,10 +19,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RedisServiceRegistryConfiguration}.
@@ -35,20 +38,11 @@ import java.util.Collection;
 @ConditionalOnProperty(prefix = "cas.service-registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisServiceRegistryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
-    @RefreshScope
-    public RedisConnectionFactory redisServiceConnectionFactory() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public RedisConnectionFactory redisServiceConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getServiceRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
@@ -56,25 +50,31 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @Autowired
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
-    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(@Qualifier("redisServiceConnectionFactory") final RedisConnectionFactory redisServiceConnectionFactory) {
+    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(
+        @Qualifier("redisServiceConnectionFactory")
+        final RedisConnectionFactory redisServiceConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
-    public ServiceRegistry redisServiceRegistry(@Qualifier("registeredServiceRedisTemplate") final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate) {
-        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate, serviceRegistryListeners.getObject());
+    public ServiceRegistry redisServiceRegistry(
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        @Qualifier("registeredServiceRedisTemplate")
+        final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate, final ConfigurableApplicationContext applicationContext) {
+        return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer(
-        @Qualifier("redisServiceRegistry") final ServiceRegistry redisServiceRegistry) {
+        @Qualifier("redisServiceRegistry")
+        final ServiceRegistry redisServiceRegistry) {
         return plan -> plan.registerServiceRegistry(redisServiceRegistry);
     }
-
 }

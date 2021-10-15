@@ -21,6 +21,11 @@ import java.util.Collection;
 public interface AuthenticationSystemSupport {
 
     /**
+     * Default impl bean name.
+     */
+    String BEAN_NAME = "defaultAuthenticationSystemSupport";
+
+    /**
      * Gets authentication transaction manager.
      *
      * @return the authentication transaction manager

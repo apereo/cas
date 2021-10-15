@@ -54,16 +54,15 @@ import java.util.stream.Stream;
 public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
-    /**
-     * Instantiates a new Delegated client authentication action.
-     *
-     * @param context the context
-     */
-    public DelegatedClientAuthenticationAction(final DelegatedClientAuthenticationConfigurationContext context) {
+    private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
+
+    public DelegatedClientAuthenticationAction(final DelegatedClientAuthenticationConfigurationContext context,
+                                               final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager) {
         super(context.getInitialAuthenticationAttemptWebflowEventResolver(),
             context.getServiceTicketRequestWebflowEventResolver(),
             context.getAdaptiveAuthenticationPolicy());
         this.configContext = context;
+        this.delegatedClientAuthenticationWebflowManager = delegatedClientAuthenticationWebflowManager;
     }
 
     /**
@@ -319,8 +318,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         try {
             val clientResult = configContext.getClients().findClient(clientName);
             if (clientResult.isPresent()) {
-                return configContext.getDelegatedClientAuthenticationWebflowManager()
-                    .retrieve(requestContext, webContext, BaseClient.class.cast(clientResult.get()));
+                return delegatedClientAuthenticationWebflowManager.retrieve(requestContext,
+                    webContext, BaseClient.class.cast(clientResult.get()));
             }
             LOGGER.warn("Unable to locate client [{}] in registered clients", clientName);
         } catch (final Exception e) {

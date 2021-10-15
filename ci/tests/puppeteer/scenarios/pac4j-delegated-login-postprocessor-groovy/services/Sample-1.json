@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://apereo.github.io",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "allowedProviders" : [ "java.util.ArrayList", [ "CasClient" ] ]
+    }
+  }
+}

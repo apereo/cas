@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 /**
  * Reports overall CAS health based on the observations of the configured {@link HealthEndpoint} instance.
  *

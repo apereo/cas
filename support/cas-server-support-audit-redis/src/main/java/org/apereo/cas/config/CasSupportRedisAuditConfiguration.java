@@ -8,6 +8,7 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,35 +23,43 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("casSupportRedisAuditConfiguration")
+@Configuration(value = "casSupportRedisAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasSupportRedisAuditConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditTrailManager")
-    public AuditTrailManager redisAuditTrailManager() {
+    @Autowired
+    public AuditTrailManager redisAuditTrailManager(
+        @Qualifier("auditRedisTemplate")
+        final RedisTemplate auditRedisTemplate,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
-        return new RedisAuditTrailManager(auditRedisTemplate(), redis.isAsynchronous());
+        return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
-    public RedisConnectionFactory redisAuditConnectionFactory() {
+    @Autowired
+    public RedisConnectionFactory redisAuditConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
     @Bean
+    @Autowired
     @ConditionalOnMissingBean(name = "auditRedisTemplate")
-    public RedisTemplate auditRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory());
+    public RedisTemplate auditRedisTemplate(
+        @Qualifier("redisAuditConnectionFactory")
+        final RedisConnectionFactory redisAuditConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory);
     }
 
     @Bean
-    public AuditTrailExecutionPlanConfigurer redisAuditTrailExecutionPlanConfigurer() {
-        return plan -> plan.registerAuditTrailManager(redisAuditTrailManager());
+    @Autowired
+    public AuditTrailExecutionPlanConfigurer redisAuditTrailExecutionPlanConfigurer(
+        @Qualifier("redisAuditTrailManager")
+        final AuditTrailManager redisAuditTrailManager) {
+        return plan -> plan.registerAuditTrailManager(redisAuditTrailManager);
     }
 }

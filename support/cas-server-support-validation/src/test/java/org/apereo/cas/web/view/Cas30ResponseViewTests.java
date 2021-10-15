@@ -82,7 +82,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     protected ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @SneakyThrows

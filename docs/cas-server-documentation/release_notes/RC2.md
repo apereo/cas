@@ -56,8 +56,42 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+     
+### CGLib Proxies
+
+All CAS auto-configuration components are now adjusted to use JDK dynamic proxies rather than CGLib proxies. JDK Dynamic proxies 
+are generally the preferred choice and offer several advantages over CGLib proxies. The removal of CGLib proxies should assist 
+with native CAS builds in the future using the likes of GraalVM. One side-effect (or intended benefit, if you prefer) of 
+this move is that `@Configuration` classes that are home to CAS `@Bean` methods can no longer invoke 
+each other directly since `proxyBeanMethods` is now forcefully turned off. Rather, references 
+must be passed and injected dynamically. This has led to a significant cleanup effort to 
+ensure all field injections are removed and all circular dependencies and injections are re-adjusted.
+                                        
+Given the number of variations and combinations across modules, it's quite likely that there will be accidental 
+mishaps and misconfigurations at runtime leading to circular dependencies issues. Additional test scenarios and scripts will continuously
+be added to ensure validity of as many combinations as possible.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are 
+approximately `190` test scenarios and we'll continue to add more in the coming releases.
+
+## Groovy Access Strategy
+
+Access strategy and authorization decision can be carried [using a Groovy script](../services/Configuring-Service-Access-Strategy.html) 
+for all services and applications.
 
 ## Other Stuff
+     
+- Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
+- Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
 
 ## Library Upgrades
-
+            
+- Pac4j
+- Lombok
+- Okta SDK
+- Hibernate
+- Bootstrap
+- Spring Boot
+- Amazon SDK

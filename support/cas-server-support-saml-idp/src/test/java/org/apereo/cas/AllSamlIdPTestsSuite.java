@@ -70,6 +70,7 @@ import org.apereo.cas.support.saml.web.velocity.SamlTemplatesVelocityEngineTests
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactoryTests;
 import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactoryTests;
 import org.apereo.cas.web.SamlIdPSingleSignOnParticipationStrategyTests;
+import org.apereo.cas.web.flow.SamlIdPConsentSingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.SamlIdPConsentableAttributeBuilderTests;
 import org.apereo.cas.web.flow.SamlIdPMetadataUIActionTests;
 import org.apereo.cas.web.flow.SamlIdPWebflowConfigurerTests;
@@ -142,8 +143,10 @@ import org.junit.platform.suite.api.Suite;
     SamlTemplatesVelocityEngineTests.class,
     SamlIdPDelegatedAuthenticationConfigurationTests.class,
     SamlIdPAuthenticationContextTests.class,
+    SamlIdPConsentableAttributeBuilderTests.class,
     SamlProfileSamlAssertionBuilderTests.class,
     SamlProfileSamlAuthNStatementBuilderTests.class,
+    SamlIdPConsentSingleSignOnParticipationStrategyTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests.class,
     SamlIdPDelegatedClientAuthenticationRequestCustomizerTests.class,
     MetadataRegistrationAuthorityAttributeReleasePolicyTests.class,

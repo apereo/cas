@@ -84,15 +84,15 @@ public class DelegatedClientAuthenticationActionTests {
     private Action delegatedAuthenticationAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("delegatedClientWebflowManager")
+    @Qualifier(DelegatedClientAuthenticationWebflowManager.DEFAULT_BEAN_NAME)
     private DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
@@ -100,7 +100,7 @@ public class DelegatedClientAuthenticationActionTests {
     private Clients builtClients;
 
     private static String getLogoutResponse() {
-        val logoutResponse = "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+        return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
             + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
             + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
             + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
@@ -111,7 +111,6 @@ public class DelegatedClientAuthenticationActionTests {
             + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
             + "  </samlp:Status>%n"
             + "</samlp:LogoutResponse>";
-        return logoutResponse;
     }
 
     @Test
@@ -270,7 +269,7 @@ public class DelegatedClientAuthenticationActionTests {
         val service = CoreAuthenticationTestUtils.getService("https://delegated2-authn-policy.example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
         val authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
-        authenticationPolicy.setRequiredAuthenticationHandlers(Set.of("MyCustomHandler"));
+        authenticationPolicy.setRequiredAuthenticationHandlers(Set.of("DelegatedClientAuthenticationHandler"));
         authenticationPolicy.setCriteria(new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria());
         registeredService.setAuthenticationPolicy(authenticationPolicy);
         servicesManager.save(registeredService);

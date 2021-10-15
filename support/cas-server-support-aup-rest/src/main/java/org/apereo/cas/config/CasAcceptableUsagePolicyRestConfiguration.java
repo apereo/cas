@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasAcceptableUsagePolicyRestConfiguration}.
@@ -26,17 +26,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyRestConfiguration {
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+    @Autowired
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
+                                                                           @Qualifier(TicketRegistrySupport.BEAN_NAME)
+                                                                           final TicketRegistrySupport ticketRegistrySupport) {
         val aup = casProperties.getAcceptableUsagePolicy();
-        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport.getObject(), aup);
+        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup);
     }
 }

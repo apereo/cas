@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
@@ -8,17 +9,15 @@ import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthentic
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import javax.net.ssl.SSLContext;
 
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
@@ -26,48 +25,40 @@ import javax.net.ssl.SSLContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("mongoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "mongoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
-    @Autowired
-    @Qualifier("mfaTrustRecordKeyGenerator")
-    private ObjectProvider<MultifactorAuthenticationTrustRecordKeyGenerator> keyGenerationStrategy;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("mfaTrustCipherExecutor")
-    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
-
-    @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceMfaTrustedAuthnExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoTemplate mongoMfaTrustedAuthnTemplate() {
+    @Autowired
+    public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
+                                                      @Qualifier("casSslContext")
+                                                      final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
-        val factory = new MongoDbConnectionFactory(sslContext.getObject());
-
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        return new MongoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor.getObject(),
-            mongoMfaTrustedAuthnTemplate(),
-            keyGenerationStrategy.getObject());
+    @Autowired
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoMfaTrustedAuthnTemplate")
+        final MongoTemplate mongoMfaTrustedAuthnTemplate,
+        @Qualifier("mfaTrustRecordKeyGenerator")
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
+        @Qualifier("mfaTrustCipherExecutor")
+        final CipherExecutor mfaTrustCipherExecutor) {
+        return new MongoDbMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustCipherExecutor, mongoMfaTrustedAuthnTemplate, keyGenerationStrategy);
     }
 }

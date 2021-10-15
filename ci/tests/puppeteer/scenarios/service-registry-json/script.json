@@ -1,0 +1,7 @@
+{
+  "dependencies": "json-service-registry",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

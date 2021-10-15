@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("MFAProvider")
 @Getter
 public class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired

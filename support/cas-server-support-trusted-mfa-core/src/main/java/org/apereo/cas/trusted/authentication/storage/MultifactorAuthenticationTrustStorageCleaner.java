@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @RequiredArgsConstructor

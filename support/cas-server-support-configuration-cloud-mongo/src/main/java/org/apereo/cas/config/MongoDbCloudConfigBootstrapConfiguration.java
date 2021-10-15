@@ -4,6 +4,7 @@ import org.apereo.cas.MongoDbPropertySourceLocator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -18,24 +19,24 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("mongoDbCloudConfigBootstrapConfiguration")
+@Configuration(value = "mongoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**
      * MongoDb CAS configuration key prefix.
      */
     public static final String CAS_CONFIGURATION_MONGODB_URI = "cas.spring.cloud.mongo.uri";
 
-    @Autowired
-    private ConfigurableEnvironment environment;
-
     @Bean
-    public MongoDbPropertySourceLocator mongoDbPropertySourceLocator() {
-        val mongoTemplate = mongoDbCloudConfigurationTemplate();
-        return new MongoDbPropertySourceLocator(mongoTemplate);
+    @Autowired
+    public MongoDbPropertySourceLocator mongoDbPropertySourceLocator(
+        @Qualifier("mongoDbCloudConfigurationTemplate")
+        final MongoTemplate mongoDbCloudConfigurationTemplate) {
+        return new MongoDbPropertySourceLocator(mongoDbCloudConfigurationTemplate);
     }
 
     @Bean
-    public MongoTemplate mongoDbCloudConfigurationTemplate() {
+    @Autowired
+    public MongoTemplate mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val uri = Objects.requireNonNull(environment.getProperty(CAS_CONFIGURATION_MONGODB_URI));
         return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -22,8 +23,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -86,8 +85,8 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     @Lazy(false)
     public static class SpnegoAuthenticationTestConfiguration {
         @Bean
-        public List<Authentication> spnegoAuthentications() {
-            return CollectionUtils.wrapList(new MockJcifsAuthentication());
+        public BeanContainer<Authentication> spnegoAuthentications() {
+            return BeanContainer.of(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         }
     }
 }

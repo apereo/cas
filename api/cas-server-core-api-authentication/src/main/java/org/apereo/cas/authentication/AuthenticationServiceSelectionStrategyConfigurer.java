@@ -15,6 +15,7 @@ public interface AuthenticationServiceSelectionStrategyConfigurer {
      * @param plan the plan
      */
     void configureAuthenticationServiceSelectionStrategy(AuthenticationServiceSelectionPlan plan);
+
     /**
      * Gets name.
      *

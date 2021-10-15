@@ -52,7 +52,7 @@ import static org.springframework.http.HttpStatus.*;
     "cas.authn.mfa.duo[0].duo-api-host=httpbin.org/post"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("MFAProvider")
 public class BasicDuoSecurityAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

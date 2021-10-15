@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -49,5 +50,5 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * Can be used to explicitly position this source in chain and affects
      * merging strategies.
      */
-    private int order;
+    private int order = Ordered.LOWEST_PRECEDENCE;
 }

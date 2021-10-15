@@ -2,7 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -12,9 +12,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,10 +34,6 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    @Autowired
-    @Qualifier("principalFactory")
-    private ObjectProvider<PrincipalFactory> principalFactory;
-
     @Test
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
@@ -51,7 +44,8 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
 
     @Test
     public void checkInitialAttributes() {
-        val p = this.principalFactory.getObject().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+        val p = PrincipalFactoryUtils.newPrincipalFactory()
+            .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, rep.getAttributes(p, registeredService).size());
@@ -60,17 +54,17 @@ public class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests 
 
     @Test
     public void checkAttributesWithRepository() {
-        val p = principalFactory.getObject().createPrincipal("uid",
+        val p = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
             Collections.singletonMap("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
         rep.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.NONE);
         rep.setAttributeRepositoryIds(Set.of("StubPersonAttributeDao"));
-        
+
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertEquals(1, rep.getAttributes(p, registeredService).size());
         assertTrue(rep.getAttributes(p, registeredService).containsKey("mail"));
     }
-    
+
     @Test
     public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         val repositoryWritten = new DefaultPrincipalAttributesRepository();

@@ -80,8 +80,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring MongoDb resources.
      */
-    @NestedConfigurationProperty
-    private MongoDbMonitorProperties mongo = new MongoDbMonitorProperties();
+    private List<MongoDbMonitorProperties> mongo = new ArrayList<>();
 
     /**
      * Properties relevant to endpoint security, etc.

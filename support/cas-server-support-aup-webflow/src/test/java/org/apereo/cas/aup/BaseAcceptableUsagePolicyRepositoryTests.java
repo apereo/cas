@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
@@ -71,7 +72,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class)
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired
@@ -152,6 +153,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCookieConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,

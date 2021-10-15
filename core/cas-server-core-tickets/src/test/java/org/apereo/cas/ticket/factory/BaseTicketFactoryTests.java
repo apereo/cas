@@ -52,7 +52,7 @@ public abstract class BaseTicketFactoryTests {
     protected TicketFactory ticketFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

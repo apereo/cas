@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,6 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Optional;
 
@@ -36,84 +36,83 @@ import java.util.Optional;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("ouchDbSamlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.couch-db", name = "idp-metadata-enabled", havingValue = "true")
+@Configuration(value = "ouchDbSamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class CouchDbSamlIdPMetadataConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-    private ObjectProvider<SamlIdPMetadataGeneratorConfigurationContext> samlIdPMetadataGeneratorConfigurationContext;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCache")
-    private ObjectProvider<Cache<String, SamlIdPMetadataDocument>> samlIdPMetadataCache;
-
-    @Autowired
-    @Qualifier("samlMetadataCouchDbFactory")
-    private ObjectProvider<CouchDbConnectorFactory> samlMetadataCouchDbFactory;
-
-    @Autowired
-    @Qualifier("samlIdPMetadataCouchDbRepository")
-    private ObjectProvider<SamlIdPMetadataCouchDbRepository> samlIdPMetadataRepository;
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchDbInstance samlIdPMetadataCouchDbInstance() {
-        return samlMetadataCouchDbFactory.getObject().getCouchDbInstance();
+    public CouchDbInstance samlIdPMetadataCouchDbInstance(
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+        return samlMetadataCouchDbFactory.getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchDbConnector samlIdPMetadataCouchDbConnector() {
-        return samlMetadataCouchDbFactory.getObject().getCouchDbConnector();
+    public CouchDbConnector samlIdPMetadataCouchDbConnector(
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+        return samlMetadataCouchDbFactory.getCouchDbConnector();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository() {
-        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getObject().getCouchDbConnector(),
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlMetadataCouchDbFactory")
+        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
+        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(),
             casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
 
     @Bean
-    @RefreshScope
-    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getCouchDb().getCrypto();
-
         if (crypto.isEnabled()) {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, CouchDbSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("CouchDb SAML IdP metadata encryption/signing is turned off and "
-            + "MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+                    + "MAY NOT be safe in a production environment. "
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val generator = new CouchDbSamlIdPMetadataGenerator(
-            samlIdPMetadataGeneratorConfigurationContext.getObject(), samlIdPMetadataRepository.getObject());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
+        @Qualifier("samlIdPMetadataCouchDbRepository")
+        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
+        val generator = new CouchDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, samlIdPMetadataRepository);
         generator.generate(Optional.empty());
         return generator;
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
-    @RefreshScope
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor(),
-            samlIdPMetadataCache.getObject(), samlIdPMetadataRepository.getObject());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public SamlIdPMetadataLocator samlIdPMetadataLocator(
+        @Qualifier("samlIdPMetadataCache")
+        final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+        @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+        final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
+        @Qualifier("samlIdPMetadataCouchDbRepository")
+        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
+        return new CouchDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
+            samlIdPMetadataCache, samlIdPMetadataRepository);
     }
 }

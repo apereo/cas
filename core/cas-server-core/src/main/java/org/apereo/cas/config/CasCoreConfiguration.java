@@ -21,14 +21,16 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
@@ -39,86 +41,87 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreConfiguration")
+@Configuration(value = "casCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Slf4j
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreConfiguration {
 
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultTicketFactory")
-    private ObjectProvider<TicketFactory> ticketFactory;
-
-    @Autowired
-    @Qualifier("principalFactory")
-    private ObjectProvider<PrincipalFactory> principalFactory;
-
-    @Autowired
-    @Qualifier("protocolTicketCipherExecutor")
-    private ObjectProvider<CipherExecutor> cipherExecutor;
-
-    @Bean
-    @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
-    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
-        if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
-            LOGGER.trace("Applying configuration for Required Handler Authentication Policy");
-            return new RequiredHandlerAuthenticationPolicyFactory();
+    @Configuration(value = "CasCorePolicyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCorePolicyConfiguration {
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
+        public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory(
+            final CasConfigurationProperties casProperties) {
+            if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
+                LOGGER.trace("Applying configuration for Required Handler Authentication Policy");
+                return new RequiredHandlerAuthenticationPolicyFactory();
+            }
+            LOGGER.trace("Applying configuration for Accept Any Authentication Policy");
+            return new AcceptAnyAuthenticationPolicyFactory();
         }
-        LOGGER.trace("Applying configuration for Accept Any Authentication Policy");
-        return new AcceptAnyAuthenticationPolicyFactory();
+
+        @Bean
+        @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
+        @Autowired
+        public ServiceMatchingStrategy serviceMatchingStrategy(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new DefaultServiceMatchingStrategy(servicesManager);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
-    @Autowired
-    @Bean
-    public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
-        final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-        val plan = new DefaultAuthenticationServiceSelectionPlan();
-        configurers.forEach(c -> {
-            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
-            c.configureAuthenticationServiceSelectionStrategy(plan);
-        });
-        return plan;
+    @Configuration(value = "CasCoreContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreContextConfiguration {
+
+        @Bean
+        @Autowired
+        @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
+        public CentralAuthenticationService centralAuthenticationService(
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor cipherExecutor,
+            @Qualifier("principalFactory")
+            final PrincipalFactory principalFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("defaultTicketFactory")
+            final TicketFactory ticketFactory,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("authenticationPolicyFactory")
+            final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+            @Qualifier("serviceMatchingStrategy")
+            final ServiceMatchingStrategy serviceMatchingStrategy,
+            final ConfigurableApplicationContext applicationContext) {
+            return new DefaultCentralAuthenticationService(applicationContext,
+                ticketRegistry, servicesManager, ticketFactory,
+                authenticationServiceSelectionPlan, authenticationPolicyFactory, principalFactory,
+                cipherExecutor, registeredServiceAccessStrategyEnforcer, serviceMatchingStrategy);
+        }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
-    public ServiceMatchingStrategy serviceMatchingStrategy() {
-        return new DefaultServiceMatchingStrategy(servicesManager.getObject());
-    }
-
-    @Bean
-    @Autowired
-    @ConditionalOnMissingBean(name = "centralAuthenticationService")
-    public CentralAuthenticationService centralAuthenticationService(
-        @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
-        return new DefaultCentralAuthenticationService(applicationContext,
-            ticketRegistry.getObject(),
-            servicesManager.getObject(),
-            ticketFactory.getObject(),
-            authenticationServiceSelectionPlan,
-            authenticationPolicyFactory(),
-            principalFactory.getObject(),
-            cipherExecutor.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject(),
-            serviceMatchingStrategy());
+    @Configuration(value = "CasCoreAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+    public static class CasCoreAuthenticationServiceSelectionConfiguration {
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
+        @Autowired
+        @Bean
+        public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
+            final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
+            val plan = new DefaultAuthenticationServiceSelectionPlan();
+            configurers.forEach(c -> {
+                LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
+                c.configureAuthenticationServiceSelectionStrategy(plan);
+            });
+            return plan;
+        }
     }
 }

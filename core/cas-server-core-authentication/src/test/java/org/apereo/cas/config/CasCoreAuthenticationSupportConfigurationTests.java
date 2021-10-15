@@ -36,6 +36,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationSupportConfigurationTests.CasCoreAuthenticationSupportConfigurationTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -82,15 +83,15 @@ public class CasCoreAuthenticationSupportConfigurationTests {
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(groovyAuthenticationProcessorExecutionPlanConfigurer);
         assertTrue(authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-            CoreAuthenticationTestUtils.getAuthentication(),
-            mock(Assertion.class), Map.of(), CoreAuthenticationTestUtils.getRegisteredService())
+                CoreAuthenticationTestUtils.getAuthentication(),
+                mock(Assertion.class), Map.of(), CoreAuthenticationTestUtils.getRegisteredService())
             .isEmpty());
     }
 
     @TestConfiguration("CasCoreAuthenticationSupportConfigurationTestConfiguration")
     public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return mock(AuthenticationServiceSelectionPlan.class);
         }

@@ -16,7 +16,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SwivelAuthenticationEventExecutionPlanConfiguration}.
@@ -32,34 +32,21 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration("swivelAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "swivelAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class SwivelAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("swivelBypassEvaluator")
-    private ObjectProvider<MultifactorAuthenticationProviderBypassEvaluator> swivelBypassEvaluator;
-
-    @Autowired
-    @Qualifier("failureModeEvaluator")
-    private ObjectProvider<MultifactorAuthenticationFailureModeEvaluator> failureModeEvaluator;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
+    @Autowired
+    public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
+                                                                                 @Qualifier("swivelAuthenticationHandler")
+                                                                                 final SwivelAuthenticationHandler swivelAuthenticationHandler,
+                                                                                 @Qualifier("swivelMultifactorAuthenticationProvider")
+                                                                                 final MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(
-            authenticationContextAttribute,
-            swivelAuthenticationHandler(),
-            swivelMultifactorAuthenticationProvider().getId()
-        );
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, swivelAuthenticationHandler, swivelMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "swivelPrincipalFactory")
@@ -69,23 +56,34 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
-    public SwivelAuthenticationHandler swivelAuthenticationHandler() {
-        val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
-        return new SwivelAuthenticationHandler(swivel.getName(),
-            servicesManager.getObject(), swivelPrincipalFactory(), swivel);
+    @Autowired
+    public SwivelAuthenticationHandler swivelAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("swivelPrincipalFactory")
+        final PrincipalFactory swivelPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
+        val swivel = casProperties.getAuthn().getMfa().getSwivel();
+        return new SwivelAuthenticationHandler(swivel.getName(), servicesManager, swivelPrincipalFactory, swivel);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelMultifactorAuthenticationProvider")
-    public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
-        val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
+    @Autowired
+    public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("swivelBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+        val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
-        p.setBypassEvaluator(swivelBypassEvaluator.getObject());
+        p.setBypassEvaluator(swivelBypassEvaluator);
         p.setFailureMode(swivel.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator.getObject());
+        p.setFailureModeEvaluator(failureModeEvaluator);
         p.setOrder(swivel.getRank());
         p.setId(swivel.getId());
         return p;
@@ -93,11 +91,15 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @RefreshScope
-    public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("swivelAuthenticationHandler")
+        final SwivelAuthenticationHandler swivelAuthenticationHandler,
+        @Qualifier("swivelAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator) {
         return plan -> {
-            plan.registerAuthenticationHandler(swivelAuthenticationHandler());
-            plan.registerAuthenticationMetadataPopulator(swivelAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandler(swivelAuthenticationHandler);
+            plan.registerAuthenticationMetadataPopulator(swivelAuthenticationMetaDataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(SwivelTokenCredential.class));
         };
     }

@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://apereo.github.io.*",
+  "name" : "Sample",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://github.com.*"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseProxyGrantingTicket" : false
+  }
+}

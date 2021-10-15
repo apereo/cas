@@ -12,10 +12,10 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.client.Http;
-import com.squareup.okhttp.OkHttpClient;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,12 +23,14 @@ import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 
+import javax.net.ssl.X509TrustManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiService {
+    private static final long TIMEOUT_SECONDS = 60;
+
     private final HttpClient httpClient;
 
     private final DuoSecurityMultifactorAuthenticationProperties duoProperties;
@@ -155,19 +159,27 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());
         val request = new Http(method, resolver.resolve(duoProperties.getDuoApiHost()), uri);
+        
+        val factory = this.httpClient.getHttpClientFactory();
+        val okHttpClient = new OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0])
+            .hostnameVerifier(factory.getHostnameVerifier())
+            .build();
+
         request.addParam("offset", "0");
         request.addParam("limit", params.getOrDefault("limit", "1"));
         params.forEach(request::addParam);
         val ikey = resolver.resolve(duoProperties.getDuoAdminIntegrationKey());
         val skey = resolver.resolve(duoProperties.getDuoAdminSecretKey());
         request.signRequest(ikey, skey);
-        val factory = this.httpClient.getHttpClientFactory();
         Optional.ofNullable(factory.getProxy()).ifPresent(proxy -> request.setProxy(proxy.getHostName(), proxy.getPort()));
-        val field = ReflectionUtils.findField(request.getClass(), "httpClient");
-        ReflectionUtils.makeAccessible(Objects.requireNonNull(field));
-        val client = Objects.requireNonNull((OkHttpClient) ReflectionUtils.getField(field, request));
-        client.setHostnameVerifier(factory.getHostnameVerifier());
-        client.setSslSocketFactory(factory.getSslContext().getSocketFactory());
+        val httpClientField = ReflectionUtils.findField(request.getClass(), "httpClient");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
+        ReflectionUtils.setField(httpClientField, request, okHttpClient);
+
         val result = (JSONObject) request.executeJSONRequest();
         return result.length() > 0 && result.has(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
             && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)

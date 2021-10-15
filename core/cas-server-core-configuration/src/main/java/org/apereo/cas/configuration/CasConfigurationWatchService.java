@@ -7,14 +7,12 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.PathWatcherService;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.io.Closeable;
 import java.io.File;
@@ -27,7 +25,7 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationWatchService implements Closeable {
+public class CasConfigurationWatchService implements Closeable, CasEventListener {
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
 
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
@@ -48,13 +46,9 @@ public class CasConfigurationWatchService implements Closeable {
     }
 
     /**
-     * Run path watch services.
-     *
-     * @param event the event
+     * Initialize.
      */
-    @EventListener
-    @Async
-    public void runPathWatchServices(final ApplicationReadyEvent event) {
+    public void initialize() {
         watchConfigurationDirectoryIfNeeded();
         watchConfigurationFileIfNeeded();
     }
@@ -63,7 +57,7 @@ public class CasConfigurationWatchService implements Closeable {
         val configFile = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null && configFile.exists()) {
             LOGGER.debug("Starting to watch configuration file [{}]", configFile);
-            this.configurationFileWatch = new FileWatcherService(configFile.getParentFile(),
+            this.configurationFileWatch = new FileWatcherService(configFile,
                 createConfigurationCreatedEvent.andNext(eventPublisher::publishEvent),
                 createConfigurationModifiedEvent.andNext(eventPublisher::publishEvent),
                 createConfigurationDeletedEvent.andNext(eventPublisher::publishEvent));

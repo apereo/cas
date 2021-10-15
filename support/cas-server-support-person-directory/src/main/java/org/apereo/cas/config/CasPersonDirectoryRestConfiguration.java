@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -13,12 +12,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
@@ -34,17 +36,15 @@ import java.util.Objects;
  */
 
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.rest[0]", value = "url")
-@Configuration("CasPersonDirectoryRestConfiguration")
+@Configuration(value = "CasPersonDirectoryRestConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+public class CasPersonDirectoryRestConfiguration {
     @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
     @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> restfulAttributeRepositories() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public List<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getRest()
             .stream()
@@ -77,9 +77,12 @@ public class CasPersonDirectoryRestConfiguration implements PersonDirectoryAttri
         return list;
     }
 
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(restfulAttributeRepositories());
+    @Bean
+    @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("restfulAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> restfulAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories.getObject());
     }
 }
 

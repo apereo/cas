@@ -33,6 +33,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Objects;
 
@@ -43,19 +44,17 @@ import java.util.Objects;
  * @since 5.0.0
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
-@Configuration("ehcacheTicketRegistryConfiguration")
+@Configuration(value = "ehcacheTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated(since = "6.2.0")
 @Slf4j
 public class EhcacheTicketRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMISynchronousCacheReplicator")
-    public CacheReplicator ticketRMISynchronousCacheReplicator() {
+    @Autowired
+    public CacheReplicator ticketRMISynchronousCacheReplicator(final CasConfigurationProperties casProperties) {
         val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
             cache.isReplicatePuts(),
@@ -65,10 +64,11 @@ public class EhcacheTicketRegistryConfiguration {
             cache.isReplicateRemovals());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRMIAsynchronousCacheReplicator")
-    public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
+    @Autowired
+    public CacheReplicator ticketRMIAsynchronousCacheReplicator(final CasConfigurationProperties casProperties) {
         val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
             cache.isReplicatePuts(),
@@ -80,17 +80,19 @@ public class EhcacheTicketRegistryConfiguration {
             cache.getMaximumBatchSize());
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketCacheBootstrapCacheLoader")
-    public BootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
+    @Autowired
+    public BootstrapCacheLoader ticketCacheBootstrapCacheLoader(final CasConfigurationProperties casProperties) {
         val cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
     @Lazy(false)
     @Bean
-    public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
+    @Autowired
+    public EhCacheManagerFactoryBean ehcacheTicketCacheManager(final CasConfigurationProperties casProperties) {
         AsciiArtUtils.printAsciiArtWarning(LOGGER,
             "CAS Integration with ehcache 2.x will be discontinued after CAS 6.2.x. Consider migrating to another type of registry.");
 
@@ -116,23 +118,34 @@ public class EhcacheTicketRegistryConfiguration {
      * Create ticket registry bean with all necessary caches.
      * Using the spring ehcache wrapper bean so it can be initialized after the caches are built.
      *
-     * @param manager       Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
-     * @param ticketCatalog Ticket Catalog
+     * @param ticketRMISynchronousCacheReplicator the ticket rmi synchronous cache replicator
+     * @param ticketCacheBootstrapCacheLoader     the ticket cache bootstrap cache loader
+     * @param casProperties                       the cas properties
+     * @param manager                             Spring EhCache manager bean, wraps EhCache manager and is used for cache actuator endpoint.
+     * @param ticketCatalog                       Ticket Catalog
      * @return Ticket Registry
      */
     @Autowired
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Lazy(false)
-    public TicketRegistry ticketRegistry(@Qualifier("ehCacheCacheManager") final EhCacheCacheManager manager,
-                                         @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(
+        @Qualifier("ticketRMISynchronousCacheReplicator")
+        final CacheReplicator ticketRMISynchronousCacheReplicator,
+        @Qualifier("ticketCacheBootstrapCacheLoader")
+        final BootstrapCacheLoader ticketCacheBootstrapCacheLoader,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("ehCacheCacheManager")
+        final EhCacheCacheManager manager,
+        @Qualifier("ticketCatalog")
+        final TicketCatalog ticketCatalog) {
 
         val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
         val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
 
         val definitions = ticketCatalog.findAll();
         definitions.forEach(t -> {
-            val ehcache = buildCache(t);
+            val ehcache = buildCache(casProperties, t, ticketRMISynchronousCacheReplicator, ticketCacheBootstrapCacheLoader);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
                 val config = ehcache.getCacheConfiguration();
@@ -166,7 +179,10 @@ public class EhcacheTicketRegistryConfiguration {
         return new EhCacheCacheManager(ehcacheTicketCacheManager);
     }
 
-    private Ehcache buildCache(final TicketDefinition ticketDefinition) {
+    private static Ehcache buildCache(final CasConfigurationProperties casProperties,
+                                      final TicketDefinition ticketDefinition,
+                                      final CacheReplicator ticketRMISynchronousCacheReplicator,
+                                      final BootstrapCacheLoader ticketCacheBootstrapCacheLoader) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache();
         val configExists = ResourceUtils.doesResourceExist(ehcacheProperties.getConfigLocation());
 
@@ -176,8 +192,8 @@ public class EhcacheTicketRegistryConfiguration {
         LOGGER.debug("Constructing Ehcache cache [{}]", bean.getName());
 
         if (configExists) {
-            bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
-            bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
+            bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator));
+            bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader);
         } else {
             LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
                 + "so no cache event listeners will be configured to bootstrap. "

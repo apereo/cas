@@ -45,7 +45,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

@@ -9,6 +9,29 @@ package org.apereo.cas.web.flow;
 public interface CasWebflowConstants {
     /*
      ****************************************
+     * Bean Names.
+     ****************************************
+     */
+
+    /**
+     * Bean name for login flow registry.
+     */
+    String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
+    /**
+     * Bean name for logout flow registry.
+     */
+    String BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY = "logoutFlowRegistry";
+    /**
+     * Bean name for flow builder services.
+     */
+    String BEAN_NAME_FLOW_BUILDER_SERVICES = "flowBuilderServices";
+    /**
+     * Bean name for flow builder.
+     */
+    String BEAN_NAME_FLOW_BUILDER = "flowBuilder";
+
+    /*
+     ****************************************
      * Errors.
      ****************************************
      */
@@ -22,6 +45,7 @@ public interface CasWebflowConstants {
      * Attribute to track registered service in the flow.
      */
     String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
+
     /**
      * Attribute to track service in the flow.
      */
@@ -445,7 +469,7 @@ public interface CasWebflowConstants {
      * The state 'accountRegistrationSubflow'.
      */
     String STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW = "accountRegistrationSubflow";
-    
+
     /**
      * The state 'accountSignUpInfoSent'.
      */
@@ -1107,6 +1131,7 @@ public interface CasWebflowConstants {
      * Action id 'serviceWarningAction'.
      */
     String ACTION_ID_SERVICE_WARNING = "serviceWarningAction";
+
     /**
      * Action id 'finishLogoutAction'.
      */

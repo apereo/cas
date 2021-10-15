@@ -38,7 +38,7 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     private Action samlIdPMetadataUIParserAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

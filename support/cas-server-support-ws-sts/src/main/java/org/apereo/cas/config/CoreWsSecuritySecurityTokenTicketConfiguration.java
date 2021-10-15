@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenTicketConfiguration}.
@@ -23,33 +23,48 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration("coreWsSecuritySecurityTokenTicketConfiguration")
+@Configuration(value = "coreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecuritySecurityTokenTicketConfiguration {
+    
+    @Configuration(value = "CoreWsSecuritySecurityTokenTicketFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
+        @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public SecurityTokenTicketFactory securityTokenTicketFactory(
+            @Qualifier("securityTokenTicketIdGenerator")
+            final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
+            return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator, grantingTicketExpirationPolicy);
+        }
 
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> grantingTicketExpirationPolicy;
-
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
-    @Bean
-    @RefreshScope
-    public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getObject());
+        @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+        
+    }
+    
+    @Configuration(value = "CoreWsSecuritySecurityTokenTicketPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
+        @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
+            @Qualifier("securityTokenTicketFactory")
+            final SecurityTokenTicketFactory securityTokenTicketFactory) {
+            return () -> securityTokenTicketFactory;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
-    @Bean
-    @RefreshScope
-    public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer() {
-        return this::securityTokenTicketFactory;
-    }
 
-    @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
-    @Bean
-    @RefreshScope
-    public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
-        return new DefaultUniqueTicketIdGenerator();
-    }
 
 }

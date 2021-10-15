@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @Getter
-@Tag("MFA")
+@Tag("MFAProvider")
 public class GoogleAuthenticatorConfigurationTests {
     @Autowired
     @Qualifier("googleAuthenticatorInstance")

@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
@@ -28,22 +29,19 @@ import java.security.KeyStore;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration("inweboConfiguration")
+@Configuration(value = "inweboConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class InweboServiceConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("casSslContext")
-    private ObjectProvider<CasSSLContext> casSslContext;
-
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
-    @RefreshScope
-    public InweboConsoleAdmin inweboConsoleAdmin() throws Exception {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public InweboConsoleAdmin inweboConsoleAdmin(
+        @Qualifier("casSslContext")
+        final ObjectProvider<CasSSLContext> casSslContext,
+        final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
 
         val marshaller = new Jaxb2Marshaller();
@@ -70,10 +68,14 @@ public class InweboServiceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
-    @RefreshScope
-    public InweboService inweboService() throws Exception {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public InweboService inweboService(
+        @Qualifier("inweboConsoleAdmin")
+        final InweboConsoleAdmin inweboConsoleAdmin,
+        final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val sslContext = SSLUtils.buildSSLContext(inwebo.getClientCertificate());
-        return new InweboService(casProperties, inweboConsoleAdmin(), sslContext);
+        return new InweboService(casProperties, inweboConsoleAdmin, sslContext);
     }
 }

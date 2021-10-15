@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
     "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
 })
-@Tag("MFA")
+@Tag("MFAProvider")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityAuthenticationServiceTests {
 

@@ -19,11 +19,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentRestConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public ConsentRepository consentRepository() {
+    @Autowired
+    public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
         return new RestfulConsentRepository(casProperties.getConsent().getRest());
     }
 }

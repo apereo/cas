@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -87,6 +88,7 @@ public abstract class BaseYubiKeyTests {
         CasCoreNotificationsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class

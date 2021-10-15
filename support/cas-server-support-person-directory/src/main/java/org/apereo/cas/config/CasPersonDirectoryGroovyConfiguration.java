@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
@@ -11,13 +10,16 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,20 +31,18 @@ import java.util.List;
  * @since 6.4.0
  */
 @ConditionalOnMultiValuedProperty(name = "cas.authn.attribute-repository.groovy[0]", value = "location")
-@Configuration("CasPersonDirectoryGroovyConfiguration")
+@Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryGroovyConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
-    @Autowired
-    private CasConfigurationProperties casProperties;
+public class CasPersonDirectoryGroovyConfiguration {
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-    
     @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
     @Bean
-    @RefreshScope
-    public List<IPersonAttributeDao> groovyAttributeRepositories() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public List<IPersonAttributeDao> groovyAttributeRepositories(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getGroovy()
             .stream()
@@ -58,8 +58,12 @@ public class CasPersonDirectoryGroovyConfiguration implements PersonDirectoryAtt
         return list;
     }
 
-    @Override
-    public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
-        plan.registerAttributeRepositories(groovyAttributeRepositories());
+    @Bean
+    @Autowired
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
+        @Qualifier("groovyAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> groovyAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories.getObject());
     }
+
 }

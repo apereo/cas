@@ -11,7 +11,6 @@ import org.apereo.cas.support.saml.ShibbolethIdPEntityIdAuthenticationServiceSel
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration}.
@@ -26,42 +26,39 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("externalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration")
+@Configuration(value = "externalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
     @ConditionalOnMissingBean(name = "shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     @Bean
-    @RefreshScope
-    public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("registeredServiceAccessStrategyEnforcer")
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("webApplicationServiceFactory")
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(
-            servicesManager.getObject(),
+            servicesManager,
             webApplicationServiceFactory,
             casProperties.getAuthn().getShibIdp().getServerUrl(),
-            registeredServiceAccessStrategyEnforcer.getObject());
+            registeredServiceAccessStrategyEnforcer);
     }
 
     @Bean
-    public AuthenticationServiceSelectionStrategyConfigurer shibbolethIdPAuthenticationServiceSelectionStrategyConfigurer() {
+    @Autowired
+    public AuthenticationServiceSelectionStrategyConfigurer shibbolethIdPAuthenticationServiceSelectionStrategyConfigurer(
+        @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
+        final AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy,
+        final CasConfigurationProperties casProperties) {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getShibIdp().getServerUrl())) {
-                plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy());
+                plan.registerStrategy(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy);
             } else {
                 LOGGER.warn("Shibboleth IdP url is not specified; External authentication requests by the IdP will not be recognized");
             }

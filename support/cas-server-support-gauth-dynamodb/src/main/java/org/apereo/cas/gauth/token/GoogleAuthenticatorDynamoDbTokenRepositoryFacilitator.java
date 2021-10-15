@@ -93,18 +93,17 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * @return the google authenticator token
      */
     public GoogleAuthenticatorToken find(final String uid, final Integer otp) {
-        val query =
-            List.of(
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build(),
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.TOKEN.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(otp)).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
+        val query = List.of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.USERID.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build(),
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.TOKEN.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(otp)).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
         val results = getRecordsByKeys(query);
         return results.isEmpty() ? null : results.iterator().next();
     }
@@ -142,13 +141,12 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * @return the long
      */
     public long count(final String uid) {
-        val query =
-            List.of(
-                DynamoDbQueryBuilder.builder()
-                    .key(ColumnNames.USERID.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
-                    .operator(ComparisonOperator.EQ)
-                    .build());
+        val query = List.of(
+            DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.USERID.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
         return getRecordsByKeys(query).size();
     }
 
@@ -194,7 +192,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(uid)).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
                 .operator(ComparisonOperator.EQ)
                 .build());
         val records = getRecordsByKeys(query);
@@ -221,7 +219,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.USERID.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(String.valueOf(uid)).build()))
+                .attributeValue(List.of(AttributeValue.builder().s(uid.toLowerCase()).build()))
                 .operator(ComparisonOperator.EQ)
                 .build(),
             DynamoDbQueryBuilder.builder()

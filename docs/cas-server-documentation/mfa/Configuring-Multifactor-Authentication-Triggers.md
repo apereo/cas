@@ -8,25 +8,8 @@ category: Multifactor Authentication
 
 # Multifactor Authentication Triggers
 
-The following triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow.
-
-The execution order of multifactor authentication triggers is outlined below:
-
-1. Adaptive
-2. Global
-3. Opt-In Request Parameter/Header
-4. REST Endpoint
-5. Groovy Script
-6. Principal Attribute Per Application
-7. Global Principal Attribute Predicate
-8. Global Principal Attribute
-9. Global Authentication Attribute
-10. Applications
-11. Grouper
-12. Entity ID Request Parameter
-13. Other
-
-Each trigger should properly try to ignore the authentication request, if applicable configuration 
+Triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow. Each 
+trigger should properly try to ignore the authentication request, if applicable configuration 
 is not found for its activation and execution. Also note that various CAS modules present 
 and inject their own *internal triggers* into the CAS application runtime in order to 
 translate protocol-specific authentication requests (such as those presented by 
@@ -47,60 +30,21 @@ different event in the authentication flow. In the event, having selected a fina
 event, the appropriate component and module that is able to support and respond to the 
 produced event will take over and route the authentication flow appropriately.
 
-## Global
+The following triggers are available:
 
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Global.html).
-
-## Per Application
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-PerApplication.html).
-
-## Groovy Per Application 
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-PerApplication-Groovy.html).
-
-## Global Principal Attribute
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute.html).
-
-## Global Principal Attribute Predicate
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute-Predicate.html).
-
-## Global Authentication Attribute
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Global-AuthenticationAttribute.html).
-
-## Adaptive
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Adaptive.html).
-
-## Grouper
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Grouper.html).
-
-## Groovy
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Groovy.html).
-
-## REST
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-Rest.html).
-
-## Opt-In Request Parameter/Header
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-OptInRequest.html).
-
-## Principal Attribute Per Application
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html).
-
-## Entity Id Request Parameter
-
-Please see [this guide](Configuring-Multifactor-Authentication-Triggers-EntityId.html).
-
-## Custom
-
-While support for triggers may seem extensive, there is always that edge use case that would 
-have you trigger MFA based on a special set of requirements. To learn how to design 
-your own triggers, [please see this guide](Configuring-Multifactor-Authentication-Triggers-Custom.html).
+| Trigger               | Description
+|-----------------------|--------------------------------------------------------------------------------------------------------
+| Global                | [See this page](Configuring-Multifactor-Authentication-Triggers-Global.html).
+| Per Application             | [See this page](Configuring-Multifactor-Authentication-Triggers-PerApplication.html).
+| Groovy Per Application      | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).
+| Global Principal Attribute  | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute.html).
+| Global Principal Attribute Predicate  | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute-Predicate.html).
+| Global Authentication Attribute       | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-AuthenticationAttribute.html).
+| Adaptive              | [See this page](Configuring-Multifactor-Authentication-Triggers-Adaptive.html).
+| Grouper               | [See this page](Configuring-Multifactor-Authentication-Triggers-Grouper.html).
+| Groovy                | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).
+| REST                  | [See this page](Configuring-Multifactor-Authentication-Triggers-Rest.html).
+| Opt-In Request Parameter/Header     | [See this page](Configuring-Multifactor-Authentication-Triggers-OptInRequest.html).
+| Principal Attribute Per Application | [See this page](Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html).
+| Entity Id Request Parameter | [See this page](Configuring-Multifactor-Authentication-Triggers-EntityId.html).
+| Custom                      | [See this page](Configuring-Multifactor-Authentication-Triggers-Custom.html).

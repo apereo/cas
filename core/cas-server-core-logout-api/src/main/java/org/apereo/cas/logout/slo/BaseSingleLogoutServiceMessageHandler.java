@@ -173,7 +173,8 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                 LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", selectedService);
             }
         } else {
-            LOGGER.trace("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, logoutRequest.getLogoutType());
+            LOGGER.trace("Logout operation is not yet attempted for [{}] given logout type is set to [{}]",
+                selectedService, logoutRequest.getLogoutType());
             logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
         }
         return logoutRequest;

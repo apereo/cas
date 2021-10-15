@@ -60,11 +60,11 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @RepeatedTest(2)

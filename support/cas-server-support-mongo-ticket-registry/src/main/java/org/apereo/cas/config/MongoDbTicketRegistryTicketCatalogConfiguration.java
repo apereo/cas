@@ -20,16 +20,18 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public MongoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
-                                                           final CasTicketCatalogConfigurationValuesProvider configProvider) {
+    public MongoDbTicketRegistryTicketCatalogConfiguration(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
         super(casProperties, configProvider);
     }
 
-    @Configuration("mongoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class MongoDbTicketCatalogConfigValuesProviderConfiguration {
 
-        @ConditionalOnMissingBean
+    @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+        @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
             return new CasTicketCatalogConfigurationValuesProvider() {

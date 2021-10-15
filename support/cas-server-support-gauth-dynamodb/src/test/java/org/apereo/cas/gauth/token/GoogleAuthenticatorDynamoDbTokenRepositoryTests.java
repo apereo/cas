@@ -97,8 +97,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.gauth.dynamo-db.local-instance=true",
         "cas.authn.mfa.gauth.dynamo-db.region=us-east-1"
     })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Getter
 @EnabledIfPortOpen(port = 8000)
@@ -110,29 +110,30 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
 
     @BeforeEach
     public void initialize() {
+        super.initialize();
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 
     @Test
     public void verifyExpiredTokens() {
-        val token = new GoogleAuthenticatorToken(1111, CASUSER);
+        val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        var t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        var t1 = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
         assertEquals(token, t1);
         oneTimeTokenAuthenticatorTokenRepository.clean();
-        t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, t1.getToken());
+        t1 = oneTimeTokenAuthenticatorTokenRepository.get(userId, t1.getToken());
         assertNull(t1);
     }
 
     @Test
     public void verifyLargeDataSet() {
-        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), CASUSER)).limit(500);
+        val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), userId)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();
         tokens.forEach(token -> {
             oneTimeTokenAuthenticatorTokenRepository.store(token);
-            assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken()));
+            assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken()));
             oneTimeTokenAuthenticatorTokenRepository.remove(token.getToken());
         });
         stopwatch.stop();

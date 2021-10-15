@@ -33,21 +33,21 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasEmbeddedContainerTomcatConfiguration {
 
-    @Autowired
-    private ServerProperties serverProperties;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
-    public ConfigurableServletWebServerFactory casServletWebServerFactory() {
+    @Autowired
+    public ConfigurableServletWebServerFactory casServletWebServerFactory(
+        final ServerProperties serverProperties,
+        final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactory(casProperties, serverProperties);
     }
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
     @Bean
-    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer() {
+    @Autowired
+    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer(
+        final ServerProperties serverProperties,
+        final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
     }
 }

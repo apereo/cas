@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -31,8 +30,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Setter
 @Builder
 public class CasWebflowEventResolutionConfigurationContext {
-    private final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver;
-    
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final CentralAuthenticationService centralAuthenticationService;

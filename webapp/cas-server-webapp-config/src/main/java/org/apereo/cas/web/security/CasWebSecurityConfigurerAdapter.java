@@ -17,17 +17,20 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.FilterInvocation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,9 +54,11 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final SecurityProperties securityProperties;
 
-    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+    private final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler;
 
-    private final PathMappedEndpoints pathMappedEndpoints;
+    private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
+
+    private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
@@ -73,8 +78,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     @Override
     public void configure(final WebSecurity web) {
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
-        val patterns = beans.stream()
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
@@ -134,9 +138,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
-
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointWebSecurityConfigurer.class, false, true).values();
-        beans.forEach(cfg -> cfg.configure(http));
+        protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
     }
 
     /**
@@ -149,7 +151,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                           final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        pathMappedEndpoints.forEach(endpoint -> {
+        pathMappedEndpoints.getObject().forEach(endpoint -> {
             val rootPath = endpoint.getRootPath();
             if (endpoints.contains(rootPath)) {
                 LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);

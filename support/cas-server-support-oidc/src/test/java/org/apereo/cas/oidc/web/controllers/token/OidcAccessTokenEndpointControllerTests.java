@@ -28,6 +28,7 @@ public class OidcAccessTokenEndpointControllerTests extends AbstractOidcTests {
     @Test
     public void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
         val mv = oidcAccessTokenEndpointController.handleRequest(request, response);
         assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatus());

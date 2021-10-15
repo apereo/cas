@@ -20,16 +20,17 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public DynamoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
-                                                            final CasTicketCatalogConfigurationValuesProvider configProvider) {
+    public DynamoDbTicketRegistryTicketCatalogConfiguration(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
         super(casProperties, configProvider);
     }
-
-    @Configuration("dynamoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class Config {
-
-        @ConditionalOnMissingBean
+    
+    @Configuration(value = "DynamoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DynamoDbTicketRegistryTicketCatalogProviderConfiguration {
+        @ConditionalOnMissingBean(name = "dynamoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
             return new CasTicketCatalogConfigurationValuesProvider() {
@@ -60,4 +61,5 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicket
             };
         }
     }
+
 }

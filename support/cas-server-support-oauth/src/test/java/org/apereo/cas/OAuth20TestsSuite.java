@@ -28,6 +28,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestVali
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenExceptionTests;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeExceptionTests;
 import org.apereo.cas.support.oauth.web.CSRFCookieTests;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenSecurityLogicTests;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolverTests;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapterTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
@@ -164,7 +165,8 @@ import org.junit.platform.suite.api.Suite;
     OAuth20TokenAuthorizationResponseBuilderTests.class,
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
-    CSRFCookieTests.class
+    CSRFCookieTests.class,
+    OAuth20AccessTokenSecurityLogicTests.class
 })
 @Suite
 public class OAuth20TestsSuite {

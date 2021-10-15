@@ -95,7 +95,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
 
     @Override
     public PersistenceProvider newPersistenceProvider(final AbstractJpaProperties jpa) {
-        val configurers = applicationContext.getBeansOfType(JpaPersistenceProviderConfigurer.class, false, true).values();
+        val configurers = applicationContext.getBeansOfType(JpaPersistenceProviderConfigurer.class).values();
         AnnotationAwareOrderComparator.sortIfNecessary(configurers);
         val context = new JpaPersistenceProviderContext();
         configurers.forEach(cfg -> cfg.configure(context));

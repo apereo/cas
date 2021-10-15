@@ -19,15 +19,14 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -45,53 +44,43 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlMetadataUIConfiguration {
+
     private static final String DEFAULT_SEPARATOR = "::";
 
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
-    @Bean
-    public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter() {
-        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapSet(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
-    }
-
-    private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
+    private static MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter,
+                                                            final ConfigurableApplicationContext applicationContext,
+                                                            final CasConfigurationProperties casProperties,
+                                                            final OpenSamlConfigBean openSamlConfigBean) {
         val resources = new HashMap<Resource, MetadataFilterChain>();
         val chain = new MetadataFilterChain();
-        casProperties.getSamlMetadataUi().getResources().forEach(Unchecked.consumer(r -> configureResource(resources, chain, r)));
+        casProperties.getSamlMetadataUi().getResources()
+            .forEach(Unchecked.consumer(r -> configureResource(applicationContext, resources, chain, r, casProperties)));
         adapter.setRequireValidMetadata(casProperties.getSamlMetadataUi().isRequireValidMetadata());
         adapter.setMetadataResources(resources);
-        adapter.setConfigBean(openSamlConfigBean.getObject());
+        adapter.setConfigBean(openSamlConfigBean);
         return adapter;
     }
 
-    private void configureResource(final Map<Resource, MetadataFilterChain> resources,
-                                   final MetadataFilterChain chain, final String r) {
-        val splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
-
+    private static void configureResource(
+        final ConfigurableApplicationContext applicationContext,
+        final Map<Resource, MetadataFilterChain> resources,
+        final MetadataFilterChain chain,
+        final String resourceArray,
+        final CasConfigurationProperties casProperties) {
+        val splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(resourceArray);
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
             val arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
             val metadataFile = arr.get(0);
             val signingKey = arr.size() > 1 ? arr.get(1) : null;
-
             val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
                 val filter = new RequiredValidUntilFilter();
                 filter.setMaxValidityInterval(Duration.ofSeconds(casProperties.getSamlMetadataUi().getMaxValidity()));
                 filters.add(filter);
             }
-
             var addResource = true;
             if (StringUtils.isNotBlank(signingKey)) {
-                val sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
+                val sigFilter = SamlUtils.buildSignatureValidationFilter(applicationContext, signingKey);
                 if (sigFilter != null) {
                     sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                     filters.add(sigFilter);
@@ -101,8 +90,7 @@ public class SamlMetadataUIConfiguration {
                 }
             }
             chain.setFilters(filters);
-
-            val resource = this.resourceLoader.getResource(metadataFile);
+            val resource = applicationContext.getResource(metadataFile);
             if (addResource && ResourceUtils.doesResourceExist(resource)) {
                 resources.put(resource, chain);
             } else {
@@ -111,16 +99,19 @@ public class SamlMetadataUIConfiguration {
         }));
     }
 
-    private MetadataResolverAdapter getDynamicMetadataResolverAdapter() {
-        val adapter = new DynamicMetadataResolverAdapter();
-        configureAdapter(adapter);
-        return adapter;
-    }
+    @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
+    @Bean
+    @Autowired
+    public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter(final CasConfigurationProperties casProperties,
+                                                                                 final ConfigurableApplicationContext applicationContext,
+                                                                                 @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+                                                                                 final OpenSamlConfigBean openSamlConfigBean) {
+        val staticAdapter = new StaticMetadataResolverAdapter();
+        configureAdapter(staticAdapter, applicationContext, casProperties, openSamlConfigBean);
+        staticAdapter.buildMetadataResolverAggregate();
 
-    private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
-        val adapter = new StaticMetadataResolverAdapter();
-        configureAdapter(adapter);
-        adapter.buildMetadataResolverAggregate();
-        return adapter;
+        val dynaAdapter = new DynamicMetadataResolverAdapter();
+        configureAdapter(dynaAdapter, applicationContext, casProperties, openSamlConfigBean);
+        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapSet(staticAdapter, dynaAdapter));
     }
 }

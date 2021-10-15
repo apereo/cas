@@ -39,7 +39,7 @@ public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentit
     private Action wsFederationMetadataUIAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

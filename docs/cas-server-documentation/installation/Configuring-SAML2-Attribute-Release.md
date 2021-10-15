@@ -44,43 +44,7 @@ To learn more about attribute definitions, please [see this guide](../integratio
 
 ## Attribute Value Types
 
-By default, attribute value blocks that are created in the final SAML2 response do not carry any type information in the encoded XML.
-You can, if necessary, enforce a particular type for an attribute value per the requirements of the SAML2 service provider, if any.
-An example of an attribute that is encoded with specific type information would be:
-
-```xml
-<saml2:Attribute FriendlyName="givenName" Name="givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-    <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string">HelloWorld</saml2:AttributeValue>
-</saml2:Attribute>
-```
-
-The following attribute value types are supported:
-
-| Type              | Description
-|-------------------|---------------------------------------------------------------------------------------
-| `XSString`        | Mark the attribute value type as `string`.
-| `XSURI`           | Mark the attribute value type as `uri`.
-| `XSBoolean`       | Mark the attribute value type as `boolean`.
-| `XSInteger`       | Mark the attribute value type as `integer`.
-| `XSDateTime`      | Mark the attribute value type as `datetime` .
-| `XSBase64Binary`  | Mark the attribute value type as `base64Binary`.
-| `XSObject`        | Skip the attribute value type and serialize the value as a complex XML object/POJO.
-
-...where the types for each attribute would be defined as such:
- 
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name": "SAML Service",
-  "metadataLocation" : "../../sp-metadata.xml",
-  "id": 1,
-  "attributeValueTypes": {
-    "@class": "java.util.HashMap",
-    "<attribute-name>": "<attribute-value-type>"
-  }
-}
-```
+[See this guide](Configuring-SAML2-Attribute-ValueTypes.html).
 
 ## Attribute Name Formats
 
@@ -211,7 +175,8 @@ you can let CAS calculate the `eduPersonTargetedID` attribute dynamically at rel
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
     "salt": "OqmG80fEKBQt",
-    "attribute": ""
+    "attribute": "",
+    "useUniformResourceName": false
   }
 }
 ```

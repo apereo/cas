@@ -39,6 +39,7 @@ enum TestCategories {
     Memcached,
     Metrics,
     MFA,
+    MFAProvider,
     MFATrigger,
     MFATrustedDevices,
     MongoDb,
@@ -223,6 +224,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
     }
     filter {
         setFailOnNoMatchingTests(false)
+        excludeTestsMatching "*TestsSuite"
     }
 }
 

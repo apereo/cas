@@ -32,7 +32,7 @@ public class RemoteAddressAuthenticationHandlerTests {
     private AuthenticationHandler remoteAddressAuthenticationHandler;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

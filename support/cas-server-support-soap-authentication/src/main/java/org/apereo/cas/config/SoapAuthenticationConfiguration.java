@@ -16,7 +16,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import javax.xml.bind.Marshaller;
@@ -38,22 +38,9 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration("soapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "soapAuthenticationConfiguration", proxyBeanMethods = false)
 public class SoapAuthenticationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "soapAuthenticationPrincipalFactory")
     @Bean
@@ -63,14 +50,17 @@ public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationAuthenticationHandler")
     @Bean
-    @RefreshScope
-    public AuthenticationHandler soapAuthenticationAuthenticationHandler() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public AuthenticationHandler soapAuthenticationAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+                                                                         @Qualifier("soapAuthenticationPrincipalFactory")
+                                                                         final PrincipalFactory soapAuthenticationPrincipalFactory,
+                                                                         @Qualifier("soapAuthenticationClient")
+                                                                         final SoapAuthenticationClient soapAuthenticationClient,
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
+                                                                         final ServicesManager servicesManager) {
         val soap = casProperties.getAuthn().getSoap();
-        val handler = new SoapAuthenticationHandler(soap.getName(),
-            servicesManager.getObject(),
-            soapAuthenticationPrincipalFactory(),
-            soap.getOrder(),
-            soapAuthenticationClient());
+        val handler = new SoapAuthenticationHandler(soap.getName(), servicesManager, soapAuthenticationPrincipalFactory, soap.getOrder(), soapAuthenticationClient);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(soap.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(soap.getPasswordEncoder(), applicationContext));
         return handler;
@@ -78,8 +68,12 @@ public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler(), defaultPrincipalResolver.getObject());
+    public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("soapAuthenticationAuthenticationHandler")
+        final AuthenticationHandler soapAuthenticationAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler, defaultPrincipalResolver);
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationMarshaller")
@@ -96,16 +90,19 @@ public class SoapAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "soapAuthenticationClient")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SoapAuthenticationClient soapAuthenticationClient() {
+    @Autowired
+    public SoapAuthenticationClient soapAuthenticationClient(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("soapAuthenticationMarshaller")
+                                                             final Jaxb2Marshaller soapAuthenticationMarshaller) {
         val soap = casProperties.getAuthn().getSoap();
         if (StringUtils.isBlank(soap.getUrl())) {
             throw new BeanCreationException("No SOAP url is defined");
         }
         val client = new SoapAuthenticationClient();
-        client.setMarshaller(soapAuthenticationMarshaller());
-        client.setUnmarshaller(soapAuthenticationMarshaller());
+        client.setMarshaller(soapAuthenticationMarshaller);
+        client.setUnmarshaller(soapAuthenticationMarshaller);
         client.setDefaultUri(soap.getUrl());
         return client;
     }

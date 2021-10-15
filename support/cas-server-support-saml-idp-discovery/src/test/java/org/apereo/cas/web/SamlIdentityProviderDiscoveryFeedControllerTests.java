@@ -41,7 +41,7 @@ public class SamlIdentityProviderDiscoveryFeedControllerTests {
     private SamlIdentityProviderDiscoveryFeedController controller;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test

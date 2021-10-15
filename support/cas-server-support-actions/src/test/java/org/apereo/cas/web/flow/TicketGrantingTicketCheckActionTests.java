@@ -2,10 +2,12 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
@@ -20,6 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
+
+    @BeforeEach
+    public void setup() {
+        val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();
+        getServicesManager().save(services.stream());
+    }
 
     @Test
     public void verifyNullTicket() throws Exception {

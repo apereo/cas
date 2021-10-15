@@ -7,13 +7,13 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateRestAuthenticationConfiguration}.
@@ -25,20 +25,15 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateRestAuthenticationConfiguration {
-    
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SurrogateAuthenticationService surrogateAuthenticationService() {
+    @Autowired
+    public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
+                                                                         @Qualifier(ServicesManager.BEAN_NAME)
+                                                                         final ServicesManager servicesManager) {
         val su = casProperties.getAuthn().getSurrogate();
-        LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
-            su.getRest().getUrl(), su.getRest().getMethod());
-        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getObject());
+        LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts", su.getRest().getUrl(), su.getRest().getMethod());
+        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager);
     }
 }

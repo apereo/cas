@@ -164,7 +164,7 @@ public class DynamoDbTableUtils {
                                                  final List<DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
         try {
-            var scanFilter = queries.stream()
+            val scanFilter = queries.stream()
                 .map(query -> {
                     val cond = Condition.builder()
                         .comparisonOperator(query.getOperator())
@@ -197,10 +197,11 @@ public class DynamoDbTableUtils {
         val startTime = System.currentTimeMillis();
         val endTime = startTime + timeout;
 
+        val tableRequest = DescribeTableRequest.builder().tableName(tableName).build();
         TableDescription table = null;
         while (System.currentTimeMillis() < endTime) {
             try {
-                table = dynamo.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+                table = dynamo.describeTable(tableRequest).table();
                 if (desiredStatus == null || table.tableStatusAsString().equals(desiredStatus.toString())) {
                     return table;
                 }

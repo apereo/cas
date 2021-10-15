@@ -559,10 +559,10 @@ ext.libraries = [
                 }
         ],
         caffein                 : [
-                dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeinVersion") {
+                dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("com.github.ben-manes.caffeine:guava:$caffeinVersion") {
+                dependencies.create("com.github.ben-manes.caffeine:guava:$caffeineVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
@@ -1104,7 +1104,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
                 },
-                dependencies.create("org.messaginghub:pooled-jms:2.0.1") {
+                dependencies.create("org.messaginghub:pooled-jms:2.0.2") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
@@ -2387,7 +2387,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
-
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         springbootlogging       : [

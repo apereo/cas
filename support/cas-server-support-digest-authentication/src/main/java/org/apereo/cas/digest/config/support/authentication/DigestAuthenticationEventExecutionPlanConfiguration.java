@@ -10,7 +10,6 @@ import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link DigestAuthenticationEventExecutionPlanConfiguration}.
@@ -26,39 +26,37 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("digestAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "digestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class DigestAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "digestAuthenticationHandler")
-    public AuthenticationHandler digestAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler digestAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                             @Qualifier("digestAuthenticationPrincipalFactory")
+                                                             final PrincipalFactory digestAuthenticationPrincipalFactory,
+                                                             @Qualifier(ServicesManager.BEAN_NAME)
+                                                             final ServicesManager servicesManager) {
         val digest = casProperties.getAuthn().getDigest();
-        return new DigestAuthenticationHandler(digest.getName(), servicesManager.getObject(),
-            digestAuthenticationPrincipalFactory(), digest.getOrder());
+        return new DigestAuthenticationHandler(digest.getName(), servicesManager, digestAuthenticationPrincipalFactory, digest.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "digestAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), defaultPrincipalResolver.getObject());
+    public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("digestAuthenticationHandler")
+        final AuthenticationHandler digestAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler, defaultPrincipalResolver);
     }
 }

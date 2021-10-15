@@ -41,7 +41,7 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     private DefaultDelegatedAuthenticationNavigationController controller;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @BeforeEach

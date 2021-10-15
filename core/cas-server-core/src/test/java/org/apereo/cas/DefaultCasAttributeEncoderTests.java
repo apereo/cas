@@ -31,7 +31,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     private static Collection<String> newSingleAttribute(final String attr) {

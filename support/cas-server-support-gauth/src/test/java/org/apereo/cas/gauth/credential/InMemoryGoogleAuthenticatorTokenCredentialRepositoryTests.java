@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     private final ConcurrentHashMap<String, OneTimeTokenCredentialRepository> repoMap = new ConcurrentHashMap<>();
 

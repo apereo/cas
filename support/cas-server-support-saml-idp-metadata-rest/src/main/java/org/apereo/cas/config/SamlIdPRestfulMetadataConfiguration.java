@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlIdPRestfulMetadataConfiguration}.
@@ -22,29 +22,27 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("samlIdPRestMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "samlIdPRestMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRestfulMetadataConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolver")
-    @RefreshScope
-    public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
+                                                                                           @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+                                                                                           final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RestfulSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getObject());
+        return new RestfulSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolutionPlanConfigurer")
-    public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer() {
-        return plan -> plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver());
+    public SamlRegisteredServiceMetadataResolutionPlanConfigurer restSamlRegisteredServiceMetadataResolutionPlanConfigurer(
+        @Qualifier("restSamlRegisteredServiceMetadataResolver")
+        final SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver) {
+        return plan -> plan.registerMetadataResolver(restSamlRegisteredServiceMetadataResolver);
     }
 }

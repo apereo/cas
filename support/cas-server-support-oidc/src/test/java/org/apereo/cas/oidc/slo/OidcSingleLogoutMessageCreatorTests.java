@@ -3,10 +3,9 @@ package org.apereo.cas.oidc.slo;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.issuer.OidcDefaultIssuerService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -17,6 +16,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -33,18 +34,14 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
-    private static final String PRINCIPAL_ID = "jleleu";
+    @Autowired
+    @Qualifier("oidcSingleLogoutMessageCreator")
+    private SingleLogoutMessageCreator oidcSingleLogoutMessageCreator;
 
     @Test
     public void verifyBackChannelLogout() throws ParseException {
         val service = getOidcRegisteredService(true, false);
-
-        val context = OidcConfigurationContext.builder()
-            .idTokenSigningAndEncryptionService(oidcTokenSigningAndEncryptionService)
-            .casProperties(casProperties)
-            .issuerService(new OidcDefaultIssuerService(casProperties.getAuthn().getOidc()))
-            .build();
-        val principal = RegisteredServiceTestUtils.getPrincipal(PRINCIPAL_ID);
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TGT_ID);
@@ -55,16 +52,13 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
             .executionRequest(SingleLogoutExecutionRequest.builder().ticketGrantingTicket(tgt).build())
             .build();
 
-        val creator = new OidcSingleLogoutMessageCreator(context);
-        val message = creator.create(logoutRequest);
-
+        val message = oidcSingleLogoutMessageCreator.create(logoutRequest);
         assertNull(message.getMessage());
         val token = message.getPayload();
 
-        var claims = JWTParser.parse(token).getJWTClaimsSet();
-
+        val claims = JWTParser.parse(token).getJWTClaimsSet();
         assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
-        assertEquals(PRINCIPAL_ID, claims.getSubject());
+        assertEquals("casuser", claims.getSubject());
         assertEquals(service.getClientId(), claims.getAudience().get(0));
         assertNotNull(claims.getClaim("iat"));
         assertNotNull(claims.getClaim("jti"));
@@ -75,14 +69,10 @@ public class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
 
     @Test
     public void verifyFrontChannelLogout() {
-        val context = OidcConfigurationContext.builder().build();
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
             .build();
-
-        val creator = new OidcSingleLogoutMessageCreator(context);
-        val message = creator.create(logoutRequest);
-
+        val message = oidcSingleLogoutMessageCreator.create(logoutRequest);
         assertEquals(StringUtils.EMPTY, message.getPayload());
         assertNull(message.getMessage());
     }

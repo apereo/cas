@@ -42,7 +42,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(bypassApprovalParameter)) {
-            bypassApprovalParameter = (String) this.sessionStore
+            bypassApprovalParameter = sessionStore
                 .get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         }

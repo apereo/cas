@@ -1,0 +1,13 @@
+{
+  "dependencies": "hazelcast-ticket-registry,hazelcast-monitor",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--management.health.hazelcastHealthIndicator.enabled=true",
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

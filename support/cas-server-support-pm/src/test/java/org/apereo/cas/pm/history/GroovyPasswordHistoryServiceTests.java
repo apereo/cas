@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.history;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     PasswordManagementConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreUtilConfiguration.class
 },

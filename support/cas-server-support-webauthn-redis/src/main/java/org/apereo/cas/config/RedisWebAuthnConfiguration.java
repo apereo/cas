@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.RedisWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -26,37 +26,39 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("RedisWebAuthnConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.web-authn.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Configuration(value = "RedisWebAuthnConfiguration", proxyBeanMethods = false)
 public class RedisWebAuthnConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisTemplate")
-    public RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate() {
-        return RedisObjectFactory.newRedisTemplate(webAuthnRedisConnectionFactory());
+    public RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate(
+        @Qualifier("webAuthnRedisConnectionFactory")
+        final RedisConnectionFactory webAuthnRedisConnectionFactory) {
+        return RedisObjectFactory.newRedisTemplate(webAuthnRedisConnectionFactory);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisConnectionFactory")
-    @RefreshScope
-    public RedisConnectionFactory webAuthnRedisConnectionFactory() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Autowired
+    public RedisConnectionFactory webAuthnRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getWebAuthn().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new RedisWebAuthnCredentialRepository(webAuthnRedisTemplate(),
-            casProperties, webAuthnCredentialRegistrationCipherExecutor.getObject());
+    @Autowired
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("webAuthnRedisTemplate")
+                                                                     final RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate,
+                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+        return new RedisWebAuthnCredentialRepository(webAuthnRedisTemplate,
+            casProperties,
+            webAuthnCredentialRegistrationCipherExecutor);
     }
 }

@@ -23,7 +23,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.policy.any.try-all=true",
-    "spring.aop.proxy-target-class=true",
     "cas.ticket.st.time-to-kill-in-seconds=30"
 })
 @Setter
@@ -34,7 +33,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
@@ -42,7 +41,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -50,7 +49,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
@@ -58,7 +57,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
@@ -66,6 +65,6 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 }

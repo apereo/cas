@@ -32,7 +32,7 @@ import static org.springframework.http.HttpStatus.OK;
         "cas.authn.mfa.swivel.shared-secret=$ecret",
         "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class SwivelTuringImageGeneratorControllerTests {
     @Autowired
     @Qualifier("swivelTuringImageGeneratorController")
