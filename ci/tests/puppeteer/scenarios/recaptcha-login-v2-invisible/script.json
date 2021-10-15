@@ -1,0 +1,12 @@
+{
+  "dependencies": "captcha",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    "--cas.google-recaptcha.enabled=true",
+    "--cas.google-recaptcha.verify-url=https://www.google.com/recaptcha/api/siteverify",
+    "--cas.google-recaptcha.site-key=7Let09ISAAAAAL-ip28pWHPkk-DtRz5HNpT4lVDf",
+    "--cas.google-recaptcha.secret=7Let09ISAAAAAIwdE2YXEQ3k4BBRmfGabOQpA3ka",
+    "--cas.google-recaptcha.version=GOOGLE_RECAPTCHA_V2",
+    "--cas.google-recaptcha.invisible=true"
+  ]
+}

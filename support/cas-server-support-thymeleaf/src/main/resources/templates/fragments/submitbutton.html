@@ -25,7 +25,7 @@
 
         <span th:unless="${recaptchaSiteKey == null}">
              <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}">
-                <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
+                <button th:unless="${recaptchaInvisible != null AND recaptchaInvisible}"
                         class="mdc-button mdc-button--raised"
                         name="submit"
                         accesskey="l"
@@ -33,8 +33,8 @@
                         value="Login3">
                     <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
                 </button>
-                <button th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                        class="mdc-button mdc-button--raised"
+                <button th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
+                        class="mdc-button mdc-button--raised g-recaptcha"
                         th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                         data-callback="onRecaptchaV2Submit"
                         name="submitBtn"
@@ -45,7 +45,6 @@
 
             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}">
                 <button class="mdc-button mdc-button--raised"
-                        th:if="${recaptchaSiteKey != null}"
                         name="submit"
                         th:attr="data-sitekey=${recaptchaSiteKey}"
                         accesskey="l"
@@ -74,5 +73,3 @@
 </body>
 
 </html>
-
-
