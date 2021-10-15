@@ -608,7 +608,7 @@ public class CollectionUtils {
         addToCollection(list, source);
         return list;
     }
-    
+
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
         if (source != null) {
             Arrays.stream(source).forEach(s -> {
@@ -616,5 +616,17 @@ public class CollectionUtils {
                 list.addAll((Collection) col);
             });
         }
+    }
+
+    /**
+     * Merge map.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, Object> merge(final Map<String, ?>... attributes) {
+        val result = new LinkedHashMap<String, Object>();
+        Arrays.stream(attributes).forEach(result::putAll);
+        return result;
     }
 }

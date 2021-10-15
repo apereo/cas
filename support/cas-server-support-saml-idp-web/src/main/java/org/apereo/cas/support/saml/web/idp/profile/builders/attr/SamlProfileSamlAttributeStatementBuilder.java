@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.util.Saml20AttributeBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,7 +23,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -79,21 +79,20 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     public AttributeStatement build(final RequestAbstractType authnRequest,
                                     final HttpServletRequest request,
                                     final HttpServletResponse response,
-                                    final Object casAssertion,
+                                    final AuthenticatedAssertionContext assertion,
                                     final SamlRegisteredService registeredService,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                     final String binding,
                                     final MessageContext messageContext) throws SamlException {
-        val assertion = Assertion.class.cast(casAssertion);
+
         val attributes = new HashMap<>(assertion.getAttributes());
-        attributes.putAll(assertion.getPrincipal().getAttributes());
 
         val webApplicationService = serviceFactory.createService(adaptor.getEntityId(), WebApplicationService.class);
         val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, registeredService, webApplicationService);
 
         val attrBuilder = new SamlProfileSamlRegisteredServiceAttributeBuilder(registeredService, adaptor, samlObjectEncrypter);
         return newAttributeStatement(authnRequest, request, response,
-            casAssertion, registeredService, adaptor, binding,
+            assertion, registeredService, adaptor, binding,
             messageContext, encodedAttrs, attrBuilder);
     }
 
@@ -115,7 +114,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     public AttributeStatement newAttributeStatement(final RequestAbstractType authnRequest,
                                                     final HttpServletRequest request,
                                                     final HttpServletResponse response,
-                                                    final Object casAssertion,
+                                                    final AuthenticatedAssertionContext casAssertion,
                                                     final SamlRegisteredService samlRegisteredService,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final String binding,

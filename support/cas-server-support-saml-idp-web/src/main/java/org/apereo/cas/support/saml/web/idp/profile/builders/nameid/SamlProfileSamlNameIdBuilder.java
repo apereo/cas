@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -14,7 +15,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -128,7 +128,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     public NameID build(final RequestAbstractType authnRequest,
                         final HttpServletRequest request,
                         final HttpServletResponse response,
-                        final Object assertion,
+                        final AuthenticatedAssertionContext assertion,
                         final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final String binding,
@@ -150,7 +150,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @throws SamlException the saml exception
      */
     protected NameID buildNameId(final RequestAbstractType authnRequest,
-                                 final Object assertion,
+                                 final AuthenticatedAssertionContext assertion,
                                  final SamlRegisteredService service,
                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                  final MessageContext messageContext) throws SamlException {
@@ -174,7 +174,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected NameID finalizeNameId(final NameID nameid,
                                     final RequestAbstractType authnRequest,
-                                    final Object assertion,
+                                    final AuthenticatedAssertionContext assertion,
                                     final List<String> supportedNameFormats,
                                     final SamlRegisteredService service,
                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -226,7 +226,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @return the name id
      */
     protected NameID determineNameId(final RequestAbstractType authnRequest,
-                                     final Object assertion,
+                                     final AuthenticatedAssertionContext assertion,
                                      final List<String> supportedNameFormats,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -253,7 +253,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @return the name id
      */
     protected NameID encodeNameIdBasedOnNameFormat(final RequestAbstractType authnRequest,
-                                                   final Object assertion,
+                                                   final AuthenticatedAssertionContext assertion,
                                                    final String nameFormat,
                                                    final SamlRegisteredService service,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
@@ -283,21 +283,18 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     /**
      * Prepare name id attribute idp attribute.
      *
-     * @param casAssertion      the assertion
+     * @param assertion         the assertion
      * @param nameFormat        the name format
      * @param adaptor           the adaptor
      * @param registeredService the registered service
      * @return the idp attribute
      */
-    protected String prepareNameIdAttribute(final Object casAssertion,
+    protected String prepareNameIdAttribute(final AuthenticatedAssertionContext assertion,
                                             final String nameFormat,
                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                             final SamlRegisteredService registeredService) {
-        val assertion = Assertion.class.cast(casAssertion);
-        val principalName = assertion.getPrincipal().getName();
-        LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
-
-        val nameIdValue = getNameIdValueFromNameFormat(nameFormat, adaptor, principalName, registeredService);
+        LOGGER.debug("Preparing NameID attribute for principal [{}]", assertion.getName());
+        val nameIdValue = getNameIdValueFromNameFormat(nameFormat, adaptor, assertion.getName(), registeredService);
         LOGGER.debug("NameID attribute value is set to [{}]", nameIdValue);
         return nameIdValue;
     }

@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.InetAddressUtils;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -55,7 +55,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     public AuthnStatement build(final RequestAbstractType authnRequest,
                                 final HttpServletRequest request,
                                 final HttpServletResponse response,
-                                final Object assertion,
+                                final AuthenticatedAssertionContext assertion,
                                 final SamlRegisteredService service,
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                 final String binding,
@@ -74,7 +74,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return the subject locality
      * @throws SamlException the saml exception
      */
-    protected SubjectLocality buildSubjectLocality(final Assertion assertion,
+    protected SubjectLocality buildSubjectLocality(final AuthenticatedAssertionContext assertion,
                                                    final RequestAbstractType authnRequest,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                    final String binding,
@@ -101,30 +101,31 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @return constructed authentication statement
      * @throws SamlException the saml exception
      */
-    private AuthnStatement buildAuthnStatement(final Object casAssertion,
+    private AuthnStatement buildAuthnStatement(final AuthenticatedAssertionContext casAssertion,
                                                final RequestAbstractType authnRequest,
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                final SamlRegisteredService service,
                                                final String binding,
                                                final HttpServletRequest request) throws SamlException {
 
-        val assertion = Assertion.class.cast(casAssertion);
-        val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        var id = request != null ? CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
+        val authenticationMethod = authnContextClassRefBuilder.build(casAssertion, authnRequest, adaptor, service);
+        var id = request != null ? CommonUtils.safeGetParameter(request,
+            CasProtocolConstants.PARAMETER_TICKET) : StringUtils.EMPTY;
         if (StringUtils.isBlank(id)) {
             LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
         }
-        val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
-        if (assertion.getValidUntilDate() != null) {
-            val dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
+        val statement = newAuthnStatement(authenticationMethod,
+            DateTimeUtils.zonedDateTimeOf(casAssertion.getAuthenticationDate()), id);
+        if (casAssertion.getValidUntilDate() != null) {
+            val dt = DateTimeUtils.zonedDateTimeOf(casAssertion.getValidUntilDate());
 
             val skewAllowance = service.getSkewAllowance() > 0
                 ? service.getSkewAllowance()
                 : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
-        val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
+        val subjectLocality = buildSubjectLocality(casAssertion, authnRequest, adaptor, binding, service);
         statement.setSubjectLocality(subjectLocality);
         return statement;
     }

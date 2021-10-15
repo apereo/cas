@@ -39,7 +39,7 @@ public interface SamlProfileObjectBuilder<T extends XMLObject> {
     T build(RequestAbstractType authnRequest,
             HttpServletRequest request,
             HttpServletResponse response,
-            Object assertion,
+            AuthenticatedAssertionContext assertion,
             SamlRegisteredService service,
             SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
             String binding,

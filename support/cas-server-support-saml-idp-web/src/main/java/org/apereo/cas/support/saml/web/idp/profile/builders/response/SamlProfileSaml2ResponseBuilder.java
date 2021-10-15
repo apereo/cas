@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
@@ -54,7 +55,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     @Override
     @SneakyThrows
     public Response buildResponse(final Assertion assertion,
-                                  final Object casAssertion,
+                                  final AuthenticatedAssertionContext casAssertion,
                                   final RequestAbstractType authnRequest,
                                   final SamlRegisteredService service,
                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -123,7 +124,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String relayState,
                               final String binding,
                               final RequestAbstractType authnRequest,
-                              final Object assertion,
+                              final AuthenticatedAssertionContext assertion,
                               final MessageContext messageContext) throws SamlException {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
         val configContext = getConfigurationContext();

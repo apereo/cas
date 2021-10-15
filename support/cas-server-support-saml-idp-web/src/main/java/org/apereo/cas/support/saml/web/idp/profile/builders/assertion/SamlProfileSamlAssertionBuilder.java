@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredSer
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
@@ -78,7 +79,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     public Assertion build(final RequestAbstractType authnRequest,
                            final HttpServletRequest request,
                            final HttpServletResponse response,
-                           final Object casAssertion,
+                           final AuthenticatedAssertionContext casAssertion,
                            final SamlRegisteredService service,
                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                            final String binding,
