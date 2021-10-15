@@ -13,28 +13,27 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div th:fragment="recaptchaToken">
-            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}" th:remove="tag">
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}" th:remove="tag">
                 <script src="//www.google.com/recaptcha/api.js"></script>
+                <script type="text/javascript"
+                        th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
+                        th:inline="javascript">
+                    function onRecaptchaV2Submit(token) {
+                        document.getElementById('fm1').submit();
+                    }
+                </script>
                 <section id="recaptchaV2Section"
                          class="form-group"
-                         th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND !recaptchaInvisible}">
-                    <div id="g-recaptcha" class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
-
-                    <script type="text/javascript"
-                            th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                            th:inline="javascript">
-                        function onRecaptchaV2Submit(token) {
-                            document.getElementById('fm1').submit();
-                        }
-                    </script>
+                         th:unless="${recaptchaInvisible != null AND recaptchaInvisible}">
+                    <div id="g-recaptcha" class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
             </span>
             
-            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}" id="recaptchaV3Section">
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}" id="recaptchaV3Section">
                 <script th:src="${'//www.google.com/recaptcha/api.js?render=' + recaptchaSiteKey}"></script>
                 <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
 
-                <script type="text/javascript" th:if="${recaptchaSiteKey != null}" th:inline="javascript">
+                <script type="text/javascript" th:inline="javascript">
                     grecaptcha.ready(function () {
                         grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
                             .then(function (token) {
@@ -44,19 +43,14 @@
                 </script>
             </span>
 
-            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
                 <script src="//hcaptcha.com/1/api.js" async defer></script>
                 <section id="hcaptchaSection" class="form-group">
                     <div class="h-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
             </span>
-            
-            <br/>
         </div>
     </main>
 </body>
 
 </html>
-
-
-
