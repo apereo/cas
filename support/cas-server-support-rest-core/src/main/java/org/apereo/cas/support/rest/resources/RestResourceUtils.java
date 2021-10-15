@@ -14,6 +14,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +71,7 @@ public class RestResourceUtils {
             return new ResponseEntity<>(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
         } catch (final JsonProcessingException exception) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -78,7 +79,8 @@ public class RestResourceUtils {
                                                 final HttpServletRequest request,
                                                 final ApplicationContext applicationContext,
                                                 final Throwable ex) {
-        val authnMsg = StringUtils.defaultIfBlank(ex.getMessage(), "Authentication Failure: " + authnhandlerErrors.getMessage());
+        val authnMsg = StringUtils.defaultIfBlank(StringEscapeUtils.escapeHtml4(ex.getMessage()),
+            "Authentication Failure: " + authnhandlerErrors.getMessage());
         val authnBundleMsg = getTranslatedMessageForExceptionClass(ex.getClass().getSimpleName(), request, applicationContext);
         return String.format("%s:%s", authnMsg, authnBundleMsg);
     }
