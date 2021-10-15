@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -154,6 +155,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @Configuration("casSimpleMultifactorTrustConfiguration")
+    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.simple")
     public class CasSimpleMultifactorTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTrustWebflowConfigurer")
