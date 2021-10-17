@@ -26,8 +26,7 @@ buildscript {
         classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "com.github.jengelman.gradle.plugins:shadow:$gradleShadowVersion"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$gradleNexusStagingVersion"
-        classpath "de.marcphilipp.gradle:nexus-publish-plugin:$gradleNexusPublishingVersion"
+        classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
     }
 }
 
@@ -78,14 +77,23 @@ def isArtifactSigningRequired = {
     return publishReleases && !skipArtifactSigning
 }
 
-apply plugin: "io.codearte.nexus-staging"
-nexusStaging {
-    username = "${repositoryUsername}"
-    password = "${repositoryPassword}"
+apply plugin: "io.github.gradle-nexus.publish-plugin"
+nexusPublishing {
     packageGroup = "org.apereo"
-    stagingProfileId = "11d1ddbbdeae9d"
-    numberOfRetries = 60
-    delayBetweenRetriesInMillis = 60000
+    repositories {
+        sonatype {
+            stagingProfileId = "11d1ddbbdeae9d"
+            username = "${repositoryUsername}"
+            password = "${repositoryPassword}"
+        }
+    }
+    
+    clientTimeout = java.time.Duration.ofSeconds(120)
+    connectTimeout = java.time.Duration.ofSeconds(120)
+    transitionCheckOptions {
+        maxRetries.set(60)
+        delayBetween.set(java.time.Duration.ofMillis(60000))
+    }
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
