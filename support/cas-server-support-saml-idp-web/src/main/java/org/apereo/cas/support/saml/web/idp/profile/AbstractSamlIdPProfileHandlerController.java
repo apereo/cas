@@ -195,11 +195,14 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .resolveUsername(authentication.getPrincipal(), service, registeredService);
         attributes.putAll(attributesToCombine);
 
+        val authnAttributes = configurationContext.getAuthenticationAttributeReleasePolicy()
+            .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
+
         return AuthenticatedAssertionContext.builder()
             .name(principalId)
             .authenticationDate(DateTimeUtils.zonedDateTimeOf(authentication.getAuthenticationDate()))
             .validFromDate(DateTimeUtils.zonedDateTimeOf(authentication.getAuthenticationDate()))
-            .attributes(CollectionUtils.merge(attributes, authentication.getAttributes()))
+            .attributes(CollectionUtils.merge(attributes, authnAttributes))
             .build();
     }
 

@@ -62,15 +62,16 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
                 CollectionUtils.wrap(authentication.getAuthenticationDate()));
         }
 
-        if (assertion != null) {
-            if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
-                attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                    CollectionUtils.wrap(assertion.isFromNewLogin()));
-            }
-            if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
-                attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                    CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion)));
-            }
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
+            val forceAuthn = (assertion != null && assertion.isFromNewLogin())
+                             || authentication.getAttributes().containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
+            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, CollectionUtils.wrap(forceAuthn));
+        }
+        
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
+            val rememberMe = (assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion))
+                || authentication.getAttributes().containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
+            attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
         }
 
         if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
@@ -96,7 +97,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      */
     protected boolean isAttributeAllowedForRelease(final String attributeName) {
         return !this.neverReleaseAttributes.contains(attributeName)
-            && (this.onlyReleaseAttributes.isEmpty() || this.onlyReleaseAttributes.contains(attributeName));
+               && (this.onlyReleaseAttributes.isEmpty() || this.onlyReleaseAttributes.contains(attributeName));
     }
 
     /**
