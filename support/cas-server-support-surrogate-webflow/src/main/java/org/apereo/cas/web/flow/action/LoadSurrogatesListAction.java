@@ -62,8 +62,8 @@ public class LoadSurrogatesListAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
-            if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
-                WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
+            if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
+                WebUtils.removeSurrogateAuthenticationRequest(requestContext);
                 LOGGER.trace("Attempting to load surrogates...");
                 if (loadSurrogates(requestContext)) {
                     return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
@@ -76,7 +76,8 @@ public class LoadSurrogatesListAction extends AbstractAction {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val credential = (SurrogateUsernamePasswordCredential) currentCredential;
                 val registeredService = WebUtils.getRegisteredService(requestContext);
-                val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, currentCredential,
+                val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
+                    authenticationResultBuilder, currentCredential,
                     credential.getSurrogateUsername(), registeredService);
                 result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
             }

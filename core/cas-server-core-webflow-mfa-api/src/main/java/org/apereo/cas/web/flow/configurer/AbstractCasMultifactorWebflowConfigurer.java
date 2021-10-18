@@ -54,12 +54,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private final List<CasMultifactorWebflowCustomizer> multifactorAuthenticationFlowCustomizers = new ArrayList<>();
 
-    protected AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                      final ConfigurableApplicationContext applicationContext,
-                                                      final CasConfigurationProperties casProperties,
-                                                      final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
-                                                      final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    protected AbstractCasMultifactorWebflowConfigurer(
+        final FlowBuilderServices flowBuilderServices,
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         this(flowBuilderServices,
             loginFlowDefinitionRegistry,
             applicationContext,
@@ -68,12 +69,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             mfaFlowCustomizers);
     }
 
-    private AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                    final ConfigurableApplicationContext applicationContext,
-                                                    final CasConfigurationProperties casProperties,
-                                                    final List<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
-                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    private AbstractCasMultifactorWebflowConfigurer(
+        final FlowBuilderServices flowBuilderServices,
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final List<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
         multifactorAuthenticationFlowDefinitionRegistries.addAll(mfaFlowDefinitionRegistry);
@@ -113,16 +115,28 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             registerMultifactorProviderFailureAction(flow, mfaFlow);
 
             val subflowState = createSubflowState(flow, subflowId, subflowId);
-            val subflowMappings = Stream.of(CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+            val subflowMappings = Stream.of(
+                    CasWebflowConstants.ATTRIBUTE_SERVICE,
+                    CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
                 .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
                 .collect(Collectors.toList());
+            subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
+                createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+            multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
             val inputMapper = createMapperToSubflowState(subflowMappings);
             val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
             subflowState.setAttributeMapper(subflowMapper);
 
-            val flowMappings = Stream.of(CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+            val flowMappings = Stream.of(
+                    CasWebflowConstants.ATTRIBUTE_SERVICE,
+                    CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
                 .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
                 .collect(Collectors.toList());
+            flowMappings.add(new DefaultMapping(createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)),
+                createExpression("flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+            multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
             val flowInputMapper = createMapperToSubflowState(flowMappings);
             mfaFlow.setInputMapper(flowInputMapper);
 

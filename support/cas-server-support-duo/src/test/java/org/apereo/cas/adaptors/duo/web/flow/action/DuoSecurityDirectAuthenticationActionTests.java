@@ -36,9 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseDuoSecurityTests.SharedTestConfiguration.class
 },
     properties = {
-        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-        "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-secret-key=Q2IU2i8BFNd6VYflZT8Evl6lF7oPlj3PM15BmRU7",
+        "cas.authn.mfa.duo[0].duo-integration-key=DIOXVRZD2UMZ8XXMNFQ5",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

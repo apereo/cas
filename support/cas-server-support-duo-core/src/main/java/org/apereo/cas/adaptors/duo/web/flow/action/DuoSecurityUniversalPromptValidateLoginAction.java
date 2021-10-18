@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -18,8 +19,11 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Map;
 
 /**
  * This is {@link DuoSecurityUniversalPromptPrepareLoginAction}.
@@ -40,10 +44,11 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    public DuoSecurityUniversalPromptValidateLoginAction(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-                                                         final CentralAuthenticationService centralAuthenticationService,
-                                                         final MultifactorAuthenticationProviderBean duoProviderBean,
-                                                         final AuthenticationSystemSupport authenticationSystemSupport) {
+    public DuoSecurityUniversalPromptValidateLoginAction(
+        final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
+        final CentralAuthenticationService centralAuthenticationService,
+        final MultifactorAuthenticationProviderBean duoProviderBean,
+        final AuthenticationSystemSupport authenticationSystemSupport) {
         super(duoAuthenticationWebflowEventResolver);
         this.centralAuthenticationService = centralAuthenticationService;
         this.duoProviderBean = duoProviderBean;
@@ -56,9 +61,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
             val duoState = requestParameters.get(REQUEST_PARAMETER_STATE, String.class);
             LOGGER.trace("Received Duo Security state [{}]", duoState);
+            var ticket = (TransientSessionTicket) null;
             try {
-                val ticket = centralAuthenticationService.getTicket(duoState, TransientSessionTicket.class);
-                val authentication = ticket.getProperty("authentication", Authentication.class);
+                ticket = centralAuthenticationService.getTicket(duoState, TransientSessionTicket.class);
+                val authentication = ticket.getProperty(Authentication.class.getSimpleName(), Authentication.class);
                 populateContextWithCredential(requestContext, ticket, authentication);
                 populateContextWithAuthentication(requestContext, ticket);
                 populateContextWithService(requestContext, ticket);
@@ -67,6 +73,12 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 LoggingUtils.warn(LOGGER, e);
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
             } finally {
+                if (ticket != null) {
+                    val flowScope = ticket.getProperty(MutableAttributeMap.class.getSimpleName(), Map.class);
+                    flowScope.forEach((key, value) -> requestContext.getFlowScope().put(key.toString(), value));
+                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
+                    WebUtils.putCredential(requestContext, credential);
+                }
                 centralAuthenticationService.deleteTicket(duoState);
             }
         }
@@ -80,7 +92,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
      * @param ticket         the ticket
      */
     protected void populateContextWithService(final RequestContext requestContext, final TransientSessionTicket ticket) {
-        val registeredService = ticket.getProperty("registeredService", RegisteredService.class);
+        val registeredService = ticket.getProperty(RegisteredService.class.getSimpleName(), RegisteredService.class);
         WebUtils.putRegisteredService(requestContext, registeredService);
         WebUtils.putServiceIntoFlowScope(requestContext, ticket.getService());
     }
@@ -112,7 +124,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
      * @param ticket         the ticket
      */
     protected void populateContextWithAuthentication(final RequestContext requestContext, final TransientSessionTicket ticket) {
-        val authenticationResultBuilder = ticket.getProperty("authenticationResultBuilder", AuthenticationResultBuilder.class);
+        val authenticationResultBuilder = ticket.getProperty(AuthenticationResultBuilder.class.getSimpleName(),
+            AuthenticationResultBuilder.class);
         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
         val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
