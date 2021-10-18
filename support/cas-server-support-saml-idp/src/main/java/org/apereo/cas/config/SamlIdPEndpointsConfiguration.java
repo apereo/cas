@@ -133,6 +133,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
@@ -181,6 +183,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("ssoPostProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -214,6 +217,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SSOSamlIdPPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
@@ -262,6 +267,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("ssoPostSimpleSignProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -295,6 +301,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SLOSamlIdPRedirectProfileHandlerController sloRedirectProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
@@ -343,6 +351,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("sloRedirectProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -375,6 +384,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SLOSamlIdPPostProfileHandlerController sloPostProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
             @Qualifier("samlObjectSigner")
@@ -423,6 +434,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("sloPostProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -455,6 +467,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPObjectSignatureValidator")
             final SamlObjectSignatureValidator samlIdPObjectSignatureValidator,
             final CasConfigurationProperties casProperties,
@@ -503,6 +517,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlObjectSignatureValidator")
             final SamlObjectSignatureValidator samlObjectSignatureValidator) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -535,6 +550,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SSOSamlIdPProfileCallbackHandlerController ssoPostProfileCallbackHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
@@ -581,6 +598,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -612,6 +630,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public ECPSamlIdPProfileHandlerController ecpProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder,
@@ -662,6 +682,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -695,6 +716,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlIdPSaml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder,
             final CasConfigurationProperties casProperties,
@@ -745,6 +768,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -779,6 +803,8 @@ public class SamlIdPEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController(
+            @Qualifier("authenticationAttributeReleasePolicy")
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
             final CasConfigurationProperties casProperties,
@@ -829,6 +855,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileHandlerConfigurationContext.builder()
+                .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
@@ -867,7 +894,8 @@ public class SamlIdPEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
         @Autowired
-        public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
+        public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn()
                 .getSamlIdp()
                 .getProfile()
@@ -878,11 +906,11 @@ public class SamlIdPEndpointsConfiguration {
             return decoders;
         }
 
-
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
         @Autowired
-        public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
+        public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
             val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
@@ -910,7 +938,6 @@ public class SamlIdPEndpointsConfiguration {
         }
 
     }
-
 
     @Configuration(value = "SamlIdPEndpointsLogoutResponseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -992,7 +1019,6 @@ public class SamlIdPEndpointsConfiguration {
                 .build();
             return new SamlIdPSingleLogoutRedirectionStrategy(context);
         }
-
     }
 
     @Configuration(value = "SamlIdPEndpointLogoutConfiguration", proxyBeanMethods = false)
@@ -1052,7 +1078,7 @@ public class SamlIdPEndpointsConfiguration {
             return new SamlIdPLogoutResponseObjectBuilder(openSamlConfigBean);
         }
     }
-    
+
     @Configuration(value = "SamlIdPEndpointsLogoutExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPEndpointsLogoutExecutionConfiguration {

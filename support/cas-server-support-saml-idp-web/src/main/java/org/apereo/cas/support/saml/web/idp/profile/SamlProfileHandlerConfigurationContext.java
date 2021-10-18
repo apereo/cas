@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
@@ -91,4 +92,6 @@ public class SamlProfileHandlerConfigurationContext {
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 }
