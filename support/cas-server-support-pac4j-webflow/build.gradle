@@ -31,8 +31,8 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.apachevelocity
     implementation libraries.dropwizard
-    
-    compileOnly libraries.hazelcast
+
+    compileOnlyApi libraries.hazelcast
 
     testImplementation libraries.hazelcast
     

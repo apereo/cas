@@ -26,19 +26,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
-                properties = {
-                    "management.endpoint.duoAdmin.enabled=true",
-                    "management.endpoints.web.exposure.include=*",
+    properties = {
+        "management.endpoint.duoAdmin.enabled=true",
+        "management.endpoints.web.exposure.include=*",
 
-                    "cas.authn.mfa.duo[0].duo-admin-secret-key=${#systemProperties['DUO_SECURITY_ADMIN_SKEY']}",
-                    "cas.authn.mfa.duo[0].duo-admin-integration-key=${#systemProperties['DUO_SECURITY_ADMIN_IKEY']}",
-                    "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-                    "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-                    "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
-                    "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com",
-                    "cas.authn.mfa.duo[0].trusted-device-enabled=true",
-                    "cas.authn.mfa.trusted.core.device-registration-enabled=true"
-                })
+        "cas.authn.mfa.duo[0].duo-admin-secret-key=${#systemProperties['DUO_SECURITY_ADMIN_SKEY']}",
+        "cas.authn.mfa.duo[0].duo-admin-integration-key=${#systemProperties['DUO_SECURITY_ADMIN_IKEY']}",
+        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
+        "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
+        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com",
+        "cas.authn.mfa.duo[0].trusted-device-enabled=true",
+        "cas.authn.mfa.trusted.core.device-registration-enabled=true"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowMfaConfig")
 public class DuoSecurityMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
