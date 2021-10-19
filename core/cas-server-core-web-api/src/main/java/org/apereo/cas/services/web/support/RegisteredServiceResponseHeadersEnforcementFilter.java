@@ -206,6 +206,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
             val registeredService = this.servicesManager.findServiceBy(resolved);
             val audit = AuditableContext.builder()
                 .registeredService(registeredService)
+                .service(service)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();

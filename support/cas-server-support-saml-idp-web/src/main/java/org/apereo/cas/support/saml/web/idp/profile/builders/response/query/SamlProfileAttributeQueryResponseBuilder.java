@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 
@@ -28,13 +29,16 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 
-    public SamlProfileAttributeQueryResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+    public SamlProfileAttributeQueryResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
-    public Envelope build(final RequestAbstractType authnRequest, final HttpServletRequest request,
-                          final HttpServletResponse response, final Object casAssertion, final SamlRegisteredService service,
+    public Envelope build(final RequestAbstractType authnRequest,
+                          final HttpServletRequest request,
+                          final HttpServletResponse response,
+                          final AuthenticatedAssertionContext casAssertion,
+                          final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding,
                           final MessageContext messageContext) throws SamlException {

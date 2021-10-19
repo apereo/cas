@@ -5,6 +5,9 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -13,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.JEEContext;
@@ -104,15 +106,24 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         return null;
     }
 
-    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-                                                          final HttpServletRequest request,
-                                                          final Pair<? extends RequestAbstractType, MessageContext> authnContext) throws Exception {
+    private AuthenticatedAssertionContext validateRequestAndBuildCasAssertion(
+        final HttpServletResponse response,
+        final HttpServletRequest request,
+        final Pair<? extends RequestAbstractType, MessageContext> authnContext)
+        throws Exception {
+
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val validator = getConfigurationContext().getTicketValidator();
         val serviceUrl = constructServiceUrl(request, response, authnContext);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         val assertion = validator.validate(ticket, serviceUrl);
         logCasValidationAssertion(assertion);
-        return assertion;
+        return AuthenticatedAssertionContext.builder()
+            .name(assertion.getPrincipal().getName())
+            .authenticationDate(DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()))
+            .validFromDate(DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate()))
+            .validUntilDate(DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate()))
+            .attributes(CollectionUtils.merge(assertion.getAttributes(), assertion.getPrincipal().getAttributes()))
+            .build();
     }
 }

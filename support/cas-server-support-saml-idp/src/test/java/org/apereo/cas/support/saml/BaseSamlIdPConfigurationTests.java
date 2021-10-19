@@ -48,12 +48,12 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
@@ -68,9 +68,6 @@ import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -98,7 +95,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -207,11 +204,15 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
     protected ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
 
-    protected static Assertion getAssertion() {
+    protected static AuthenticatedAssertionContext getAssertion() {
         return getAssertion(Map.of());
     }
 
-    protected static Assertion getAssertion(final Map<String, Object> attrs) {
+    protected static AuthenticatedAssertionContext getAssertion(final Map<String, Object> attrs) {
+        return getAssertion("casuser", attrs);
+    }
+
+    protected static AuthenticatedAssertionContext getAssertion(final String user, final Map<String, Object> attrs) {
         val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
         attributes.putAll(attrs);
 
@@ -219,11 +220,13 @@ public abstract class BaseSamlIdPConfigurationTests {
         permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
         attributes.put("permissions", permissions);
-        val casuser = new AttributePrincipalImpl("casuser", attributes);
-        return new AssertionImpl(casuser, DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC())),
-            DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)),
-            DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC())),
-            attributes);
+        return AuthenticatedAssertionContext.builder()
+            .name(user)
+            .authenticationDate(ZonedDateTime.now(Clock.systemUTC()))
+            .validUntilDate(ZonedDateTime.now(Clock.systemUTC()).plusDays(1))
+            .validFromDate(ZonedDateTime.now(Clock.systemUTC()))
+            .attributes(attributes)
+            .build();
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {

@@ -38,14 +38,15 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
     private String registrationAuthority;
 
     @Override
-    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                              final SamlRegisteredService registeredService,
-                                                                              final ApplicationContext applicationContext,
-                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                              final EntityDescriptor entityDescriptor,
-                                                                              final Principal principal,
-                                                                              final Service selectedService) {
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
+        final Map<String, List<Object>> attributes,
+        final SamlRegisteredService registeredService,
+        final ApplicationContext applicationContext,
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final EntityDescriptor entityDescriptor,
+        final Principal principal,
+        final Service selectedService) {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElse(List.of());
 
