@@ -261,7 +261,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             ? expirationPolicy.getTimeToLive((TicketState) ticket)
             : expirationPolicy.getTimeToLive();
 
-        if (ttl < 1) {
+        if (ttl < 1 || ttl == Long.MAX_VALUE) {
             return null;
         }
         val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
