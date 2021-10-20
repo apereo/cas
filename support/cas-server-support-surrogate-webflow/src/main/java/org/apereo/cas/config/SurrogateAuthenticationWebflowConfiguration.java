@@ -93,7 +93,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         }
     }
 
-
     @Configuration(value = "SurrogateAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationWebflowActionConfiguration {
