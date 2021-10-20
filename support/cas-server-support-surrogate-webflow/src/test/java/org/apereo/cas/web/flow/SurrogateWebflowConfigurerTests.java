@@ -74,10 +74,6 @@ public class SurrogateWebflowConfigurerTests {
     @Import(SurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
     public class DefaultTests extends BaseWebflowConfigurerTests {
 
-        @Autowired
-        @Qualifier("surrogateCasMultifactorWebflowCustomizer")
-        private CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer;
-
         @Test
         public void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
@@ -89,9 +85,6 @@ public class SurrogateWebflowConfigurerTests {
             assertNotNull(state);
             state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SURROGATE_VIEW);
             assertNotNull(state);
-
-            val mappings = surrogateCasMultifactorWebflowCustomizer.getMultifactorWebflowAttributeMappings();
-            assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
         }
     }
 
@@ -114,14 +107,21 @@ public class SurrogateWebflowConfigurerTests {
         @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         private CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer;
 
+        @Autowired
+        @Qualifier("surrogateCasMultifactorWebflowCustomizer")
+        private CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer;
+
         @Test
         public void verifyOperation() {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
-
+            assertNotNull(surrogateCasMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
+
+            val mappings = surrogateCasMultifactorWebflowCustomizer.getMultifactorWebflowAttributeMappings();
+            assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
         }
     }
 }
