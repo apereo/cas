@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
@@ -44,6 +45,8 @@ import org.pac4j.core.context.session.SessionStore;
 public class SamlProfileHandlerConfigurationContext {
 
     private final SamlIdPObjectSigner samlObjectSigner;
+
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
