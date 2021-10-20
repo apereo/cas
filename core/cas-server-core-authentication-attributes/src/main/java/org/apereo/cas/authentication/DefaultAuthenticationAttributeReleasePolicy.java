@@ -63,14 +63,21 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         }
 
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
-            val forceAuthn = (assertion != null && assertion.isFromNewLogin())
-                             || authentication.getAttributes().containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
+            var forceAuthn = assertion != null && assertion.isFromNewLogin();
+            if (!forceAuthn) {
+                val values = authentication.getAttributes().getOrDefault(
+                    CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, List.of(Boolean.FALSE));
+                forceAuthn = values.contains(Boolean.TRUE);
+            }
             attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, CollectionUtils.wrap(forceAuthn));
         }
-        
+
         if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
-            val rememberMe = (assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion))
-                || authentication.getAttributes().containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
+            var rememberMe = assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion);
+            if (!rememberMe) {
+                val values = authentication.getAttributes().getOrDefault(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, List.of(Boolean.FALSE));
+                rememberMe = values.contains(Boolean.TRUE);
+            }
             attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
         }
 
