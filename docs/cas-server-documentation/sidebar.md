@@ -512,6 +512,7 @@ layout: null
             *   [Attribute Value Types](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-ValueTypes.html)
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
+            *   [Attribute Query](/cas/{{ version }}/installation/Configuring-SAML2-AttributeQuery.html)
     *   [REST](#casrestprotocol)
         *   [Overview](/cas/{{ version }}/protocol/REST-Protocol.html)
         *   [Create Service](/cas/{{ version }}/protocol/REST-Protocol-Create-Service.html)
