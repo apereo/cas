@@ -29,6 +29,7 @@ import org.apereo.cas.support.saml.web.idp.profile.SamlIdPInitiatedProfileHandle
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.SamlIdPSaml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
@@ -137,6 +138,8 @@ public class SamlIdPEndpointsConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -185,6 +188,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -221,6 +225,8 @@ public class SamlIdPEndpointsConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -269,6 +275,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -305,6 +312,8 @@ public class SamlIdPEndpointsConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -353,6 +362,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -388,6 +398,8 @@ public class SamlIdPEndpointsConfiguration {
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -436,6 +448,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -474,6 +487,8 @@ public class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -519,6 +534,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -555,6 +571,8 @@ public class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -600,6 +618,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -639,6 +658,8 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11ResponseBuilder,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -684,6 +705,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -725,6 +747,8 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -770,6 +794,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -812,6 +837,8 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder,
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -857,6 +884,7 @@ public class SamlIdPEndpointsConfiguration {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)
@@ -949,6 +977,8 @@ public class SamlIdPEndpointsConfiguration {
         public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy(
             @Qualifier("samlIdPCallbackService")
             final Service samlIdPCallbackService,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlObjectSigner")
             final SamlIdPObjectSigner samlObjectSigner,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -994,6 +1024,7 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileHandlerConfigurationContext.builder()
                 .samlObjectSigner(samlObjectSigner)
+                .samlObjectEncrypter(samlObjectEncrypter)
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .webApplicationServiceFactory(samlIdPServiceFactory)

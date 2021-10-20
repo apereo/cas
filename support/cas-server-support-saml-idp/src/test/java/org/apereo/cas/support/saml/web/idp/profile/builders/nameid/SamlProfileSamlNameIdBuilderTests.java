@@ -152,7 +152,8 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
+        val request = new MockHttpServletRequest();
+        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, new MockHttpServletResponse(),
             getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
         assertNull(subject.getNameID());
         assertNotNull(subject.getEncryptedID());
@@ -160,6 +161,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val subjectConfirmation = subject.getSubjectConfirmations().get(0);
         assertNotNull(subjectConfirmation.getEncryptedID());
         assertNull(subjectConfirmation.getNameID());
+        assertNotNull(request.getAttribute(NameID.class.getName()));
     }
 
     @Test
