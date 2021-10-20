@@ -78,7 +78,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);
 
             LOGGER.trace("Final attributes for attribute query are [{}]", finalAttributes);
-            val casAssertion = buildCasAssertion(issuer, registeredService, finalAttributes);
+            val casAssertion = buildCasAssertion(principal.getId(), registeredService, finalAttributes);
             getConfigurationContext().getResponseBuilder().build(query, request, response, casAssertion,
                 registeredService, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
