@@ -76,7 +76,7 @@ jobs:
 
   ##########################################################################
 
-   publish-snapshots:
+  publish-snapshots:
      runs-on: ubuntu-latest
      needs: [cache]
      continue-on-error: false
