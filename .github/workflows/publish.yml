@@ -129,7 +129,7 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
       - name: Install Ruby gems
         run: gem install bundler
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
       - name: Publish Documentation
         run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
