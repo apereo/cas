@@ -108,7 +108,7 @@ public class CasServiceRegistryInitializationConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             val registry = casProperties.getServiceRegistry().getJson();
-            if (ResourceUtils.doesResourceExist(registry.getLocation())) {
+            if (registry.getLocation().exists()) {
                 LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
                 return registry.getLocation();
             }
