@@ -47,6 +47,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -127,7 +128,8 @@ public class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
         public TicketRegistry ticketRegistry(
-            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+            final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
@@ -135,7 +137,6 @@ public class CasCoreTicketsConfiguration {
             val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "in-memory");
 
             if (mem.isCache()) {
-                val logoutManager = applicationContext.getBean(LogoutManager.DEFAULT_BEAN_NAME, LogoutManager.class);
                 return new CachingTicketRegistry(cipher, logoutManager);
             }
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
