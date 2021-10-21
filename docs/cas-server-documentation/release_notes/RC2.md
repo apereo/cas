@@ -76,22 +76,44 @@ be added to ensure validity of as many combinations as possible.
 The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are 
 approximately `190` test scenarios and we'll continue to add more in the coming releases.
 
-## Groovy Access Strategy
+### Groovy Access Strategy
 
 Access strategy and authorization decision can be carried [using a Groovy script](../services/Configuring-Service-Access-Strategy.html) 
 for all services and applications.
+  
+### SAML2 Attribute Query
+              
+Various improvements to SAML2 attribute query requests:
+       
+- SAML2 attribute query responses are now encoded with the correct bindings and content type headers.
+- SAML2 subject `NameID`s should now correctly resolve for SAML2 attribute queries that contain encrypted `NameID` elements.
+- SAML2 attribute query tracking tokens now gain their own expiration policy in the CAS configuration schema.
+- The expiration policies of the SAML2 attribute query token and its linked ticket-granting ticket are now taken into account. 
+- Attributes released in response to an attribute query pass through relevant attribute release policies for the service provider.
 
 ## Other Stuff
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
 - Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
+- [Duo Security Universal Prompt](../mfa/DuoSecurity-Authentication.html) can 
+  handle [impersonation requests](../authentication/Surrogate-Authentication.html) that require user selection.
 
 ## Library Upgrades
             
 - Pac4j
 - Lombok
 - Okta SDK
+- Spring Data
+- PostgreSQL Driver
+- Infinispan
+- Micrometer
 - Hibernate
 - Bootstrap
 - Spring Boot
+- MySQL Driver
 - Amazon SDK
+- Twilio
+- Spring Security
+- Spring Session
+- Nimbus OIDC
+- 

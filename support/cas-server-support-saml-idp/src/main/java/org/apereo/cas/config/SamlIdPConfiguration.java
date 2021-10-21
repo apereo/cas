@@ -434,7 +434,8 @@ public class SamlIdPConfiguration {
             final PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
-            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator, casSamlIdPMetadataResolver);
+            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator,
+                casSamlIdPMetadataResolver);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlConditionsBuilder")
@@ -704,8 +705,11 @@ public class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public SamlIdPObjectEncrypter samlObjectEncrypter(final CasConfigurationProperties casProperties) {
-            return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp());
+        public SamlIdPObjectEncrypter samlObjectEncrypter(
+            @Qualifier("samlIdPMetadataLocator")
+            final SamlIdPMetadataLocator samlIdPMetadataLocator,
+            final CasConfigurationProperties casProperties) {
+            return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp(), samlIdPMetadataLocator);
         }
 
         @ConditionalOnMissingBean(name = SamlIdPObjectSigner.DEFAULT_BEAN_NAME)

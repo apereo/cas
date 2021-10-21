@@ -28,10 +28,11 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
     /**
      * Create ticket id.
      *
-     * @param id the artifact id
+     * @param id           the artifact id
+     * @param relyingParty the relying party
      * @return the string
      */
-    default String createTicketIdFor(final String id) {
-        return SamlAttributeQueryTicket.PREFIX + '-' + id;
+    default String createTicketIdFor(final String id, final String relyingParty) {
+        return SamlAttributeQueryTicket.PREFIX + '-' + id + '-' + relyingParty;
     }
 }

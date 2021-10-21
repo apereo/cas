@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.util.DirectObjectProvider;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
@@ -30,7 +31,7 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
-        return new CachingTicketRegistry(mock(LogoutManager.class));
+        return new CachingTicketRegistry(new DirectObjectProvider<>(mock(LogoutManager.class)));
     }
 
     @RepeatedTest(1)
@@ -38,14 +39,16 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
+                new CachingTicketRegistry(CipherExecutor.noOp(),
+                    new DirectObjectProvider<>(mock(LogoutManager.class)));
             }
         });
     }
 
     @RepeatedTest(1)
     public void verifyExpirationByTimeout() throws Exception {
-        val registry = new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
+        val registry = new CachingTicketRegistry(CipherExecutor.noOp(),
+            new DirectObjectProvider<>(mock(LogoutManager.class)));
         val ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "-12346", RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(1));
         registry.addTicket(ticket);
@@ -55,7 +58,8 @@ public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     public void verifyExpirationExplicit() throws Exception {
-        val registry = new CachingTicketRegistry(CipherExecutor.noOp(), mock(LogoutManager.class));
+        val registry = new CachingTicketRegistry(CipherExecutor.noOp(),
+            new DirectObjectProvider<>(mock(LogoutManager.class)));
         val ticket = new MockTicketGrantingTicket("casuser");
         registry.addTicket(ticket);
         Thread.sleep(1000);

@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.query;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import lombok.ToString;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
-public class SamlAttributeQueryTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlArtifactTicket> {
+public class SamlAttributeQueryTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<SamlAttributeQueryTicket> {
     private static final long serialVersionUID = -3597980180617072826L;
     /**
      * The Cas properties.
@@ -33,8 +32,8 @@ public class SamlAttributeQueryTicketExpirationPolicyBuilder implements Expirati
     }
 
     @Override
-    public Class<SamlArtifactTicket> getTicketType() {
-        return SamlArtifactTicket.class;
+    public Class<SamlAttributeQueryTicket> getTicketType() {
+        return SamlAttributeQueryTicket.class;
     }
 
     /**
@@ -43,7 +42,8 @@ public class SamlAttributeQueryTicketExpirationPolicyBuilder implements Expirati
      * @return the expiration policy
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
-        return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+        return new SamlAttributeQueryTicketExpirationPolicy(
+            casProperties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().getTimeToKillInSeconds());
     }
 }
 

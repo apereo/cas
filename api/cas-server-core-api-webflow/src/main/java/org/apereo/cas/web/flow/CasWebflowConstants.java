@@ -898,6 +898,31 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_VALIDATE_ACCOUNT_REGISTRATION_TOKEN = "validateAccountRegistrationToken";
 
+    /**
+     * State id 'determineDuoRequest'.
+     */
+    String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
+
+    /**
+     * State id 'viewLoginFormDuo'.
+     */
+    String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+
+    /**
+     * State id 'finalizeAuthentication'.
+     */
+    String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
+
+    /**
+     * State id 'determineDuoUserAccount'.
+     */
+    String STATE_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccount";
+
+    /**
+     * State id 'duoNonWebAuthentication'.
+     */
+    String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "duoNonWebAuthentication";
+
     /*
      ****************************************
      * Views.
@@ -1300,4 +1325,30 @@ public interface CasWebflowConstants {
      * Action id 'submitAccountRegistrationAction .
      */
     String ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT = "submitAccountRegistrationAction";
+
+    /**
+     * Action id 'determineDuoUserAccountAction .
+     */
+    String ACTION_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccountAction";
+
+    /**
+     * Action id 'checkWebAuthenticationRequestAction .
+     */
+    String ACTION_ID_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
+
+    /**
+     * Action id 'prepareDuoWebLoginFormAction .
+     */
+    String ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM_ACTION = "prepareDuoWebLoginFormAction";
+
+    /**
+     * Action id 'duoAuthenticationWebflowAction .
+     */
+    String ACTION_ID_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";
+
+    /**
+     * Action id 'duoNonWebAuthenticationAction .
+     */
+    String ACTION_ID_DUO_NON_WEB_AUTHENTICATION_ACTION = "duoNonWebAuthenticationAction";
+
 }
