@@ -62,15 +62,23 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
                 CollectionUtils.wrap(authentication.getAuthenticationDate()));
         }
 
-        if (assertion != null) {
-            if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
-                attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                    CollectionUtils.wrap(assertion.isFromNewLogin()));
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN)) {
+            var forceAuthn = assertion != null && assertion.isFromNewLogin();
+            if (!forceAuthn) {
+                val values = authentication.getAttributes().getOrDefault(
+                    CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, List.of(Boolean.FALSE));
+                forceAuthn = values.contains(Boolean.TRUE);
             }
-            if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
-                attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                    CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion)));
+            attrs.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, CollectionUtils.wrap(forceAuthn));
+        }
+
+        if (isAttributeAllowedForRelease(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME)) {
+            var rememberMe = assertion != null && CoreAuthenticationUtils.isRememberMeAuthentication(authentication, assertion);
+            if (!rememberMe) {
+                val values = authentication.getAttributes().getOrDefault(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, List.of(Boolean.FALSE));
+                rememberMe = values.contains(Boolean.TRUE);
             }
+            attrs.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, CollectionUtils.wrap(rememberMe));
         }
 
         if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
@@ -96,7 +104,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
      */
     protected boolean isAttributeAllowedForRelease(final String attributeName) {
         return !this.neverReleaseAttributes.contains(attributeName)
-            && (this.onlyReleaseAttributes.isEmpty() || this.onlyReleaseAttributes.contains(attributeName));
+               && (this.onlyReleaseAttributes.isEmpty() || this.onlyReleaseAttributes.contains(attributeName));
     }
 
     /**

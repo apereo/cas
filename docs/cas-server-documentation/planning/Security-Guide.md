@@ -18,6 +18,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [October 18 2021 Vulnerability Disclosure](https://apereo.github.io/2021/10/18/restvuln/)
 - [Feb 13 2021 Vulnerability Disclosure](https://apereo.github.io/2021/02/13/gauthvuln/)
 - [Oct 14 2020 Vulnerability Disclosure](https://apereo.github.io/2020/10/14/gauthvuln/)
 - [July 24 2020 Vulnerability Disclosure](https://apereo.github.io/2020/07/24/credvuln/)

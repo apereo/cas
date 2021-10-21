@@ -1,6 +1,6 @@
 description = "Apereo CAS X509 Webflow Support"
 dependencies {
-    compileOnly libraries.springboottomcat
+    compileOnlyApi libraries.springboottomcat
 
     api project(":api:cas-server-core-api-webflow")
     

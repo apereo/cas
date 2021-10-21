@@ -192,7 +192,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties,
+            return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
@@ -213,7 +214,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             return new DuoSecurityPrepareWebLoginFormAction();
         }
 
-        @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction() {
