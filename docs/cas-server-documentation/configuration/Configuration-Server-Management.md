@@ -76,8 +76,7 @@ override via <code>application.yml</code>, <code>application-standalone.properti
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
-{% include_cached casproperties.html 
-thirdPartyStartsWith="spring.cloud.config.override-system-properties,spring.cloud.config.allow-override,spring.cloud.config.override-none" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config" %}
 
 ### Spring Cloud
 
