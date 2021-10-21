@@ -168,6 +168,8 @@ public class SamlIdPObjectEncrypter {
      * Decode name id.
      *
      * @param encryptedId the encrypted id
+     * @param service     the service
+     * @param adaptor     the adaptor
      * @return the name id
      */
     public NameID decode(final EncryptedID encryptedId,

@@ -104,10 +104,16 @@ Various improvements to SAML2 attribute query requests:
 - Lombok
 - Okta SDK
 - Spring Data
-- PostgreSQL
+- PostgreSQL Driver
 - Infinispan
 - Micrometer
 - Hibernate
 - Bootstrap
 - Spring Boot
+- MySQL Driver
 - Amazon SDK
+- Twilio
+- Spring Security
+- Spring Session
+- Nimbus OIDC
+- 
