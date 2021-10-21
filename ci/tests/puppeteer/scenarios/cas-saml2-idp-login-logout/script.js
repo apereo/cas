@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
 
     await page.goto(`https://localhost:8443/cas/logout`);
-    await page.waitForTimeout(60000)
+    await page.waitForTimeout(5000);
     const content = await page.content();
     assert(content.includes('id="service1"'));
 
