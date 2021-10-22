@@ -101,7 +101,7 @@ public class SurrogateWebflowConfigurerTests {
         "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
-    public class DuoSecurityTests extends BaseWebflowConfigurerTests {
+    public class DuoSecurityUniversalPromptTests extends BaseWebflowConfigurerTests {
         @Autowired
         @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         private CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer;
@@ -121,6 +121,31 @@ public class SurrogateWebflowConfigurerTests {
 
             val mappings = surrogateCasMultifactorWebflowCustomizer.getMultifactorWebflowAttributeMappings();
             assertTrue(mappings.contains(WebUtils.REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE));
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @Import({
+        DuoSecurityTestConfiguration.class,
+        DuoSecurityConfiguration.class,
+        DuoSecurityAuthenticationEventExecutionPlanConfiguration.class,
+        DuoSecurityMultifactorProviderBypassConfiguration.class,
+        SurrogateWebflowConfigurerTests.SharedTestConfiguration.class
+    })
+    @TestPropertySource(properties = {
+        "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
+        "cas.authn.mfa.duo[0].application-key=my134nfd46m89",
+        "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
+        "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
+    })
+    @Deprecated(since = "6.5.0", forRemoval = true)
+    public class DuoSecurityWebSdkTests extends BaseWebflowConfigurerTests {
+        @Test
+        public void verifyOperation() {
+            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            var state = (TransitionableState) flow.getState("mfa-duo");
+            assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
         }
     }
 }

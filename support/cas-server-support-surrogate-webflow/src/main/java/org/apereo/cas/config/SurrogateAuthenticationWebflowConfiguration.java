@@ -172,15 +172,19 @@ public class SurrogateAuthenticationWebflowConfiguration {
             final CasWebflowConfigurer surrogateWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
         }
+    }
 
+    @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnDuoSecurityConfigured
+    public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @Bean
-        @ConditionalOnDuoSecurityConfigured
+        @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
         @Autowired
         public CasWebflowExecutionPlanConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer(
             @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
             final CasWebflowConfigurer surrogateWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
         }
-
     }
 }

@@ -17,6 +17,42 @@ in form of pull requests must pass all automated unit or integration tests, and/
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
 
+## Test Cases
+
+Primarily, there is two types of test cases in the project that CAS developers/contributors need to review:
+
+<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+If you are about to describe a problem, please try to put together a test case that concretely demonstrates
+the issue in an automated fashion in an environment that is fairly 
+isolated, <strong>WITHOUT</strong> manual instructions and guidance 
+as much as possible. Descriptive instructions and language
+to explain what one must manually do (i.e. go here, click there, wait 3 seconds, etc) in order 
+to reproduce an issue or environment are not as effective or
+acceptable as evidence of an issue, and may require a significant time and research investment to ultimately
+get to a root cause. Save yourself and everyone else time and headache,
+and put together automated, repeatable, verifiable <i>reproducers</i>.
+</p></div>
+
+### Unit Tests
+
+Unit tests are composed of small pieces of work or functionality that generally can be tested in isolation. They 
+are created as Java test classes, and individual test scenarios are typically annotated 
+with the `@Test` annotation and then executed by the test framework. 
+
+For example, a `src/main/java/Extractor.java` type of component would have 
+its test cases inside a `src/test/java/ExtractorTests.java` test class.
+
+In some scenarios unit tests also run a series of tests against databases, systems or APIs to verify functionality.
+For example, a `MongoDbTicketRegistry` type of component would require a MongoDb running instance and special markup
+and annotations to run tests when that external instance is up and running. Structurally speaking, such tests are
+almost identical to plain vanilla unit tests, and may contain additional decorations, depending on the test system.
+
+### Functional Tests
+            
+Functional tests are categories of tests that verify combinations of scenarios and behaviors from the perpective
+of an end-user. Such test typically are composed of a script and scenario, and may involve a headless browser
+to run through a scenario, verify data elements on the screen, etc.
+
 ## Testing Modules
 
 To test the functionality provided by a given CAS module, execute the following steps:

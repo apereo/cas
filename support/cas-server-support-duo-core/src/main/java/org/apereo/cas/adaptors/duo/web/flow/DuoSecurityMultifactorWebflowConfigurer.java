@@ -47,18 +47,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
-            applicationContext, casProperties, Optional.empty(),
-            mfaFlowCustomizers);
+            applicationContext, casProperties, Optional.empty(), mfaFlowCustomizers);
     }
 
     @Override
