@@ -15,6 +15,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
@@ -133,8 +135,9 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
-                                                                                                    final RequestAbstractType authnRequest) {
+    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+        final SamlRegisteredService registeredService,
+        final RequestAbstractType authnRequest) {
         return SamlRegisteredServiceServiceProviderMetadataFacade.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
     }
@@ -231,9 +234,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param response the response
      * @return the model and view
      */
-    protected ModelAndView issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
-                                                              final HttpServletRequest request,
-                                                              final HttpServletResponse response) {
+    protected ModelAndView issueAuthenticationRequestRedirect(
+        final Pair<? extends SignableSAMLObject, MessageContext> pair,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
@@ -317,15 +321,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * to ensure a clean slate from previous attempts, specially
      * when requests/responses are produced rapidly.
      *
-     * @param context        the pair
-     * @param authentication the authentication
-     * @param request        the request
-     * @param response       the response
+     * @param context              the pair
+     * @param ticketGrantingTicket the authentication
+     * @param request              the request
+     * @param response             the response
      */
-    protected void buildResponseBasedSingleSignOnSession(final Pair<? extends RequestAbstractType, MessageContext> context,
-                                                         final Authentication authentication,
-                                                         final HttpServletRequest request,
-                                                         final HttpServletResponse response) {
+    protected void buildResponseBasedSingleSignOnSession(
+        final Pair<? extends RequestAbstractType, MessageContext> context,
+        final TicketGrantingTicket ticketGrantingTicket,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);
@@ -334,7 +339,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
 
         val audit = AuditableContext.builder()
             .service(service)
-            .authentication(authentication)
+            .authentication(ticketGrantingTicket.getAuthentication())
             .registeredService(registeredService)
             .httpRequest(request)
             .httpResponse(response)
@@ -342,7 +347,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        val assertion = buildCasAssertion(authentication, service, registeredService, Map.of());
+        val assertion = buildCasAssertion(ticketGrantingTicket.getAuthentication(), service, registeredService, Map.of());
         val authenticationContext = buildAuthenticationContextPair(request, response, context);
         val binding = determineProfileBinding(authenticationContext);
 
@@ -350,6 +355,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val relayState = SAMLBindingSupport.getRelayState(messageContext);
         SAMLBindingSupport.setRelayState(authenticationContext.getRight(), relayState);
         response.reset();
+
+        val factory = (ServiceTicketFactory) getConfigurationContext().getTicketFactory().get(ServiceTicket.class);
+        val st = factory.create(ticketGrantingTicket, service, false, ServiceTicket.class);
+        getConfigurationContext().getTicketRegistry().addTicket(st);
+        getConfigurationContext().getTicketRegistry().updateTicket(ticketGrantingTicket);
         buildSamlResponse(response, request, authenticationContext, assertion, binding);
     }
 
@@ -379,9 +389,10 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param response the response
      * @return the boolean
      */
-    protected Optional<Authentication> singleSignOnSessionExists(final Pair<? extends SignableSAMLObject, MessageContext> pair,
-                                                                 final HttpServletRequest request,
-                                                                 final HttpServletResponse response) {
+    protected Optional<TicketGrantingTicket> singleSignOnSessionExists(
+        final Pair<? extends SignableSAMLObject, MessageContext> pair,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         val authnRequest = AuthnRequest.class.cast(pair.getLeft());
         if (authnRequest.isForceAuthn()) {
             LOGGER.trace("Authentication request asks for forced authn. Ignoring existing single sign-on session, if any");
@@ -393,12 +404,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             return Optional.empty();
         }
 
-        val authn = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(cookie);
-        if (authn == null) {
+        val ticketGrantingTicket = configurationContext.getTicketRegistrySupport().getTicketGrantingTicket(cookie);
+        if (ticketGrantingTicket == null) {
             LOGGER.debug("Authentication transaction linked to single sign-on session cannot determined.");
             return Optional.empty();
         }
 
+        val authn = ticketGrantingTicket.getAuthentication();
         LOGGER.debug("Located single sign-on authentication for principal [{}]", authn.getPrincipal());
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(issuer);
@@ -415,7 +427,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val ssoStrategy = configurationContext.getSingleSignOnParticipationStrategy();
         LOGGER.debug("Checking for single sign-on participation for issuer [{}]", issuer);
         val ssoAvailable = ssoStrategy.supports(ssoRequest) && ssoStrategy.isParticipating(ssoRequest);
-        return ssoAvailable ? Optional.of(authn) : Optional.empty();
+        return ssoAvailable ? Optional.of(ticketGrantingTicket) : Optional.empty();
     }
 
     /**

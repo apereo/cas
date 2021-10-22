@@ -8,7 +8,6 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     const service = "https://example.com";
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
-    let uid = await page.$('#username');
     await cas.loginWith(page, "casuser", "Mellon");
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
@@ -23,11 +22,9 @@ const cas = require('../../cas.js');
     await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
 
     await page.goto(`https://localhost:8443/cas/logout`);
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(2000);
     const content = await page.content();
     assert(content.includes('id="service1"'));
-
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-
     await browser.close();
 })();

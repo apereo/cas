@@ -62,7 +62,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean onlyTrackMostRecentSession) {
         val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
-        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        trackService(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 

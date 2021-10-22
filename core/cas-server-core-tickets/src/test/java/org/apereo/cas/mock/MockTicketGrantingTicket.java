@@ -49,21 +49,21 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
 
     private static final long serialVersionUID = 6546995681334670659L;
 
-    @Setter
-    private Service proxiedBy;
-
     private final String id;
 
     private final Authentication authentication;
-
-    @Setter
-    private ZonedDateTime created;
 
     private final Map<String, Service> services = new HashMap<>();
 
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     private final Set<String> descendantTickets = new LinkedHashSet<>();
+
+    @Setter
+    private Service proxiedBy;
+
+    @Setter
+    private ZonedDateTime created;
 
     private int usageCount;
 
@@ -114,6 +114,12 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
             principalAttributes);
     }
 
+
+    @Override
+    public void trackService(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
+        this.services.put(id, service);
+    }
+
     public ServiceTicket grantServiceTicket(final Service service) {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
             false, true);
@@ -124,7 +130,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
                                             final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         update();
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
-        this.services.put(id, service);
+        trackService(id, service, true);
         return st;
     }
 

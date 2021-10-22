@@ -27,6 +27,15 @@ public interface TicketGrantingTicket extends AuthenticationAwareTicket {
     String PREFIX = "TGT";
 
     /**
+     * Update service and track session.
+     *
+     * @param id                         the id
+     * @param service                    the service
+     * @param onlyTrackMostRecentSession the only track most recent session
+     */
+    void trackService(String id, Service service, boolean onlyTrackMostRecentSession);
+
+    /**
      * Grant a ServiceTicket for a specific service.
      *
      * @param id                         The unique identifier for this ticket.
@@ -36,7 +45,8 @@ public interface TicketGrantingTicket extends AuthenticationAwareTicket {
      * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
      * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
-    ServiceTicket grantServiceTicket(String id, Service service,
+    ServiceTicket grantServiceTicket(String id,
+                                     Service service,
                                      ExpirationPolicy expirationPolicy,
                                      boolean credentialProvided,
                                      boolean onlyTrackMostRecentSession);

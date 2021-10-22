@@ -5,8 +5,5 @@
   "id" : 2,
   "evaluationOrder" : 2,
   "metadataLocation" : "https://samltest.id/saml/sp",
-  "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
-  },
   "logoutType" : "FRONT_CHANNEL"
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandler
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -60,7 +61,8 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
 
             val nameIdValue = determineNameIdForQuery(query, registeredService, facade);
 
-            val id = getConfigurationContext().getSamlAttributeQueryTicketFactory().createTicketIdFor(nameIdValue, facade.getEntityId());
+            val factory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
+            val id = factory.createTicketIdFor(nameIdValue, facade.getEntityId());
             LOGGER.debug("Created ticket id for attribute query [{}]", id);
             val ticket = getConfigurationContext().getTicketRegistry().getTicket(id, SamlAttributeQueryTicket.class);
             if (ticket == null || ticket.getTicketGrantingTicket() == null || ticket.getTicketGrantingTicket().isExpired()) {
