@@ -21,6 +21,12 @@ public class MessageSanitizationUtilsTests {
         assertTrue(results.contains("TGT-1-*****"));
         results = MessageSanitizationUtils.sanitize("ticket PGT-1-abcdefg created");
         assertTrue(results.contains("PGT-1-*****"));
+        results = MessageSanitizationUtils.sanitize("ticket PGTIOU-1-abcdefg created");
+        assertTrue(results.contains("PGTIOU-1-*****"));
+        results = MessageSanitizationUtils.sanitize("ticket OC-1-abcdefg created");
+        assertTrue(results.contains("OC-1-*****"));
+        results = MessageSanitizationUtils.sanitize("ticket AT-1-abcdefg created");
+        assertTrue(results.contains("AT-1-*****"));
 
         results = MessageSanitizationUtils.sanitize("found a [password =se!ns4357$##@@**it!!_ive] here...");
         assertTrue(results.contains("[password =*****"));
