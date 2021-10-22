@@ -50,8 +50,8 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
     }
 
-    public static class DuoSecurityUniversalPromptMultifactorAuthentication extends AbstractCasWebflowConfigurer {
-        public DuoSecurityUniversalPromptMultifactorAuthentication(
+    public static class DuoSecurityMultifactorAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+        public DuoSecurityMultifactorAuthenticationWebflowConfigurer(
             final FlowBuilderServices flowBuilderServices,
             final FlowDefinitionRegistry mainFlowDefinitionRegistry,
             final ConfigurableApplicationContext applicationContext,
@@ -67,6 +67,14 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                     CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
             }
+            val duoConfig = casProperties.getAuthn().getMfa().getDuo();
+            duoConfig.forEach(duoCfg -> {
+                val duoSuccess = getState(getLoginFlow(), duoCfg.getId());
+                if (duoSuccess != null) {
+                    createTransitionForState(duoSuccess, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                        CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+                }
+            });
         }
     }
 
