@@ -12,14 +12,14 @@
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
     "--cas.authn.accept.users=duobypass::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=false",
-    
-    "--cas.authn.mfa.duo[0].duo-admin-secret-key=iYEHffw7j1xRykTthGXeItJgWhNVZr3226EIJzyA",
-    "--cas.authn.mfa.duo[0].duo-admin-integration-key=DIOXYYERS1HDVRUL38Z6",
-    
-    "--cas.authn.mfa.duo[0].duo-secret-key=OUuJ6duhTjdrndcLVWMbf13qVPsO5Zab9AKcofQZ",
-    "--cas.authn.mfa.duo[0].duo-integration-key=DICLHRWL1KQK5EUAQP43",
-    "--cas.authn.mfa.duo[0].duo-application-key=u3IHBaREMB7Cb9S4QMISAgHycpj8lPBkDGfWt55I",
-    "--cas.authn.mfa.duo[0].duo-api-host=api-d2e616a0.duosecurity.com",
+
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_WEBSDK_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_WEBSDK_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-application-key=${#environmentVars['DUO_SECURITY_WEBSDK_AKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
