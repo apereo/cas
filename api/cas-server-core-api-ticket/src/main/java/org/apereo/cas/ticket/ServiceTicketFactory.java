@@ -12,6 +12,13 @@ import org.apereo.cas.authentication.principal.Service;
 public interface ServiceTicketFactory extends TicketFactory {
 
     /**
+     * Gets ticket expiration policy.
+     *
+     * @return the ticket expiration policy
+     */
+    ExpirationPolicyBuilder<ServiceTicket> getTicketExpirationPolicy();
+
+    /**
      * Create the ticket object.
      *
      * @param <T>                  the type parameter

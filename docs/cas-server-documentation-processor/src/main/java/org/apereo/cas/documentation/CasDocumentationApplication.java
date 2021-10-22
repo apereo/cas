@@ -16,9 +16,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
-import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
@@ -108,13 +108,7 @@ public class CasDocumentationApplication {
             .stream()
             .filter(property -> StringUtils.isNotBlank(property.getModule()))
             .peek(property -> {
-                var desc = property.getDescription()
-                    .replace("{@code ", "<code>")
-                    .replace("{@value ", "<code>")
-                    .replace("{@link ", "<code>")
-                    .replace("}}", "[%s]</code>")
-                    .replace("}", "</code>")
-                    .replace("[%s]", "}");
+                var desc = cleanDescription(property);
                 property.setDescription(desc);
             })
             .forEach(property -> {
@@ -156,6 +150,16 @@ public class CasDocumentationApplication {
         if (StringUtils.equalsIgnoreCase("true", actuators)) {
             exportActuatorEndpoints(dataPath);
         }
+    }
+
+    private static String cleanDescription(final CasReferenceProperty property) {
+        return property.getDescription()
+            .replace("{@code ", "<code>")
+            .replace("{@value ", "<code>")
+            .replace("{@link ", "<code>")
+            .replace("}}", "[%s]</code>")
+            .replace("}", "</code>")
+            .replace("[%s]", "}");
     }
 
     private static void exportActuatorEndpoints(final File dataPath) throws Exception {
@@ -599,6 +603,13 @@ public class CasDocumentationApplication {
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
                 .queryFilter(property -> RegexUtils.find(propertyFilter, property.getName()))
                 .build());
+        results.properties()
+            .stream()
+            .peek(property -> {
+                var desc = cleanDescription(property);
+                property.setDescription(desc);
+            });
+        
         var destination = new File(dataPath, "third-party");
         if (destination.exists()) {
             FileUtils.deleteQuietly(destination);

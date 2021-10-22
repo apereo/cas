@@ -16,8 +16,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
-import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -32,6 +31,8 @@ import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.common.SAMLObject;
 import org.pac4j.core.context.session.SessionStore;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
  *
@@ -44,57 +45,81 @@ import org.pac4j.core.context.session.SessionStore;
 @SuperBuilder
 public class SamlProfileHandlerConfigurationContext {
 
+    @Nonnull
     private final SamlIdPObjectSigner samlObjectSigner;
 
+    @Nonnull
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
+    @Nonnull
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
+    @Nonnull
     private final ServicesManager servicesManager;
 
+    @Nonnull
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    @Nonnull
     private final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
+    @Nonnull
     private final OpenSamlConfigBean openSamlConfigBean;
 
-    private final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
+    @Nonnull
+    private SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
 
+    @Nonnull
     private final SamlIdPLogoutResponseObjectBuilder logoutResponseBuilder;
 
+    @Nonnull
     private final CasConfigurationProperties casProperties;
 
+    @Nonnull
     private final SamlObjectSignatureValidator samlObjectSignatureValidator;
 
+    @Nonnull
     private final Service callbackService;
 
+    @Nonnull
     private final CasCookieBuilder samlDistributedSessionCookieGenerator;
 
-    private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
+    @Nonnull
+    private SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
-    private final HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
+    @Nonnull
+    private HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
 
-    private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
+    @Nonnull
+    private SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
+    @Nonnull
     private final TicketValidator ticketValidator;
 
+    @Nonnull
     private final TicketRegistry ticketRegistry;
 
+    @Nonnull
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    private final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
-
-    private final SamlArtifactTicketFactory artifactTicketFactory;
-
+    @Nonnull
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
+    @Nonnull
     private final SessionStore sessionStore;
 
+    @Nonnull
     private final TicketRegistrySupport ticketRegistrySupport;
 
+    @Nonnull
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
+    @Nonnull
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
+    @Nonnull
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
+    @Nonnull
+    private final TicketFactory ticketFactory;
 }
