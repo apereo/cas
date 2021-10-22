@@ -96,7 +96,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 }
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking visibility for ${selector}`);
+    console.log(`Checking visibility for ${selector} while on page ${page.url()}`);
     return (element != null && await element.boundingBox() != null);
 }
 

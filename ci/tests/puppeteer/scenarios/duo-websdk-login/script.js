@@ -7,11 +7,11 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
-    await cas.loginWith(page, "casuser", "Mellon");
+    await cas.loginWith(page, "duobypass", "Mellon");
     await cas.assertVisibility(page, '#twitter-link')
     await cas.assertVisibility(page, '#youtube-link')
-    await cas.loginDuoSecurityBypassCode(page, "websdk");
     console.log(await page.url())
+    await page.waitForTimeout(8000)
     await cas.assertTicketParameter(page);
 
     await page.goto(`https://localhost:8443/cas/login`);
@@ -22,6 +22,7 @@ const cas = require('../../cas.js');
     const baseUrl = "https://localhost:8443/cas/actuator/"
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
+        console.log(`Calling endpoint ${url}`)
         const response = await page.goto(url);
         console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())

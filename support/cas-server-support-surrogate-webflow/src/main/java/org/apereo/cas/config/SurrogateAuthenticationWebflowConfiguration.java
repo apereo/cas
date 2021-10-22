@@ -80,6 +80,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @Bean
         @Autowired
+        @ConditionalOnDuoSecurityConfigured
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -88,7 +89,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new SurrogateWebflowConfigurer.DuoSecurityUniversalPromptMultifactorAuthentication(
+            return new SurrogateWebflowConfigurer.DuoSecurityMultifactorAuthenticationWebflowConfigurer(
                 flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         }
     }
