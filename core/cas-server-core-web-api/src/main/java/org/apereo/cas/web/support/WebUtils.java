@@ -1131,7 +1131,7 @@ public class WebUtils {
      * @return true /false
      */
     public static boolean hasSurrogateAuthenticationRequest(final RequestContext requestContext) {
-        return requestContext.getFlowScope().getBoolean(REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE, Boolean.FALSE);
+        return BooleanUtils.toBoolean(requestContext.getFlowScope().getBoolean(REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE, Boolean.FALSE));
     }
 
     /**

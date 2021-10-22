@@ -137,7 +137,7 @@ public class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesBaseConfiguration {
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
@@ -252,11 +252,7 @@ public class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesManagerExecutionPlanConfiguration {
         @Bean
-        @Autowired
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
-        @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
-        public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
+        public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
             @Qualifier("serviceRegistry")
             final ChainingServiceRegistry serviceRegistry,
             @Qualifier("servicesManagerCache")
@@ -264,18 +260,26 @@ public class CasCoreServicesConfiguration {
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
             final Environment environment,
             final ConfigurableApplicationContext applicationContext) {
-            return () -> {
-                AnnotationAwareOrderComparator.sortIfNecessary(servicesManagerRegisteredServiceLocators);
-                val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-                val context = ServicesManagerConfigurationContext.builder()
-                    .serviceRegistry(serviceRegistry)
-                    .applicationContext(applicationContext)
-                    .environments(activeProfiles)
-                    .servicesCache(servicesManagerCache)
-                    .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
-                    .build();
-                return new DefaultServicesManager(context);
-            };
+            AnnotationAwareOrderComparator.sortIfNecessary(servicesManagerRegisteredServiceLocators);
+            val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+            return ServicesManagerConfigurationContext.builder()
+                .serviceRegistry(serviceRegistry)
+                .applicationContext(applicationContext)
+                .environments(activeProfiles)
+                .servicesCache(servicesManagerCache)
+                .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
+                .build();
+        }
+
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
+        @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
+        public ServicesManagerExecutionPlanConfigurer defaultServicesManagerExecutionPlanConfigurer(
+            @Qualifier("servicesManagerConfigurationContext")
+            final ServicesManagerConfigurationContext servicesManagerConfigurationContext) {
+            return () -> new DefaultServicesManager(servicesManagerConfigurationContext);
         }
 
         @Bean
@@ -291,23 +295,9 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
         @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DOMAIN")
         public ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer(
-            final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceRegistry")
-            final ChainingServiceRegistry serviceRegistry,
-            @Qualifier("servicesManagerCache")
-            final Cache<Long, RegisteredService> servicesManagerCache,
-            final Environment environment) {
-            return () -> {
-                val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
-                val context = ServicesManagerConfigurationContext.builder()
-                    .serviceRegistry(serviceRegistry)
-                    .applicationContext(applicationContext)
-                    .environments(activeProfiles)
-                    .servicesCache(servicesManagerCache)
-                    .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
-                    .build();
-                return new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
-            };
+            @Qualifier("servicesManagerConfigurationContext")
+            final ServicesManagerConfigurationContext servicesManagerConfigurationContext) {
+            return () -> new DefaultDomainAwareServicesManager(servicesManagerConfigurationContext, new DefaultRegisteredServiceDomainExtractor());
         }
     }
 
