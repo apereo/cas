@@ -1,8 +1,6 @@
 {
   "dependencies": "saml-idp",
   "properties": [
-    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=Apereo",
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
@@ -16,12 +14,7 @@
     "--logging.level.org.apereo.cas=debug",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-
-    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache",
-    "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

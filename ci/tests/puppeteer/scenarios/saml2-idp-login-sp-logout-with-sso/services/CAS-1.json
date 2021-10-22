@@ -3,8 +3,5 @@
   "serviceId" : "https://example.com",
   "name": "CAS",
   "id" : 1,
-  "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
-  },
   "logoutType" : "FRONT_CHANNEL"
 }

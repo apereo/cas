@@ -15,6 +15,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,8 +32,9 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    private final ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy;
+    private final ExpirationPolicyBuilder<ServiceTicket> ticketExpirationPolicy;
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -132,6 +134,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.serviceTicketExpirationPolicy.buildTicketExpirationPolicy();
+        return this.ticketExpirationPolicy.buildTicketExpirationPolicy();
     }
 }

@@ -133,18 +133,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
-        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        trackService(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 
-    /**
-     * Update service and track session.
-     *
-     * @param id                         the id
-     * @param service                    the service
-     * @param onlyTrackMostRecentSession the only track most recent session
-     */
-    protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
+    @Override
+    public void trackService(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
         service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {
