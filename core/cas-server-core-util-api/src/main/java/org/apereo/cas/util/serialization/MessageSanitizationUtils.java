@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class MessageSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + '|'
         + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+        + '|' + "OC" + '|' + "AT"
         + ")-\\d+-)([\\w.-]+)");
 
     private static final Pattern SENSITIVE_TEXT_PATTERN =
