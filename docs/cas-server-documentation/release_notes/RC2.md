@@ -95,6 +95,7 @@ Various improvements to SAML2 attribute query requests:
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
 - Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
+- [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) is adjusted to work well with timeout expiration policy assigned to ticket-granting tickets. 
 - [Duo Security Universal Prompt](../mfa/DuoSecurity-Authentication.html) can 
   handle [impersonation requests](../authentication/Surrogate-Authentication.html) that require user selection.
 
@@ -116,4 +117,4 @@ Various improvements to SAML2 attribute query requests:
 - Spring Security
 - Spring Session
 - Nimbus OIDC
-- 
+- Spring
