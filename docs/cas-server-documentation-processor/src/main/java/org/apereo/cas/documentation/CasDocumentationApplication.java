@@ -169,10 +169,7 @@ public class CasDocumentationApplication {
         urls.addAll(ClasspathHelper.forPackage("org.springframework.boot"));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.cloud"));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.data"));
-        var reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(urls)
-            .setScanners(new TypeAnnotationsScanner()));
-
+        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
         var subTypes = reflections.getTypesAnnotatedWith(RestControllerEndpoint.class, true);
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();

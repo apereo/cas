@@ -77,28 +77,28 @@ jobs:
   ##########################################################################
 
   publish-snapshots:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    continue-on-error: false
-    if: ${{ github.event_name == 'push' }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'zulu'
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Publish SNAPSHOTs
-        if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
-        run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
+     runs-on: ubuntu-latest
+     needs: [cache]
+     continue-on-error: false
+     if: ${{ github.event_name == 'push' }}
+     steps:
+       - uses: actions/checkout@v2
+       - name: Set up JDK
+         uses: actions/setup-java@v2
+         with:
+           java-version: ${{ env.JDK_CURRENT }}
+           distribution: 'zulu'
+       - name: Initialize
+         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+       - uses: actions/cache@v2
+         with:
+           path: ~/.gradle/caches
+           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+           restore-keys: |
+             ${{ runner.os }}-gradle-
+       - name: Publish SNAPSHOTs
+         if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
+         run: ./gradlew -DpublishSnapshots=true --build-cache --configure-on-demand --no-daemon --parallel -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.http.connectionTimeout=180000 build publish -x test -x javadoc -x check -DrepositoryUsername="${REPOSITORY_USER}" -DrepositoryPassword="${REPOSITORY_PWD}"
 
 
   ##########################################################################
@@ -129,5 +129,7 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
       - name: Install Ruby gems
         run: gem install bundler
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
       - name: Publish Documentation
         run: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }}
