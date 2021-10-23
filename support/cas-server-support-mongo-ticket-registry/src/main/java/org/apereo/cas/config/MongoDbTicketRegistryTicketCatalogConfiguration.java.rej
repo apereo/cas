@@ -1,0 +1,54 @@
+diff a/support/cas-server-support-mongo-ticket-registry/src/main/java/org/apereo/cas/config/MongoDbTicketRegistryTicketCatalogConfiguration.java b/support/cas-server-support-mongo-ticket-registry/src/main/java/org/apereo/cas/config/MongoDbTicketRegistryTicketCatalogConfiguration.java	(rejected hunks)
+@@ -27,24 +31,50 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketD
+         super(casProperties, configProvider);
+     }
+ 
+-
+     @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+     @EnableConfigurationProperties(CasConfigurationProperties.class)
+     public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+         @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
+         @Bean
+-        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
++        @Autowired
++        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
++        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider(
++            @Qualifier("grantingTicketExpirationPolicy")
++            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
++            @Qualifier("serviceTicketExpirationPolicy")
++            final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
++            @Qualifier("proxyTicketExpirationPolicy")
++            final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
++            @Qualifier("proxyGrantingTicketExpirationPolicy")
++            final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
++            @Qualifier("transientSessionTicketExpirationPolicy")
++            final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
+             return new CasTicketCatalogConfigurationValuesProvider() {
++                @Override
++                public Function<CasConfigurationProperties, Long> getTicketGrantingTicketStorageTimeout() {
++                    return p -> grantingTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
++                }
++
+                 @Override
+                 public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                     return p -> "serviceTicketsCollection";
+                 }
+ 
++                @Override
++                public Function<CasConfigurationProperties, Long> getServiceTicketStorageTimeout() {
++                    return p -> serviceTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
++                }
++
+                 @Override
+                 public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                     return p -> "proxyTicketsCollection";
+                 }
+ 
++                @Override
++                public Function<CasConfigurationProperties, Long> getProxyTicketStorageTimeout() {
++                    return p -> proxyTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
++                }
++
+                 @Override
+                 public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                     return p -> "ticketGrantingTicketsCollection";

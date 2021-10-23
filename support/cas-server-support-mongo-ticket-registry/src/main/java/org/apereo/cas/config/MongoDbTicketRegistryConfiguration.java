@@ -50,8 +50,8 @@ public class MongoDbTicketRegistryConfiguration {
         val mongoTemplate = mongoDbTicketRegistryTemplate();
         val registry = new MongoDbTicketRegistry(ticketCatalog, mongoTemplate, ticketSerializationManager.getObject());
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection())
-            .createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoTemplate, mongo.isDropCollection(),
+            mongo.isUpdateIndexes(), mongo.isDropIndexes()).createTicketCollections();
         return registry;
     }
 

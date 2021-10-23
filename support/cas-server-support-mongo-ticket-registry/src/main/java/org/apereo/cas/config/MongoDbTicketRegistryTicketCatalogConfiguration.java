@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +33,18 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketD
 
         @ConditionalOnMissingBean
         @Bean
-        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
+        @Autowired
+        public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider(
+            @Qualifier("grantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
+            @Qualifier("serviceTicketExpirationPolicy")
+            final ExpirationPolicyBuilder serviceTicketExpirationPolicy,
+            @Qualifier("proxyTicketExpirationPolicy")
+            final ExpirationPolicyBuilder proxyTicketExpirationPolicy,
+            @Qualifier("proxyGrantingTicketExpirationPolicy")
+            final ExpirationPolicyBuilder proxyGrantingTicketExpirationPolicy,
+            @Qualifier("transientSessionTicketExpirationPolicy")
+            final ExpirationPolicyBuilder transientSessionTicketExpirationPolicy) {
             return new CasTicketCatalogConfigurationValuesProvider() {
                 @Override
                 public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
@@ -56,6 +69,16 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketD
                 @Override
                 public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
                     return p -> "transientSessionTicketsCollection";
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, Long> getProxyGrantingTicketStorageTimeout() {
+                    return p -> proxyGrantingTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
+                }
+
+                @Override
+                public Function<CasConfigurationProperties, Long> getTransientSessionStorageTimeout() {
+                    return p -> transientSessionTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
                 }
             };
         }

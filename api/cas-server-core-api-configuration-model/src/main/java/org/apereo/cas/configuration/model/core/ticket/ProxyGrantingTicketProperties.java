@@ -25,5 +25,5 @@ public class ProxyGrantingTicketProperties implements Serializable {
     /**
      * Maximum length of the proxy granting ticket, when generating one.
      */
-    private int maxLength = 50;
+    private long maxLength = 50;
 }
