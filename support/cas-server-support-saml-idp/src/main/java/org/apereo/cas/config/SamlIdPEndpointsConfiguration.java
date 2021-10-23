@@ -501,6 +501,7 @@ public class SamlIdPEndpointsConfiguration {
             .samlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver.getObject())
             .openSamlConfigBean(openSamlConfigBean.getObject())
             .casProperties(casProperties)
+            .ticketFactory(ticketFactory.getObject())
             .ticketRegistrySupport(ticketRegistrySupport.getObject())
             .singleSignOnParticipationStrategy(singleSignOnParticipationStrategy.getObject())
             .logoutResponseBuilder(samlIdPLogoutResponseObjectBuilder())

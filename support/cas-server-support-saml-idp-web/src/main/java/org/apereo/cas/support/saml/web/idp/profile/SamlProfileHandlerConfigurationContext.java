@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,6 +42,8 @@ import org.pac4j.core.context.session.SessionStore;
 @Setter
 @SuperBuilder
 public class SamlProfileHandlerConfigurationContext {
+
+    private final TicketFactory ticketFactory;
 
     private final SamlIdPObjectSigner samlObjectSigner;
 
