@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 
     await cas.assertTicketGrantingCookie(page);
-    response = await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices");
+    let response = await cas.doRequest("https://localhost:8443/cas/actuator/multifactorTrustedDevices");
     let record = JSON.parse(response)[0];
     assert(record.id !== null);
     assert(record.name !== null);
