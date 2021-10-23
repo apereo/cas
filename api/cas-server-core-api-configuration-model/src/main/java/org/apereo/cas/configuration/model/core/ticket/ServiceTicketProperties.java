@@ -27,7 +27,7 @@ public class ServiceTicketProperties implements Serializable {
      * in CAS context means service ticket validation
      * transaction.
      */
-    private int numberOfUses = 1;
+    private long numberOfUses = 1;
 
     /**
      * Time in seconds that service tickets should be considered live in CAS server.

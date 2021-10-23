@@ -88,6 +88,8 @@ import static org.mockito.Mockito.*;
     "cas.ticket.registry.mongo.host=localhost",
     "cas.ticket.registry.mongo.port=27017",
     "cas.ticket.registry.mongo.drop-collection=true",
+    "cas.ticket.registry.mongo.update-indexes=true",
+    "cas.ticket.registry.mongo.drop-indexes=true",
     "cas.ticket.registry.mongo.user-id=root",
     "cas.ticket.registry.mongo.password=secret"
 })

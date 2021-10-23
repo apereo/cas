@@ -29,6 +29,21 @@ public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
     private boolean dropCollection;
 
     /**
+     * Whether CAS should attempt to create/update indexes automatically
+     * and figure out the differences between existing keys and new keys.
+     */
+    private boolean updateIndexes = true;
+
+    /**
+     * When updating/creating indexes, decide if existing indexes
+     * should all be dropped once prior to creating/updating indexes.
+     * This may be useful to avoid conflicts between old and new indexes,
+     * in scenarios where CAS may be unable to locate the proper difference
+     * in index options or names during upgrades..
+     */
+    private boolean dropIndexes;
+
+    /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty

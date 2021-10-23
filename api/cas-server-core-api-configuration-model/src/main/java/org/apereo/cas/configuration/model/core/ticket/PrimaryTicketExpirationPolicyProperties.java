@@ -27,11 +27,11 @@ public class PrimaryTicketExpirationPolicyProperties implements Serializable {
     /**
      * Maximum time in seconds tickets would be live in CAS server.
      */
-    private int maxTimeToLiveInSeconds = 28_800;
+    private long maxTimeToLiveInSeconds = 28_800;
 
     /**
      * Time in seconds after which tickets would be destroyed after a period of inactivity.
      */
-    private int timeToKillInSeconds = 7_200;
+    private long timeToKillInSeconds = 7_200;
 
 }
