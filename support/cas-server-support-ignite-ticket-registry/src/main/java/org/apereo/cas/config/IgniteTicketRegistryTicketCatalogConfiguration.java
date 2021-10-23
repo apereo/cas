@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -15,7 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public IgniteTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties) {
-        super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {});
+    public IgniteTicketRegistryTicketCatalogConfiguration(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        super(casProperties, new CasTicketCatalogConfigurationValuesProvider() {}, applicationContext);
     }
 }

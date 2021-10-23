@@ -120,7 +120,7 @@ public class TokenCoreConfiguration {
             final JwtBuilder tokenTicketJwtBuilder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("grantingTicketExpirationPolicy")
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
             return new JwtTokenTicketBuilder(tokenTicketValidator,
                 grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
