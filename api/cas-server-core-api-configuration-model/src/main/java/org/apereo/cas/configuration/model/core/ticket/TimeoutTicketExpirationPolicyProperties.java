@@ -27,5 +27,5 @@ public class TimeoutTicketExpirationPolicyProperties implements Serializable {
     /**
      * Maximum time in seconds. for TGTs to be live in CAS server.
      */
-    private int maxTimeToLiveInSeconds;
+    private long maxTimeToLiveInSeconds;
 }

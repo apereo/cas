@@ -20,7 +20,7 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
      */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
-    public DefaultRandomStringGenerator(final int defaultLength) {
+    public DefaultRandomStringGenerator(final long defaultLength) {
         super(defaultLength);
     }
 

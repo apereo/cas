@@ -28,7 +28,7 @@ public class TransientSessionTicketProperties implements Serializable {
     /**
      * Controls number of times a ticket can be used within CAS server.
      */
-    private int numberOfUses = 1;
+    private long numberOfUses = 1;
 
     /**
      * Number of seconds after which this ticket becomes invalid.

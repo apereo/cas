@@ -25,10 +25,10 @@ public class ProxyTicketProperties implements Serializable {
     /**
      * Number of uses allowed.
      */
-    private int numberOfUses = 1;
+    private long numberOfUses = 1;
 
     /**
      * Number of seconds after which this ticket becomes invalid.
      */
-    private int timeToKillInSeconds = 10;
+    private long timeToKillInSeconds = 10;
 }

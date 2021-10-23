@@ -13,7 +13,7 @@ public class ProxyTicketIdGenerator extends HostNameBasedUniqueTicketIdGenerator
      * @param maxLength the max length
      * @param suffix    the suffix
      */
-    public ProxyTicketIdGenerator(final int maxLength,
+    public ProxyTicketIdGenerator(final long maxLength,
                                   final String suffix) {
         super(maxLength, suffix);
     }

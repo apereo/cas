@@ -3,6 +3,7 @@ package org.apereo.cas.mongo;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -135,6 +136,15 @@ public class MongoDbConnectionFactory {
     }
 
     /**
+     * Drop collection indexes.
+     *
+     * @param collection the collection
+     */
+    public static void dropCollectionIndexes(final MongoCollection<org.bson.Document> collection) {
+        collection.dropIndexes();
+    }
+
+    /**
      * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
      *
      * @param mongoTemplate   the mongo template
@@ -144,6 +154,7 @@ public class MongoDbConnectionFactory {
     public static void createOrUpdateIndexes(final MongoTemplate mongoTemplate,
                                              final MongoCollection<org.bson.Document> collection,
                                              final List<? extends IndexDefinition> indexesToCreate) {
+        val collectionName = collection.getNamespace().getCollectionName();
         val indexes = collection.listIndexes();
         LOGGER.debug("Existing indexes on collection [{}] are [{}]", collection.getNamespace(), indexes);
         indexesToCreate.forEach(index -> {
@@ -159,13 +170,16 @@ public class MongoDbConnectionFactory {
                 indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
             }
 
-            if (indexExistsWithDifferentOptions) {
-                LOGGER.debug("Removing MongoDb index [{}] from [{}]", indexKeys, collection.getNamespace());
-                collection.dropIndex(indexKeys);
+            try {
+                if (indexExistsWithDifferentOptions) {
+                    LOGGER.debug("Removing MongoDb index [{}] from [{}]", indexKeys, collection.getNamespace());
+                    collection.dropIndex(indexKeys);
+                }
+                LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
+                mongoTemplate.indexOps(collectionName).ensureIndex(index);
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, e);
             }
-            val collectionName = collection.getNamespace().getCollectionName();
-            LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
-            mongoTemplate.indexOps(collectionName).ensureIndex(index);
         });
     }
 
@@ -206,7 +220,7 @@ public class MongoDbConnectionFactory {
             val servers = new ArrayList<ServerAddress>(0);
             if (serverAddresses.length > 1) {
                 LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
-                    + "assuming ports are defined as part of the address", mongo.getPort());
+                             + "assuming ports are defined as part of the address", mongo.getPort());
                 Arrays.stream(serverAddresses)
                     .filter(StringUtils::isNotBlank)
                     .map(ServerAddress::new)

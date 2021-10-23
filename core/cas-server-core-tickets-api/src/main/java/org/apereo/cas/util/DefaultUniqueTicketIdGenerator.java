@@ -56,7 +56,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @param maxLength the maximum length of the random string used to generate
      *                  the id.
      */
-    public DefaultUniqueTicketIdGenerator(final int maxLength) {
+    public DefaultUniqueTicketIdGenerator(final long maxLength) {
         this(maxLength, null);
     }
 
@@ -69,7 +69,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @param suffix    the value to append at the end of the unique id to ensure
      *                  uniqueness across JVMs.
      */
-    public DefaultUniqueTicketIdGenerator(final int maxLength, final String suffix) {
+    public DefaultUniqueTicketIdGenerator(final long maxLength, final String suffix) {
         setMaxLength(maxLength);
         setSuffix(suffix);
     }
@@ -115,7 +115,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      *
      * @param maxLength the max length
      */
-    public void setMaxLength(final int maxLength) {
+    public void setMaxLength(final long maxLength) {
         this.randomStringGenerator = new Base64RandomStringGenerator(maxLength);
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }

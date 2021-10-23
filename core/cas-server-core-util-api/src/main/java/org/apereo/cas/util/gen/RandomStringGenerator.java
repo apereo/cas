@@ -17,7 +17,7 @@ public interface RandomStringGenerator {
      * Default length to use.
      * @return the default length as an int.
      */
-    int getDefaultLength();
+    long getDefaultLength();
 
     /**
      * The algorithm used by the generator's SecureRandom instance.
