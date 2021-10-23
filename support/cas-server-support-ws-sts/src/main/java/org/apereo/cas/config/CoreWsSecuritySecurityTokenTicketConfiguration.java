@@ -37,7 +37,7 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
         public SecurityTokenTicketFactory securityTokenTicketFactory(
             @Qualifier("securityTokenTicketIdGenerator")
             final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
-            @Qualifier("grantingTicketExpirationPolicy")
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder grantingTicketExpirationPolicy) {
             return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator, grantingTicketExpirationPolicy);
         }
