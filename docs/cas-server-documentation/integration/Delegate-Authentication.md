@@ -85,7 +85,7 @@ a remote REST endpoint whose responsibility is to produce the following payload 
 ```
 
 The syntax and collection of available `properties` in the above 
-payload is controlled by the [pac4j library](https://pac4j.org/docs/index.html). 
+payload is controlled by the [pac4j library](https://github.com/pac4j/pac4j). 
 The response that is returned must be accompanied by a `200` status code.
 
 ## Profile Attributes
