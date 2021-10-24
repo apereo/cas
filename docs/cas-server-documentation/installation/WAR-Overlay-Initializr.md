@@ -94,9 +94,9 @@ curl https://casinit.herokuapp.com/actuator/supportedVersions | jq
 
 [CAS Initializr][initializr] is available at:
 
-| Source Repository      | Location | Heroku
-|--------------------|---------------------------------------|---------------------------------------
-| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinit)
+| Source Repository      | Location 
+|--------------------|-------------------------------------------------------------
+| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com)
 
 ## Project Generation
 

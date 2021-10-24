@@ -35,16 +35,16 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.dropbox.com/guide/admin/security/configure-single-sign-on">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052575/47ba8930-dd60-11e6-8cb1-9334066d5f0f.png" height="48" width="140"></a> 
 
-<a href="https://blog.samanage.com/company/saml-single-sign-on-support-samanage/">
+<a href="https://samanage.com">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052581/47e7bcfc-dd60-11e6-85e9-c09926736e5e.png" height="48" width="140"></a> 
 
 <a href="https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052579/47da9d74-dd60-11e6-8eac-d66b67e2ebf7.png" height="60" width="100"></a>
 
-<a href="https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263">
+<a href="https://box.com">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052572/47ace302-dd60-11e6-9842-4eda5a9ab5cf.png" height="48" width="90"></a> 
 
-<a href="http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile">
+<a href="http://servicenow.com">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="100"></a> 
 
 <a href="http://www.workday.com/">
@@ -86,7 +86,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.infinitecampus.com/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24698286/4c4d8740-1a05-11e7-844e-54d328e64e2f.png" height="48" width="120"></a>
 
-<a href="http://kb.securingthehuman.org/Other-Resources/55708668/Single-Sign-On-Technical-Overview-Guide.htm">
+<a href="https://sc.edu">
 <img src="https://cloud.githubusercontent.com/assets/1205228/24699366/fbfbcf5a-1a08-11e7-9664-f37d6e50a5a3.png" height="48" width="120"></a>
 
 <a href="https://get.slack.help/hc/en-us/articles/205168057">
