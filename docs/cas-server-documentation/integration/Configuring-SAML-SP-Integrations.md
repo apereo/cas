@@ -26,7 +26,7 @@ Support is enabled by including the following module in the WAR Overlay:
 The following SAML SP integrations, as samples, are provided by CAS:
 
 <div class="img-cloud">
-<a href="http://www.incommon.org/federation/metadata.html">
+<a href="http://www.incommon.org/federation">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="110"></a> 
 
 <a href="https://zoom.us">
@@ -146,7 +146,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
 <img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="150"></a>
 
-<a href="https://go.givecampus.com/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="130"></a>
 
 <a href="https://www.warpwire.com/">
