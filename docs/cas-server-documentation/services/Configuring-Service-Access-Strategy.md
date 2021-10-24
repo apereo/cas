@@ -151,7 +151,8 @@ the user will be redirected to `https://www.github.com` instead.
 
 #### Dynamic Unauthorized Redirect URL
 
-Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`. If so, the redirect URL
+Service access is denied if the principal does *not* have a `cn` attribute 
+containing the value `super-user`. If so, the redirect URL
 will be dynamically determined based on outcome of the specified Groovy script.
 
 ```json
@@ -264,7 +265,7 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
 a given attribute support regular expression patterns. For example, a <code>role</code> attribute could
 be designed with a value value pattern of <code>admin-.*</code>.</p></div>
 
-## Groovy Script
+## Global Groovy Script
 
 Access strategy and authorization decision can be carried using a Groovy script for all services and applications. This policy
 is not tied to a specific application and is invoked for all services and integrations. 
@@ -357,7 +358,7 @@ Remote endpoint access strategy authorizing service access based on response cod
 }
 ```
 
-## Groovy
+## Groovy Per Service
 
 This strategy delegates to a Groovy script to dynamically decide the access rules requested by CAS at runtime:
 
