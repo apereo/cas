@@ -215,13 +215,6 @@ if [[ $proofRead == "true" ]]; then
     exit 1
   fi
 
-  printgreen "Validating documentation links..."
-  validateProjectDocumentation
-  retVal=$?
-  if [[ ${retVal} -eq 1 ]]; then
-    printred "Failed to validate documentation.\n"
-    exit ${retVal}
-  fi
 else
   printgreen "Skipping validation of documentation links..."
 fi
@@ -241,6 +234,17 @@ if [[ ${buildDocs} == "true" ]]; then
   else
     bundle exec jekyll build --profile
   fi
+
+  if [[ $proofRead == "true" ]]; then
+    printgreen "Validating documentation links..."
+    validateProjectDocumentation
+    retVal=$?
+    if [[ ${retVal} -eq 1 ]]; then
+      printred "Failed to validate documentation.\n"
+      exit ${retVal}
+    fi
+  fi
+
   echo -n "Ended at " && date
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
