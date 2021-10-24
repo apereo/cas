@@ -9,6 +9,9 @@ options = {
   :only_4xx => true,
   :empty_alt_ignore => true,
   :http_status_ignore => [401],
+  :url_swap => {
+    %r{^/cas/} => '/'
+  }, 
   :url_ignore => [
     %r{^/cas/\d+\..+},
     %r{^/cas/development/$},
