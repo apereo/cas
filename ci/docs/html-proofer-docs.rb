@@ -9,14 +9,18 @@ options = {
   :only_4xx => true,
   :empty_alt_ignore => true,
   :http_status_ignore => [401],
+  :parallel => { :in_processes => 3},
   :url_swap => {
     %r{^/cas/} => '/'
   }, 
   :url_ignore => [
-    %r{^/cas/\d+\..+},
-    %r{^/cas/development/$},
+    %r{^/\d+.\d+.x},
+    %r{^/development/},
+    %r{Older-Versions},
+    %r{^#.+},
     %r{^../images/}
   ],
+  :verbose => true
 }
 
 files = Dir.glob("/root/docs/**/*.html")
