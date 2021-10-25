@@ -80,24 +80,19 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     /**
      * Gets the attributes, having applied the filter.
      *
-     * @param principal               the principal that contains the resolved attributes
-     * @param selectedService the selected service
-     * @param service         the service
+     * @param context the context
      * @return the attributes
      */
-    Map<String, List<Object>> getAttributes(Principal principal, Service selectedService, RegisteredService service);
+    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context);
 
     /**
      * Gets the attributes that qualify for consent.
      *
-     * @param principal               the principal that contains the resolved attributes
-     * @param selectedService the selected service
-     * @param service         the service
+     * @param context the context
      * @return the attributes
      */
-    default Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService,
-                                                               final RegisteredService service) {
-        return getAttributes(principal, selectedService, service);
+    default Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+        return getAttributes(context);
     }
 
     @Override

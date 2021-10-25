@@ -77,7 +77,7 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
             CasConfigurationProperties.class.getSimpleName());
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-        
+
         val allowedAttributes = new ArrayList<String>();
         allowedAttributes.add("uid");
         allowedAttributes.add("cn");
@@ -88,8 +88,12 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
-        val results = policy.getConsentableAttributes(principal,
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getConsentableAttributes(context);
         assertEquals(1, results.size());
         assertTrue(results.containsKey("givenName"));
     }
@@ -132,7 +136,12 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("customName", List.of("CAS")));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        val attributes = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attributes = policy.getAttributes(context);
         assertTrue(attributes.containsKey("custom-name"));
         assertEquals(attributes.get("custom-Name").get(0), "CAS");
     }
@@ -163,7 +172,12 @@ public class ReturnAllowedAttributeReleasePolicyTests {
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of("uid", List.of("UID")));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        val attributes = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attributes = policy.getAttributes(context);
         assertEquals(2, attributes.size());
         assertTrue(attributes.containsKey("given-name"));
         assertEquals(attributes.get("given-name").get(0), "hello");
@@ -194,7 +208,13 @@ public class ReturnAllowedAttributeReleasePolicyTests {
                 return principal.getId();
             }
         });
-        val attributes = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attributes = policy.getAttributes(context);
         assertEquals(3, attributes.size());
         assertTrue(attributes.containsKey("principalId"));
         assertTrue(attributes.containsKey("cn"));

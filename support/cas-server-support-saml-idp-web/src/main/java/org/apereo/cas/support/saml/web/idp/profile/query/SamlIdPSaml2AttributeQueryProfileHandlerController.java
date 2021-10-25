@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.query;
 
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -73,8 +74,12 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val authentication = ticket.getTicketGrantingTicket().getAuthentication();
             val principal = authentication.getPrincipal();
 
-            val principalAttributes = registeredService.getAttributeReleasePolicy()
-                .getConsentableAttributes(principal, ticket.getService(), registeredService);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(ticket.getService())
+                .principal(principal)
+                .build();
+            val principalAttributes = registeredService.getAttributeReleasePolicy().getConsentableAttributes(context);
             val authenticationAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
                 .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);

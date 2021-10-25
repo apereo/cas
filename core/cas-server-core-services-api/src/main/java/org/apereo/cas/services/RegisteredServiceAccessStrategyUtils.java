@@ -118,7 +118,7 @@ public class RegisteredServiceAccessStrategyUtils {
             if (ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn(
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
-                        + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(),
+                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(),
                     service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
@@ -126,7 +126,7 @@ public class RegisteredServiceAccessStrategyUtils {
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
     }
-    
+
     /**
      * Ensure principal access is allowed for service.
      *
@@ -164,8 +164,8 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws PrincipalException           the principal exception
      */
     public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
-                                                            final RegisteredService registeredService,
-                                                            final Authentication authentication)
+                                                                   final RegisteredService registeredService,
+                                                                   final Authentication authentication)
         throws UnauthorizedServiceException, PrincipalException {
 
         ensureServiceAccessIsAllowed(service, registeredService);
@@ -173,7 +173,12 @@ public class RegisteredServiceAccessStrategyUtils {
         val principal = authentication.getPrincipal();
         val principalAttributes = new HashMap<>(principal.getAttributes());
         val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-        val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(principal)
+            .build();
+        val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val result = CoreAuthenticationUtils.mergeAttributes(principalAttributes, policyAttributes, merger);
         LOGGER.trace("Merged principal attributes [{}] with attributes from release policy [{}]. Result: [{}]",
             principalAttributes, policyAttributes, result);
