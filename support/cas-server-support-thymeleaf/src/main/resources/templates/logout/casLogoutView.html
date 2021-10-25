@@ -12,15 +12,17 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content">
-        <div class="w-50 m-auto mdc-card p-4">
-            <h2 class="banner-heading">
-                <i class="mdi mdi-logout"></i>
-                <span th:utext="#{screen.logout.header}">Log Out Successful</span>
-            </h2>
+        <div class="w-50 m-auto mdc-card card p-4">
+            <div class="card-body">
+                <h2 class="banner-heading">
+                    <i class="mdi mdi-logout fas fa-sign-out-alt"></i>
+                    <span th:utext="#{screen.logout.header}">Log Out Successful</span>
+                </h2>
 
-            <p class="banner-message" th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
-                Service. You may <a href="login">log in</a> again.</p>
-            <p class="banner-message" th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+                <p class="banner-message" th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
+                    Service. You may <a href="login">log in</a> again.</p>
+                <p class="banner-message" th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+            </div>
         </div>
     </div>
 </main>

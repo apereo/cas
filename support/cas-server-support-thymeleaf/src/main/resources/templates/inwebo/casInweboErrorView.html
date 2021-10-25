@@ -11,8 +11,8 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66">
-        <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occurred.</h2>
+    <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occured.</h2>
         <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
              th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
             <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
@@ -20,12 +20,11 @@
                 Error Message Text
             </p>
         </div>
-
         <div class="form-wrapper">
             <form id="retryForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="retry"/>
-                <button class="mdc-button mdc-button--raised" name="retry"
+                <button class="mdc-button mdc-button--raised btn btn-primary" name="retry"
                         type="submit" value="retry"
                         th:value="#{cas.inwebo.retry.button}">
                     <span class="mdc-button__label" th:text="#{cas.inwebo.retry.button}">Retry the Inwebo multi-factor authentication</span>
@@ -43,7 +42,7 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="browser"/>
             </form>
-            <div id="enrollError" class="banner banner-danger banner-dismissible" style="display:none;">
+            <div id="enrollError" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
                 <p th:utext="#{cas.inwebo.enroll.failure}">The enrollment failed</p>
             </div>
             <script th:inline="javascript">
@@ -79,56 +78,46 @@
             </script>
             <div class="form-wrapper">
                 <form>
-                    <section class="cas-field my-3">
-                        <label for="code" class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
-                                   id="code"
-                                   name="code"
-                                   tabindex="0"
-                                   size="25"
-                                   type="text"
-                                   maxlength="10"
-                                   required
-                                   autocomplete="off"
-                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                   autocapitalize="none"
-                                   spellcheck="false"/>
-
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label" th:utext="#{cas.inwebo.enroll.code}">Activation Code</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                        </label>
+                    <section class="cas-field form-group my-3">
+                        <div class="mdc-text-field  d-flex">
+                            <input type="text"
+                                    class="mdc-text-field__input form-control"
+                                    id="code"
+                                    name="code"
+                                    tabindex="0"
+                                    size="25"
+                                    maxlength="10"
+                                    required
+                                    autocomplete="off"
+                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                    autocapitalize="none"
+                                    spellcheck="false" />
+                            <label for="code" class="mdc-floating-label" th:utext="#{cas.inwebo.enroll.code}">Activation code</label>
+                        </div>
                     </section>
-                    <section class="cas-field my-3">
-                        <label for="code" class="mdc-text-field mdc-text-field--outlined">
-                            <input class="mdc-text-field__input"
-                                   id="pin"
-                                   name="pin"
-                                   tabindex="0"
-                                   size="25"
-                                   type="text"
-                                   maxlength="10"
-                                   required
-                                   autocomplete="off"
-                                   th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                                   autocapitalize="none"
-                                   spellcheck="false"/>
-
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                  <span class="mdc-floating-label" th:utext="#{cas.inwebo.pin}">PIN</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                        </label>
+                    <section class="cas-field form-group my-3">
+                        <div class="mdc-text-field  d-flex">
+                            <input type="text"
+                                    class="mdc-text-field__input form-control"
+                                    id="pin"
+                                    name="pin"
+                                    tabindex="0"
+                                    size="25"
+                                    maxlength="10"
+                                    required
+                                    autocomplete="off"
+                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                    autocapitalize="none"
+                                    spellcheck="false" />
+                            <label for="pin" class="mdc-floating-label" th:utext="#{cas.inwebo.pin}">PIN code</label>
+                        </div>
                     </section>
-                    <button class="mdc-button mdc-button--raised" name="enroll"
-                            id="enrollButton" type="button" onclick="doEnroll()" value="Enroll"
+                    <button class="mdc-button mdc-button--raised btn btn-primary"
+                            name="enroll"
+                            id="enrollButton"
+                            type="button"
+                            onclick="doEnroll()"
+                            value="Enroll"
                             th:value="#{cas.inwebo.enroll.button}">
                         <span class="mdc-button__label" th:text="#{cas.inwebo.enroll.button}">Enroll for browser authentication</span>
                     </button>

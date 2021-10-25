@@ -1,0 +1,8 @@
+<span th:fragment="javascript" th:remove="tag">
+    <script type="text/javascript" th:src="@{#{webjars.bootstrap.js}}"></script>
+</span>
+
+<span th:fragment="stylesheets" th:remove="tag">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" th:href="@{#{webjars.bootstrap.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/fontawesome.css" th:href="@{#{webjars.fontawesome.css}}" />
+</span>

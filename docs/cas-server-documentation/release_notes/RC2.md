@@ -98,6 +98,8 @@ Various improvements to SAML2 attribute query requests:
 - [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) is adjusted to work well with timeout expiration policy assigned to ticket-granting tickets. 
 - [Duo Security Universal Prompt](../mfa/DuoSecurity-Authentication.html) can 
   handle [impersonation requests](../authentication/Surrogate-Authentication.html) that require user selection.
+- Added support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes.
+- Added `twbs` theme to `cas-server-support-theme-collections`, taking advantage of Bootstrap support.
 
 ## Library Upgrades
             
