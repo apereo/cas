@@ -8,6 +8,7 @@ const colors = require('colors');
 const fs = require("fs");
 const {ImgurClient} = require('imgur');
 const path = require("path");
+const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 
 const BROWSER_OPTIONS = {
@@ -391,6 +392,11 @@ exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
 
 exports.fetchDuoSecurityBypassCode = async (user = "casuser") => {
     return await this.fetchDuoSecurityBypassCode(user)[0];
+}
+
+exports.base64Decode = async(data) => {
+    let buff = Buffer.from(data, 'base64');
+    return buff.toString('ascii');
 }
 
 exports.screenshot = async (page) => {

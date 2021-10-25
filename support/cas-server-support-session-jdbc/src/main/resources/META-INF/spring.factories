@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.JdbcSessionConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasJdbcSessionConfiguration
