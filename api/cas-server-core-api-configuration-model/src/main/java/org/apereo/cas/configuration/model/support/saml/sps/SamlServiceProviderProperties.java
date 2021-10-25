@@ -65,10 +65,6 @@ public class SamlServiceProviderProperties implements Serializable {
      */
     private PollEverywhere pollEverywhere = new PollEverywhere();
     /**
-     * Settings related to Hipchat acting as a SAML service provider.
-     */
-    private Hipchat hipchat = new Hipchat();
-    /**
      * Settings related to Gitlab acting as a SAML service provider.
      */
     private Gitlab gitlab = new Gitlab();
@@ -806,19 +802,6 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Gitlab() {
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), "last_name", "first_name", "name");
-        }
-    }
-
-    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Hipchat extends AbstractSamlSPProperties {
-
-        private static final long serialVersionUID = -6141931806328699054L;
-
-        public Hipchat() {
-            addAttributes(CommonAttributeNames.EMAIL.getAttributeName(), "last_name", "first_name", "title");
         }
     }
 

@@ -107,7 +107,6 @@ public class CasSamlServiceProvidersConfiguration {
             processSamlServiceProvider(samlSp.getGartner(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getGitlab(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getGiveCampus(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
-            processSamlServiceProvider(samlSp.getHipchat(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getInCommon(), servicesManager, samlRegisteredServiceCachingMetadataResolver, preloadMetadata);
             processSamlServiceProvider(samlSp.getInfiniteCampus(), servicesManager, samlRegisteredServiceCachingMetadataResolver);
             processSamlServiceProvider(samlSp.getJira(), servicesManager, samlRegisteredServiceCachingMetadataResolver);

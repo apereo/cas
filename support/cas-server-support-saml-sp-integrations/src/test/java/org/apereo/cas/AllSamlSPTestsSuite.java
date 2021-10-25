@@ -29,7 +29,6 @@ import org.apereo.cas.config.CasSamlSPFamisConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGartnerConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGitlabConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGiveCampusConfigurationTests;
-import org.apereo.cas.config.CasSamlSPHipchatConfigurationTests;
 import org.apereo.cas.config.CasSamlSPInCommonConfigurationTests;
 import org.apereo.cas.config.CasSamlSPInfiniteCampusConfigurationTests;
 import org.apereo.cas.config.CasSamlSPJiraConfigurationTests;
@@ -107,7 +106,6 @@ import org.junit.platform.suite.api.Suite;
     CasSamlSPCherWellConfigurationTests.class,
     CasSamlSPAcademicWorksConfigurationTests.class,
     CasSamlSPConfluenceConfigurationTests.class,
-    CasSamlSPHipchatConfigurationTests.class,
     CasSamlSPBlackBaudConfigurationTests.class,
     CasSamlSPBenefitFocusConfigurationTests.class,
     CasSamlSPBynderConfigurationTests.class,
