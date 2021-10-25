@@ -84,4 +84,7 @@ public class OidcClientRegistrationResponse implements Serializable {
 
     @JsonProperty("registration_client_uri")
     private String registrationClientUri;
+    
+    @JsonProperty("client_secret_expires_at")
+    private long clientSecretExpiresAt;
 }
