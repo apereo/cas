@@ -74,7 +74,7 @@
             </div>
             <p th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
             
-            <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
+            <div id="errorPanel" class="banner banner-danger alert alert-danger alert-dismissible mb-4"
                  th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="#{${message.text}}">
@@ -92,17 +92,17 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center flex-column align-items-center">
-                <button class="mdc-button mdc-button--raised mr-2"
+                <button class="mdc-button mdc-button--raised btn btn-primary mr-2"
                         name="authnButton" id="authnButton" accesskey="a" type="button">
-                    <i class="mdi mdi-fingerprint"></i>
+                    <i class="mdi mdi-fingerprint fas fa-fingerprint"></i>
                     <span id="authnButtonText" class="mdc-button__label"
                           th:text="#{screen.welcome.button.login}">Login</span>
                 </button>
             </div>
         </div>
         <div>
-            <div class="w-100 mdc-data-table mx-auto my-4" id="divDeviceInfo" style="display: none">
-                <table id="deviceTable" class="mdc-data-table__table" style="white-space: unset">
+            <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divDeviceInfo" style="display: none">
+                <table id="deviceTable" class="table table-striped" style="white-space: unset">
                     <thead>
                     <tr class="mdc-data-table__header-row">
                         <th class="w-50 mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>

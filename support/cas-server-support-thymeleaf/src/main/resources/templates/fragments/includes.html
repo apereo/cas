@@ -1,0 +1,14 @@
+<span th:fragment="javascript" th:remove="tag">
+    <script type="text/javascript" th:src="@{#{webjars.es5shim.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.cssVarsPonyfill.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.material-components.js}}"></script>
+</span>
+
+<span th:fragment="stylesheets" th:remove="tag">
+    <link rel="stylesheet" type="text/css" href="../static/css/normalize.css" th:href="@{#{webjars.normalize.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-grid.min.css"
+        th:href="@{#{webjars.bootstrap-grid.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/material-components-web.min.css"
+        th:href="@{#{webjars.material-components.css}}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/mdi-font.css" th:href="@{#{webjars.mdi-font.css}}" />
+</span>

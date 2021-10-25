@@ -30,7 +30,7 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div id="content" layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
         <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
         <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has
             not yet established a single sign-on session for <strong>{0}</strong>.</p>
@@ -47,10 +47,10 @@
                     </a>
                 </div>
             </div>
-            <div class="mdc-data-table mt-2 mb-4">
+            <div class="mdc-data-table table-responsive mt-2 mb-4">
                 <table id="attributesTable"
                     th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}"
-                    class="mdc-data-table__table w-100"
+                    class="table table-striped w-100"
                     aria-label="Attributes">
                     <thead>
                         <tr class="mdc-data-table__header-row">
@@ -75,8 +75,8 @@
         <form method="post" id="fm1" th:unless="${interrupt.block}">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="proceed" />
-            <div class="form-actions d-flex">
-                <button class="mdc-button mdc-button--raised mr-2"
+            <div class="form-actions d-flex align-items-center">
+                <button class="mdc-button mdc-button--raised btn btn-primary mr-2"
                     name="proceed"
                     id="proceed"
                     type="submit"
@@ -93,8 +93,7 @@
         </form>
 
         <div th:if="${interrupt.block}">
-            <a class="mdc-button mdc-button--raised mr-2" id="cancel" name="cancel" th:href="@{/login}">
-
+            <a class="mdc-button mdc-button--raised mr-2 btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
                 <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
                       th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
 

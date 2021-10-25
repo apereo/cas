@@ -11,7 +11,7 @@
 
 <body id="cas">
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
         <h4 th:text="#{screen.authentication.gauth.register}">Your account is not registered.</h4>
 
         <!-- Confirmation Dialog -->
@@ -26,7 +26,7 @@
                         </h1>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
-                                <div class="banner banner-danger banner-dismissible"
+                                <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      style="display: none" id="errorPanel">
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
@@ -37,60 +37,50 @@
                                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                                 <input type="hidden" name="geolocation"/>
 
-                                <section class="cas-field my-3 mdc-input-group">
+                                <section class="cas-field form-group my-3 mdc-input-group">
                                     <div class="mdc-input-group-field mdc-input-group-field-append">
                                         <div class="d-flex caps-check">
+                                            <label for="token" class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                        <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
 
-                                            <label for="token"
-                                                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                                                <input class="mdc-text-field__input pwd"
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+                                                <input class="mdc-text-field__input form-control pwd"
                                                        type="password"
                                                        name="token"
                                                        id="token"
                                                        size="25"
                                                        required
-                                                       autocomplete="off"/>
-                                                <span class="mdc-notched-outline">
-                                                    <span class="mdc-notched-outline__leading"></span>
-                                                    <span class="mdc-notched-outline__notch">
-                                                      <span class="mdc-floating-label"
-                                                            th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
-                                                    </span>
-                                                    <span class="mdc-notched-outline__trailing"></span>
-                                                </span>
-
+                                                       autocomplete="off" />
                                             </label>
-
-                                            <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
-                                                    tabindex="-1"
-                                                    type="button">
-                                                <i class="mdi mdi-eye reveal-password-icon"></i>
-                                                <span class="sr-only">Toggle Token</span>
+                                            <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button" type="button"
+                                                tabindex="-1"
+                                                type="button">
+                                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
+                                                <span class="visually-hidden">Toggle Token</span>
                                             </button>
                                         </div>
-
-
                                         <br>
                                         <div class="d-flex">
                                             <label for="accountName"
-                                                   class="mdc-text-field mdc-text-field--outlined">
-
-                                                <input class="mdc-text-field__input"
+                                                   class="mdc-text-field mdc-text-field--outlined control-label">
+                                                <span class="mdc-notched-outline">
+                                                    <span class="mdc-notched-outline__leading"></span>
+                                                    <span class="mdc-notched-outline__notch">
+                                                        <span class="mdc-floating-label" th:utext="#{screen.authentication.gauth.name}">Account Name</span>
+                                                    </span>
+                                                    <span class="mdc-notched-outline__trailing"></span>
+                                                </span>
+                                                <input class="mdc-text-field__input form-control"
                                                        type="text"
                                                        name="accountName"
                                                        id="accountName"
                                                        size="50"
-                                                       autocomplete="off"/>
-
-                                                <span class="mdc-notched-outline">
-                                                    <span class="mdc-notched-outline__leading"></span>
-                                                    <span class="mdc-notched-outline__notch">
-                                                      <span class="mdc-floating-label"
-                                                            th:utext="#{screen.authentication.gauth.name}">Token</span>
-                                                    </span>
-                                                    <span class="mdc-notched-outline__trailing"></span>
-                                                </span>
-
+                                                       autocomplete="off" />
                                             </label>
                                             <script>document.getElementById("accountName").value = randomWord();</script>
                                         </div>
@@ -99,10 +89,10 @@
                             </div>
                         </div>
                         <footer class="mdc-dialog__actions">
-                            <button class="mdc-button mdc-button--raised mr-2" name="registerButton" id="registerButton">
+                            <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="registerButton" id="registerButton">
                                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
                             </button>
-                            <button type="button" class="mdc-button mdc-button--outlined"
+                            <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
                                     data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
                                 <span class="mdc-button__label">Cancel</span>
                             </button>
@@ -166,14 +156,14 @@
         </table>
         <div class="d-flex flex-column align-items-center">
             <div class="d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised mr-2" name="confirm" id="confirm" accesskey="f" value="Confirm">
+                <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="confirm" id="confirm" accesskey="f" value="Confirm">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
-                <button class="mdc-button mdc-button--raised mr-2" name="print" accesskey="p" type="button"
+                <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="print" accesskey="p" type="button"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>
-                <button class="mdc-button mdc-button--outlined" name="back" accesskey="c" type="button" value="Cancel"
+                <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button" value="Cancel"
                         onclick="location.href = location.href;"
                         th:value="#{screen.pm.button.cancel}">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
