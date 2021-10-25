@@ -85,6 +85,8 @@ for all services and applications.
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
 - Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
+- Added support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes.
+- Added `twbs` theme to `cas-server-support-theme-collections`, taking advantage of Bootstrap support.
 
 ## Library Upgrades
             
