@@ -37,10 +37,19 @@
       }
     },
     {
-      "name": "cas.consent.crypto",
+      "name": "cas.consent.crypto.signing.key",
       "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
       "deprecation": {
-        "replacement": "cas.consent.core.crypto",
+        "replacement": "cas.consent.core.crypto.signing.key",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto.encryption.key",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto.encryption.key",
         "reason": "Setting is now moved into a core sub namespace",
         "level": "error"
       }

@@ -50,6 +50,34 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SELECT_SURROGATE);
     }
 
+    public static class DuoSecurityMultifactorAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+        public DuoSecurityMultifactorAuthenticationWebflowConfigurer(
+            final FlowBuilderServices flowBuilderServices,
+            final FlowDefinitionRegistry mainFlowDefinitionRegistry,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
+            setOrder(Ordered.LOWEST_PRECEDENCE);
+        }
+
+        @Override
+        protected void doInitialize() {
+            val validateAction = getState(getLoginFlow(), CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+            if (validateAction != null) {
+                createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+            }
+            val duoConfig = casProperties.getAuthn().getMfa().getDuo();
+            duoConfig.forEach(duoCfg -> {
+                val duoSuccess = getState(getLoginFlow(), duoCfg.getId());
+                if (duoSuccess != null) {
+                    createTransitionForState(duoSuccess, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                        CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION, true);
+                }
+            });
+        }
+    }
+
     private void createSurrogateAuthorizationActionState(final Flow flow) {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));

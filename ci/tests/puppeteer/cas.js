@@ -96,7 +96,7 @@ exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
 }
 exports.isVisible = async (page, selector) => {
     let element = await page.$(selector);
-    console.log(`Checking visibility for ${selector}`);
+    console.log(`Checking visibility for ${selector} while on page ${page.url()}`);
     return (element != null && await element.boundingBox() != null);
 }
 
@@ -215,7 +215,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
     });
 }
 
-exports.doGet = async (url, successHandler, failureHandler, headers = {}) => {
+exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
@@ -224,10 +224,15 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}) => {
     let config = {
       headers: headers
     };
+    if (responseType !== undefined) {
+        config["responseType"] = responseType
+    }
     await instance
         .get(url, config)
         .then(res => {
-            console.log(res.data);
+            if (responseType !== "blob" && responseType !== "stream") {
+                console.log(res.data);
+            }
             successHandler(res);
         })
         .catch(error => {

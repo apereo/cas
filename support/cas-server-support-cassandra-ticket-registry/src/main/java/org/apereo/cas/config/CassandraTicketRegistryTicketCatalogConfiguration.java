@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,10 +22,11 @@ import java.util.function.Function;
 public class CassandraTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
     public CassandraTicketRegistryTicketCatalogConfiguration(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketCatalogConfigurationValuesProvider")
         final CasTicketCatalogConfigurationValuesProvider configProvider) {
-        super(casProperties, configProvider);
+        super(casProperties, configProvider, applicationContext);
     }
 
 

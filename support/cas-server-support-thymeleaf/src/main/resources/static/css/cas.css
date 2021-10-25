@@ -387,6 +387,7 @@ button.close {
 }
 
 .mdc-button--raised:not(:disabled) {
+    margin-right: 5px;
     background-color: var(--mdc-theme-primary, #153E50);
 }
 

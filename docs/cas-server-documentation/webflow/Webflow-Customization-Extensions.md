@@ -1,5 +1,7 @@
 ---
-layout: default title: CAS - Web Flow Extensions category: Webflow Management
+layout: default 
+title: CAS - Web Flow Extensions 
+category: Webflow Management
 ---
 
 {% include variables.html %}

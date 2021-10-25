@@ -62,6 +62,7 @@ public class WebUtilsTests {
         assertNull(WebUtils.getAuthenticationResult(context));
         assertNull(WebUtils.getHttpServletRequestGeoLocationFromRequestContext());
         assertNull(WebUtils.getAcceptableUsagePolicyTermsFromFlowScope(context, Object.class));
+        assertFalse(WebUtils.hasSurrogateAuthenticationRequest(context));
 
         assertNotNull(WebUtils.produceUnauthorizedErrorView(new RuntimeException()));
         assertNotNull(WebUtils.produceErrorView(new IllegalArgumentException()));

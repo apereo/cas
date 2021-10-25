@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthenticationActionTests {
     @Autowired
-    @Qualifier("loadSurrogatesListAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
     private Action loadSurrogatesListAction;
 
     @Test
@@ -45,7 +45,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        WebUtils.putRequestSurrogateAuthentication(context, true);
+        WebUtils.putSurrogateAuthenticationRequest(context, true);
         WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
@@ -114,7 +114,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
     public void verifySkipAuthenticate() throws Exception {
         val context = new MockRequestContext();
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
-        WebUtils.putRequestSurrogateAuthentication(context, Boolean.TRUE);
+        WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
 
         val attributes = new LinkedHashMap<String, List<Object>>();
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true));

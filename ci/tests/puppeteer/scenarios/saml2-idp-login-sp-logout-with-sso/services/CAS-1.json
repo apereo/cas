@@ -1,0 +1,7 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://example.com",
+  "name": "CAS",
+  "id" : 1,
+  "logoutType" : "FRONT_CHANNEL"
+}

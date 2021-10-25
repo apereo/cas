@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 
 import lombok.val;
@@ -32,15 +33,15 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -1875903354216171261L;
 
-    public SamlProfileSamlSoap11FaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+    public SamlProfileSamlSoap11FaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
     public Envelope build(final RequestAbstractType authnRequest,
                           final HttpServletRequest request,
                           final HttpServletResponse response,
-                          final Object casAssertion,
+                          final AuthenticatedAssertionContext casAssertion,
                           final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding,

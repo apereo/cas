@@ -3,7 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
 
-    implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")
@@ -15,13 +14,13 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
+
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
-    implementation project(":support:cas-server-support-saml-mdui-core")
-    implementation project(":support:cas-server-support-saml-idp-core")
 
     implementation libraries.casclient
     implementation libraries.shibutiljavasupport
 
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-notifications")
 }

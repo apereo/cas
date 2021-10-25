@@ -87,9 +87,10 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
-        val ticket = samlArtifactTicketFactory.create("https://cassp.example.org", CoreAuthenticationTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"), "https://cas.example.org", "https://cassp.example.org",
-            artifactResolve);
+        val ticket = samlArtifactTicketFactory.create("https://cassp.example.org",
+            CoreAuthenticationTestUtils.getAuthentication(),
+            new MockTicketGrantingTicket("casuser"), "https://cas.example.org",
+            "https://cassp.example.org", artifactResolve);
         ticketRegistry.addTicket(ticket);
         controller.handlePostRequest(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());

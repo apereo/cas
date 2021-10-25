@@ -159,7 +159,7 @@ public class OidcResponseConfiguration {
             final IdTokenGeneratorService oidcIdTokenGenerator,
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("grantingTicketExpirationPolicy")
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
@@ -185,7 +185,7 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("grantingTicketExpirationPolicy")
+            @Qualifier(ExpirationPolicyBuilder.BEAN_NAME_TICKET_GRANTING_TICKET_EXPIRATION_POLICY)
             final ExpirationPolicyBuilder grantingTicketExpirationPolicy,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 
@@ -23,7 +24,7 @@ public interface AuthnContextClassRefBuilder {
      * @param service      the service
      * @return the authentication method from assertion
      */
-    String build(Object assertion, RequestAbstractType authnRequest,
+    String build(AuthenticatedAssertionContext assertion, RequestAbstractType authnRequest,
                  SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                  SamlRegisteredService service);
 }

@@ -283,7 +283,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
      * For the duration of the read, the cache store should not remain empty.
      * Otherwise, lookup operations during that loading time window might produce
      * unauthorized failure errors. Invalidation attempts must happen after the load
-     * to minimize chances of faliures.
+     * to minimize chances of failures.
      */
     @Override
     public synchronized Collection<RegisteredService> load() {

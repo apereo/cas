@@ -25,9 +25,11 @@ import java.util.TreeMap;
  * @since 5.1.0
  */
 public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
-    private static final long serialVersionUID = 1532960981124784595L;
-
-    private static final Map<String, String> ALLOWED_ATTRIBUTES = CollectionUtils.wrap(
+    /**
+     * Map of allowed attributes by this policy in the form of attribute name linked
+     * to its equivalent urn value.
+     */
+    public static final Map<String, String> ALLOWED_ATTRIBUTES = CollectionUtils.wrap(
         "eduPersonPrincipalName", "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
         "eduPersonTargetedID", "urn:oid:1.3.6.1.4.1.5923.1.1.1.10",
         "email", "urn:oid:0.9.2342.19200300.100.1.3",
@@ -37,6 +39,8 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
         "surname", "urn:oid:2.5.4.4",
         "sn", "urn:oid:2.5.4.4",
         "eduPersonScopedAffiliation", "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
+
+    private static final long serialVersionUID = 1532960981124784595L;
 
     @Getter
     @Setter
@@ -71,10 +75,11 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
     }
 
     @Override
-    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                            final Map<String, List<Object>> attrs,
-                                                                            final RegisteredService registeredService,
-                                                                            final Service selectedService) {
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
+        final Principal principal,
+        final Map<String, List<Object>> attrs,
+        final RegisteredService registeredService,
+        final Service selectedService) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, List<Object>>();
@@ -85,5 +90,15 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
             }
         });
         return attributesToRelease;
+    }
+
+    @Override
+    protected List<String> determineRequestedAttributeDefinitions(
+        final Principal principal,
+        final RegisteredService registeredService,
+        final Service selectedService) {
+        return this.useUniformResourceName
+            ? new ArrayList<>(ALLOWED_ATTRIBUTES.values())
+            : new ArrayList<>(ALLOWED_ATTRIBUTES.keySet());
     }
 }

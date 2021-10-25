@@ -213,7 +213,7 @@ public class DateTimeUtils {
      * @return ZonedDateTime representing time
      */
     public static ZonedDateTime zonedDateTimeOf(final Date time) {
-        return zonedDateTimeOf(Instant.ofEpochMilli(time.getTime()));
+        return time != null ? zonedDateTimeOf(Instant.ofEpochMilli(time.getTime())) : null;
     }
 
     /**

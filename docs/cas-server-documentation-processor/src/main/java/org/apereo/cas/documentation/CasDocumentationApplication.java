@@ -10,15 +10,14 @@ import org.apereo.cas.util.RegexUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.reflections.Reflections;
-import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
@@ -88,12 +87,12 @@ public class CasDocumentationApplication {
         var sp = new Option("sp", "serviceproperties", true, "Generate data for registered services properties");
         sp.setRequired(false);
         options.addOption(sp);
-        
+
         new HelpFormatter().printHelp("CAS Documentation", options);
         var cmd = new DefaultParser().parse(options, args);
 
         var dataDirectory = cmd.getOptionValue("data");
-        var projectVersion =  cmd.getOptionValue("version");
+        var projectVersion = cmd.getOptionValue("version");
         var projectRootDirectory = cmd.getOptionValue("root");
         var propertyFilter = cmd.getOptionValue("filter", ".+");
 
@@ -108,13 +107,7 @@ public class CasDocumentationApplication {
             .stream()
             .filter(property -> StringUtils.isNotBlank(property.getModule()))
             .peek(property -> {
-                var desc = property.getDescription()
-                    .replace("{@code ", "<code>")
-                    .replace("{@value ", "<code>")
-                    .replace("{@link ", "<code>")
-                    .replace("}}", "[%s]</code>")
-                    .replace("}", "</code>")
-                    .replace("[%s]", "}");
+                var desc = cleanDescription(property);
                 property.setDescription(desc);
             })
             .forEach(property -> {
@@ -158,6 +151,16 @@ public class CasDocumentationApplication {
         }
     }
 
+    private static String cleanDescription(final CasReferenceProperty property) {
+        return property.getDescription()
+            .replace("{@code ", "<code>")
+            .replace("{@value ", "<code>")
+            .replace("{@link ", "<code>")
+            .replace("}}", "[%s]</code>")
+            .replace("}", "</code>")
+            .replace("[%s]", "}");
+    }
+
     private static void exportActuatorEndpoints(final File dataPath) throws Exception {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
@@ -169,10 +172,7 @@ public class CasDocumentationApplication {
         urls.addAll(ClasspathHelper.forPackage("org.springframework.boot"));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.cloud"));
         urls.addAll(ClasspathHelper.forPackage("org.springframework.data"));
-        var reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(urls)
-            .setScanners(new TypeAnnotationsScanner()));
-
+        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
         var subTypes = reflections.getTypesAnnotatedWith(RestControllerEndpoint.class, true);
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
@@ -185,7 +185,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(get.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/"))
+                                                                             + StringUtils.prependIfMissing(path, "/"))
                     .findFirst()
                     .orElse(null);
                 map.put("method", RequestMethod.GET.name());
@@ -218,7 +218,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(delete.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/"))
+                                                                             + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", paths == null ? endpoint.id() : paths);
@@ -249,7 +249,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(post.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/"))
+                                                                             + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", paths == null ? endpoint.id() : paths);
@@ -280,7 +280,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(patch.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/"))
+                                                                             + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
                 map.put("path", paths == null ? endpoint.id() : paths);
@@ -311,7 +311,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(put.path())
                     .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                        + StringUtils.prependIfMissing(path, "/"))
+                                                                             + StringUtils.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
                 map.put("path", paths == null ? endpoint.id() : paths);
@@ -468,7 +468,7 @@ public class CasDocumentationApplication {
             var operation = method.getAnnotation(Operation.class);
             if (operation == null) {
                 throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
-                    + " in declaring class " + clazz.getName());
+                                           + " in declaring class " + clazz.getName());
             }
             if (!map.containsKey("deprecated") && operation.deprecated()) {
                 map.put("deprecated", true);
@@ -479,7 +479,7 @@ public class CasDocumentationApplication {
 
             if (operation.parameters().length == 0 && paramCount > 0) {
                 throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
-                    + " in declaring class " + clazz.getName());
+                                           + " in declaring class " + clazz.getName());
             }
 
             for (int i = 0; i < operation.parameters().length; i++) {
@@ -602,6 +602,11 @@ public class CasDocumentationApplication {
                 .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.THIRD_PARTY)
                 .queryFilter(property -> RegexUtils.find(propertyFilter, property.getName()))
                 .build());
+        results.properties().forEach(property -> {
+            var desc = cleanDescription(property);
+            property.setDescription(desc);
+        });
+
         var destination = new File(dataPath, "third-party");
         if (destination.exists()) {
             FileUtils.deleteQuietly(destination);

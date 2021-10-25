@@ -1,0 +1,17 @@
+{
+  "dependencies": "reports,jpa-service-registry",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

@@ -77,9 +77,15 @@ public class WebUtils {
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /**
+     * Flow attribute to indicate surrogate authn is requested..
+     */
+    public static final String REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE = "requestSurrogateAccount";
+
+    /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
+
 
     private static final String PARAMETER_AUTHENTICATION = "authentication";
 
@@ -127,7 +133,7 @@ public class WebUtils {
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
             "Cannot obtain HttpServletRequest from event of type: "
-                + context.getExternalContext().getClass().getName());
+            + context.getExternalContext().getClass().getName());
 
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
@@ -448,8 +454,8 @@ public class WebUtils {
         }
         if (!clazz.isAssignableFrom(credential.getClass())) {
             throw new ClassCastException("credential [" + credential.getId()
-                + " is of type " + credential.getClass()
-                + " when we were expecting " + clazz);
+                                         + " is of type " + credential.getClass()
+                                         + " when we were expecting " + clazz);
         }
         return (T) credential;
     }
@@ -1114,8 +1120,8 @@ public class WebUtils {
      * @param context the context
      * @param value   the value
      */
-    public static void putRequestSurrogateAuthentication(final RequestContext context, final Boolean value) {
-        context.getFlowScope().put("requestSurrogateAccount", value);
+    public static void putSurrogateAuthenticationRequest(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put(REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE, value);
     }
 
     /**
@@ -1124,8 +1130,8 @@ public class WebUtils {
      * @param requestContext the request context
      * @return true /false
      */
-    public static boolean hasRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
-        return requestContext.getFlowScope().getBoolean("requestSurrogateAccount", Boolean.FALSE);
+    public static boolean hasSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        return BooleanUtils.toBoolean(requestContext.getFlowScope().getBoolean(REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE, Boolean.FALSE));
     }
 
     /**
@@ -1133,8 +1139,8 @@ public class WebUtils {
      *
      * @param requestContext the request context
      */
-    public static void removeRequestSurrogateAuthenticationRequest(final RequestContext requestContext) {
-        requestContext.getFlowScope().remove("requestSurrogateAccount");
+    public static void removeSurrogateAuthenticationRequest(final RequestContext requestContext) {
+        requestContext.getFlowScope().remove(REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE);
     }
 
     /**
@@ -1888,5 +1894,15 @@ public class WebUtils {
      */
     public static void removeInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
         requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
+    }
+
+    /**
+     * Gets multifactor authentication parent credential.
+     *
+     * @param requestContext the request context
+     * @return the multifactor authentication parent credential
+     */
+    public static Credential getMultifactorAuthenticationParentCredential(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("parentCredential", Credential.class);
     }
 }

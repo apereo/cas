@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
@@ -40,7 +41,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
 
     @Override
     protected Envelope buildResponse(final Assertion assertion,
-                                     final Object casAssertion,
+                                     final AuthenticatedAssertionContext casAssertion,
                                      final RequestAbstractType authnRequest,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -48,8 +49,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
                                      final HttpServletResponse response,
                                      final String binding,
                                      final MessageContext messageContext) throws SamlException {
-        val castedAssertion = org.jasig.cas.client.validation.Assertion.class.cast(casAssertion);
-        val ticket = (SamlArtifactTicket) castedAssertion.getAttributes().get("artifact");
+        val ticket = (SamlArtifactTicket) casAssertion.getAttributes().get("artifact");
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));

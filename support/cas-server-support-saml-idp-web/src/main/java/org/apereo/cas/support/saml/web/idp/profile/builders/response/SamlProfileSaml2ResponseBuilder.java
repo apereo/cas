@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
@@ -26,6 +27,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -54,7 +56,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     @Override
     @SneakyThrows
     public Response buildResponse(final Assertion assertion,
-                                  final Object casAssertion,
+                                  final AuthenticatedAssertionContext casAssertion,
                                   final RequestAbstractType authnRequest,
                                   final SamlRegisteredService service,
                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -67,15 +69,15 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         samlResponse.setVersion(SAMLVersion.VERSION_20);
 
         val issuerId = FunctionUtils.doIf(StringUtils.isNotBlank(service.getIssuerEntityId()),
-            service::getIssuerEntityId,
-            Unchecked.supplier(() -> {
-                val criteriaSet = new CriteriaSet(
-                    new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
-                    new SamlIdPSamlRegisteredServiceCriterion(service));
-                LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
-                val entityDescriptor = Objects.requireNonNull(getConfigurationContext().getSamlIdPMetadataResolver().resolveSingle(criteriaSet));
-                return entityDescriptor.getEntityID();
-            }))
+                service::getIssuerEntityId,
+                Unchecked.supplier(() -> {
+                    val criteriaSet = new CriteriaSet(
+                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                        new SamlIdPSamlRegisteredServiceCriterion(service));
+                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
+                    val entityDescriptor = Objects.requireNonNull(getConfigurationContext().getSamlIdPMetadataResolver().resolveSingle(criteriaSet));
+                    return entityDescriptor.getEntityID();
+                }))
             .get();
 
         samlResponse.setIssuer(buildSamlResponseIssuer(issuerId));
@@ -123,39 +125,36 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                               final String relayState,
                               final String binding,
                               final RequestAbstractType authnRequest,
-                              final Object assertion,
+                              final AuthenticatedAssertionContext assertion,
                               final MessageContext messageContext) throws SamlException {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
-        val configContext = getConfigurationContext();
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
             val encoder = new SamlResponseArtifactEncoder(
-                configContext.getVelocityEngineFactory(),
+                getConfigurationContext().getVelocityEngineFactory(),
                 adaptor, httpRequest, httpResponse,
-                configContext.getSamlArtifactMap());
+                getConfigurationContext().getSamlArtifactMap());
             return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
         }
 
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
-            val encoder = new SamlResponsePostSimpleSignEncoder(configContext.getVelocityEngineFactory(),
+            val encoder = new SamlResponsePostSimpleSignEncoder(getConfigurationContext().getVelocityEngineFactory(),
                 adaptor, httpResponse, httpRequest);
             return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
         }
 
-        val encoder = new SamlResponsePostEncoder(configContext.getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
+        val encoder = new SamlResponsePostEncoder(getConfigurationContext().getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
         return encoder.encode(authnRequest, samlResponse, relayState, messageContext);
     }
 
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-
-        val value = assertion.getSubject().getNameID().getValue();
+        val nameId = (String) request.getAttribute(NameID.class.getName());
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
             getConfigurationContext().getTicketRegistry(), request);
 
-        val ticket = getConfigurationContext().getSamlAttributeQueryTicketFactory().create(value,
+        val ticket = getConfigurationContext().getSamlAttributeQueryTicketFactory().create(nameId,
             assertion, adaptor.getEntityId(), ticketGrantingTicket);
         getConfigurationContext().getTicketRegistry().addTicket(ticket);
-
     }
 }
