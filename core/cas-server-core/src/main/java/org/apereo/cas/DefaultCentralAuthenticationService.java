@@ -19,6 +19,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -55,8 +56,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
@@ -90,6 +90,20 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
             principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer,
             serviceMatchingStrategy);
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket) {
+        if (context == null) {
+            return null;
+        }
+        val currentAuthentication = context.getAuthentication();
+        if (currentAuthentication != null) {
+            val original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+            }
+        }
+        return currentAuthentication;
     }
 
     @Audit(
@@ -166,7 +180,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
         return proxyTicket;
     }
-
 
     @Audit(
         action = AuditableActions.PROXY_GRANTING_TICKET,
@@ -265,13 +278,15 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 new ServiceContext(selectedService, registeredService));
             val principal = authentication.getPrincipal();
 
-            val attributePolicy = registeredService.getAttributeReleasePolicy();
+            val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());
             LOGGER.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
 
-            val attributesToRelease = attributePolicy != null
-                ? attributePolicy.getAttributes(principal, selectedService, registeredService)
-                : new HashMap<String, List<Object>>();
-
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(selectedService)
+                .principal(principal)
+                .build();
+            val attributesToRelease = attributePolicy.getAttributes(context);
             LOGGER.debug("Calculated attributes for release per the release policy are [{}]",
                 attributesToRelease.keySet());
 
@@ -285,12 +300,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 registeredService,
                 authentication);
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
-            
+
             builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
                 CollectionUtils.wrap(serviceTicket.isFromNewLogin()));
             builder.addAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
-            
+
             val finalAuthentication = builder.build();
 
             enforceRegisteredServiceAccess(finalAuthentication, selectedService, registeredService);
@@ -302,7 +317,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
-            
+
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
@@ -360,19 +375,5 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
-    }
-
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket) {
-        if (context == null) {
-            return null;
-        }
-        val currentAuthentication = context.getAuthentication();
-        if (currentAuthentication != null) {
-            val original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-        }
-        return currentAuthentication;
     }
 }

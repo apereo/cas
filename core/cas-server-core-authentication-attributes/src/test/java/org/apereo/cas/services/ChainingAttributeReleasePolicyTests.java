@@ -101,10 +101,13 @@ public class ChainingAttributeReleasePolicyTests {
 
     @Test
     public void verifyConsentableAttrs() {
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-        val results = chain.getConsentableAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val results = chain.getConsentableAttributes(context);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(2, values.size());

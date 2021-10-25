@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
@@ -94,7 +95,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
-            val consentableAttributes = policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(authentication.getPrincipal())
+                .build();
+            val consentableAttributes = policy.getConsentableAttributes(context);
             consentableAttributes.entrySet().removeIf(entry -> {
                 val excludedAttributes = casProperties.getConsent().getCore().getExcludedAttributes();
                 return excludedAttributes.contains(entry.getKey());
