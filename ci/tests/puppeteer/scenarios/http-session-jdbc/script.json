@@ -11,7 +11,7 @@
     "--spring.datasource.url=jdbc:hsqldb:mem:cas-hsql-database",
     "--spring.datasource.username=sa",
     "--spring.datasource.password=",
-    "--spring.datasource.driverClassName=org.hsqldb.jdbcDriver",
+    "--spring.datasource.driver-class-name=org.hsqldb.jdbcDriver",
     "--spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.HSQLDialect",
 
     "--spring.session.store-type=JDBC",
