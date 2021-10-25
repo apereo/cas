@@ -9,7 +9,7 @@ category: Ticketing
 # Hazelcast Ticket Registry
 
 Hazelcast Ticket Registry is a distributed ticket registry implementation
-based on [Hazelcast distributed grid library](http://hazelcast.org/). The registry implementation is
+based on [Hazelcast distributed grid library](https://hazelcast.org/). The registry implementation is
 cluster-aware and is able to auto-join a cluster of all the CAS nodes that expose this registry.
 Hazelcast will use port auto-increment feature to assign a TCP port to each member of a cluster starting
 from initially provided arbitrary port, which is typically `5701` by default.

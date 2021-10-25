@@ -8,6 +8,10 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.authn.accept.users=duobypass::Mellon",
+    
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+
     "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
     "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
     

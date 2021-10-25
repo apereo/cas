@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
-                properties = {
-                    "cas.authn.mfa.duo[0].duo-secret-key=Q2IU2i8BFNd6VYflZT8Evl6lF7oPlj3PM15BmRU7",
-                    "cas.authn.mfa.duo[0].duo-integration-key=DIOXVRZD2UMZ8XXMNFQ5",
-                    "cas.authn.mfa.duo[0].trusted-device-enabled=true",
-                    "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
-                })
+    properties = {
+        "cas.authn.mfa.duo[0].duo-secret-key=Q2IU2i8BFNd6VYflZT8Evl6lF7oPlj3PM15BmRU7",
+        "cas.authn.mfa.duo[0].duo-integration-key=DIOXVRZD2UMZ8XXMNFQ5",
+        "cas.authn.mfa.duo[0].trusted-device-enabled=true",
+        "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebflowMfaConfig")
 public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
@@ -47,7 +47,7 @@ public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends
 
         val registry = getMultifactorFlowDefinitionRegistry();
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
-        val viewState = (ViewState) flow.getState(DuoSecurityMultifactorWebflowConfigurer.STATE_ID_VIEW_LOGIN_FORM_DUO);
+        val viewState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
         assertTrue(viewState.getEntryActionList().get(0).toString()
             .contains(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN));
     }

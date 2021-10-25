@@ -55,6 +55,7 @@ jobs:
     needs: [initialize]
     continue-on-error: false
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK

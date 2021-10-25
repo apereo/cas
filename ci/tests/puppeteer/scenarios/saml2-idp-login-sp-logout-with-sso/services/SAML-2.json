@@ -1,0 +1,9 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://samltest.id/.+",
+  "name" : "SAML",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataLocation" : "https://samltest.id/saml/sp",
+  "logoutType" : "FRONT_CHANNEL"
+}

@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactoryTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocatorTests;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataResolverTests;
+import org.apereo.cas.support.saml.services.AttributeQueryAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
@@ -153,6 +154,7 @@ import org.junit.platform.suite.api.Suite;
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
+    AttributeQueryAttributeReleasePolicyTests.class,
     SamlIdPMultifactorAuthenticationTriggerTests.class,
     ECPSamlIdPProfileHandlerControllerTests.class,
     SamlIdPSaml2AttributeQueryProfileHandlerControllerTests.class,

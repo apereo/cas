@@ -12,21 +12,10 @@ function printgreen() {
 function printyellow() {
   printf "${YELLOW}$1${ENDCOLOR}\n"
 }
-function validateProjectDocumentation() {
-  HTML_PROOFER_IMAGE=hdeadman/html-proofer:latest
-  DOCS_FOLDER=$PWD/gh-pages/"$branchVersion"
-  DOCS_OUTPUT=/tmp/build/out
-  HTML_PROOFER_SCRIPT=$PWD/ci/docs/html-proofer-docs.rb
 
-  echo "Running html-proof image: ${HTML_PROOFER_IMAGE} on ${DOCS_FOLDER} with output ${DOCS_OUTPUT} using ${HTML_PROOFER_SCRIPT}"
-  docker run --name="html-proofer" --rm \
-    --workdir /root \
-    -v "${DOCS_FOLDER}":/root/docs \
-    -v ${DOCS_OUTPUT}:/root/out \
-    -v "${HTML_PROOFER_SCRIPT}":/root/html-proofer-docs.rb \
-    --entrypoint /usr/local/bin/ruby \
-    ${HTML_PROOFER_IMAGE} \
-    /root/html-proofer-docs.rb
+function validateProjectDocumentation() {
+  ruby $PWD/ci/docs/proof.rb
+
   retVal=$?
   if [[ ${retVal} -eq 0 ]]; then
     printgreen "HTML Proofer found no bad links."
@@ -52,6 +41,7 @@ serviceProps=true
 publishDocs=true
 buildDocs=true
 serve=false
+clone=true
 
 while (("$#")); do
   case "$1" in
@@ -70,6 +60,10 @@ while (("$#")); do
   --publish)
     publishDocs=$2
     shift 2
+    ;;
+  --skip-clone)
+    clone=false
+    shift;
     ;;
   --build)
     buildDocs=$2
@@ -123,40 +117,42 @@ printgreen "Third Party: \t${thirdParty}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
-rm -Rf "$PWD/gh-pages"
-[[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
-[[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
+if [[ $clone == "true" ]]; then
+  rm -Rf "$PWD/gh-pages"
+  [[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
+  [[ -d $PWD/docs-includes ]] && rm -Rf "$PWD"/docs-includes
 
-printgreen "Copying project documentation over to $PWD/docs-latest...\n"
-chmod -R 777 docs/cas-server-documentation
-cp -R docs/cas-server-documentation/ "$PWD"/docs-latest
-mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
+  printgreen "Copying project documentation over to $PWD/docs-latest...\n"
+  chmod -R 777 docs/cas-server-documentation
+  cp -R docs/cas-server-documentation/ "$PWD"/docs-latest
+  mv "$PWD/docs-latest/_includes" "$PWD/docs-includes"
 
-printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch...\n"
-[[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
-git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
+  printgreen "Cloning ${REPOSITORY_NAME}'s [gh-pages] branch...\n"
+  [[ -d "$PWD/gh-pages" ]] && rm -Rf "$PWD/gh-pages"
+  git clone --single-branch --depth 1 --branch gh-pages --quiet "${REPOSITORY_ADDR}" $PWD/gh-pages
 
-printgreen "Removing previous documentation from $branchVersion...\n"
-rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
-rm -Rf "$PWD/gh-pages/_includes/$branchVersion" >/dev/null
-rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
+  printgreen "Removing previous documentation from $branchVersion...\n"
+  rm -Rf "$PWD/gh-pages/$branchVersion" >/dev/null
+  rm -Rf "$PWD/gh-pages/_includes/$branchVersion" >/dev/null
+  rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
 
-printgreen "Creating $branchVersion directory...\n"
-mkdir -p "$PWD/gh-pages/$branchVersion"
-mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
-mkdir -p "$PWD/gh-pages/_data/$branchVersion"
+  printgreen "Creating $branchVersion directory...\n"
+  mkdir -p "$PWD/gh-pages/$branchVersion"
+  mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
+  mkdir -p "$PWD/gh-pages/_data/$branchVersion"
 
-printgreen "Copying new docs to $branchVersion...\n"
-mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
-mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
-rm -f "$PWD/gh-pages/Gemfile.lock"
+  printgreen "Copying new docs to $branchVersion...\n"
+  mv "$PWD/docs-latest/Gemfile" "$PWD/gh-pages"
+  mv "$PWD/docs-latest/_config.yml" "$PWD/gh-pages"
+  rm -f "$PWD/gh-pages/Gemfile.lock"
 
-cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
-cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
-rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
-rm -Rf "$PWD/docs-latest"
-rm -Rf "$PWD/docs-includes"
-printgreen "Copied project documentation to $PWD/gh-pages/...\n"
+  cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
+  cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
+  rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
+  rm -Rf "$PWD/docs-latest"
+  rm -Rf "$PWD/docs-includes"
+  printgreen "Copied project documentation to $PWD/gh-pages/...\n"
+fi
 
 if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
@@ -215,21 +211,14 @@ if [[ $proofRead == "true" ]]; then
     exit 1
   fi
 
-  printgreen "Validating documentation links..."
-  validateProjectDocumentation
-  retVal=$?
-  if [[ ${retVal} -eq 1 ]]; then
-    printred "Failed to validate documentation.\n"
-    exit ${retVal}
-  fi
 else
   printgreen "Skipping validation of documentation links..."
 fi
 
-pushd .
-cd "$PWD/gh-pages"
 
 if [[ ${buildDocs} == "true" ]]; then
+  pushd .
+  cd "$PWD/gh-pages"
   printgreen "Installing documentation dependencies...\n"
   bundle install
   printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
@@ -241,35 +230,51 @@ if [[ ${buildDocs} == "true" ]]; then
   else
     bundle exec jekyll build --profile
   fi
+
   echo -n "Ended at " && date
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
     printred "Failed to build documentation.\n"
     exit ${retVal}
   fi
+  popd
 fi
 
-rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
+if [[ $proofRead == "true" ]]; then
+  printgreen "Validating documentation links..."
+  validateProjectDocumentation
+  retVal=$?
+  if [[ ${retVal} -eq 1 ]]; then
+    printred "Failed to validate documentation.\n"
+    exit ${retVal}
+  fi
+fi
 
-printgreen "\nConfiguring git repository settings...\n"
-rm -Rf .git
-git init
-git config init.defaultBranch master
-git remote add origin "${REPOSITORY_ADDR}"
-git config user.email "cas@apereo.org"
-git config user.name "CAS"
-git config core.fileMode false
+pushd .
+cd "$PWD/gh-pages"
 
-printgreen "Checking out gh-pages branch..."
-git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null
-printgreen "Configuring tracking branches for repository...\n"
-git branch -u origin/gh-pages
+if [[ $clone == "true" ]]; then
+  rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
+  printgreen "\nConfiguring git repository settings...\n"
+  rm -Rf .git
+  git init
+  git config init.defaultBranch master
+  git remote add origin "${REPOSITORY_ADDR}"
+  git config user.email "cas@apereo.org"
+  git config user.name "CAS"
+  git config core.fileMode false
 
-rm -Rf "./$branchVersion"
-mv "_site/$branchVersion" .
-touch "$branchVersion/.nojekyll"
-rm -Rf _site
-rm -Rf _data
+  printgreen "Checking out gh-pages branch..."
+  git switch gh-pages 2>/dev/null || git switch -c gh-pages 2>/dev/null
+  printgreen "Configuring tracking branches for repository...\n"
+  git branch -u origin/gh-pages
+
+  rm -Rf "./$branchVersion"
+  mv "_site/$branchVersion" .
+  touch "$branchVersion/.nojekyll"
+  rm -Rf _site
+  rm -Rf _data
+fi 
 
 if [[ "${publishDocs}" == "true" ]]; then
   printgreen "Adding changes to the git index...\n"
@@ -295,7 +300,10 @@ else
 fi
 
 popd
-rm -Rf "$PWD/gh-pages"
+
+if [[ $clone == "true" ]]; then
+  rm -Rf "$PWD/gh-pages"
+fi
 
 if [[ ${retVal} -eq 0 ]]; then
   printgreen "Done processing documentation to $branchVersion.\n"

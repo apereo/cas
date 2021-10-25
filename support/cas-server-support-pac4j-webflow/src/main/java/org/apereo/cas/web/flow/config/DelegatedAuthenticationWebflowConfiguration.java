@@ -65,6 +65,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,11 +144,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
             return new DefaultDelegatedClientAuthenticationWebflowManager(delegatedClientAuthenticationConfigurationContext);
         }
 
-
         @Bean
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCasMultifactorWebflowCustomizer")
         public CasMultifactorWebflowCustomizer delegatedAuthenticationCasMultifactorWebflowCustomizer() {
-            return () -> List.of(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+            return new CasMultifactorWebflowCustomizer() {
+                @Override
+                public Collection<String> getCandidateStatesForMultifactorAuthentication() {
+                    return List.of(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION);
+                }
+            };
         }
     }
 

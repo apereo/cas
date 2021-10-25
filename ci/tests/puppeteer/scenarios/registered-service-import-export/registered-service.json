@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://.+",
+  "name": "Sample",
+  "id": ${id},
+  "description": "CAS",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
