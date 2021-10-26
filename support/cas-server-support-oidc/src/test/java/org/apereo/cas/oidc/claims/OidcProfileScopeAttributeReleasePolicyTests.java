@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -32,9 +33,12 @@ public class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTes
             "profile", List.of("test"),
             "preferred_username", List.of("casuser"),
             "family_name", List.of("given_name")));
-        val attrs = policy.getAttributes(principal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
         assertTrue(policy.determineRequestedAttributeDefinitions(
             principal,

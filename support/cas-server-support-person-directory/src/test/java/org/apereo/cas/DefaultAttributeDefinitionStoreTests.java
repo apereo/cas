@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -77,9 +78,13 @@ public class DefaultAttributeDefinitionStoreTests {
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()),
-            CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getRegisteredService());
-        assertNotNull(attributes);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
@@ -146,8 +151,13 @@ public class DefaultAttributeDefinitionStoreTests {
         assertNotNull(person);
 
         val policy = new ReturnAllAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()),
-            CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal(person.getAttributes()))
+            .build();
+
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertNotNull(attributes);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("interesting-attribute"));

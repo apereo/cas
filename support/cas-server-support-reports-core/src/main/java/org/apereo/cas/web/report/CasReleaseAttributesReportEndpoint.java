@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
@@ -80,7 +81,12 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         val authentication = result.getAuthentication();
 
         val principal = authentication.getPrincipal();
-        val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(selectedService)
+            .principal(principal)
+            .build();
+        val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
             principal,
             this.principalFactory,

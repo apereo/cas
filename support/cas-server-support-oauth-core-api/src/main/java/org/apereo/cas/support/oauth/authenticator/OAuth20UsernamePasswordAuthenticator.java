@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -45,11 +46,12 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
     private final SessionStore sessionStore;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext context, final SessionStore sessionStore) throws CredentialsException {
-        val upc = (UsernamePasswordCredentials) credentials;
-        val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
+    public void validate(final Credentials credentials, final WebContext webContext,
+                         final SessionStore sessionStore) throws CredentialsException {
         try {
-            val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context, this.sessionStore);
+            val upc = (UsernamePasswordCredentials) credentials;
+            val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
+            val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(webContext, this.sessionStore);
             if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
                 throw new CredentialsException("No client credentials could be identified in this request");
             }
@@ -64,7 +66,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
                                                + Objects.requireNonNull(registeredService).getName());
             }
 
-            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            val redirectUri = webContext.getRequestParameter(OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             val service = StringUtils.isNotBlank(redirectUri)
                 ? this.webApplicationServiceFactory.createService(redirectUri)
@@ -76,8 +78,13 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             }
             val authentication = authenticationResult.getAuthentication();
             val principal = authentication.getPrincipal();
-            val attributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy()
-                .getAttributes(principal, service, registeredService);
+
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+            val attributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy().getAttributes(context);
 
             val profile = new CommonProfile();
             val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);

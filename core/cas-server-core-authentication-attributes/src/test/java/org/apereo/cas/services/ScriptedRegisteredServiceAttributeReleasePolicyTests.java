@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -28,9 +29,12 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
         p.setScriptFile("groovy { return attributes }");
         val principal = CoreAttributesTestUtils.getPrincipal("cas",
             Collections.singletonMap("attribute", List.of("value")));
-        val attrs = p.getAttributes(principal,
-            CoreAttributesTestUtils.getService(),
-            CoreAttributesTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = p.getAttributes(releasePolicyContext);
         assertEquals(attrs.size(), principal.getAttributes().size());
     }
 }

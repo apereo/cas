@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -49,8 +50,13 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertTrue(attributes.isEmpty());
     }
 
@@ -62,8 +68,12 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 
@@ -80,7 +90,12 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), service, registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 
@@ -97,7 +112,12 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
 
         val service = RegisteredServiceTestUtils.getService();
         service.getAttributes().put(SamlIdPConstants.PROVIDER_ID, List.of(registeredService.getServiceId()));
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), service, registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 
@@ -117,7 +137,12 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
             val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             val service = RegisteredServiceTestUtils.getService();
             service.getAttributes().put(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest));
-            val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(), service, registeredService);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .build();
+            val attributes = filter.getAttributes(context);
             assertFalse(attributes.isEmpty());
         }
     }

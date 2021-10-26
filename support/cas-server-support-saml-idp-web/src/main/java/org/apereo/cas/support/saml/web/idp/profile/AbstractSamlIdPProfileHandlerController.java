@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -192,8 +193,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                                                               final Service service,
                                                               final RegisteredService registeredService,
                                                               final Map<String, List<Object>> attributesToCombine) {
-        val attributes = registeredService.getAttributeReleasePolicy()
-            .getAttributes(authentication.getPrincipal(), service, registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(authentication.getPrincipal())
+            .build();
+        val attributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val principalId = registeredService.getUsernameAttributeProvider()
             .resolveUsername(authentication.getPrincipal(), service, registeredService);
         attributes.putAll(attributesToCombine);

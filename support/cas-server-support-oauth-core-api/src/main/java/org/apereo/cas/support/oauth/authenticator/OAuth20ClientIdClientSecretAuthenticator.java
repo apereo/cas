@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -57,7 +58,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final PrincipalResolver principalResolver;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext context,
+    public void validate(final Credentials credentials, final WebContext webContext,
                          final SessionStore sessionStore) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
         val upc = (UsernamePasswordCredentials) credentials;
@@ -68,13 +69,19 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             .build();
         val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
 
-        if (!accessResult.isExecutionFailure() && canAuthenticate(context)) {
+        if (!accessResult.isExecutionFailure() && canAuthenticate(webContext)) {
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            validateCredentials(upc, registeredService, context, sessionStore);
+            validateCredentials(upc, registeredService, webContext, sessionStore);
 
             val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
-            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
 
             val profile = new CommonProfile();
             if (principal instanceof NullPrincipal) {
