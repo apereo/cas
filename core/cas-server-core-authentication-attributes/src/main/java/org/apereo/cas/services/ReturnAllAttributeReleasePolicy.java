@@ -1,8 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -35,8 +32,8 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
     private Set<String> excludedAttributes;
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> resolvedAttributes,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> resolvedAttributes) {
         if (excludedAttributes != null) {
             excludedAttributes.forEach(resolvedAttributes::remove);
         }

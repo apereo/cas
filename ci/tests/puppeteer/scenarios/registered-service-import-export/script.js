@@ -34,7 +34,7 @@ const os = require("os");
             let exported = path.join(tempDir, 'services.zip');
             res.data.pipe(fs.createWriteStream(exported));
             console.log(`Exported services are at ${exported}`);
-            assert(fs.existsSync(exported) === true)
+            assert(fs.existsSync(exported))
         },
         function(error) {
             throw error;

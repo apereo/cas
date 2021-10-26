@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -46,13 +45,11 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final SamlRegisteredService registeredService,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
         final EntityDescriptor entityDescriptor,
-        final Principal principal,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         val attr = new EntityAttributesPredicate.Candidate(getEntityAttribute(), getEntityAttributeFormat());
         attr.setValues(getEntityAttributeValues());
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
@@ -60,7 +57,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         if (predicate.test(entityDescriptor)) {
             LOGGER.debug("Authorizing release of allowed attributes [{}] for entity id [{}]",
                 attributes, entityDescriptor.getEntityID());
-            return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+            return authorizeReleaseOfAllowedAttributes(context, attributes);
         }
         LOGGER.debug("Unable to authorize attribute release for entity attribute category [{}] and value(s) [{}] to entity id [{}]",
             getEntityAttribute(), getEntityAttributeValues(), entityDescriptor.getEntityID());

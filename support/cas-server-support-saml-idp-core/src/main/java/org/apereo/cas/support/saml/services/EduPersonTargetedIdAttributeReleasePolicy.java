@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -66,13 +64,11 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final SamlRegisteredService service,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
         final EntityDescriptor entityDescriptor,
-        final Principal principal,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         val releaseAttributes = new HashMap<String, List<Object>>();
 
         val resolvedSalt = SpringExpressionLanguageValueResolver.getInstance().resolve(this.salt);
@@ -81,10 +77,10 @@ public class EduPersonTargetedIdAttributeReleasePolicy extends BaseSamlRegistere
         val resolvedAttrs = SpringExpressionLanguageValueResolver.getInstance().resolve(this.attribute);
         persistentIdGenerator.setAttribute(resolvedAttrs);
 
-        val principalId = persistentIdGenerator.determinePrincipalIdFromAttributes(principal.getId(), attributes);
+        val principalId = persistentIdGenerator.determinePrincipalIdFromAttributes(context.getPrincipal().getId(), attributes);
         LOGGER.debug("Selected principal id [{}] to generate [{}] for service [{}]",
-            principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, selectedService);
-        val result = persistentIdGenerator.generate(principalId, selectedService);
+            principalId, ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID, context.getService());
+        val result = persistentIdGenerator.generate(principalId, context.getService());
         val attrName = this.useUniformResourceName ? ATTRIBUTE_URN_EDU_PERSON_TARGETED_ID : ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID;
         releaseAttributes.put(attrName, CollectionUtils.wrapList(result));
         LOGGER.debug("Calculated [{}] attribute as [{}]", attrName, result);

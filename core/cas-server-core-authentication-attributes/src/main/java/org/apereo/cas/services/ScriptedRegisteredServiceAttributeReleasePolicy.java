@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -42,8 +40,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     private String scriptFile;
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
-        final RegisteredService service, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attributes) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(this.scriptFile);
         if (matcherInline.find()) {
             return getAttributesFromInlineGroovyScript(attributes, matcherInline);
