@@ -90,6 +90,11 @@ Various improvements to SAML2 attribute query requests:
 - SAML2 attribute query tracking tokens now gain their own expiration policy in the CAS configuration schema.
 - The expiration policies of the SAML2 attribute query token and its linked ticket-granting ticket are now taken into account. 
 - Attributes released in response to an attribute query pass through relevant attribute release policies for the service provider.
+   
+### Bootstrap Themes
+       
+There is now additional, optional support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes. The collection of themes
+that ship with CAS now include a special `twbs` theme that is based on Bootstrap support.
 
 ## Other Stuff
      

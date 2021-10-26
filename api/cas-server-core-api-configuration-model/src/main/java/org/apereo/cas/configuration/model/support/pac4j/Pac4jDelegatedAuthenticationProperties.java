@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
@@ -163,4 +164,10 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationCookieProperties cookie = new Pac4jDelegatedAuthenticationCookieProperties();
+
+    /**
+     * Webflow auto-configuration settings.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties();
 }

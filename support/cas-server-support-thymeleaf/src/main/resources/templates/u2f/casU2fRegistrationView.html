@@ -40,7 +40,7 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" id="login" class="mdc-card mdc-card-content w-lg-50 p-4 m-auto">
+        <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
             <h3 th:text="#{cas.mfa.u2f.register.device}">Register Device</h3>
             <div th:utext="#{cas.mfa.u2f.authentication.message}" th:remove="tag">
                 <p><strong>Please touch the flashing U2F device now.</strong></p>

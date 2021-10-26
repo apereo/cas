@@ -99,8 +99,12 @@ header>nav .cas-brand .cas-logo {
     height: 100%;
 }
 
-.caps-check:not(.caps-on) .caps-warn, .caps-check:not(.caps-on)+.caps-warn {
+.caps-warn {
     display: none;
+}
+
+.caps-on .caps-warn {
+    display: block;
 }
 
 .login-section {
@@ -334,20 +338,11 @@ button.close {
 .mdc-text-field {
     width: 100%;
 }
+
 .mdc-text-field>.mdc-text-field__input, .mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea)>.mdc-text-field__input {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);
     border-radius: 4px;
-}
-
-.mdc-input-group {
-    display: flex;
-    align-items: stretch;
-}
-
-.mdc-input-group .mdc-input-group-field {
-    flex: 1 1 auto;
-    order: 1;
 }
 
 .mdc-input-group .mdc-input-group-field .mdc-text-field {
@@ -558,7 +553,7 @@ button.close {
     }
 }
 
-.sr-only {
+.visually-hidden {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -569,21 +564,12 @@ button.close {
     border: 0;
 }
 
-.sr-only-focusable:active, .sr-only-focusable:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-}
-
 *, ::after, ::before {
     box-sizing: border-box;
 }
 
 .text-justify {
-text-align: justify;
+    text-align: justify;
 }
 
 #duo_iframe {

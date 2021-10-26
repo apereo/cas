@@ -11,14 +11,12 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-danger mdc-card p-4 m-auto w-lg-66 text-justify">
-        <div class="alert alert-danger alert-dismissible fade show">
-            <h2 th:utext="#{screen.delauthn.error.header}">Delegated Authentication Failure</h2>
-            <p th:utext="#{screen.delauthn.error.message}">CAS is unable to complete the delegated authentication scenario,
-                or redirect to the selected identity provider. Please examine the original authentication request and try again.
-                You may need to close your browser and start again.
-            </p>
-        </div>
+    <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
+        <h2 th:utext="#{screen.delauthn.error.header}">Delegated Authentication Failure</h2>
+        <p th:utext="#{screen.delauthn.error.message}">CAS is unable to complete the delegated authentication scenario,
+            or redirect to the selected identity provider. Please examine the original authentication request and try again.
+            You may need to close your browser and start again.
+        </p>
     </div>
 </main>
 </body>
