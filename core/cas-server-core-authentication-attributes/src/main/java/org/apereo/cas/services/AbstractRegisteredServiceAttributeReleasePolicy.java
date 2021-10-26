@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.PostLoad;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,7 +88,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, context.getPrincipal().getId());
 
             val availableAttributes = resolveAttributesFromAttributeDefinitionStore(context, principalAttributes);
-            LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store", availableAttributes, context.getPrincipal().getId());
+            LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store",
+                availableAttributes, context.getPrincipal().getId());
 
             getRegisteredServicePrincipalAttributesRepository()
                 .ifPresent(repository -> repository.update(context.getPrincipal().getId(), availableAttributes, context.getRegisteredService()));
@@ -95,7 +97,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
             LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), context.getPrincipal().getId());
             val policyAttributes = getAttributesInternal(context, availableAttributes);
-            LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, context.getPrincipal().getId());
+            LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]",
+                getClass().getSimpleName(), policyAttributes, context.getPrincipal().getId());
 
             LOGGER.trace("Attempting to merge policy attributes and default attributes");
             if (isExcludeDefaultAttributes()) {
@@ -176,31 +179,32 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * Resolve attributes from attribute definition store and provide map.
      *
      * @param context             the context
-     * @param attributesToResolve the principal attributes
+     * @param principalAttributes the principal attributes
      * @return the map
      */
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(
         final RegisteredServiceAttributeReleasePolicyContext context,
-        final Map<String, List<Object>> attributesToResolve) {
+        final Map<String, List<Object>> principalAttributes) {
         LOGGER.trace("Retrieving attribute definition store and attribute definitions...");
         return ApplicationContextProvider.getAttributeDefinitionStore()
             .map(attributeDefinitionStore -> {
                 if (attributeDefinitionStore.isEmpty()) {
-                    LOGGER.trace("No attribute definitions are defined in the attribute definition store");
-                    return attributesToResolve;
+                    LOGGER.trace("No attribute definitions are defined in the attribute definition "
+                        + "store, or no attribute definitions are requested.");
+                    return principalAttributes;
                 }
-                val requestedDefinitions = determineRequestedAttributeDefinitions(context);
-                if (!requestedDefinitions.isEmpty()) {
-                    LOGGER.trace("Finding requested attribute definitions [{}]", requestedDefinitions);
-                    requestedDefinitions.stream()
-                        .filter(defn -> attributeDefinitionStore.locateAttributeDefinition(defn).isPresent())
-                        .forEach(defn -> attributesToResolve.putIfAbsent(defn, List.of()));
-                }
-                return attributeDefinitionStore.resolveAttributeValues(attributesToResolve, context.getRegisteredService());
+                val requestedDefinitions = new ArrayList<>(determineRequestedAttributeDefinitions(context));
+                requestedDefinitions.addAll(principalAttributes.keySet());
+                LOGGER.trace("Finding requested attribute definitions [{}]", requestedDefinitions);
+                val availableAttributes = new LinkedHashMap<>(principalAttributes);
+                availableAttributes.putAll(context.getReleasingAttributes());
+
+                return attributeDefinitionStore.resolveAttributeValues(requestedDefinitions,
+                    availableAttributes, context.getRegisteredService());
             })
             .orElseGet(() -> {
                 LOGGER.trace("No attribute definition store is available in application context");
-                return attributesToResolve;
+                return principalAttributes;
             });
     }
 

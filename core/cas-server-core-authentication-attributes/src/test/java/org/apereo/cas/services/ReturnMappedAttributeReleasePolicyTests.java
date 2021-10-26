@@ -433,4 +433,27 @@ public class ReturnMappedAttributeReleasePolicyTests {
             }));
         service.awaitTermination(5, TimeUnit.SECONDS);
     }
+
+    @Test
+    @Order(13)
+    public void verifyChainDependingOnPreviousAttributes() {
+        val policy1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap("uid", "my-userid"));
+        policy1.setOrder(1);
+        val policy2 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap("new-uid", "groovy {attributes['my-userid'][0]+'-new'}"));
+        policy2.setOrder(2);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicies(policy2, policy1);
+
+        val attributes = chain.getAttributes(releasePolicyContext);
+        assertEquals(2, attributes.size());
+        assertEquals("test", attributes.get("my-userid").get(0));
+        assertEquals("test-new", attributes.get("new-uid").get(0));
+    }
 }

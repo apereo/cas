@@ -56,7 +56,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+    public synchronized Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         try {
             context.getReleasingAttributes().clear();
             val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);

@@ -39,5 +39,4 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
         }
         return resolvedAttributes;
     }
-
 }
