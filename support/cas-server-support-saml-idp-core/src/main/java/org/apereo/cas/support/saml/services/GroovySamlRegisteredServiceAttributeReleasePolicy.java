@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -41,15 +40,13 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
     private String groovyScript;
 
     @Override
-    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(final Map<String, List<Object>> attributes,
-                                                                              final SamlRegisteredService registeredService,
-                                                                              final ApplicationContext applicationContext,
-                                                                              final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                              final SamlRegisteredServiceServiceProviderMetadataFacade facade,
-                                                                              final EntityDescriptor entityDescriptor,
-                                                                              final Principal principal,
-                                                                              final Service selectedService) {
-
+    protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
+        final Map<String, List<Object>> attributes,
+        final ApplicationContext applicationContext,
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+        final EntityDescriptor entityDescriptor,
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
@@ -57,7 +54,8 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                 val script = cacheMgr.resolveScriptableResource(groovyResource, groovyResource);
                 return Optional.ofNullable(script)
                     .map(sc -> {
-                        val args = new Object[]{attributes, registeredService, resolver, facade, entityDescriptor, applicationContext, LOGGER};
+                        val args = new Object[]{attributes, context.getRegisteredService(), resolver,
+                            facade, entityDescriptor, applicationContext, LOGGER};
                         return script.execute(args, Map.class, true);
                     })
                     .orElseGet(() -> {

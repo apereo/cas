@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -56,8 +54,8 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     private String endpoint;
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attributes,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attributes) {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
@@ -65,8 +63,8 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(this.endpoint)
-                .parameters(CollectionUtils.wrap("principal", principal.getId(),
-                    "service", registeredService.getServiceId()))
+                .parameters(CollectionUtils.wrap("principal", context.getPrincipal().getId(),
+                    "service", context.getRegisteredService().getServiceId()))
                 .entity(writer.toString())
                 .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();

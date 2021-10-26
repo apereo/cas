@@ -78,7 +78,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        if (supports(context.getPrincipal(), context.getService(), context.getRegisteredService())) {
+        if (supports(context)) {
             LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
                 context.getPrincipal().getId(), context.getService(), context.getRegisteredService().getServiceId());
             LOGGER.trace("Locating principal attributes for [{}]", context.getPrincipal().getId());
@@ -94,7 +94,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.trace("Updating principal attributes repository cache for [{}] with [{}]", context.getPrincipal().getId(), availableAttributes);
 
             LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), context.getPrincipal().getId());
-            val policyAttributes = getAttributesInternal(context.getPrincipal(), availableAttributes, context.getRegisteredService(), context.getService());
+            val policyAttributes = getAttributesInternal(context, availableAttributes);
             LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]", getClass().getSimpleName(), policyAttributes, context.getPrincipal().getId());
 
             LOGGER.trace("Attempting to merge policy attributes and default attributes");
@@ -154,25 +154,21 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     /**
      * Gets the attributes internally from the implementation.
      *
-     * @param principal       the principal
-     * @param attributes      the principal attributes
-     * @param service         the service
-     * @param selectedService the selected service
+     * @param context    the context
+     * @param attributes the principal attributes
      * @return the attributes allowed for release
      */
-    public abstract Map<String, List<Object>> getAttributesInternal(Principal principal, Map<String, List<Object>> attributes,
-                                                                    RegisteredService service, Service selectedService);
+    public abstract Map<String, List<Object>> getAttributesInternal(
+        RegisteredServiceAttributeReleasePolicyContext context,
+        Map<String, List<Object>> attributes);
 
     /**
      * Supports this policy request..
      *
-     * @param principal         the principal
-     * @param selectedService   the selected service
-     * @param registeredService the registered service
+     * @param context the context
      * @return the boolean
      */
-    protected boolean supports(final Principal principal, final Service selectedService,
-                               final RegisteredService registeredService) {
+    protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
         return true;
     }
 

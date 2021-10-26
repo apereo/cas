@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -46,14 +44,12 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final SamlRegisteredService registeredService,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
         final EntityDescriptor entityDescriptor,
-        final Principal principal,
-        final Service selectedService) {
-        return fetchRequestedAttributes(attributes, registeredService, facade);
+        final RegisteredServiceAttributeReleasePolicyContext context) {
+        return fetchRequestedAttributes(attributes, context, facade);
     }
 
     @Override
@@ -75,21 +71,21 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     }
 
     private Map<String, List<Object>> fetchRequestedAttributes(final Map<String, List<Object>> attributes,
-                                                               final SamlRegisteredService registeredService,
+                                                               final RegisteredServiceAttributeReleasePolicyContext context,
                                                                final SamlRegisteredServiceServiceProviderMetadataFacade facade) {
         val releaseAttributes = new HashMap<String, List<Object>>();
         Optional.ofNullable(facade.getSsoDescriptor())
-            .ifPresent(sso -> {
-                sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestedAttributes().stream().filter(attr -> {
-                    val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
-                    LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]", name, registeredService.getName());
-                    return attributes.containsKey(name);
-                }).forEach(attr -> {
-                    val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
-                    LOGGER.debug("Found requested attribute [{}] in metadata for [{}]", name, registeredService.getName());
-                    releaseAttributes.put(name, attributes.get(name));
-                }));
-            });
+            .ifPresent(sso -> sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestedAttributes().stream().filter(attr -> {
+                val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
+                LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]",
+                    name, context.getRegisteredService().getName());
+                return attributes.containsKey(name);
+            }).forEach(attr -> {
+                val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
+                LOGGER.debug("Found requested attribute [{}] in metadata for [{}]",
+                    name, context.getRegisteredService().getName());
+                releaseAttributes.put(name, attributes.get(name));
+            })));
         return releaseAttributes;
     }
 }

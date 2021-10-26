@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
@@ -40,13 +39,11 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
         final Map<String, List<Object>> attributes,
-        final SamlRegisteredService registeredService,
         final ApplicationContext applicationContext,
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceServiceProviderMetadataFacade facade,
         final EntityDescriptor entityDescriptor,
-        final Principal principal,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElse(List.of());
 
@@ -56,7 +53,7 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
             .anyMatch(info -> RegexUtils.find(this.registrationAuthority, info.getRegistrationAuthority()));
 
         if (matched) {
-            return authorizeReleaseOfAllowedAttributes(principal, attributes, registeredService, selectedService);
+            return authorizeReleaseOfAllowedAttributes(context, attributes);
         }
         return new HashMap<>(0);
     }

@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -77,10 +74,8 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
 
     @Override
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
-        final Principal principal,
-        final Map<String, List<Object>> attrs,
-        final RegisteredService registeredService,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> attrs) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = new HashMap<String, List<Object>>();

@@ -57,13 +57,13 @@ public class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfig
         val service = CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp");
         service.getAttributes().put("owner", List.of(SamlAttributeQueryTicket.class.getName()));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        assertTrue(filter.supports(principal, service, registeredService));
 
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
             .service(service)
             .principal(principal)
             .build();
+        assertTrue(filter.supports(context));
         val attributes = filter.getAttributes(context);
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("cn"));
