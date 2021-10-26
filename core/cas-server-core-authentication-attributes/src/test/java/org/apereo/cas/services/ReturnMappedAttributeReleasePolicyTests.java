@@ -329,11 +329,14 @@ public class ReturnMappedAttributeReleasePolicyTests {
     public void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy(allowed1);
-        assertTrue(policy.determineRequestedAttributeDefinitions(
-            CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService()
-        ).containsAll(policy.getAllowedAttributes().keySet()));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = policy.determineRequestedAttributeDefinitions(releasePolicyContext);
+        assertTrue(attributes.containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test

@@ -88,11 +88,14 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         val attr = policy.getAttributes(context);
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
-        assertTrue(policy.determineRequestedAttributeDefinitions(
-            p,
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService()
-        ).containsAll(policy.getAllowedAttributes().keySet()));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(p)
+            .build();
+        val definitions = policy.determineRequestedAttributeDefinitions(releasePolicyContext);
+        assertTrue(definitions.containsAll(policy.getAllowedAttributes().keySet()));
     }
 
     @Test
@@ -120,9 +123,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
-        assertTrue(policy.determineRequestedAttributeDefinitions(p,
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService()).containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(context).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test

@@ -65,6 +65,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
             val policyAttributes = policy.getAttributes(context);
             merger.mergeAttributes(attributes, policyAttributes);
             LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
+            context.getReleasingAttributes().putAll(attributes);
         });
         return attributes;
     }

@@ -50,11 +50,7 @@ public class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTest
             .build();
         val releaseAttrs = policy.getAttributes(releasePolicyContext2);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(releaseAttrs::containsKey));
-        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions(
-            principal2,
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService()
-        )));
+        assertTrue(policy.getAllowedAttributes().containsAll(policy.determineRequestedAttributeDefinitions(releasePolicyContext2)));
         assertEquals(releaseAttrs.get("groups"), List.of("admin", "user"));
     }
 

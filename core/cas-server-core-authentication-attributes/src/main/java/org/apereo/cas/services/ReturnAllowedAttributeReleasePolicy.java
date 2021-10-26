@@ -73,9 +73,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    protected List<String> determineRequestedAttributeDefinitions(final Principal principal,
-                                                                  final RegisteredService registeredService,
-                                                                  final Service selectedService) {
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return getAllowedAttributes();
     }
 }

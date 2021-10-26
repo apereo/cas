@@ -91,13 +91,17 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new InCommonRSAttributeReleasePolicy();
         policy.setUseUniformResourceName(true);
-        var definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        var definitions = policy.determineRequestedAttributeDefinitions(context);
         assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.values()));
 
         policy.setUseUniformResourceName(false);
-        definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
+        definitions = policy.determineRequestedAttributeDefinitions(context);
         assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.keySet()));
     }
 }

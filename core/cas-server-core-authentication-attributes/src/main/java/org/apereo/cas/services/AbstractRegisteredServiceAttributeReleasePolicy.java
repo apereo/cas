@@ -86,8 +86,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(context.getPrincipal(), context.getRegisteredService());
             LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, context.getPrincipal().getId());
 
-            val availableAttributes = resolveAttributesFromAttributeDefinitionStore(context.getPrincipal(),
-                principalAttributes, context.getRegisteredService(), context.getService());
+            val availableAttributes = resolveAttributesFromAttributeDefinitionStore(context, principalAttributes);
             LOGGER.trace("Resolved principal attributes [{}] for [{}] from attribute definition store", availableAttributes, context.getPrincipal().getId());
 
             getRegisteredServicePrincipalAttributesRepository()
@@ -180,17 +179,13 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     /**
      * Resolve attributes from attribute definition store and provide map.
      *
-     * @param principal           the principal
+     * @param context             the context
      * @param attributesToResolve the principal attributes
-     * @param registeredService   the registered service
-     * @param selectedService     the selected service
      * @return the map
      */
     protected Map<String, List<Object>> resolveAttributesFromAttributeDefinitionStore(
-        final Principal principal,
-        final Map<String, List<Object>> attributesToResolve,
-        final RegisteredService registeredService,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> attributesToResolve) {
         LOGGER.trace("Retrieving attribute definition store and attribute definitions...");
         return ApplicationContextProvider.getAttributeDefinitionStore()
             .map(attributeDefinitionStore -> {
@@ -198,14 +193,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                     LOGGER.trace("No attribute definitions are defined in the attribute definition store");
                     return attributesToResolve;
                 }
-                val requestedDefinitions = determineRequestedAttributeDefinitions(principal, registeredService, selectedService);
+                val requestedDefinitions = determineRequestedAttributeDefinitions(context);
                 if (!requestedDefinitions.isEmpty()) {
                     LOGGER.trace("Finding requested attribute definitions [{}]", requestedDefinitions);
                     requestedDefinitions.stream()
                         .filter(defn -> attributeDefinitionStore.locateAttributeDefinition(defn).isPresent())
                         .forEach(defn -> attributesToResolve.putIfAbsent(defn, List.of()));
                 }
-                return attributeDefinitionStore.resolveAttributeValues(attributesToResolve, registeredService);
+                return attributeDefinitionStore.resolveAttributeValues(attributesToResolve, context.getRegisteredService());
             })
             .orElseGet(() -> {
                 LOGGER.trace("No attribute definition store is available in application context");
@@ -295,15 +290,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * released in the policy.  This method should return the list of definitions keys that need to be resolved by the
      * definition store so the can be resolved and released to the client.
      *
-     * @param principal         the principal
-     * @param registeredService the registered service
-     * @param selectedService   the selected service
+     * @param context the context
      * @return - List of requested attribute definitions to be released.
      */
-    protected List<String> determineRequestedAttributeDefinitions(
-        final Principal principal,
-        final RegisteredService registeredService,
-        final Service selectedService) {
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>();
     }
 

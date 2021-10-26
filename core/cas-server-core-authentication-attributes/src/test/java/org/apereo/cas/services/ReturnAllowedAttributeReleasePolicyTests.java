@@ -106,11 +106,13 @@ public class ReturnAllowedAttributeReleasePolicyTests {
         allowedAttributes.add("cn");
         allowedAttributes.add("givenName");
         val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
-        assertTrue(policy.determineRequestedAttributeDefinitions(
-            CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService()
-        ).containsAll(policy.getAllowedAttributes()));
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        assertTrue(policy.determineRequestedAttributeDefinitions(context).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
