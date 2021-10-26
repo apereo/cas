@@ -59,7 +59,13 @@ public class ReturnAllAttributeReleasePolicyTests {
             CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
-        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), registeredService);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
         assertEquals(1, results.size());
         assertFalse(results.containsKey("cn"));
         assertTrue(results.containsKey("uid"));

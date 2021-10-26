@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -40,11 +41,15 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         val filter = new InCommonRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
                     "mail", "cas@example.org",
-                    "sn", "surname")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+                    "sn", "surname")))
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
         assertTrue(attributes.containsKey("mail"));
@@ -58,11 +63,15 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
                     "mail", "cas@example.org",
-                    "sn", "surname")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+                    "sn", "surname")))
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
         assertTrue(attributes.containsKey("urn:oid:0.9.2342.19200300.100.1.3"));

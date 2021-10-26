@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
@@ -57,7 +58,13 @@ public class AttributeQueryAttributeReleasePolicyTests extends BaseSamlIdPConfig
         service.getAttributes().put("owner", List.of(SamlAttributeQueryTicket.class.getName()));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         assertTrue(filter.supports(principal, service, registeredService));
-        val attributes = filter.getAttributes(principal, service, registeredService);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(principal)
+            .build();
+        val attributes = filter.getAttributes(context);
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("cn"));
     }

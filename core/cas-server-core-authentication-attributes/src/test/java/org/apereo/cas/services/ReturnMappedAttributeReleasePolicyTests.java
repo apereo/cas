@@ -83,7 +83,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val registeredService = CoreAttributesTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyRead);
 
-        val attributes = policyRead.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attributes = policyRead.getAttributes(releasePolicyContext);
         assertTrue(attributes.containsKey("DaTest2"));
         assertTrue(attributes.containsKey("newTest2"));
         assertTrue(attributes.containsKey("newTest1"));
@@ -113,9 +118,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        val result = policyWritten.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
         assertTrue(result.containsValue(List.of("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME)));
     }
@@ -131,9 +139,13 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        val result = policyWritten.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
         assertEquals(2, Collection.class.cast(result.get("attr1")).size());
     }
@@ -154,9 +166,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        val result = policyWritten.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey(attributeName));
         val attr1 = result.get(attributeName);
         assertTrue(attr1.contains("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
@@ -175,16 +190,17 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        var result = policy.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        var result = policy.getAttributes(releasePolicyContext);
         assertTrue(result.isEmpty());
 
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
         principalAttributes.put("email", List.of("user@example.org"));
-        result = policy.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        result = policy.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey(mappedAttribute));
         assertEquals(List.of("user@example.org"), result.get(mappedAttribute));
     }
@@ -201,9 +217,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        val result = policyWritten.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey(attributeName));
         val attr1 = result.get(attributeName);
         assertTrue(attr1.contains("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
@@ -224,10 +243,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        val result1 = p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1);
-
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service1)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
+            .build();
+        val result1 = p1.getAttributes(releasePolicyContext);
         assertTrue(result1.containsKey(attributeName));
         assertTrue(result1.containsValue(List.of("v1")));
 
@@ -241,9 +262,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         val service2 = CoreAttributesTestUtils.getRegisteredService();
         when(service2.getAttributeReleasePolicy()).thenReturn(p2);
-        val result2 = p2.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service2);
+        val releasePolicyContext2 = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service2)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
+            .build();
+        val result2 = p2.getAttributes(releasePolicyContext2);
         assertTrue(result2.containsKey(attributeName));
         assertTrue(result2.containsValue(List.of("v2")));
     }
@@ -262,14 +286,14 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        var result = p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service1)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
+            .build();
+        var result = p1.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey(attributeName));
-
-        result = p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1);
+        result = p1.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey(attributeName));
     }
 
@@ -283,18 +307,19 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        var result = p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service1)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes))
+            .build();
+        var result = p1.getAttributes(releasePolicyContext);
         assertEquals(1, result.size());
         assertFalse(result.containsKey("uid"));
         assertTrue(result.containsKey("my-userid"));
 
         attributes.clear();
         attributes.put("my-userid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
-        result = p1.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, attributes),
-            CoreAttributesTestUtils.getService(), service1);
+        result = p1.getAttributes(releasePolicyContext);
         assertEquals(1, result.size());
         assertTrue(result.containsKey("my-userid"));
     }
@@ -325,9 +350,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
 
-        val result = policyWritten.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policyWritten.getAttributes(releasePolicyContext);
         assertFalse(result.containsKey("attr1"));
         assertTrue(result.containsKey("userId"));
     }
@@ -347,9 +375,12 @@ public class ReturnMappedAttributeReleasePolicyTests {
         val principalAttributes = new HashMap<String, List<Object>>();
         principalAttributes.put("uid", List.of(CoreAttributesTestUtils.CONST_USERNAME));
 
-        val result = policy.getAttributes(
-            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
-            CoreAttributesTestUtils.getService(), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes))
+            .build();
+        val result = policy.getAttributes(releasePolicyContext);
 
         assertFalse(result.containsKey("attr1"));
         assertTrue(result.containsKey("userId"));
@@ -376,7 +407,13 @@ public class ReturnMappedAttributeReleasePolicyTests {
                     principalAttributes.put("uid", List.of(uid));
                     principalAttributes.put("fiscalNumber", List.of(uid + '-' + RandomUtils.randomAlphabetic(9)));
                     val principal = CoreAttributesTestUtils.getPrincipal(uid, principalAttributes);
-                    val result = policy.getAttributes(principal, CoreAttributesTestUtils.getService(), registeredService);
+
+                    val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+                        .registeredService(registeredService)
+                        .service(CoreAuthenticationTestUtils.getService())
+                        .principal(principal)
+                        .build();
+                    var result = policy.getAttributes(releasePolicyContext);
                     assertNotNull(result);
                     assertTrue(result.containsKey("uid"));
                     assertTrue(result.containsKey("taxId"));

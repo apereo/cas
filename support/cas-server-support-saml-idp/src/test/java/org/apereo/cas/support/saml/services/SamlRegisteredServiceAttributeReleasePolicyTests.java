@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -36,8 +37,12 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
     public void verifyNoSamlService() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
     }
 
@@ -45,8 +50,12 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
     public void verifyNoAppContext() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
     }
 
@@ -59,8 +68,12 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         registeredService.setMetadataLocation("classpath:metadata/testshib-providers.xml");
 
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.cas.org"), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.cas.org"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
     }
 
@@ -74,8 +87,12 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service);
 
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
     }
 
@@ -86,14 +103,21 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
 
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, new CasConfigurationProperties(), "CasConfigurationProperties");
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, resolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            new CasConfigurationProperties(), "CasConfigurationProperties");
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            resolver, SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME);
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setServiceId("https://sp.cas.org");
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.cas.org"), registeredService);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.cas.org"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertTrue(attributes.isEmpty());
     }
 
@@ -128,8 +152,12 @@ public class SamlRegisteredServiceAttributeReleasePolicyTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service);
 
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
-        val attributes = policy.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = policy.getAttributes(releasePolicyContext);
         assertFalse(attributes.isEmpty());
     }
 

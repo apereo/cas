@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -122,8 +123,12 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        val attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService("test"));
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService("test"))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(p)
+            .build();
+        val attr = policy.getAttributes(context);
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 

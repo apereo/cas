@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     "spring.session.store-type=JDBC",
     "spring.session.jdbc.schema=classpath:org/springframework/session/jdbc/schema-@@platform@@.sql",
-    "spring.session.jdbc.initialize-schema=always",
+    "spring.session.jdbc.initialize-schema=always"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcSessionConfigurationTests {
