@@ -11,7 +11,7 @@
 
 <body id="cas">
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+        <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
             <p>The following devices are registered for <code th:text="${principal.id}"></code>:</p>
             
             <div class="card-text">
@@ -20,20 +20,20 @@
                         <h4 class="d-flex align-items-center">
                             <ul style="list-style: none">
                                 <code>
-                                <li><i class="mdi mdi-laptop mr-2"></i>
+                                <li><i class="mdi mdi-laptop fas fa-laptop mr-2"></i>
                                     <span th:id="${'name-' + device.name}" th:utext="${device.name}">Device Name</span>
                                 </li>
-                                <li><i class="mdi mdi-account-clock mr-2"></i>
+                                <li><i class="mdi mdi-account-clock fas fa-user-clock mr-2"></i>
                                     <span th:utext="${device.registrationDate}">Device Date</span>
                                 </li>
-                                <li><i class="mdi mdi-account-details mr-2"></i>
+                                <li><i class="mdi mdi-account-details fas fa-user-tag mr-2"></i>
                                     <span th:id="${'id-' + device.id}" th:utext="${device.id}">Device Id</span>
                                 </li>
                                 </code>
                             </ul>
                         </h4>
                         <button th:id="${'useButton-' + device.id}"
-                                class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.selectdevice}">
+                                class="mdc-button mdc-button--raised btn btn-primary" th:value="#{screen.authentication.gauth.selectdevice}">
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Use</span>
                         </button>
                         <button th:id="${'delButton-' + device.id}"
@@ -53,7 +53,7 @@
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <input type="hidden" name="_eventId_register" value="Register"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="register" class="mdc-button mdc-button--raised mr-2" name="register" accesskey="r" value="Register">
+                <button id="register" class="mdc-button mdc-button--raised btn btn-primary mr-2" name="register" accesskey="r" value="Register">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
                 </button>
             </form>

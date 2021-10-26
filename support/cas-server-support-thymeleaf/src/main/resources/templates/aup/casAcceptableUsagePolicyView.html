@@ -11,7 +11,7 @@
 
 <body id="cas">
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
         <form method="post" id="fm1">
             <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
             <div class="aup">
@@ -31,13 +31,13 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <div class="form-actions d-flex">
-                    <button class="mdc-button mdc-button--raised mr-2"
+                    <button class="mdc-button mdc-button--raised mr-2 btn btn-primary"
                             name="submit"
                             id="aupSubmit"
                             accesskey="s">
                         <span class="mdc-button__label" th:value="#{screen.aup.button.accept}">ACCEPT</span>
                     </button>
-                    <button class="mdc-button mdc-button--outlined"
+                    <button class="mdc-button mdc-button--outlined btn btn-outline-secondary"
                             name="cancel"
                             th:value="#{screen.aup.button.cancel}"
                             accesskey="c"
