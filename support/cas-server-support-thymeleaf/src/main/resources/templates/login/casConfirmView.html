@@ -11,15 +11,15 @@
 
 <body>
     <main role="main" class="container mt-3 mb-3">
-        <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
             <h4 th:text="#{screen.confirmation.message}">You asked to be warned before logging into applications. Please
                 proceed.</h4>
 
             <form method="post" id="form" class="">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                <div class="mdc-form-field">
+                <div class="mdc-form-field form-check">
                     <div class="mdc-checkbox">
-                        <input id="ignorewarn" class="mdc-checkbox__native-control" name="ignorewarn" value="true"
+                        <input id="ignorewarn" class="mdc-checkbox__native-control form-check-input" name="ignorewarn" value="true"
                             type="checkbox" />
                         <div class="mdc-checkbox__background">
                             <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
@@ -30,11 +30,11 @@
                         </div>
                         <div class="mdc-checkbox__ripple"></div>
                     </div>
-                    <label for="ignorewarn" th:utext="#{screen.welcome.label.warnremove}">Do
+                    <label class="form-check-label" for="ignorewarn" th:utext="#{screen.welcome.label.warnremove}">Do
                         not warn me again</label>
                 </div>
 
-                <button class="mdc-button mdc-button--raised mt-4 d-block" name="_eventId_success" accesskey="l"
+                <button class="mdc-button mdc-button--raised btn btn-primary mt-4 d-block" name="_eventId_success" accesskey="l"
                     value="Continue">
                     <span th:text="#{screen.button.continue}"></span>
                 </button>

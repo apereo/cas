@@ -23,8 +23,6 @@
             <section class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
                     <div class="d-flex caps-check">
-
-
                         <label for="token"
                                class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                             <input class="mdc-text-field__input pwd"
@@ -34,61 +32,55 @@
                                    size="25"
                                    autocomplete="off" required/>
                             <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{cas.mfa.yubikey.label.token}">Token</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{cas.mfa.yubikey.label.token}">Token</span>
                                 </span>
-
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <input class="mdc-text-field__input form-control pwd" type="password" name="token" id="token" size="25"
+                                autocomplete="off" required />
                         </label>
-
-
                     </div>
-                    <div class="mdc-text-field-helper-line caps-warn">
-                        <p
-                                class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
-                            <span th:utext="#{screen.capslock.on}"/>
-                        </p>
-                    </div>
-                </div>
-                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                    <button
+                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                         tabindex="-1"
                         type="button">
-                    <i class="mdi mdi-eye reveal-password-icon"></i>
-                    <span class="sr-only">Toggle Password</span>
-                </button>
-
+                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
+                        <span class="visually-hidden">Toggle Password</span>
+                    </button>
+                </div>
+                <div class="mdc-text-field-helper-line caps-warn">
+                    <p
+                        class="mdc-text-field-helper-text form-text text-small mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                        <span th:utext="#{screen.capslock.on}" />
+                    </p>
+                </div>
             </section>
             <div class="d-flex">
-
-
-                <label for="accountName" class="mdc-text-field mdc-text-field--outlined">
-                    <input class="mdc-text-field__input"
-                           type="text"
-                           name="accountName"
-                           id="accountName"
-                           size="50"
-                           autocomplete="off" required/>
-
+                <label for="accountName" class="mdc-text-field mdc-text-field--outlined control-label">
                     <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{screen.authentication.yubikey.name}">Token</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" th:utext="#{screen.authentication.yubikey.name}">Token</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
+                            type="text"
+                            name="accountName"
+                            id="accountName"
+                            size="50"
+                            autocomplete="off" required />
                 </label>
-
                 <script>document.getElementById("accountName").value = randomWord();</script>
             </div>
             <br>
-
-            <button class="mdc-button mdc-button--raised" accesskey="s">
+            <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="s">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
             </button>
-            <input type="hidden" name="_eventId_submit" value="Register"/>
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId_submit" value="Register" />
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
         </form>
     </div>
 </main>

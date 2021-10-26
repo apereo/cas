@@ -63,7 +63,7 @@
                     </script>
 
                     <p>
-                        <i class="mdi mdi-help-circle" th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
+                        <i class="mdi mdi-help-circle fas fa-question-circle" th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
                         <kbd th:text="${entry.key.service.id}">entry.key.service.id</kbd>
                     </p>
                 </li>
@@ -72,7 +72,7 @@
             <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
 
             <button type="button" th:if="${logoutRedirectUrl}"
-                   class="mdc-button mdc-button--raised" onclick="redirectToApp();"
+                   class="mdc-button mdc-button--raised btn btn-primary" onclick="redirectToApp();"
                    th:value="${'Go to ' + logoutRedirectUrl}" value="Go to...">
                    <span class="mdc-button__label" th:text="${'Go to ' + logoutRedirectUrl}"></span>
             </button>
