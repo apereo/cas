@@ -231,7 +231,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             }
         });
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
-            .registeredService(CoreAttributesTestUtils.getRegisteredService())
+            .registeredService(registeredService)
             .service(CoreAttributesTestUtils.getService())
             .principal(p)
             .build();

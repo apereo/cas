@@ -82,7 +82,7 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
             .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
             .build();
-        val attributes = filter.getAttributes(releasePolicyContext);
+        val attributes = chain.getAttributes(releasePolicyContext);
         assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
             attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
