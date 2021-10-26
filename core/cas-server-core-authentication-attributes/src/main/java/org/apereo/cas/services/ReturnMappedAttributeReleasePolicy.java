@@ -170,6 +170,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
+        resolvedAttributes.putAll(context.getReleasingAttributes());
+        
         val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);

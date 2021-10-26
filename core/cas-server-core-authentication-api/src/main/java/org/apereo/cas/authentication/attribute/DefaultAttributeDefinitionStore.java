@@ -72,19 +72,6 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         Arrays.stream(defns).forEach(this::registerAttributeDefinition);
     }
 
-    private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
-        try {
-            LOGGER.trace("Loading attribute definitions from [{}]", resource);
-            val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-            val map = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<Map<String, AttributeDefinition>>() {
-            });
-            map.forEach(this::registerAttributeDefinition);
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-    }
-
     @Override
     public AttributeDefinitionStore registerAttributeDefinition(final AttributeDefinition defn) {
         return registerAttributeDefinition(defn.getKey(), defn);
@@ -96,8 +83,8 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
 
         if (StringUtils.isNotBlank(defn.getKey()) && !StringUtils.equalsIgnoreCase(defn.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
-                + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
-                + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
+                        + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
+                        + "to register the attribute definition in the attribute store", defn.getKey(), key, defn.getKey());
             attributeDefinitions.put(defn.getKey(), defn);
         } else {
             attributeDefinitions.put(key, defn);
@@ -149,10 +136,11 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     @Override
-    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(final String key,
-                                                                                    final List<Object> attributeValues,
-                                                                                    final RegisteredService registeredService,
-                                                                                    final Map<String, List<Object>> attributes) {
+    public Optional<Pair<AttributeDefinition, List<Object>>> resolveAttributeValues(
+        final String key,
+        final List<Object> attributeValues,
+        final RegisteredService registeredService,
+        final Map<String, List<Object>> attributes) {
         val result = locateAttributeDefinition(key);
         if (result.isEmpty()) {
             return Optional.empty();
@@ -195,5 +183,18 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     @Override
     public void destroy() {
         close();
+    }
+
+    private void loadAttributeDefinitionsFromInputStream(final Resource resource) {
+        try {
+            LOGGER.trace("Loading attribute definitions from [{}]", resource);
+            val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
+            val map = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<Map<String, AttributeDefinition>>() {
+            });
+            map.forEach(this::registerAttributeDefinition);
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
     }
 }
