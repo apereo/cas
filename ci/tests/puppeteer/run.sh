@@ -153,7 +153,9 @@ fi
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
-  printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${BUILDFLAGS}]"
+
+  FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
+  printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
   ./gradlew :webapp:cas-server-webapp-${project}:build \
     -DskipNestedConfigMetadataGen=true -x check -x javadoc \
