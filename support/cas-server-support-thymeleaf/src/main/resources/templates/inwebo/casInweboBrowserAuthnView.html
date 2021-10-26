@@ -11,7 +11,7 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-message mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
         <h2 th:utext="#{cas.inwebo.browser.heading}">Fill in your PIN code:</h2>
         <script src="https://ult-inwebo.com/neon/3.6.0/simple-neon-lib.js " type="text/javascript"></script>
         <form id="inweboErrorForm" method="POST">
@@ -22,7 +22,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="enroll" />
         </form>
-        <div id="otpError" class="banner banner-danger banner-dismissible" style="display:none;">
+        <div id="otpError" class="banner banner-danger alert alert-danger banner-dismissible" style="display:none;">
             <p th:utext="#{cas.inwebo.browser.failure}">OTP generation error</p>
         </div>
         <script th:inline="javascript">
@@ -65,14 +65,14 @@
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                 <input type="hidden" name="_eventId" value="otp" />
                 <input type="hidden" id="otp" name="otp" value="" />
-                <section class="cas-field my-3">
+                <section class="cas-field form-group my-3">
                     <div class="mdc-text-field  d-flex">
-                        <input type="text" class="mdc-text-field__input" id="pin" name="pin"
+                        <input type="text" class="mdc-text-field__input form-control" id="pin" name="pin"
                                size="6" maxlength="6" required autocomplete="off" />
                         <label for="pin" class="mdc-floating-label" th:utext="#{cas.inwebo.pin}">PIN code</label>
                     </div>
                 </section>
-                <button class="mdc-button mdc-button--raised" name="enroll"
+                <button class="mdc-button mdc-button--raised btn btn-primary" name="enroll"
                         type="button" onclick="getOtp()" value="Enroll"
                         th:value="#{cas.inwebo.browser.button}">
                     <span class="mdc-button__label" th:text="#{cas.inwebo.browser.button}">Log in in the browser</span>

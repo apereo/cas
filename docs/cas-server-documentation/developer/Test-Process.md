@@ -19,7 +19,7 @@ the contribution most likely will not be accepted into the codebase and ultimate
 
 ## Test Cases
 
-Primarily, there is two types of test cases in the project that CAS developers/contributors need to review:
+The following types of test cases in the project are those that CAS developers/contributors need to review,
 
 <div class="alert alert-info mt-3"><strong>Remember</strong><p>
 If you are about to describe a problem, please try to put together a test case that concretely demonstrates
@@ -42,16 +42,20 @@ with the `@Test` annotation and then executed by the test framework.
 For example, a `src/main/java/Extractor.java` type of component would have 
 its test cases inside a `src/test/java/ExtractorTests.java` test class.
 
-In some scenarios unit tests also run a series of tests against databases, systems or APIs to verify functionality.
-For example, a `MongoDbTicketRegistry` type of component would require a MongoDb running instance and special markup
-and annotations to run tests when that external instance is up and running. Structurally speaking, such tests are
-almost identical to plain vanilla unit tests, and may contain additional decorations, depending on the test system.
+In some scenarios unit tests also run a series of tests against databases, external systems or APIs to verify functionality
+and correctness of integration. For example, a `MongoDbTicketRegistry` type of component would 
+require a MongoDb running instance and special markup
+and annotations to run tests when that external instance is up 
+and running. Structurally speaking, such tests are
+almost identical to plain vanilla unit tests and may only contain additional 
+decorations and annotations,depending on the test system.
 
 ### Functional Tests
             
-Functional tests are categories of tests that verify combinations of scenarios and behaviors from the perpective
-of an end-user. Such test typically are composed of a script and scenario, and may involve a headless browser
-to run through a scenario, verify data elements on the screen, etc.
+Functional tests are categories of tests that verify combinations of scenarios and behaviors from the perspective
+of an end-user. Such tests typically are composed of an execution script and scenario, and may involve a headless browser
+to run through a scenario, verify data elements on the screen, etc. This category of tests is usually very effective
+at reproducing scenarios related to an issue or possible defect, and can be very helpful in troubleshooting and issue diagnosis.
 
 ## Testing Modules
 

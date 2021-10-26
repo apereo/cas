@@ -25,9 +25,17 @@ function jqueryReady() {
             });
         });
 
+        function setProgress(value, bar) {
+            var materialBar = bar.foundation;
+            if (materialBar) {
+                materialBar.setProgress(value > 0 ? value / 100 : 0);
+            } else {
+                $(bar).find('#progress-strength-indicator').css('width', value + '%');
+            }
+        }
+
         function UpdateProgressBar() {
             var progressBar = settings.progressBar;
-            var materialBar = settings.materialBar.foundation;
 
             var indicator = document.getElementById('progress-strength-indicator');
             var password = document.getElementById('password').value;
@@ -36,7 +44,7 @@ function jqueryReady() {
                 var result = zxcvbn(password, settings.userInputs);
                 //result.score: 0, 1, 2, 3 or 4 - if crack time is less than 10**2, 10**4, 10**6, 10**8, Infinity.
                 var scorePercentage = (result.score + 1) * 20;
-                materialBar.setProgress(scorePercentage / 100);
+                setProgress(scorePercentage, settings.bar);
 
                 if (result.score == 0) {
                     //weak
@@ -64,7 +72,7 @@ function jqueryReady() {
                     $(indicator).html(strength[4]);
                 }
             } else {
-                materialBar.setProgress(0);
+                setProgress(0);
                 $(progressBar).removeClass(settings.allProgressBarClasses).addClass(settings.progressBarClass0);
                 $(indicator).html('');
             }
@@ -73,8 +81,15 @@ function jqueryReady() {
     var policyPatternRegex = new RegExp(policyPattern);
     var password = document.getElementById('password');
     var confirmed = document.getElementById('confirmedPassword');
-    var materialBarElement = document.getElementById('strengthProgressBar');
-    var materialBar = new mdc.linearProgress.MDCLinearProgress(materialBarElement);
+    var barElement = document.getElementById('strengthProgressBar');
+    var bar;
+
+    if (typeof mdc !== 'undefined') {
+        bar = new mdc.linearProgress.MDCLinearProgress(barElement);
+    } else {
+        bar = $(barElement);
+    }
+    
 
     password.addEventListener('input', validate);
     confirmed.addEventListener('input', validate);
@@ -101,11 +116,11 @@ function jqueryReady() {
         $('#submit').prop('disabled', disableSubmit);
 
         var result = zxcvbn(val);
-        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', materialBar: materialBar });
+        $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
 
         // Check strength, update the text indicator
         if (val !== '') {
-            $('#strengthProgressBar').show();
+            $('#strengthProgressBar').removeClass('d-none');
             $('#password-strength-warning').text(result.feedback.warning);
             $('#password-strength-suggestions').text(result.feedback.suggestions.join(' ').trim());
 
