@@ -43,14 +43,8 @@
                 <div class="mdc-input-group-field mdc-input-group-field-append flex-grow-1">
                     <div class="d-flex caps-check">
 
-                        <label for="password" class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
+                        <label for="password"
+                               class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                             <input class="mdc-text-field__input form-control pwd"
                                    autocapitalize="none"
                                    spellcheck="false"
@@ -59,10 +53,15 @@
                                    id="password"
                                    th:field="*{password}"
                                    autocomplete="off" required/>
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
                         </label>
-
                         <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
-
                     </div>
                 </div>
                 <button class="reveal-password align-self-end mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button btn btn-primary"
@@ -74,7 +73,6 @@
 
             <div class="cas-field form-group mdc-input-group my-3">
                 <div class="d-flex caps-check">
-
                     <label for="confirmedPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
                         <input class="mdc-text-field__input form-control pwd"
                                type="password"
@@ -85,7 +83,6 @@
                                th:field="*{confirmedPassword}"
                                autocomplete="off" required/>
 
-                    <label for="confirmedPassword" class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <span class="mdc-notched-outline__notch">
@@ -93,14 +90,7 @@
                             </span>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
-                        <input class="mdc-text-field__input form-control pwd"
-                               type="password"
-                               name="confirmedPassword"
-                               id="confirmedPassword"
-                               th:field="*{confirmedPassword}"
-                               autocomplete="off" required/>
                     </label>
-
                     <i class="mdi mdi-alert mdc-text-field__icon bs-hide text-danger caps-warn"></i>
                 </div>
             </div>
