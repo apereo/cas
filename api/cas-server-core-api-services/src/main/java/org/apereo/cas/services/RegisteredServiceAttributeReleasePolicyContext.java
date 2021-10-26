@@ -3,9 +3,11 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,5 +26,6 @@ public class RegisteredServiceAttributeReleasePolicyContext {
 
     private final RegisteredService registeredService;
 
-    private final Map<String, List<Object>> releasingAttributes;
+    @Builder.Default
+    private final Map<String, List<Object>> releasingAttributes = new LinkedHashMap<>();
 }
