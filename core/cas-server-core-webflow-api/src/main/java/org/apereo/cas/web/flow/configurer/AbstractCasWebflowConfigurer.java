@@ -463,10 +463,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                final Map<String, Object> attributes, final Action... actions) {
         try {
             if (removeExisting) {
-                val transition = (Transition) state.getTransition(criteriaOutcome);
-                if (transition != null) {
-                    state.getTransitionSet().remove(transition);
-                }
+                var transition = (Transition) null;
+                do {
+                    transition = (Transition) state.getTransition(criteriaOutcome);
+                    if (transition != null) {
+                        state.getTransitionSet().remove(transition);
+                    }
+                } while (transition != null);
             }
             val transition = createTransition(criteriaOutcome, targetState, actions);
             attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
