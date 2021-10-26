@@ -34,6 +34,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
                                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
+        setOrder(casProperties.getAuthn().getPac4j().getWebflow().getOrder());
     }
 
     @Override
