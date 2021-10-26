@@ -93,13 +93,16 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         policy.setSalt("OqmG80fEKBQt");
         policy.setUseUniformResourceName(true);
-        var definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
-        assertTrue(definitions.contains(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_URN_EDU_PERSON_TARGETED_ID));
 
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        var definitions = policy.determineRequestedAttributeDefinitions(context);
+        assertTrue(definitions.contains(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_URN_EDU_PERSON_TARGETED_ID));
         policy.setUseUniformResourceName(false);
-        definitions = policy.determineRequestedAttributeDefinitions(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            registeredService, CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
+        definitions = policy.determineRequestedAttributeDefinitions(context);
         assertTrue(definitions.contains(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 }

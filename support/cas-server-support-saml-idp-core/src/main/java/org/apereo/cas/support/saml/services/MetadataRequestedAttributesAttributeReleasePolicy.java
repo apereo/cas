@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 
@@ -57,11 +57,9 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     }
 
     @Override
-    protected List<String> determineRequestedAttributeDefinitions(final Principal principal,
-                                                                  final RegisteredService registeredService,
-                                                                  final Service selectedService) {
-        val entityId = getEntityIdFromRequest(selectedService);
-        val facade = determineServiceProviderMetadataFacade((SamlRegisteredService) registeredService, entityId);
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
+        val entityId = getEntityIdFromRequest(context.getService());
+        val facade = determineServiceProviderMetadataFacade((SamlRegisteredService) context.getRegisteredService(), entityId);
         return facade
             .map(SamlRegisteredServiceServiceProviderMetadataFacade::getSsoDescriptor)
             .map(sso -> sso.getAttributeConsumingServices()

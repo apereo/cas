@@ -153,9 +153,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions(final Principal principal,
-                                                               final RegisteredService registeredService,
-                                                               final Service selectedService) {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 

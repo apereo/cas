@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -154,9 +155,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions(final Principal principal,
-                                                               final RegisteredService registeredService,
-                                                               final Service selectedService) {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

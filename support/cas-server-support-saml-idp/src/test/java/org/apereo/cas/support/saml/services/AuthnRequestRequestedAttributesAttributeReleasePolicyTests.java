@@ -271,9 +271,7 @@ public class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends 
                 .build();
             val attributes = filter.getAttributes(releasePolicyContext);
             assertTrue(attributes.containsKey("eduPersonPrincipalName"));
-
-            val definitions = filter.determineRequestedAttributeDefinitions(getPrincipal("casuser"),
-                registeredService, CoreAuthenticationTestUtils.getService());
+            val definitions = filter.determineRequestedAttributeDefinitions(releasePolicyContext);
             assertTrue(definitions.contains("eduPersonPrincipalName"));
         }
     }

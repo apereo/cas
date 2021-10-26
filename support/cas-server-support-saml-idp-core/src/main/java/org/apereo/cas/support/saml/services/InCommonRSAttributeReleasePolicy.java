@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -94,9 +95,7 @@ public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAt
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(
-        final Principal principal,
-        final RegisteredService registeredService,
-        final Service selectedService) {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         return this.useUniformResourceName
             ? new ArrayList<>(ALLOWED_ATTRIBUTES.values())
             : new ArrayList<>(ALLOWED_ATTRIBUTES.keySet());

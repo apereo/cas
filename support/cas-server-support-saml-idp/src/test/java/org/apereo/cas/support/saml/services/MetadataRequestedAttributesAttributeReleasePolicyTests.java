@@ -52,8 +52,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicyTests extends Base
         val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
-
-        val defns = filter.determineRequestedAttributeDefinitions(principal, registeredService, CoreAuthenticationTestUtils.getService());
+        val defns = filter.determineRequestedAttributeDefinitions(context);
         assertEquals(3, defns.size());
         assertTrue(defns.contains("eduPersonPrincipalName"));
     }

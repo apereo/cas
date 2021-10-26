@@ -40,11 +40,13 @@
                                 <section class="cas-field form-group my-3 mdc-input-group">
                                     <div class="mdc-input-group-field mdc-input-group-field-append">
                                         <div class="d-flex caps-check">
-                                            <label for="token" class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                            <label for="token"
+                                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
                                                     <span class="mdc-notched-outline__notch">
-                                                        <span class="mdc-floating-label" th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
+                                                        <span class="mdc-floating-label"
+                                                              th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
 
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
@@ -55,11 +57,11 @@
                                                        id="token"
                                                        size="25"
                                                        required
-                                                       autocomplete="off" />
+                                                       autocomplete="off"/>
                                             </label>
-                                            <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button" type="button"
-                                                tabindex="-1"
-                                                type="button">
+                                            <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                                    tabindex="-1"
+                                                    type="button">
                                                 <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
                                                 <span class="visually-hidden">Toggle Token</span>
                                             </button>
@@ -80,7 +82,7 @@
                                                        name="accountName"
                                                        id="accountName"
                                                        size="50"
-                                                       autocomplete="off" />
+                                                       autocomplete="off"/>
                                             </label>
                                             <script>document.getElementById("accountName").value = randomWord();</script>
                                         </div>
@@ -156,14 +158,16 @@
         </table>
         <div class="d-flex flex-column align-items-center">
             <div class="d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="confirm" id="confirm" accesskey="f" value="Confirm">
+                <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="confirm" id="confirm" accesskey="f"
+                        value="Confirm">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
                 <button class="mdc-button mdc-button--raised btn btn-primary mr-2" name="print" accesskey="p" type="button"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>
-                <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button" value="Cancel"
+                <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button"
+                        value="Cancel"
                         onclick="location.href = location.href;"
                         th:value="#{screen.pm.button.cancel}">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
