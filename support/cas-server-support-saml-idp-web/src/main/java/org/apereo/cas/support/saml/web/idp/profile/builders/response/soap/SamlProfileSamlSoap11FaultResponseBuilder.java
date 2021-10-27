@@ -10,8 +10,10 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 
 import lombok.val;
+import org.apache.http.HttpStatus;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
@@ -22,6 +24,7 @@ import org.opensaml.soap.soap11.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * The {@link SamlProfileSamlSoap11FaultResponseBuilder} is responsible for
@@ -73,6 +76,8 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         val header = SamlUtils.newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
+        val ctx = messageContext.getSubcontext(SOAP11Context.class, true);
+        Objects.requireNonNull(ctx).setHTTPResponseStatus(HttpStatus.SC_OK);
         encodeFinalResponse(request, response, service, adaptor, envelope,
             binding, authnRequest, casAssertion, messageContext);
         return envelope;
