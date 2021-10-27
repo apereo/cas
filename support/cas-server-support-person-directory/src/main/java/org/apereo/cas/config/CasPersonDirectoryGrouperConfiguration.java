@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
@@ -48,7 +49,9 @@ public class CasPersonDirectoryGrouperConfiguration {
             dao.setParameters(gp.getParameters());
             dao.setSubjectType(GrouperPersonAttributeDao.GrouperSubjectType.valueOf(gp.getSubjectType()));
             dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(gp.getUsernameAttribute()));
-            dao.setEnabled(gp.isEnabled());
+            dao.setEnabled(gp.getState() != AttributeRepositoryStates.DISABLED);
+            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                gp.getState() == AttributeRepositoryStates.ACTIVE);
             FunctionUtils.doIfNotNull(gp.getId(), dao::setId);
             LOGGER.debug("Configured Grouper attribute source");
             list.add(dao);
@@ -66,7 +69,13 @@ public class CasPersonDirectoryGrouperConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer grouperPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("grouperAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> grouperAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(grouperAttributeRepositories.toList());
+            return plan -> {
+                val results = grouperAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
         }
     }
 }

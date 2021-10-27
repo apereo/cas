@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -58,11 +59,14 @@ public class CasPersonDirectoryRestConfiguration {
                     FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
                     dao.setUrl(rest.getUrl());
                     dao.setMethod(Objects.requireNonNull(HttpMethod.resolve(rest.getMethod())).name());
+                    dao.setEnabled(rest.getState() != AttributeRepositoryStates.DISABLED);
 
                     val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
                     headers.putAll(rest.getHeaders());
                     dao.setHeaders(headers);
                     dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(rest.getUsernameAttribute()));
+                    dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                        rest.getState() == AttributeRepositoryStates.ACTIVE);
 
                     if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
                         dao.setBasicAuthPassword(rest.getBasicAuthPassword());
@@ -88,9 +92,15 @@ public class CasPersonDirectoryRestConfiguration {
         @ConditionalOnMissingBean(name = "restfulPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("restfulAttributeRepositories") final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories.toList());
-        }
+            return plan -> {
+                val results = restfulAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
 
+        }
     }
 }
 

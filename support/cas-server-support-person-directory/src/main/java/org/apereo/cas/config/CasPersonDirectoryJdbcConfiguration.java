@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
@@ -116,7 +117,9 @@ public class CasPersonDirectoryJdbcConfiguration {
                     jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
                     jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase()));
                     jdbcDao.setOrder(jdbc.getOrder());
-                    jdbcDao.setEnabled(jdbc.isEnabled());
+                    jdbcDao.setEnabled(jdbc.getState() != AttributeRepositoryStates.DISABLED);
+                    jdbcDao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                        jdbc.getState() == AttributeRepositoryStates.ACTIVE);
                     list.add(jdbcDao);
                 });
             return BeanContainer.of(list);
@@ -133,7 +136,13 @@ public class CasPersonDirectoryJdbcConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer jdbcPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("jdbcAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(jdbcAttributeRepositories.toList());
+            return plan -> {
+                val results = jdbcAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
         }
     }
 }

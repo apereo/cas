@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryJsonConfiguration}.
@@ -56,7 +58,9 @@ public class CasPersonDirectoryJsonConfiguration {
                     }
                     dao.setOrder(json.getOrder());
                     FunctionUtils.doIfNotNull(json.getId(), dao::setId);
-                    dao.setEnabled(json.isEnabled());
+                    dao.setEnabled(json.getState() != AttributeRepositoryStates.DISABLED);
+                    dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                        json.getState() == AttributeRepositoryStates.ACTIVE);
                     dao.init();
                     LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                     list.add(dao);
@@ -75,7 +79,13 @@ public class CasPersonDirectoryJsonConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("jsonAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> jsonAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.toList());
+            return plan -> {
+                val results = jsonAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
         }
     }
 }
