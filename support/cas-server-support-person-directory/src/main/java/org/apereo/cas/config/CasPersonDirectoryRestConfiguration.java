@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryRestConfiguration}.

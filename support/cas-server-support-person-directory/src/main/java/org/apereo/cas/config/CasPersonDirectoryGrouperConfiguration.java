@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryGrouperConfiguration}.

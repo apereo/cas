@@ -36,7 +36,7 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
     /**
      * Whether attribute resolution based on this source is enabled.
      */
-    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 
     /**
      * A value can be assigned to this field to uniquely identify this resolver.
