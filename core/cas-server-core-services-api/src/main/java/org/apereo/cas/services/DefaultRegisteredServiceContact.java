@@ -45,4 +45,7 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     @Column
     private String department;
 
+    @Column
+    private String type;
+    
 }

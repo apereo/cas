@@ -40,4 +40,11 @@ public interface RegisteredServiceContact extends Serializable {
      * @return the department
      */
     String getDepartment();
+
+    /**
+     * Gets contact type.
+     *
+     * @return the type
+     */
+    String getType();
 }
