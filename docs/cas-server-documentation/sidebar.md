@@ -515,6 +515,7 @@ layout: null
             *   [Metadata Management](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata.html)
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
             *   [Attribute Query](/cas/{{ version }}/installation/Configuring-SAML2-AttributeQuery.html)
+            *   [Security Configuration](/cas/{{ version }}/installation/Configuring-SAML2-Security.html)
     *   [REST](#casrestprotocol)
         *   [Overview](/cas/{{ version }}/protocol/REST-Protocol.html)
         *   [Create Service](/cas/{{ version }}/protocol/REST-Protocol-Create-Service.html)

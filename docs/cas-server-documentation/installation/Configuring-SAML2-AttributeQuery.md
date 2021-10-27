@@ -18,7 +18,7 @@ will always use its own signing certificate for signing of the responses generat
 Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on
 CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
-{% include_cached casproperties.html properties="cas.authn.saml-idp.core,cas.authn.saml-idp.ticket" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.ticket.attribute-query" %}
 
 ## Attribute Release
    
