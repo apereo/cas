@@ -50,5 +50,5 @@ public class JsonPrincipalAttributesProperties extends SpringResourceProperties 
     /**
      * Whether attribute resolution based on this source is enabled.
      */
-    private boolean enabled = true;
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

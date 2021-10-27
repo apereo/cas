@@ -49,4 +49,9 @@ public class RestPrincipalAttributesProperties extends RestEndpointProperties {
      * to the ultimate source to locate the user record.
      */
     private String usernameAttribute = "username";
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

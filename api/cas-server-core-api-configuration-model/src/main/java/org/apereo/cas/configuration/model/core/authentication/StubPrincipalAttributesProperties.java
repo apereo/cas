@@ -51,4 +51,9 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * merging strategies.
      */
     private int order = Ordered.LOWEST_PRECEDENCE;
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

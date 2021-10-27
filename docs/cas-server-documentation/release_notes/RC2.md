@@ -100,8 +100,8 @@ that ship with CAS now include a special `twbs` theme that is based on Bootstrap
 
 Attribute release policies, when grouped and ordered together in a chain are now able to reuse and build on top of previously-selected
 attributes, tagged for release by previous policies in the same chain. For example, a typical scenario might be that the first attribute
-release policy in the first releases attribute `A1` and the second attribute policy creates attribute `A3`  whose 
-value is constructed based on a dynamic construct such as `A1 + ': Hello`.
+release policy in the first releases attribute `A1` and the second attribute policy creates attribute `A2`  whose 
+value is constructed based on a dynamic construct such as `A1 + '-Hello'`.
 
 ## Other Stuff
      

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -57,5 +58,5 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
     /**
      * Whether attribute resolution based on this source is enabled.
      */
-    private boolean enabled = true;
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

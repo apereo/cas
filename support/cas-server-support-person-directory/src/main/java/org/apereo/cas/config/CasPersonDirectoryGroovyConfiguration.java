@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryGroovyConfiguration}.
@@ -53,6 +55,9 @@ public class CasPersonDirectoryGroovyConfiguration {
                     val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
                     dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
                     dao.setOrder(groovy.getOrder());
+                    dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);
+                    dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                        groovy.getState() == AttributeRepositoryStates.ACTIVE);
                     FunctionUtils.doIfNotNull(groovy.getId(), dao::setId);
                     LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                     list.add(dao);
@@ -71,7 +76,13 @@ public class CasPersonDirectoryGroovyConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("groovyAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> groovyAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories.toList());
+            return plan -> {
+                val results = groovyAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
         }
     }
 

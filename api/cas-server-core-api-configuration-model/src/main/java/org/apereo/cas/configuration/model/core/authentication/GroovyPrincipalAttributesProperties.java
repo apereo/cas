@@ -40,4 +40,9 @@ public class GroovyPrincipalAttributesProperties extends SpringResourcePropertie
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

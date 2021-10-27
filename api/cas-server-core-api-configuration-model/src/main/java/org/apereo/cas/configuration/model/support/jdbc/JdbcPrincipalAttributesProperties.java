@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -144,5 +145,5 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     /**
      * Whether attribute resolution based on this source is enabled.
      */
-    private boolean enabled = true;
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

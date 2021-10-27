@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -58,20 +59,22 @@ public class CasPersonDirectoryLdapConfiguration {
                 .stream()
                 .filter(ldap -> StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl()))
                 .forEach(ldap -> {
-                    val ldapDao = new LdaptivePersonAttributeDao();
-                    FunctionUtils.doIfNotNull(ldap.getId(), ldapDao::setId);
+                    val dao = new LdaptivePersonAttributeDao();
+                    FunctionUtils.doIfNotNull(ldap.getId(), dao::setId);
                     LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
-                    ldapDao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
-                    ldapDao.setBaseDN(ldap.getBaseDn());
-                    ldapDao.setEnabled(ldap.isEnabled());
+                    dao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+                    dao.setBaseDN(ldap.getBaseDn());
+                    dao.setEnabled(ldap.getState() != AttributeRepositoryStates.DISABLED);
+                    dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
+                        ldap.getState() == AttributeRepositoryStates.ACTIVE);
 
                     LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
-                    ldapDao.setSearchFilter(ldap.getSearchFilter());
+                    dao.setSearchFilter(ldap.getSearchFilter());
 
                     val constraints = new SearchControls();
                     if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
                         LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
-                        ldapDao.setResultAttributeMapping(ldap.getAttributes());
+                        dao.setResultAttributeMapping(ldap.getAttributes());
                         val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                         constraints.setReturningAttributes(attributes);
                     } else {
@@ -82,7 +85,7 @@ public class CasPersonDirectoryLdapConfiguration {
                     val binaryAttributes = ldap.getBinaryAttributes();
                     if (binaryAttributes != null && !binaryAttributes.isEmpty()) {
                         LOGGER.debug("Setting binary attributes [{}]", binaryAttributes);
-                        ldapDao.setBinaryAttributes(binaryAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+                        dao.setBinaryAttributes(binaryAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     }
 
                     val searchEntryHandlers = ldap.getSearchEntryHandlers();
@@ -90,12 +93,12 @@ public class CasPersonDirectoryLdapConfiguration {
                         val entryHandlers = LdapUtils.newLdaptiveEntryHandlers(searchEntryHandlers);
                         if (!entryHandlers.isEmpty()) {
                             LOGGER.debug("Setting entry handlers [{}]", entryHandlers);
-                            ldapDao.setEntryHandlers(entryHandlers.toArray(LDAP_ENTRY_HANDLERS));
+                            dao.setEntryHandlers(entryHandlers.toArray(LDAP_ENTRY_HANDLERS));
                         }
                         val searchResultHandlers = LdapUtils.newLdaptiveSearchResultHandlers(searchEntryHandlers);
                         if (!searchResultHandlers.isEmpty()) {
                             LOGGER.debug("Setting search result handlers [{}]", searchResultHandlers);
-                            ldapDao.setSearchResultHandlers(searchResultHandlers.toArray(SEARCH_RESULT_HANDLERS));
+                            dao.setSearchResultHandlers(searchResultHandlers.toArray(SEARCH_RESULT_HANDLERS));
                         }
                     }
 
@@ -104,10 +107,10 @@ public class CasPersonDirectoryLdapConfiguration {
                         constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     }
                     constraints.setDerefLinkFlag(true);
-                    ldapDao.setSearchControls(constraints);
-                    ldapDao.setOrder(ldap.getOrder());
+                    dao.setSearchControls(constraints);
+                    dao.setOrder(ldap.getOrder());
                     LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
-                    list.add(ldapDao);
+                    list.add(dao);
                 });
             return BeanContainer.of(list);
         }
@@ -123,7 +126,14 @@ public class CasPersonDirectoryLdapConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer ldapPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("ldapAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> ldapAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories.toList());
+            return plan -> {
+                val results = ldapAttributeRepositories.toList()
+                    .stream()
+                    .filter(repo -> (Boolean) repo.getTags().get(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName()))
+                    .collect(Collectors.toList());
+                plan.registerAttributeRepositories(results);
+            };
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 
@@ -68,6 +69,7 @@ public class Beans {
         });
         dao.setBackingMap(backingMap);
         dao.setOrder(stub.getOrder());
+        dao.setEnabled(stub.getState() != AttributeRepositoryStates.DISABLED);
         if (StringUtils.hasText(stub.getId())) {
             dao.setId(stub.getId());
         }
