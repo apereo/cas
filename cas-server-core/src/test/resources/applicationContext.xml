@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean
+		name="centralAuthenticationService"
+		class="org.jasig.cas.CentralAuthenticationServiceImpl">
+		<property
+			name="authenticationManager"
+			ref="authenticationManager" />
+		<property
+			name="serviceTicketExpirationPolicy"
+			ref="neverExpiresExpirationPolicy" />
+		<property
+			name="ticketGrantingTicketExpirationPolicy"
+			ref="neverExpiresExpirationPolicy" />
+		<property
+			name="ticketRegistry"
+			ref="ticketRegistry" />
+		<property
+			name="ticketGrantingTicketUniqueTicketIdGenerator"
+			ref="uniqueTicketIdGenerator" />
+		<property
+			name="uniqueTicketIdGeneratorsForService">
+			<map>
+                <entry
+                        key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                        value-ref="uniqueTicketIdGenerator" />
+                <entry
+                        key="org.jasig.cas.authentication.principal.OpenIdService"
+                        value-ref="uniqueTicketIdGenerator" />
+			</map>
+		</property>
+        <property name="servicesManager"
+        ref="servicesManager" />
+	</bean>
+    
+    <bean id="attributeRepository"
+		class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+		<property name="backingMap">
+			<map>
+				<entry key="uid" value="uid" />
+				<entry key="eduPersonAffiliation" value="developer" /> 
+				<entry key="groupMembership" value="adopters" />
+			</map>
+		</property>
+	</bean>
+	
+    <bean
+    	id="servicesManager"
+    	class="org.jasig.cas.services.DefaultServicesManagerImpl">
+    	<constructor-arg index="0" ref="serviceRegistryDao" />
+    </bean>
+    
+    <bean id="serviceRegistryDao" 	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+    	<property name="registeredServices">
+            <list>
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="0" />
+                    <property name="name" value="Test Service" />
+                    <property name="serviceId" value="test$" />
+                    <property name="evaluationOrder" value="1" />
+                    <property name="allowedToProxy" value="true" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="1" />
+                    <property name="name" value="Test Default Service" />
+                    <property name="serviceId" value="testDefault" />
+                    <property name="evaluationOrder" value="2" />
+                    <property name="usernameAttribute" value="(default)" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="2" />
+                    <property name="name" value="EduPerson Test Service" />
+                    <property name="serviceId" value="eduPersonTest" />
+                    <property name="evaluationOrder" value="3" />
+                    <property name="usernameAttribute" value="eduPersonAffiliation" />
+                    <property name="ignoreAttributes" value="true" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="3" />
+                    <property name="name" value="EduPerson Test Invalid Service" />
+                    <property name="serviceId" value="eduPersonTestInvalid" />
+                    <property name="evaluationOrder" value="4" />
+                    <property name="usernameAttribute" value="nonExistentAttributeName" />
+                    <property name="allowedAttributes">
+                    	<list>
+                    		<value>groupMembership</value>
+                    	</list>
+                    </property>
+                </bean>
+            </list>
+            
+        </property>
+    </bean>
+	
+	<bean
+		id="authenticationManager"
+		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+		<property
+			name="credentialsToPrincipalResolvers">
+			<list>
+				<ref
+					local="usernamePasswordCredentialsToPrincipalResolver" />
+				<ref
+					local="httpBasedServiceCredentialsToPrincipalResolver" />
+<!--				<bean
+					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />-->
+			</list>
+		</property>
+		<property
+			name="authenticationHandlers">
+			<list>
+				<ref
+					local="simpleTestUsernamePasswordAuthenticationHandler" />
+				<ref
+					local="httpBasedServiceCredentialsAuthenticationHandler" />
+<!--				<bean
+					class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
+					<property name="ticketRegistry" ref="ticketRegistry" />
+				</bean>-->
+			</list>
+		</property>
+		<property
+			name="authenticationMetaDataPopulators">
+			<list>
+				<ref
+					local="authenticationMetaDataPopulator" />
+			</list>
+		</property>
+			
+	</bean>
+	
+	<bean
+		id="neverExpiresExpirationPolicy"
+		class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
+		
+	<bean
+		id="ticketRegistry"
+		class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+		
+	<bean
+		id="uniqueTicketIdGenerator" 
+		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
+
+	<bean id="usernamePasswordCredentialsToPrincipalResolver"
+		class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+		<property name="attributeRepository" ref="attributeRepository" />
+	</bean>
+		
+	<bean
+		id="httpBasedServiceCredentialsToPrincipalResolver"
+		class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+		
+	<bean
+		id="httpBasedServiceCredentialsAuthenticationHandler"
+		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+		<property name="httpClient">
+			<bean class="org.jasig.cas.util.HttpClient" />
+		</property>
+	</bean>
+	
+	<bean
+		id="simpleTestUsernamePasswordAuthenticationHandler"
+		class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />		
+		
+	<bean
+		id="authenticationMetaDataPopulator"
+		class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+</beans>

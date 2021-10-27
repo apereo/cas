@@ -1,0 +1,58 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<html>
+<body>
+
+In the Servlet API, the WEB-INF/web.xml deployment descriptor maps various URL 
+values to Java classes. In Spring, the web.xml maps all URL program requests to 
+a single generic handler. The mapping of particular URL values to particular 
+classes is then part of the Spring configuration, specifically in the 
+cas-servlet.xml file:<pre>&lt;!-- Handler Mapping --&gt;
+&lt;bean id=&quot;handlerMapping&quot; class=&quot;org.springframework.web.servlet.handler.SimpleUrlHandlerMapping&quot;&gt;
+ &lt;property name=&quot;mappings&quot;&gt;
+  &lt;props&gt;
+   &lt;prop key=&quot;/login&quot;&gt;loginController&lt;/prop&gt;
+   &lt;prop key=&quot;/logout&quot;&gt;logoutController&lt;/prop&gt;
+   &lt;prop key=&quot;/serviceValidate&quot;&gt;serviceValidateController&lt;/prop&gt;
+   &lt;prop key=&quot;/validate&quot;&gt;legacyValidateController&lt;/prop&gt;
+   &lt;prop key=&quot;/proxy&quot;&gt;proxyController&lt;/prop&gt;
+   &lt;prop key=&quot;/proxyValidate&quot;&gt;proxyValidateController&lt;/prop&gt;
+   &lt;prop key=&quot;/CentralAuthenticationService&quot;&gt;xFireCentralAuthenticationService&lt;/prop&gt;
+ &lt;/props&gt;
+&lt;/bean&gt;</pre>
+<p>Each named service is then configured as a bean. For example, the /login 
+processing is defined as</p>
+<pre>&lt;bean id=&quot;loginController&quot; class=&quot;org.jasig.cas.web.LoginController&quot; autowire=&quot;byType&quot;&gt;
+&lt;property name=&quot;loginTokens&quot; ref=&quot;loginTokens&quot; /&gt;
+&lt;property name=&quot;centralAuthenticationService&quot; ref=&quot;centralAuthenticationService&quot; /&gt;
+&lt;/bean&gt;</pre>
+<p>This package then supplies the classes that implement each of the URL 
+services that are defined as part of the HTTP CAS protocol. Each such class is 
+what Spring calls a Controller (from the MVC or Model, View, Controller 
+paradigm). Generically, Controllers extract information from the HttpRequest 
+object (Cookies, Headers, Certificates, Query parameters, etc.). In CAS, each 
+Controller then calls the CAS layer to perform some operation involving tickets. 
+The successful return object or failure from CAS is then added to a Map called 
+the Model and is passed to a JSP page or Java class called the View that writes 
+back a response.</p>
+
+</body>
+</html>

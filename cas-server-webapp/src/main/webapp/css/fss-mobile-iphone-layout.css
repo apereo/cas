@@ -1,0 +1,490 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+:root {
+    -webkit-background-origin: padding-box;
+    -webkit-background-clip: content-box;
+    -webkit-background-size: 10px 1px;
+}
+body {
+    margin:0;
+    padding:0;
+    font:normal 17px Helvetica, sans-serif; /* Base font rules */
+	-webkit-user-select: none; /* prevents child elements content from being selected - desired? */
+    -webkit-text-size-adjust:none; /* http://website-engineering.blogspot.com/2009/07/stop-adjusting-text-size-in-iphone-when.html */
+}
+h1, h2, h3, h4, h5, h6 {margin:0.25em;}
+h1 {font-size:1.5em;}
+h2 {font-size:1.1em;}
+h3 {font-size:1em;}
+h4 {}
+h5 {}
+h6 {}
+img {border:none;}
+
+
+/***************************************/
+/**
+ * Basic overrides for fss layout
+ */
+
+.fl-icon {
+    width:30px;
+    height:30px;
+    margin-top:-5px;
+    -webkit-border-radius: 5px;
+}
+.fl-label {
+    width:25%;
+}
+
+
+/***************************************/
+/* to override any widths for a mobile device.
+ * This eliminates the width, allowing for device specific screen settings
+ */
+.fl-panel {
+	width:auto;
+}
+
+/***************************************/
+/* iPhone general purpose gel buttons */
+/* effect is applied anywhere but the navbar, which has its own button look */
+
+.fl-button {
+    border-width: 10px;
+    text-align:center;
+    -webkit-border-radius:10px;
+    -webkit-background-origin: border;
+    -webkit-background-clip: border;
+}
+
+/*************************************************/
+/* Navigation Bar
+ */
+body::before, .fl-navbar {
+    width:100%;
+    height:43px;
+    text-align:center;
+}
+body::before {
+    content:" ";
+	margin-bottom:-43px;
+	display:block;
+	border-style:solid;
+	border-width:1px 0;
+    -webkit-background-origin: padding-box;
+    -webkit-background-clip: content-box;
+}
+
+.fl-navbar .fl-table-cell:not(h1) {
+    width:1px;
+    white-space:nowrap;
+}
+
+.fl-navbar .fl-table-cell:first-child {
+    padding-left:5px;
+}
+.fl-navbar .fl-table-cell:last-child {
+    padding-right:5px;
+}
+.fl-navbar h1 {
+    padding:0;
+    text-align:center;
+    font-size:1.17em;
+    font-weight: bold;
+}
+.fl-navbar a {
+	text-decoration:none;
+	font-size: 0.7em;
+    font-weight:bold;
+}
+
+.fl-navbar [class*=fl-button] {
+    -webkit-border-radius:5px;
+    padding:0;
+}
+
+.fl-navbar .fl-backButton {
+    padding:10px 0;
+    /*
+     * To create the oddly shaped back button with fully customizable CSS colors, there are 2 main things:
+     * 1) The stencil for the shadow and hilights along the angled edge
+     * 2) The mask to crop the background along the angled edge
+     */
+    /* Angled effect is just a single border with a transaprent stencil image */
+    border-width:0 0 0 15px;
+    -webkit-border-top-right-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -webkit-background-origin: border;
+    -webkit-background-clip: border;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-origin: border;
+    -webkit-mask-clip: border;
+}
+
+.fl-navbar .fl-backButton .fl-button-inner {
+    margin-left:-3px; /* close tiny gap between angled border + button-inner on Mobile Safari */
+    border-left-width:0;
+}
+.fl-navbar .fl-button-inner {
+    float:none;
+    padding:5px;
+    border-width:5px;
+    -webkit-background-origin: border;
+    -webkit-background-clip: border;
+}
+
+
+
+/*************************************************/
+/* iPhone tabs: general purpose dividers, or fixed to the bottom of the screen
+ */
+/*************************************************/
+.fl-tabs {
+    margin:0;
+    padding:0;
+    border:none;
+    text-align:center;
+}
+
+.fl-tabs li {
+    display:inline-block;
+    margin-right:-5px;
+    border-width:5px 0;
+    text-align:center;
+}
+
+.fl-tabs li:first-child {
+    border-left-width:5px;
+    -webkit-border-top-left-radius:5px;
+    -webkit-border-bottom-left-radius:5px;
+}
+
+.fl-tabs li:last-child {
+    margin-right:0;
+    border-right-width:5px;
+    -webkit-border-top-right-radius:5px;
+    -webkit-border-bottom-right-radius:5px;
+}
+
+.fl-tabs li.fl-tabs-active a,
+.fl-tabs li a {
+    display:block;
+    margin:-4px 0;
+    text-decoration:none;
+    padding:0.35em 0.5em;
+    font-weight:bold;
+    background:none;
+    border-width:0 1px;
+    border-style:solid;
+}
+
+.fl-tabs li:last-child a {
+    border-right:none;
+}
+.fl-tabs li:first-child a {
+    border-left:none;
+}
+
+.fl-tabs.fl-tabs-functionBar {
+
+}
+
+/*************************************************/
+/* iPhone list menu styles: Ordered lists, Unordererd lists, Thumbnail lists, Icon lists, Definition lists
+ * By default, all list formats fit to width
+ * When nested within a fl-panel element, they are indented and therefore contain rounded corners
+ */
+/*************************************************/
+/* Default list system setup */
+[class*=fl-list] {
+    border: none;
+    list-style:none;
+    margin:0 0 10px;
+    padding:0;
+}
+
+[class*=fl-list] > li {
+	display:block;
+	padding: 12px 0px 12px 12px;
+	text-decoration: none;
+	font-weight: bold;
+	outline: none;
+	border-style:solid;
+	border-width:1px 1px 0 1px;
+    overflow:auto; /* to encapsulate floating elements within */
+}
+
+[class*=fl-list] > li:last-child {
+	border-bottom-width:1px;
+}
+
+[class*=fl-list] .fl-link-loading .fl-link-secondary {
+    display:none;
+}
+
+/* secondary link info behaviour */
+[class*=fl-list] > li .fl-link-secondary {
+    float:right;
+    margin-right:25px;
+    font-weight:normal;
+    font-size:.9em;
+}
+
+ /* summary link info ehaviour */
+[class*=fl-list] > li .fl-link-summary {
+    display:block;
+    clear:right;
+    margin:0 25px 0 0px;
+    font-weight:normal;
+    font-size:0.8em;
+
+}
+[class*=fl-list] li .fl-icon ~ .fl-link-summary {
+    margin-left:30px; /* default size of fl-icon */
+}
+
+/* icon behaviour */
+[class*=fl-list] li .fl-icon {
+    float:left;
+    margin-left:-6px;
+}
+
+.fl-panel [class*=fl-list] > li:first-child,
+.fl-panel [class*=fl-list] > li:first-child a {
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+}
+
+.fl-panel [class*=fl-list] > li:last-child,
+.fl-panel [class*=fl-list] > li:last-child a {
+    -webkit-border-bottom-left-radius: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+}
+
+/*************************************************/
+/**
+ * fl-listmenu is now the way to create a link list
+ * The links create a hotspot over the entire list item, just like how it was by default
+ */
+.fl-listmenu {
+}
+.fl-listmenu li {
+	padding:0;
+}
+.fl-listmenu li a {
+    display:block;
+    padding: 12px 0px 12px 12px;
+    text-decoration: none;
+    font-weight: bold;
+    outline: none;
+}
+
+
+/*************************************************/
+/* Thumbnail and Expanded Thumbnails list features */
+
+.fl-list-thumbnails > li {
+    margin-bottom:5px;
+}
+
+.fl-list-thumbnails > li a {
+	border-bottom-width:1px;
+    padding-top:6px;
+    overflow:auto;
+}
+/* summary behaviour */
+.fl-list-thumbnails > li a > .fl-icon ~ .fl-link-summary {
+	margin:0 25px -12px 42px;
+
+}
+.fl-list-thumbnails:not(.fl-thumbnails-expanded):not(.fl-list-brief) > li a > .fl-icon ~ .fl-link-summary {
+    padding-bottom:10px;
+}
+/* icon behaviour */
+.fl-list-thumbnails > li a > .fl-icon {
+    width:44px;
+    height:44px;
+    margin:-6px 10px -12px -12px;
+    -webkit-border-radius:0;
+}
+.fl-panel .fl-list-thumbnails > li a {
+	-webkit-border-radius:8px;
+}
+.fl-panel .fl-list-thumbnails > li a > .fl-icon {
+    -webkit-border-bottom-left-radius: 8px;
+    -webkit-border-top-left-radius: 8px;
+}
+.fl-list-thumbnails.fl-thumbnails-expanded li {
+    margin:0;
+}
+.fl-list-thumbnails.fl-thumbnails-expanded > li a {
+    border-bottom-width:0;
+    -webkit-border-radius:0;
+    padding:10px;
+}
+.fl-list-thumbnails.fl-thumbnails-expanded > li a > .fl-icon {
+    width:60px;
+    height:60px;
+    margin:-5px 5px -5px -5px;
+    -webkit-border-radius:0;
+}
+.fl-list-thumbnails.fl-thumbnails-expanded > li:last-child a {
+    border-bottom-width:1px;
+}
+
+.fl-list-thumbnails.fl-thumbnails-expanded > li a > .fl-icon ~ .fl-link-summary {
+    margin: 0px 0px -5px 60px;
+}
+.fl-list-thumbnails.fl-thumbnails-expanded > li a > .fl-link-secondary {
+    padding-top:0;
+}
+/*************************************************/
+/* Brief lists auto trim summary content + add ellipsis if necessary */
+
+.fl-list-brief > li a  {
+    padding-bottom:6px;
+}
+
+.fl-list-brief > li a > .fl-link-summary {
+    height:1.3em;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.fl-list-brief > li a > .fl-link-secondary {
+    padding-top:6px;
+}
+
+.fl-list-brief > li a > .fl-icon ~ .fl-link-summary {
+    margin-left:0;
+}
+
+.fl-list-brief.fl-list-thumbnails:not(.fl-thumbnails-expanded) > li a > .fl-icon {
+    margin:-6px 10px -6px -12px;
+}
+.fl-list-brief.fl-list-thumbnails:not(.fl-thumbnails-expanded) > li a > .fl-link-secondary {
+    padding-top:0px;
+}
+
+/*************************************************/
+/* Glossy icons (and thumbnails?) */
+
+/* Glossiness for 30x30 icons */
+.fl-list-glossy > li a::before {
+    position:absolute;
+    content:" ";
+    float:left;
+    width:28px;
+    height:28px;
+    margin:-4px 0 0 -5px;
+    -webkit-border-radius:3px;
+    -webkit-background-size: 30px 60px;
+    background-repeat:no-repeat;
+}
+/* Glossiness for 44x44 thumbnails */
+.fl-list-thumbnails.fl-list-glossy > li a::before {
+    width:42px;
+    height:42px;
+    margin:-11px;
+    -webkit-border-radius:0px;
+    -webkit-background-size: 44px 50px;
+}
+/* Glossiness for 60x60 thumbnails */
+.fl-list-thumbnails.fl-thumbnails-expanded.fl-list-glossy > li a::before {
+    width:58px;
+    height:58px;
+    margin:-4px;
+    -webkit-border-radius:0px;
+    -webkit-background-size: 60px 40px;
+}
+
+
+/*************************************************/
+/* Content Panels */
+/*************************************************/
+
+[class*=fl-panel] {
+	margin:10px;
+}
+/* Panel Auto Headings */
+/* The first element found becomes the "heading" */
+.fl-panel-autoHeading > *:first-child {
+	padding:10px;
+	margin:0;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-top-right-radius: 8px;
+}
+/* The last element found becomes the "content" - list or otherwise */
+.fl-panel-autoHeading > *:last-child {
+	margin:0;
+	-webkit-border-radius:0;
+	-webkit-border-bottom-left-radius:8px;
+	-webkit-border-bottom-right-radius:8px;
+}
+
+.fl-panel-autoHeading [class*=fl-list] > li {
+	margin:0;
+}
+.fl-panel-autoHeading [class*=fl-list] > li:first-child,
+.fl-panel-autoHeading [class*=fl-list] > li:first-child a {
+	-webkit-border-radius:0;
+}
+.fl-panel-autoHeading [class*=fl-list] > li:first-child:last-child,
+.fl-panel-autoHeading [class*=fl-list] > li:first-child:last-child a {
+	-webkit-border-bottom-left-radius:8px;
+	-webkit-border-bottom-right-radius:8px;
+}
+.fl-panel-autoHeading .fl-list-thumbnails > li a {
+	/*padding:5px;*/
+	/*overflow:auto;*/
+}
+
+/* Collapsing and expanding panels */
+.fl-panel-collapsable {
+	max-height:900px;
+	overflow:hidden;
+	-webkit-border-radius:8px;
+}
+/***************************/
+.fl-table {
+    display:table;
+    border-collapse:collapse;
+    border:none;
+}
+.fl-table-row {
+    display:table-row;
+    border:none;
+}
+.fl-table-cell {
+    display:table-cell;
+    vertical-align:middle;
+    border:none;
+}
+
+/***************************/
+
+
+
+
+
+
+

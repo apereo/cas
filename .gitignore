@@ -1,0 +1,16 @@
+.classpath
+!/.project
+.project
+.settings
+target
+*.ipr
+*.iml
+*.iws
+.idea/
+.DS_Store
+.idea
+overlays/
+pom.xml.versionsBackup
+*.log
+build.xml
+bin/

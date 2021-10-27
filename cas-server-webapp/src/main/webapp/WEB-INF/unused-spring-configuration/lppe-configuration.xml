@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<!--
+     Sample LPPE-enabled Ldap authentication handler with errors codes defined as a regex pattern.
+     Each error type will redirect the user to a particular view state defined in the flow.
+     Unhandled error codes/types will prevent authentication.
+     
+     Use the bean id below in the main configuration file when you reference the authentication handler bean.
+     -->
+    <bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+       p:filter="${ldap.authentication.filter}"
+       p:searchBase="${ldap.authentication.basedn}"
+       p:contextSource-ref="contextSource"
+       p:searchContextSource-ref="pooledContextSource"
+       p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}">
+
+       <property name="ldapErrorDefinitions">
+         <list>
+            <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+	             p:ldapPattern="data 530"
+	             p:type="badHours" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 533"
+                 p:type="accountDisabled" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 773"
+                 p:type="mustChangePassword" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 775"
+                 p:type="accountLocked" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 531"
+                 p:type="badWorkstation" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data (701|532)"
+                 p:type="passwordExpired" />
+         </list>
+       </property>
+    </bean>
+	
+	<!--
+    Configuration beans that are required for LDAP authentication. 
+    LDAP settings may be defined inside the 'cas.properties' file.
+    In addition to the CAS LDAP module, Apache Common Pool may also be declared as a 
+    dependency inside the pom.
+    
+    See here for additional information: https://wiki.jasig.org/display/CASUM/LDAP 
+    -->
+	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+	    <property name="pooled" value="false"/>
+	    <property name="urls">
+	      <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+	          <constructor-arg type="java.lang.String" value="${ldap.authentication.server.urls}"/>
+	      </bean>
+	  	</property>
+	    <property name="userDn" value="${ldap.authentication.manager.userdn}"/>
+	    <property name="password" value="${ldap.authentication.manager.password}"/>
+	
+	    <property name="baseEnvironmentProperties">
+	      <map>
+	        <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.authentication.jndi.connect.timeout}" />
+	        <entry key="com.sun.jndi.ldap.read.timeout" value="${ldap.authentication.jndi.read.timeout}" />
+	        <entry key="java.naming.security.authentication" value="${ldap.authentication.jndi.security.level}" />
+	      </map>
+	    </property>
+	</bean>
+
+	<bean id="dirContextValidator"
+	  class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+	  p:base=""
+	  p:filter="objectclass=*">
+	  <property name="searchControls">
+	    <bean class="javax.naming.directory.SearchControls"
+		      p:timeLimit="1000"
+		      p:countLimit="1"
+		      p:searchScope="0"
+		      p:returningAttributes="" />
+	  </property>
+	</bean>
+
+  	<bean id="pooledContextSource"
+		class="org.springframework.ldap.pool.factory.PoolingContextSource"
+		p:minIdle="${ldap.authentication.pool.minIdle}"
+		p:maxIdle="${ldap.authentication.pool.maxIdle}"
+		p:maxActive="${ldap.authentication.pool.maxSize}"
+		p:maxWait="${ldap.authentication.pool.maxWait}"
+		p:timeBetweenEvictionRunsMillis="${ldap.authentication.pool.evictionPeriod}"
+		p:minEvictableIdleTimeMillis="${ldap.authentication.pool.idleTime}"
+		p:testOnBorrow="${ldap.authentication.pool.testOnBorrow}"
+		p:testWhileIdle="${ldap.authentication.pool.testWhileIdle}"
+		p:dirContextValidator-ref="dirContextValidator"
+		p:contextSource-ref="contextSource" />
+	    	       
+	<bean id="passwordPolicyAction" class="org.jasig.cas.web.flow.PasswordPolicyEnforcementAction">
+	  	<property name="passwordPolicyEnforcer" ref="ldapPasswordPolicyEnforcer" />
+	  	<property name="passwordPolicyUrl" value="${ldap.authentication.lppe.password.url}" />
+	</bean>
+
+	<!--
+		This bean defines the current implementation of the password policy enforcer for ldap.
+		The properties defined below would possibly exist inside the local 'cas.properties' file
+	-->
+	<bean id="ldapPasswordPolicyEnforcer" class="org.jasig.cas.adaptors.ldap.LdapPasswordPolicyEnforcer">
+	  <property name="searchBase" value="${ldap.authentication.basedn}" />
+	  <property name="contextSource" ref="contextSource" />
+	  <property name="filter" value="${ldap.authentication.filter}" />
+	  <property name="ignorePartialResultException" value="${ldap.authentication.ignorePartialResultException}" />
+	  <property name="warnAll" value="${ldap.authentication.lppe.warnAll}" />
+	  <property name="dateFormat" value="${ldap.authentication.lppe.dateFormat}" />
+	  <property name="dateAttribute" value="${ldap.authentication.lppe.dateAttribute}" />
+	  <property name="warningDaysAttribute" value="${ldap.authentication.lppe.warningDaysAttribute}" />
+	  <property name="validDaysAttribute" value="${ldap.authentication.lppe.validDaysAttribute}" />
+	  <property name="warningDays" value="${ldap.authentication.lppe.warningDays}" />
+	  <property name="validDays" value="${ldap.authentication.lppe.validDays}" />
+	  <property name="noWarnAttribute" value="${ldap.authentication.lppe.noWarnAttribute}" />
+	  <property name="noWarnValues" value="${ldap.authentication.lppe.noWarnValues}" />
+	</bean>
+</beans>

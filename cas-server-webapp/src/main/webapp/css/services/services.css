@@ -1,0 +1,82 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+.fl-reorderer-instructions{
+	background-color:#F5FFB0;
+	border:1px solid #FFE390;
+	margin:5px;
+	padding:10px;
+}
+
+.fl-reorderer-instructions strong{
+	display:block;
+}
+
+.fl-reorderer-movable-default{
+	cursor:move;
+}
+
+.fl-reorderer-movable-selected{
+	background-color:yellow;
+}
+
+.fl-reorderer-movable-hover{
+	background-color:yellow;
+}
+
+.fl-reorderer-movable-dragging{
+	background:#ccc;
+}
+
+.fl-reorderer-avatar {
+	cursor:move;
+	list-style-type:none;
+	filter:alpha(opacity=75);
+	opacity:.75;
+}
+
+.fl-reorderer-dropWarning{
+	display:none;
+	padding:5px 25px;
+	color:#fff;opacity:1;
+	filter:alpha(opacity=100);
+	background:#900 url('../../images/services/error.gif')    
+	no-repeat 5px center;
+}
+
+.fl-reorderer-verticalLayout .fl-reorderer-dropMarker,.fluid-vertical-order .fl-reorderer-dropMarker{
+	background-color:#F00;
+	height:0;
+	padding:2px 0 0 0;	
+	border-width:0;
+	margin:-2px 0 0 0;	
+	list-style-type:none;	
+	font-size:0;	
+	line-height:0;	
+	overflow:hidden;
+}
+
+.fl-reorderer-horizontalLayout .fl-reorderer-dropMarker,.fluid-horizontal-order .fl-reorderer-dropMarker{
+	background-color:#F00;	
+	padding:0 3px;	
+	border-width:0;	
+	margin:0 -3px!important;	
+	list-style-type:none;	
+	overflow:hidden;	
+	width:0!important;
+}

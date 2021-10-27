@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+    <description>
+        This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
+        modify this unless you
+        know what you're doing!
+    </description>
+
+    <!--
+      Including this aspectj-autoproxy element will cause spring to automatically
+      create proxies around any beans defined in this file that match the pointcuts
+      of any aspects defined in this file.
+    -->
+    <aop:aspectj-autoproxy/>
+
+    <!--
+      Declare the TimingAspect that we want to weave into the other beans
+      defined in this config file.
+    -->
+    <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
+
+
+    <!-- Message source for this context, loaded from localized "messages_xx" files -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+          p:basename="messages"/>
+
+    <bean
+            id="servicesManager"
+            class="org.jasig.cas.services.DefaultServicesManagerImpl">
+        <constructor-arg index="0" ref="serviceRegistryDao"/>
+    </bean>
+
+    <!--
+        Job to periodically reload services from service registry.
+        This job is needed for a clustered CAS environment since service changes
+        in one CAS node are not known to the other until a reload.
+    -->
+    <bean id="serviceRegistryReloaderJobDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+          p:targetObject-ref="servicesManager"
+          p:targetMethod="reload"/>
+
+    <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+          p:jobDetail-ref="serviceRegistryReloaderJobDetail"
+          p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
+          p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
+
+    <bean id="httpClient" class="org.jasig.cas.util.HttpClient"
+          p:readTimeout="5000"
+          p:connectionTimeout="5000"/>
+
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.HttpClient" parent="httpClient"
+          p:followRedirects="false" />
+
+    <bean id="persistentIdGenerator"
+          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          p:salt="casrocks"/>
+
+    <!-- CentralAuthenticationService -->
+    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          p:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
+          p:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
+          p:authenticationManager-ref="authenticationManager"
+          p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
+          p:ticketRegistry-ref="ticketRegistry"
+          p:servicesManager-ref="servicesManager"
+          p:persistentIdGenerator-ref="persistentIdGenerator"
+          p:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"/>
+
+    <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
+
+    <bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
+          p:httpClient-ref="httpClient"
+          p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
+
+    <!-- ADVISORS -->
+    <bean id="advisorAutoProxyCreator"
+          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+            p:afterInitialization="true" />
+
+    <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
+    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
+    
+            
+</beans>

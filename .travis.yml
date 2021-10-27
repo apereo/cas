@@ -1,0 +1,5 @@
+language: java
+
+branches:
+  only:
+    - 3.5.x

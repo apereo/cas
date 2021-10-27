@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+  <description>
+  Configuration file for the Inspektr package which handles auditing for Java applications.
+  If enabled this should be modified to log audit and statistics information the same way
+  your local applications do.  The default is currently to log to the console which is good
+  for debugging/testing purposes.
+  </description>
+
+  <aop:aspectj-autoproxy/> 
+
+  <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect">
+    <!-- String applicationCode -->
+    <constructor-arg index="0" value="CAS" />
+
+    <!-- PrincipalResolver auditablePrincipalResolver -->
+    <constructor-arg index="1" ref="auditablePrincipalResolver" />
+    
+    <!-- List<AuditTrailManager> auditTrailManagers -->
+    <constructor-arg index="2">
+      <list>
+        <ref bean="auditTrailManager" />
+      </list>
+    </constructor-arg>
+
+    <!-- Map<String,AuditActionResolver> auditActionResolverMap -->
+    <constructor-arg index="3">
+      <map>
+        <entry key="AUTHENTICATION_RESOLVER">
+          <ref local="authenticationActionResolver" />
+        </entry>
+        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
+          <ref local="ticketCreationActionResolver" />
+        </entry>
+        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
+          <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
+        </entry>
+        <entry key="GRANT_SERVICE_TICKET_RESOLVER">
+          <ref local="ticketCreationActionResolver" />
+        </entry>
+        <entry key="GRANT_PROXY_GRANTING_TICKET_RESOLVER">
+          <ref local="ticketCreationActionResolver" />
+        </entry>
+        <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
+          <ref local="ticketValidationActionResolver" />
+        </entry>
+        <entry key="DELETE_SERVICE_ACTION_RESOLVER">
+            <ref local="deleteServiceActionResolver" />
+        </entry>
+        <entry key="SAVE_SERVICE_ACTION_RESOLVER">
+          <ref local="saveServiceActionResolver" />
+        </entry>
+      </map>
+    </constructor-arg>
+    
+    <!-- Map<String,AuditResourceResolver> auditResourceResolverMap -->
+    <constructor-arg index="4">
+      <map>
+        <entry key="AUTHENTICATION_RESOURCE_RESOLVER">
+          <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver" />
+        </entry>
+        <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+          <ref local="returnValueResourceResolver" />
+        </entry>
+        <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+          <ref local="ticketResourceResolver" />
+        </entry>
+        <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
+          <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver" />
+        </entry>
+        <entry key="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
+          <ref local="returnValueResourceResolver" />
+        </entry>
+        <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
+          <ref local="ticketResourceResolver" />
+        </entry>
+        <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
+            <ref local="deleteServiceResourceResolver" />
+        </entry>
+        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
+            <ref local="saveServiceResourceResolver" />
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
+    <bean id="saveServiceResourceResolver" class="com.github.inspektr.audit.spi.support.ParametersAsStringResourceResolver" />
+
+    <bean id="deleteServiceResourceResolver" class="org.jasig.cas.audit.spi.ServiceManagementResourceResolver" />
+
+    <bean id="saveServiceActionResolver" class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+        <constructor-arg index="0" value="_SUCCEEDED" />
+        <constructor-arg index="1" value="_FAILED" />
+    </bean>
+
+    <bean id="deleteServiceActionResolver" class="com.github.inspektr.audit.spi.support.ObjectCreationAuditActionResolver">
+        <constructor-arg index="0" value="_SUCCEEDED" />
+        <constructor-arg index="1" value="_FAILED" />
+    </bean>
+
+  <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver">
+      <constructor-arg index="0" ref="ticketRegistry" />
+  </bean>
+
+  <bean id="authenticationActionResolver"
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    <!-- String successSuffix -->
+    <constructor-arg index="0" value="_SUCCESS" />
+    
+    <!-- String failureSuffix -->
+    <constructor-arg index="1" value="_FAILED" />
+  </bean>
+  
+  <bean id="ticketCreationActionResolver"
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    <!-- String successSuffix -->
+    <constructor-arg index="0" value="_CREATED" />
+    
+    <!-- String failureSuffix -->
+    <constructor-arg index="1" value="_NOT_CREATED" />
+  </bean>
+  
+  <bean id="ticketValidationActionResolver"
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    <!-- String successSuffix -->
+    <constructor-arg index="0" value="D" />
+    
+    <!-- String failureSuffix -->
+    <constructor-arg index="1" value="_FAILED" />
+  </bean>
+  
+  <bean id="returnValueResourceResolver"
+     class="com.github.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
+     
+  <bean id="ticketResourceResolver"
+    class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />
+</beans>

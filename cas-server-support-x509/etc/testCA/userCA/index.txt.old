@@ -1,0 +1,9 @@
+V	321214182757Z		0CA5	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Alice
+V	100119190000Z		0CA6	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Handyman Bob
+R	321214184006Z	110119184136Z,keyTime,20100119190000Z	0CA7	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Mallory
+V	321219185645Z		0CA8	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Albert
+V	321219190010Z		0CA9	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Malificent
+V	321221160057Z		0CAA	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Anthony
+R	321221161023Z	110126161056Z,keyCompromise	0CAB	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Marauder
+R	321221162127Z	110126162153Z,keyCompromise	0CAC	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Marauder
+V	321226170329Z		0CAD	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Malverde

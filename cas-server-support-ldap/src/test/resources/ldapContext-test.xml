@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+  
+  
+  <!-- 
+  NOTE:
+  Create a ldap.properties file from ldap.properties.sample to customize unit
+  tests for your environment.
+   -->
+   
+  <bean
+    class="org.springframework.beans.factory.config.PropertyOverrideConfigurer"
+    p:location="file:ldap.properties"
+    p:ignoreResourceNotFound="true" />
+    
+  <bean id="contextSource"
+    class="org.springframework.ldap.core.support.LdapContextSource"
+    p:url="ldap://ldap1.rutgers.edu"
+    p:userDn=""
+    p:password="">
+  </bean>
+  
+  <bean id="poolingContextSoure"
+        class="org.springframework.ldap.pool.factory.PoolingContextSource"
+        p:minIdle="1"
+        p:maxIdle="1"
+        p:maxActive="1"
+        p:maxWait="3000"
+        p:dirContextValidator-ref="dirContextValidator"
+        p:contextSource-ref="contextSource" />
+
+  <!-- Query RootDSE for no attributes at suggestion of dhawes -->
+  <bean id="dirContextValidator"
+        class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+        p:base=""
+        p:filter="objectclass=*">
+    <property name="searchControls">
+      <bean class="javax.naming.directory.SearchControls"
+            p:timeLimit="1000"
+            p:countLimit="1"
+            p:searchScope="0"
+            p:returningAttributes="" />
+    </property>
+  </bean>
+
+  <bean id="saslMd5ContextSource"
+    class="org.springframework.ldap.core.support.LdapContextSource"
+    p:url="ldap://ldap1.rutgers.edu"
+    p:userDn=""
+    p:password="">
+    <property name="authenticationStrategy">
+      <bean class="org.jasig.cas.adaptors.ldap.DigestMd5DirContextAuthenticationStrategy" />
+    </property>
+  </bean>
+  
+  <bean id="bindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+    p:filter="uid=%u"
+    p:searchBase="ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="contextSource"
+    p:ignorePartialResultException="true"
+  />
+  
+  <bean id="bindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
+    p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
+    p:notExistsCredential="nobody123"
+  />
+
+  <bean id="fastBindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    p:filter="%u"
+    p:contextSource-ref="contextSource"
+  />
+    
+  <bean id="fastBindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
+    p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
+    p:notExistsCredential="nobody123"
+  />
+  
+  <bean id="saslMd5FastBindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    p:filter="uid=%u,ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="saslMd5ContextSource"
+  />
+    
+  <bean id="saslMd5FastBindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
+  />
+
+  <bean id="ldapResolver"
+    class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver"
+    p:filter="rutgersEduIID=%u"
+    p:principalAttributeName="uid"
+    p:searchBase="ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="contextSource">
+    <property name="credentialsToPrincipalResolver">
+      <bean
+        class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver">
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="resolverTestConfig"
+    class="org.jasig.cas.authentication.principal.ResolverTestConfig"
+    p:existsCredential="SRB54"
+    p:existsPrincipal="battags"
+    p:notExistsCredential="SRB"
+    p:tooManyCredential="S*"
+  />
+</beans>

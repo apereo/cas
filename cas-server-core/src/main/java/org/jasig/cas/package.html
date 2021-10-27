@@ -1,0 +1,60 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<html>
+<body>
+
+<p>This is the entry point to the part of the CAS processing that is independent 
+of the user/program interface. This layer is mostly a service to create, manage, 
+validate, query, and destroy tickets. The caller of this layer may be a Web 
+application running in a Servlet container, but it may also be a Web Service 
+client, RMI client, or even a program that finds these services compelling.</p>
+<p>One first enters this layer with opaque Credentials requesting creation of a 
+TGT. The Credentials are &quot;opaque&quot; because they are an object whose nature is 
+irrelevant to CAS. The Credentials are carried through the layers until they can 
+be presented to plugin configuration beans that may recognize the underlying 
+type and process it. Simple Credentials might be an object with a userid and 
+password, but they may also be an X.509 Certificate, Kerberos Ticket, Shibboleth 
+artifact, XML SOAP header, or any other object.</p>
+<p>The Credentials are presented to a set of objects plugged into the 
+Authentication process by the system administrators. If one of these plugin 
+elements recognizes the Credentials, validates their integrity, and maps them to 
+the identity of a user in the local system, then CAS has logged someone on and 
+creates a TGT.</p>
+<p>The results of the login are somewhat opaque. The TGT references an 
+Authentication object that references a Principal. Minimally the Principal 
+contains a simple ID string. What else the Principal or Authentication object 
+contain are transparent to CAS. These objects must be Serializable, because the 
+Tickets and everything they reference may need to be checkpointed to disk or 
+shared with multiple machines in a clustering configuration. CAS is managing the 
+TGT and, as a result, it also saves everything in the concrete classes 
+referenced by it.</p>
+<p>Any additional information about the User fetched at login is of no direct 
+interest to CAS. It may, however, be meaningful to the caller of this layer. In 
+the case of an HTTP Servlet interface, this would be the View layer that 
+generates, among other things, the response to the Ticket Validation query.</p>
+<p>Having created a TGT, CAS then proceeds to create Service Tickets which are 
+chained off the TGT, and in the case of Proxy authentication creates chains of 
+TGTs for the Service Ticket. TGTs and STs are stored in a cache until they 
+expire or are deleted. Various technologies can be plugged into the back end so 
+that the Ticket cache is shared among machines or persisted across a reboot.</p>
+
+</body>
+</html>

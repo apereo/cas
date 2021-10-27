@@ -1,0 +1,622 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/**
+ * Percents could work for IE, but for backCompat purposes, we are using keywords.
+ * x-small is for IE6/7 quirks mode.
+ */
+body {}
+table {font-size:inherit;font:100%;}
+/**
+ * Bump up IE to get to 13px equivalent
+ */
+pre,code,kbd,samp,tt {font-family:monospace;*font-size:108%;line-height:100%;}
+
+html{color:#000;background:#FFF;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+fieldset,img{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+li{list-style:none;}
+caption,th{text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}
+q:before,q:after{content:'';}
+abbr,acronym {border:0;font-variant:normal;}
+/* to preserve line-height and selector appearance */
+sup {vertical-align:text-top;}
+sub {vertical-align:text-bottom;}
+
+/*because legend doesn't inherit in IE */
+legend{color:#000;}
+
+/* base.css, part of YUI's CSS Foundation */
+h1 {
+	/*18px via YUI Fonts CSS foundation*/
+	font-size:138.5%;
+}
+h2 {
+	/*16px via YUI Fonts CSS foundation*/
+	font-size:123.1%;
+}
+h3 {
+	/*14px via YUI Fonts CSS foundation*/
+	font-size:108%;
+}
+h1,h2,h3 {
+	/* top & bottom margin based on font size */
+	margin:1em 0;
+}
+h1,h2,h3,h4,h5,h6,strong {
+	/*bringing boldness back to headers and the strong element*/
+	font-weight:bold;
+}
+abbr,acronym {
+	/*indicating to users that more info is available */
+	border-bottom:1px dotted #000;
+	cursor:help;
+}
+em {
+	/*bringing italics back to the em element*/
+	font-style:italic;
+}
+blockquote,ul,ol,dl {
+	/*giving blockquotes and lists room to breath*/
+	margin:1em;
+}
+ol,ul,dl {
+	/*bringing lists on to the page with breathing room */
+	margin-left:2em;
+}
+ol li {
+	/*giving OL's LIs generated numbers*/
+	list-style: decimal outside;
+}
+ul li {
+	/*giving UL's LIs generated disc markers*/
+	list-style: disc outside;
+}
+dl dd {
+	/*giving UL's LIs generated numbers*/
+	margin-left:1em;
+}
+th,td {
+	/*borders and padding to make the table readable*/
+	border:1px solid #000;
+	padding:.5em;
+}
+th {
+	/*distinguishing table headers from data cells*/
+	font-weight:bold;
+	text-align:center;
+}
+caption {
+	/*coordinated margin to match cell's padding*/
+	margin-bottom:.5em;
+	/*centered so it doesn't blend in to other content*/
+	text-align:center;
+}
+p,fieldset,table,pre {
+	/*so things don't run into each other*/
+	margin-bottom:1em;
+}
+/* setting a consistent width, 160px;
+   control of type=file still not possible */
+input[type=text],input[type=password],textarea{width:12.25em;*width:11.9em;}
+input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}
+
+/*************************************************************************************/
+/* Prevent unecessary scrollbars in IE */
+/* Put font data on the HTML element to allow overrides on the body */
+/* IE6 cant zoom text properly, so text size reset is a rough approximation */
+html {overflow:auto; font:13px/1.231 arial,helvetica,clean,sans-serif; *font-size:small;}
+
+/*to enable resizing for IE*/
+input,textarea,select{
+    *font-size:100%;
+    *font-family:sans-serif;
+}
+
+/* IE rendering fix for extra padding on buttons. Padding can now be set safely */
+input {
+    *overflow:visible; *padding:0 1em;
+}
+
+/* custom default focus indicator - theme overwrites this */
+:focus {
+   outline: 2px solid black;
+}
+
+
+
+
+
+/*
+Generic containers for columns and layouts
+=============================================
+ */
+
+/* Container Utilities*/
+.fl-fix {overflow: auto; zoom:1;}
+.fl-push {clear:both;}
+
+/* Container alignment */
+ /* IE 6 needs inline display to prevent double margin bug (other browsers ignore it) */
+.fl-force-right {float:right; display:inline;}
+.fl-force-left {float:left; display:inline;}
+.fl-centered {margin-left:auto; margin-right:auto; display:block;}
+
+/* Generic container, proxy for other container effects */
+.fl-container {}
+
+/* Fixed width containers */
+.fl-container-50 {width: 50px;}
+.fl-container-100 {width: 100px;}
+.fl-container-150 {width: 150px;}
+.fl-container-200 {width: 200px;}
+.fl-container-250 {width: 250px;}
+.fl-container-300 {width: 300px;}
+.fl-container-350 {width: 350px;}
+.fl-container-400 {width: 400px;}
+.fl-container-450 {width: 450px;}
+.fl-container-500 {width: 500px;}
+.fl-container-550 {width: 550px;}
+.fl-container-600 {width: 600px;}
+.fl-container-650 {width: 650px;}
+.fl-container-700 {width: 700px;}
+.fl-container-750 {width: 750px;}
+.fl-container-800 {width: 800px;}
+.fl-container-850 {width: 850px;}
+.fl-container-900 {width: 900px;}
+.fl-container-950 {width: 950px;}
+.fl-container-1000 {width: 1000px;}
+
+/* Flex width containers */
+.fl-container-auto {width: auto;}
+.fl-container-flex {width: 100%; clear:both;}
+.fl-container-flex10 {width: 10%;}
+.fl-container-flex20 {width: 20%;}
+.fl-container-flex25 {width: 25%;}
+.fl-container-flex30 {width: 30%;}
+.fl-container-flex33 {width: 33%;}
+.fl-container-flex40 {width: 40%;}
+.fl-container-flex50 {width: 50%;}
+.fl-container-flex60 {width: 60%;}
+.fl-container-flex66 {width: 66%;}
+.fl-container-flex75 {width: 75%;}
+
+/* linearizable containers & columns */
+.fl-layout-linear *,
+.fl-layout-linear .fl-linearEnabled {
+    overflow:visible !important;
+    clear: both !important;
+    float:none !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+}
+.fl-layout-linear .fl-container,
+.fl-layout-linear .fl-container-100,
+.fl-layout-linear .fl-container-150,
+.fl-layout-linear .fl-container-200,
+.fl-layout-linear .fl-container-250,
+.fl-layout-linear .fl-container-300,
+.fl-layout-linear .fl-container-400,
+.fl-layout-linear .fl-container-750,
+.fl-layout-linear .fl-container-950,
+.fl-layout-linear .fl-container-auto,
+.fl-layout-linear .fl-container-flex25,
+.fl-layout-linear .fl-container-flex30,
+.fl-layout-linear .fl-container-flex33,
+.fl-layout-linear .fl-container-flex50,
+.fl-layout-linear .fl-col,
+.fl-layout-linear .fl-col-side,
+.fl-layout-linear .fl-col-flex,
+.fl-layout-linear .fl-col-main,
+.fl-layout-linear .fl-col-fixed,
+.fl-layout-linear .fl-col-justified {width:100% !important; margin:auto; padding:0 !important;}
+
+.fl-layout-linear .fl-force-left,
+.fl-layout-linear .fl-force-right,
+.fl-layout-linear li {display:block !important; float:none !important;}
+
+.fl-layout-linear .fl-linearEnabled {width:100% !important; /*position:relative;*/ display:block;} /* linearization opt in for special cases */
+
+.fl-layout-linear .fl-button-left,
+.fl-layout-linear .fl-button-right {padding:1em;}
+
+/*
+Layout Helpers
+=============================================
+*/
+/* Columns: A quick column grid system */
+/* Flex width columns (containers with margins and padding) */
+.fl-col-justified {float:left; display:inline; overflow:auto; text-align:justify;} /* redundant: text alignment now in fluid.text.css */
+
+.fl-col-flex2, .fl-col-flex3, .fl-col-flex4, .fl-col-flex5 {overflow:auto; zoom:1;}
+.fl-col {float:left; display:inline;}
+.fl-col-flex5 .fl-col {width:18.95%; margin-left:0.25%;margin-right:0.25%; padding-left:0.25%; padding-right:0.25%}
+.fl-col-flex4 .fl-col {width:24%; margin-left:0.25%;margin-right:0.25%; padding-left:0.25%; padding-right:0.25%}
+.fl-col-flex3 .fl-col {width:32.33%; margin-left:0.25%;margin-right:0.25%; padding-left:0.25%; padding-right:0.25%}
+.fl-col-flex2 .fl-col {width:48.85%; margin-left:0.25%;margin-right:0.25%; padding-left:0.25%; padding-right:0.25%}
+
+/* CHANGE TO LAYOUT not COL since this will become a layout helper */
+.fl-col-mixed,
+.fl-col-mixed2,
+.fl-col-mixed3 {overflow:auto; zoom:1;}
+
+/* Old System */
+.fl-col-mixed .fl-col-side {width:200px;}
+.fl-col-mixed .fl-col-side,
+.fl-col-mixed .fl-col-main {padding:0 10px;}
+
+.fl-col-mixed2 .fl-col-side {width:200px; padding:0 10px; float:left;}
+.fl-col-mixed2 .fl-col-main {margin-left:220px; padding:0 10px;} /* margin goes on whichever side the fixed column goes */
+
+.fl-col-mixed3 .fl-col-main {margin:0 220px;} /* margin goes on whichever side the fixed column goes */
+
+/* New System, requires fl-force-XX on the fixed column, provides some basic numbers to start with */
+.fl-col-fixed, .fl-col-flex {padding:0 10px;}
+
+.fl-col-mixed .fl-col-fixed {width:200px; padding:0 10px;}
+.fl-col-mixed .fl-col-flex {margin-left:220px; padding:0 10px;}
+
+.fl-col-mixed-100 .fl-col-fixed {width:100px;}
+.fl-col-mixed-100 .fl-col-flex {margin-left:120px;}
+
+.fl-col-mixed-150 .fl-col-fixed {width:150px;}
+.fl-col-mixed-150 .fl-col-flex {margin-left:170px;}
+
+.fl-col-mixed-200 .fl-col-fixed {width:200px;}
+.fl-col-mixed-200 .fl-col-flex {margin-left:220px;}
+
+.fl-col-mixed-250 .fl-col-fixed {width:250px;}
+.fl-col-mixed-250 .fl-col-flex {margin-left:270px;}
+
+.fl-col-mixed-300 .fl-col-fixed {width:300px;}
+.fl-col-mixed-300 .fl-col-flex {margin-left:320px;}
+
+
+/*
+ * Tabs: a quick tab system
+ * Dependency: list-based markup ?
+ */
+.fl-tabs {margin:10px 0 0 0; border-bottom:1px solid #000; text-align:center; padding-bottom:2px;}
+.fl-tabs li {list-style-type:none; display:inline;}
+/* star hack to get IE 6+7 to behave perfectly */
+.fl-tabs li a {padding:3px 16px 2px; background-color:#fff; margin-left:-5px; *margin-bottom:-6px; zoom:1; border:1px solid #000; color:#999;}
+.fl-tabs li a:hover {}
+.fl-tabs-center {text-align:center;}
+.fl-tabs-left {text-align:left; padding-left:10px;}
+.fl-tabs-right {text-align:right; padding-right:15px;}
+.fl-tabs .fl-reorderer-dropMarker {padding:0 3px; background-color:#c00;margin:0 5px 0 -5px; zoom:1;}
+.fl-tabs .fl-tabs-active a {padding:3px 16px; border-bottom:none; color:#000;}
+.fl-tabs-content {padding:5px;}
+/* get webkit to behave perfectly -
+ * unfortunately, Chrome gets caught in this too even though it applied the original padding values fine
+ */
+@media screen and (-webkit-min-device-pixel-ratio:0){
+    .fl-tabs li a {padding:3px 16px 3px;}
+    .fl-tabs .fl-tabs-active a {padding:3px 16px 4px;}
+}
+
+/*
+ * Menus: quick horizontal and vertical menu
+ * Requires list items with anchors
+ */
+.fl-listmenu {padding:0px; margin:0; border-bottom-width:1px; border-bottom-style:solid;}
+.fl-listmenu li {margin:0; padding:0; list-style-type:none; border-width:1px; border-style:solid; border-bottom:none;}
+.fl-listmenu a {padding:5px 5px; display:block; zoom:1;} /* list item needs layout (http://www.brunildo.org/test/IEWlispace.php) */
+
+.fl-vert-menu {
+}
+.fl-horz-menu {
+}
+
+/*
+ * Picture Grid: a quick picture grid layout
+ * Dependency: list-based markup
+ */
+ul.fl-grid, .fl-grid ul {padding:0; margin:0;}
+.fl-grid li {list-style-type:none; display:inline;}
+.fl-grid li {float:left; width:19%; margin:0.5%; height:150px; overflow:hidden; position:relative; display:inline;}
+.fl-grid li img {display:block; margin:5px auto;}
+.fl-grid li .caption {position:absolute; left:0px; bottom:0px; width:100%; text-align:center; height:1em; padding:3px 0;}
+
+/*
+ * Icons: quick accessible icon helper
+ */
+.fl-icon {
+    text-indent:-5000px;
+    overflow:hidden;
+    cursor:pointer;
+    display:block;
+    height:16px;
+    width:16px;
+    margin-left:5px;
+    margin-right:5px;
+    background-position:center center;
+    background-repeat:no-repeat;
+}
+input.fl-icon {padding-left:16px;}
+
+/*
+ * Buttons: quick sliding door buttons
+ * requires a container with a sub container
+ */
+.fl-button-left {float:left; margin-right:10px; padding:0 0 0 16px; background-position:left center; background-repeat:no-repeat;}
+.fl-button-right {float:right;  margin-left:10px; padding:0 0 0 16px; background-position:left center; background-repeat:no-repeat;}
+.fl-button-inner {float:left; padding:5px 16px 5px 0; cursor:pointer; background-position:right center; background-repeat:no-repeat;}
+
+/*
+ * Widgets: modelled after the mycamtools widget model
+ */
+.fl-widget {padding:5px; margin-bottom:10px;}
+.fl-widget .button {margin:0 5px;}
+.fl-grabbable .fl-widget-titlebar {background-position:center top; background-repeat:no-repeat; cursor:move;}
+.fl-widget .fl-widget-titlebar {}
+.fl-widget .fl-widget-titlebar h2 {padding:0; margin:0; font-size:105%;}
+.fl-widget .fl-widget-titlebar .fl-button-inner {
+    font-size:0.8em;
+    padding-bottom:0.2em;
+    padding-top:0.2em;
+}
+.fl-widget .fl-widget-controls {margin:-1.3em 0 1.5em 0;}
+.fl-widget .fl-widget-options {margin-top:5px; padding:0px 10px;}
+.fl-widget .fl-widget-options ul {margin:0; padding:0; overflow:hidden; zoom:1;}
+.fl-widget .fl-widget-options li {list-style-type:none; float:left; display:inline; padding:0 5px 0 5px; margin-left:-5px;}
+.fl-widget .fl-widget-options a {margin-right:5px;}
+.fl-widget .fl-widget-content {zoom:1; margin:5px 0 0 0; overflow: auto;}
+.fl-widget .fl-widget-content ul {}
+.fl-widget .empty * {padding-top:10px; margin-left:auto; margin-right:auto; text-align:center;}
+
+
+/* Common widget sub-components */
+.fl-widget .menu 	{margin:0;}
+.fl-widget .toggle  {width:32px;}
+.fl-widget .on 		{background-position:left top;}
+.fl-widget .off 	{background-position:left bottom;}
+
+/*
+ * Forms and Form Controls
+ * Common arrangements for form inputs in a list
+ * Alignment requires list of fl-label elements placed before the control
+ */
+.fl-controls-left li {list-style-type:none; text-align:left;}
+.fl-controls-left .fl-label {float:left; text-align:left; width:50%; margin-right:5px;}
+
+.fl-controls-right li {list-style-type:none; display:block; text-align:left;}
+.fl-controls-right .fl-label {float:left; text-align:right; width:50%; margin-right:5px;}
+
+.fl-controls-centered li {list-style-type:none; display:block; text-align:left;}
+.fl-controls-centered .fl-label {float:left; text-align:center; width:50%; margin-right:5px;}
+
+/**
+ * Knockout Background Images
+ */
+.fl-noBackgroundImages, .fl-noBackgroundImages * {
+    background-image:none !important;
+}
+.fl-noBackgroundImages .fl-icon {
+    text-indent:0 !important;
+    width:auto !important;
+    background-color:transparent !important;
+}
+
+/* Progressive Enhancement: JS will reverse the display setup if it is enabled */
+.fl-ProgEnhance-enhanced, /* << syntax breaks conventions and is Deprecated*/
+.fl-progEnhance-enhanced {display:none}
+
+.fl-ProgEnhance-basic, /* << syntax breaks conventions and is Deprecated*/
+.fl-progEnhance-basic {}
+
+/* hide text for screen readers. */
+.fl-offScreen-hidden {position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;}
+
+
+.fl-font-size-70,
+.fl-font-size-70 body,
+.fl-font-size-70 input,
+.fl-font-size-70 select,
+.fl-font-size-70 textarea {font-size:0.7em !important; line-height:1em !important;}
+
+.fl-font-size-80,
+.fl-font-size-80 body,
+.fl-font-size-80 input,
+.fl-font-size-80 select,
+.fl-font-size-80 textarea {font-size:0.8em !important; line-height:1.1em !important;}
+
+.fl-font-size-90,
+.fl-font-size-90 body,
+.fl-font-size-90 input,
+.fl-font-size-90 select,
+.fl-font-size-90 textarea {font-size:0.9em !important; line-height:1.2em !important;}
+
+.fl-font-size-100,
+.fl-font-size-100 body,
+.fl-font-size-100 input,
+.fl-font-size-100 select,
+.fl-font-size-100 textarea {font-size:1em !important; line-height:1.3em !important;}
+
+.fl-font-size-110,
+.fl-font-size-110 body,
+.fl-font-size-110 input,
+.fl-font-size-110 select,
+.fl-font-size-110 textarea {font-size:1.1em !important; line-height:1.4em !important;}
+
+.fl-font-size-120,
+.fl-font-size-120 body,
+.fl-font-size-120 input,
+.fl-font-size-120 select,
+.fl-font-size-120 textarea {font-size:1.2em !important; line-height:1.5em !important;}
+
+.fl-font-size-130,
+.fl-font-size-130 body,
+.fl-font-size-130 input,
+.fl-font-size-130 select,
+.fl-font-size-130 textarea {font-size:1.3em !important; line-height:1.6em !important;}
+
+.fl-font-size-140,
+.fl-font-size-140 body,
+.fl-font-size-140 input,
+.fl-font-size-140 select,
+.fl-font-size-140 textarea {font-size:1.4em !important; line-height:1.7em !important;}
+
+.fl-font-size-150,
+.fl-font-size-150 body,
+.fl-font-size-150 input,
+.fl-font-size-150 select,
+.fl-font-size-150 textarea {font-size:1.5em !important; line-height:1.8em !important;}
+
+/* fix for Safari 3 ignoring input font size */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+
+    [class~='fl-font-size-70'] input[type=submit],
+    [class~='fl-font-size-70'] input[type=button] {padding:0 1em}
+
+    [class~='fl-font-size-80'] input[type=submit],
+    [class~='fl-font-size-80'] input[type=button] {font-size:0.8em !important; padding:0 1em}
+
+    [class~='fl-font-size-90'] input[type=submit],
+    [class~='fl-font-size-90'] input[type=button] {font-size:0.9em !important; padding:0 1em}
+
+    [class~='fl-font-size-100'] input[type=submit],
+    [class~='fl-font-size-100'] input[type=button] {font-size:1em !important; padding:0 1em}
+
+    [class~='fl-font-size-110'] input[type=submit],
+    input[type=submit][class~='fl-font-size-110'],
+    [class~='fl-font-size-110'] input[type=button] {background-color:#fff; font-size:1.1em !important; padding:0 1em}
+
+    [class~='fl-font-size-120'] input[type=submit],
+    input[type=submit][class~='fl-font-size-120'],
+    [class~='fl-font-size-120'] input[type=button] {background-color:#fff; font-size:1.2em !important; padding:0 1em}
+
+    [class~='fl-font-size-130'] input[type=submit],
+    input[type=submit][class~='fl-font-size-130'],
+    [class~='fl-font-size-130'] input[type=button] {background-color:#fff; font-size:1.3em !important; padding:0 1em}
+
+    [class~='fl-font-size-140'] input[type=submit],
+    input[type=submit][class~='fl-font-size-140'],
+    [class~='fl-font-size-140'] input[type=button] {background-color:#fff; font-size:1.4em !important; padding:0 1em}
+
+    [class~='fl-font-size-150'] input[type=submit],
+    input[type=submit][class~='fl-font-size-150'],
+    [class~='fl-font-size-150'] input[type=button] {background-color:#fff; font-size:1.5em !important; padding:0 1em}
+
+    [class~='fl-font-serif'] input[type=submit],
+    [class~='fl-font-sans'] input[type=submit],
+    [class~='fl-font-monospace'] input[type=submit],
+    [class~='fl-font-arial'] input[type=submit],
+    [class~='fl-font-verdana'] input[type=submit],
+    [class~='fl-font-times'] input[type=submit],
+    [class~='fl-font-courier'] input[type=submit] {background-color:#fff; padding:0 1em}
+}
+
+
+.fl-font-serif, .fl-font-serif * {font-family: Georgia, Times, "Times New Roman", "Book Antiqua", serif !important;}
+.fl-font-sans, .fl-font-sans * {font-family: Tahoma, Verdana, Helvetica, sans-serif !important;}
+.fl-font-monospace, .fl-font-monospace * {font-family: "Courier New, Courier", monospace !important;}
+
+.fl-font-arial, .fl-font-arial * {font-family: "Arial" !important;}
+.fl-font-verdana, .fl-font-verdana * {font-family: "Verdana" !important;}
+.fl-font-times, .fl-font-times *   {font-family: Georgia, Times, "Times New Roman", serif !important;}
+.fl-font-courier, .fl-font-courier * {font-family: "Courier New", Courier, monospace !important;}
+
+.fl-text-align-left {
+    text-align:left;
+}
+.fl-text-align-right {
+    text-align:right;
+}
+.fl-text-align-center {
+    text-align:center;
+}
+.fl-text-align-justify {
+    text-align:justify;
+}
+
+.fl-font-spacing-0,
+.fl-font-spacing-0 body,
+.fl-font-spacing-0 input,
+.fl-font-spacing-0 select,
+.fl-font-spacing-0 textarea {letter-spacing:0em}
+
+.fl-font-spacing-1,
+.fl-font-spacing-1 body,
+.fl-font-spacing-1 input,
+.fl-font-spacing-1 select,
+.fl-font-spacing-1 textarea {letter-spacing:0.1em}
+
+.fl-font-spacing-2,
+.fl-font-spacing-2 body,
+.fl-font-spacing-2 input,
+.fl-font-spacing-2 select,
+.fl-font-spacing-2 textarea {letter-spacing:0.2em}
+
+.fl-font-spacing-3,
+.fl-font-spacing-3 body,
+.fl-font-spacing-3 input,
+.fl-font-spacing-3 select,
+.fl-font-spacing-3 textarea {letter-spacing:0.3em}
+
+.fl-font-spacing-4,
+.fl-font-spacing-4 body,
+.fl-font-spacing-4 input,
+.fl-font-spacing-4 select,
+.fl-font-spacing-4 textarea {letter-spacing:0.4em}
+
+.fl-font-spacing-5,
+.fl-font-spacing-5 body,
+.fl-font-spacing-5 input,
+.fl-font-spacing-5 select,
+.fl-font-spacing-5 textarea {letter-spacing:0.5em}
+
+.fl-font-spacing-6,
+.fl-font-spacing-6 body,
+.fl-font-spacing-6 input,
+.fl-font-spacing-6 select,
+.fl-font-spacing-6 textarea {letter-spacing:0.6em}
+
+/* UI Enhancer "Esier to Find" link options */
+/* First pass strategy: apply classnames directky on the elements of interest, usually via JS */
+.fl-text-aqua {color: aqua !important;}
+.fl-text-black {color: black !important;}
+.fl-text-blue {color: blue !important;}
+.fl-text-fuchsia {color: fuchsia !important;}
+.fl-text-gray {color: gray !important;}
+.fl-text-green {color: green !important;}
+.fl-text-lime {color: lime !important;}
+.fl-text-maroon {color: maroon !important;}
+.fl-text-navy {color: navy !important;}
+.fl-text-olive {color: olive !important;}
+.fl-text-purple {color: purple !important;}
+.fl-text-red {color: red !important;}
+.fl-text-silver {color: silver !important;}
+.fl-text-teal {color: teal !important;}
+.fl-text-white {color:white !important;}
+.fl-text-yellow {color: yellow !important;}
+
+.fl-text-underline {text-decoration:underline !important;}
+.fl-text-bold {font-weight:bold !important;}
+.fl-text-larger {font-size:125% !important;}
+.fl-input-outline {border:2px solid;} /* leave out color? */
+
+.fl-highlight-yellow, .fl-highlight-hover-yellow:hover, .fl-highlight-focus-yellow:focus {background-color:#FF0 !important; background-image:none !important;}
+.fl-highlight-green, .fl-highlight-hover-green:hover, .fl-highlight-focus-green:focus {background-color:#0F0 !important; background-image:none !important;}
+.fl-highlight-blue, .fl-highlight-hover-blue:hover, .fl-highlight-focus-blue:focus {background-color:#00F !important; background-image:none !important;}
+
+
