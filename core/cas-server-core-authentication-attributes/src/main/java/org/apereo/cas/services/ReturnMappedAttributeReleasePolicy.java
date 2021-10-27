@@ -161,7 +161,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
      * by the original key, value and the original entry itself.
      * Then process the array to populate the map for allowed attributes.
      *
-     * @param context the context
+     * @param context    the context
+     * @param attributes the attributes
      * @return the map
      */
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(

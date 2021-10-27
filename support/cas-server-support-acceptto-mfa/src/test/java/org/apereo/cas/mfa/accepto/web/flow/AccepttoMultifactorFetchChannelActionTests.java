@@ -47,8 +47,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.acceptto.api-url=http://localhost:5001",
-        "cas.authn.mfa.acceptto.registration-api-url=http://localhost:5002",
+        "cas.authn.mfa.acceptto.api-url=http://localhost:5011",
+        "cas.authn.mfa.acceptto.registration-api-url=http://localhost:5012",
         "cas.authn.mfa.acceptto.application-id=thisisatestid",
         "cas.authn.mfa.acceptto.secret=thisisasecret",
         "cas.authn.mfa.acceptto.organization-id=thisisatestid",
@@ -78,7 +78,7 @@ public class AccepttoMultifactorFetchChannelActionTests {
         ClientInfoHolder.setClientInfo(new ClientInfo(httpRequest));
 
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("channel", "test-channel", "status", "success"));
-        try (val webServer = new MockWebServer(5001,
+        try (val webServer = new MockWebServer(5011,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val action = new AccepttoMultifactorFetchChannelAction(casProperties, mfaAccepttoDistributedSessionStore, mfaAccepttoApiPublicKey);
@@ -114,7 +114,7 @@ public class AccepttoMultifactorFetchChannelActionTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5002,
+        try (val webServer = new MockWebServer(5012,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val action = new AccepttoMultifactorFetchChannelAction(casProperties,
@@ -149,7 +149,7 @@ public class AccepttoMultifactorFetchChannelActionTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5002,
+        try (val webServer = new MockWebServer(5012,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val action = new AccepttoMultifactorFetchChannelAction(casProperties,
@@ -184,7 +184,7 @@ public class AccepttoMultifactorFetchChannelActionTests {
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
         val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
 
-        try (val webServer = new MockWebServer(5002,
+        try (val webServer = new MockWebServer(5012,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val action = new AccepttoMultifactorFetchChannelAction(casProperties,
