@@ -35,34 +35,43 @@ import java.util.ArrayList;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryGroovyConfiguration {
 
-    @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public BeanContainer<IPersonAttributeDao> groovyAttributeRepositories(
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getGroovy()
-            .stream()
-            .filter(groovy -> groovy.getLocation() != null)
-            .forEach(groovy -> {
-                val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
-                dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
-                dao.setOrder(groovy.getOrder());
-                FunctionUtils.doIfNotNull(groovy.getId(), dao::setId);
-                LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
-                list.add(dao);
-            });
-        return BeanContainer.of(list);
+    @Configuration(value = "GroovyAttributeRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GroovyAttributeRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public BeanContainer<IPersonAttributeDao> groovyAttributeRepositories(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            val list = new ArrayList<IPersonAttributeDao>();
+            casProperties.getAuthn().getAttributeRepository().getGroovy()
+                .stream()
+                .filter(groovy -> groovy.getLocation() != null)
+                .forEach(groovy -> {
+                    val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties));
+                    dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
+                    dao.setOrder(groovy.getOrder());
+                    FunctionUtils.doIfNotNull(groovy.getId(), dao::setId);
+                    LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
+                    list.add(dao);
+                });
+            return BeanContainer.of(list);
+        }
     }
 
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("groovyAttributeRepositories") final BeanContainer<IPersonAttributeDao> groovyAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories.toList());
+    @Configuration(value = "GroovyAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GroovyAttributeRepositoryPlanConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
+            @Qualifier("groovyAttributeRepositories")
+            final BeanContainer<IPersonAttributeDao> groovyAttributeRepositories) {
+            return plan -> plan.registerAttributeRepositories(groovyAttributeRepositories.toList());
+        }
     }
 
 }

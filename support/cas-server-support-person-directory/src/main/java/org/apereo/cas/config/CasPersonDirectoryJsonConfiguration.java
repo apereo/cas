@@ -16,6 +16,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,40 +34,48 @@ import java.util.ArrayList;
 @Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
 @Slf4j
 public class CasPersonDirectoryJsonConfiguration {
-
-    @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public BeanContainer<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
-        val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getJson()
-            .stream()
-            .filter(json -> ResourceUtils.doesResourceExist(json.getLocation()))
-            .forEach(Unchecked.consumer(json -> {
-                val r = json.getLocation();
-                val dao = new JsonBackedComplexStubPersonAttributeDao(r);
-                if (ResourceUtils.isFile(r)) {
-                    val watcherService = new FileWatcherService(r.getFile(), Unchecked.consumer(file -> dao.init()));
-                    watcherService.start(getClass().getSimpleName());
-                    dao.setResourceWatcherService(watcherService);
-                }
-                dao.setOrder(json.getOrder());
-                FunctionUtils.doIfNotNull(json.getId(), dao::setId);
-                dao.setEnabled(json.isEnabled());
-                dao.init();
-                LOGGER.debug("Configured JSON attribute sources from [{}]", r);
-                list.add(dao);
-            }));
-        return BeanContainer.of(list);
+    @Configuration(value = "JsonAttributeRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JsonAttributeRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public BeanContainer<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
+            val list = new ArrayList<IPersonAttributeDao>();
+            casProperties.getAuthn().getAttributeRepository().getJson()
+                .stream()
+                .filter(json -> ResourceUtils.doesResourceExist(json.getLocation()))
+                .forEach(Unchecked.consumer(json -> {
+                    val r = json.getLocation();
+                    val dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                    if (ResourceUtils.isFile(r)) {
+                        val watcherService = new FileWatcherService(r.getFile(), Unchecked.consumer(file -> dao.init()));
+                        watcherService.start(getClass().getSimpleName());
+                        dao.setResourceWatcherService(watcherService);
+                    }
+                    dao.setOrder(json.getOrder());
+                    FunctionUtils.doIfNotNull(json.getId(), dao::setId);
+                    dao.setEnabled(json.isEnabled());
+                    dao.init();
+                    LOGGER.debug("Configured JSON attribute sources from [{}]", r);
+                    list.add(dao);
+                }));
+            return BeanContainer.of(list);
+        }
     }
 
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")
-    public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("jsonAttributeRepositories") final BeanContainer<IPersonAttributeDao> jsonAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.toList());
+    @Configuration(value = "JsonAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class JsonAttributeRepositoryPlanConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")
+        public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
+            @Qualifier("jsonAttributeRepositories")
+            final BeanContainer<IPersonAttributeDao> jsonAttributeRepositories) {
+            return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.toList());
+        }
     }
 }
