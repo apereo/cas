@@ -266,7 +266,13 @@ public class CasPersonDirectoryConfiguration {
             public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
                 @Qualifier("stubAttributeRepositories")
                 final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
-                return plan -> plan.registerAttributeRepositories(stubAttributeRepositories.toList());
+                return plan -> {
+                    val results = stubAttributeRepositories.toList()
+                        .stream()
+                        .filter(repo -> (Boolean) repo.getTags().get("state"))
+                        .collect(Collectors.toList());
+                    plan.registerAttributeRepositories(results);
+                };
             }
         }
     }

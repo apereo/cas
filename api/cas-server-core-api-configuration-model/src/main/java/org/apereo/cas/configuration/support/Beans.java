@@ -70,6 +70,7 @@ public class Beans {
         dao.setBackingMap(backingMap);
         dao.setOrder(stub.getOrder());
         dao.setEnabled(stub.getState() != AttributeRepositoryStates.DISABLED);
+        dao.putTag("state", stub.getState() == AttributeRepositoryStates.ACTIVE);
         if (StringUtils.hasText(stub.getId())) {
             dao.setId(stub.getId());
         }

@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
 
     const title = await page.title();
     console.log(title);
-    assert(title === "CAS Boostrap Theme");
+    assert(title === "CAS Boostrap Theme Log In Successful");
 
     await browser.close();
 })();
