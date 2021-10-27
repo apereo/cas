@@ -107,12 +107,11 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final RequestAbstractType authnRequest,
                               final AuthenticatedAssertionContext assertion,
                               final MessageContext messageContext) throws SamlException {
-        val result = new MessageContext();
-        val ctx = result.getSubcontext(SOAP11Context.class, true);
+        val ctx = messageContext.getSubcontext(SOAP11Context.class, true);
         Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();
         encoder.setHttpServletResponse(httpResponse);
-        encoder.setMessageContext(result);
+        encoder.setMessageContext(messageContext);
         encoder.initialize();
         encoder.encode();
         return envelope;
