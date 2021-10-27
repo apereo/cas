@@ -73,7 +73,6 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             }
             val authentication = ticket.getTicketGrantingTicket().getAuthentication();
             val principal = authentication.getPrincipal();
-
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
                 .service(ticket.getService())
@@ -84,8 +83,12 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);
 
+            val principalId = registeredService.getUsernameAttributeProvider()
+                .resolveUsername(authentication.getPrincipal(), ticket.getService(), registeredService);
+            LOGGER.debug("Principal id used for attribute query response should be [{}]", principalId);
+            
             LOGGER.trace("Final attributes for attribute query are [{}]", finalAttributes);
-            val casAssertion = buildCasAssertion(principal.getId(), registeredService, finalAttributes);
+            val casAssertion = buildCasAssertion(principalId, registeredService, finalAttributes);
             getConfigurationContext().getResponseBuilder().build(query, request, response, casAssertion,
                 registeredService, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
