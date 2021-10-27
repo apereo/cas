@@ -43,13 +43,13 @@ public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyOperation() {
-        val login = springWebflowEndpoint.getReport("login");
+        val login = springWebflowEndpoint.getReport("login", null);
         assertNotNull(login);
 
-        val logout = springWebflowEndpoint.getReport("logout");
+        val logout = springWebflowEndpoint.getReport("logout", null);
         assertNotNull(logout);
 
-        val all = springWebflowEndpoint.getReport(StringUtils.EMPTY);
+        val all = springWebflowEndpoint.getReport(StringUtils.EMPTY, null);
         assertNotNull(all);
     }
 
