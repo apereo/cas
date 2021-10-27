@@ -27,6 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasPersonDirectoryLdapConfiguration}.
