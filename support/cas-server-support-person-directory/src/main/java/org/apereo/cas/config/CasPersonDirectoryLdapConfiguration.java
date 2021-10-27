@@ -42,6 +42,11 @@ public class CasPersonDirectoryLdapConfiguration {
     @Configuration(value = "LdapAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class LdapAttributeRepositoryConfiguration {
+
+        private static final LdapEntryHandler[] LDAP_ENTRY_HANDLERS = new LdapEntryHandler[0];
+
+        private static final SearchResultHandler[] SEARCH_RESULT_HANDLERS = new SearchResultHandler[0];
+
         @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -85,12 +90,12 @@ public class CasPersonDirectoryLdapConfiguration {
                         val entryHandlers = LdapUtils.newLdaptiveEntryHandlers(searchEntryHandlers);
                         if (!entryHandlers.isEmpty()) {
                             LOGGER.debug("Setting entry handlers [{}]", entryHandlers);
-                            ldapDao.setEntryHandlers(entryHandlers.toArray(new LdapEntryHandler[0]));
+                            ldapDao.setEntryHandlers(entryHandlers.toArray(LDAP_ENTRY_HANDLERS));
                         }
                         val searchResultHandlers = LdapUtils.newLdaptiveSearchResultHandlers(searchEntryHandlers);
                         if (!searchResultHandlers.isEmpty()) {
                             LOGGER.debug("Setting search result handlers [{}]", searchResultHandlers);
-                            ldapDao.setSearchResultHandlers(searchResultHandlers.toArray(new SearchResultHandler[0]));
+                            ldapDao.setSearchResultHandlers(searchResultHandlers.toArray(SEARCH_RESULT_HANDLERS));
                         }
                     }
 

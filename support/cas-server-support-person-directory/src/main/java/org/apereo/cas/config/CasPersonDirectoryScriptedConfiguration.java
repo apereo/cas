@@ -69,6 +69,7 @@ public class CasPersonDirectoryScriptedConfiguration {
         @Bean
         @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "scriptedPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("scriptedAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories) {

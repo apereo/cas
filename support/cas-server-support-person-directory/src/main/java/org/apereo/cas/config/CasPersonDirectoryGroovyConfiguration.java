@@ -67,6 +67,7 @@ public class CasPersonDirectoryGroovyConfiguration {
         @Bean
         @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovyPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("groovyAttributeRepositories")
             final BeanContainer<IPersonAttributeDao> groovyAttributeRepositories) {
