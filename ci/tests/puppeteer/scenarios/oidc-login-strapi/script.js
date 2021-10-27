@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTicketGrantingCookie(page);
 
-    await cas.assertPageTitle(page, "CAS - Central Authentication Service");
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     // hit strapi endpoint that triggers CAS login to get JWT

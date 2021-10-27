@@ -21,7 +21,7 @@ const path = require('path');
     await page.waitForTimeout(7000)
 
     console.log(`Page url: ${ await page.url()}`)
-    await cas.assertPageTitle(page, "CAS - Central Authentication Service");
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
