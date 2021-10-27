@@ -1,0 +1,48 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<html>
+<body>
+
+<p>Credentials is a marker interface for an opaque object that may be recognized by
+Handlers and Resolvers. Credentials may be a Userid/Password, Certificate,
+RemoteUser, IP address, etc.</p>
+<p>When the authentication manager is used, that bean is configured with a list of 
+AuthenticationHandlers that validate Credentials and 
+org.jasig.cas.authentication.principal.PrincipalResolver that turn 
+org.jasig.cas.authentication.Credential objects into 
+org.jasig.cas.authentication.principal.Principal objects.</p>
+<p>The Authentication Handler validates credentials and in certain cases is able extract
+information. The extraction use case is clearer when credentials are certificates.
+A certificate is valid if you trust the CA, if it hasn't expired, and if it isn't revoked.
+You can decide all this, and still not have the foggiest idea what ID to give to the person (if
+it is a person) represented by the Certificate.</p>
+<p>The CredentialsToPrincipalResolver looks into previously validated
+Credentials to construct a Principal object containing an ID (and in more
+complex cases some attributes). The DefaultCredentialsToPrincipalResolver takes
+UsernamePasswordCredentials and creates a SimplePrincipal containing the Userid.</p>
+<p>The {@link org.jasig.cas.authentication.principal.PrincipalResolver}
+looks into previously validated credentials to construct a Principal object containing an ID (and 
+in more complex cases some attributes). The
+org.jasig.cas.authentication.principal.BasicPrincipalResolver} takes credentials and creates 
+a SimplePrincipal containing the Userid.</p>
+
+</body>
+</html>

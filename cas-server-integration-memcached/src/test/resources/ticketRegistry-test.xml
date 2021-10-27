@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+  <bean id="testCase1" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry">
+    <constructor-arg index="0" value="localhost:11211" />
+    <constructor-arg index="1" value="36000" />
+    <constructor-arg index="2" value="2" />
+  </bean>
+
+
+  <bean id="testCase2" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry">
+    <constructor-arg index="0">
+      <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+            p:servers="localhost:11211"
+            p:protocol="BINARY"
+            p:locatorType="ARRAY_MOD"
+            p:failureMode="Redistribute"
+            p:transcoder-ref="serialTranscoder">
+        <property name="hashAlg">
+          <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.FNV1A_64_HASH" />
+        </property>
+      </bean>
+    </constructor-arg>
+    <constructor-arg index="1" value="36000" />
+    <constructor-arg index="2" value="2" />
+  </bean>
+
+  <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
+      p:compressionThreshold="2048" />
+
+  <bean id="kryoTranscover" class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder" />
+
+  <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+</beans>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+  <description>
+    Configuration for the EhCache TicketRegistry which stores the tickets in a distributed EhCache and cleans
+    them out as specified intervals.
+  </description>
+
+  <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <property name="configLocation" value="classpath:ehcache-replicated.xml" />
+    <property name="shared" value="false" />
+    <property name="cacheManagerName" value="ticketRegistryCacheManager" />
+  </bean>
+
+  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
+    p:serviceTicketsCache-ref="serviceTicketsCache" p:ticketGrantingTicketsCache-ref="ticketGrantingTicketsCache" />
+
+  <bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+    abstract="true">
+    <property name="cacheManager" ref="cacheManager" />
+    <property name="diskExpiryThreadIntervalSeconds" value="0" />
+    <property name="diskPersistent" value="false" />
+    <property name="eternal" value="false" />
+    <property name="maxElementsInMemory" value="10000" />
+    <property name="maxElementsOnDisk" value="0" />
+    <property name="memoryStoreEvictionPolicy" value="LRU" />
+    <property name="overflowToDisk" value="false" />
+    <property name="bootstrapCacheLoader">
+      <ref bean="ticketCacheBootstrapCacheLoader" />
+    </property>
+  </bean>
+
+  <bean id="serviceTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+    parent="abstractTicketCache">
+    <description>
+      Service Tickets (ST) and Proxy Tickets are only valid for short amount of time (default is 10 seconds),
+      and
+      most often are removed from the cache when the ST is validated. The ST cache must be replicated
+      quickly
+      since validation is expected within a few second after its creation. The CAS instance validating the
+      ST may
+      not be one that created the ST, since validation is a back-channel service-to-CAS call that is not
+      aware of
+      user session affinity. Synchronous mode is used to ensure all CAS nodes can validate the ST.
+    </description>
+    <property name="cacheName" value="org.jasig.cas.ticket.ServiceTicket" />
+
+    <property name="cacheEventListeners">
+      <ref bean="ticketRMISynchronousCacheReplicator" />
+    </property>
+
+    <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
+      element expires at this limit and will no longer be returned from the cache. The default value is 0,
+      which means no TTI eviction takes place (infinite lifetime). -->
+    <property name="timeToIdle" value="0" />
+
+    <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element
+      expires at this limit and will no longer be returned from the cache. The default value is 0, which means
+      no TTL eviction takes place (infinite lifetime). -->
+    <property name="timeToLive" value="300" />
+  </bean>
+
+  <bean id="ticketGrantingTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <description>
+      Ticket Granting Tickets (TGT) are valid for the lifetime of the SSO Session. They become invalid either
+      by expiration policy (default 2 hours idle, 8 hours max) or by explicit user sign off via
+      /cas/login.
+      The TGT cache can be replicated slowly because TGT are only manipulated via web user started
+      operations
+      (mostly grant service ticket) and thus benefit of web session affinity.
+    </description>
+
+    <property name="cacheName" value="org.jasig.cas.ticket.TicketGrantingTicket" />
+
+    <property name="cacheEventListeners">
+      <ref bean="ticketRMIAsynchronousCacheReplicator" />
+    </property>
+
+    <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element
+      expires at this limit and will no longer be returned from the cache. The default value is 0, which means
+      no TTL eviction takes place (infinite lifetime). For this sample configuration, 2 hours of inactivity
+      before ticket granting tickets are expired automatically -->
+
+    <property name="timeToIdle" value="7201" />
+
+    <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
+      element expires at this limit and will no longer be returned from the cache. The default value is 0,
+      which means no TTI eviction takes place (infinite lifetime). -->
+    <property name="timeToLive" value="0" />
+  </bean>
+
+  <bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
+    <constructor-arg name="replicatePuts" value="true" />
+    <constructor-arg name="replicatePutsViaCopy" value="true" />
+    <constructor-arg name="replicateUpdates" value="true" />
+    <constructor-arg name="replicateUpdatesViaCopy" value="true" />
+    <constructor-arg name="replicateRemovals" value="true" />
+  </bean>
+
+  <bean id="ticketRMIAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator"
+    parent="ticketRMISynchronousCacheReplicator">
+    <constructor-arg name="replicationInterval" value="10000" />
+    <constructor-arg name="maximumBatchSize" value="100" />
+  </bean>
+
+  <bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+    <constructor-arg name="asynchronous" value="true" />
+    <constructor-arg name="maximumChunkSize" value="5000000" />
+  </bean>
+
+</beans>

@@ -1,0 +1,42 @@
+Licensed to Apereo under one or more contributor license
+agreements. See the NOTICE file distributed with this work
+for additional information regarding copyright ownership.
+Apereo licenses this file to you under the Apache License,
+Version 2.0 (the "License"); you may not use this file
+except in compliance with the License.  You may obtain a
+copy of the License at the following location:
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+
+This project includes:
+  Apache Commons Lang under Apache License, Version 2.0
+  Apache Commons Logging under The Apache Software License, Version 2.0
+  Apache Log4j API under The Apache Software License, Version 2.0
+  Apache Log4j Commons Logging Bridge under The Apache Software License, Version 2.0
+  Apache Log4j Core under The Apache Software License, Version 2.0
+  Apache Log4j SLF4J Binding under The Apache Software License, Version 2.0
+  Apereo CAS Core APIs under Apache 2
+  AspectJ runtime under Eclipse Public License - v 1.0
+  AspectJ weaver under Eclipse Public License - v 1.0
+  Bean Validation API under The Apache Software License, Version 2.0
+  Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
+  Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  Hamcrest Core under New BSD License
+  Inspektr - Aspects under Apache 2.0 License
+  Java Servlet API under CDDL + GPLv2 with classpath exception
+  JUL to SLF4J bridge under MIT License
+  JUnit under Eclipse Public License 1.0
+  Mockito under The MIT License
+  Objenesis under Apache 2
+  SLF4J API Module under MIT License
+  Spring Core under The Apache Software License, Version 2.0
+  Spring TestContext Framework under The Apache Software License, Version 2.0
+

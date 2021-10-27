@@ -1,0 +1,80 @@
+#
+# Licensed to Apereo under one or more contributor license
+# agreements. See the NOTICE file distributed with this work
+# for additional information regarding copyright ownership.
+# Apereo licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file
+# except in compliance with the License.  You may obtain a
+# copy of the License at the following location:
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+
+#
+# This file only serves a template that outlines the list of properties
+# may have to be declared inside the cas.properties file, not only to
+# configure ldap authentication, but also enable and configure the lppe feature.
+#
+
+# == General connection settings ==
+
+# Search filter when using a search-and-bind strategy.
+ldap.authentication.filter=sAMAccountName=%u
+
+# Directory URL. Only one URL should be supplied.
+# For deployments that need HA directory connections, hardware load balancing with a
+# single virtual host is the only reasonable solution.
+ldap.authentication.server.urls=ldap://1.1.1.1
+
+# Base DN for directory searches.
+ldap.authentication.basedn=cn=users,dc=school,dc=edu
+
+# Manager credentials to bind; only used for searches.
+# Only required by directories that prevent anonymous queries (e.g. AD) when performing
+# a search-and-bind authentication strategy.
+ldap.authentication.manager.userdn=cn=manager,cn=users,dc=school,dc=edu
+ldap.authentication.manager.password=password
+
+# Strongly recommended for AD.
+ldap.authentication.ignorePartialResultException=true
+
+ldap.authentication.jndi.connect.timeout=3000
+ldap.authentication.jndi.read.timeout=3000
+ldap.authentication.jndi.security.level=simple
+
+# == Connection pooling settings ==
+
+ldap.authentication.pool.minIdle=3
+ldap.authentication.pool.maxIdle=5
+ldap.authentication.pool.maxSize=10
+
+# Maximum time in ms to wait for connection to become available
+# under pool exhausted condition.
+ldap.authentication.pool.maxWait=10000
+
+# == Evictor configuration ==
+
+# Period in ms at which evictor process runs.
+ldap.authentication.pool.evictionPeriod=600000
+
+# Maximum time in ms at which connections can remain idle before
+# they become liable to eviction.
+ldap.authentication.pool.idleTime=1200000
+
+# == Connection testing settings ==
+
+# Set to true to enable connection liveliness testing on evictor
+# process runs.  Probably results in best performance.
+ldap.authentication.pool.testWhileIdle=true
+
+# Set to true to enable connection liveliness testing before every
+# request to borrow an object from the pool.
+ldap.authentication.pool.testOnBorrow=false

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <description>
+        This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
+        modify this unless you know what you're doing!
+    </description>
+
+
+    <!-- 
+        Message source for this context, loaded from localized "messages_xx" files.
+        
+        Disable the fallback mechanism to the system/JVM locale. By turning off this behavior, CAS
+        will be able to revert back to the default language bundle that is "messages.properties"
+        and will not rely on the JVM default locale which introduces the side effect of rendering
+        the UI in the JVM locale by default.
+      
+        Also, explicitly set the default encoding to be UTF-8 when parsing message bundles.
+        The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
+    -->
+    <bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
+          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
+          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true"/>
+
+    <util:list id="basenames">
+        <value>classpath:custom_messages</value>
+        <value>classpath:messages</value>
+    </util:list>
+
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+          c:serviceRegistryDao-ref="serviceRegistryDao"/>
+</beans>

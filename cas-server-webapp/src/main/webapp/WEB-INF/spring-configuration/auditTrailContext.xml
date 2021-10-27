@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <description>
+  Configuration file for the Inspektr package which handles auditing for Java applications.
+  If enabled this should be modified to log audit and statistics information the same way
+  your local applications do.  The default is currently to log to the console which is good
+  for debugging/testing purposes.
+  </description>
+
+  <aop:aspectj-autoproxy/>
+
+  <bean id="auditTrailManagementAspect" class="org.jasig.inspektr.audit.AuditTrailManagementAspect"
+          c:applicationCode="${cas.audit.appcode:CAS}" c:auditablePrincipalResolver-ref="assertionAsReturnValuePrincipalResolver"
+    c:auditTrailManagers-ref="auditTrailManager" c:auditActionResolverMap-ref="auditActionResolverMap"
+    c:auditResourceResolverMap-ref="auditResourceResolverMap" />
+
+  <util:map id="auditActionResolverMap">
+    <entry key="AUTHENTICATION_RESOLVER">
+      <ref bean="authenticationActionResolver" />
+    </entry>
+    <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
+      <ref bean="ticketCreationActionResolver" />
+    </entry>
+    <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
+      <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver" />
+    </entry>
+    <entry key="GRANT_SERVICE_TICKET_RESOLVER">
+      <ref bean="ticketCreationActionResolver" />
+    </entry>
+    <entry key="GRANT_PROXY_GRANTING_TICKET_RESOLVER">
+      <ref bean="ticketCreationActionResolver" />
+    </entry>
+    <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
+      <ref bean="ticketValidationActionResolver" />
+    </entry>
+  </util:map>
+  
+  <util:map id="auditResourceResolverMap">
+    <entry key="AUTHENTICATION_RESOURCE_RESOLVER">
+      <bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver" />
+    </entry>
+    <entry key="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+      <ref bean="returnValueResourceResolver" />
+    </entry>
+    <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER">
+      <ref bean="ticketResourceResolver" />
+    </entry>
+    <entry key="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER">
+      <bean class="org.jasig.cas.audit.spi.ServiceResourceResolver" />
+    </entry>
+    <entry key="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER">
+      <ref bean="returnValueResourceResolver" />
+    </entry>
+    <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
+      <ref bean="ticketResourceResolver" />
+    </entry>
+  </util:map>
+      
+  <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver"
+    c:centralAuthenticationService-ref="centralAuthenticationService" />
+
+  <bean id="authenticationActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    c:successSuffix="_SUCCESS" c:failureSuffix="_FAILED" />
+  
+  <bean id="ticketCreationActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    c:successSuffix="_CREATED" c:failureSuffix="_NOT_CREATED" />
+  
+  <bean id="ticketValidationActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    c:successSuffix="D" c:failureSuffix="_FAILED" />
+  
+  <bean id="returnValueResourceResolver"
+     class="org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
+     
+  <bean id="ticketResourceResolver"
+    class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />
+  
+  <bean id="assertionAsReturnValuePrincipalResolver"
+    class="org.jasig.cas.audit.spi.AssertionAsReturnValuePrincipalResolver"
+    c:delegate-ref="auditablePrincipalResolver" />
+</beans>

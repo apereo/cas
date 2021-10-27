@@ -1,0 +1,50 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <description>
+        This file is loaded by the Spring configuration automatically, and serves as a placeholder
+        for various view definitions and beans. This helps with construction of views that require
+        references to other beans and whose changes can be configured externally.
+    </description>
+
+    <!-- Sample configuration to turn on SAML validation. Note that the SAML module dependency
+         is required to be included in the final weba application file.  -->
+
+    <bean id="abstractsamlView" class="org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"
+          abstract="true"/>
+
+    <bean id="casSamlServiceSuccessView" class="org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView"
+          parent="abstractsamlView"
+          p:issuer="localhost"
+          p:skewAllowance="0" />
+
+    <bean id="casSamlServiceFailureView" class="org.jasig.cas.support.saml.web.view.Saml10FailureResponseView"
+          parent="abstractsamlView"  />
+
+</beans>

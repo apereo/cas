@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <description>
+    Security configuration for services management and other sensitive areas of CAS.
+    In most cases it should not be necessary to edit this file as common configuration
+    can be managed by setting properties in the cas.properties file.
+  </description>
+
+  <!-- As of Spring SEC 3.1 -->
+  <sec:http pattern="/loggedOut.html" security="none"/>
+  <sec:http pattern="/authorizationFailure.html" security="none"/>
+  <sec:http pattern="/css/**" security="none"/>
+  <sec:http pattern="/images/**" security="none"/>
+  <sec:http pattern="/js/**" security="none"/>
+  <sec:http pattern="/themes/**" security="none"/>
+
+  <sec:http entry-point-ref="casProcessingFilterEntryPoint" auto-config="true">
+    <sec:logout logout-url="/logout.html" logout-success-url="/loggedOut.html"/>
+    <sec:custom-filter ref="casProcessingFilter" after="CAS_FILTER"/>
+    <sec:intercept-url pattern="/**" access="${cas-management.securityContext.serviceProperties.adminRoles}"/>
+  </sec:http>
+
+  <sec:authentication-manager alias="casAuthenticationManager">
+    <sec:authentication-provider ref="casAuthenticationProvider"/>
+  </sec:authentication-manager>
+
+  <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"
+        p:service="${cas-management.securityContext.serviceProperties.service}"
+        p:sendRenew="false"/>
+
+  <bean id="casProcessingFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"
+        p:authenticationManager-ref="casAuthenticationManager">
+    <property name="authenticationSuccessHandler">
+      <bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"
+            p:alwaysUseDefaultTargetUrl="true"
+            p:defaultTargetUrl="/manage.html"/>
+    </property>
+    <property name="authenticationFailureHandler">
+      <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+            c:defaultFailureUrl="/authorizationFailure.html"/>
+    </property>
+  </bean>
+
+  <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"
+        p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
+        p:serviceProperties-ref="serviceProperties"/>
+
+  <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"
+        p:key="my_password_for_this_auth_provider_only"
+        p:serviceProperties-ref="serviceProperties"
+        p:userDetailsService-ref="userDetailsService">
+    <property name="ticketValidator">
+      <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator"
+            c:casServerUrlPrefix="${cas.securityContext.ticketValidator.casServerUrlPrefix}"/>
+    </property>
+  </bean>
+
+</beans>

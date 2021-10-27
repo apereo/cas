@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+        <constructor-arg>
+            <map>
+                <entry key-ref="acceptUsersAuthenticationHandler" value-ref="usernamePasswordCredentialsResolver" />
+                <entry key-ref="x509AuthenticationHandler" value-ref="x509CredentialsResolver" />
+                <entry key-ref="httpBasedAuthenticationHandler" value-ref="httpBasedCredentialsResolver" />
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!--
+       | Authentication handler beans
+       -->
+    <bean id="acceptUsersAuthenticationHandler"
+          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
+        <property name="users">
+            <map>
+                <entry key="casuser" value="Mellon"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="httpBasedAuthenticationHandler"
+          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+
+    <bean id="x509AuthenticationHandler"
+          class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+        <property name="trustedIssuerDnPattern"
+                  value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
+        <property name="subjectDnPattern"
+                  value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
+        <property name="checkKeyUsage" value="true" />
+        <property name="requireKeyUsage" value="true" />
+        <property name="maxPathLength" value="2147483647" />
+        <property name="maxPathLengthAllowUnspecified" value="true" />
+        <property name="revocationChecker">
+            <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
+                <constructor-arg>
+                    <!-- Cache CRL fetches for 6h -->
+                    <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+                          p:cacheName="CRLCache"
+                          p:eternal="false"
+                          p:overflowToDisk="false"
+                          p:maxElementsInMemory="100"
+                          p:timeToLive="21600"
+                          p:timeToIdle="21600">
+                        <property name="cacheManager">
+                            <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+                                 p:shared="false" p:cacheManagerName="crlcache-mgmr" />
+                        </property>
+                    </bean>
+                </constructor-arg>
+                <property name="unavailableCRLPolicy">
+                    <!--
+                        Default is to trigger authentication failure on unavailable CRL data.
+                        Use org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy
+                        to allow auth on unavailable CRL data.
+                    -->
+                    <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
+                </property>
+                <property name="expiredCRLPolicy">
+                    <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
+                        <!--
+                                Allow expired CRL data up to 48h after expiration.
+                                Set to 0 to prevent expired CRL data.
+                        -->
+                        <property name="threshold" value="172800" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!--
+       | Credential-to-principal resolver beans
+       -->
+    <bean id="usernamePasswordCredentialsResolver"
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
+
+    <bean id="httpBasedCredentialsResolver"
+          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
+
+    <!--
+       | Resolves a principal from the subject DN of an X.509 certificate.
+       | The following example resolves the principal ID jacky@vt.edu from a certificate whose
+       | subject DN is DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto.
+       -->
+    <bean id="x509CredentialsResolver"
+          class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+          p:descriptor="$UID@$DC.$DC" />
+
+</beans>
