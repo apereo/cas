@@ -1,0 +1,17 @@
+dn: uid=9000000100,${ldapBaseDn}
+cn: CAS Test1
+departmentNumber: 0822
+displayName: CAS Test1
+employeeNumber: 88100
+employeeType: Employee
+givenName: CAS
+initials: CT
+mail: cas.test1@example.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Test1
+uid: 9000000100
+# password=Pa$$word.Test1
+userPassword: {SHA}uIGVgZJWVCqIlA7X9F8t5nmYee8=

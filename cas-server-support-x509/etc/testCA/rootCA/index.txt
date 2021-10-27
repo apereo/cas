@@ -1,0 +1,1 @@
+V	321214164744Z		0CA5	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=CAS Test Intermediate CA

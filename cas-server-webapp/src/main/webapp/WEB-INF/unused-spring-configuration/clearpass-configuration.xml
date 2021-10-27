@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <!-- Credentials Cache implementation -->
+  <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+        p:configLocation="classpath:ehcacheClearPass.xml" 
+        p:shared="false"
+        p:cacheManagerName="ehCacheClearPassCacheManger"/>
+
+  <bean id="clearPassEhCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+        p:cacheManager-ref="ehCacheManager"
+        p:cacheName="clearPassCache"/>
+
+  <bean id="credentialsCache" class="org.jasig.cas.extension.clearpass.EhcacheBackedMap"
+    c:cache-ref="clearPassEhCache"/>
+  
+  <bean id="encryptedMap" class="org.jasig.cas.extension.clearpass.EncryptedMapDecorator"
+    c:decoratedMap-ref="credentialsCache"/>
+
+  <!--
+    NOTE:
+    Name of delegated ticket registry bean in ticketRegistry.xml must be "ticketRegistryValue."
+  -->
+  <bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator"
+    c:actualTicketRegistry-ref="ticketRegistryValue" c:cache-ref="encryptedMap" />
+
+  <!-- implementation of the clear pass vending service -->
+  <bean id="clearPassController" class="org.jasig.cas.extension.clearpass.ClearPassController"
+    c:credentialsCache-ref="encryptedMap"/>
+
+  <bean id="handlerMappingClearPass" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+        p:alwaysUseFullPath="true" p:mappings-ref="mappings" />
+
+  <util:properties id="mappings">
+    <prop key="/clearPass">clearPassController</prop>
+  </util:properties>
+      
+  <!-- Security configuration -->
+  <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
+    <sec:filter-chain-map request-matcher="ant">
+      <sec:filter-chain pattern="/clearPass"
+                        filters="casValidationFilter,httpServletRequestWrappingFilter"/>
+    </sec:filter-chain-map>
+  </bean>
+  <!-- NOTE:
+	 It is dangerous to include a non-proxied CAS Filter for protecting /clearPass. Non-proxied CAS Filters
+	 like AuthenticationFilter don't honor the Filter chain proxy protection mechanism and, worse yet, allow access to the
+	 logged on user's cleartext password. It could be useful to enable this bean for easy testing of clearPass functionality however.-->
+   <!--
+  <bean id="casAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
+    <property name="casServerLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/>
+    <property name="serverName" value="${server.name}"/>
+  </bean>
+  -->
+  <!--
+    NOTE:
+    A bean named clearPassProxyList must be defined in deployerConfigContext.xml that defines
+    the list of proxying services authorized to obtain clearpass credential.
+  -->
+  <bean id="casValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter"
+        p:serverName="${server.name}" p:exceptionOnValidationFailure="false" 
+        p:useSession="true" p:ticketValidator-ref="clearPassTicketValidator" />
+
+  <bean id="clearPassTicketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
+        c:casServerUrlPrefix="${server.prefix}" p:allowedProxyChains-ref="clearPassProxyList" />
+
+  <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
+
+</beans>

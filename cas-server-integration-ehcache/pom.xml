@@ -1,0 +1,101 @@
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server</artifactId>
+    <version>4.0.8-SNAPSHOT</version>
+  </parent>   
+  <modelVersion>4.0.0</modelVersion>      
+  <artifactId>cas-server-integration-ehcache</artifactId>   
+  <packaging>jar</packaging>   
+  <name>Jasig CAS Ehcache Integration</name>
+  
+  <dependencies>    
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>   
+    <dependency>         
+      <groupId>org.jasig.cas</groupId>         
+      <artifactId>cas-server-core</artifactId>         
+      <version>${project.version}</version>      
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <developers>
+    <developer>
+      <id>wgthom</id>
+      <name>Bill Thompson</name>
+      <email>wgthom@unicon.net</email>
+      <url>https://github.com/wgthom</url>
+      <organization>Unicon, Inc.</organization>
+      <organizationUrl>http://www.unicon.net/</organizationUrl>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Adam Rybicki</name>
+      <email>arybicki@unicon.net</email>
+      <url>http://www.unicon.net</url>
+      <organization>Unicon, Inc.</organization>
+      <organizationUrl>http://www.unicon.net/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Andrew Tillinghast</name>
+      <email>atilling@conncoll.edu</email>
+      <url>https://github.com/atilling</url>
+      <organization>Connecticut College</organization>
+      <organizationUrl>http://conncoll.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Andrew Petro</name>
+      <email>apetro@unicon.net</email>
+      <url>https://github.com/apetro</url>
+      <organization>Unicon, Inc.</organization>
+      <organizationUrl>http://www.unicon.net</organizationUrl>
+      <roles>
+        <role>maintainer</role>
+      </roles>
+    </contributor>
+  </contributors>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
+</project>

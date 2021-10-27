@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!--
+      This default ConsoleAppender is used to logger all NON perf4j messages
+      to System.out
+    -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %p [%c] - &lt;%m&gt;%n"/>
+        </layout>
+    </appender>
+
+    <appender name="cas" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="cas.log" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="3" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- Perf4J appenders -->
+    <!--
+       This AsyncCoalescingStatisticsAppender groups StopWatch logger messages
+       into GroupedTimingStatistics messages which it sends on the
+       file appender defined below
+    -->
+    <appender name="CoalescingStatistics" class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
+        <param name="TimeSlice" value="60000"/>
+        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="graphExecutionTimes"/>
+        <appender-ref ref="graphExecutionTPS"/>
+    </appender>
+
+    <!-- This file appender is used to output aggregated performance statistics -->
+    <appender name="fileAppender" class="org.apache.log4j.FileAppender">
+        <param name="File" value="perfStats.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n"/>
+        </layout>
+    </appender>
+
+       <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
+           <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
+           <param name="GraphType" value="Mean"/>
+           <!-- The tags of the timed execution blocks to graph are specified here -->
+           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
+       </appender>
+
+       <appender name="graphExecutionTPS" class="org.perf4j.log4j.GraphingStatisticsAppender">
+           <param name="GraphType" value="TPS" />
+           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
+       </appender>
+
+    <!-- Loggers -->
+    <!--
+      The Perf4J logger. Note that org.perf4j.TimingLogger is the value of the
+      org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that
+      additivity is set to false, which is usually what is desired - this means
+      that timing statements will only be sent to this logger and NOT to
+      upstream loggers.
+    -->
+    <logger name="org.perf4j.TimingLogger" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="CoalescingStatistics" />
+    </logger>
+
+    <!--
+        WARNING: Setting the org.springframework logger to DEBUG displays debug information about
+        the request parameter values being bound to the command objects.  This could expose your
+        password in the logger file.  If you are sharing your logger files, it is recommend you selectively
+        apply DEBUG level logging on a an org.springframework.* package level (i.e. org.springframework.dao)
+    -->
+    <logger name="org.springframework">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="org.springframework.webflow">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="org.jasig" additivity="true">
+        <level value="INFO" />
+        <appender-ref ref="cas" />
+    </logger>
+
+    <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
+        <level value="INFO" />
+        <appender-ref ref="cas" />
+    </logger>
+
+    <!--
+        WARNING: Setting the flow package to DEBUG will display
+        the parameters posted to the login servlet including
+        cleartext authentication credentials
+    -->
+    <logger name="org.jasig.cas.web.flow" additivity="true">
+        <level value="INFO" />
+        <appender-ref ref="cas" />
+    </logger>
+
+    <!--
+      The root logger sends all logger statements EXCEPT those sent to the perf4j
+      logger to System.out.
+    -->
+    <root>
+        <level value="ERROR" />
+        <appender-ref ref="console" />
+    </root>
+</log4j:configuration>

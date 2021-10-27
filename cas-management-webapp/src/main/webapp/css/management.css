@@ -1,0 +1,481 @@
+/* $Id$ */
+/* GLOBAL/UTILITIES
+ --------------------------------- */
+/* reset margins and padding for all elements since defaults are not crossbrowser */
+
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+* {
+    margin:0;
+    padding:0;
+    font-size:1em;
+}
+/* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
+body {
+    font:normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
+    min-width:992px;
+}
+
+form {
+    float:left;
+    margin:0 1%;
+    padding:0;
+    width:77%;
+    }
+
+/* general positioning styles */
+.ac {text-align:center !important;}
+
+/* HEADER
+ --------------------------------- */
+#header #nav-system {
+    float:right;
+    padding:0;
+}
+#header #nav-system ul {
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+#header #nav-system li {
+    float:left;
+    margin:0;
+    padding:0;
+}
+#header #nav-system li a {
+    float:left;
+    margin:0 0 0 1px;
+    padding:2px 10px;
+    font:normal 1.1em/1.5 Verdana,Arial,Helvetica,sans-serif;
+    text-decoration:none;
+    background-color:#323265;
+    color:#fff;
+    white-space:nowrap;
+}
+#header #nav-system li a:hover,
+#header #nav-system li a:focus {
+    background-color:#fff;
+    color:#323265;
+}
+
+#header p#tagline {
+    padding:0 0 2px 3px;
+    background: #323265;
+    color:#fff;
+    font-size:1.2em;
+    line-height:1.6;
+}
+#header h1#app-name {
+    clear:both;
+    padding:0 0 0 15px;
+    background:#323265;
+    color:#fff;
+    font:2.4em/2em Arial,Helvetica,sans-serif;
+}
+/* MAIN MENU
+ --------------------------------- */
+#nav-main {
+    float: left;
+    width: 100%;
+    background: #999;
+    font-size: 1.1em;
+    line-height: normal;
+    padding: 0;
+    xmargin:0 0 1.5em 0;
+    color:#eee;
+}
+#nav-main ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 1.4em;
+}
+#nav-main li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+#nav-main a {
+    float: left;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+#nav-main a span {
+    float:left;
+    display:block;
+    padding:5px 10px;
+    background:transparent;
+    color:#eee;
+}
+/* Hide from IE5Mac only \*/
+#nav-main a span {float:none;}
+/* End hack */
+#nav-main a:hover {background:#eee;}
+#nav-main a:hover span {
+    background:#eee;
+    color:#333;
+}
+
+.highlightBottom td {background:#FFEFF3; color:#666; font-weight:400;}
+.highlightBottom td a {display:inline; background:#fff; padding:5px 10px; color:#666; font-weight: normal;}
+.highlightBottom a:hover {background:#b00; color:#fff;}
+
+
+/* CONTENT
+ --------------------------------- */
+#content {
+    clear:both;
+    width:auto;
+    padding:1px 0;
+    margin:0 2% 2em;
+}
+#content h1 {
+    margin:15px 0;
+    font:normal 2.2em "Times New Roman",serif;
+    color:#333;
+    background:transparent;
+    text-transform:capitalize;
+}
+#content p {margin:1em 0;}
+/* FOOTER
+---------------------------------------------------------- */
+#footer {
+    color:#999;
+    background:transparent;
+    clear:both;
+    margin:0 2% 2em;
+    padding:0 0 1px 0;
+    border-top:1px solid #ccc;
+    position:relative;
+}
+
+#footer div {
+    margin:1em 5px .5em;
+    clear:left;
+    overflow:hidden;
+}
+#footer h4 {
+    font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
+    clear:left;
+    margin:0;
+    padding:0;
+    float:left;
+}
+
+#footer a#jasig {
+    position:relative;
+    float:right;
+    clear:both;
+    display: block;
+    background-image: url(../images/ja-sig-logo.gif);
+    width: 118px;
+    height: 31px;
+    margin:1em 5px .5em;
+}
+
+#footer #nav-campus-sites {
+    list-style:none;
+    float:left;
+    margin:0 0 0 5px;
+    padding:0;
+}
+#footer #nav-campus-sites li {
+    display:inline;
+    padding:0;
+    margin:0;
+    font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
+}
+#footer #nav-campus-sites li:before {} /* content: " | " */
+#footer #nav-campus-sites li:first-child:before {}
+/* All IE browsers */
+* html #footer {height:1px;}
+* html #footer #nav-campus-sites {
+    padding:0 0.4em 0 0;
+    margin:0;
+}
+/* Win IE browsers - hide from Mac IE\*/
+* html #footer #nav-campus-sites {height:1px; }
+* html #footer #nav-campus-sites li {
+    display:block;
+    float:left;
+}
+/* End hide from Mac IE 5 */
+* html #footer #nav-campus-sites li:first-child {border-left:0px none;}
+/*
+_______________________________
+---    CONTENT  FRAGMENTS    ---
+_______________________________
+*/
+/* MESSAGES
+ --------------------------------- */
+.errors, .success {
+    clear:both;
+    padding:20px 20px 20px 85px; /* bg */
+    margin:0 0 1em;
+   font-weight:bold;
+    font-size:1.3em;
+    line-height:1.5;
+}
+.success {
+    border:1px dotted #390;
+    color:#390;
+    background:#dfa url('../images/success.gif') no-repeat 2em 50%;
+}
+
+.errors {
+    border:1px dotted #b00;
+    color:#e71708; /* bg */
+    background:#fed url('../images/error.gif') no-repeat 2em 50%;
+}
+
+/* FORMS
+ --------------------------------- */
+fieldset {
+    border-left:0px solid #ddd; border-right:0px solid #ddd; border-top:1px solid #ddd; border-bottom:0px solid #ddd; margin:2em 0; padding:10px; 
+}
+
+legend {
+    margin:1em 5px;
+    color:#b00;
+    font-size:1.1em;
+    font-weight:bold;
+    text-transform:uppercase;
+}
+label {
+    cursor:pointer;
+    font-size:1em;
+    color:#666;
+}
+input, select, textarea, option {font:normal 1.1em sans-serif;}
+input, textarea {padding:0px 2px;}
+select option {margin:auto .5em 0 0;}
+/* vertically aligned form*/
+input.check { margin:0 0 0 .5em; width:13px; height:13px; vertical-align:middle;} 
+
+/* highlight errors */
+.required {background:#ff9;}
+
+.formError {
+background: #fafafa url('../images/alert2.gif') no-repeat 0 50%;
+/* bg */
+color:#b00; /* bg */
+margin-left:.5em; /* bg */
+font-size:1.4em;
+line-height:20px; padding-left:24px; padding-right:0; padding-top:0; padding-bottom:0
+}
+
+
+/* TABLES
+ --------------------------------- */
+/* table row highlighting (does not work in IE - JavaScript workaround) */
+table.highlight tr:hover td, table.highlight tr.over td {background:#ffc !important;}
+table.highlight tr.highlightBottom:hover td {background: #ffeff3 !important;}
+
+table {
+    border:0px none;
+    border-collapse:collapse;
+    empty-cells:show;
+    background-color:#fff;
+    font-size:1.1em;
+    border-collapse:separate; 
+    border-spacing: 0px;
+    }
+
+.large {width:100%;}
+
+th    {
+    background:#eee;
+    color:#666;
+    padding:3px 5px;
+    text-align:left;
+    font-weight:normal;
+    line-height: 24px;
+    }
+    
+tr.added {
+    background-color: #ff3;
+}
+
+td    {
+    padding:3px 5px;
+    border-bottom:1px solid #eee;
+    height:38px;
+    }
+
+td a {
+    padding:10px 0pt 10px 35px;
+    text-decoration: none;
+    display:inline;
+    line-height:32px;
+    color:#c1c1c0;
+    font-weight:400;
+}
+
+.add {
+    min-width:952px;
+    line-height:32px;
+    height:32px;
+    border-top: 5px solid #eee;
+    color:#000;
+    width:100%;
+    text-indent:5px;
+    padding-top: 5px;
+    font-size:1.1em;
+}
+    
+.add a {background: url('../images/add_service.gif') no-repeat left center;
+    text-decoration: none;
+    display: inline;
+    line-height:32px;
+    color:#c1c1c0;
+    font-weight:900; padding-left:35px; padding-right:0; padding-top:10px; padding-bottom:10px
+}
+
+
+.add a:hover {color:#b00;}
+td a.edit {background: url('../images/edit_service.gif') no-repeat left center;}
+td a.del {background: url('../images/delete_service.gif') no-repeat left center;}
+td a:hover {color:#b00;}
+
+
+    p.instructions {
+        margin:1em 0;
+        font-size:1.2em;
+        background:url('../images/info.gif') no-repeat left center; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
+        }
+
+    fieldset {
+        padding:0 10px;
+        background-color:#fafafa;
+        margin:0;
+        position:relative;
+        border:1px solid #ddd;
+        }
+
+    legend {
+        padding:2px 5px;
+        color:#b00;
+        font-size:1.3em;
+        font-weight:900;
+        background:#fff;
+        }
+
+    label.preField, .label {
+        display:block;
+        width:8em;
+        float:left;
+        font-size:1.1em;
+		color:#666; /* + bg */
+		line-height:20px; /* + bg */
+        }
+
+    label.postField {
+        margin-right:1em;
+        font-size:1.1em;
+        vertical-align:middle;  /*- bg */
+		line-height:20px; /* + bg */
+        }
+
+    .check {border:0px none;}
+
+    input,
+    textarea,
+    select {
+        border:1px solid #ccc;
+        border-color:#999 #eee #eee #999;
+        padding:2px;
+		margin-left:.5em; /* + bg */
+		}
+
+    input {
+        /* margin-left:.5em;  - bg */
+        font-size:1.1em;
+        vertical-align:top;
+        }
+
+    span.oneField {
+        display:block;
+        margin:1em 0; /* bg */
+        padding:0;
+        }
+
+button {font-size:1em;}
+
+.primaryAction {
+    padding:.5em;
+    color:green;
+    font-weight:900;
+    }
+    
+@media screen {
+    div#container {
+    	width:100%; 
+    	min-width:952px; 
+    	margin:0; 
+    	padding:0;
+   	}
+    table#headerTable {
+    	width:100%; 
+    	min-width:952px; 
+    	background:#999; 
+    	margin:0; 
+    	padding:0; 
+    	border:0; 
+    	border-collapse:collapse;
+    }
+    div.tableWrapper {
+    	width:100%; 
+    	min-width:952px; 
+    	max-height:250px; 
+    	overflow:auto; 
+    	overflow-x:hidden;
+    }
+    table#scrollTable {
+    	width:100%; 
+    	min-width:935px;
+    }
+    table#scrollTable thead {display:none;}
+    table#headerTable th, table#scrollTable td {padding:0 5px; border:0;}
+    table#scrollTable td {text-align:left; border-bottom:1px solid #eee;}
+    table#headerTable th {height:38px; border:0 !important;}
+    th.th1, td.td1 {width:200px; overflow:hidden;}
+    th.th2, td.td2 {overflow:hidden;}
+    th.th3, td.td3 {width:50px;}
+    th.th4, td.td4 {width:70px;}
+    th.th5, td.td5 {width:50px;}
+    th.th6, td.td6 {width:70px;}
+    th.th7, td.td7 {width:102px;}
+    th.th8, td.td8 {width:70px}
+    th.th9, td.td9 {width:70px; text-align:right !important;}
+    th.th10, td.td10 {width:102px; text-align:right !important;}
+    
+	.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
+	.actions {margin:1.5em 0;}
+	#allowedAttributes {height:150px;}			
+}
+
+/* Container that holds the error messages on the services manage page
+ * This will be hidden by default and through JS calls, will be displayed
+ * when appropriate. 
+ */
+#errorsDiv {
+	display: none;
+}

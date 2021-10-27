@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:/openldap.properties"/>
+
+    <bean id="usersLdif"
+          class="org.springframework.core.io.ClassPathResource"
+          c:path="/ldif/openldap-users.ldif" />
+
+    <bean id="baseDn" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+    </bean>
+
+    <bean id="usernameAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="uid" />
+    </bean>
+
+    <bean id="ldapAuthenticationHandler"
+          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          p:principalIdAttribute="uid"
+          c:authenticator-ref="authenticator">
+        <property name="principalAttributeMap">
+            <map>
+                <!--
+                   | This map provides a simple attribute resolution mechanism.
+                   | Keys are LDAP attribute names, values are CAS attribute names.
+                   | Use this facility instead of a PrincipalResolver if LDAP is
+                   | the only attribute source.
+                   -->
+                <entry key="member" value="member" />
+                <entry key="mail" value="mail" />
+                <entry key="displayName" value="displayName" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+          c:resolver-ref="dnResolver"
+          c:handler-ref="authHandler" />
+
+    <bean id="dnResolver"
+          class="org.ldaptive.auth.FormatDnResolver"
+          c:format="uid=%s,${ldap.baseDn}" />
+
+    <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+          p:connectionFactory-ref="pooledLdapConnectionFactory" />
+
+    <bean id="pooledLdapConnectionFactory"
+          class="org.ldaptive.pool.PooledConnectionFactory"
+          p:connectionPool-ref="connectionPool" />
+
+    <bean id="connectionPool"
+          class="org.ldaptive.pool.BlockingConnectionPool"
+          init-method="initialize"
+          p:poolConfig-ref="ldapPoolConfig"
+          p:blockWaitTime="${ldap.pool.blockWaitTime}"
+          p:validator-ref="searchValidator"
+          p:pruneStrategy-ref="pruneStrategy"
+          p:connectionFactory-ref="connectionFactory" />
+
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+          p:minPoolSize="${ldap.pool.minSize}"
+          p:maxPoolSize="${ldap.pool.maxSize}"
+          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+          p:validatePeriodically="${ldap.pool.validatePeriodically}"
+          p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="connectionConfig" />
+
+    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+          p:ldapUrl="${ldap.url}"
+          p:connectTimeout="${ldap.connectTimeout}"
+          p:useStartTLS="${ldap.useStartTLS}"
+          p:sslConfig-ref="sslConfig" />
+
+    <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.X509CredentialConfig"
+                  p:trustCertificates="${ldap.trustedCert}" />
+        </property>
+    </bean>
+
+    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+          p:prunePeriod="${ldap.pool.prunePeriod}"
+          p:idleTime="${ldap.pool.idleTime}" />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+</beans>

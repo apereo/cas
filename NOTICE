@@ -1,0 +1,190 @@
+Copyright 2010, JA-SIG, Inc.
+This project includes software developed by Jasig.
+http://www.jasig.org/
+
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+This project includes:
+  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License
+  A Hibernate Core Module under GNU Lesser General Public License
+  AntLR Parser Generator under BSD License
+  AOP alliance under Public Domain
+  Apache Log4j under The Apache Software License, Version 2.0
+  Apache Velocity under The Apache Software License, Version 2.0
+  ASM Core under BSD
+  AspectJ runtime under Eclipse Public License - v 1.0
+  AspectJ weaver under Eclipse Public License - v 1.0
+  Bean Validation API under Apache License, Version 2.0
+  Bouncy Castle Provider under Bouncy Castle Licence
+  CAS server security filter under Apache 2
+  Central Authentication Service under Jasig License
+  cglib-full under Apache License, Version 1.1
+  Code Generation Library under ASF 2.0
+  Collections under The Apache Software License, Version 2.0
+  com.github.coova.jradius:jradius-apps under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-client under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-core under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary-min under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-example under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extended under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extras under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-server under GNU Lesser General Public License, version 2.1
+  com.github.coova:jradius under GNU Lesser General Public License, version 2.1
+  Commons Chain under The Apache Software License, Version 2.0
+  Commons CLI under The Apache Software License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
+  Commons Collections under The Apache Software License, Version 2.0
+  Commons Configuration under The Apache Software License, Version 2.0
+  Commons IO under The Apache Software License, Version 2.0
+  Commons JEXL under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
+  Commons Pool under The Apache Software License, Version 2.0
+  commons-beanutils under Apache License, Version 2.0
+  commons-beanutils-core under Apache License, Version 2.0
+  commons-collections under Apache License, Version 2.0
+  Digester under The Apache Software License, Version 2.0
+  dom4j under BSD License
+  ehcache under The Apache Software License, Version 2.0
+  Ehcache Core under The Apache Software License, Version 2.0
+  ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
+  ezmorph under The Apache Software License, Version 2.0
+  guice under Apache License, Version 2.0
+  Hamcrest Core under BSD style
+  Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Validator under Apache License, Version 2.0
+  HSQLDB Database under HSQLDB License, a BSD open source license
+  HttpClient under Apache License
+  HttpCore under Apache License
+  Inspektr - Auditing API under Apache 2.0 License
+  Inspektr - Common API under Apache 2.0 License
+  Inspektr - Error Logging under Apache 2.0 License
+  Inspektr - Spring Framework Support under Apache 2.0 License
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
+  Jasig CAS - Uber WAR under Apache 2
+  Jasig CAS ClearPass Extension under Apache 2
+  Jasig CAS Client for Java - Core under Apache License Version 2.0
+  Jasig CAS Client Protocols Support using pac4j under Apache 2
+  Jasig CAS Core under Apache 2
+  Jasig CAS Ehcache Integration under Apache 2
+  Jasig CAS Generic Support under Apache 2
+  Jasig CAS JBoss Cache Integration under Apache 2
+  Jasig CAS JDBC Support under Apache 2
+  Jasig CAS LDAP Support under Apache 2
+  Jasig CAS Legacy Support under Apache 2
+  Jasig CAS Management Web Application under Apache 2
+  Jasig CAS Memcached Integration under Apache 2
+  Jasig CAS OAuth Server Support under Apache 2
+  Jasig CAS OpenId Server Support under Apache 2
+  Jasig CAS RADIUS Support under Apache 2
+  Jasig CAS Restlet Integration under Apache 2
+  Jasig CAS SAML Server and Validation Support under Apache 2
+  Jasig CAS SPNEGO/NTLM Support under Apache 2
+  Jasig CAS Trusted User Support under Apache 2
+  Jasig CAS Web Application under Apache 2
+  Jasig CAS Web Application support under Apache 2
+  Jasig CAS X.509 Client Certificate Support under Apache 2
+  Jasig Central Authentication Service under Apache 2
+  Java Transaction API under Commons Development and Distribution License, Version 1.0
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
+  Javassist under MPL 1.1 or LGPL 2.1
+  jaxb-api under Commons Development and Distribution License, Version 1.0
+  jaxb-impl under Commons Development and Distribution License, Version 1.0
+  JBoss Cache - Core Edition under GNU Lesser General Public License
+  JBoss Common Classes under lgpl
+  JBoss Logging 3 under GNU Lesser General Public License, version 2.1
+  JBoss Logging Programming Interface under lgpl
+  jcifs under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
+  JCL 1.1.1 implemented over SLF4J under MIT License
+  jdom under Apache style license
+  Jettison under Apache License, Version 2.0
+  JGroups under Library (or Lesser) GNU Public License 2.1
+  Joda time under Apache 2
+  JPA 2.0 API under Sun Binary Code License
+  json-lib under Apache License, Version 2.0
+  JSR 105 - Java(TM) XML Digital Signature API under JDL license
+  jstl under Commons Development and Distribution License, Version 1.0
+  JUL to SLF4J bridge under MIT License
+  JUnit under Common Public License Version 1.0
+  Kryo under New BSD License
+  kryo serializers under The Apache Software License, Version 2.0
+  Lang under The Apache Software License, Version 2.0
+  LDAPTIVE under Apache 2 or GNU Lesser General Public License
+  Logging under The Apache Software License, Version 2.0
+  MinLog under New BSD License
+  Mockito under The MIT License
+  MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
+  Not Yet Commons SSL under Apache License v2
+  Objenesis under Apache 2
+  ON Enterprise Server JAR under GNU Lesser General Public License (LGPL)
+  OpenID4Java no dependencies under Apache 2
+  OpenSAML-J under Apache 2
+  OpenWS under Apache 2
+  org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
+  org.springframework:spring-aop under Apache License, Version 2.0
+  org.springframework:spring-beans under Apache License, Version 2.0
+  org.springframework:spring-context under Apache License, Version 2.0
+  org.springframework:spring-context-support under Apache License, Version 2.0
+  org.springframework:spring-core under Apache License, Version 2.0
+  org.springframework:spring-expression under Apache License, Version 2.0
+  org.springframework:spring-jdbc under Apache License, Version 2.0
+  org.springframework:spring-orm under Apache License, Version 2.0
+  org.springframework:spring-test under Apache License, Version 2.0
+  org.springframework:spring-tx under Apache License, Version 2.0
+  org.springframework:spring-web under Apache License, Version 2.0
+  org.springframework:spring-webmvc under Apache License, Version 2.0
+  pac4j core under The Apache Software License, Version 2.0
+  pac4j for OAuth protocol under The Apache Software License, Version 2.0
+  Perf4J under Apache 2
+  Person Directory API under Apache License Version 2.0
+  Person Directory Implementations under Apache License Version 2.0
+  Protocol Buffer Java API under New BSD license
+  quartz under The Apache Software License, Version 2.0
+  ReflectASM under New BSD License
+  Restlet Core - API and Engine under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - Servlet under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - SLF4J under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Restlet Extension - Spring Framework under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
+  Scribe OAuth Library under MIT
+  servlet-api under Commons Development and Distribution License, Version 1.0
+  SLF4J API Module under MIT License
+  SLF4J LOG4J-12 Binding under MIT License
+  SOJO under The Apache Software License, Version 2.0
+  Spring Binding under Apache License, Version 2.0
+  Spring JavaScript under Apache License, Version 2.0
+  Spring JavaScript Resources under Apache License, Version 2.0
+  Spring Json View under The Apache Software License, Version 2.0
+  Spring Web Flow under Apache License, Version 2.0
+  spring-security-cas under The Apache Software License, Version 2.0
+  spring-security-config under The Apache Software License, Version 2.0
+  spring-security-core under The Apache Software License, Version 2.0
+  spring-security-web under The Apache Software License, Version 2.0
+  Spymemcached under The Apache Software License, Version 2.0
+  standard under Apache License, Version 2.0
+  StAX API under The Apache Software License, Version 2.0
+  Streaming API for XML under Sun Binary Code License
+  Transaction 1.1 API under lgpl
+  VT Crypt Library under Apache 2 or GNU Lesser General Public License
+  Xalan Java under The Apache Software License, Version 2.0
+  Xalan Java Serializer under The Apache Software License, Version 2.0
+  Xerces2-j under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
+  XML Commons Resolver Component under The Apache Software License, Version 2.0
+  XML Security under The Apache Software License, Version 2.0
+  XMLTooling-J under Apache 2
+  XStream Core under BSD style
+

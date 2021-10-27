@@ -1,0 +1,92 @@
+JA-SIG Central Authentication Service
+Quick Installation Guide
+----------------------------------
+
+This guide is meant to be a quickstart for you configure and install CAS 
+as quickly and easily as possible.  If you need more information, 
+you can check the CAS website at 
+
+http://www.ja-sig.org/products/cas/
+
+and you can subscribe to the CAS mailing list by visiting:
+
+http://www.ja-sig.org/products/cas/community/lists/
+
+Quick Demo
+----------
+
+The following steps will deploy the included demo of CAS.  Start here if
+you're new to CAS and want to see it in action.  These steps assume
+you will be using Tomcat as your servlet container.
+
+
+Quick Demo
+----------
+
+The following steps will deploy the included demo of CAS. Start here if
+you're new to CAS and want to see it in action. These steps assume
+you will be using Tomcat as your servlet container.
+
+1. copy modules/cas-server-webapp-VERSION.war to Tomcat's webapps/ directory
+
+2. start Tomcat
+
+3. access the CAS login page by opening up a web browser and visiting:
+
+   http://hostname:8080/cas-server-webapp-VERSION/login (see note below) 
+
+   You should see the CAS login page asking you for your username and
+   password.  The default authentication plugin accepts NetID=password.
+   Enter in an identical value for NetID and password and click LOGIN.
+   If everything is set up correctly, you should see a page stating that
+   you've successfully logged into CAS.  Congratulations!
+
+   Note: this URL assumes that port 8080 is not blocked by a firewall,
+   and Tomcat is configured to listen on that port (it is by default).
+   Since we are only testing CAS, this configuration uses http for transport 
+   rather than https -- this is not something you would do in production.
+
+Customization
+-------------
+
+After you've gotten CAS working, one of the first things you will want 
+to do is create your own skin.
+
+There is one skin included with CAS; Its called "default" If you look in cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/default/ui,
+you will see that a skin is made up of the following files:
+
+casConfirmView.jsp      displayed when the user is warned before being
+                        redirected to the service
+casGenericSuccess.jsp   displayed when the user has been logged in without
+                        providing a service to be redirected to
+casLoginView.jsp        the login form itself
+casLogoutView.jsp       displayed when the user has been logged out
+serviceErrorView.jsp    used in conjunction with the service registry feature,
+                        displayed when the service the user is trying to 
+                        access is not allowed to use CAS.  Note that this
+                        feature is not enabled by default, in which case
+                        all services are able to use CAS.
+
+Steps for creating a custom skin
+--------------------------------
+   Edit each of the pages to appear as you want them.  Take care when
+   you're editing these pages not to change any of the forms or logic tags
+   unless you're sure you know what you're doing.  If you need to include 
+   a css file, put it in cas-server-webapp/src/main/webapp/themes/default/cas.css and reference it 
+   with the following link tag:
+
+   <link rel="stylesheet" href="<spring:theme code="css" />" type="text/css" 
+    media="all" />
+
+   The "<spring:theme code="css" />" will be replaced with the appropriate 
+   URL to that directory.
+
+Documentation
+---------------------------------
+Documentation for CAS can be found in the CAS User Manual:
+http://www.ja-sig.org/wiki/display/CASUM/Home
+
+--------------------------
+Author: Drew Mazurek
+Version: $Revision$ $Date$
+Since: 3.0

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!DOCTYPE project [
+<!ENTITY config	SYSTEM "includes/config.xml">
+<!ENTITY definition	SYSTEM "includes/definition.xml">
+<!ENTITY checkBadCredentials	SYSTEM "modules/checkBadCredentials.xml">
+<!ENTITY checkLoginSuccess	SYSTEM "modules/checkLoginSuccess.xml">
+<!ENTITY checkWarnPage	SYSTEM "modules/checkWarnPage.xml">
+<!ENTITY getLoginFormWithoutService	SYSTEM "modules/getLoginFormWithoutService.xml">
+<!ENTITY getLoginFormWithService	SYSTEM "modules/getLoginFormWithService.xml">
+<!ENTITY getLogout	SYSTEM "modules/getLogout.xml">
+<!ENTITY verifyCookie	SYSTEM "modules/verifyCookie.xml">
+<!ENTITY verifyLoginForm	SYSTEM "modules/verifyLoginForm.xml">
+<!ENTITY verifyRedirect	SYSTEM "modules/verifyRedirect.xml">
+]>
+
+<project name="logintests" basedir="." default="main">
+	&definition;
+	<target name="main">
+		<property name="username" value="arnaud.lesueur" />
+		<property name="username2" value="scott.battaglia" />
+		<property name="bad.password" value="bad.password" />
+
+		<webtest name="Incorrect credentials">
+			&config;
+			<steps>
+				&getLoginFormWithoutService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${bad.password}'" name="password" value="${bad.password}" />
+				<!-- there was no name in the default view for the submit button -->
+				<clickButton description="Click the submit button" name="submit" />
+				&checkBadCredentials;
+			</steps>
+		</webtest>
+
+		<webtest name="Correct credentials, no service">
+			&config;
+			<steps>
+				&getLoginFormWithoutService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${username}'" name="password" value="${username}" />
+				<!-- there was no name in the default view for the submit button -->
+				<clickButton description="Click the submit button" name="submit" />
+				&checkLoginSuccess;
+				&verifyCookie;
+			</steps>
+		</webtest>
+
+		<webtest name="Cookie login, with service, logout test">
+			&config;
+			<steps>
+				&getLoginFormWithService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${username}'" name="password" value="${username}" />
+				<clickButton description="Click the submit button" name="submit" />
+				&verifyCookie;
+				&verifyRedirect;
+				&getLogout;
+				&getLoginFormWithService;
+				&verifyLoginForm;
+			</steps>
+		</webtest>
+
+		<webtest name="Correct credentials with service, Gateway with service">
+			&config;
+			<steps>
+				&getLoginFormWithService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${username}'" name="password" value="${username}" />
+				<clickButton description="Click the submit button" name="submit" />
+				&verifyCookie;
+				&verifyRedirect;
+				<invoke description="Go to login page with service and gateway" url="/login?gateway=true&amp;service=http://foo.bar/" />
+				&verifyRedirect;
+			</steps>
+		</webtest>
+
+		<webtest name="Correct credentials with warn and service, service with warn, service with gateway and warn">
+			&config;
+			<steps>
+				&getLoginFormWithService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${username}'" name="password" value="${username}" />
+				<setCheckbox description="set warn : true" name="warn" value="true" />
+				<clickButton description="Click the submit button" name="submit" />
+				&verifyCookie;
+				&verifyRedirect;
+				&getLoginFormWithService;
+				&verifyCookie;
+				&checkWarnPage;
+				<invoke description="Go to login page with service and gateway" url="/login?gateway=true&amp;service=http://foo.bar/" />
+				&checkWarnPage;
+			</steps>
+		</webtest>
+
+		<webtest name="No credentials, gateway">
+			&config;
+			<steps>
+				<invoke description="Go to login page with service and gateway" url="/login?gateway=true&amp;service=http://foo.bar/" />
+				<storeResponseCode description="store status of response" property="status" />
+				<verifyProperty description="should be a 302 redirect to the service" name="status" text="302" />
+				<storeHeader description="store header of response" name="Location" property="location" />
+				<verifyProperty description="Verify the redirect location without service ticket" name="location" text="http://foo.bar/" />
+			</steps>
+		</webtest>
+
+		<webtest name="Logging as someone else">
+			&config;
+			<steps>
+				&getLoginFormWithService;
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+				<setInputField description="set password : '${username}'" name="password" value="${username}" />
+				<clickButton description="Click the submit button" name="submit" />
+				&verifyCookie;
+				&verifyRedirect;
+				<invoke description="Go to login page with renew" url="/login?renew=true&amp;service=http://foo.bar/" />
+				&verifyLoginForm;
+				<setInputField description="set user name : '${username2}'" name="username" value="${username2}" />
+				<setInputField description="set password : '${username2}'" name="password" value="${username2}" />
+				<clickButton description="Click the submit button" name="submit" />
+				&verifyCookie;
+				&verifyRedirect;
+				<!-- TODO : verify that the previous cookie has been destroyed -->
+			</steps>
+		</webtest>
+	</target>
+</project>

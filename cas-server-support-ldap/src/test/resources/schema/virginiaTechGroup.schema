@@ -1,0 +1,116 @@
+objectIdentifier VTMiddlewareRoot 1.3.6.1.4.1.6760.6
+objectIdentifier VTMiddlewareAttributeType VTMiddlewareRoot:1
+objectIdentifier VTMiddlewareObjectClass VTMiddlewareRoot:2
+
+attributetype (
+    VTMiddlewareAttributeType:7
+    NAME 'creationDate'
+    DESC 'This is the date the person was added to the directory'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTMiddlewareAttributeType:9
+    NAME 'expirationDate'
+    DESC 'This is the date the entry will expire'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTMiddlewareAttributeType:36
+    NAME 'administrator'
+    DESC 'These are the DNs of the people who may administer this group'
+    EQUALITY distinguishedNameMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
+attributetype (
+    VTMiddlewareAttributeType:37
+    NAME 'contactPerson'
+    DESC 'The DN of the person to who should receive correspondence for this group.'
+    EQUALITY distinguishedNameMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
+attributetype (
+    VTMiddlewareAttributeType:40
+    NAME 'groupData'
+    DESC 'This field allows a group to store additional information about the group, which may be displayed along with other group information'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype (
+    VTMiddlewareAttributeType:44
+    NAME 'uugid'
+    DESC 'This Universally Unique Group Identifier is the unique identifier of a group within the directory'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTMiddlewareAttributeType:99
+    NAME 'suppressDisplay'
+    DESC 'Whether this person\27s entire record should be suppressed from public view'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTMiddlewareAttributeType:100
+    NAME 'viewer'
+    DESC 'The DNs that may view this group and its membership'
+    EQUALITY distinguishedNameMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
+attributetype (
+    VTMiddlewareAttributeType:101
+    NAME 'groupMembership'
+    DESC 'A list of the group DNs this person is a member of'
+    EQUALITY distinguishedNameMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
+attributetype (
+    VTMiddlewareAttributeType:114
+    NAME 'suppressMembers'
+    DESC 'Whether this group\27s membership should be suppressed from public view'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+attributetype (
+    VTMiddlewareAttributeType:66
+    NAME 'meetingTime'
+    DESC 'A list of the times this group meets'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype (
+    VTMiddlewareAttributeType:67
+    NAME 'physicalAddress'
+    DESC 'The location this group meets'
+    EQUALITY distinguishedNameMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
+    SINGLE-VALUE )
+
+
+########################################################
+#  Objectclasses below                                 #
+########################################################
+
+objectclass (
+    VTMiddlewareObjectClass:4
+    NAME 'virginiaTechGroup'
+    DESC 'A group of people.'
+    MUST ( contactPerson $ creationDate $ uid $ uugid )
+    MAY ( administrator $ displayName $ emailAddress
+          $ expirationDate $ groupData $ groupMembership $ labeledURI $ manager
+          $ meetingTime $ member $ physicalAddress $ suppressDisplay
+          $ suppressMembers $ url $ viewer ))
+

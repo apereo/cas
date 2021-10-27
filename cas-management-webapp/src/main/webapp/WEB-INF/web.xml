@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+  <display-name>CAS Management ${project.version}</display-name>
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      /WEB-INF/spring-configuration/*.xml
+      /WEB-INF/managementConfigContext.xml
+    </param-value>
+  </context-param>
+
+  <filter>
+    <filter-name>CAS Client Info Logging Filter</filter-name>
+    <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CAS Client Info Logging Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!--
+    - Loads the CAS ApplicationContext.
+    - The deployer choice here is how to handle Throwables thrown by Spring's
+    - ContextLoaderListener.  The Spring ContextLoaderListener will throw an exception when the
+    - application context cannot be loaded, say because the bean XML files are not valid XML or do not
+    - refer to real classes and properties or because a bean configured via Spring throws an exception
+    - at construction, property setting, or on an afterPropertiesSet() lifecycle method.
+    -
+    - If you'd like these errors to be fatal and prevent the CAS servlet context from loading at all,
+    - use org.springframework.web.context.ContextLoaderListener.
+    -
+    - If you'd like these errors to result in all requests for CAS getting a "CAS is Unavailable" response,
+    - use org.jasig.cas.web.init.SafeContextLoaderListener
+  -->
+  <listener>
+    <listener-class>
+      org.jasig.cas.web.init.SafeContextLoaderListener
+    </listener-class>
+  </listener>
+
+  <!--
+    - This is the Spring dispatcher servlet which delegates all requests to the
+    - Spring WebMVC controllers as configured in cas-servlet.xml.
+    -
+    - The choice made above about how to handle a broken ApplicationContext at
+    - context initialization applies here as well, since this servlet is load-on-startup.
+    -
+    - If you'd like these errors to be fatal and prevent the CAS servlet from loading at all,
+    - use org.springframework.web.servlet.DispatcherServlet.
+    -
+    - If you'd like these errors to result in all requests for CAS getting a "CAS is Unavailable" response,
+    - use org.jasig.cas.web.init.SafeDispatcherServlet
+  -->
+  <servlet>
+    <servlet-name>cas-management</servlet-name>
+    <servlet-class>
+      org.jasig.cas.web.init.SafeDispatcherServlet
+    </servlet-class>
+    <init-param>
+      <param-name>publishContext</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+	
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/add.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/logout.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/loggedOut.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/manage.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/edit.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/deleteRegisteredService.html</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+	<servlet-name>cas-management</servlet-name>
+	<url-pattern>/updateRegisteredServiceEvaluationOrder.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/authorizationFailure.html</url-pattern>
+  </servlet-mapping>
+
+  <session-config>
+    <!-- Default to 5 minute session timeouts -->
+    <session-timeout>5</session-timeout>
+  </session-config>
+
+  <error-page>
+    <error-code>401</error-code>
+    <location>/authorizationFailure.html</location>
+  </error-page>
+
+  <error-page>
+    <error-code>403</error-code>
+    <location>/authorizationFailure.html</location>
+  </error-page>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/</location>
+  </error-page>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
+  </error-page>
+
+  <error-page>
+    <error-code>501</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
+  </error-page>
+
+  <error-page>
+    <error-code>503</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
+  </error-page>
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

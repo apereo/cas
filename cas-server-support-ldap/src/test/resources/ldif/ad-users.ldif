@@ -1,0 +1,15 @@
+dn: cn=CAS Test1,${ldapBaseDn}
+cn: CAS Test1
+departmentNumber: 0822
+displayName: CAS Test1
+givenName: CAS
+initials: CT
+mail: cas.test1@example.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sAMAccountName: cas.test1
+sn: Test1
+uid: 9000000100
+userPrincipalName: cas.test1@middleware.vt.edu

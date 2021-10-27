@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+	| managementConfigContext.xml centralizes into one file some of the declarative configuration that
+	| all CAS deployers will need to modify for the (services) management webapp.
+	|
+	| The beans declared in this file are instantiated at context initialization time by the Spring 
+	| ContextLoaderListener declared in web.xml.  It finds this file because this
+	| file is among those declared in the context parameter "contextConfigLocation".
+	+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!--
+	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
+	More robust deployments will want to use another option, such as the Jdbc version.
+	
+	The name of this should remain "userDetailsService" in order for Spring Security to find it.
+	 -->
+    <sec:user-service id="userDetailsService" 
+                      properties="${user.details.file.location:classpath:user-details.properties}" />
+	
+    <!-- 
+    Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
+    may go against a database or LDAP server.  The id should remain "attributeRepository" though.
+     -->
+    <bean id="attributeRepository"
+        class="org.jasig.services.persondir.support.StubPersonAttributeDao" p:backingMap-ref="backingMap">
+    </bean>
+    
+    <util:map id="backingMap">
+        <entry key="uid" value="uid" />
+        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
+        <entry key="groupMembership" value="groupMembership" />
+    </util:map>
+
+	<!-- 
+	Sample, in-memory data store for the ServiceRegistry. A real implementation
+	would probably want to replace this with the JPA-backed ServiceRegistry DAO
+	The name of this bean should remain "serviceRegistryDao".
+	 -->
+	<bean
+		id="serviceRegistryDao"
+        class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+            <property name="registeredServices">
+                <util:list>
+                    <bean class="org.jasig.cas.services.RegexRegisteredService"
+                          p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+                          p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+                    <!--
+                    Use the following definition instead of the above to further restrict access
+                    to services within your domain (including subdomains).
+                    Note that example.com must be replaced with the domain you wish to permit.
+                    -->
+                    <!--
+                    <bean class="org.jasig.cas.services.RegexRegisteredService">
+                        <property name="id" value="1" />
+                        <property name="name" value="HTTP and IMAP on example.com" />
+                        <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
+                        <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
+                        <property name="evaluationOrder" value="0" />
+                    </bean>
+                    -->
+                </util:list>
+            </property>
+        </bean>
+
+  <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+</beans>

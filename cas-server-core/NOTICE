@@ -1,0 +1,79 @@
+Copyright 2010, JA-SIG, Inc.
+This project includes software developed by Jasig.
+http://www.jasig.org/
+
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+This project includes:
+  A Hibernate Core Module under GNU Lesser General Public License
+  AntLR Parser Generator under BSD License
+  AOP alliance under Public Domain
+  Apache Log4j under The Apache Software License, Version 2.0
+  AspectJ runtime under Eclipse Public License - v 1.0
+  AspectJ weaver under Eclipse Public License - v 1.0
+  Bean Validation API under Apache License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
+  Commons Collections under The Apache Software License, Version 2.0
+  Commons IO under The Apache Software License, Version 2.0
+  Commons JEXL under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  dom4j under BSD License
+  Hamcrest Core under New BSD License
+  Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Validator under Apache License, Version 2.0
+  HSQLDB Database under HSQLDB License, a BSD open source license
+  Inspektr - Auditing API under Apache 2.0 License
+  Inspektr - Common API under Apache 2.0 License
+  Inspektr - Error Logging under Apache 2.0 License
+  Inspektr - Spring Framework Support under Apache 2.0 License
+  Jasig CAS Core under Apache 2
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
+  Javassist under MPL 1.1 or LGPL 2.1
+  jaxb-api under Commons Development and Distribution License, Version 1.0
+  jaxb-impl under Commons Development and Distribution License, Version 1.0
+  JBoss Logging 3 under GNU Lesser General Public License, version 2.1
+  JCL 1.1.1 implemented over SLF4J under MIT License
+  Joda time under Apache 2
+  JPA 2.0 API under Sun Binary Code License
+  JUnit under Common Public License Version 1.0
+  Mockito under The MIT License
+  Objenesis under MIT License
+  org.springframework:spring-aop under Apache License, Version 2.0
+  org.springframework:spring-beans under Apache License, Version 2.0
+  org.springframework:spring-context under Apache License, Version 2.0
+  org.springframework:spring-context-support under Apache License, Version 2.0
+  org.springframework:spring-core under Apache License, Version 2.0
+  org.springframework:spring-expression under Apache License, Version 2.0
+  org.springframework:spring-jdbc under Apache License, Version 2.0
+  org.springframework:spring-orm under Apache License, Version 2.0
+  org.springframework:spring-test under Apache License, Version 2.0
+  org.springframework:spring-tx under Apache License, Version 2.0
+  org.springframework:spring-web under Apache License, Version 2.0
+  org.springframework:spring-webmvc under Apache License, Version 2.0
+  Perf4J under Apache 2
+  Person Directory API under Apache License Version 2.0
+  Person Directory Implementations under Apache License Version 2.0
+  quartz under The Apache Software License, Version 2.0
+  servlet-api under Commons Development and Distribution License, Version 1.0
+  SLF4J API Module under MIT License
+  SLF4J LOG4J-12 Binding under MIT License
+  Spring Binding under Apache License, Version 2.0
+  Spring JavaScript under Apache License, Version 2.0
+  Spring JavaScript Resources under Apache License, Version 2.0
+  Spring Web Flow under Apache License, Version 2.0
+  spring-security-core under The Apache Software License, Version 2.0
+  Streaming API for XML under Sun Binary Code License
+  Transaction 1.1 API under lgpl
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+
