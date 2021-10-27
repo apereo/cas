@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <context:property-placeholder properties-ref="casProperties"/>
+  <util:properties id="casProperties"/>
+
+  <bean id="memoryAddressThrottle"
+        class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter" />
+
+  <bean id="memoryAddressThrottleJobDetail"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="memoryAddressThrottle"
+        p:targetMethod="decrementCounts"/>
+
+  <bean id="memoryAddressThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
+        p:jobDetail-ref="memoryAddressThrottleJobDetail"
+        p:startDelay="1000"
+        p:repeatInterval="1000"/>
+
+  <bean id="memoryAddressUserThrottle"
+        class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter" />
+
+  <bean id="memoryAddressUserThrottleJobDetail"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="memoryAddressUserThrottle"
+        p:targetMethod="decrementCounts"/>
+
+  <bean id="memoryAddressUserThrottleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
+        p:jobDetail-ref="memoryAddressUserThrottleJobDetail"
+        p:startDelay="1000"
+        p:repeatInterval="1000"/>
+
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+      <list>
+        <ref bean="memoryAddressThrottleTrigger" />
+        <ref bean="memoryAddressUserThrottleTrigger" />
+      </list>
+    </property>
+  </bean>
+
+</beans>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <description>
+        Configuration for the EhCache TicketRegistry which stores the tickets in a distributed EhCache and cleans
+        them out as specified intervals.
+    </description>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+        p:configLocation="${ehcache.config.file:classpath:ehcache-replicated.xml}"
+        p:shared="${ehcache.cachemanager.shared:false}"
+        p:cacheManagerName="${ehcache.cachemanager.name:ticketRegistryCacheManager}" />
+
+    <bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+          abstract="true">
+        <property name="cacheManager" ref="cacheManager" />
+        <property name="diskExpiryThreadIntervalSeconds" value="${ehcache.disk.expiry.interval.seconds:0}" />
+        <property name="diskPersistent" value="${ehcache.disk.persistent:false}" />
+        <property name="eternal" value="${ehcache.eternal:false}" />
+        <property name="maxElementsInMemory" value="${ehcache.max.elements.memory:10000}" />
+        <property name="maxElementsOnDisk" value="${ehcache.max.elements.disk:0}" />
+        <property name="memoryStoreEvictionPolicy" value="${ehcache.eviction.policy:LRU}" />
+        <property name="overflowToDisk" value="${ehcache.overflow.disk:false}" />
+        <property name="bootstrapCacheLoader">
+            <ref bean="ticketCacheBootstrapCacheLoader" />
+        </property>
+    </bean>
+
+    <bean id="serviceTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+          parent="abstractTicketCache">
+        <property name="cacheName" value="${ehcache.cache.st.name:org.jasig.cas.ticket.ServiceTicket}" />
+        <property name="cacheEventListeners">
+            <ref bean="ticketRMISynchronousCacheReplicator" />
+        </property>
+
+        <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
+          element expires at this limit and will no longer be returned from the cache. The default value is 0,
+          which means no TTI eviction takes place (infinite lifetime). -->
+        <property name="timeToIdle" value="${ehcache.cache.st.timeIdle:0}" />
+
+        <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element
+          expires at this limit and will no longer be returned from the cache. The default value is 0, which means
+          no TTL eviction takes place (infinite lifetime). -->
+        <property name="timeToLive" value="${ehcache.cache.st.timeAlive:300}" />
+    </bean>
+
+    <bean id="ticketGrantingTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheName" value="${ehcache.cache.tgt.name:org.jasig.cas.ticket.TicketGrantingTicket}" />
+        <property name="cacheEventListeners">
+            <ref bean="ticketRMIAsynchronousCacheReplicator" />
+        </property>
+
+        <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element
+          expires at this limit and will no longer be returned from the cache. The default value is 0, which means
+          no TTL eviction takes place (infinite lifetime). For this sample configuration, 2 hours of inactivity
+          before ticket granting tickets are expired automatically -->
+
+        <property name="timeToIdle" value="${ehcache.cache.tgt.timeIdle:7201}" />
+
+        <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
+          element expires at this limit and will no longer be returned from the cache. The default value is 0,
+          which means no TTI eviction takes place (infinite lifetime). -->
+        <property name="timeToLive" value="${ehcache.cache.tgt.timeAlive:0}" />
+    </bean>
+
+    <bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
+        <constructor-arg name="replicatePuts" value="${ehcache.repl.sync.puts:true}" />
+        <constructor-arg name="replicatePutsViaCopy" value="${ehcache.repl.sync.putscopy:true}" />
+        <constructor-arg name="replicateUpdates" value="${ehcache.repl.sync.updates:true}" />
+        <constructor-arg name="replicateUpdatesViaCopy" value="${ehcache.repl.sync.updatesCopy:true}" />
+        <constructor-arg name="replicateRemovals" value="${ehcache.repl.sync.removals:true}" />
+    </bean>
+
+    <bean id="ticketRMIAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator"
+          parent="ticketRMISynchronousCacheReplicator">
+        <constructor-arg name="replicationInterval" value="${ehcache.repl.async.interval:10000}" />
+        <constructor-arg name="maximumBatchSize" value="${ehcache.repl.async.batch.size:100}" />
+    </bean>
+
+    <bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+        <constructor-arg name="asynchronous" value="${ehcache.cache.loader.async:true}" />
+        <constructor-arg name="maximumChunkSize" value="${ehcache.cache.loader.chunksize:5000000}" />
+    </bean>
+
+</beans>

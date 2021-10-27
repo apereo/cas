@@ -1,0 +1,64 @@
+dn: cn=mmoayyed,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: ad
+objectClass: inetOrgPerson
+cn: Misagh Moayyed
+sn: Moayyed
+givenName: Misagh
+displayName: Misagh Moayyed
+sAMAccountName: mmoayyed
+mail: mmoayyed@example.org
+userPrincipalName: mmoayyed@example.org
+userAccountControl: 66048
+distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
+userPassword: misagh
+unicodePwd: ignoredForTests
+
+
+dn: cn=casTest,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: ad
+objectClass: account
+cn: CAS Test
+givenName: CAS
+sn: CAS
+uid: CASTest
+displayName: CAS Test
+sAMAccountName: casTest
+distinguishedName: CN=casTest,ou=people,dc=example,dc=org
+mail: casTest@example.org
+userPassword: thePassw0rd
+unicodePwd: ignoredForTests
+userPrincipalName: castest@example.org
+userAccountControl: 66048
+host: localhost
+
+dn: cn=Administrators,ou=people,dc=example,dc=org
+cn: Administrators
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: account
+objectClass: casServiceUserDetails
+objectClass: ad
+unicodePwd: ignoredForTests
+uid: 31415926535
+sAMAccountName: administrators
+sn: Administrators
+contactPerson: uid=9000000100,ou=people,dc=example,dc=org
+creationDate: 2012 12 21
+uugid: Administrators
+uugid: Users
+member: cn=Administrators,ou=people,dc=example,dc=org
+mail: Administrators@example.org
+userAccountControl: 66048
+distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
+userPassword: thePassw0rd
+displayName: Administrators
+host: 127.0.0.1

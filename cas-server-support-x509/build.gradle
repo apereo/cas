@@ -1,0 +1,40 @@
+description = 'Apereo CAS X.509 Client Certificate Support'
+dependencies {
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-web')
+    compile(group: 'org.cryptacular', name: 'cryptacular', version: cryptacularVersion) {
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+    }
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+    }
+    compile(group: 'net.sf.ehcache', name: 'ehcache', version: ehcacheVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile group: 'org.springframework', name: 'spring-expression', version: springVersion
+    compile(group: 'org.ldaptive', name: 'ldaptive', version: ldaptiveVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    provided group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
+    testCompile project(':cas-server-support-generic')
+    testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
+    testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion
+    testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version: ldaptiveVersion
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-services')
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core", configuration: "tests")
+}

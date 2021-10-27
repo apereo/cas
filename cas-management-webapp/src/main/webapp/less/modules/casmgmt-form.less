@@ -1,0 +1,43 @@
+.casmgmt-form {
+    .tooltip-inner {width: 300px; max-width: 300px;}
+
+    label {padding-top: 7px;
+        &.required {color: @brand-danger;}
+    }
+
+    .form-padding {margin-top: 10px;}
+
+    .form-tooltip-icon {float: right; padding-top: 5px; color: @brand-info;
+        &:hover {color: lighten(@brand-info, 10%);}
+        &.no-float {float: none;}
+    }
+
+    .form-group {
+        .alert {margin: 0; padding: 4px 12px;}
+    }
+
+    .input-group-required {color: @state-danger-text;}
+
+    .radio-group,
+    .checkbox-group {margin-bottom: 10px;}
+
+    .services-button-group-top {float: right;}
+    .services-button-group {margin: 20px; padding: 20px; border-top: 1px solid @gray2; text-align: center;
+        .btn + .btn {margin-left: 20px;}
+    }
+    .services-button-group,
+    .services-button-group-top {
+        .btn + .btn {margin-left: 20px;}
+    }
+}
+
+#serviceForm {
+    input,
+    textarea,
+    select {
+        &.required-missing {background-color: #ffcccc;}
+    }
+    textarea {width: 100%;
+        &.noresize {resize: none;}
+    }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+  <context:property-placeholder properties-ref="casProperties"/>
+  <util:properties id="casProperties"/>
+
+
+  <context:component-scan base-package="org.jasig.cas" />
+  <context:annotation-config/>
+
+  <import resource="classpath:jpaTicketRegistryContext.xml" />
+
+  <bean
+      id="dataSourceTicket"
+      class="com.mchange.v2.c3p0.ComboPooledDataSource"
+      p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
+      p:user="${database.user:sa}"
+      p:password="${database.password:}"
+      p:initialPoolSize="${database.pool.minSize:6}"
+      p:minPoolSize="${database.pool.minSize:6}"
+      p:maxPoolSize="${database.pool.maxSize:18}"
+      p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
+      p:checkoutTimeout="${database.pool.maxWait:2000}"
+      p:acquireIncrement="${database.pool.acquireIncrement:16}"
+      p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
+      p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
+      p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
+      p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
+
+  <bean id="jpaTicketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry"/>
+  <alias name="jpaTicketRegistry" alias="ticketRegistry" />
+
+  <bean id="jpaLockingStrategy" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy" />
+
+  <!-- CAS Context Core -->
+  <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+  <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+  <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+  <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+  <util:map id="authenticationHandlersResolvers"/>
+  <util:list id="authenticationMetadataPopulators" />
+  <util:list id="monitorsList" />
+  <util:map id="uniqueIdGeneratorsMap"/>
+  <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+  <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+  <util:list id="serviceFactoryList" />
+  <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+  <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+
+</beans>
+
+

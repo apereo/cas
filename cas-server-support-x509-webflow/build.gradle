@@ -1,0 +1,6 @@
+
+description = 'Apereo CAS X509 Webflow Support'
+dependencies {
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-support-x509')
+}

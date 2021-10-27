@@ -1,0 +1,111 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="org.jasig.cas"/>
+    <context:annotation-config/>
+
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="false"/>
+
+    <bean id="openIdValidateController" parent="serviceValidateController"
+          p:successView="casOpenIdServiceSuccessView"
+          p:failureView="casOpenIdServiceFailureView"/>
+
+    <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
+          p:delegates-ref="delegateControllers"/>
+
+    <util:list id="delegateControllers">
+        <ref bean="smartOpenIdAssociationController"/>
+        <ref bean="openIdValidateController"/>
+    </util:list>
+
+    <bean id="serverManager"
+          class="org.openid4java.server.ServerManager"
+          p:oPEndpointUrl="${server.prefix}/login"
+          p:sharedAssociations-ref="serverAssociations"
+          p:enforceRpId="${cas.openid.enforce.rpid:false}"/>
+
+    <bean id="serverAssociations" class="org.openid4java.server.InMemoryServerAssociationStore"/>
+
+    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <util:properties id="casProperties" />
+    <metrics:metric-registry id="metrics" />
+    <metrics:health-check-registry id="healthCheckMetrics" />
+
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
+
+    <!-- Proxy Response Protocol Views: /proxy -->
+
+    <!-- Failure Proxy Views -->
+    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+
+    <!-- Successful Proxy Views -->
+    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+
+    <!-- CAS 3.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <!-- Successful Validation Views -->
+
+    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
+
+    <!-- Post View -->
+    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+
+    <util:map id="serviceThemeResolverSupportedBrowsers">
+        <entry key=".*iPhone.*" value="iphone"/>
+        <entry key=".*Android.*" value="android"/>
+        <entry key=".*Safari.*Pre.*" value="safari"/>
+        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
+    </util:map>
+
+</beans>

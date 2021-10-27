@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <description>
+      Security configuration for services management and other sensitive areas of CAS.
+      In most cases it should not be necessary to edit this file as common configuration
+      can be managed by setting properties in the cas-management.properties file.
+    </description>
+
+    <context:component-scan base-package="org.pac4j.springframework.web" />
+
+    <bean id="config" class="org.pac4j.core.config.Config">
+        <constructor-arg name="callbackUrl" value="${cas-management.securityContext.serviceProperties.service}" />
+        <constructor-arg name="client">
+            <bean class="org.pac4j.cas.client.CasClient">
+                <property name="casLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
+                <property name="authorizationGenerator" ref="authorizationGenerator" />
+            </bean>
+        </constructor-arg>
+        <property name="authorizer">
+            <bean class="org.pac4j.core.authorization.RequireAnyRoleAuthorizer">
+                <constructor-arg name="roles" value="${cas-management.securityContext.serviceProperties.adminRoles}" />
+            </bean>
+        </property>
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/callback*" />
+            <mvc:exclude-mapping path="/logout*" />
+            <mvc:exclude-mapping path="/authorizationFailure.html" />
+            <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
+                <constructor-arg name="config" ref="config" />
+                <constructor-arg name="clientName" value="CasClient" />
+                <constructor-arg name="authorizerName" value="securityHeaders,csrfToken,RequireAnyRoleAuthorizer" />
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+</beans>

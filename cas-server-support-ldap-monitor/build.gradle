@@ -1,0 +1,20 @@
+
+description = 'Apereo CAS LDAP Monitor Support'
+dependencies {
+  
+  compile project(':cas-server-support-ldap')
+  compile project(':cas-server-core-monitor')
+  testCompile project(':cas-server-core-tickets')
+  testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-core-services')
+  testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
+  testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:unboundidVersion
+  testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:ldaptiveVersion
+  testCompile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+
+
+}
+

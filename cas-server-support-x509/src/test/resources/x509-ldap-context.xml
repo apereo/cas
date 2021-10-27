@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config />
+
+    <context:property-placeholder location="classpath:/ldap.properties"/>
+
+    <bean id="ldapCertFetcher"
+          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+          c:connectionConfig-ref="provisioningConnectionConfig"
+          c:searchExecutor-ref="searchExecutor"  />
+
+    <bean id="poolingLdapCertFetcher"
+          class="org.jasig.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+          c:connectionConfig-ref="provisioningConnectionConfig"
+          c:searchExecutor-ref="searchExecutor"
+          c:connectionPool-ref="connectionPool"/>
+
+    <bean id="baseDn" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+    </bean>
+
+    <util:list id="returnAttributes">
+        <value>certificateRevocationList</value>
+    </util:list>
+
+    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
+          p:filter="${ldap.searchfilter.cert}" />
+
+    <bean id="searchExecutor" class="org.ldaptive.SearchExecutor"
+          p:baseDn-ref="baseDn"
+          p:searchFilter-ref="searchFilter"
+          p:returnAttributes-ref="returnAttributes"
+          p:binaryAttributes-ref="returnAttributes" />
+
+    <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="provisioningConnectionConfig"
+          p:provider-ref="unboundidLdapProvider"  />
+
+    <bean id="unboundidLdapProvider"
+          class="org.ldaptive.provider.unboundid.UnboundIDProvider"/>
+
+    <bean id="provisioningConnectionConfig" class="org.ldaptive.ConnectionConfig"
+          p:connectTimeout="${ldap.connectTimeout}"
+          p:useStartTLS="${ldap.useStartTLS: false}"
+          p:connectionInitializer-ref="bindConnectionInitializer"
+          p:sslConfig-ref="provisionSslConfig"/>
+
+    <bean id="provisionSslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
+        </property>
+    </bean>
+
+    <bean id="bindConnectionInitializer"
+          class="org.ldaptive.BindConnectionInitializer"
+          p:bindDn="${ldap.managerDn}">
+        <property name="bindCredential">
+            <bean class="org.ldaptive.Credential"
+                  c:password="${ldap.managerPassword}" />
+        </property>
+    </bean>
+
+    <bean id="connectionPool"
+          class="org.ldaptive.pool.BlockingConnectionPool"
+          lazy-init="true"
+          p:poolConfig-ref="ldapPoolConfig"
+          p:blockWaitTime="${ldap.pool.blockWaitTime}"
+          p:validator-ref="searchValidator"
+          p:pruneStrategy-ref="pruneStrategy" />
+
+    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+          p:prunePeriod="${ldap.pool.prunePeriod}"
+          p:idleTime="${ldap.pool.idleTime}" />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+          p:minPoolSize="${ldap.pool.minSize}"
+          p:maxPoolSize="${ldap.pool.maxSize}"
+          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+          p:validatePeriodically="${ldap.pool.validatePeriodically}"
+          p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+
+</beans>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="characterEncodingFilter" class="org.springframework.web.filter.CharacterEncodingFilter"
+            p:encoding="${httprequest.web.encoding:UTF-8}"
+            p:forceEncoding="${httprequest.web.encoding.force:true}" />
+
+    <bean id="responseHeadersSecurityFilter" class="org.apereo.cas.security.ResponseHeadersEnforcementFilter"
+          p:enableCacheControl="${httpresponse.header.cache:false}"
+          p:enableStrictTransportSecurity="${httpresponse.header.hsts:false}"
+          p:enableXFrameOptions="${httpresponse.header.xframe:false}"
+          p:enableXContentTypeOptions="${httpresponse.header.xcontent:false}"
+          p:enableXSSProtection="${httpresponse.header.xss:false}" />
+
+    <bean id="requestParameterSecurityFilter"
+          class="org.apereo.cas.security.RequestParameterPolicyEnforcementFilter"
+          p:allowMultiValueParameters="${cas.http.allow.multivalue.params:false}">
+        <property name="parametersToCheck">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String"
+                                 value="${cas.http.check.params:ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId}"/>
+            </bean>
+        </property>
+        <property name="charactersToForbid">
+            <util:set />
+        </property>
+        <property name="onlyPostParameters">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String"
+                                 value="${cas.http.allow.post.params:username,password}"/>
+            </bean>
+        </property>
+    </bean>
+</beans>

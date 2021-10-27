@@ -1,0 +1,34 @@
+description = 'Apereo CAS JWT Token Authentication Support'
+dependencies {
+    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-integration-pac4j')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+    compile(group: 'org.pac4j', name: 'pac4j-jwt', version: pac4jVersion) {
+        
+    }
+    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+    }
+    compile group: 'org.springframework', name: 'spring-context', version:springVersion
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    testCompile project(':cas-server-core-authentication')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-util", configuration: "tests")
+}
+
+

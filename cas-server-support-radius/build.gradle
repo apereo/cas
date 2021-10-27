@@ -1,0 +1,27 @@
+
+description = 'Apereo CAS RADIUS Support'
+dependencies {
+	
+	compile project(':cas-server-core-authentication')
+	compile(group: 'com.github.coova', name: 'jradius', version:jradiusVersion) {
+		exclude(group: 'commons-logging', module: 'commons-logging')
+		exclude(group: 'log4j', module: 'log4j')
+		exclude(group: 'org.slf4j', module: 'slf4j-api')
+		exclude(group: 'commons-collections', module: 'commons-collections')
+		exclude(group: 'commons-beanutils', module: 'commons-beanutils')
+		exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15')
+		exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
+	    exclude(group: 'org.springframework', module: 'spring-beans')
+    	exclude(group: 'org.springframework', module: 'spring-context')
+    	exclude(group: 'org.springframework', module: 'spring-context-support')
+    	exclude(group: 'org.springframework', module: 'spring-core')
+	}
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'gnu-getopt') {
+            details.useTarget group: 'gnu.getopt', name: 'java-getopt', version: details.requested.version
+        }
+    }
+}

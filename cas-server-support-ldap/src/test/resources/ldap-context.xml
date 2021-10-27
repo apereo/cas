@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:/ldap.properties"/>
+
+    <ldaptive:pooled-connection-factory
+            id="provisioningConnectionFactory"
+            ldapUrl="${ldap.url}"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            failFastInitialize="true"
+            connectTimeout="${ldap.connectTimeout}"
+            useStartTLS="${ldap.useStartTLS}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            idleTime="${ldap.pool.idleTime}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            minPoolSize="${ldap.pool.minSize}"
+            useSSL="${ldap.use.ssl:false}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+    />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+</beans>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <util:list id="jpaServicePackagesToScan">
+        <value>org.jasig.cas.services</value>
+        <value>org.jasig.cas.support.oauth.services</value>
+    </util:list>
+
+    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          id="jpaServiceVendorAdapter"
+          p:generateDdl="${database.gen.ddl:true}"
+          p:showSql="${database.show.sql:true}" />
+
+    <bean id="abstractServiceJpaEntityManagerFactory" abstract="true"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:jpaVendorAdapter-ref="jpaServiceVendorAdapter"
+          p:persistenceUnitName="jpaServiceRegistryContext"
+          p:packagesToScan-ref="jpaServicePackagesToScan">
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${svcreg.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${svcreg.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${svcreg.database.batchSize:1}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean
+            id="dataSourceService"
+            class="com.mchange.v2.c3p0.ComboPooledDataSource"
+            p:driverClass="${svcreg.database.driverClass:org.hsqldb.jdbcDriver}"
+            p:jdbcUrl="${svcreg.database.url:jdbc:hsqldb:mem:cas-service-registry}"
+            p:user="${svcreg.database.user:sa}"
+            p:password="${svcreg.database.password:}"
+            p:initialPoolSize="${svcreg.database.pool.minSize:6}"
+            p:minPoolSize="${svcreg.database.pool.minSize:6}"
+            p:maxPoolSize="${svcreg.database.pool.maxSize:18}"
+            p:maxIdleTimeExcessConnections="${svcreg.database.pool.maxIdleTime:1000}"
+            p:checkoutTimeout="${svcreg.database.pool.maxWait:2000}"
+            p:acquireIncrement="${svcreg.database.pool.acquireIncrement:16}"
+            p:acquireRetryAttempts="${svcreg.database.pool.acquireRetryAttempts:5}"
+            p:acquireRetryDelay="${svcreg.database.pool.acquireRetryDelay:2000}"
+            p:idleConnectionTestPeriod="${svcreg.database.pool.idleConnectionTestPeriod:30}"
+            p:preferredTestQuery="${svcreg.database.pool.connectionHealthQuery:select 1}"/>
+
+    <bean id="abstractServiceTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+            abstract="true"/>
+
+    <bean id="serviceEntityManagerFactory" parent="abstractServiceJpaEntityManagerFactory"
+          p:dataSource-ref="dataSourceService"/>
+
+    <bean id="transactionManagerServiceReg" parent="abstractServiceTransactionManager"
+          p:entityManagerFactory-ref="serviceEntityManagerFactory" />
+    
+</beans>

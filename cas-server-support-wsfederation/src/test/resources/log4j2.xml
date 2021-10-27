@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </Console>
+        <RollingFile name="file" fileName="target/wsfed.log" append="true"
+                     filePattern="wsfed-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.jasig" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.jasig.cas.support.wsfederation" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.opensaml" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="PROTOCOL_MESSAGE" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apache.xml.security" level="off" />
+        <Root level="warn">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

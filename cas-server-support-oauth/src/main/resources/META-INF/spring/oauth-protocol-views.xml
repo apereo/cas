@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <description>
+        This file is loaded by the Spring configuration automatically, and serves as a placeholder
+        for various view definitions and beans. This helps with construction of views that require
+        references to other beans and whose changes can be configured externally.
+    </description>
+
+
+    <!-- OAuth View -->
+    <bean id="oauthConfirmView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/oauth/confirm.jsp"/>
+
+</beans>

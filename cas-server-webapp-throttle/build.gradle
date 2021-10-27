@@ -1,0 +1,57 @@
+description = 'Apereo CAS Web Application Authentication Throttling'
+dependencies {
+    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-jdbc', version: springVersion
+    compile(group: 'org.quartz-scheduler', name: 'quartz', version: quartzVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'c3p0', module: 'c3p0')
+    }
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'javax.validation', module: 'validation-api')
+        exclude(group: 'org.aspectj', module: 'aspectjrt')
+    }
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version: inspektrVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'javax.validation', module: 'validation-api')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+        exclude(group: 'org.springframework', module: 'spring-tx')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-jdbc')
+        exclude(group: 'org.aspectj', module: 'aspectjrt')
+        exclude(group: 'javax.validation', module: 'validation-api')
+    }
+    compile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
+    compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+    compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-util')
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    testCompile project(':cas-server-core-authentication')
+    testCompile project(':cas-server-core-audit')
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core", configuration: "tests")
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile group: 'org.hsqldb', name: 'hsqldb', version: hsqlVersion
+    testCompile group: 'org.springframework', name: 'spring-orm', version: springVersion
+}
+

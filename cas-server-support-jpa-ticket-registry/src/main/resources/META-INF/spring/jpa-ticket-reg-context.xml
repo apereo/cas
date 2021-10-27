@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <util:list id="ticketPackagesToScan">
+        <value>org.jasig.cas.ticket</value>
+        <value>org.jasig.cas.adaptors.jdbc</value>
+    </util:list>
+
+    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          id="ticketJpaVendorAdapter"
+          p:generateDdl="${database.gen.ddl:true}"
+          p:showSql="${database.show.sql:true}" />
+
+    <bean id="abstractJpaEntityManagerFactory" abstract="true"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:persistenceUnitName="jpaTicketRegistryContext"
+          p:jpaVendorAdapter-ref="ticketJpaVendorAdapter"
+          p:packagesToScan-ref="ticketPackagesToScan">
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${ticketreg.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${ticketreg.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${ticketreg.database.batchSize:1}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean
+            id="dataSourceTicket"
+            class="com.mchange.v2.c3p0.ComboPooledDataSource"
+            p:driverClass="${ticketreg.database.driverClass:org.hsqldb.jdbcDriver}"
+            p:jdbcUrl="${ticketreg.database.url:jdbc:hsqldb:mem:cas-service-registry}"
+            p:user="${ticketreg.database.user:sa}"
+            p:password="${ticketreg.database.password:}"
+            p:initialPoolSize="${ticketreg.database.pool.minSize:6}"
+            p:minPoolSize="${ticketreg.database.pool.minSize:6}"
+            p:maxPoolSize="${ticketreg.database.pool.maxSize:18}"
+            p:maxIdleTimeExcessConnections="${ticketreg.database.pool.maxIdleTime:1000}"
+            p:checkoutTimeout="${ticketreg.database.pool.maxWait:2000}"
+            p:acquireIncrement="${ticketreg.database.pool.acquireIncrement:16}"
+            p:acquireRetryAttempts="${ticketreg.database.pool.acquireRetryAttempts:5}"
+            p:acquireRetryDelay="${ticketreg.database.pool.acquireRetryDelay:2000}"
+            p:idleConnectionTestPeriod="${ticketreg.database.pool.idleConnectionTestPeriod:30}"
+            p:preferredTestQuery="${ticketreg.database.pool.connectionHealthQuery:select 1}"/>
+
+    <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+            abstract="true"/>
+
+    <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+          p:dataSource-ref="dataSourceTicket" />
+
+    <bean id="ticketTransactionManager" parent="abstractTransactionManager"
+          p:entityManagerFactory-ref="ticketEntityManagerFactory" />
+
+</beans>

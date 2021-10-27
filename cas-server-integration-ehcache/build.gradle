@@ -1,0 +1,18 @@
+
+description = 'Apereo CAS Ehcache Integration'
+dependencies {
+  compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+  }
+  compile project(':cas-server-core-tickets')
+  compile(group: 'org.ehcache', name: 'jcache', version:jcacheVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'net.sf.ehcache', module: 'ehcache')
+  }
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+  testCompile project(':cas-server-core-services')
+  testCompile project(path: ":cas-server-core-services", configuration: "tests")
+  testCompile project(':cas-server-core-util')
+}
+
+

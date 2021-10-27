@@ -1,0 +1,30 @@
+description = 'Apereo CAS Web Application Reports'
+dependencies {
+    compile project(':cas-server-core-api')
+    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+    }
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    compile(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version: dropwizardMetricsVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+    }
+
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-monitor')
+    compile project(':cas-server-core-authentication')
+}
+
+

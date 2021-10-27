@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+    <import resource="spring-configuration/propertyFileConfigurer.xml"/>
+
+    <bean id="themeChangeInterceptor"
+          class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
+          p:paramName="${cas.themeResolver.param.name:theme}"/>
+
+
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"
+          p:order="1"/>
+
+    <!--
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+            p:order="1000"
+            p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+    -->
+
+    <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
+          p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/"
+          p:suffix=".jsp"
+          p:order="2000"/>
+
+    <!-- Locale Resolver -->
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
+          p:defaultLocale="${locale.default:en}"/>
+
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+            p:paramName="${locale.param.name:locale}"/>
+
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+    <!-- login webflow configuration -->
+    <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
+          p:flowRegistry-ref="loginFlowRegistry" p:order="2">
+        <property name="interceptors">
+            <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+                <ref bean="localeChangeInterceptor"/>
+                <ref bean="authenticationThrottle"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="loginHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
+          p:supportedFlowId="login" p:flowExecutor-ref="loginFlowExecutor" p:flowUrlHandler-ref="loginFlowUrlHandler"/>
+
+    <bean id="loginFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler"/>
+
+    <bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl"
+          c:definitionLocator-ref="loginFlowRegistry"
+          c:executionFactory-ref="loginFlowExecutionFactory"
+          c:executionRepository-ref="loginFlowExecutionRepository"/>
+
+    <bean name="loginFlowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"
+          p:executionKeyFactory-ref="loginFlowExecutionRepository"/>
+
+    <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+          c:flowExecutionFactory-ref="loginFlowExecutionFactory"
+          c:flowDefinitionLocator-ref="loginFlowRegistry"
+          c:transcoder-ref="loginFlowStateTranscoder"/>
+
+    <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"
+          c:cipherBean-ref="loginFlowCipherBean" />
+
+    <!-- logout webflow configuration -->
+    <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
+          p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
+        <property name="interceptors">
+            <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+                <ref bean="localeChangeInterceptor"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="logoutHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
+          p:supportedFlowId="logout" p:flowExecutor-ref="logoutFlowExecutor"
+          p:flowUrlHandler-ref="logoutFlowUrlHandler"/>
+
+    <bean id="logoutFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler"
+          p:flowExecutionKeyParameter="RelayState"/>
+    
+    <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+          p:messageInterpolator-ref="messageInterpolator"/>
+
+
+</beans>

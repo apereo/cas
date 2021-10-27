@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </Console>
+        <RollingFile name="cas-management" fileName="cas-management.log" append="true"
+                     filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="512 KB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework.webflow" level="warn" />
+        <Logger name="org.springframework.web" level="warn" />
+        <Logger name="org.pac4j" level="warn" />
+
+        <Logger name="org.jasig" level="info" additivity="false">
+            <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+            <AppenderRef ref="cas-management"/>
+        </Logger>
+
+        <Root level="error">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

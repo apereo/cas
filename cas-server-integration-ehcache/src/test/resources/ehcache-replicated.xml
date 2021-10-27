@@ -1,0 +1,22 @@
+<ehcache name="ehCacheTicketRegistryCache"
+    updateCheck="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+        <diskStore path="java.io.tmpdir/cas"/>
+
+        <!-- Automatic Peer Discovery
+        <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1, multicastGroupPort=4446, timeToLive=32"
+        propertySeparator="," />
+        -->
+
+        <!-- Manual Peer Discovery -->
+        <cacheManagerPeerProviderFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+            properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.jasig.cas.ticket.ServiceTicket|//localhost:41001/org.jasig.cas.ticket.TicketGrantingTicket" />
+        <cacheManagerPeerListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+            properties="port=41001,remoteObjectPort=41002" />
+</ehcache>

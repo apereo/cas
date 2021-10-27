@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    | managementConfigContext.xml centralizes into one file some of the declarative configuration that
+    | all CAS deployers will need to modify for the (services) management webapp.
+    |
+    | The beans declared in this file are instantiated at context initialization time by the Spring
+    | ContextLoaderListener declared in web.xml.  It finds this file because this
+    | file is among those declared in the context parameter "contextConfigLocation".
+    +-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--
+    This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
+    More robust deployments will want to use another option, such as the Jdbc version.
+
+    The name of this should remain "authorizationGenerator" in order for the pac4j security context to find it.
+     -->
+    <util:properties id="userProperties" location="${user.details.file.location:classpath:user-details.properties}" />
+
+    <bean id="authorizationGenerator" class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator">
+        <constructor-arg name="properties" ref="userProperties" />
+    </bean>
+
+    <!-- 
+    Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
+    may go against a database or LDAP server.  The id should remain "attributeRepository" though.
+     -->
+    <bean id="attributeRepository"
+          class="org.jasig.services.persondir.support.StubPersonAttributeDao" p:backingMap-ref="backingMap">
+    </bean>
+
+    <util:map id="backingMap">
+        <entry key="uid" value="uid"/>
+        <entry key="eduPersonAffiliation" value="eduPersonAffiliation"/>
+        <entry key="groupMembership" value="groupMembership"/>
+    </util:map>
+
+    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+
+    <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"/>
+</beans>

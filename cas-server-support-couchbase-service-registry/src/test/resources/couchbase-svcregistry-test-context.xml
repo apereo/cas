@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="false"/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.cas" />
+
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <util:list id="serviceFactoryList" />
+
+    <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+        <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:127.0.0.1:8091}"/>
+    </bean>
+
+    <bean id="serviceRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
+          p:nodes-ref="nodesSet"
+          p:timeout="${svcreg.couchbase.timeout:10}"
+          p:password="${svcreg.couchbase.password:}"
+          p:bucket="${svcreg.couchbase.bucket:default}" />
+</beans>

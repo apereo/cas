@@ -1,0 +1,35 @@
+task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
+    baseName = "${project.archivesBaseName}-tests"
+    classifier = "tests"
+    from sourceSets.test.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = project.gradleVersion
+}
+
+task cleanLogs(description: "Clean build log files") {
+    delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
+}
+
+clean << {
+    cleanLogs
+}
+
+task findbugs(type: FindBugs) {
+    pluginClasspath = project.configurations.findbugsPlugins
+}
+
+gradle.buildFinished { buildResult ->
+    cleanLogs
+}

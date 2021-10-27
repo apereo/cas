@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- CAS 2.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
+
+    <!-- Proxy Response Protocol Views: /proxy -->
+
+    <!-- Failure Proxy Views -->
+    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+
+    <!-- Successful Proxy Views -->
+    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+
+    <!-- CAS 3.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <!-- Successful Validation Views -->
+
+    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
+
+    <!-- Post View -->
+    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+
+</beans>

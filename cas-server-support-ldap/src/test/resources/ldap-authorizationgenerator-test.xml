@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="usernameAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="mail" />
+    </bean>
+
+    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
+    <alias name="searchExecutorRole" alias="ldapAuthorizationGeneratorRoleSearchExecutor" />
+
+    <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
+          p:baseDn="${ldap.baseDn}"
+          p:searchFilter="${ldap.user.searchFilter}"
+          p:returnAttributes-ref="userDetailsUserAttributes" />
+
+    <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
+          p:baseDn="${ldap.role.baseDn}"
+          p:searchFilter="${ldap.role.searchFilter}"
+          p:returnAttributes-ref="userDetailsRoleAttributes" />
+
+    <util:list id="userDetailsUserAttributes">
+        <value>mail</value>
+    </util:list>
+
+    <util:list id="userDetailsRoleAttributes">
+        <value>uugid</value>
+    </util:list>
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+
+</beans>

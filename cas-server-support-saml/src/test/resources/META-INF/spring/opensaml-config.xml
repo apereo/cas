@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="false"
+                                  ignore-unresolvable="false"/>
+
+    <util:properties id="casProperties"/>
+    <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
+    <context:annotation-config />
+
+    <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
+          depends-on="shibboleth.ParserPool"/>
+
+    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+          p:maxPoolSize="100"
+          p:coalescing="true"
+          p:ignoreComments="true"
+          p:xincludeAware="false"
+          p:expandEntityReferences="false"
+          p:ignoreElementContentWhitespace="true"
+          p:namespaceAware="true"
+          init-method="initialize">
+        <property name="builderAttributes">
+            <map>
+                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->
+                <entry key="http://apache.org/xml/properties/security-manager">
+                    <bean class="com.sun.org.apache.xerces.internal.util.SecurityManager"/>
+                </entry>
+            </map>
+        </property>
+        <property name="builderFeatures">
+            <map>
+                <entry key="http://apache.org/xml/features/disallow-doctype-decl">
+                    <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+                <entry key="http://apache.org/xml/features/validation/schema/normalized-value">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                </entry>
+                <entry key="http://javax.xml.XMLConstants/feature/secure-processing">
+                    <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-general-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-parameter-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.BuilderFactory" factory-method="getBuilderFactory"
+          class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
+    <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory"
+          class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
+    <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory"
+          class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
+
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+            c:serviceRegistryDao-ref="serviceRegistryDao" />
+
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <bean class="org.jasig.cas.services.RegexRegisteredService"
+                    p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
+        </property>
+    </bean>
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+
+    <util:map id="serviceThemeResolverSupportedBrowsers">
+    </util:map>
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <metrics:metric-registry id="metrics" />
+    <metrics:health-check-registry id="healthCheckMetrics" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+    <!-- CAS 2.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
+
+    <!-- Proxy Response Protocol Views: /proxy -->
+
+    <!-- Failure Proxy Views -->
+    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+
+    <!-- Successful Proxy Views -->
+    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+
+    <!-- CAS 3.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <!-- Successful Validation Views -->
+
+    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
+
+    <!-- Post View -->
+    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+
+</beans>

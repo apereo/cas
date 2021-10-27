@@ -1,0 +1,22 @@
+
+description = 'Apereo CAS Core Monitor Support'
+dependencies {
+  compile project(':cas-server-core-api-monitor')
+  compile project(':cas-server-core-api-ticket')
+  compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+  compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.javassist', name: 'javassist', version:javassistVersion
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
+  testCompile project(':cas-server-core-tickets')
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+  testCompile project(path: ":cas-server-core-util", configuration: "tests")
+}
+

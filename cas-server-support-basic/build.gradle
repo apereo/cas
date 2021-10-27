@@ -1,0 +1,11 @@
+description = 'Apereo CAS Basic Authentication Support'
+dependencies {
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-core-web')
+    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+    }
+}
+

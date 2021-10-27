@@ -1,0 +1,20 @@
+description = 'Apereo CAS JDBC Support'
+dependencies {
+
+    compile project(':cas-server-core-authentication')
+    compile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    compile group: 'org.springframework', name: 'spring-jdbc', version: springVersion
+    compile group: 'org.springframework', name: 'spring-orm', version: springVersion
+    compile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core-util')
+    testCompile group: 'org.hsqldb', name: 'hsqldb', version: hsqlVersion
+    testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+}
+
+

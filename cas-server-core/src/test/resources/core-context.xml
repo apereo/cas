@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="org.jasig.cas"/>
+    <context:annotation-config/>
+
+
+    <context:property-placeholder properties-ref="casProperties"/>
+    <util:properties id="casProperties"/>
+
+
+    <util:map id="authenticationHandlersResolvers">
+        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
+        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
+    </util:map>
+    <util:list id="authenticationMetadataPopulators">
+        <ref bean="cacheCredentialsMetaDataPopulator" />
+    </util:list>
+
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
+          p:backingMap-ref="attrRepoBackingMap"/>
+
+    <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
+
+    <util:map id="attrRepoBackingMap">
+        <entry key="uid" value="uid"/>
+        <entry key="eduPersonAffiliation" value="developer"/>
+        <entry key="groupMembership" value="adopters"/>
+    </util:map>
+
+
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
+
+
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+
+    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
+        <ref bean="memoryMonitor"/>
+        <ref bean="sessionMonitor"/>
+    </util:list>
+
+    <util:list id="serviceFactoryList">
+        <ref bean="webApplicationServiceFactory" />
+    </util:list>
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+            value-ref="serviceTicketUniqueIdGenerator" />
+    </util:map>
+
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+
+    <util:list id="inMemoryRegisteredServices">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="0"/>
+            <property name="name" value="Test Service"/>
+            <property name="serviceId" value="(https://)*google.com$"/>
+            <property name="evaluationOrder" value="1"/>
+            <property name="proxyPolicy">
+                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern=".+"/>
+            </property>
+            <property name="publicKey">
+                <bean class="org.jasig.cas.services.RegisteredServicePublicKeyImpl"
+                      c:location="classpath:RSA1024Public.key"
+                      c:algorithm="RSA"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
+                      p:authorizedToReleaseCredentialPassword="true"
+                      p:authorizedToReleaseProxyGrantingTicket="true"/>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="1"/>
+            <property name="name" value="Test Default Service"/>
+            <property name="serviceId" value="testDefault"/>
+            <property name="evaluationOrder" value="2"/>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="2"/>
+            <property name="name" value="EduPerson Test Service"/>
+            <property name="serviceId" value="eduPersonTest"/>
+            <property name="evaluationOrder" value="3"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="eduPersonAffiliation"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy"/>
+            </property>
+
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="3"/>
+            <property name="name" value="EduPerson Test Invalid Service"/>
+            <property name="serviceId" value="eduPersonTestInvalid"/>
+            <property name="evaluationOrder" value="4"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="nonExistentAttributeName"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
+                    <property name="allowedAttributes">
+                        <list>
+                            <value>groupMembership</value>
+                        </list>
+                    </property>
+                </bean>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="333"/>
+            <property name="name" value="proxyService"/>
+            <property name="serviceId" value="proxyService"/>
+            <property name="evaluationOrder" value="333"/>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="4"/>
+            <property name="name" value="Test Service anonymous"/>
+            <property name="serviceId" value="testAnonymous"/>
+            <property name="evaluationOrder" value="5"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="10"/>
+            <property name="name" value="Test Regex Jasig Service"/>
+            <property name="serviceId" value="^http://www.jasig.org.+"/>
+            <property name="evaluationOrder" value="10"/>
+            <property name="proxyPolicy">
+                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern=".+"/>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="100"/>
+            <property name="name" value="TestProxyService"/>
+            <property name="serviceId" value="proxyService"/>
+            <property name="evaluationOrder" value="100"/>
+            <property name="proxyPolicy">
+                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern="^https://.+"/>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="222"/>
+            <property name="name" value="TestSsoFalse"/>
+            <property name="serviceId" value="^TestSsoFalse"/>
+            <property name="evaluationOrder" value="555"/>
+            <property name="accessStrategy">
+                <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
+                      c:ssoEnabled="false"
+                      c:enabled="true"/>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="111"/>
+            <property name="name" value="TestServiceAttributeForAuthzFails"/>
+            <property name="serviceId" value="^TestServiceAttributeForAuthzFails"/>
+            <property name="evaluationOrder" value="600"/>
+            <property name="accessStrategy">
+                <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+                    <property name="requiredAttributes">
+                        <map>
+                            <entry key="cn"
+                                   value="cnValue"/>
+                            <entry key="givenName"
+                                   value="gnameValue"/>
+                        </map>
+                    </property>
+                </bean>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="100"/>
+            <property name="name" value="TestServiceAttributeForAuthzPasses"/>
+            <property name="serviceId" value="TestServiceAttributeForAuthzPasses"/>
+            <property name="evaluationOrder" value="610"/>
+            <property name="accessStrategy">
+                <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
+                    <property name="requiredAttributes">
+                        <map>
+                            <entry key="groupMembership"
+                                   value="adopters"/>
+                        </map>
+                    </property>
+                </bean>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy"/>
+            </property>
+        </bean>
+
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
+            <property name="id" value="35"/>
+            <property name="name" value="Test Encryption of Attributes"/>
+            <property name="serviceId" value="testencryption$"/>
+            <property name="evaluationOrder" value="1"/>
+            <property name="publicKey">
+                <bean class="org.jasig.cas.services.RegisteredServicePublicKeyImpl"
+                      c:location="classpath:keys/RSA1024Public.key"
+                      c:algorithm="RSA"/>
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
+                      p:authorizedToReleaseCredentialPassword="true"
+                      p:authorizedToReleaseProxyGrantingTicket="true"/>
+            </property>
+        </bean>
+
+    </util:list>
+
+
+    <util:map id="serviceThemeResolverSupportedBrowsers">
+        <entry key=".*iPhone.*" value="iphone"/>
+        <entry key=".*Android.*" value="android"/>
+        <entry key=".*Safari.*Pre.*" value="safari"/>
+        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
+    </util:map>
+
+    <!-- CAS 2.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
+
+    <!-- Proxy Response Protocol Views: /proxy -->
+
+    <!-- Failure Proxy Views -->
+    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
+
+    <!-- Successful Proxy Views -->
+    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
+
+    <!-- CAS 3.0 Response Protocol Views -->
+
+    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
+
+    <!-- Successful Validation Views -->
+
+    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <!-- Failure Validation Views -->
+    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
+
+    <!-- Post View -->
+    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+
+    <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/2.0/}"
+          p:suffix=".jsp"
+          p:order="0"/>
+
+    <bean id="protocolCas3ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
+          p:suffix=".jsp"
+          p:order="1"/>
+
+    <bean id="cachingPrincipalAttributeRepository"
+          class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
+            c:timeUnit="SECONDS"
+            c:expiryDuration="20"/>
+
+    <bean id="persistentIdGenerator" class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          c:salt="casrox"  />
+
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+</beans>

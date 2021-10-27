@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <ldaptive:ad-authenticator id="authenticator-ad"
+            ldapUrl="${ldap.url}"
+            userFilter="${ldap.authn.searchFilter}"
+            bindDn="${ldap.managerDn}"
+            bindCredential="${ldap.managerPassword}"
+            allowMultipleDns="${ldap.allowMultipleDns:false}"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+            connectTimeout="${ldap.connectTimeout}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            failFastInitialize="true"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            idleTime="${ldap.pool.idleTime}"
+            baseDn="${ldap.baseDn}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            minPoolSize="${ldap.pool.minSize}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            useSSL="${ldap.use.ssl:false}"
+            subtreeSearch="${ldap.subtree.search:true}"
+            useStartTLS="${ldap.useStartTLS}"
+            />
+
+    <ldaptive:anonymous-search-authenticator id="authenticator-anonymous"
+           ldapUrl="${ldap.url}"
+           provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+           connectTimeout="${ldap.connectTimeout}"
+           validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+           failFastInitialize="true"
+           blockWaitTime="${ldap.pool.blockWaitTime}"
+           idleTime="${ldap.pool.idleTime}"
+           maxPoolSize="${ldap.pool.maxSize}"
+           minPoolSize="${ldap.pool.minSize}"
+           validatePeriodically="${ldap.pool.validatePeriodically}"
+           validatePeriod="${ldap.pool.validatePeriod}"
+           prunePeriod="${ldap.pool.prunePeriod}"
+           useSSL="${ldap.use.ssl:false}"
+           useStartTLS="${ldap.useStartTLS}"
+           usePasswordPolicy="${ldap.usePpolicy:true}"
+           allowMultipleDns="${ldap.allowMultipleDns:false}"
+           baseDn="${ldap.baseDn}"
+           subtreeSearch="${ldap.subtree.search:true}"
+           userFilter="${ldap.authn.searchFilter}"
+    />
+
+    <ldaptive:direct-authenticator id="authenticator-direct"
+            format="${ldap.authn.searchFilter}"
+            ldapUrl="${ldap.url}"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+            connectTimeout="${ldap.connectTimeout}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            failFastInitialize="true"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            idleTime="${ldap.pool.idleTime}"
+            usePasswordPolicy="${ldap.usePpolicy:true}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            minPoolSize="${ldap.pool.minSize}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            useSSL="${ldap.use.ssl:false}"
+            useStartTLS="${ldap.useStartTLS}" />
+
+
+    <ldaptive:bind-search-authenticator id="authenticator"
+            ldapUrl="${ldap.url}"
+            baseDn="${ldap.baseDn}"
+            userFilter="${ldap.authn.searchFilter}"
+            bindDn="${ldap.managerDn}"
+            bindCredential="${ldap.managerPassword}"
+            connectTimeout="${ldap.connectTimeout}"
+            useStartTLS="${ldap.useStartTLS}"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            allowMultipleDns="${ldap.allowMultipleDns:false}"
+            usePasswordPolicy="${ldap.usePpolicy:true}"
+            minPoolSize="${ldap.pool.minSize}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            idleTime="${ldap.pool.idleTime}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            failFastInitialize="true"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+            subtreeSearch="${ldap.subtree.search:true}"
+            useSSL="${ldap.use.ssl:false}"
+    />
+
+    <bean id="ldapAuthenticationHandler"
+          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          p:principalIdAttribute-ref="usernameAttribute"
+          c:authenticator-ref="authenticator">
+        <property name="principalAttributeList">
+            <list>
+                <value>displayName</value>
+                <value>mail</value>
+                <value>givenName</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="usernameAttribute" class="java.lang.String"
+          c:_0="sAMAccountName" />
+</beans>

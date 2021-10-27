@@ -1,0 +1,16 @@
+
+description = 'Apereo CAS Web Application Support'
+dependencies {
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+  }
+  compile(group: 'org.cryptacular', name: 'cryptacular', version: cryptacularVersion) {
+    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
+  compile project(':cas-server-core-web')
+  compile group: 'org.springframework', name: 'spring-web', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+}

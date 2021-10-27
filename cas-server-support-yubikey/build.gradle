@@ -1,0 +1,16 @@
+
+description = 'Apereo CAS YubiKey Support'
+dependencies {
+    
+    compile project(':cas-server-core-authentication')
+    compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    compile group: 'org.javassist', name: 'javassist', version:javassistVersion
+    compile(group: 'com.yubico', name: 'yubico-validation-client2', version:yubicoVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+    }
+}
+
+

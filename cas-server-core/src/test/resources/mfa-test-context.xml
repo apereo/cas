@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="org.jasig.cas"/>
+    <context:annotation-config/>
+
+    <context:property-placeholder properties-ref="propertiesMfa"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="false"/>
+
+    <util:properties id="propertiesMfa">
+        <prop key="cas.authn.policy.any.tryall">true</prop>
+    </util:properties>
+
+    <util:map id="authenticationHandlersResolvers">
+        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
+        <entry key-ref="passwordHandler" value-ref="personDirectoryPrincipalResolver"/>
+        <entry key-ref="oneTimePasswordHandler">
+            <null/>
+        </entry>
+    </util:map>
+    <util:list id="authenticationMetadataPopulators">
+        <ref bean="successfulHandlerMetaDataPopulator"/>
+    </util:list>
+
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
+          p:backingMap-ref="attrRepoBackingMap"/>
+
+    <util:map id="attrRepoBackingMap">
+        <entry key="uid" value="uid"/>
+        <entry key="eduPersonAffiliation" value="developer"/>
+        <entry key="groupMembership" value="adopters"/>
+    </util:map>
+
+
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy"/>
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    <alias name="requiredHandlerAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
+
+
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
+          p:entrySeparator="${cas.audit.singleline.separator:|}"
+          p:useSingleLine="${cas.audit.singleline:false}"/>
+
+    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
+        <ref bean="memoryMonitor"/>
+        <ref bean="sessionMonitor"/>
+    </util:list>
+
+    <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
+        <ref bean="webApplicationServiceFactory"/>
+    </util:list>
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                value-ref="serviceTicketUniqueIdGenerator"/>
+    </util:map>
+
+    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao"/>
+
+
+    <util:list id="inMemoryRegisteredServices">
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl"
+              p:id="1"
+              p:name="Normal"
+              p:serviceId="https://example.com/normal/**"
+              p:evaluationOrder="10"/>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl"
+              p:id="2"
+              p:name="High"
+              p:serviceId="https://example.com/high/**"
+              p:evaluationOrder="20">
+            <property name="requiredHandlers">
+                <list>
+                    <value>passwordHandler</value>
+                    <value>oneTimePasswordHandler</value>
+                </list>
+            </property>
+        </bean>
+
+    </util:list>
+
+
+    <bean id="passwordHandler"
+          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
+          p:name="passwordHandler">
+        <property name="users">
+            <map>
+                <entry key="alice" value="alice"/>
+                <entry key="bob" value="bob"/>
+                <entry key="mallory" value="mallory"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="oneTimePasswordHandler"
+          class="org.jasig.cas.TestOneTimePasswordAuthenticationHandler"
+          p:name="oneTimePasswordHandler">
+        <constructor-arg>
+            <map>
+                <entry key="alice" value="31415"/>
+                <entry key="bob" value="62831"/>
+                <entry key="mallory" value="14142"/>
+            </map>
+        </constructor-arg>
+    </bean>
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+
+</beans>

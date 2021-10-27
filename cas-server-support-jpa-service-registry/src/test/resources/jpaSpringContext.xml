@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+
+  <context:property-placeholder properties-ref="casProperties"/>
+  <util:properties id="casProperties"/>
+
+
+  <context:component-scan base-package="org.jasig.cas" />
+  <context:annotation-config/>
+
+  <import resource="classpath:META-INF/spring/jpa-svc-reg-context.xml" />
+
+  <bean id="jpaServiceRegistryDao" class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"/>
+  <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
+
+  <!-- CAS Context Core -->
+  <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+  <util:map id="authenticationHandlersResolvers"/>
+  <util:list id="authenticationMetadataPopulators" />
+  <util:list id="monitorsList" />
+  <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+  <util:map id="uniqueIdGeneratorsMap"/>
+  <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+  <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+  <util:list id="serviceFactoryList" />
+  <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+  <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+  <alias name="defaultPrincipalFactory" alias="principalFactory" />
+	<alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+  <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
+  <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+  <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" />
+</beans>
+
+

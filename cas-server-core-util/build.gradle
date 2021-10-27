@@ -1,0 +1,34 @@
+
+description = 'Apereo CAS Core Utilities'
+dependencies {
+    compile project(':cas-server-core-api-authentication')
+    compile project(':cas-server-core-api-util')
+    compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context', version:springVersion
+    compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'c3p0', module: 'c3p0')
+    }
+    compile group: 'commons-codec', name: 'commons-codec', version:commonsCodecVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+    compile(group: 'org.bitbucket.b_c', name: 'jose4j', version:jose4jVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile group: 'org.hjson', name:'hjson', version:hjsonVersion
+    compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+    compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
+    compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:httpclientVersion) {
+        exclude(group: 'commons-codec', module: 'commons-codec')
+    }
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
+    compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+    compile group: 'org.springframework', name: 'spring-tx', version:springVersion
+}
+

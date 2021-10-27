@@ -1,0 +1,24 @@
+
+description = 'Apereo CAS Web Application Themes Support'
+dependencies {
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  
+  compile project(':cas-server-core-web')
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+    exclude(group: 'org.springframework', module: 'spring-context')
+    exclude(group: 'org.springframework', module: 'spring-web')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-core')
+    exclude(group: 'org.springframework', module: 'spring-expression')
+    exclude(group: 'org.springframework', module: 'spring-webmvc')
+  }
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
+  testCompile project(':cas-server-core-services')
+  testCompile project(path: ":cas-server-core-services", configuration: "tests")
+}
+

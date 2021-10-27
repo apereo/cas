@@ -1,0 +1,6 @@
+
+description = 'Apereo CAS Trusted Authentication Webflow Support'
+dependencies {
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-support-trusted')
+}

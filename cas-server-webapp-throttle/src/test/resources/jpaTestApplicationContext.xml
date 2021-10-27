@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
+          id="inspektrAuditTrailDataSource"
+          p:driverClass="org.hsqldb.jdbcDriver"
+          p:username="sa"
+          p:password=""
+          p:url="jdbc:hsqldb:mem:cas-ticket-registry"/>
+
+    <util:list id="packagesToScan">
+        <value>org.jasig.cas.services</value>
+        <value>org.jasig.cas.ticket</value>
+    </util:list>
+
+    <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          id="factoryBean"
+          p:dataSource-ref="inspektrAuditTrailDataSource"
+          p:jpaVendorAdapter-ref="jpaVendorAdapter"
+          p:packagesToScan-ref="packagesToScan">
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.jdbc.batch_size">1</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          id="jpaVendorAdapter"
+          p:generateDdl="true"
+          p:showSql="true"/>
+
+
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
+          p:entityManagerFactory-ref="factoryBean"/>
+
+    <!--
+      Injects EntityManager/Factory instances into beans with
+      @PersistenceUnit and @PersistenceContext
+    -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+</beans>
+
+

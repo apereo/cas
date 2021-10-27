@@ -1,0 +1,40 @@
+
+description = 'Apereo CAS Core Services'
+dependencies {
+  compile project(':cas-server-core-api-services')
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+    exclude(group: 'org.javassist', module: 'javassist')
+    exclude(group: 'xml-apis', module: 'xml-apis')  
+  }
+  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:inspektrVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'javax.validation', module: 'validation-api')
+    exclude(group: 'org.aspectj', module: 'aspectjrt')
+  }
+  compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+  compile group: 'org.springframework', name: 'spring-orm', version:springVersion
+  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
+  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'c3p0', module: 'c3p0')
+  }
+  compile(group: 'org.reflections', name: 'reflections', version:reflectionsVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.javassist', name: 'javassist', version:javassistVersion
+  compile project(':cas-server-core-util')
+  compile project(':cas-server-core-events')
+  compile project(':cas-server-core-web')
+  testCompile project(path: ":cas-server-core-util", configuration: "tests")
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+  }
+}
+

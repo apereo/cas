@@ -1,0 +1,35 @@
+description = 'Apereo CAS Infinispan Integration'
+dependencies {
+    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context', version:springVersion
+    compile(group: 'org.infinispan', name: 'infinispan-core', version:infinispanVersion) {
+        exclude(group: 'com.google.guava', module: 'guava')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    compile(group: 'org.infinispan', name: 'infinispan-commons', version:infinispanVersion) {
+        exclude(group: 'com.google.guava', module: 'guava')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    compile(group: 'org.infinispan', name: 'infinispan-cachestore-remote', version:infinispanVersion) {
+        exclude(group: 'com.google.guava', module: 'guava')
+        exclude(group: 'org.iq80.leveldb', module: 'leveldb-api')
+        exclude(group: 'org.fusesource.leveldbjni', module: 'leveldbjni')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-tickets')
+
+    testCompile(group: 'org.infinispan', name: 'infinispan-embedded', version:infinispanVersion) {
+        exclude(group: 'com.google.guava', module: 'guava')
+        exclude(group: 'org.iq80.leveldb', module: 'leveldb-api')
+        exclude(group: 'org.fusesource.leveldbjni', module: 'leveldbjni')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile project(':cas-server-core-util')
+}
+
+

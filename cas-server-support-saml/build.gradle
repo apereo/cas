@@ -1,0 +1,124 @@
+description = 'Apereo CAS SAML Server and Validation Support'
+dependencies {
+
+    compile(group: 'org.opensaml', name: 'opensaml-core', version: opensamlVersion) {
+        exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile(group: 'net.shibboleth.utilities', name: 'java-support', version: shibbolethUtilJavaSupport) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile(group: 'org.opensaml', name: 'opensaml-saml-api', version: opensamlVersion) {
+        exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+    }
+    compile(group: 'org.opensaml', name: 'opensaml-saml-impl', version: opensamlVersion) {
+        exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile(group: 'org.opensaml', name: 'opensaml-soap-api', version: opensamlVersion) {
+        exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: bouncyCastleVersion
+    compile(group: 'net.shibboleth.idp', name: 'idp-profile-spring', version: opensamlVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'ch.qos.logback', module: 'logback-classic')
+        exclude(group: 'ch.qos.logback', module: 'logback-core')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-webapp-validation')
+    compile(group: 'jdom', name: 'jdom', version: jdomVersion) {
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    runtime group: 'xml-apis', name: 'xml-apis', version: xmlapisVersion
+    testCompile project(':cas-server-core-util')
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-logout')
+    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-aop')
+    }
+}

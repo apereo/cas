@@ -1,0 +1,24 @@
+description = 'Apereo CAS WS-Federation Support'
+dependencies {
+
+    compile(project(':cas-server-support-saml')) {
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: bouncyCastleVersion
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: bouncyCastleVersion
+
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-logout')
+    testCompile(project(path: ":cas-server-support-saml", configuration: "tests")) {
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    testCompile project(':cas-server-core-authentication')
+    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
+    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-aop')
+    }
+}

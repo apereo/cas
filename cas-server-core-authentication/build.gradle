@@ -1,0 +1,45 @@
+description = 'Apereo CAS Core Authentication'
+dependencies {
+    compile project(':cas-server-core-api-services')
+    compile project(':cas-server-core-api-ticket')
+    compile(group: 'io.dropwizard.metrics', name: 'metrics-annotation', version: dropwizardMetricsVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile project(':cas-server-core-util')
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'javax.validation', module: 'validation-api')
+        exclude(group: 'org.aspectj', module: 'aspectjrt')
+    }
+    compile(group: 'org.jasig.service.persondir', name: 'person-directory-impl', version: personDirectoryVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+        exclude(group: 'org.apache.commons', module: 'commons-collections4')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-tx')
+        exclude(group: 'org.ldaptive', module: 'ldaptive')
+    }
+    compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+        exclude(group: 'org.springframework', module: 'spring-web')
+    }
+    testCompile project(':cas-server-core-web')
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+        exclude(group: 'org.javassist', module: 'javassist')
+    }
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+}
+

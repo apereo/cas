@@ -1,0 +1,17 @@
+description = 'Apereo CAS Couchbase Service Registry'
+dependencies {
+
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-support-couchbase-core')
+
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile project(path: ":cas-server-core-util", configuration: "tests")
+}
+
+

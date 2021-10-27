@@ -1,0 +1,14 @@
+
+description = 'Apereo CAS REST Implementation'
+dependencies {
+
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core-tickets')
+    testCompile project(':cas-server-core-util')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile group: 'org.skyscreamer', name: 'jsonassert', version: jsonassertVersion
+}
+
+

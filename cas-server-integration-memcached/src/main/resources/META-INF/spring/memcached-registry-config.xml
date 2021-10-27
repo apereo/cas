@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:c="http://www.springframework.org/schema/c"
+           xmlns:p="http://www.springframework.org/schema/p"
+           xmlns:util="http://www.springframework.org/schema/util"
+           xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+        <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+              p:servers="${memcached.servers:localhost:11211}"
+              p:protocol="${memcached.protocol:BINARY}"
+              p:locatorType="${memcached.locatorType:ARRAY_MOD}"
+              p:failureMode="${memcached.failureMode:Redistribute}"
+              p:transcoder-ref="kryoTranscoder">
+            <property name="hashAlg">
+                <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.${memcached.hashAlgorithm:FNV1_64_HASH}" />
+            </property>
+        </bean>
+
+        <bean id="kryoTranscoder"
+              class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
+              init-method="initialize" />
+    </beans>
+
+</beans>

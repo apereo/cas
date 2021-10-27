@@ -1,0 +1,130 @@
+/*
+/* --------------- CUSTOM STYLES
+*/
+
+body,html {
+    background: #153e50;
+}
+
+/*body,html,*/
+
+#cas-sessions,
+#container-stable, 
+.ui-widget  {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 14px;
+}
+
+
+/* Navigation -- */
+.navbar-default .navbar-brand,
+.navbar-default .navbar-toggle {
+  color: #ffffff;
+}
+.navbar-default .navbar-brand {
+  font-family: 'Open Sans', sans-serif;
+  color: #ffffff;
+  line-height: 32px;
+  font-size: 20px;
+  padding: 0;
+  position: relative;
+  top: 8px;
+  left: 5px;
+}
+.navbar-default .navbar-brand:hover {
+  color: #ffffff;
+}
+.navbar-default .navbar-brand img {
+  margin-right: 8px;
+  width: 32px;
+}
+.navbar-default .navbar-brand .logo {
+  text-transform: uppercase;
+  font-size: 26px;
+}
+.navbar-default .navbar-brand .logo .heavy {
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .navbar-brand {
+    display: block;
+    padding: 6px 15px 0;
+    box-sizing: border-box;
+    top: auto;
+    left: auto;
+  }
+  .navbar-brand img {
+    display: inline-block;
+    width: 32px;
+  }
+}
+
+
+
+#navbar > .navbar-nav > li > a {
+  color: #ffffff;
+  font-size: 12px;
+}
+.navbar-default {
+  border-bottom: 1px solid #dadada;
+  background-color: #346288;
+}
+.navbar-default .navbar-header a {
+  color: #ffffff;
+}
+.navbar-default .navbar-header a.toggle-sidebar {
+  padding: 15px 20px;
+  float: left;
+}
+#top-navbar .nav > li .navbar-text {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+}
+#top-navbar .nav > li > a {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+}
+#top-navbar .nav > li > a:hover,
+#top-navbar .nav > li > a:focus {
+  background-color: #36a9e1;
+}
+
+/* Main content block --*/
+/*#content {*/
+   /*border-radius: 4px;*/
+/*}*/
+
+/* Session container --*/
+#container-stable {
+    margin: 40px 0 20px; 
+}
+#container-stable h3, 
+#container-stable table th, 
+#container-stable table td {
+    /*font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;*/  
+}
+#container-stable  table th {
+    text-align: left;   
+}
+
+/* Tables */
+#table-monitor-hdr {
+    font-weight: bold;
+    margin-left: 16px;
+    text-align: center
+}
+
+
+/* UI controls */
+.ui-accordion .ui-accordion-header {
+  margin: 15px 0 0;    
+}
+
+.btn.active, .btn:active {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}

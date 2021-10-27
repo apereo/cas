@@ -1,0 +1,43 @@
+
+description = 'Apereo CAS JDBC Monitor Support'
+dependencies {
+  
+  compile project(':cas-server-core-monitor')
+  compile project(':cas-server-core-authentication')
+  compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
+  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
+  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'c3p0', module: 'c3p0')
+  }
+  compile group: 'org.springframework', name: 'spring-orm', version:springVersion
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+  }
+  compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:hibernateVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+  }
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
+  runtime group: 'com.mchange', name: 'c3p0', version:c3p0Version
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+  }
+  testCompile group: 'org.hsqldb', name: 'hsqldb', version:hsqlVersion
+  testCompile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+    exclude(group: 'org.springframework', module: 'spring-context')
+    exclude(group: 'org.springframework', module: 'spring-web')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-core')
+    exclude(group: 'org.springframework', module: 'spring-expression')
+    exclude(group: 'org.springframework', module: 'spring-webmvc')
+  }
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(':cas-server-core-util')
+}
+

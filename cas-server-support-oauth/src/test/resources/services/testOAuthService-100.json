@@ -1,0 +1,35 @@
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "secret",
+  "serviceId" : "^(https|imaps)://hello.*",
+  "name" : "HTTPS and IMAPS",
+  "id" : 10000001,
+  "description" : "Description is here",
+  "theme": "misagh",
+  "logoutUrl" : "https://example.org/logout",
+  "logo": "https://example.org",
+  "evaluationOrder": 100,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "usernameAttributeProvider" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "logoutType" : "FRONT_CHANNEL",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "groupMembership" ] ],
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : true,
+    "authorizedToReleaseProxyGrantingTicket" : true
+  },
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : false,
+    "ssoEnabled" : false,
+    "requireAllAttributes" : true
+  }
+}

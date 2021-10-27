@@ -1,0 +1,14 @@
+description = 'Apereo CAS LDAP Core Support'
+dependencies {
+
+    compile project(':cas-server-core-util')
+    compile project(':cas-server-core-authentication')
+    compile(group: 'org.ldaptive', name: 'ldaptive', version: ldaptiveVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.ldaptive', name: 'ldaptive-beans', version: ldaptiveVersion
+    compile group: 'joda-time', name: 'joda-time', version: jodaTimeVersion
+    testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version: ldaptiveVersion
+    testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion
+}

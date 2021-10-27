@@ -1,0 +1,30 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <description>
+        This file is loaded by the Spring configuration automatically, and serves as a placeholder
+        for various view definitions and beans. This helps with construction of views that require
+        references to other beans and whose changes can be configured externally.
+    </description>
+
+    <!-- Sample configuration to turn on SAML validation. Note that the SAML module dependency
+         is required to be included in the final web application file.  -->
+
+    <bean id="abstractsamlView" class="org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView"
+          p:casAttributeEncoder-ref="casAttributeEncoder"
+          p:servicesManager-ref="servicesManager"
+          abstract="true"/>
+
+    <bean id="casSamlServiceSuccessView" class="org.jasig.cas.support.saml.web.view.Saml10SuccessResponseView"
+          parent="abstractsamlView"
+          p:issuer="${cas.saml.response.issuer:localhost}"
+          p:skewAllowance="${cas.saml.response.skewAllowance:0}" />
+
+    <bean id="casSamlServiceFailureView" class="org.jasig.cas.support.saml.web.view.Saml10FailureResponseView"
+          parent="abstractsamlView"  />
+
+</beans>

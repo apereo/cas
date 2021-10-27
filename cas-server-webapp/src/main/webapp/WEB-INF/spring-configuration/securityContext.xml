@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <description>
+        Security configuration for sensitive areas of CAS : status and statistics.
+    </description>
+
+    <bean id="config" class="org.pac4j.core.config.Config">
+        <constructor-arg name="client">
+            <bean class="org.pac4j.http.client.direct.IpClient">
+                <property name="authenticator">
+                    <bean class="org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator">
+                        <constructor-arg name="regexpPattern" value="${cas.securityContext.adminpages.ip:127\.0\.0\.1|0:0:0:0:0:0:0:1}" />
+                    </bean>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/status/**" />
+            <mvc:mapping path="/statistics/**" />
+            <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
+                <constructor-arg name="config" ref="config" />
+                <constructor-arg name="clientName" value="IpClient" />
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+</beans>

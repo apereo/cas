@@ -1,0 +1,50 @@
+description = 'Apereo CAS Client Protocols Support using pac4j'
+dependencies {
+
+    compile project(':cas-server-core-tickets')
+    compile group: 'com.google.guava', name: 'guava', version: guavaVersion
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-integration-pac4j-core')
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+        exclude(group: 'commons-io', module: 'commons-io')
+    }
+    compile(group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+        exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+    }
+    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+    }
+    compile(group: 'org.pac4j', name: 'pac4j-saml', version: pac4jVersion) {
+        exclude(group: 'org.apache.commons', module: 'commons-lang3')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+        exclude(group: 'junit', module: 'junit')
+        exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+        exclude(group: 'org.opensaml', module: 'xmltooling')
+    }
+    compile(group: 'org.pac4j', name: 'pac4j-config', version: pac4jVersion) {
+        exclude(group: 'org.pac4j', module: 'pac4j-core')
+        exclude(group: 'org.pac4j', module: 'pac4j-saml')
+        exclude(group: 'org.pac4j', module: 'pac4j-oauth')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+        exclude(group: 'net.minidev', module: 'json-smart')
+        exclude(group: 'org.opensaml', module: 'xmltooling')
+        exclude(group: 'commons-io', module: 'commons-io')
+    }
+    compile(group: 'net.minidev', name: 'json-smart', version: '1.3.1') {
+
+    }
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+}

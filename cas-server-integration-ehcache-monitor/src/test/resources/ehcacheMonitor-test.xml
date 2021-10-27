@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <context:property-placeholder location="classpath:cas.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="false"/>
+
+
+  <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <property name="configLocation" value="classpath:ehcache-failsafe.xml" />
+    <property name="shared" value="true" />
+    <property name="cacheManagerName" value="cacheManager" />
+  </bean>
+
+  <bean id="testCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+    <property name="cacheManager" ref="cacheManager" />
+    <property name="cacheName" value="testCache" />
+    <property name="diskExpiryThreadIntervalSeconds" value="0" />
+    <property name="diskPersistent" value="false" />
+    <property name="eternal" value="false" />
+    <property name="maxElementsInMemory" value="100" />
+    <property name="maxElementsOnDisk" value="100" />
+    <property name="memoryStoreEvictionPolicy" value="LRU" />
+    <property name="overflowToDisk" value="false" />
+    <property name="timeToIdle" value="300" />
+    <property name="timeToLive" value="300" />
+  </bean>
+
+  <bean id="monitor" class="org.jasig.cas.monitor.EhCacheMonitor">
+    <constructor-arg index="0" ref="testCache" />
+  </bean>
+
+</beans>

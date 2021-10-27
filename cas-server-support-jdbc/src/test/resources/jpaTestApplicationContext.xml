@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <context:property-placeholder properties-ref="casProperties"/>
+  <util:properties id="casProperties"/>
+
+  <util:list id="ticketPackagesToScan">
+    <value>org.jasig.cas</value>
+  </util:list>
+
+  <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+        id="ticketJpaVendorAdapter"
+        p:generateDdl="${database.gen.ddl:true}"
+        p:showSql="${database.show.sql:true}" />
+
+  <bean id="abstractJpaEntityManagerFactory" abstract="true"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+        p:persistenceUnitName="jpaTicketRegistryContext"
+        p:jpaVendorAdapter-ref="ticketJpaVendorAdapter"
+        p:packagesToScan-ref="ticketPackagesToScan">
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+        <prop key="hibernate.hbm2ddl.auto">${database.ddl.auto:create-drop}</prop>
+        <prop key="hibernate.jdbc.batch_size">${database.batchSize:1}</prop>
+      </props>
+    </property>
+  </bean>
+
+
+  <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+        p:dataSource-ref="dataSource" />
+
+
+  <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
+        id="dataSource"
+        p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+        p:username="${database.user:sa}"
+        p:password="${database.password:}"
+        p:url="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}" />
+
+
+
+</beans>
+
+

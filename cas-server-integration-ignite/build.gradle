@@ -1,0 +1,24 @@
+description = 'Apereo CAS Ignite Integration'
+dependencies {
+    compile(group: 'org.apache.ignite', name: 'ignite-core', version:igniteVersion)
+    compile(group: 'org.apache.ignite', name: 'ignite-log4j', version:igniteVersion)
+    compile(group: 'org.apache.ignite', name: 'ignite-spring', version:igniteVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-aop')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-jdbc')
+        exclude(group: 'org.springframework', module: 'spring-tx')
+    }
+
+    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-tickets')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile project(':cas-server-core-util')
+}
+
+

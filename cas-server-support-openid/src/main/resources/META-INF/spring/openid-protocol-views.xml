@@ -1,0 +1,58 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <description>
+        This file is loaded by the Spring configuration automatically, and serves as a placeholder
+        for various view definitions and beans. This helps with construction of views that require
+        references to other beans and whose changes can be configured externally.
+    </description>
+
+
+    <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
+          p:delegates-ref="delegateControllers"/>
+
+    <util:list id="delegateControllers">
+        <ref bean="smartOpenIdAssociationController"/>
+        <ref bean="openIdValidateController"/>
+    </util:list>
+
+    <bean id="serverManager"
+          class="org.openid4java.server.ServerManager"
+          p:oPEndpointUrl="${server.prefix}/login"
+          p:enforceRpId="${cas.openid.enforce.rpid:false}" />
+
+
+    <!-- OpenId View -->
+
+    <!-- OpenId Service Views -->
+
+    <!-- Failure Validation Views -->
+    <bean id="casOpenIdServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceFailureView.jsp"/>
+
+    <!-- Successful Views -->
+    <bean id="casOpenIdServiceSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceSuccessView.jsp"/>
+
+    <!-- OpenId Association Views -->
+
+    <!-- Failure Validation Views -->
+    <bean id="casOpenIdAssociationFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationFailureView.jsp"/>
+
+    <!-- Successful Views -->
+    <bean id="casOpenIdAssociationSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationSuccessView.jsp"/>
+
+    <!-- OpenId Provider Views -->
+    <bean id="openIdProviderView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/user.jsp"/>
+
+</beans>

@@ -1,0 +1,68 @@
+description = 'Apereo CAS Management Web Application Support'
+
+dependencies {
+    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.pac4j', module: 'pac4j-core')
+    }
+    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'joda-time', module: 'joda-time')
+    }
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'javax.validation', module: 'validation-api')
+        exclude(group: 'org.aspectj', module: 'aspectjrt')
+    }
+    compile group: 'org.springframework', name: 'spring-aop', version: springVersion
+    compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-web')
+    }
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-core')
+    compile project(':cas-server-core-logout')
+    compile project(':cas-server-core-logging')
+    compile project(':cas-server-core-tickets')
+    compile project(':cas-server-core-audit')
+    compile project(':cas-server-support-oauth-core')
+    compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version: casClientVersion) {
+        exclude(group: 'javax.servlet', module: 'servlet-api')
+        exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+    }
+    compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
+    compile group: 'org.springframework', name: 'spring-expression', version: springVersion
+    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
+    compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+    compile group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
+    runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version: inspektrVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'javax.validation', module: 'validation-api')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+        exclude(group: 'org.springframework', module: 'spring-tx')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-jdbc')
+        exclude(group: 'org.aspectj', module: 'aspectjrt')
+        exclude(group: 'javax.validation', module: 'validation-api')
+    }
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
+    runtime group: 'com.lmax', name: 'disruptor', version: disruptorVersion
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+}

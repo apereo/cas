@@ -1,0 +1,92 @@
+description = 'Apereo CAS Core'
+dependencies {
+  
+  compile project(':cas-server-core-services')
+  compile project(':cas-server-core-events')
+  compile project(':cas-server-core-tickets')
+  compile project(':cas-server-core-validation')
+  compile project(':cas-server-core-authentication')
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:inspektrVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'javax.validation', module: 'validation-api')
+    exclude(group: 'org.aspectj', module: 'aspectjrt')
+  }
+  compile(group: 'io.dropwizard.metrics', name: 'metrics-core', version:dropwizardMetricsVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+  }
+  compile(group: 'io.dropwizard.metrics', name: 'metrics-annotation', version:dropwizardMetricsVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+  }
+  compile(group: 'org.jasig.service.persondir', name: 'person-directory-impl', version:personDirectoryVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.apache.commons', module: 'commons-lang3')
+    exclude(group: 'org.apache.commons', module: 'commons-collections4')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-context')
+    exclude(group: 'org.springframework', module: 'spring-core')
+    exclude(group: 'org.springframework', module: 'spring-tx')
+    exclude(group: 'org.ldaptive', module: 'ldaptive')
+  }
+  compile group: 'commons-codec', name: 'commons-codec', version:commonsCodecVersion
+  compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-tx', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+    exclude(group: 'org.javassist', module: 'javassist')
+    exclude(group: 'xml-apis', module: 'xml-apis')  
+  }
+  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
+  compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
+  compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+  
+  compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+  }
+  runtime(group: 'commons-jexl', name: 'commons-jexl', version:commonsJexlVersion) {
+    exclude(group: 'commons-logging', module: 'commons-logging')
+    exclude(group: 'junit', module: 'junit')
+  }
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    exclude(group: 'xml-apis', module: 'xml-apis')  
+  }
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.springframework', module: 'spring-core')
+    exclude(group: 'org.springframework', module: 'spring-aop')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-context-support')
+  }
+  testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:hibernateVersion) {
+    exclude(group: 'org.javassist', module: 'javassist')
+    exclude(group: 'xml-apis', module: 'xml-apis')  
+  }
+  testCompile group: 'org.javassist', name: 'javassist', version:javassistVersion
+  testCompile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:inspektrVersion) {
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.springframework', module: 'spring-web')
+    exclude(group: 'org.springframework', module: 'spring-webmvc')
+    exclude(group: 'org.springframework', module: 'spring-tx')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-jdbc')
+    exclude(group: 'org.aspectj', module: 'aspectjrt')
+    exclude(group: 'javax.validation', module: 'validation-api')
+  }
+  testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
+  testCompile project(path: ":cas-server-core-logout", configuration: "tests")
+  testCompile project(':cas-server-core-util')
+  testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-core-monitor')
+  testCompile project(path: ":cas-server-core-services", configuration: "tests")
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+}
+

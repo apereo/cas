@@ -1,0 +1,15 @@
+#casmgmt-header {border-bottom: 1px solid @color2;
+    nav {background-color: @header-background-color; color: @header-background-text-color; border: none; border-radius: 0; margin-bottom: 0;
+        a {font-size: @header-link-font-size; color: @header-link-text-color;}
+        .navbar-header {
+            h4 {display: inline-block; margin-top: 16px; font-weight: normal;}
+            .navbar-brand {padding-top: 13px;
+                img {height: @header-image-height;}
+            }
+        }
+        .quicklinks a {
+            &:hover,
+            &:focus {color: @header-link-text-hover-color; background-color: @header-link-background-hover-color;}
+        }
+    }
+}

@@ -1,0 +1,28 @@
+description = 'Apereo CAS Mongo Authentication Support'
+dependencies {
+
+    compile project(':cas-server-core-authentication')
+    compile project(':cas-server-integration-pac4j')
+    compile(group: 'org.pac4j', name: 'pac4j-mongo', version: pac4jVersion) {
+        exclude(group: 'org.mongodb', module: 'mongo-java-driver')
+    }
+    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
+        exclude(group: 'commons-logging', module: 'commons-logging')
+    }
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: mongoDriverVersion
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    }
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+        exclude(group: 'org.javassist', module: 'javassist')
+        exclude(group: 'xml-apis', module: 'xml-apis')
+    }
+    testCompile project(':cas-server-core-services')
+    testCompile project(':cas-server-core-authentication')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-util", configuration: "tests")
+}
+
+
