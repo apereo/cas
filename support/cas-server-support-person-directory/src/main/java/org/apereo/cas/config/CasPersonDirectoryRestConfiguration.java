@@ -39,49 +39,58 @@ import java.util.Objects;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryRestConfiguration {
-    @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public BeanContainer<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
-        val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getRest()
-            .stream()
-            .filter(rest -> StringUtils.isNotBlank(rest.getUrl()))
-            .forEach(rest -> {
-                val dao = new RestfulPersonAttributeDao();
-                dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
-                dao.setOrder(rest.getOrder());
-                FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
-                dao.setUrl(rest.getUrl());
-                dao.setMethod(Objects.requireNonNull(HttpMethod.resolve(rest.getMethod())).name());
+    @Configuration(value = "RestfulAttributeRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RestfulAttributeRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public BeanContainer<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
+            val list = new ArrayList<IPersonAttributeDao>();
+            casProperties.getAuthn().getAttributeRepository().getRest()
+                .stream()
+                .filter(rest -> StringUtils.isNotBlank(rest.getUrl()))
+                .forEach(rest -> {
+                    val dao = new RestfulPersonAttributeDao();
+                    dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
+                    dao.setOrder(rest.getOrder());
+                    FunctionUtils.doIfNotNull(rest.getId(), dao::setId);
+                    dao.setUrl(rest.getUrl());
+                    dao.setMethod(Objects.requireNonNull(HttpMethod.resolve(rest.getMethod())).name());
 
-                val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.putAll(rest.getHeaders());
-                dao.setHeaders(headers);
-                dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(rest.getUsernameAttribute()));
+                    val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                    headers.putAll(rest.getHeaders());
+                    dao.setHeaders(headers);
+                    dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(rest.getUsernameAttribute()));
 
-                if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
-                    dao.setBasicAuthPassword(rest.getBasicAuthPassword());
-                    dao.setBasicAuthUsername(rest.getBasicAuthUsername());
-                    LOGGER.debug("Basic authentication credentials are located for REST endpoint [{}]", rest.getUrl());
-                } else {
-                    LOGGER.debug("Basic authentication credentials are not defined for REST endpoint [{}]", rest.getUrl());
-                }
+                    if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
+                        dao.setBasicAuthPassword(rest.getBasicAuthPassword());
+                        dao.setBasicAuthUsername(rest.getBasicAuthUsername());
+                        LOGGER.debug("Basic authentication credentials are located for REST endpoint [{}]", rest.getUrl());
+                    } else {
+                        LOGGER.debug("Basic authentication credentials are not defined for REST endpoint [{}]", rest.getUrl());
+                    }
 
-                LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
-                list.add(dao);
-            });
-        return BeanContainer.of(list);
+                    LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
+                    list.add(dao);
+                });
+            return BeanContainer.of(list);
+        }
     }
 
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "restfulPersonDirectoryAttributeRepositoryPlanConfigurer")
-    public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("restfulAttributeRepositories") final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories.toList());
+    @Configuration(value = "RestfulAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class RestfulAttributeRepositoryPlanConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "restfulPersonDirectoryAttributeRepositoryPlanConfigurer")
+        public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
+            @Qualifier("restfulAttributeRepositories") final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
+            return plan -> plan.registerAttributeRepositories(restfulAttributeRepositories.toList());
+        }
+
     }
 }
 

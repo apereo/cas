@@ -236,28 +236,38 @@ public class CasPersonDirectoryConfiguration {
     @Configuration(value = "CasPersonDirectoryStaticSubAttributeRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasPersonDirectoryStaticSubAttributeRepositoryConfiguration {
-        @ConditionalOnMissingBean(name = "stubAttributeRepositories")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
-        public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
-            val list = new ArrayList<IPersonAttributeDao>();
-            val stub = casProperties.getAuthn().getAttributeRepository().getStub();
-            val attrs = stub.getAttributes();
-            if (!attrs.isEmpty()) {
-                val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
-                list.add(dao);
+
+        @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
+        @EnableConfigurationProperties(CasConfigurationProperties.class)
+        public static class StubAttributeRepositoryConfiguration {
+            @ConditionalOnMissingBean(name = "stubAttributeRepositories")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            @Autowired
+            public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
+                val list = new ArrayList<IPersonAttributeDao>();
+                val stub = casProperties.getAuthn().getAttributeRepository().getStub();
+                val attrs = stub.getAttributes();
+                if (!attrs.isEmpty()) {
+                    val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
+                    list.add(dao);
+                }
+                return BeanContainer.of(list);
             }
-            return BeanContainer.of(list);
         }
 
-        @Bean
-        @Autowired
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
-            @Qualifier("stubAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
-            return plan -> plan.registerAttributeRepositories(stubAttributeRepositories.getObject());
+        @Configuration(value = "StubAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
+        @EnableConfigurationProperties(CasConfigurationProperties.class)
+        public static class StubAttributeRepositoryPlanConfiguration {
+            @Bean
+            @Autowired
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")
+            public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
+                @Qualifier("stubAttributeRepositories")
+                final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
+                return plan -> plan.registerAttributeRepositories(stubAttributeRepositories.toList());
+            }
         }
     }
 }

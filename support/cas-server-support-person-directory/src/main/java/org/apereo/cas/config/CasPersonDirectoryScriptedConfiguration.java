@@ -37,36 +37,43 @@ import java.util.ArrayList;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPersonDirectoryScriptedConfiguration {
-
-    @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
-        val list = new ArrayList<IPersonAttributeDao>();
-        casProperties.getAuthn().getAttributeRepository().getScript()
-            .forEach(Unchecked.consumer(script -> {
-                val scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                val engineName = script.getEngineName() == null
-                    ? ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename())
-                    : script.getEngineName();
-                val dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
-                dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
-                dao.setOrder(script.getOrder());
-                FunctionUtils.doIfNotNull(script.getId(), dao::setId);
-                LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
-                list.add(dao);
-            }));
-        return BeanContainer.of(list);
+    @Configuration(value = "ScriptAttributeRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class ScriptAttributeRepositoryConfiguration {
+        @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Autowired
+        public BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
+            val list = new ArrayList<IPersonAttributeDao>();
+            casProperties.getAuthn().getAttributeRepository().getScript()
+                .forEach(Unchecked.consumer(script -> {
+                    val scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                    val engineName = script.getEngineName() == null
+                        ? ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename())
+                        : script.getEngineName();
+                    val dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
+                    dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
+                    dao.setOrder(script.getOrder());
+                    FunctionUtils.doIfNotNull(script.getId(), dao::setId);
+                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
+                    list.add(dao);
+                }));
+            return BeanContainer.of(list);
+        }
     }
 
-    @Bean
-    @Autowired
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("scriptedAttributeRepositories")
-        final BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(scriptedAttributeRepositories.toList());
+    @Configuration(value = "ScriptAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class ScriptAttributeRepositoryPlanConfiguration {
+        @Bean
+        @Autowired
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(
+            @Qualifier("scriptedAttributeRepositories")
+            final BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories) {
+            return plan -> plan.registerAttributeRepositories(scriptedAttributeRepositories.toList());
+        }
     }
 
 }

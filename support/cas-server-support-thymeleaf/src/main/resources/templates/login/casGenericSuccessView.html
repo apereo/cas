@@ -136,7 +136,7 @@
                                         let serviceId = /*[[${service.serviceId}]]*/ ;
                                         if (isValidURL(serviceId)) {
                                             let id = /*[[${'service' + service.id}]]*/ ;
-                                            $("a#" + id).attr("href", serviceId);
+                                            $(`a#${id}`).attr("href", serviceId);
                                         }
                                         /*]]>*/
                                     </script>
@@ -156,28 +156,24 @@
         <script type="text/javascript" th:inline="javascript">
             let divs = ["divPrincipalAttributes", "divAuthenticationAttributes", "divAuthorizedServices"]
             divs.forEach(id => {
-                let div = document.querySelector('#' + id);
-                if (div != null) {
-                    new mdc.dataTable.MDCDataTable(div);
-                }
-            });
-            $(function() {
-                if (typeof mdc !== 'undefined') {
-                    new mdc.dataTable.MDCDataTable(div);
-                    tabify(mdc);
-                } else {
-                    $('#principal-tab').tab('show');
+                console.log(`Marking element ${id}`)
+                let div = document.querySelector(`#${id}`);
+                $(function() {
+                    if (typeof mdc !== 'undefined') {
+                        new mdc.dataTable.MDCDataTable(div);
+                        tabify(mdc);
+                    } else {
+                        $('#principal-tab').tab('show');
 
-                    $('button[data-toggle="tab"]').on('shown.bs.tab', function (event) {
-                        var id = $(event.target).data('target');
-                        $('.tab-pane').addClass('d-none');
-                        $('#' + id).removeClass('d-none');
-                        
-                    })
-                }
-                
+                        $('button[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+                            var id = $(event.target).data('target');
+                            $('.tab-pane').addClass('d-none');
+                            $(`#${id}`).removeClass('d-none');
+
+                        })
+                    }
+                });
             });
-            
             function tabify(material) {
                 var elm = document.getElementById('attribute-tabs');
                 if (material) {
