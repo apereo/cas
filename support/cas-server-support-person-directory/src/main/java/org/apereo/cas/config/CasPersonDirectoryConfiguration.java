@@ -14,6 +14,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryCustomizer;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
@@ -239,7 +240,7 @@ public class CasPersonDirectoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Autowired
-        public List<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
+        public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val stub = casProperties.getAuthn().getAttributeRepository().getStub();
             val attrs = stub.getAttributes();
@@ -247,7 +248,7 @@ public class CasPersonDirectoryConfiguration {
                 val dao = Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
                 list.add(dao);
             }
-            return list;
+            return BeanContainer.of(list);
         }
 
         @Bean
@@ -255,7 +256,7 @@ public class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(
             @Qualifier("stubAttributeRepositories")
-            final ObjectProvider<List<IPersonAttributeDao>> stubAttributeRepositories) {
+            final BeanContainer<IPersonAttributeDao> stubAttributeRepositories) {
             return plan -> plan.registerAttributeRepositories(stubAttributeRepositories.getObject());
         }
     }

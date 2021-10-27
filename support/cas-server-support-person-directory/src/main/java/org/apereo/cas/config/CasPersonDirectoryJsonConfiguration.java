@@ -5,6 +5,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasPersonDirectoryJsonConfiguration}.
@@ -39,7 +38,7 @@ public class CasPersonDirectoryJsonConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public List<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
+    public BeanContainer<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getJson()
             .stream()
@@ -54,18 +53,20 @@ public class CasPersonDirectoryJsonConfiguration {
                 }
                 dao.setOrder(json.getOrder());
                 FunctionUtils.doIfNotNull(json.getId(), dao::setId);
+                dao.setEnabled(json.isEnabled());
                 dao.init();
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
             }));
-        return list;
+        return BeanContainer.of(list);
     }
 
     @Bean
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")
     public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("jsonAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> jsonAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.getObject());
+        @Qualifier("jsonAttributeRepositories") final BeanContainer<IPersonAttributeDao> jsonAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(jsonAttributeRepositories.toList());
     }
 }

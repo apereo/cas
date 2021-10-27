@@ -3,13 +3,13 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasPersonDirectoryGrouperConfiguration}.
@@ -38,7 +37,7 @@ public class CasPersonDirectoryGrouperConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public List<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
+    public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
 
@@ -52,14 +51,14 @@ public class CasPersonDirectoryGrouperConfiguration {
             LOGGER.debug("Configured Grouper attribute source");
             list.add(dao);
         }
-        return list;
+        return BeanContainer.of(list);
     }
 
     @Bean
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer grouperPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("grouperAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> grouperAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(grouperAttributeRepositories.getObject());
+        @Qualifier("grouperAttributeRepositories") final BeanContainer<IPersonAttributeDao> grouperAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(grouperAttributeRepositories.toList());
     }
 }

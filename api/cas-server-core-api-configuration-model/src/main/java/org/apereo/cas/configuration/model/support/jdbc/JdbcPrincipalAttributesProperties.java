@@ -140,4 +140,9 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * and the value is the database column that should map.
      */
     private Map<String, String> queryAttributes = new HashMap<>(0);
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private boolean enabled = true;
 }

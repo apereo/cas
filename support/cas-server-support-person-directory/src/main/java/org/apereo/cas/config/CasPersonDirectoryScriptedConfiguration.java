@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,7 +23,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasPersonDirectoryScriptedConfiguration}.
@@ -43,7 +42,7 @@ public class CasPersonDirectoryScriptedConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public List<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
+    public BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
@@ -58,7 +57,7 @@ public class CasPersonDirectoryScriptedConfiguration {
                 LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
                 list.add(dao);
             }));
-        return list;
+        return BeanContainer.of(list);
     }
 
     @Bean
@@ -66,8 +65,8 @@ public class CasPersonDirectoryScriptedConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(
         @Qualifier("scriptedAttributeRepositories")
-        final ObjectProvider<List<IPersonAttributeDao>> scriptedAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(scriptedAttributeRepositories.getObject());
+        final BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(scriptedAttributeRepositories.toList());
     }
 
 }

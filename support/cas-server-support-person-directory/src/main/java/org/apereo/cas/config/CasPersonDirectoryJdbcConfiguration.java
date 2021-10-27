@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
@@ -19,7 +20,6 @@ import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -87,7 +86,7 @@ public class CasPersonDirectoryJdbcConfiguration {
     @Bean
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public List<IPersonAttributeDao> jdbcAttributeRepositories(final CasConfigurationProperties casProperties) {
+    public BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getJdbc()
@@ -113,16 +112,18 @@ public class CasPersonDirectoryJdbcConfiguration {
                 jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
                 jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase()));
                 jdbcDao.setOrder(jdbc.getOrder());
+                jdbcDao.setEnabled(jdbc.isEnabled());
                 list.add(jdbcDao);
             });
-        return list;
+        return BeanContainer.of(list);
     }
 
     @Bean
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jdbcPersonDirectoryAttributeRepositoryPlanConfigurer")
     public PersonDirectoryAttributeRepositoryPlanConfigurer jdbcPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("jdbcAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> jdbcAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(jdbcAttributeRepositories.getObject());
+        @Qualifier("jdbcAttributeRepositories") final BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(jdbcAttributeRepositories.toList());
     }
 }

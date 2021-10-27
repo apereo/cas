@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,7 +26,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.naming.directory.SearchControls;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasPersonDirectoryLdapConfiguration}.
@@ -44,7 +43,7 @@ public class CasPersonDirectoryLdapConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Autowired
-    public List<IPersonAttributeDao> ldapAttributeRepositories(final CasConfigurationProperties casProperties) {
+    public BeanContainer<IPersonAttributeDao> ldapAttributeRepositories(final CasConfigurationProperties casProperties) {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository();
         attrs.getLdap()
@@ -56,6 +55,7 @@ public class CasPersonDirectoryLdapConfiguration {
                 LOGGER.debug("Configured LDAP attribute source for [{}] and baseDn [{}]", ldap.getLdapUrl(), ldap.getBaseDn());
                 ldapDao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
+                ldapDao.setEnabled(ldap.isEnabled());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
                 ldapDao.setSearchFilter(ldap.getSearchFilter());
@@ -101,16 +101,16 @@ public class CasPersonDirectoryLdapConfiguration {
                 LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
                 list.add(ldapDao);
             });
-
-        return list;
+        return BeanContainer.of(list);
     }
 
     @Bean
     @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "ldapPersonDirectoryAttributeRepositoryPlanConfigurer")
     public PersonDirectoryAttributeRepositoryPlanConfigurer ldapPersonDirectoryAttributeRepositoryPlanConfigurer(
-        @Qualifier("ldapAttributeRepositories") final ObjectProvider<List<IPersonAttributeDao>> ldapAttributeRepositories) {
-        return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories.getObject());
+        @Qualifier("ldapAttributeRepositories") final BeanContainer<IPersonAttributeDao> ldapAttributeRepositories) {
+        return plan -> plan.registerAttributeRepositories(ldapAttributeRepositories.toList());
     }
 }
 
