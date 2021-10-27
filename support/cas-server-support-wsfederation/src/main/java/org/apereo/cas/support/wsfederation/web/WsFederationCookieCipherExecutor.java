@@ -24,7 +24,7 @@ public class WsFederationCookieCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.wsfed[].cookie.encryption.key";
+        return "cas.authn.wsfed[].cookie.crypto.encryption.key";
     }
 
     @Override
