@@ -14,7 +14,6 @@ import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@ConditionalOnProperty(prefix = "cas.authn.attribute-repository.grouper", name = "enabled", havingValue = "true")
 @Configuration(value = "CasPersonDirectoryGrouperConfiguration", proxyBeanMethods = false)
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)

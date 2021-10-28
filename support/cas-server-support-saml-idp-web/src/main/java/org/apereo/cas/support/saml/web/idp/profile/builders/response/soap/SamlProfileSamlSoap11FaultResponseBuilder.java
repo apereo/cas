@@ -69,7 +69,6 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
             faultString.setValue("SOAP failure");
         }
         fault.setMessage(faultString);
-
         body.getUnknownXMLObjects().add(fault);
         
         val envelope = SamlUtils.newSoapObject(Envelope.class);
@@ -80,6 +79,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         Objects.requireNonNull(ctx).setHTTPResponseStatus(HttpStatus.SC_OK);
         encodeFinalResponse(request, response, service, adaptor, envelope,
             binding, authnRequest, casAssertion, messageContext);
+        request.setAttribute(FaultString.class.getSimpleName(), error);
         return envelope;
     }
 }
