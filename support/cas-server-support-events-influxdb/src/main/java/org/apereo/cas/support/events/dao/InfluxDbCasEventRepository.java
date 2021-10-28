@@ -18,9 +18,8 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * This is {@link InfluxDbCasEventRepository}.
@@ -58,12 +57,12 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public Collection<? extends CasEvent> load() {
-        val events = new ArrayList<CasEvent>();
+    public Stream<? extends CasEvent> load() {
         val results = influxDbConnectionFactory.query(InfluxDbEvent.class);
-        results.forEach(flux -> {
+        return results.stream().map(flux -> {
             val event = new CasEvent();
-            val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(), new TypeReference<GeoLocationRequest>() { })).get();
+            val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(), new TypeReference<GeoLocationRequest>() {
+            })).get();
             event.putGeoLocation(geo);
             event.setPrincipalId(flux.getPrincipalId());
             event.setType(flux.getType());
@@ -72,9 +71,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
             event.putServerIpAddress(flux.getServerIpAddress());
             event.putEventId(flux.getValue());
             event.putTimestamp(Long.valueOf(flux.getTimestamp()));
-            events.add(event);
+            return event;
         });
-        return events;
     }
 
     @Override
@@ -110,7 +108,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
         @Column(tag = true)
         private String geoLocation;
-        
+
         @Column
         private String value;
     }

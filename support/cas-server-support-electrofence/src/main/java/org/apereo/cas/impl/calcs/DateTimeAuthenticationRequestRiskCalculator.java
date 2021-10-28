@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DateTimeAuthenticationRequestRiskCalculator}.
@@ -33,7 +33,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
-                                        final RegisteredService service, final Collection<? extends CasEvent> events) {
+                                        final RegisteredService service, final Stream<? extends CasEvent> events) {
         val windowInHours = casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours();
         val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
@@ -42,7 +42,6 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
         val hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
 
         val count = events
-            .stream()
             .map(time -> {
                 val dt = DateTimeUtils.convertToZonedDateTime(time.getCreationTime());
                 val instant = ChronoZonedDateTime.from(dt).toInstant();
@@ -50,7 +49,8 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
                 return zdt.getHour();
             })
             .filter(hour ->
-                hoursBeforeNow <= hoursFromNow ? (hour >= hoursBeforeNow && hour <= hoursFromNow) : (hour >= hoursBeforeNow || hour <= hoursFromNow)
+                hoursBeforeNow <= hoursFromNow
+                    ? (hour >= hoursBeforeNow && hour <= hoursFromNow) : (hour >= hoursBeforeNow || hour <= hoursFromNow)
             )
             .count();
 

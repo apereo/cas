@@ -118,11 +118,15 @@ public class JpaEventsConfiguration {
 
         @Bean
         public CasEventRepository casEventRepository(
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory,
+            final CasConfigurationProperties casProperties,
             @Qualifier("transactionManagerEvents")
             final PlatformTransactionManager transactionManager,
             @Qualifier("jpaEventRepositoryFilter")
             final CasEventRepositoryFilter jpaEventRepositoryFilter) {
-            return new JpaCasEventRepository(jpaEventRepositoryFilter, transactionManager);
+            return new JpaCasEventRepository(jpaEventRepositoryFilter, transactionManager,
+                casProperties, jpaBeanFactory);
         }
     }
 }

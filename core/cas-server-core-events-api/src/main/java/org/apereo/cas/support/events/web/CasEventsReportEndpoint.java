@@ -6,10 +6,13 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasEventsReportEndpoint}.
@@ -17,8 +20,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Endpoint(id = "events", enableByDefault = false)
+@RestControllerEndpoint(id = "events", enableByDefault = false)
 public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
+    private static final long LIMIT = 1000;
+
     private final CasEventRepository eventRepository;
 
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
@@ -32,9 +37,12 @@ public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the collection
      */
-    @ReadOperation
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Provide a report of CAS events in the event repository")
-    public Collection<? extends CasEvent> events() {
-        return this.eventRepository.load();
+    public List<? extends CasEvent> events() {
+        return eventRepository.load()
+            .sorted(Comparator.comparingLong(CasEvent::getTimestamp).reversed())
+            .limit(LIMIT)
+            .collect(Collectors.toList());
     }
 }

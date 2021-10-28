@@ -33,6 +33,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,7 +73,7 @@ public class DefaultCasEventListenerTests {
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @Test
@@ -81,7 +82,7 @@ public class DefaultCasEventListenerTests {
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @Test
@@ -89,7 +90,7 @@ public class DefaultCasEventListenerTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt);
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @Test
@@ -100,7 +101,7 @@ public class DefaultCasEventListenerTests {
                 CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())),
             CoreAuthenticationTestUtils.getAuthentication());
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @Test
@@ -110,7 +111,7 @@ public class DefaultCasEventListenerTests {
             CoreAuthenticationTestUtils.getRegisteredService(),
             new Object());
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class DefaultCasEventListenerTests {
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"));
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
     @TestConfiguration("EventTestConfiguration")
@@ -136,8 +137,8 @@ public class DefaultCasEventListenerTests {
                 }
 
                 @Override
-                public Collection<CasEvent> load() {
-                    return events;
+                public Stream<CasEvent> load() {
+                    return events.stream();
                 }
             };
         }

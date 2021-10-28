@@ -4,9 +4,8 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
-import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link InMemoryCasEventRepository}.
@@ -24,18 +23,17 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public Collection<? extends CasEvent> load() {
-        return cache.asMap().values();
+    public Stream<? extends CasEvent> load() {
+        return cache.asMap().values().stream();
     }
 
     @Override
-    public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
+    public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
         return cache
             .asMap()
             .values()
             .stream()
-            .filter(e -> e.getPrincipalId().equalsIgnoreCase(id))
-            .collect(Collectors.toSet());
+            .filter(e -> e.getPrincipalId().equalsIgnoreCase(id));
     }
 
     @Override
