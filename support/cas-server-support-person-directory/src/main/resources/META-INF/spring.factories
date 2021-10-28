@@ -1,7 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   org.apereo.cas.config.CasPersonDirectoryConfiguration,\
   org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration,\
-  org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration,\
   org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration,\
   org.apereo.cas.config.CasPersonDirectoryJsonConfiguration,\
   org.apereo.cas.config.CasPersonDirectoryLdapConfiguration,\
