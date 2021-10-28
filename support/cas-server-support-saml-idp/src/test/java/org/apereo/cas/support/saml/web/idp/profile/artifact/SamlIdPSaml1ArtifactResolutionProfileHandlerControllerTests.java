@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -123,7 +124,8 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
         controller.handlePostRequest(response, request);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
     }
 
     private ArtifactResolve getArtifactResolve() {
