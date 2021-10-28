@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryLdapConfiguration;
@@ -34,7 +33,6 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryJdbcConfiguration.class,
         CasPersonDirectoryLdapConfiguration.class,
-        CasPersonDirectoryGrouperConfiguration.class,
         CasPersonDirectoryGroovyConfiguration.class,
         CasPersonDirectoryRestConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,

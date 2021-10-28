@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link BaseAuthenticationRequestRiskCalculator}.
@@ -47,7 +47,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
                                                    final HttpServletRequest request) {
         val principal = authentication.getPrincipal();
         val events = getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
-        if (events.isEmpty()) {
+        if (events.findAny().isEmpty()) {
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
         val score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
@@ -67,7 +67,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<? extends CasEvent> events) {
+                                        final Stream<? extends CasEvent> events) {
         return HIGHEST_RISK_SCORE;
     }
 
@@ -77,7 +77,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @param principal the principal
      * @return the cas ticket granting ticket created events for
      */
-    protected Collection<? extends CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
+    protected Stream<? extends CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
@@ -95,13 +95,15 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the big decimal
      */
     protected BigDecimal calculateScoreBasedOnEventsCount(final Authentication authentication,
-                                                          final Collection<? extends CasEvent> events,
+                                                          final Stream<? extends CasEvent> events,
                                                           final long count) {
-        if (count == events.size()) {
-            LOGGER.debug("Principal [{}] is assigned to the lowest risk score with attempted count of [{}]", authentication.getPrincipal(), count);
+        val eventCount = events.count();
+        if (count == eventCount) {
+            LOGGER.debug("Principal [{}] is assigned to the lowest risk score with attempted count of [{}]",
+                authentication.getPrincipal(), count);
             return LOWEST_RISK_SCORE;
         }
-        return getFinalAveragedScore(count, events.size());
+        return getFinalAveragedScore(count, eventCount);
     }
 
     /**

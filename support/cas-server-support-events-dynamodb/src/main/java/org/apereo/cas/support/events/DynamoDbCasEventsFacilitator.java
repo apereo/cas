@@ -23,12 +23,10 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DynamoDbCasEventsFacilitator}.
@@ -106,7 +104,7 @@ public class DynamoDbCasEventsFacilitator {
         return record;
     }
 
-    public Set<CasEvent> getAll() {
+    public Stream<CasEvent> getAll() {
         return getRecordsByKeys(List.of());
     }
 
@@ -123,7 +121,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param id the id
      * @return the events for principal
      */
-    public Collection<? extends CasEvent> getEventsForPrincipal(final String id) {
+    public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
         val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.PRINCIPAL.getColumnName())
             .attributeValue(List.of(AttributeValue.builder().s(id).build()))
@@ -139,7 +137,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param dateTime the date time
      * @return the events for principal
      */
-    public Collection<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
+    public Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         val query =
             List.of(
                 DynamoDbQueryBuilder.builder()
@@ -162,7 +160,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param dateTime the date time
      * @return the events of type
      */
-    public Collection<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
+    public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
@@ -183,7 +181,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param type the type
      * @return the events of type
      */
-    public Collection<? extends CasEvent> getEventsOfType(final String type) {
+    public Stream<? extends CasEvent> getEventsOfType(final String type) {
         val query = DynamoDbQueryBuilder.builder()
             .key(ColumnNames.TYPE.getColumnName())
             .attributeValue(List.of(AttributeValue.builder().s(type).build()))
@@ -200,7 +198,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param dateTime  the date time
      * @return the events of type for principal
      */
-    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
+    public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
                                                                       final ZonedDateTime dateTime) {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
@@ -228,7 +226,7 @@ public class DynamoDbCasEventsFacilitator {
      * @param principal the principal
      * @return the events of type for principal
      */
-    public Collection<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
+    public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val query =
             List.of(
                 DynamoDbQueryBuilder.builder()
@@ -275,12 +273,11 @@ public class DynamoDbCasEventsFacilitator {
     }
 
     @SneakyThrows
-    private Set<CasEvent> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
+    private Stream<CasEvent> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
                 dynamoDbProperties.getTableName(),
                 queries,
-                DynamoDbCasEventsFacilitator::extractAttributeValuesFrom)
-            .collect(Collectors.toSet());
+                DynamoDbCasEventsFacilitator::extractAttributeValuesFrom);
     }
 
 }

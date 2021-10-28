@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Transactional
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test
@@ -30,16 +32,17 @@ public abstract class AbstractCasEventRepositoryTests {
         eventRepository.save(dto1);
 
         val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
-        assertFalse(eventRepository.load(dt).isEmpty());
+        val loaded = eventRepository.load(dt);
+        assertTrue(loaded.findAny().isPresent());
 
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).isEmpty());
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).findAny().isEmpty());
 
-        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).isEmpty());
-        assertFalse(eventRepository.getEventsOfType(dto1.getType()).isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType()).findAny().isEmpty());
 
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).isEmpty());
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).findAny().isEmpty());
     }
 
     @Test
@@ -51,12 +54,15 @@ public abstract class AbstractCasEventRepositoryTests {
         getEventRepository().save(dto2);
 
         val col = getEventRepository().load();
-        assertEquals(2, col.size());
+        assertEquals(2, col.count());
 
         assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
-        assertEquals(2, col.stream().map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
-        
-        col.forEach(event -> {
+
+        val load2 = getEventRepository().load();
+        assertEquals(2, load2.map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
+
+        val load3 = getEventRepository().load();
+        load3.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {
                 assertEquals(dto1.getType(), event.getType());

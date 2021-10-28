@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link UserAgentAuthenticationRequestRiskCalculator}.
@@ -33,11 +33,10 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<? extends CasEvent> events) {
-
+                                        final Stream<? extends CasEvent> events) {
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);
-        val count = events.stream()
+        val count = events
             .filter(e -> StringUtils.isNotBlank(e.getAgent()))
             .filter(e -> e.getAgent().equalsIgnoreCase(agent))
             .count();

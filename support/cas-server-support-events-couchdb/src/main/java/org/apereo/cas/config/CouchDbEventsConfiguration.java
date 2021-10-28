@@ -34,7 +34,9 @@ public class CouchDbEventsConfiguration {
     public EventCouchDbRepository couchDbEventRepository(
         @Qualifier("eventCouchDbFactory")
         final CouchDbConnectorFactory eventCouchDbFactory, final CasConfigurationProperties casProperties) {
-        val repository = new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(), casProperties.getEvents().getCouchDb().isCreateIfNotExists());
+        val repository = new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(),
+            casProperties.getEvents().getCouchDb().isCreateIfNotExists(),
+            eventCouchDbFactory.getObjectMapperFactory());
         repository.initStandardDesignDocument();
         return repository;
     }

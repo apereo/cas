@@ -7,11 +7,13 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttribut
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * This is {@link SamlIdPConsentableAttributeBuilder}.
@@ -37,7 +39,8 @@ public class SamlIdPConsentableAttributeBuilder implements ConsentableAttributeB
             val samlAttr = (SamlIdPAttributeDefinition) result.get();
             attribute.setFriendlyName(samlAttr.getFriendlyName());
         }
-        attribute.getValues().replaceAll(o -> {
+        val attributeValues = ObjectUtils.defaultIfNull(attribute.getValues(), new ArrayList<>());
+        attributeValues.replaceAll(o -> {
             if (o instanceof XSString) {
                 return ((XSString) o).getValue();
             }

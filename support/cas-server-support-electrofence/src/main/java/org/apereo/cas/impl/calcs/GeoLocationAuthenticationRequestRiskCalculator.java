@@ -15,7 +15,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link GeoLocationAuthenticationRequestRiskCalculator}.
@@ -37,11 +37,11 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
-                                        final RegisteredService service, final Collection<? extends CasEvent> events) {
+                                        final RegisteredService service, final Stream<? extends CasEvent> events) {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
         if (loc != null && loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
-            val count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
+            val count = events.filter(e -> e.getGeoLocation().equals(loc)).count();
             LOGGER.debug("Total authentication events found for [{}]: [{}]", loc, count);
             return calculateScoreBasedOnEventsCount(authentication, events, count);
         }
@@ -50,7 +50,6 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
         val response = this.geoLocationService.locate(remoteAddr);
         if (response != null) {
             val count = events
-                .stream()
                 .filter(e -> e.getGeoLocation().equals(new GeoLocationRequest(response.getLatitude(), response.getLongitude())))
                 .count();
             LOGGER.debug("Total authentication events found for location of [{}]: [{}]", remoteAddr, count);
