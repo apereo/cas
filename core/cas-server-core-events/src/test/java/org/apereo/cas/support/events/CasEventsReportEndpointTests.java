@@ -78,7 +78,7 @@ public class CasEventsReportEndpointTests {
         val endpoint = new CasEventsReportEndpoint(casProperties, casEventRepository);
         val result = endpoint.events();
         assertNotNull(result);
-        assertFalse(result.findAny().isEmpty());
+        assertFalse(result.isEmpty());
     }
 
     @TestConfiguration("CasEventsReportEndpointTestConfiguration")
