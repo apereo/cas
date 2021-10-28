@@ -8,7 +8,6 @@ import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ public class CasSupportDynamoDbAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManager")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuditTrailManager dynamoDbAuditTrailManager(
         final CasConfigurationProperties casProperties,
         @Qualifier("dynamoDbAuditTrailManagerFacilitator")
@@ -41,7 +39,6 @@ public class CasSupportDynamoDbAuditConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "amazonDynamoDbAuditTrailManagerClient")
     public DynamoDbClient amazonDynamoDbAuditTrailManagerClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAudit().getDynamoDb();
@@ -51,7 +48,6 @@ public class CasSupportDynamoDbAuditConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailManagerFacilitator")
     public DynamoDbAuditTrailManagerFacilitator dynamoDbAuditTrailManagerFacilitator(
         @Qualifier("amazonDynamoDbAuditTrailManagerClient")

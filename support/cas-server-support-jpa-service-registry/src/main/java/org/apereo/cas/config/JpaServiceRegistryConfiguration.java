@@ -15,7 +15,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,7 +77,6 @@ public class JpaServiceRegistryConfiguration {
     public static class JpaServiceRegistryEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaServiceVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -88,7 +86,6 @@ public class JpaServiceRegistryConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public PersistenceProvider jpaServicePersistenceProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -103,7 +100,6 @@ public class JpaServiceRegistryConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
@@ -131,7 +127,6 @@ public class JpaServiceRegistryConfiguration {
     @Configuration(value = "JpaServiceRegistryTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaServiceRegistryTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerServiceReg(
             @Qualifier("serviceEntityManagerFactory")
@@ -143,7 +138,6 @@ public class JpaServiceRegistryConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
         @Bean
-        @Autowired
         public TransactionTemplate jdbcServiceRegistryTransactionTemplate(final CasConfigurationProperties casProperties,
                                                                           final ConfigurableApplicationContext applicationContext) {
             val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));
@@ -159,7 +153,6 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceService(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
         }
@@ -173,7 +166,6 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaServiceRegistry")
-        @Autowired
         public ServiceRegistry jpaServiceRegistry(
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,

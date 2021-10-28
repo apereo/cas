@@ -9,7 +9,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ public class SurrogateLdapAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "surrogateLdapConnectionFactory")
-    @Autowired
     public ConnectionFactory surrogateLdapConnectionFactory(final CasConfigurationProperties casProperties) {
         val su = casProperties.getAuthn().getSurrogate();
         return LdapUtils.newLdaptiveConnectionFactory(su.getLdap());
@@ -40,7 +38,6 @@ public class SurrogateLdapAuthenticationConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

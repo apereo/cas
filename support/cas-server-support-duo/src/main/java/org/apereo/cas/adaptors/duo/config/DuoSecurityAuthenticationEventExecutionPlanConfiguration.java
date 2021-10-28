@@ -36,7 +36,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -81,7 +80,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public BeanContainer<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers(
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
             final CasConfigurationProperties casProperties,
@@ -108,7 +106,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("duoAuthenticationHandlers")
@@ -130,7 +127,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
         @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
-        @Autowired
         public HealthIndicator duoSecurityHealthIndicator(final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityHealthIndicator(applicationContext);
         }
@@ -149,7 +145,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "duoProviderFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory(
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
@@ -167,7 +162,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "duoProviderBean")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean(
             final CasConfigurationProperties casProperties,
             final GenericWebApplicationContext applicationContext,
@@ -184,7 +178,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer duoMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -200,7 +193,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer(
             @Qualifier("duoMultifactorWebflowConfigurer")
             final CasWebflowConfigurer duoMultifactorWebflowConfigurer) {
@@ -227,14 +219,12 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public DuoSecurityPingEndpoint duoPingEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityPingEndpoint(casProperties, applicationContext);
         }
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
         }
@@ -242,7 +232,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @ConditionalOnDuoSecurityAdminApiConfigured
-        @Autowired
         public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
         }

@@ -6,7 +6,6 @@ import org.apereo.cas.consent.RedisConsentRepository;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,7 +35,6 @@ public class CasConsentRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisConsentConnectionFactory")
-    @Autowired
     public RedisConnectionFactory redisConsentConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getConsent()
             .getRedis();

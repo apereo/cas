@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,7 +35,6 @@ public class AmazonS3ServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryClient")
-    @Autowired
     public S3Client amazonS3ServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getServiceRegistry().getAmazonS3();
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
@@ -49,7 +47,6 @@ public class AmazonS3ServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
-    @Autowired
     public ServiceRegistry amazonS3ServiceRegistry(
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("amazonS3ServiceRegistryClient")
@@ -61,7 +58,6 @@ public class AmazonS3ServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer(
         @Qualifier("amazonS3ServiceRegistry")
         final ServiceRegistry amazonS3ServiceRegistry) {

@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -57,7 +56,6 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "u2fFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry u2fFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -75,7 +73,6 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer u2fMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -127,7 +124,6 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowEndpointConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("u2fDeviceRepository")
                                                                          final U2FDeviceRepository u2fDeviceRepository) {
@@ -151,7 +147,6 @@ public class U2FWebflowConfiguration {
         @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action u2fStartAuthenticationAction(final CasConfigurationProperties casProperties,
                                                    @Qualifier("u2fDeviceRepository")
                                                    final U2FDeviceRepository u2fDeviceRepository,
@@ -163,7 +158,6 @@ public class U2FWebflowConfiguration {
         @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action u2fStartRegistrationAction(final CasConfigurationProperties casProperties,
                                                  @Qualifier("u2fDeviceRepository")
                                                  final U2FDeviceRepository u2fDeviceRepository,
@@ -201,7 +195,6 @@ public class U2FWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer(
             @Qualifier("u2fFlowRegistry")
             final FlowDefinitionRegistry u2fFlowRegistry,
@@ -220,7 +213,6 @@ public class U2FWebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         public CasWebflowExecutionPlanConfigurer u2fMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("u2fMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer) {

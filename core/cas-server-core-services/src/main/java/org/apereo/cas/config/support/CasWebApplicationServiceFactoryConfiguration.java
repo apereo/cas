@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +41,6 @@ public class CasWebApplicationServiceFactoryConfiguration {
     public static class CasWebApplicationServiceFactoryPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
-        @Autowired
         public ServiceFactoryConfigurer casWebApplicationServiceFactoryConfigurer(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {

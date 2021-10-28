@@ -31,7 +31,6 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -100,7 +99,6 @@ public class RadiusConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AbstractRadiusServer radiusServer(final CasConfigurationProperties casProperties,
                                              @Qualifier("casSslContext")
                                              final CasSSLContext casSslContext) {
@@ -113,7 +111,6 @@ public class RadiusConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public BeanContainer<RadiusServer> radiusServers(
         @Qualifier("casSslContext")
         final CasSSLContext casSslContext,
@@ -129,7 +126,6 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
     @Bean
-    @Autowired
     public AuthenticationHandler radiusAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
@@ -154,7 +150,6 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("radiusAuthenticationHandler")
@@ -180,7 +175,6 @@ public class RadiusConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
-    @Autowired
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
@@ -191,7 +185,6 @@ public class RadiusConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,

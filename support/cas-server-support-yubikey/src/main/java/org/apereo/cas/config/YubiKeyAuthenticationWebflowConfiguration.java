@@ -19,7 +19,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +51,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class YubiKeyAuthenticationWebflowPlanConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer(
             @Qualifier("yubikeyMultifactorWebflowConfigurer")
@@ -65,7 +63,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class YubiKeyAuthenticationWebflowCoreConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
         public FlowDefinitionRegistry yubikeyFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
@@ -80,7 +77,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowEventResolver")
-        @Autowired
         public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -90,7 +86,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "yubikeyMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer(
             @Qualifier("yubikeyFlowRegistry")
             final FlowDefinitionRegistry yubikeyFlowRegistry,
@@ -117,7 +112,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowAction")
         public Action yubikeyAuthenticationWebflowAction(
             @Qualifier("yubikeyAuthenticationWebflowEventResolver")
@@ -127,7 +121,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "prepareYubiKeyAuthenticationLoginAction")
         public Action prepareYubiKeyAuthenticationLoginAction(final CasConfigurationProperties casProperties) {
             return new YubiKeyAuthenticationPrepareLoginAction(casProperties);
@@ -135,7 +128,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "yubiKeyAccountRegistrationAction")
         public Action yubiKeyAccountRegistrationAction(
             @Qualifier("yubiKeyAccountRegistry")
@@ -145,7 +137,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "yubiKeySaveAccountRegistrationAction")
         public Action yubiKeySaveAccountRegistrationAction(
             @Qualifier("yubiKeyAccountRegistry")
@@ -162,7 +153,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer(
             @Qualifier("yubikeyFlowRegistry")
             final FlowDefinitionRegistry yubikeyFlowRegistry,
@@ -183,7 +173,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "yubiMultifactorCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer yubiMultifactorCasWebflowExecutionPlanConfigurer(
             @Qualifier("yubiMultifactorTrustWebflowConfigurer")

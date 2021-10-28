@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.SpnegoCasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.SpnegoWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class SpnegoWebflowConfiguration {
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer spnegoWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -54,7 +52,6 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "spnegoCasWebflowExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasWebflowExecutionPlanConfigurer spnegoCasWebflowExecutionPlanConfigurer(
         @Qualifier("spnegoWebflowConfigurer")
         final CasWebflowConfigurer spnegoWebflowConfigurer) {

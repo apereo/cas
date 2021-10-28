@@ -11,7 +11,6 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -35,7 +34,6 @@ public class MemcachedMonitorConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "memcachedMonitorTranscoder")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Transcoder memcachedMonitorTranscoder(final CasConfigurationProperties casProperties,
                                                  @Qualifier("componentSerializationPlan")
                                                  final ComponentSerializationPlan componentSerializationPlan) {
@@ -46,7 +44,6 @@ public class MemcachedMonitorConfiguration {
     @Bean
     @ConditionalOnEnabledHealthIndicator("memcachedHealthIndicator")
     @ConditionalOnMissingBean(name = "memcachedHealthIndicator")
-    @Autowired
     public HealthIndicator memcachedHealthIndicator(
         @Qualifier("memcachedHealthClientPool")
         final ObjectPool<MemcachedClientIF> memcachedHealthClientPool,
@@ -59,7 +56,6 @@ public class MemcachedMonitorConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "memcachedHealthClientPool")
-    @Autowired
     public ObjectPool<MemcachedClientIF> memcachedHealthClientPool(
         @Qualifier("memcachedMonitorTranscoder")
         final Transcoder memcachedMonitorTranscoder,

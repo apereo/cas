@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +51,6 @@ public class RadiusMultifactorConfiguration {
     public static class RadiusMultifactorRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "radiusFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry radiusFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -86,7 +84,6 @@ public class RadiusMultifactorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusAuthenticationWebflowEventResolver")
-        @Autowired
         public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("casWebflowConfigurationContext")
@@ -101,7 +98,6 @@ public class RadiusMultifactorConfiguration {
     public static class RadiusMultifactorWebflowConfiguration {
         @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer radiusMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -125,7 +121,6 @@ public class RadiusMultifactorConfiguration {
     public static class RadiusMultifactorWebflowPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "radiusMultifactorCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer radiusMultifactorCasWebflowExecutionPlanConfigurer(
             @Qualifier("radiusMultifactorWebflowConfigurer")
             final CasWebflowConfigurer radiusMultifactorWebflowConfigurer) {
@@ -142,7 +137,6 @@ public class RadiusMultifactorConfiguration {
 
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer radiusMultifactorTrustConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -161,7 +155,6 @@ public class RadiusMultifactorConfiguration {
         }
 
         @Bean
-        @Autowired
         public CasWebflowExecutionPlanConfigurer radiusMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("radiusMultifactorTrustConfigurer")
             final CasWebflowConfigurer radiusMultifactorTrustConfigurer) {

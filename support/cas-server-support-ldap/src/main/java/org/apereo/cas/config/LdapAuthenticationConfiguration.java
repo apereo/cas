@@ -13,7 +13,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +55,6 @@ public class LdapAuthenticationConfiguration {
     public static class LdapAuthenticationPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
@@ -84,7 +82,6 @@ public class LdapAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")

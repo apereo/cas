@@ -32,7 +32,6 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -73,7 +72,6 @@ public class MultifactorAuthnTrustConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustRecordKeyGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationTrustRecordKeyGenerator mfaTrustRecordKeyGenerator(
             final CasConfigurationProperties casProperties) {
             val type = casProperties.getAuthn().getMfa().getTrusted().getCore().getKeyGeneratorType();
@@ -97,7 +95,6 @@ public class MultifactorAuthnTrustConfiguration {
         @ConditionalOnMissingBean(name = "mfaTrustEngine")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustCipherExecutor")
@@ -136,7 +133,6 @@ public class MultifactorAuthnTrustConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaTrustCipherExecutor")
-        @Autowired
         public CipherExecutor mfaTrustCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
             if (crypto.isEnabled()) {
@@ -187,7 +183,6 @@ public class MultifactorAuthnTrustConfiguration {
     public static class MultifactorAuthnTrustWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustEngine")

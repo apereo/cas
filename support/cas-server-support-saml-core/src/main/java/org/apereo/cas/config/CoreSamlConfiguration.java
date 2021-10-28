@@ -17,7 +17,6 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,7 +52,6 @@ public class CoreSamlConfiguration {
     @Lazy
     @Bean(name = {"shibboleth.VelocityEngine", "velocityEngineFactoryBean", "velocityEngineFactory"})
     @ConditionalOnMissingBean(name = "velocityEngineFactoryBean")
-    @Autowired
     public VelocityEngine velocityEngineFactoryBean() {
         val properties = new Properties();
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
@@ -68,7 +66,6 @@ public class CoreSamlConfiguration {
     }
 
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
-    @Autowired
     public OpenSamlConfigBean openSamlConfigBean(
         @Qualifier("shibboleth.ParserPool")
         final BasicParserPool parserPool) throws Exception {
@@ -76,7 +73,6 @@ public class CoreSamlConfiguration {
     }
 
     @Bean(name = {"shibboleth.ParserPool", "basicParserPool"}, initMethod = "initialize")
-    @Autowired
     public BasicParserPool parserPool(final CasConfigurationProperties casProperties) throws Exception {
         val pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);

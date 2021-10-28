@@ -16,7 +16,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,7 +48,6 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Configuration(value = "GoogleAuthenticatorJpaTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaTransactionConfiguration {
-        @Autowired
         @Bean
         @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
         public PlatformTransactionManager transactionManagerGoogleAuthenticator(
@@ -65,7 +63,6 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Configuration(value = "GoogleAuthenticatorJpaRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaRepositoryConfiguration {
-        @Autowired
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
@@ -77,13 +74,12 @@ public class GoogleAuthenticatorJpaConfiguration {
         }
 
         @Bean
-        @Autowired
         public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties) {
             return new GoogleAuthenticatorJpaTokenRepository(casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
         }
 
     }
-    
+
     @Configuration(value = "GoogleAuthenticatorJpaDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaDataConfiguration {
@@ -91,7 +87,6 @@ public class GoogleAuthenticatorJpaConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceGoogleAuthenticator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceGoogleAuthenticator(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa());
         }
@@ -110,7 +105,6 @@ public class GoogleAuthenticatorJpaConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -118,9 +112,8 @@ public class GoogleAuthenticatorJpaConfiguration {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
 
-        
+
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaGoogleAuthenticatorVendorAdapter")

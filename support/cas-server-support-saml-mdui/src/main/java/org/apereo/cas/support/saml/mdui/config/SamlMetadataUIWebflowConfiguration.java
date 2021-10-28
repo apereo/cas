@@ -14,7 +14,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,7 +49,6 @@ public class SamlMetadataUIWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
     @Bean
-    @Autowired
     public Action samlMetadataUIParserAction(
         @Qualifier("chainingSamlMetadataUIMetadataResolverAdapter")
         final MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter,
@@ -64,7 +62,6 @@ public class SamlMetadataUIWebflowConfiguration {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "samlMetadataUICasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer samlMetadataUICasWebflowExecutionPlanConfigurer(
         @Qualifier("samlMetadataUIWebConfigurer")

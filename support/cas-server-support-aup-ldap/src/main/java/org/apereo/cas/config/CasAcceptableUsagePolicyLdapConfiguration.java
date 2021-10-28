@@ -8,7 +8,6 @@ import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier(TicketRegistrySupport.BEAN_NAME)
                                                                            final TicketRegistrySupport ticketRegistrySupport) {

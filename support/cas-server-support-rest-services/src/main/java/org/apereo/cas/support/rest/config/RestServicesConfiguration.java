@@ -11,7 +11,6 @@ import org.apereo.cas.support.rest.RegisteredServiceResource;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +35,6 @@ public class RestServicesConfiguration {
     }
 
     @Bean
-    @Autowired
     public RegisteredServiceResource registeredServiceResourceRestController(
         final CasConfigurationProperties casProperties,
         @Qualifier("webApplicationServiceFactory")

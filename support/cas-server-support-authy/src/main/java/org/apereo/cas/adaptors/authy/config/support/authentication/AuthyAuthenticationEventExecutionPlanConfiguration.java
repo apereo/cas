@@ -20,7 +20,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +44,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthyClientInstance authyClientInstance(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         if (StringUtils.isBlank(authy.getApiKey())) {
@@ -57,7 +55,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthenticationHandler authyAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                             @Qualifier("authyPrincipalFactory")
                                                             final PrincipalFactory authyPrincipalFactory,
@@ -78,7 +75,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                                  @Qualifier("authyBypassEvaluator")
                                                                                                  final MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator,
@@ -96,7 +92,6 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
                                                                                 @Qualifier("authyAuthenticationHandler")
                                                                                 final AuthenticationHandler authyAuthenticationHandler,

@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,7 +44,6 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthenticationHandler rejectUsersAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                   @Qualifier("rejectUsersPrincipalFactory")
                                                                   final PrincipalFactory rejectUsersPrincipalFactory,
@@ -64,7 +62,6 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                             @Qualifier("rejectUsersAuthenticationHandler")
                                                                                                             final AuthenticationHandler rejectUsersAuthenticationHandler,

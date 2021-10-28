@@ -11,7 +11,6 @@ import org.apereo.cas.support.x509.rest.X509RestTlsClientCertCredentialFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +44,6 @@ public class X509RestConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "x509RestRequestHeader")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestHttpRequestCredentialFactory x509RestRequestHeader(
             @Qualifier("x509CertificateExtractor")
@@ -67,7 +65,6 @@ public class X509RestConfiguration {
     public static class X509RestCredentialFactoryPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "x509RestHttpRequestCredentialFactoryConfigurer")
         public RestHttpRequestCredentialFactoryConfigurer x509RestHttpRequestCredentialFactoryConfigurer(
             @Qualifier("x509RestTlsClientCert")

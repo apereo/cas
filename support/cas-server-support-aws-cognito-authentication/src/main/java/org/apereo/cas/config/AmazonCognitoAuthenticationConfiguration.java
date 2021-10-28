@@ -22,7 +22,6 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,7 +48,6 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoIdentityProvider")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CognitoIdentityProviderClient amazonCognitoIdentityProvider(final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getCognito();
         val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(), props.getCredentialSecretKey());
@@ -67,7 +65,6 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthenticationHandler amazonCognitoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                     @Qualifier("amazonCognitoPrincipalFactory")
                                                                     final PrincipalFactory amazonCognitoPrincipalFactory,
@@ -100,7 +97,6 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationJwtProcessor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(final CasConfigurationProperties casProperties) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
         val resourceRetriever =

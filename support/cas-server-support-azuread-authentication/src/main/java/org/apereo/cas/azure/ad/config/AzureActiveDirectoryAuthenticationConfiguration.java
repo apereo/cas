@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MicrosoftGraphPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +43,6 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         final AuthenticationHandler handler,
@@ -55,7 +53,6 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer")
     @Bean
-    @Autowired
     public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
         @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
         final List<IPersonAttributeDao> repositories) {
@@ -68,7 +65,6 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val attrs = casProperties.getAuthn().getAttributeRepository();
@@ -103,7 +99,6 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)

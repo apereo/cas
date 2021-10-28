@@ -9,7 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -45,7 +44,6 @@ public class RestPasswordManagementConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public PasswordManagementService passwordChangeService(final RestTemplateBuilder restTemplateBuilder,
                                                            final CasConfigurationProperties casProperties,
                                                            @Qualifier("passwordManagementCipherExecutor")

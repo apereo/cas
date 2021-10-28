@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +37,6 @@ public class DigestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -48,7 +46,6 @@ public class DigestAuthenticationConfiguration {
         return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "digestAuthenticationAction")
     public Action digestAuthenticationAction(
@@ -67,7 +64,6 @@ public class DigestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever(final CasConfigurationProperties casProperties) {
         val digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());

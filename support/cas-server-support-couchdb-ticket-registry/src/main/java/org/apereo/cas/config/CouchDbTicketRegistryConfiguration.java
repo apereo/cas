@@ -11,7 +11,6 @@ import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class CouchDbTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
-    @Autowired
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
@@ -43,7 +41,6 @@ public class CouchDbTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
-    @Autowired
     public TicketRepository ticketRegistryCouchDbRepository(final CasConfigurationProperties casProperties,
                                                             @Qualifier("ticketRegistryCouchDbFactory")
                                                             final CouchDbConnectorFactory ticketRegistryCouchDbFactory) {
@@ -56,7 +53,6 @@ public class CouchDbTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
-    @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          @Qualifier("ticketRegistryCouchDbRepository")
                                          final TicketRepository ticketRegistryCouchDbRepository) {

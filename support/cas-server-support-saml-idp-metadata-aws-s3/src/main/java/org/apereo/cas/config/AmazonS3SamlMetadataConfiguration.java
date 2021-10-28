@@ -5,7 +5,6 @@ import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,7 +26,6 @@ public class AmazonS3SamlMetadataConfiguration {
     @ConditionalOnMissingBean(name = "amazonS3Client")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public S3Client amazonS3Client(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(), amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());

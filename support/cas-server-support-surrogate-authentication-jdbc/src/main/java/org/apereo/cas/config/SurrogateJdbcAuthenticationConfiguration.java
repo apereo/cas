@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class SurrogateJdbcAuthenticationConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("surrogateAuthenticationJdbcDataSource")
                                                                          final DataSource surrogateAuthenticationJdbcDataSource,
@@ -45,7 +43,6 @@ public class SurrogateJdbcAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "surrogateAuthenticationJdbcDataSource")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public DataSource surrogateAuthenticationJdbcDataSource(final CasConfigurationProperties casProperties) {
         val su = casProperties.getAuthn().getSurrogate();
         return JpaBeans.newDataSource(su.getJdbc());

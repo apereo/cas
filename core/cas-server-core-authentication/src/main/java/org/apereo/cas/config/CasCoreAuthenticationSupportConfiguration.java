@@ -23,7 +23,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -61,7 +60,6 @@ public class CasCoreAuthenticationSupportConfiguration {
     public static class CasCoreAuthenticationHandlerResolverConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
         public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(
             final CasConfigurationProperties casProperties,
@@ -77,7 +75,6 @@ public class CasCoreAuthenticationSupportConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
         @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
         public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
@@ -104,7 +101,6 @@ public class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
-        @Autowired
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
             @Qualifier("authenticationTransactionManager")
             final AuthenticationTransactionManager authenticationTransactionManager,
@@ -126,7 +122,6 @@ public class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyResolver")
-        @Autowired
         public AuthenticationPolicyResolver registeredServiceAuthenticationPolicyResolver(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -143,7 +138,6 @@ public class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer(
             @Qualifier("byCredentialSourceAuthenticationHandlerResolver")
             final ObjectProvider<AuthenticationHandlerResolver> byCredentialSourceAuthenticationHandlerResolver,
@@ -164,7 +158,6 @@ public class CasCoreAuthenticationSupportConfiguration {
         @ConditionalOnMissingBean(name = "groovyAuthenticationProcessorExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {
             return plan -> {

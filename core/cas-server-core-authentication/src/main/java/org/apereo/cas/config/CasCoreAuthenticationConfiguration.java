@@ -19,7 +19,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -70,7 +69,6 @@ public class CasCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy(
             final CasConfigurationProperties casProperties) {
             val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
@@ -89,7 +87,6 @@ public class CasCoreAuthenticationConfiguration {
     public static class CasCoreAuthenticationManagerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "authenticationTransactionManager")
         public AuthenticationTransactionManager authenticationTransactionManager(
             @Qualifier("casAuthenticationManager")
@@ -101,7 +98,6 @@ public class CasCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "casAuthenticationManager")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationManager casAuthenticationManager(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -116,7 +112,6 @@ public class CasCoreAuthenticationConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasCoreAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-        @Autowired
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(

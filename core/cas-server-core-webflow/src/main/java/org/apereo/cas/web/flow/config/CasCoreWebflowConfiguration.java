@@ -55,7 +55,6 @@ import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventRes
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -95,7 +94,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -105,7 +103,6 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
             val webflow = casProperties.getWebflow();
             val crypto = webflow.getCrypto();
@@ -137,7 +134,6 @@ public class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -197,7 +193,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "checkWebAuthenticationRequestAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action checkWebAuthenticationRequestAction(final CasConfigurationProperties casProperties) {
             return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getCore().getContentType());
         }
@@ -205,7 +200,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "renewAuthenticationRequestCheckAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action renewAuthenticationRequestCheckAction(
             @Qualifier("singleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy) {
@@ -215,7 +209,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action redirectToServiceAction(
             @Qualifier("webApplicationResponseBuilderLocator")
             final ResponseBuilderLocator responseBuilderLocator) {
@@ -225,7 +218,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action injectResponseHeadersAction(
             @Qualifier("webApplicationResponseBuilderLocator")
             final ResponseBuilderLocator responseBuilderLocator) {
@@ -235,7 +227,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action authenticationExceptionHandler(final List<CasWebflowExceptionHandler> handlers) {
             AnnotationAwareOrderComparator.sort(handlers);
             return new AuthenticationExceptionHandlerAction(handlers);
@@ -249,7 +240,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnProperty(name = "cas.authn.errors.groovy.location")
         public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
             final ConfigurableApplicationContext applicationContext,
@@ -261,7 +251,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowExceptionHandler<AuthenticationException> defaultCasWebflowAuthenticationExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
@@ -272,7 +261,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowExceptionHandler<AbstractTicketException> defaultCasWebflowAbstractTicketExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
@@ -283,7 +271,6 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
             @Qualifier("handledAuthenticationExceptions")
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
@@ -309,7 +296,6 @@ public class CasCoreWebflowConfiguration {
          */
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
         public CasWebflowExceptionCatalog handledAuthenticationExceptions(
             final CasConfigurationProperties casProperties) {
@@ -344,7 +330,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "singleSignOnParticipationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy(
             final List<SingleSignOnParticipationStrategyConfigurer> providers) {
             AnnotationAwareOrderComparator.sort(providers);
@@ -356,7 +341,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategy")
-        @Autowired
         public SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy(
             final CasConfigurationProperties casProperties,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
@@ -374,7 +358,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "defaultSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleSignOnParticipationStrategyConfigurer defaultSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("defaultSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy defaultSingleSignOnParticipationStrategy) {
@@ -384,7 +367,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
-        @Autowired
         public SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
@@ -403,7 +385,6 @@ public class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleSignOnParticipationStrategyConfigurer requiredAuthenticationHandlersSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("requiredAuthenticationHandlersSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy requiredAuthenticationHandlersSingleSignOnParticipationStrategy) {

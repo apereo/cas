@@ -50,7 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -93,7 +92,6 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesResponseLocatorConfiguration {
         @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
         @Bean
-        @Autowired
         public ResponseBuilderLocator webApplicationResponseBuilderLocator(final List<ResponseBuilder> responseBuilders) {
             AnnotationAwareOrderComparator.sortIfNecessary(responseBuilders);
             return new DefaultWebApplicationResponseBuilderLocator(responseBuilders);
@@ -107,7 +105,6 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesEventsConfiguration {
 
         @Bean
-        @Autowired
         public CasEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -123,7 +120,6 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesResponseBuilderConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -186,7 +182,6 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "serviceRegistryExecutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan(
             final ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> provider) {
             val plan = new DefaultServiceRegistryExecutionPlan();
@@ -226,7 +221,6 @@ public class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = "serviceRegistry")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ChainingServiceRegistry serviceRegistry(
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
@@ -272,7 +266,6 @@ public class CasCoreServicesConfiguration {
         }
 
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultServicesManagerExecutionPlanConfigurer")
         @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DEFAULT", matchIfMissing = true)
@@ -290,7 +283,6 @@ public class CasCoreServicesConfiguration {
         }
 
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "domainServicesManagerExecutionPlanConfigurer")
         @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "management-type", havingValue = "DOMAIN")
@@ -318,7 +310,6 @@ public class CasCoreServicesConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "servicesManagerCache")
-        @Autowired
         public Cache<Long, RegisteredService> servicesManagerCache(final CasConfigurationProperties casProperties) {
             val cacheProperties = casProperties.getServiceRegistry().getCache();
             val builder = Caffeine.newBuilder();
@@ -344,7 +335,6 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnProperty(prefix = "cas.service-registry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     public static class CasCoreServicesSchedulingConfiguration {
         @Bean
-        @Autowired
         public Runnable servicesManagerScheduledLoader(
             @Qualifier("serviceRegistryExecutionPlan")
             final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,

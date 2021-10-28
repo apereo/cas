@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredSer
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,14 +33,13 @@ public class CasOAuth20ServicesConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     @ConditionalOnMissingBean(name = "oauthServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer oauthServiceRegistryExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return plan -> {
             val oAuthCallbackUrl = casProperties.getServer().getPrefix()
-                + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                                   + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
             val service = new RegexRegisteredService();
             service.setId(RandomUtils.nextLong());
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);

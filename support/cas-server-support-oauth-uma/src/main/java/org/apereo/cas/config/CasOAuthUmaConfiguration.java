@@ -52,7 +52,6 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -87,7 +86,6 @@ public class CasOAuthUmaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
-        @Autowired
         public IdTokenGeneratorService umaRequestingPartyTokenGenerator(
             @Qualifier("umaConfigurationContext")
             final ObjectProvider<UmaConfigurationContext> context) {
@@ -118,7 +116,6 @@ public class CasOAuthUmaConfiguration {
     public static class CasOAuthUmaContextConfiguration {
 
         @Bean
-        @Autowired
         public UmaConfigurationContext umaConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("defaultUmaPermissionTicketFactory")
@@ -142,7 +139,7 @@ public class CasOAuthUmaConfiguration {
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties) {
-            
+
             val uma = casProperties.getAuthn().getOauth().getUma();
             val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
             val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
@@ -189,7 +186,6 @@ public class CasOAuthUmaConfiguration {
 
 
         @Bean
-        @Autowired
         public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
@@ -203,7 +199,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
@@ -225,7 +220,6 @@ public class CasOAuthUmaConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
-        @Autowired
         public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(final CasConfigurationProperties casProperties) {
             return new UmaServerDiscoverySettingsFactory(casProperties);
         }
@@ -272,7 +266,6 @@ public class CasOAuthUmaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaPermissionTicketExpirationPolicy")
-        @Autowired
         public ExpirationPolicyBuilder umaPermissionTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new UmaPermissionTicketExpirationPolicyBuilder(casProperties);
         }
@@ -290,14 +283,13 @@ public class CasOAuthUmaConfiguration {
 
 
     }
-    
+
     @Configuration(value = "CasOAuthUmaTicketFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaTicketFactoryPlanConfiguration {
         @ConditionalOnMissingBean(name = "defaultUmaPermissionTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public TicketFactoryExecutionPlanConfigurer defaultUmaPermissionTicketFactoryConfigurer(
             @Qualifier("defaultUmaPermissionTicketFactory")
             final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory) {
@@ -310,7 +302,6 @@ public class CasOAuthUmaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaControllersConfiguration {
         @Bean
-        @Autowired
         public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -318,7 +309,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -326,14 +316,12 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
             return new UmaRequestingPartyClaimsCollectionEndpointController(umaConfigurationContext);
         }
 
-        @Autowired
         @Bean
         public UmaWellKnownEndpointController umaWellKnownEndpointController(
             @Qualifier("umaServerDiscoverySettingsFactory")
@@ -342,7 +330,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -350,7 +337,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -358,7 +344,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -366,7 +351,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -374,7 +358,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -382,7 +365,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -390,7 +372,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -398,7 +379,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {
@@ -406,7 +386,6 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
-        @Autowired
         public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController(
             @Qualifier("umaConfigurationContext")
             final UmaConfigurationContext umaConfigurationContext) {

@@ -9,7 +9,6 @@ import com.maxmind.db.CHMCache;
 import com.maxmind.db.Reader;
 import com.maxmind.geoip2.DatabaseReader;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +37,6 @@ public class CasGeoLocationMaxmindConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) throws Exception {
         val properties = casProperties.getMaxmind();
         val cityDatabase = readDatabase(properties.getCityDatabase());

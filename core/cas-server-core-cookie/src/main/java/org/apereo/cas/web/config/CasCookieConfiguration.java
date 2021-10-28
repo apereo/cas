@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class CasCookieConfiguration {
     public static class CasCookieCoreConfiguration {
         @ConditionalOnMissingBean(name = "cookieValueManager")
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
             final CasConfigurationProperties casProperties,
@@ -55,11 +53,11 @@ public class CasCookieConfiguration {
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public CipherExecutor cookieCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getTgc().getCrypto();
             var enabled = crypto.isEnabled();
-            if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+            if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
                 LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                             + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
                 enabled = true;
@@ -82,7 +80,6 @@ public class CasCookieConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "warnCookieGenerator")
-        @Autowired
         public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getWarningCookie();
             return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -91,7 +88,6 @@ public class CasCookieConfiguration {
         @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieValueManager")

@@ -6,7 +6,6 @@ import org.apereo.cas.monitor.HazelcastHealthIndicator;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -29,7 +28,6 @@ public class HazelcastMonitorConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("hazelcastHealthIndicator")
-    @Autowired
     public HealthIndicator hazelcastHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("casTicketRegistryHazelcastInstance")
@@ -40,7 +38,6 @@ public class HazelcastMonitorConfiguration {
     }
 
     @Bean
-    @Autowired
     public DisposableBean hazelcastMonitorDisposableBean(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance) {

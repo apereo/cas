@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,14 +27,12 @@ public class CasSupportRestAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restAuditTrailManager")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuditTrailManager restAuditTrailManager(final CasConfigurationProperties casProperties) {
         val rest = casProperties.getAudit().getRest();
         return new RestAuditTrailManager(rest);
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "restAuditTrailExecutionPlanConfigurer")
     public AuditTrailExecutionPlanConfigurer restAuditTrailExecutionPlanConfigurer(
         @Qualifier("restAuditTrailManager")

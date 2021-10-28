@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("mongoDbSamlMetadataResolverTemplate")
                                                                                               final MongoTemplate mongoDbSamlMetadataResolverTemplate,
@@ -44,7 +42,6 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MongoTemplate mongoDbSamlMetadataResolverTemplate(final CasConfigurationProperties casProperties,
                                                              @Qualifier("casSslContext")
                                                              final CasSSLContext casSslContext) {

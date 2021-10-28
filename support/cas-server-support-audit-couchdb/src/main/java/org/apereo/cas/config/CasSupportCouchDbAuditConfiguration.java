@@ -8,7 +8,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ public class CasSupportCouchDbAuditConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
-    @Autowired
     public CouchDbConnectorFactory auditCouchDbFactory(final CasConfigurationProperties casProperties,
                                                        @Qualifier("defaultObjectMapperFactory")
                                                        final ObjectMapperFactory defaultObjectMapperFactory) {
@@ -40,7 +38,6 @@ public class CasSupportCouchDbAuditConfiguration {
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuditActionContextCouchDbRepository auditActionContextCouchDbRepository(
         @Qualifier("auditCouchDbFactory")
         final CouchDbConnectorFactory auditCouchDbFactory, final CasConfigurationProperties casProperties) {
@@ -50,7 +47,6 @@ public class CasSupportCouchDbAuditConfiguration {
     @ConditionalOnMissingBean(name = "couchDbAuditTrailManager")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuditTrailManager couchDbAuditTrailManager(
         @Qualifier("auditActionContextCouchDbRepository")
         final AuditActionContextCouchDbRepository repository, final CasConfigurationProperties casProperties) {

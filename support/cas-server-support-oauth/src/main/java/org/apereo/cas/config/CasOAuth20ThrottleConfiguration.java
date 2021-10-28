@@ -18,7 +18,6 @@ import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -53,7 +52,6 @@ public class CasOAuth20ThrottleConfiguration {
     public static class CasOAuth20ThrottlePlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
-        @Autowired
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
             @Qualifier("authenticationThrottlingExecutionPlan")
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
@@ -75,7 +73,6 @@ public class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
             final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
@@ -98,7 +95,6 @@ public class CasOAuth20ThrottleConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oauthWebMvcConfigurer")
-        @Autowired
         public WebMvcConfigurer oauthWebMvcConfigurer(
             @Qualifier("oauthHandlerInterceptorAdapter")
             final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
@@ -117,7 +113,6 @@ public class CasOAuth20ThrottleConfiguration {
     public static class CasOAuth20ThrottleInterceptorConfiguration {
         @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
         @Bean
-        @Autowired
         public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
@@ -130,7 +125,6 @@ public class CasOAuth20ThrottleConfiguration {
 
         @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
         @Bean
-        @Autowired
         public HandlerInterceptor requiresAuthenticationAccessTokenInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {

@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreNotificationsConfiguration {
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "communicationsManager")
     public CommunicationsManager communicationsManager(
         @Qualifier("mailSender")
@@ -57,7 +55,6 @@ public class CasCoreNotificationsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "smsSender")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();
         if (groovy.getLocation() != null) {
@@ -73,7 +70,6 @@ public class CasCoreNotificationsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "notificationSender")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public NotificationSender notificationSender(
         final ObjectProvider<List<NotificationSenderExecutionPlanConfigurer>> configurerProviders) {
         val configurers = Optional.ofNullable(configurerProviders.getIfAvailable()).orElse(new ArrayList<>());

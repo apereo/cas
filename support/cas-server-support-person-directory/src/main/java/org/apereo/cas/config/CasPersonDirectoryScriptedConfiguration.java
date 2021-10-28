@@ -12,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.ScriptEnginePersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class CasPersonDirectoryScriptedConfiguration {
         @ConditionalOnMissingBean(name = "scriptedAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<IPersonAttributeDao> scriptedAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             casProperties.getAuthn().getAttributeRepository().getScript()
@@ -67,7 +65,6 @@ public class CasPersonDirectoryScriptedConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ScriptAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "scriptedPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer scriptedPersonDirectoryAttributeRepositoryPlanConfigurer(

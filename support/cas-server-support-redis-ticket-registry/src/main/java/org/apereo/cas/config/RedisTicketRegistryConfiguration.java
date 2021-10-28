@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,7 +33,6 @@ public class RedisTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RedisConnectionFactory redisTicketConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getTicket().getRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -51,7 +49,6 @@ public class RedisTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          @Qualifier("ticketRedisTemplate")
                                          final RedisTemplate<String, Ticket> ticketRedisTemplate) {

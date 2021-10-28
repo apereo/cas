@@ -51,7 +51,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -98,7 +97,6 @@ public class WebAuthnConfiguration {
     public static class WebAuthnMetadataServiceConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnMetadataService")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataService webAuthnMetadataService(
             final CasConfigurationProperties casProperties,
@@ -165,7 +163,6 @@ public class WebAuthnConfiguration {
     public static class WebAuthnServerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnServer")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebAuthnServer webAuthnServer(
             final CasConfigurationProperties casProperties,
@@ -205,7 +202,6 @@ public class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationHandler")
-        @Autowired
         public AuthenticationHandler webAuthnAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnPrincipalFactory")
@@ -228,7 +224,6 @@ public class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
-        @Autowired
         public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnAuthenticationHandler")
@@ -266,7 +261,6 @@ public class WebAuthnConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnCredentialRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public WebAuthnCredentialRepository webAuthnCredentialRepository(
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
@@ -286,7 +280,6 @@ public class WebAuthnConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationProvider")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("failureModeEvaluator")
@@ -309,7 +302,6 @@ public class WebAuthnConfiguration {
     public static class WebAuthnControllerConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnCredentialRepository")
@@ -334,7 +326,6 @@ public class WebAuthnConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnCredentialRegistrationCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor webAuthnCredentialRegistrationCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getMfa().getWebAuthn().getCrypto();
             if (crypto.isEnabled()) {
@@ -370,7 +361,6 @@ public class WebAuthnConfiguration {
         }
 
         @Bean
-        @Autowired
         public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
             @Qualifier("webAuthnCsrfTokenRepository")
             final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {

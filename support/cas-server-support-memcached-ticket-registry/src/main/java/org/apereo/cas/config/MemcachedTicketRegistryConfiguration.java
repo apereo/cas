@@ -12,7 +12,6 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +33,6 @@ public class MemcachedTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public Transcoder memcachedTicketRegistryTranscoder(
         final CasConfigurationProperties casProperties,
         @Qualifier("componentSerializationPlan")
@@ -48,7 +46,6 @@ public class MemcachedTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "memcachedPooledClientConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MemcachedPooledClientConnectionFactory memcachedPooledClientConnectionFactory(final CasConfigurationProperties casProperties,
                                                                                          @Qualifier("memcachedTicketRegistryTranscoder")
                                                                                          final Transcoder memcachedTicketRegistryTranscoder) {
@@ -60,7 +57,6 @@ public class MemcachedTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          @Qualifier("memcachedTicketRegistryTranscoder")
                                          final Transcoder memcachedTicketRegistryTranscoder) {

@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
 import org.ldaptive.SearchOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -40,7 +39,6 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action spnego(
         final CasConfigurationProperties casProperties,
         @Qualifier("adaptiveAuthenticationPolicy")
@@ -57,7 +55,6 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action negociateSpnego(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
@@ -67,7 +64,6 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action baseSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new BaseSpnegoKnownClientSystemsFilterAction(
@@ -78,7 +74,6 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action hostnameSpnegoClientAction(final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(
@@ -92,7 +87,6 @@ public class SpnegoWebflowActionsConfiguration {
     public static class SpnegoLdapWebflowActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action ldapSpnegoClientAction(final CasConfigurationProperties casProperties) {
             val spnegoProperties = casProperties.getAuthn().getSpnego();
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(spnegoProperties.getLdap());

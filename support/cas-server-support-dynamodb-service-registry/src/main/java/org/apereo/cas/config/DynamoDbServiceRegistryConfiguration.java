@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +36,6 @@ public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(final CasConfigurationProperties casProperties,
                                                                                  @Qualifier("amazonDynamoDbServiceRegistryClient")
                                                                                  final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
@@ -48,7 +46,6 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
-    @Autowired
     public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                                    final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
                                                    @Qualifier("dynamoDbServiceRegistryFacilitator")
@@ -69,7 +66,6 @@ public class DynamoDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbServiceRegistryClient")
-    @Autowired
     public DynamoDbClient amazonDynamoDbServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getServiceRegistry().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();

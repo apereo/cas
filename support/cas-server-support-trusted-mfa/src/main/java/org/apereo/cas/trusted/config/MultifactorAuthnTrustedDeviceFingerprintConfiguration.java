@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -57,7 +56,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintUserAgentComponentExtractor")
-        @Autowired
         public DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor(final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
             val component = new UserAgentDeviceFingerprintComponentManager();
@@ -69,7 +67,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintClientIpComponentExtractor")
-        @Autowired
         public DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor(
             final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
@@ -82,7 +79,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieComponentExtractor")
-        @Autowired
         public DeviceFingerprintComponentManager deviceFingerprintCookieComponentExtractor(
             final CasConfigurationProperties casProperties,
             @Qualifier("deviceFingerprintCookieGenerator")
@@ -103,7 +99,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @ConditionalOnMissingBean(name = DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
         @Bean(DeviceFingerprintStrategy.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponentManager> extractors,
                                                                    final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
@@ -119,7 +114,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasCookieBuilder deviceFingerprintCookieGenerator(
             final CasConfigurationProperties casProperties,
             @Qualifier("deviceFingerprintCookieValueManager")
@@ -146,7 +140,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor deviceFingerprintCookieCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
             var enabled = crypto.isEnabled();
@@ -173,7 +166,6 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")
         @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.geolocation", name = "enabled", havingValue = "true")
-        @Autowired
         public DeviceFingerprintComponentManager deviceFingerprintGeoLocationComponentExtractor(
             final CasConfigurationProperties casProperties,
             @Qualifier("geoLocationService")

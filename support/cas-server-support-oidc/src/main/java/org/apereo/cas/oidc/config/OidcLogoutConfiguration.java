@@ -17,7 +17,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class OidcLogoutConfiguration {
         @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceLogoutUrlBuilderConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutServiceLogoutUrlBuilderConfigurer oidcSingleLogoutServiceLogoutUrlBuilderConfigurer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -61,7 +59,6 @@ public class OidcLogoutConfiguration {
         @ConditionalOnMissingBean(name = "oidcSingleLogoutMessageCreator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator(
             @Qualifier("oidcConfigurationContext")
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
@@ -77,7 +74,6 @@ public class OidcLogoutConfiguration {
         @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -109,7 +105,6 @@ public class OidcLogoutConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
-        @Autowired
         public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer(
             @Qualifier("oidcSingleLogoutServiceMessageHandler")
             final SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler) {

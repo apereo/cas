@@ -17,7 +17,6 @@ import org.apereo.cas.mfa.accepto.AccepttoMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationHandler casAccepttoMultifactorAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoMultifactorPrincipalFactory")
@@ -61,7 +59,6 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationProvider")
-        @Autowired
         public MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoMultifactorBypassEvaluator")
@@ -85,7 +82,6 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationMetaDataPopulator")
-        @Autowired
         public AuthenticationMetaDataPopulator casAccepttoMultifactorAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoMultifactorAuthenticationHandler")
@@ -109,7 +105,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "AccepttoMultifactorAuthenticationEventExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationEventExecutionPlanBaseConfiguration {

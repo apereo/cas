@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.RedisWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,7 +42,6 @@ public class RedisWebAuthnConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RedisConnectionFactory webAuthnRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getWebAuthn().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -51,7 +49,6 @@ public class RedisWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("webAuthnRedisTemplate")
                                                                      final RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate,

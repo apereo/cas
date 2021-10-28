@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -59,7 +58,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public static class CasCoreAuthenticationHandlersProxyConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationHandler proxyAuthenticationHandler(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -82,7 +80,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalResolver proxyPrincipalResolver(
             @Qualifier("proxyPrincipalFactory")
             final PrincipalFactory proxyPrincipalFactory) {
@@ -91,7 +88,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("proxyAuthenticationHandler")
             final AuthenticationHandler proxyAuthenticationHandler,
@@ -129,7 +125,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "acceptUsersAuthenticationHandler")
-        @Autowired
         public AuthenticationHandler acceptUsersAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -190,7 +185,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -213,7 +207,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @ConditionalOnMissingBean(name = "jaasAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public List<AuthenticationHandler> jaasAuthenticationHandlers(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,

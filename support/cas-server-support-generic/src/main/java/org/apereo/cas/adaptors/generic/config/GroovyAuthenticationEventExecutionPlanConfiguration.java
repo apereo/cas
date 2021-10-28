@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthenticationHandler groovyResourceAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("groovyPrincipalFactory")
                                                                      final PrincipalFactory groovyPrincipalFactory,
@@ -54,7 +52,6 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                                @Qualifier("groovyResourceAuthenticationHandler")
                                                                                                                final AuthenticationHandler groovyResourceAuthenticationHandler,

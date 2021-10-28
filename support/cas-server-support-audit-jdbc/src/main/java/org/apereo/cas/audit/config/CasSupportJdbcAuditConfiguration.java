@@ -16,7 +16,6 @@ import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -52,7 +51,6 @@ public class CasSupportJdbcAuditConfiguration {
     public static class CasSupportJdbcAuditEntityConfiguration {
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
@@ -70,7 +68,6 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "auditCleanupCriteria")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public WhereClauseMatchCriteria auditCleanupCriteria(final CasConfigurationProperties casProperties) {
             return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
         }
@@ -82,7 +79,6 @@ public class CasSupportJdbcAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
         @Bean
-        @Autowired
         public TransactionTemplate inspektrAuditTransactionTemplate(
             @Qualifier("inspektrAuditTransactionManager")
             final PlatformTransactionManager inspektrAuditTransactionManager, final CasConfigurationProperties casProperties) {
@@ -110,7 +106,6 @@ public class CasSupportJdbcAuditConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuditTrailManager jdbcAuditTrailManager(
             @Qualifier("auditCleanupCriteria")
             final WhereClauseMatchCriteria auditCleanupCriteria,
@@ -141,7 +136,6 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer(
             @Qualifier("jdbcAuditTrailManager")
             final AuditTrailManager jdbcAuditTrailManager) {
@@ -157,7 +151,6 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
         @ConditionalOnProperty(prefix = "cas.audit.jdbc.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @Bean
-        @Autowired
         public Cleanable inspektrAuditTrailCleaner(
             @Qualifier("jdbcAuditTrailManager")
             final AuditTrailManager jdbcAuditTrailManager) {
@@ -178,7 +171,6 @@ public class CasSupportJdbcAuditConfiguration {
     public static class CasSupportJdbcAuditTransactionConfiguration {
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
         public PlatformTransactionManager inspektrAuditTransactionManager(
             @Qualifier("inspektrAuditTrailDataSource")
@@ -194,7 +186,6 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditTrailDataSource")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource inspektrAuditTrailDataSource(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());
         }

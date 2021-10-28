@@ -13,7 +13,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +36,6 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("defaultObjectMapperFactory")
                                                                      final ObjectMapperFactory objectMapperFactory) {
@@ -60,7 +58,6 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public GoogleAuthenticatorAccountCouchDbRepository couchDbOneTimeTokenAccountRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory")
         final CouchDbConnectorFactory oneTimeTokenCouchDbFactory, final CasConfigurationProperties casProperties) {
@@ -73,7 +70,6 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAutneticatorTokenRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         @Qualifier("couchDbOneTimeTokenRepository")
         final GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository, final CasConfigurationProperties casProperties) {
@@ -83,7 +79,6 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory(final CasConfigurationProperties casProperties,
                                                               @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {
@@ -93,7 +88,6 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public GoogleAuthenticatorTokenCouchDbRepository couchDbOneTimeTokenRepository(
         @Qualifier("oneTimeTokenAccountCouchDbFactory")
         final CouchDbConnectorFactory oneTimeTokenCouchDbFactory, final CasConfigurationProperties casProperties) {

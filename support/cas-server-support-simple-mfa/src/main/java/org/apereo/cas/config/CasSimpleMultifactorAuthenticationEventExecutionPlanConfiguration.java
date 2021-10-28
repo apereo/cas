@@ -18,7 +18,6 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler(
         @Qualifier("casSimpleMultifactorPrincipalFactory")
         final PrincipalFactory casSimpleMultifactorPrincipalFactory,
@@ -58,7 +56,6 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationProvider")
-    @Autowired
     public MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider(
         @Qualifier("casSimpleMultifactorBypassEvaluator")
         final MultifactorAuthenticationProviderBypassEvaluator casSimpleMultifactorBypassEvaluator,
@@ -78,7 +75,6 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationMetaDataPopulator")
-    @Autowired
     public AuthenticationMetaDataPopulator casSimpleMultifactorAuthenticationMetaDataPopulator(
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
         final MultifactorAuthenticationProvider casSimpleMultifactorAuthenticationProvider,
@@ -101,7 +97,6 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("casSimpleMultifactorAuthenticationHandler")
         final AuthenticationHandler casSimpleMultifactorAuthenticationHandler,

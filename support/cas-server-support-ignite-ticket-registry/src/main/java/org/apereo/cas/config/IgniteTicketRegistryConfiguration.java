@@ -19,7 +19,6 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.ssl.SslContextFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -90,7 +89,6 @@ public class IgniteTicketRegistryConfiguration {
         return null;
     }
 
-    @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public IgniteConfiguration igniteConfiguration(
@@ -133,7 +131,6 @@ public class IgniteTicketRegistryConfiguration {
         return config;
     }
 
-    @Autowired
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(

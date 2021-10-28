@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchbaseClientFactory")
-    @Autowired
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val cb = casProperties.getTicket().getRegistry().getCouchbase();
         return new CouchbaseClientFactory(cb);
@@ -39,7 +37,6 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          @Qualifier("ticketRegistryCouchbaseClientFactory")
                                          final CouchbaseClientFactory ticketRegistryCouchbaseClientFactory) {

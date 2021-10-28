@@ -25,7 +25,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -56,7 +55,6 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -73,7 +71,6 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
         @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -99,7 +96,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             return plan -> plan.registerWebflowConfigurer(acceptableUsagePolicyWebflowConfigurer);
         }
     }
-                                                      
+
     @Configuration(value = "CasAcceptableUsagePolicyWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasAcceptableUsagePolicyWebflowActionConfiguration {

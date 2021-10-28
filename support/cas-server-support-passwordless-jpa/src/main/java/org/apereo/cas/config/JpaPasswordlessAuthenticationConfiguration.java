@@ -11,7 +11,6 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -48,7 +47,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter")
@@ -69,7 +67,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaPasswordlessVendorAdapter(final CasConfigurationProperties casProperties,
                                                              @Qualifier("jpaBeanFactory")
                                                              final JpaBeanFactory jpaBeanFactory) {
@@ -83,7 +80,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "passwordlessDataSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource passwordlessDataSource(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getPasswordless().getTokens().getJpa());
         }
@@ -95,7 +91,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaPasswordlessAuthenticationTransactionConfiguration {
 
-        @Autowired
         @Bean
         public PlatformTransactionManager passwordlessTransactionManager(
             @Qualifier("passwordlessEntityManagerFactory")
@@ -113,7 +108,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties) {
             val tokens = casProperties.getAuthn()
                 .getPasswordless()
@@ -128,7 +122,6 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @ConditionalOnProperty(prefix = "cas.authn.passwordless.tokens.jpa.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "jpaPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
-        @Autowired
         public JpaPasswordlessAuthenticationTokenRepositoryCleaner jpaPasswordlessAuthenticationTokenRepositoryCleaner(
             @Qualifier("passwordlessTokenRepository")
             final PasswordlessTokenRepository passwordlessTokenRepository) {

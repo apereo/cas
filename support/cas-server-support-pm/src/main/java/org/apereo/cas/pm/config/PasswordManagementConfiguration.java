@@ -30,7 +30,6 @@ import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,14 +48,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 @Configuration(value = "passwordManagementConfiguration", proxyBeanMethods = false)
 public class PasswordManagementConfiguration {
-    
+
     @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementValidationConfiguration {
         @ConditionalOnMissingBean(name = "passwordValidationService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("passwordHistoryService")
                                                                    final PasswordHistoryService passwordHistoryService) {
@@ -64,14 +62,13 @@ public class PasswordManagementConfiguration {
             return new DefaultPasswordValidationService(policyPattern, passwordHistoryService);
         }
     }
-    
+
     @Configuration(value = "PasswordManagementHistoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementHistoryConfiguration {
         @ConditionalOnMissingBean(name = "passwordHistoryService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public PasswordHistoryService passwordHistoryService(final CasConfigurationProperties casProperties) {
             val pm = casProperties.getAuthn().getPm();
             val history = pm.getHistory();
@@ -117,7 +114,6 @@ public class PasswordManagementConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public CipherExecutor passwordManagementCipherExecutor(final CasConfigurationProperties casProperties) {
             val pm = casProperties.getAuthn().getPm();
             val crypto = pm.getReset().getCrypto();
@@ -127,15 +123,14 @@ public class PasswordManagementConfiguration {
             return CipherExecutor.noOp();
         }
     }
-    
+
     @Configuration(value = "PasswordManagementCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementCoreConfiguration {
-        
+
         @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public PasswordManagementService passwordChangeService(
             final CasConfigurationProperties casProperties,
             @Qualifier("passwordManagementCipherExecutor")
@@ -169,7 +164,6 @@ public class PasswordManagementConfiguration {
             return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
         }
 
-        @Autowired
         @Bean
         public InitializingBean afterPropertiesSet(final CasConfigurationProperties casProperties,
                                                    @Qualifier("communicationsManager")

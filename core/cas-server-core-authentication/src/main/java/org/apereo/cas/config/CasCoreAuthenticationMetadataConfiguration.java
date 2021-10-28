@@ -17,7 +17,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,14 +37,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
-    
+
     @Configuration(value = "CasCoreAuthenticationMetadataCipherConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationMetadataCipherConfiguration {
         @ConditionalOnMissingBean(name = "cacheCredentialsCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor cacheCredentialsCipherExecutor(final CasConfigurationProperties casProperties) {
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
@@ -60,6 +58,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             return CipherExecutor.noOp();
         }
     }
+
     @Configuration(value = "CasCoreAuthenticationMetadataPopulatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationMetadataPopulatorConfiguration {
@@ -95,7 +94,6 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "rememberMeAuthenticationMetaDataPopulator")
         @Bean
-        @Autowired
         public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties) {
             return new RememberMeAuthenticationMetaDataPopulator(casProperties.getTicket().getTgt().getRememberMe());
@@ -108,7 +106,6 @@ public class CasCoreAuthenticationMetadataConfiguration {
         @ConditionalOnMissingBean(name = "cacheCredentialsMetaDataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnProperty(prefix = "cas.clearpass", name = "cache-credential", havingValue = "true")
         public AuthenticationMetaDataPopulator cacheCredentialsMetaDataPopulator(
             @Qualifier("cacheCredentialsCipherExecutor")
@@ -124,7 +121,6 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public static class CasCoreAuthenticationMetadataExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("authenticationCredentialTypeMetaDataPopulator")
             final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,

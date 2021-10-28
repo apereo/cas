@@ -13,7 +13,6 @@ import org.apereo.cas.util.io.WatcherService;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class YamlServiceRegistryConfiguration {
     public static class YamlServiceRegistryCoreConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "yamlServiceRegistry")
         public ServiceRegistry yamlServiceRegistry(
             @Qualifier("registeredServiceResourceNamingStrategy")
@@ -72,7 +70,6 @@ public class YamlServiceRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "yamlServiceRegistryExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ServiceRegistryExecutionPlanConfigurer yamlServiceRegistryExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("yamlServiceRegistry")

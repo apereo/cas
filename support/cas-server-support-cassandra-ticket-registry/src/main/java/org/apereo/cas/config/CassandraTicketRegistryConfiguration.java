@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "cassandraTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraTicketRegistryConfiguration {
 
-    @Autowired
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
@@ -51,7 +49,6 @@ public class CassandraTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraTicketRegistrySessionFactory")
-    @Autowired
     public CassandraSessionFactory cassandraTicketRegistrySessionFactory(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")

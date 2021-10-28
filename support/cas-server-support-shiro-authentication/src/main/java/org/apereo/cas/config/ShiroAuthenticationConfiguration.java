@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +43,6 @@ public class ShiroAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "shiroAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler shiroAuthenticationHandler(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier("shiroPrincipalFactory")
@@ -64,7 +62,6 @@ public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("shiroAuthenticationHandler")
@@ -75,7 +72,7 @@ public class ShiroAuthenticationConfiguration {
             val shiroConfigFile = casProperties.getAuthn()
                 .getShiro()
                 .getLocation();
-            if (shiroConfigFile!=null) {
+            if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler, defaultPrincipalResolver);
             }

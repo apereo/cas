@@ -13,7 +13,6 @@ import org.apereo.cas.util.io.WatcherService;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +41,6 @@ public class JsonServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jsonServiceRegistry")
-    @Autowired
     public ServiceRegistry jsonServiceRegistry(
         @Qualifier("registeredServiceResourceNamingStrategy")
         final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
@@ -67,7 +65,6 @@ public class JsonServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryExecutionPlanConfigurer")
     public ServiceRegistryExecutionPlanConfigurer jsonServiceRegistryExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,

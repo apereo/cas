@@ -29,7 +29,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -69,7 +68,6 @@ public class OpenIdConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serverManager")
-    @Autowired
     public ServerManager serverManager(final CasConfigurationProperties casProperties) {
         val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
@@ -81,7 +79,6 @@ public class OpenIdConfiguration {
 
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
-    @Autowired
     public ResponseBuilder openIdServiceResponseBuilder(final CasConfigurationProperties casProperties,
                                                         @Qualifier("serverManager")
                                                         final ServerManager serverManager,
@@ -110,7 +107,6 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    @Autowired
     public OpenIdValidateController openIdValidateController(
         final CasConfigurationProperties casProperties,
         @Qualifier("serverManager")
@@ -181,7 +177,6 @@ public class OpenIdConfiguration {
     public static class OpenIdProtocolViews {
 
         @Bean
-        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View casOpenIdServiceFailureView(
             final ConfigurableApplicationContext applicationContext,
@@ -191,7 +186,6 @@ public class OpenIdConfiguration {
         }
 
         @Bean
-        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View casOpenIdServiceSuccessView(final ConfigurableApplicationContext applicationContext,
                                                 @Qualifier("casProtocolViewFactory")
@@ -201,7 +195,6 @@ public class OpenIdConfiguration {
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @Autowired
         public View casOpenIdAssociationSuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -210,7 +203,6 @@ public class OpenIdConfiguration {
         }
 
         @Bean
-        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public View openIdProviderView(
             final ConfigurableApplicationContext applicationContext,

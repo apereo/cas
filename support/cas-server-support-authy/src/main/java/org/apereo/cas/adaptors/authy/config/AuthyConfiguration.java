@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,7 +46,6 @@ public class AuthyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AuthyWebflowRegistryConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "authyAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry authyAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
@@ -67,7 +65,6 @@ public class AuthyConfiguration {
     public static class AuthyWebflowCoreConfiguration {
         @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer authyMultifactorWebflowConfigurer(
             @Qualifier("authyAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
@@ -91,7 +88,6 @@ public class AuthyConfiguration {
     public static class AuthyWebflowEventConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public CasWebflowEventResolver authyAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -105,7 +101,6 @@ public class AuthyConfiguration {
     public static class AuthyWebflowActionConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public Action authyAuthenticationWebflowAction(
             @Qualifier("authyAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver authyAuthenticationWebflowEventResolver) {
@@ -119,7 +114,6 @@ public class AuthyConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer(
             @Qualifier("authyMultifactorWebflowConfigurer")
             final CasWebflowConfigurer authyMultifactorWebflowConfigurer) {
@@ -135,7 +129,6 @@ public class AuthyConfiguration {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer(
             @Qualifier("authyAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
@@ -157,7 +150,6 @@ public class AuthyConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "authyMultifactorTrustCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("authyMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer) {

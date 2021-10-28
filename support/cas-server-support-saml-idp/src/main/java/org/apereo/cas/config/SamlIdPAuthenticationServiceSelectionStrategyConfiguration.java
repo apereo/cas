@@ -10,7 +10,6 @@ import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
     public static class SamlIdPAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
         @Bean
-        @Autowired
         public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPServiceFactory")

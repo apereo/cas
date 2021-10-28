@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -54,20 +53,18 @@ public class CasConsentJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceConsent")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceConsent(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getConsent().getJpa());
         }
 
     }
-    
+
     @Configuration(value = "CasConsentJdbcEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentJdbcEntityConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaConsentVendorAdapter(
             @Qualifier("jpaBeanFactory")
             final JpaBeanFactory jpaBeanFactory,
@@ -81,7 +78,6 @@ public class CasConsentJdbcConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory(
             @Qualifier("jpaConsentVendorAdapter")
             final JpaVendorAdapter jpaConsentVendorAdapter,
@@ -106,7 +102,6 @@ public class CasConsentJdbcConfiguration {
     @Configuration(value = "CasConsentJdbcTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentJdbcTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerConsent(
             @Qualifier("consentEntityManagerFactory")

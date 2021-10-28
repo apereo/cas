@@ -50,7 +50,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -113,7 +112,6 @@ public class SamlIdPMetadataConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
@@ -131,7 +129,6 @@ public class SamlIdPMetadataConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
@@ -160,7 +157,6 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataResolutionConfiguration {
         @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
         @Bean
-        @Autowired
         public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers(
             final ObjectProvider<List<SamlRegisteredServiceMetadataResolutionPlanConfigurer>> configurersList,
             final CasConfigurationProperties casProperties,
@@ -186,7 +182,6 @@ public class SamlIdPMetadataConfiguration {
         @Lazy
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
         @DependsOn("samlIdPMetadataGenerator")
-        @Autowired
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataLocator")
@@ -217,7 +212,6 @@ public class SamlIdPMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
         @Bean
-        @Autowired
         public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
             final CasConfigurationProperties casProperties) throws Exception {
             val url = new URL(casProperties.getServer().getPrefix());
@@ -240,7 +234,6 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataLocatorConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
         @Bean
-        @Autowired
         public SamlIdPMetadataLocator samlIdPMetadataLocator(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPMetadataCache")
@@ -259,7 +252,6 @@ public class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache(
             final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp();
@@ -289,7 +281,6 @@ public class SamlIdPMetadataConfiguration {
         @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("chainingMetadataResolverCacheLoader")
@@ -307,7 +298,6 @@ public class SamlIdPMetadataConfiguration {
     public static class SamlIdPMetadataContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
-        @Autowired
         public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,

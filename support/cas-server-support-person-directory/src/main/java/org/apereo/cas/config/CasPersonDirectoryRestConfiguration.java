@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +46,6 @@ public class CasPersonDirectoryRestConfiguration {
         @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<IPersonAttributeDao> restfulAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             casProperties.getAuthn().getAttributeRepository().getRest()
@@ -88,11 +86,11 @@ public class CasPersonDirectoryRestConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class RestfulAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restfulPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
-            @Qualifier("restfulAttributeRepositories") final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
+            @Qualifier("restfulAttributeRepositories")
+            final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
             return plan -> {
                 val results = restfulAttributeRepositories.toList()
                     .stream()

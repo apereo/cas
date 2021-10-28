@@ -7,7 +7,6 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.AmazonSimpleNotificationServiceSmsSender;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +26,6 @@ public class AmazonSimpleNotificationServiceSmsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val sns = casProperties.getSmsProvider().getSns();
         val clientBuilder = SnsClient.builder();

@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,7 +38,6 @@ public class SurrogateAuthenticationMetadataConfiguration {
     public static class SurrogateAuthenticationMetadataPlanConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
         @Bean
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer(
             @Qualifier("surrogateAuthenticationMetadataPopulator")
             final AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator) {

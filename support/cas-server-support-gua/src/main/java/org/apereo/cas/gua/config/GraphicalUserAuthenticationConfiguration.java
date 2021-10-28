@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +47,6 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -61,7 +59,6 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
-    @Autowired
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository(final CasConfigurationProperties casProperties) {
         val gua = casProperties.getAuthn().getGua();
         if (!gua.getSimple().isEmpty()) {
@@ -98,7 +95,6 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action initializeLoginAction(final CasConfigurationProperties casProperties,
                                         @Qualifier(ServicesManager.BEAN_NAME)
                                         final ServicesManager servicesManager) {

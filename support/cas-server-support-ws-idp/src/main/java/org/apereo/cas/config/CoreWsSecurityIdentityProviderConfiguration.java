@@ -38,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -85,7 +84,6 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public static class CoreWsSecurityIdentityProviderServiceSelectionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
         public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
             @Qualifier("webApplicationServiceFactory")
@@ -101,14 +99,13 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public static class CoreWsSecurityIdentityProviderServiceSelectionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategyConfigurer")
-        @Autowired
         public AuthenticationServiceSelectionStrategyConfigurer wsFederationAuthenticationServiceSelectionStrategyConfigurer(
             @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy) {
             return plan -> plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy);
         }
     }
-    
+
     @Configuration(value = "CoreWsSecurityIdentityProviderServicesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecurityIdentityProviderServicesConfiguration {
@@ -119,7 +116,6 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         }
 
         @Bean
-        @Autowired
         public Service wsFederationCallbackService(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
@@ -129,7 +125,6 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationServiceRegistryExecutionPlanConfigurer")
-        @Autowired
         public ServiceRegistryExecutionPlanConfigurer wsFederationServiceRegistryExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("wsFederationCallbackService")
@@ -152,7 +147,6 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecurityIdentityProviderTicketsConfiguration {
 
-        @Autowired
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationRelyingPartyTokenProducer")
@@ -236,14 +230,12 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     public static class CoreWsSecurityIdentityProviderControllersConfiguration {
         @ConditionalOnMissingBean(name = "federationValidateRequestController")
         @Bean
-        @Autowired
         public WSFederationValidateRequestController federationValidateRequestController(
             @Qualifier("wsFederationConfigurationContext")
             final WSFederationRequestConfigurationContext wsFederationConfigurationContext) {
             return new WSFederationValidateRequestController(wsFederationConfigurationContext);
         }
 
-        @Autowired
         @Bean
         public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
             @Qualifier("wsFederationConfigurationContext")
@@ -253,7 +245,6 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public WSFederationMetadataController wsFederationMetadataController(final CasConfigurationProperties casProperties) {
             return new WSFederationMetadataController(casProperties);
         }

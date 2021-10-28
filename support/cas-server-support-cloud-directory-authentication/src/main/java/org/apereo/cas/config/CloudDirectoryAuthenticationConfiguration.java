@@ -16,7 +16,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +45,6 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler cloudDirectoryAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                      @Qualifier("cloudDirectoryPrincipalFactory")
                                                                      final PrincipalFactory cloudDirectoryPrincipalFactory,
@@ -64,7 +62,6 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cloudDirectoryRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AmazonCloudDirectoryRepository cloudDirectoryRepository(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("amazonCloudDirectory")
                                                                    final CloudDirectoryClient amazonCloudDirectory) {
@@ -75,7 +72,6 @@ public class CloudDirectoryAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCloudDirectory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CloudDirectoryClient amazonCloudDirectory(final CasConfigurationProperties casProperties) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
         val builder = CloudDirectoryClient.builder();

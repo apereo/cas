@@ -18,7 +18,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -55,7 +54,6 @@ public class RedisAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RedisConnectionFactory redisAuthenticationConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -73,7 +71,6 @@ public class RedisAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler redisAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                             @Qualifier("redisPrincipalFactory")
                                                             final PrincipalFactory redisPrincipalFactory,
@@ -102,7 +99,6 @@ public class RedisAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public List<IPersonAttributeDao> redisPersonAttributeDaos(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis();
         return redis.stream().filter(r -> StringUtils.isNotBlank(r.getHost())).map(r -> {

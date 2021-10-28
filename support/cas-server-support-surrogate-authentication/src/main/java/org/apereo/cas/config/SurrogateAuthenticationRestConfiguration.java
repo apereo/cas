@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class SurrogateAuthenticationRestConfiguration {
      * @return configurer instance
      */
     @Bean
-    @Autowired
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
         @Qualifier("surrogateAuthenticationService")
         final SurrogateAuthenticationService surrogateAuthenticationService, final CasConfigurationProperties casProperties) {

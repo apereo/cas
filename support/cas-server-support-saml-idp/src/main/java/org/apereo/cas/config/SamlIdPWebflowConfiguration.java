@@ -30,7 +30,6 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,7 +69,6 @@ public class SamlIdPWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer samlIdPWebConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -142,7 +140,6 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPWebflowMultifactorAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
-        @Autowired
         public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -179,7 +176,6 @@ public class SamlIdPWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentableAttributeBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ConsentableAttributeBuilder samlIdPConsentableAttributeBuilder(
             @Qualifier("attributeDefinitionStore")
             final AttributeDefinitionStore attributeDefinitionStore) {
@@ -194,7 +190,6 @@ public class SamlIdPWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope
-        @Autowired
         public SingleSignOnParticipationStrategyConfigurer samlIdPConsentSingleSignOnParticipationStrategyConfigurer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

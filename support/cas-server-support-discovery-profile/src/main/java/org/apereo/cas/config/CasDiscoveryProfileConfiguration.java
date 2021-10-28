@@ -12,7 +12,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
-    @Autowired
     public CasServerProfileRegistrar casServerProfileRegistrar(
         final CasConfigurationProperties casProperties,
         @Qualifier("builtClients")
@@ -55,7 +53,6 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
         final CasConfigurationProperties casProperties,
         @Qualifier("casServerProfileRegistrar")
@@ -64,7 +61,6 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
-    @Autowired
     public BeanContainer<String> discoveryProfileAvailableAttributes(
         final CasConfigurationProperties casProperties,
         @Qualifier("attributeRepository")

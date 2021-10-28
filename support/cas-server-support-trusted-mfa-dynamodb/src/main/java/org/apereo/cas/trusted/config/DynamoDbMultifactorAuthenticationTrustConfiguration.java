@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.authentication.storage.DynamoDbMultifactorTrustEng
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbMultifactorTrustEngineClient")
-    @Autowired
     public DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getTrusted().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
@@ -42,7 +40,6 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbMultifactorTrustEngineFacilitator")
-    @Autowired
     public DynamoDbMultifactorTrustEngineFacilitator dynamoDbMultifactorTrustEngineFacilitator(final CasConfigurationProperties casProperties,
                                                                                                @Qualifier("amazonDynamoDbMultifactorTrustEngineClient")
                                                                                                final DynamoDbClient amazonDynamoDbMultifactorTrustEngineClient) {
@@ -56,7 +53,6 @@ public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("dynamoDbMultifactorTrustEngineFacilitator")

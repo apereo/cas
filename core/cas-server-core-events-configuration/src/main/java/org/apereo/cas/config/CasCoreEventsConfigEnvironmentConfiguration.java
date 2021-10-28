@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.apereo.cas.support.events.listener.CasConfigurationEventListener;
 import org.apereo.cas.util.spring.CasEventListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
@@ -27,7 +26,6 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
 
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
-    @Autowired
     public CasEventListener casConfigurationEventListener(
         @Qualifier("configurationPropertiesEnvironmentManager")
         final CasConfigurationPropertiesEnvironmentManager manager,

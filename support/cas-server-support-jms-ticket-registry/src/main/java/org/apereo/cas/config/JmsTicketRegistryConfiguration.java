@@ -12,7 +12,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -44,7 +43,6 @@ import javax.jms.ConnectionFactory;
 public class JmsTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
     @Bean
-    @Autowired
     public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
         val bean = new PublisherIdentifier();
         val jms = casProperties.getTicket().getRegistry().getJms();

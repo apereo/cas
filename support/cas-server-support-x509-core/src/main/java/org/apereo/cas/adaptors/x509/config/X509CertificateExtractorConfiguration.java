@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,7 +26,6 @@ public class X509CertificateExtractorConfiguration {
     @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public X509CertificateExtractor x509CertificateExtractor(final CasConfigurationProperties casProperties) {
         val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);

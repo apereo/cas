@@ -14,7 +14,6 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -61,7 +60,6 @@ public class CasServicesStreamingHazelcastConfiguration {
         @Bean(destroyMethod = "shutdown")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casRegisteredServiceHazelcastInstance")
-        @Autowired
         public HazelcastInstance casRegisteredServiceHazelcastInstance(final CasConfigurationProperties casProperties) {
             val name = DefaultCasRegisteredServiceStreamPublisher.class.getSimpleName();
             LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);

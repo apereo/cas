@@ -11,7 +11,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -43,7 +42,6 @@ public class GoogleAuthenticatorMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -55,7 +53,6 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         return mongoTemplate;
     }
 
-    @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
@@ -70,7 +67,6 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     }
 
     @Bean
-    @Autowired
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("mongoDbGoogleAuthenticatorTemplate")
                                                                            final MongoTemplate mongoDbGoogleAuthenticatorTemplate) {

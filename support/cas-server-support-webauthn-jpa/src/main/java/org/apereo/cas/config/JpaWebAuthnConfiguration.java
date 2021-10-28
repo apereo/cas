@@ -12,7 +12,6 @@ import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +40,6 @@ public class JpaWebAuthnConfiguration {
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaWebAuthnTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerWebAuthn(
             @Qualifier("webAuthnEntityManagerFactory")
@@ -58,7 +56,6 @@ public class JpaWebAuthnConfiguration {
     public static class JpaWebAuthnRepositoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public WebAuthnCredentialRepository webAuthnCredentialRepository(
             @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
             final CipherExecutor webAuthnCredentialRegistrationCipherExecutor,
@@ -76,7 +73,6 @@ public class JpaWebAuthnConfiguration {
     public static class JpaWebAuthnEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaWebAuthnVendorAdapter(
             @Qualifier("jpaBeanFactory")
             final JpaBeanFactory jpaBeanFactory,
@@ -90,7 +86,6 @@ public class JpaWebAuthnConfiguration {
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
         public LocalContainerEntityManagerFactoryBean webAuthnEntityManagerFactory(
             @Qualifier("jpaWebAuthnVendorAdapter")
@@ -120,7 +115,6 @@ public class JpaWebAuthnConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceWebAuthn")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceWebAuthn(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getWebAuthn().getJpa());
         }

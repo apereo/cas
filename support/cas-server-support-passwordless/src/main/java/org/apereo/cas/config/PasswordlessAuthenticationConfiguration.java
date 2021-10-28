@@ -24,7 +24,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -67,7 +66,6 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessUserAccountStore")
-    @Autowired
     public PasswordlessUserAccountStore passwordlessUserAccountStore(final CasConfigurationProperties casProperties) {
         val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
         if (accounts.getJson().getLocation() != null) {
@@ -96,7 +94,6 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessCipherExecutor")
-    @Autowired
     public CipherExecutor passwordlessCipherExecutor(final CasConfigurationProperties casProperties) {
         val tokens = casProperties.getAuthn().getPasswordless().getTokens();
         val crypto = tokens.getCrypto();
@@ -109,7 +106,6 @@ public class PasswordlessAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
-    @Autowired
     public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("passwordlessCipherExecutor")
                                                                    final CipherExecutor passwordlessCipherExecutor) {

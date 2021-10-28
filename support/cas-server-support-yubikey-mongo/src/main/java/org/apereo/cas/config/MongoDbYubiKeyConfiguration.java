@@ -9,7 +9,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,7 +36,6 @@ public class MongoDbYubiKeyConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MongoTemplate mongoYubiKeyTemplate(
         @Qualifier("casSslContext")
         final CasSSLContext casSslContext,
@@ -51,7 +49,6 @@ public class MongoDbYubiKeyConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(
         @Qualifier("yubiKeyAccountValidator")
         final YubiKeyAccountValidator yubiKeyAccountValidator,

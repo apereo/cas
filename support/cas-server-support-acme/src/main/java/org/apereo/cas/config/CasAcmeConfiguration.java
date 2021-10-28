@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -57,7 +56,6 @@ public class CasAcmeConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "cas.acme", name = "terms-of-use-accepted", havingValue = "true")
-    @Autowired
     public AcmeCertificateManager acmeCertificateManager(final CasConfigurationProperties casProperties,
                                                          @Qualifier("acmeChallengeRepository")
                                                          final AcmeChallengeRepository acmeChallengeRepository,

@@ -17,7 +17,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +46,6 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action duoAuthenticationWebflowAction(
         @Qualifier("duoAuthenticationWebflowEventResolver")
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver) {
@@ -57,7 +55,6 @@ public class DuoSecurityConfiguration {
     @ConditionalOnMissingBean(name = "duoUniversalPromptPrepareLoginAction")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action duoUniversalPromptPrepareLoginAction(
         @Qualifier("duoProviderBean")
         final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
@@ -70,7 +67,6 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoUniversalPromptValidateLoginAction")
     @Bean
-    @Autowired
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action duoUniversalPromptValidateLoginAction(
         @Qualifier("duoAuthenticationWebflowEventResolver")
@@ -87,7 +83,6 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")
     @Bean
-    @Autowired
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {

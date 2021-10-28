@@ -14,7 +14,6 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistry ticketRegistry(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
@@ -58,7 +56,6 @@ public class HazelcastTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
     @Bean(destroyMethod = "shutdown")
-    @Autowired
     public HazelcastInstance casTicketRegistryHazelcastInstance(
         @Qualifier("ticketCatalog")
         final TicketCatalog ticketCatalog,

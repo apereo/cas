@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.DynamoDbWebAuthnFacilitator;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class DynamoDbWebAuthnConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbWebAuthnClient")
-    @Autowired
     public DynamoDbClient amazonDynamoDbWebAuthnClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
@@ -41,7 +39,6 @@ public class DynamoDbWebAuthnConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbWebAuthnFacilitator")
-    @Autowired
     public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("amazonDynamoDbWebAuthnClient")
                                                                    final DynamoDbClient amazonDynamoDbWebAuthnClient) {
@@ -55,7 +52,6 @@ public class DynamoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("dynamoDbWebAuthnFacilitator")
                                                                      final DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator,

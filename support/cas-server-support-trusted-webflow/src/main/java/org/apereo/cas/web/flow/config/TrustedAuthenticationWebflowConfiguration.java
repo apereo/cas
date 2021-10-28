@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,7 +34,6 @@ public class TrustedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowConfigurer trustedWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -54,7 +52,6 @@ public class TrustedAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TrustedAuthenticationWebflowPlanConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer(
             @Qualifier("trustedWebflowConfigurer")

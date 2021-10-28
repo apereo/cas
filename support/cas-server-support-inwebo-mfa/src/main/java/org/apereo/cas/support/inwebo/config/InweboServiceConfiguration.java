@@ -8,7 +8,6 @@ import org.apereo.cas.util.ssl.SSLUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +36,6 @@ public class InweboServiceConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public InweboConsoleAdmin inweboConsoleAdmin(
         @Qualifier("casSslContext")
         final ObjectProvider<CasSSLContext> casSslContext,
@@ -69,7 +67,6 @@ public class InweboServiceConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "inweboService")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public InweboService inweboService(
         @Qualifier("inweboConsoleAdmin")
         final InweboConsoleAdmin inweboConsoleAdmin,

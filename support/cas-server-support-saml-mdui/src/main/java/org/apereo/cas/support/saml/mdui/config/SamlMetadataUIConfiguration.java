@@ -19,7 +19,6 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -101,7 +100,6 @@ public class SamlMetadataUIConfiguration {
 
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
-    @Autowired
     public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter(final CasConfigurationProperties casProperties,
                                                                                  final ConfigurableApplicationContext applicationContext,
                                                                                  @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)

@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +37,6 @@ public class MongoDbServiceRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
-    @Autowired
     public MongoTemplate mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -54,7 +52,6 @@ public class MongoDbServiceRegistryConfiguration {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
@@ -70,7 +67,6 @@ public class MongoDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistryExecutionPlanConfigurer mongoDbServiceRegistryExecutionPlanConfigurer(
         @Qualifier("mongoDbServiceRegistry")
         final ServiceRegistry mongoDbServiceRegistry) {

@@ -47,7 +47,6 @@ import lombok.val;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
@@ -117,7 +116,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -175,7 +173,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
-        @Autowired
         public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer(
             @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
@@ -200,7 +197,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderRedirectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy(
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedAuthenticationCookieGenerator")
@@ -221,7 +217,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasCookieBuilder delegatedAuthenticationCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getPac4j().getCookie();
             return new DelegatedAuthenticationCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -282,7 +277,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
-        @Autowired
         public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext(
             @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,

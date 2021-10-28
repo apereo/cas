@@ -8,7 +8,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MongoTemplate mongoAcceptableUsagePolicyTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -45,7 +43,6 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoAcceptableUsagePolicyTemplate")

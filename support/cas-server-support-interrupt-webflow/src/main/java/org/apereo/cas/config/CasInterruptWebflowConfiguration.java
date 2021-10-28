@@ -17,7 +17,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class CasInterruptWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer interruptWebflowConfigurer(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
                                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -54,7 +52,6 @@ public class CasInterruptWebflowConfiguration {
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action inquireInterruptAction(final CasConfigurationProperties casProperties,
                                          @Qualifier("interruptCookieGenerator")
                                          final CasCookieBuilder interruptCookieGenerator,

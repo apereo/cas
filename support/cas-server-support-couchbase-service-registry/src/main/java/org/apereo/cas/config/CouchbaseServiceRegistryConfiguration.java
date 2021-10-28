@@ -11,7 +11,6 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +37,6 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
-    @Autowired
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
@@ -47,7 +45,6 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchbaseServiceRegistry")
-    @Autowired
     public ServiceRegistry couchbaseServiceRegistry(
         final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,

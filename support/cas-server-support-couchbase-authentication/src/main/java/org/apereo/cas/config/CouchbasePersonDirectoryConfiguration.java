@@ -8,7 +8,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,7 +32,6 @@ public class CouchbasePersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "couchbasePersonAttributeDao")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public IPersonAttributeDao couchbasePersonAttributeDao(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
         val cb = new CouchbasePersonAttributeDao(couchbase, new CouchbaseClientFactory(couchbase));

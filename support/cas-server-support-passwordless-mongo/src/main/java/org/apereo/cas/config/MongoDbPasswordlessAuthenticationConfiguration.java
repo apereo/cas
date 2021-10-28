@@ -7,7 +7,6 @@ import org.apereo.cas.impl.account.MongoDbPasswordlessUserAccountStore;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MongoTemplate mongoDbPasswordlessAuthenticationTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -44,7 +42,6 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public PasswordlessUserAccountStore passwordlessUserAccountStore(
         @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
         final MongoTemplate mongoDbPasswordlessAuthenticationTemplate, final CasConfigurationProperties casProperties) {

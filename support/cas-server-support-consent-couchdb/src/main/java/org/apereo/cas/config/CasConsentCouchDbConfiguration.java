@@ -8,7 +8,6 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ public class CasConsentCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "consentCouchDbFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CouchDbConnectorFactory consentCouchDbFactory(final CasConfigurationProperties casProperties,
                                                          @Qualifier("defaultObjectMapperFactory")
                                                          final ObjectMapperFactory objectMapperFactory) {
@@ -41,7 +39,6 @@ public class CasConsentCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ConsentDecisionCouchDbRepository consentCouchDbRepository(
         @Qualifier("consentCouchDbFactory")
         final CouchDbConnectorFactory consentCouchDbFactory, final CasConfigurationProperties casProperties) {

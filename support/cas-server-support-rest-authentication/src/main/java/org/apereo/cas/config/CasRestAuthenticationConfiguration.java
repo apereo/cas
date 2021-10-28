@@ -14,7 +14,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RestTemplate restAuthenticationTemplate(final CasConfigurationProperties casProperties) {
         val rest = casProperties.getAuthn().getRest();
         val template = new RestTemplate();
@@ -69,7 +67,6 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler restAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
@@ -86,7 +83,6 @@ public class CasRestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("restAuthenticationHandler")

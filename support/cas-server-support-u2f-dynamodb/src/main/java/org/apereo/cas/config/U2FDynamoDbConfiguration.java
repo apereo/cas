@@ -11,7 +11,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class U2FDynamoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public U2FDynamoDbFacilitator u2fDynamoDbFacilitator(
         @Qualifier("u2fDynamoDbClient")
         final DynamoDbClient u2fDynamoDbClient, final CasConfigurationProperties casProperties) {
@@ -48,7 +46,6 @@ public class U2FDynamoDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "u2fDynamoDbClient")
-    @Autowired
     public DynamoDbClient u2fDynamoDbClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getU2f().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
@@ -57,7 +54,6 @@ public class U2FDynamoDbConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public U2FDeviceRepository u2fDeviceRepository(
         @Qualifier("u2fDynamoDbFacilitator")
         final U2FDynamoDbFacilitator u2fDynamoDbFacilitator, final CasConfigurationProperties casProperties,

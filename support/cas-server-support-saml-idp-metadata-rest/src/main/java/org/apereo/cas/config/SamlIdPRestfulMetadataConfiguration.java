@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,7 +28,6 @@ public class SamlIdPRestfulMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restSamlRegisteredServiceMetadataResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlRegisteredServiceMetadataResolver restSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
                                                                                            final OpenSamlConfigBean openSamlConfigBean) {

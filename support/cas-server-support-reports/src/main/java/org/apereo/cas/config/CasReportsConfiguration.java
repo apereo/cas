@@ -36,7 +36,6 @@ import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
@@ -63,7 +62,6 @@ import java.util.List;
 public class CasReportsConfiguration {
 
     @Bean
-    @Autowired
     @ConditionalOnAvailableEndpoint
     public SpringWebflowEndpoint springWebflowEndpoint(final CasConfigurationProperties casProperties,
                                                        final ConfigurableApplicationContext applicationContext) {
@@ -72,7 +70,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public AuditLogEndpoint auditLogEndpoint(
         @Qualifier("auditTrailExecutionPlan")
         final AuditTrailExecutionPlan auditTrailExecutionPlan,
@@ -82,7 +79,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint(
         @Qualifier("casRuntimeModuleLoader")
         final CasRuntimeModuleLoader casRuntimeModuleLoader,
@@ -92,7 +88,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -107,7 +102,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -117,7 +111,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -126,7 +119,6 @@ public class CasReportsConfiguration {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
     public CasInfoEndpointContributor casInfoEndpointContributor(
         @Qualifier("casRuntimeModuleLoader")
@@ -136,7 +128,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
@@ -149,7 +140,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
         @Qualifier("ticketGrantingTicketCookieGenerator")
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -160,7 +150,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public StatisticsEndpoint statisticsReportEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
@@ -170,7 +159,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint(
         @Qualifier("defaultPrincipalResolver")
         final PrincipalResolver defaultPrincipalResolver,
@@ -178,7 +166,6 @@ public class CasReportsConfiguration {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver);
     }
 
-    @Autowired
     @Bean
     @ConditionalOnAvailableEndpoint
     public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(
@@ -200,7 +187,6 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -230,7 +216,6 @@ public class CasReportsConfiguration {
     public static class StatusEndpointConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public StatusEndpoint statusEndpoint(
             final ObjectProvider<HealthEndpoint> healthEndpoint,
             final CasConfigurationProperties casProperties) {
@@ -242,7 +227,7 @@ public class CasReportsConfiguration {
         public InitializingBean statusEndpointInitializer() {
             return () ->
                 LOGGER.warn("The status actuator endpoint is deprecated and is scheduled to be removed from CAS in the future. "
-                    + "To obtain status and health information, please configure and use the health endpoint instead.");
+                            + "To obtain status and health information, please configure and use the health endpoint instead.");
         }
     }
 }

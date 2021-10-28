@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +31,6 @@ public class CasJdbcThrottlingConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "inspektrThrottleDataSource")
     public DataSource inspektrThrottleDataSource(
         final CasConfigurationProperties casProperties) {
@@ -41,7 +39,6 @@ public class CasJdbcThrottlingConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
         @Qualifier("inspektrThrottleDataSource")
         final DataSource inspektrThrottleDataSource,

@@ -13,7 +13,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +47,6 @@ public class JpaYubiKeyConfiguration {
     public static class JpaYubiKeyEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties,
                                                         @Qualifier("jpaBeanFactory")
                                                         final JpaBeanFactory jpaBeanFactory) {
@@ -61,7 +59,6 @@ public class JpaYubiKeyConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceYubiKey")
@@ -86,7 +83,6 @@ public class JpaYubiKeyConfiguration {
     @Configuration(value = "JpaYubiKeyTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaYubiKeyTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerYubiKey(
             @Qualifier("yubiKeyEntityManagerFactory")
@@ -122,7 +118,6 @@ public class JpaYubiKeyConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceYubiKey")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceYubiKey(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
         }

@@ -9,7 +9,6 @@ import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class JdbcPasswordManagementConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordChangeService")
-        @Autowired
         public PasswordManagementService passwordChangeService(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -69,7 +67,6 @@ public class JdbcPasswordManagementConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementDataSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource jdbcPasswordManagementDataSource(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getPm().getJdbc());
         }
@@ -87,7 +84,6 @@ public class JdbcPasswordManagementConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
         @Bean
-        @Autowired
         public TransactionTemplate jdbcPasswordManagementTransactionTemplate(
             final CasConfigurationProperties casProperties,
             @Qualifier("jdbcPasswordManagementTransactionManager")

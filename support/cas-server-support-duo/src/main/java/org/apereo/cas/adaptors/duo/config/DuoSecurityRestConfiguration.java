@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,9 +26,9 @@ import org.springframework.context.annotation.Configuration;
 public class DuoSecurityRestConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactoryConfigurer")
-    @Autowired
     public RestHttpRequestCredentialFactoryConfigurer duoSecurityRestHttpRequestCredentialFactoryConfigurer(
-        @Qualifier("duoSecurityRestHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory) {
+        @Qualifier("duoSecurityRestHttpRequestCredentialFactory")
+        final RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory) {
         return factory -> factory.registerCredentialFactory(duoSecurityRestHttpRequestCredentialFactory);
     }
 
