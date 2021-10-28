@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -34,7 +33,6 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("memoryHealthIndicator")
-    @Autowired
     public HealthIndicator memoryHealthIndicator(
         final CasConfigurationProperties casProperties) {
         val freeMemThreshold = casProperties.getMonitor().getMemory().getFreeMemThreshold();
@@ -48,7 +46,6 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
-    @Autowired
     public HealthIndicator sessionHealthIndicator(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
@@ -70,7 +67,6 @@ public class CasCoreMonitorConfiguration {
         @Bean
         @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
         @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
-        @Autowired
         public HealthIndicator systemHealthIndicator(
             @Qualifier("metricsEndpoint")
             final MetricsEndpoint metricsEndpoint,

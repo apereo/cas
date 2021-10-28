@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,7 +43,6 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AuthenticationHandler fileAuthenticationHandler(
         @Qualifier("filePasswordPolicyConfiguration")
         final PasswordPolicyContext filePasswordPolicyConfiguration,
@@ -67,7 +65,6 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "fileAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @ConditionalOnProperty(name = "cas.authn.file.filename")
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer fileAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("fileAuthenticationHandler")
         final AuthenticationHandler fileAuthenticationHandler,

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,6 @@ public class CouchDbSamlIdPFactoryConfiguration {
     @ConditionalOnMissingBean(name = "samlMetadataCouchDbFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CouchDbConnectorFactory samlMetadataCouchDbFactory(final CasConfigurationProperties casProperties,
                                                               @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {

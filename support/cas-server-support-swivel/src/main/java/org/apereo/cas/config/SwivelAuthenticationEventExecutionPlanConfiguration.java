@@ -16,7 +16,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,7 +38,6 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
-    @Autowired
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
                                                                                  @Qualifier("swivelAuthenticationHandler")
                                                                                  final SwivelAuthenticationHandler swivelAuthenticationHandler,
@@ -58,7 +56,6 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
-    @Autowired
     public SwivelAuthenticationHandler swivelAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelPrincipalFactory")
@@ -72,7 +69,6 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelMultifactorAuthenticationProvider")
-    @Autowired
     public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider(
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelBypassEvaluator")

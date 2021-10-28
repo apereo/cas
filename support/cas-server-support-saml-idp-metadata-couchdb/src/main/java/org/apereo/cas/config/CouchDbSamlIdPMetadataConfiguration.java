@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -63,7 +62,6 @@ public class CouchDbSamlIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("samlMetadataCouchDbFactory")
@@ -76,7 +74,6 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getCouchDb().getCrypto();

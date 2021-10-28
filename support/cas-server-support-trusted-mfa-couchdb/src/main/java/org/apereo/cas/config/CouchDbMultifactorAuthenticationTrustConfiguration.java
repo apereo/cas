@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.authentication.storage.CouchDbMultifactorAuthentic
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory mfaTrustCouchDbFactory(final CasConfigurationProperties casProperties,
                                                           @Qualifier("defaultObjectMapperFactory")
                                                           final ObjectMapperFactory objectMapperFactory) {
@@ -41,7 +39,6 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository(
         @Qualifier("mfaTrustCouchDbFactory")
         final CouchDbConnectorFactory mfaTrustCouchDbFactory, final CasConfigurationProperties casProperties) {
@@ -51,7 +48,6 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository")
         final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository, final CasConfigurationProperties casProperties,

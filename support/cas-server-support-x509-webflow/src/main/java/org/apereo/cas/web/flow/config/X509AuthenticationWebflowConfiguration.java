@@ -19,7 +19,6 @@ import org.apereo.cas.web.tomcat.X509TomcatServletWebServiceFactoryWebflowConfig
 import lombok.val;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,7 +47,6 @@ public class X509AuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer x509WebflowConfigurer(
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowRegistry,
@@ -70,7 +68,6 @@ public class X509AuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "x509Check")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action x509Check(
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -97,7 +94,6 @@ public class X509AuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
-    @Autowired
     public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer(
         @Qualifier("x509WebflowConfigurer")
         final CasWebflowConfigurer x509WebflowConfigurer) {
@@ -110,7 +106,6 @@ public class X509AuthenticationWebflowConfiguration {
     public static class X509TomcatServletWebServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
         @Bean
-        @Autowired
         public ServletWebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
             final ServerProperties serverProperties,
             final CasConfigurationProperties casProperties) {
@@ -119,7 +114,6 @@ public class X509AuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "x509TomcatWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer x509TomcatWebflowExecutionPlanConfigurer(
             @Qualifier("x509TomcatServletWebServiceFactoryWebflowConfigurer")
             final CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer) {
@@ -128,7 +122,6 @@ public class X509AuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowRegistry,

@@ -11,7 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,10 +35,9 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @Configuration(value = "CasCoreMultifactorAuthenticationContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreMultifactorAuthenticationContextConfiguration {
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "requestedContextValidator")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RequestedAuthenticationContextValidator requestedContextValidator(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -56,7 +54,6 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     @Configuration(value = "CasCoreMultifactorAuthenticationFailureConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreMultifactorAuthenticationFailureConfiguration {
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "authenticationContextValidator")
@@ -69,11 +66,10 @@ public class CasCoreMultifactorAuthenticationConfiguration {
             return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, authnAttributeName, applicationContext);
         }
 
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "failureModeEvaluator")
-        @Autowired
         public MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator(final CasConfigurationProperties casProperties) {
             return new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
         }

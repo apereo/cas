@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @ConditionalOnMissingBean(name = "ipAddressIntelligenceService")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public IPAddressIntelligenceService ipAddressIntelligenceService(final CasConfigurationProperties casProperties) {
         val adaptive = casProperties.getAuthn().getAdaptive();
         return CoreAuthenticationUtils.newIpAddressIntelligenceService(adaptive);
@@ -44,7 +42,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
         @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties) {
             return plan -> {
@@ -59,7 +56,6 @@ public class CasCoreAuthenticationPolicyConfiguration {
         @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(
             final CasConfigurationProperties casProperties,
             @Qualifier("ipAddressIntelligenceService")

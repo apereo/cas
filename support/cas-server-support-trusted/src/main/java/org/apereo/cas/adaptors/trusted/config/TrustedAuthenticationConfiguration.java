@@ -27,7 +27,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,7 +52,6 @@ public class TrustedAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalBearingCredentialsAuthenticationHandler")
-        @Autowired
         public AuthenticationHandler principalBearingCredentialsAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")
@@ -86,7 +84,6 @@ public class TrustedAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
-        @Autowired
         public PrincipalResolver trustedPrincipalResolver(
             @Qualifier("principalElectionStrategy")
             final PrincipalElectionStrategy principalElectionStrategy,
@@ -190,7 +187,6 @@ public class TrustedAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
-        @Autowired
         public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")

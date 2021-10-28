@@ -6,7 +6,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.authentication.storage.RestMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,7 +26,6 @@ public class RestMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("mfaTrustRecordKeyGenerator")

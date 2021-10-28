@@ -10,7 +10,6 @@ import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +63,6 @@ public class CasWebAppSecurityConfiguration {
     public static class CasWebappCoreSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
-        @Autowired
         public WebSecurityConfigurerAdapter casWebSecurityConfigurerAdapter(
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<ProtocolEndpointWebSecurityConfigurer> configurersList,
@@ -79,7 +77,6 @@ public class CasWebAppSecurityConfiguration {
         @ConditionalOnProperty(name = "cas.monitor.endpoints.jdbc.query")
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerJdbcAdapter")
-        @Autowired
         public CasWebSecurityJdbcConfigurerAdapter casWebSecurityConfigurerJdbcAdapter(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {

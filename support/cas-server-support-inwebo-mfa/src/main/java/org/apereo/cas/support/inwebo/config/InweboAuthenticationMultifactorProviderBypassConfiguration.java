@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "inweboBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboBypassEvaluator(
         final CasConfigurationProperties casProperties,
         @Qualifier("inweboPrincipalMultifactorAuthenticationProviderBypass")
@@ -72,7 +70,7 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation()!=null) {
+        if (props.getGroovy().getLocation() != null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(inweboGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
@@ -84,7 +82,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
@@ -94,7 +91,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "inweboRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboRestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();
@@ -104,7 +100,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "inweboGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();
@@ -114,7 +109,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "inweboHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();
@@ -124,7 +118,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "inweboCredentialMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();
@@ -134,7 +127,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "inweboRegisteredServiceMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(inwebo.getId());
@@ -143,7 +135,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "inweboPrincipalMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();
@@ -153,7 +144,6 @@ public class InweboAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "inweboAuthenticationMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator inweboAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();
         val props = inwebo.getBypass();

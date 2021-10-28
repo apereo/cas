@@ -8,7 +8,6 @@ import lombok.val;
 import org.apache.wss4j.common.crypto.WSProviderConfig;
 import org.apache.wss4j.common.saml.OpenSAMLUtil;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
@@ -41,17 +40,16 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     }
 
     @Bean
-    @Autowired
     public InitializingBean wsSecurityTokenServiceInitializingBean(
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
         return () -> {
             val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
-                + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
-                + "which is responsible for the implementation of the security token service in CAS, "
-                + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
-                + "and may be revisited in future versions of CAS, "
-                + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
+                                 + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
+                                 + "which is responsible for the implementation of the security token service in CAS, "
+                                 + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
+                                 + "and may be revisited in future versions of CAS, "
+                                 + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
             LOGGER.info(warningMessage);
 
             LOGGER.trace("Initializing WS provider configuration...");

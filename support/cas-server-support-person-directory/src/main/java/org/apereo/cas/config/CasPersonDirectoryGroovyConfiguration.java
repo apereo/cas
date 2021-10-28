@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class CasPersonDirectoryGroovyConfiguration {
         @ConditionalOnMissingBean(name = "groovyAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<IPersonAttributeDao> groovyAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
@@ -70,7 +68,6 @@ public class CasPersonDirectoryGroovyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GroovyAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer groovyPersonDirectoryAttributeRepositoryPlanConfigurer(

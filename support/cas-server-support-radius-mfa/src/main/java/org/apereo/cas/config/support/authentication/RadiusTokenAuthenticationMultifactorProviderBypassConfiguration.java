@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,7 +37,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator(
         final CasConfigurationProperties casProperties,
         @Qualifier("radiusPrincipalMultifactorAuthenticationProviderBypass")
@@ -74,7 +72,7 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusHttpRequestMultifactorAuthenticationProviderBypass);
         }
-        if (props.getGroovy().getLocation()!=null) {
+        if (props.getGroovy().getLocation() != null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(radiusGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
@@ -86,7 +84,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusRestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
@@ -96,7 +93,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
@@ -106,7 +102,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
@@ -116,7 +111,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "radiusHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
@@ -126,7 +120,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusCredentialMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
@@ -136,7 +129,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusRegisteredServiceMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(radius.getId());
@@ -144,7 +136,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "radiusPrincipalMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();
@@ -154,7 +145,6 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusAuthenticationMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator radiusAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val props = radius.getBypass();

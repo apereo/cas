@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
-    @Autowired
     public AuthenticationHandler openIdCredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                         @Qualifier("openidPrincipalFactory")
                                                                         final PrincipalFactory openidPrincipalFactory,
@@ -47,7 +45,6 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @Autowired
     public OpenIdPrincipalResolver openIdPrincipalResolver(final CasConfigurationProperties casProperties,
                                                            @Qualifier("openidPrincipalFactory")
                                                            final PrincipalFactory openidPrincipalFactory,

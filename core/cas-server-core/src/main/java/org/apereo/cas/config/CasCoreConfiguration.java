@@ -21,7 +21,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -52,7 +51,6 @@ public class CasCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCorePolicyConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
         public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory(
             final CasConfigurationProperties casProperties) {
@@ -66,7 +64,6 @@ public class CasCoreConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
-        @Autowired
         public ServiceMatchingStrategy serviceMatchingStrategy(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -79,7 +76,6 @@ public class CasCoreConfiguration {
     public static class CasCoreContextConfiguration {
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
         public CentralAuthenticationService centralAuthenticationService(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
@@ -112,7 +108,6 @@ public class CasCoreConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasCoreAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
-        @Autowired
         @Bean
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
             final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {

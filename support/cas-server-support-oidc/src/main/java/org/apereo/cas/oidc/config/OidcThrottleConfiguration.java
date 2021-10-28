@@ -9,7 +9,6 @@ import org.apereo.cas.throttle.ThrottledRequestFilter;
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +36,6 @@ public class OidcThrottleConfiguration {
     public static class OidcThrottleWebMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
-        @Autowired
         public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
             @Qualifier("authenticationThrottlingExecutionPlan")
             final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
@@ -59,7 +57,6 @@ public class OidcThrottleConfiguration {
     public static class OidcThrottleExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public AuthenticationThrottlingExecutionPlanConfigurer oidcAuthenticationThrottlingExecutionPlanConfigurer(
             @Qualifier("oidcThrottledRequestFilter")
             final ThrottledRequestFilter oidcThrottledRequestFilter) {
@@ -82,7 +79,6 @@ public class OidcThrottleConfiguration {
             OidcConstants.INTROSPECTION_URL);
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "oidcThrottledRequestFilter")
         public ThrottledRequestFilter oidcThrottledRequestFilter(
             @Qualifier("oidcRequestSupport")

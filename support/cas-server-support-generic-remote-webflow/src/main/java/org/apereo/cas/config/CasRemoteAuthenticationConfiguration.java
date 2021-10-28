@@ -18,7 +18,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +43,6 @@ public class CasRemoteAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer remoteAddressWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -57,7 +55,6 @@ public class CasRemoteAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler remoteAddressAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                     @Qualifier("remoteAddressPrincipalFactory")
                                                                     final PrincipalFactory remoteAddressPrincipalFactory,

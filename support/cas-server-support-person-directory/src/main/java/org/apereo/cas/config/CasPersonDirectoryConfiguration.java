@@ -26,7 +26,6 @@ import org.apereo.services.persondir.support.CascadingPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -62,7 +61,6 @@ public class CasPersonDirectoryConfiguration {
         @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AttributeDefinitionStore attributeDefinitionStore(final CasConfigurationProperties casProperties) throws Exception {
             val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
             val store = new DefaultAttributeDefinitionStore(resource);
@@ -84,7 +82,6 @@ public class CasPersonDirectoryConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
         public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver(
             final CasConfigurationProperties casProperties,
@@ -101,7 +98,6 @@ public class CasPersonDirectoryConfiguration {
         @ConditionalOnMissingBean(name = "principalResolutionExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalResolutionExecutionPlanConfigurer principalResolutionExecutionPlanConfigurer(
             @Qualifier("personDirectoryAttributeRepositoryPlan")
             final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan,
@@ -124,7 +120,6 @@ public class CasPersonDirectoryConfiguration {
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan(
             final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers,
             final ObjectProvider<List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
@@ -159,7 +154,6 @@ public class CasPersonDirectoryConfiguration {
         @Bean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
         @ConditionalOnMissingBean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public IPersonAttributeDao cachingAttributeRepository(
             final CasConfigurationProperties casProperties,
             @Qualifier("aggregatingAttributeRepository")
@@ -185,7 +179,6 @@ public class CasPersonDirectoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "aggregatingAttributeRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public IPersonAttributeDao aggregatingAttributeRepository(
             final CasConfigurationProperties casProperties,
             @Qualifier("personDirectoryAttributeRepositoryPlan")
@@ -219,7 +212,6 @@ public class CasPersonDirectoryConfiguration {
         }
 
         @Bean
-        @Autowired
         public InitializingBean casPersonDirectoryInitializer(final CasConfigurationProperties casProperties) {
             return () -> {
                 FunctionUtils.doIf(LOGGER.isInfoEnabled(), value -> {
@@ -243,7 +235,6 @@ public class CasPersonDirectoryConfiguration {
             @ConditionalOnMissingBean(name = "stubAttributeRepositories")
             @Bean
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-            @Autowired
             public BeanContainer<IPersonAttributeDao> stubAttributeRepositories(final CasConfigurationProperties casProperties) {
                 val list = new ArrayList<IPersonAttributeDao>();
                 val stub = casProperties.getAuthn().getAttributeRepository().getStub();
@@ -260,7 +251,6 @@ public class CasPersonDirectoryConfiguration {
         @EnableConfigurationProperties(CasConfigurationProperties.class)
         public static class StubAttributeRepositoryPlanConfiguration {
             @Bean
-            @Autowired
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             @ConditionalOnMissingBean(name = "stubPersonDirectoryAttributeRepositoryPlanConfigurer")
             public PersonDirectoryAttributeRepositoryPlanConfigurer stubPersonDirectoryAttributeRepositoryPlanConfigurer(

@@ -39,7 +39,6 @@ import lombok.val;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,7 +77,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaAccepttoApiPublicKey")
-        @Autowired
         public PublicKey mfaAccepttoApiPublicKey(final CasConfigurationProperties casProperties) throws Exception {
             val props = casProperties.getAuthn().getMfa().getAcceptto();
             val location = props.getRegistrationApiPublicKey().getLocation();
@@ -104,7 +102,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -118,7 +115,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier("mfaAccepttoAuthenticatorFlowRegistry")
@@ -162,7 +158,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
         @Bean
-        @Autowired
         public SessionStore mfaAccepttoDistributedSessionStore(
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -212,14 +207,13 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             return new AccepttoQRCodeAuthenticationHandler(servicesManager, casAccepttoQRCodePrincipalFactory);
         }
     }
-    
+
     @Configuration(value = "AccepttoMultifactorAuthenticationMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoQRCodeAuthenticationHandler")
@@ -232,6 +226,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         }
 
     }
+
     @Configuration(value = "AccepttoMultifactorAuthenticationActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationActionsConfiguration {
@@ -239,7 +234,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorValidateUserDeviceRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action mfaAccepttoMultifactorValidateUserDeviceRegistrationAction(final CasConfigurationProperties casProperties) {
             return new AccepttoMultifactorValidateUserDeviceRegistrationAction(casProperties);
         }
@@ -247,7 +241,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFetchChannelAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action mfaAccepttoMultifactorFetchChannelAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaAccepttoDistributedSessionStore")
@@ -270,7 +263,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "mfaAccepttoQRCodeValidateWebSocketChannelAction")
-        @Autowired
         public Action mfaAccepttoQRCodeValidateWebSocketChannelAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaAccepttoDistributedSessionStore")
@@ -291,7 +283,6 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorDetermineUserAccountStatusAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action mfaAccepttoMultifactorDetermineUserAccountStatusAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaAccepttoApiPublicKey")

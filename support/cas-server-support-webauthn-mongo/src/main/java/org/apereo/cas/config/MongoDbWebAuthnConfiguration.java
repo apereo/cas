@@ -8,7 +8,6 @@ import org.apereo.cas.webauthn.MongoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,7 +35,6 @@ public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MongoTemplate mongoWebAuthnTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -50,7 +48,6 @@ public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("mongoWebAuthnTemplate")
                                                                      final MongoTemplate mongoWebAuthnTemplate,

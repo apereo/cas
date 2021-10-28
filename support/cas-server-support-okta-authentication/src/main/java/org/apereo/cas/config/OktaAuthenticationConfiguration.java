@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import com.okta.authn.sdk.client.AuthenticationClient;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 public class OktaAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "oktaAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer oktaAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("defaultPrincipalResolver")
         final PrincipalResolver defaultPrincipalResolver,
@@ -56,7 +54,6 @@ public class OktaAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "oktaAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler oktaAuthenticationHandler(
         @Qualifier("oktaPrincipalFactory")
         final PrincipalFactory oktaPrincipalFactory,
@@ -79,7 +76,6 @@ public class OktaAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "oktaAuthenticationClient")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationClient oktaAuthenticationClient(final CasConfigurationProperties casProperties) {
         val properties = casProperties.getAuthn().getOkta();
         return OktaConfigurationFactory.buildAuthenticationClient(properties);

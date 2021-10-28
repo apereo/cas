@@ -8,7 +8,6 @@ import org.apereo.cas.monitor.MongoDbHealthIndicator;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -35,7 +34,6 @@ public class MongoDbMonitoringConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
-    @Autowired
     public BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -53,7 +51,6 @@ public class MongoDbMonitoringConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("mongoHealthIndicator")
     @ConditionalOnMissingBean(name = "mongoHealthIndicator")
-    @Autowired
     public HealthIndicator mongoHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoHealthIndicatorTemplate")

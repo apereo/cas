@@ -44,7 +44,6 @@ import com.warrenstrange.googleauth.KeyRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,14 +69,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Configuration(value = "googleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
-    
+
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationHandler googleAuthenticatorAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("googlePrincipalFactory")
@@ -92,13 +90,13 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
+
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
-        @Autowired
         public IGoogleAuthenticator googleAuthenticatorInstance(final CasConfigurationProperties casProperties) {
             val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
             val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
@@ -112,7 +110,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor googleAuthenticatorAccountCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
             if (crypto.isEnabled()) {
@@ -130,14 +127,13 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorAuthenticationEventExecutionPlanMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMetaDataPopulator")
-        @Autowired
         public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAuthenticationHandler")
@@ -150,12 +146,12 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
     }
+
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorMultifactorAuthenticationWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
@@ -169,7 +165,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public static class GoogleAuthenticatorMultifactorAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAuthenticationHandler")
@@ -205,7 +200,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @Bean
-        @Autowired
         public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(
             @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
             final OneTimeTokenRepository repository) {
@@ -215,7 +209,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorInstance")
@@ -249,7 +242,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleSaveAccountRegistrationAction")
-        @Autowired
         public Action googleSaveAccountRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
@@ -262,7 +254,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "prepareGoogleAuthenticatorLoginAction")
-        @Autowired
         public Action prepareGoogleAuthenticatorLoginAction(final CasConfigurationProperties casProperties) {
             return new GoogleAuthenticatorPrepareLoginAction(casProperties);
         }
@@ -297,7 +288,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAccountCreateRegistrationAction")
-        @Autowired
         public Action googleAccountCreateRegistrationAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
@@ -313,7 +303,6 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorAuthenticationProvider")
-        @Autowired
         public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorBypassEvaluator")

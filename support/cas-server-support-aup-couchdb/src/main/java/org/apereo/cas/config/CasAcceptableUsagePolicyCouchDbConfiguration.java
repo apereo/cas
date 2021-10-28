@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,7 +32,6 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "aupCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory aupCouchDbFactory(final CasConfigurationProperties casProperties,
                                                      @Qualifier("defaultObjectMapperFactory")
                                                      final ObjectMapperFactory objectMapperFactory) {
@@ -43,7 +41,6 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ProfileCouchDbRepository aupCouchDbRepository(
         @Qualifier("aupCouchDbFactory")
         final CouchDbConnectorFactory aupCouchDbFactory, final CasConfigurationProperties casProperties) {
@@ -54,7 +51,6 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbAcceptableUsagePolicyRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository")
         final ProfileCouchDbRepository profileCouchDbRepository, final CasConfigurationProperties casProperties,

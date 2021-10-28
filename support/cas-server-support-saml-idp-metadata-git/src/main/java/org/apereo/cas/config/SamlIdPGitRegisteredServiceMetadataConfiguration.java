@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,7 +32,6 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitSamlRegisteredServiceRepositoryInstance")
-    @Autowired
     public GitRepository gitSamlRegisteredServiceRepositoryInstance(final CasConfigurationProperties casProperties) {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();
@@ -41,7 +39,6 @@ public class SamlIdPGitRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlRegisteredServiceMetadataResolver gitSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                           @Qualifier("gitSamlRegisteredServiceRepositoryInstance")
                                                                                           final GitRepository gitSamlRegisteredServiceRepositoryInstance,

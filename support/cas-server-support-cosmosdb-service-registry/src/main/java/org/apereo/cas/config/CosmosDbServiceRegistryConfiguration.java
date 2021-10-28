@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,6 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
     @Bean
-    @Autowired
     public CosmosDbObjectFactory cosmosDbObjectFactory(
         @Qualifier("casSslContext")
         final CasSSLContext casSslContext,
@@ -46,7 +44,6 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistry cosmosDbServiceRegistry(
         @Qualifier("cosmosDbObjectFactory")
         final CosmosDbObjectFactory cosmosDbObjectFactory,
@@ -66,7 +63,6 @@ public class CosmosDbServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cosmosDbServiceRegistryExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistryExecutionPlanConfigurer cosmosDbServiceRegistryExecutionPlanConfigurer(
         @Qualifier("cosmosDbServiceRegistry")
         final ServiceRegistry cosmosDbServiceRegistry) {

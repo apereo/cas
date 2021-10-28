@@ -14,7 +14,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class CasPersonDirectoryJsonConfiguration {
         @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<IPersonAttributeDao> jsonAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             casProperties.getAuthn().getAttributeRepository().getJson()
@@ -73,7 +71,6 @@ public class CasPersonDirectoryJsonConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JsonAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(

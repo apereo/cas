@@ -16,7 +16,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,7 +48,6 @@ public class SwivelConfiguration {
     public static class SwivelWebflowConfiguration {
         @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer swivelMultifactorWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -75,7 +73,6 @@ public class SwivelConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowEventResolver")
-        @Autowired
         public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -90,7 +87,6 @@ public class SwivelConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelAuthenticationWebflowAction")
-        @Autowired
         public Action swivelAuthenticationWebflowAction(
             @Qualifier("swivelAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver swivelAuthenticationWebflowEventResolver) {
@@ -104,7 +100,6 @@ public class SwivelConfiguration {
     public static class SwivelWebflowRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -121,7 +116,6 @@ public class SwivelConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SwivelWebConfiguration {
         @Bean
-        @Autowired
         public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController(
             final CasConfigurationProperties casProperties) {
             val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -136,7 +130,6 @@ public class SwivelConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer(
             @Qualifier("swivelMultifactorWebflowConfigurer")
             final CasWebflowConfigurer swivelMultifactorWebflowConfigurer) {
@@ -153,7 +146,6 @@ public class SwivelConfiguration {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -172,7 +164,6 @@ public class SwivelConfiguration {
         }
 
         @Bean
-        @Autowired
         public CasWebflowExecutionPlanConfigurer swivelAuthenticationCasWebflowExecutionPlanConfigurer(
             @Qualifier("swivelMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer) {

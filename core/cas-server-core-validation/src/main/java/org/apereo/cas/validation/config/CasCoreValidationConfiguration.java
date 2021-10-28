@@ -20,7 +20,6 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +55,6 @@ public class CasCoreValidationConfiguration {
 
         @ConditionalOnMissingBean(name = "proxy20Handler")
         @Bean
-        @Autowired
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         public ProxyHandler proxy20Handler(
             @Qualifier("proxy20TicketUniqueIdGenerator")
@@ -73,7 +71,6 @@ public class CasCoreValidationConfiguration {
     public static class CasCoreValidationSpecificationConfiguration {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @Autowired
         @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -83,7 +80,6 @@ public class CasCoreValidationConfiguration {
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        @Autowired
         @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -94,7 +90,6 @@ public class CasCoreValidationConfiguration {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
-        @Autowired
         public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -107,7 +102,6 @@ public class CasCoreValidationConfiguration {
     @Configuration(value = "CasCoreValidationExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationExecutionPlanConfiguration {
-        @Autowired
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidationAuthorizers")
         public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
@@ -125,16 +119,14 @@ public class CasCoreValidationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationAuthorizerConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")
         public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer(
             @Qualifier("authenticationPolicyAwareServiceTicketValidationAuthorizer")
             final ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer) {
             return plan -> plan.registerAuthorizer(authenticationPolicyAwareServiceTicketValidationAuthorizer);
         }
-        
+
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
         public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
             final ConfigurableApplicationContext applicationContext,

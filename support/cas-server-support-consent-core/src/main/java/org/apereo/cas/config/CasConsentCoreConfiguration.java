@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +55,6 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = ConsentEngine.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ConsentEngine consentEngine(
             final CasConfigurationProperties casProperties,
             @Qualifier("consentDecisionBuilder")
@@ -81,7 +79,6 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = "consentCipherExecutor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CipherExecutor consentCipherExecutor(final CasConfigurationProperties casProperties) {
             val consent = casProperties.getConsent().getCore();
             val crypto = consent.getCrypto();
@@ -95,7 +92,6 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = "consentDecisionBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ConsentDecisionBuilder consentDecisionBuilder(
             @Qualifier("consentCipherExecutor")
             final CipherExecutor consentCipherExecutor) {
@@ -109,7 +105,6 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = ConsentActivationStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ConsentActivationStrategy consentActivationStrategy(
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ConsentEngine consentEngine,
@@ -129,7 +124,6 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = "consentRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
             val location = casProperties.getConsent().getJson().getLocation();
             if (location != null) {
@@ -152,7 +146,6 @@ public class CasConsentCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreAuditConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("authenticationActionResolver")
@@ -173,7 +166,6 @@ public class CasConsentCoreConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ConsentEngine consentEngine,

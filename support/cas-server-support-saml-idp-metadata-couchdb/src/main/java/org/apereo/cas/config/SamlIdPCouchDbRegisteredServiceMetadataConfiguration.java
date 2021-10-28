@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository(final CasConfigurationProperties casProperties,
                                                                                        @Qualifier("samlMetadataCouchDbFactory")
                                                                                        final CouchDbConnectorFactory samlMetadataCouchDbFactory) {
@@ -45,7 +43,6 @@ public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
                                                                                               @Qualifier("samlMetadataDocumentCouchDbRepository")
                                                                                               final SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository,

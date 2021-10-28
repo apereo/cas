@@ -11,7 +11,6 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -41,7 +40,6 @@ public class CasLoggingConfiguration {
     @ConditionalOnBean(value = TicketRegistry.class)
     @ConditionalOnProperty(prefix = "cas.logging", name = "mdc-enabled", havingValue = "true", matchIfMissing = true)
     public static class CasMdcLoggingConfiguration {
-        @Autowired
         @Bean
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -68,7 +66,6 @@ public class CasLoggingConfiguration {
     public static class CasLog4jConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public LoggingConfigurationEndpoint loggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
                                                                          final Environment environment,
                                                                          final ResourceLoader resourceLoader) {

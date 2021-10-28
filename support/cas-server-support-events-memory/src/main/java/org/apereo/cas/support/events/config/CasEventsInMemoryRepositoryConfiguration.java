@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,6 @@ public class CasEventsInMemoryRepositoryConfiguration {
     private static final long EXPIRATION_TIME = 2;
 
     @Bean
-    @Autowired
     public CasEventRepository casEventRepository(
         @Qualifier("casEventRepositoryFilter")
         final CasEventRepositoryFilter casEventRepositoryFilter) {

@@ -10,7 +10,6 @@ import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "digestAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler digestAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                              @Qualifier("digestAuthenticationPrincipalFactory")
                                                              final PrincipalFactory digestAuthenticationPrincipalFactory,

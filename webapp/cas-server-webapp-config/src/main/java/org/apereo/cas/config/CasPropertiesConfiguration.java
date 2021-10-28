@@ -5,7 +5,6 @@ import org.apereo.cas.util.CasVersion;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasPropertiesConfiguration {
     @Bean
-    @Autowired
     public InitializingBean casPropertiesInitializingBean(final ConfigurableEnvironment environment) {
         return () -> {
             val sysProps = System.getProperties();

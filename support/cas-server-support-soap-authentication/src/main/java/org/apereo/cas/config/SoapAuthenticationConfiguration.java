@@ -16,7 +16,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,7 +50,6 @@ public class SoapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "soapAuthenticationAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler soapAuthenticationAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                          @Qualifier("soapAuthenticationPrincipalFactory")
                                                                          final PrincipalFactory soapAuthenticationPrincipalFactory,
@@ -92,7 +90,6 @@ public class SoapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "soapAuthenticationClient")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public SoapAuthenticationClient soapAuthenticationClient(final CasConfigurationProperties casProperties,
                                                              @Qualifier("soapAuthenticationMarshaller")
                                                              final Jaxb2Marshaller soapAuthenticationMarshaller) {

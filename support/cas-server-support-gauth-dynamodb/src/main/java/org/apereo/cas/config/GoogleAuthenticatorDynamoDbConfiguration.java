@@ -12,7 +12,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +31,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Configuration(value = "googleAuthenticatorDynamoDbConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorDynamoDbConfiguration {
 
-    @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
@@ -46,7 +44,6 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     }
 
     @Bean
-    @Autowired
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
@@ -61,7 +58,6 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorDynamoDbTokenRepositoryFacilitator")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator googleAuthenticatorDynamoDbTokenRepositoryFacilitator(
         final CasConfigurationProperties casProperties,
         @Qualifier("amazonDynamoDbGoogleAuthenticatorClient")
@@ -80,7 +76,6 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorTokenCredentialRepositoryFacilitator")
-    @Autowired
     public DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator googleAuthenticatorTokenCredentialRepositoryFacilitator(
         final CasConfigurationProperties casProperties,
         @Qualifier("amazonDynamoDbGoogleAuthenticatorClient")
@@ -99,7 +94,6 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "amazonDynamoDbGoogleAuthenticatorClient")
-    @Autowired
     public DynamoDbClient amazonDynamoDbGoogleAuthenticatorClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getAuthn()
             .getMfa()

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ import java.util.Optional;
 public class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public ThemeChangeInterceptor themeChangeInterceptor(final CasConfigurationProperties casProperties) {
         val bean = new ThemeChangeInterceptor();
         bean.setParamName(casProperties.getTheme().getParamName());
@@ -52,7 +50,6 @@ public class CasWebAppConfiguration {
     @ConditionalOnMissingBean(name = "casLocaleResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public LocaleResolver localeResolver(final CasConfigurationProperties casProperties) {
         val localeProps = casProperties.getLocale();
         val localeCookie = localeProps.getCookie();
@@ -80,7 +77,6 @@ public class CasWebAppConfiguration {
     }
 
     @Bean
-    @Autowired
     public SimpleUrlHandlerMapping handlerMapping(
         @Qualifier("rootController")
         final Controller rootController) {
@@ -97,8 +93,9 @@ public class CasWebAppConfiguration {
     }
 
     @Bean
-    @Autowired
-    public WebMvcConfigurer casWebAppWebMvcConfigurer(@Qualifier("localeChangeInterceptor") final LocaleChangeInterceptor localeChangeInterceptor) {
+    public WebMvcConfigurer casWebAppWebMvcConfigurer(
+        @Qualifier("localeChangeInterceptor")
+        final LocaleChangeInterceptor localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(final InterceptorRegistry registry) {
@@ -116,7 +113,7 @@ public class CasWebAppConfiguration {
                                                          final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + "/login"
-                    + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
+                          + Optional.ofNullable(queryString).map(string -> '?' + string).orElse(StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

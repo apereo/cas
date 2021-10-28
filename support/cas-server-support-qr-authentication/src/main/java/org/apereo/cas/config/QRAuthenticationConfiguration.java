@@ -27,7 +27,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,7 +65,6 @@ public class QRAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "qrAuthenticationTokenValidatorService")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService(
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
@@ -82,7 +80,6 @@ public class QRAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "qrAuthenticationDeviceRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository(final CasConfigurationProperties casProperties) {
             val qr = casProperties.getAuthn().getQr();
             if (qr.getJson().getLocation() != null) {
@@ -111,7 +108,6 @@ public class QRAuthenticationConfiguration {
     public static class QRAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -169,7 +165,6 @@ public class QRAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
@@ -205,7 +200,6 @@ public class QRAuthenticationConfiguration {
     @Configuration(value = "QRAuthenticationControllerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationControllerConfiguration {
-        @Autowired
         @Bean
         public QRAuthenticationChannelController qrAuthenticationChannelController(
             @Qualifier("brokerMessagingTemplate")

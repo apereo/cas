@@ -20,7 +20,6 @@ import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,7 +50,6 @@ public class InweboAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationProvider")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("inweboBypassEvaluator")
@@ -75,7 +73,6 @@ public class InweboAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "inweboAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationHandler inweboAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("inweboPrincipalFactory")
@@ -96,7 +93,6 @@ public class InweboAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inweboAuthenticationMetaDataPopulator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("inweboAuthenticationHandler")

@@ -26,7 +26,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -55,7 +54,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusTokenServers")
-        @Autowired
         public BeanContainer<RadiusServer> radiusTokenServers(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSslContext")
@@ -107,7 +105,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusMultifactorAuthenticationProvider")
-        @Autowired
         public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider(
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenServers")
@@ -133,7 +130,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationHandler")
-        @Autowired
         public AuthenticationHandler radiusTokenAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenPrincipalFactory")
@@ -156,7 +152,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "radiusAuthenticationMetaDataPopulator")
-        @Autowired
         public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenAuthenticationHandler")
@@ -175,7 +170,6 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenAuthenticationHandler")

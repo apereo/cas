@@ -13,7 +13,6 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,7 +45,6 @@ public class CasServicesStreamingConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(destroyMethod = "destroy")
-    @Autowired
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy(
         final CasConfigurationProperties casProperties,
         @Qualifier("registeredServiceDistributedCacheManager")

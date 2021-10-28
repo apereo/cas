@@ -12,7 +12,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
-    @Autowired
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory(
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultObjectMapperFactory")
@@ -51,7 +49,6 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
-    @Autowired
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("serviceRegistryCouchDbFactory")
@@ -66,7 +63,6 @@ public class CouchDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
-    @Autowired
     public ServiceRegistry couchDbServiceRegistry(
         final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,7 +37,6 @@ public class CasCoreBootstrapStandaloneConfiguration {
     @Configuration(value = "CasCoreBootstrapStandaloneSourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
-        @Autowired
         @Bean
         public PropertySourceLocator casCoreBootstrapPropertySourceLocator(
             final List<CasConfigurationPropertiesSourceLocator> locatorList,
@@ -69,7 +67,6 @@ public class CasCoreBootstrapStandaloneConfiguration {
     public static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
-        @Autowired
         public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
             @Qualifier("configurationPropertiesLoaderFactory")
             final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory,

@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticatio
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,7 +42,6 @@ public class GrouperMultifactorAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,

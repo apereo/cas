@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +43,6 @@ public class JdbcPasswordHistoryManagementConfiguration {
     public static class JdbcPasswordHistoryManagementEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaPasswordHistoryVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -58,7 +56,6 @@ public class JdbcPasswordHistoryManagementConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean passwordHistoryEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordHistoryVendorAdapter")
@@ -80,7 +77,6 @@ public class JdbcPasswordHistoryManagementConfiguration {
     @Configuration(value = "JdbcPasswordHistoryManagementTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcPasswordHistoryManagementTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerPasswordHistory(
             @Qualifier("passwordHistoryEntityManagerFactory")

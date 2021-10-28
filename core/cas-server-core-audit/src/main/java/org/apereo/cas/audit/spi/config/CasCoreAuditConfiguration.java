@@ -41,7 +41,6 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
@@ -90,7 +89,6 @@ public class CasCoreAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
         @Bean
-        @Autowired
         public AuditPrincipalIdProvider auditPrincipalIdProvider(final List<AuditPrincipalIdProvider> providers) {
             AnnotationAwareOrderComparator.sortIfNecessary(providers);
             return new ChainingAuditPrincipalIdProvider(providers);
@@ -109,7 +107,6 @@ public class CasCoreAuditConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "protocolSpecificationValidationResourceResolver")
-        @Autowired
         public AuditResourceResolver protocolSpecificationValidationResourceResolver(
             final CasConfigurationProperties casProperties) {
             return new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
@@ -123,7 +120,6 @@ public class CasCoreAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver ticketValidationResourceResolver(
             @Qualifier("ticketResourceResolver")
@@ -137,7 +133,6 @@ public class CasCoreAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
         @Bean
-        @Autowired
         public AuditResourceResolver messageBundleAwareResourceResolver(
             final ConfigurableApplicationContext applicationContext) {
             val resolver = new MessageBundleAwareResourceResolver(applicationContext);
@@ -162,7 +157,6 @@ public class CasCoreAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
         @Bean
-        @Autowired
         public AuditResourceResolver nullableReturnValueResourceResolver() {
             val resolver = new NullableReturnValueAuditResourceResolver(new ShortenedReturnValueAsStringAuditResourceResolver());
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)
@@ -247,7 +241,6 @@ public class CasCoreAuditConfiguration {
     public static class CasCoreAuditManagementConfiguration {
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
         @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
         public AuditTrailManagementAspect auditTrailManagementAspect(
@@ -274,7 +267,6 @@ public class CasCoreAuditConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "filterAndDelegateAuditTrailManager")
-        @Autowired
         protected AuditTrailManager filterAndDelegateAuditTrailManager(
             @Qualifier("auditTrailExecutionPlan")
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
@@ -293,7 +285,6 @@ public class CasCoreAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuditFiltersConfiguration {
         @Bean
-        @Autowired
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             final CasConfigurationProperties casProperties) {
             val audit = casProperties.getAudit().getEngine();
@@ -324,7 +315,6 @@ public class CasCoreAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreAuditResolutionPlanConfiguration {
-        @Autowired
         @ConditionalOnMissingBean(name = "auditTrailRecordResolutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -337,8 +327,8 @@ public class CasCoreAuditConfiguration {
             });
             return plan;
         }
+
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "casAuditResourceResolversResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer casAuditResourceResolversResolutionPlanConfigurer(
             @Qualifier("credentialsAsFirstParameterResourceResolver")
@@ -379,7 +369,6 @@ public class CasCoreAuditConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "casAuditActionResolversResolutionPlanConfigurer")
-        @Autowired
         public AuditTrailRecordResolutionPlanConfigurer casAuditActionResolversResolutionPlanConfigurer(
             @Qualifier("authenticationActionResolver")
             final AuditActionResolver authenticationActionResolver,
@@ -412,12 +401,11 @@ public class CasCoreAuditConfiguration {
             };
         }
     }
-    
+
     @Configuration(value = "CasCoreAuditExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreAuditExecutionPlanConfiguration {
-        @Autowired
         @ConditionalOnMissingBean(name = "auditTrailExecutionPlan")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -431,7 +419,6 @@ public class CasCoreAuditConfiguration {
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "casAuditTrailExecutionPlanConfigurer")
         @ConditionalOnProperty(prefix = "cas.audit.slf4j", name = "enabled", havingValue = "true", matchIfMissing = true)
         public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer(

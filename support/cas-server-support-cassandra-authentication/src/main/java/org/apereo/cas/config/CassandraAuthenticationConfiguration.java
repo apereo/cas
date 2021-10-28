@@ -17,7 +17,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +46,6 @@ public class CassandraAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "cassandraAuthnSessionFactory")
-    @Autowired
     public CassandraSessionFactory cassandraAuthnSessionFactory(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")
@@ -58,7 +56,6 @@ public class CassandraAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CassandraRepository cassandraRepository(final CasConfigurationProperties casProperties,
                                                    @Qualifier("cassandraAuthnSessionFactory")
                                                    final CassandraSessionFactory cassandraAuthnSessionFactory) {
@@ -67,7 +64,6 @@ public class CassandraAuthenticationConfiguration {
     }
 
     @Bean
-    @Autowired
     public AuthenticationHandler cassandraAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                 @Qualifier("cassandraPrincipalFactory")
                                                                 final PrincipalFactory cassandraPrincipalFactory,

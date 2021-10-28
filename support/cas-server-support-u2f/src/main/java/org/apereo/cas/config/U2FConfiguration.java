@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -57,7 +56,6 @@ public class U2FConfiguration {
         @ConditionalOnMissingBean(name = "u2fDeviceRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public U2FDeviceRepository u2fDeviceRepository(
             @Qualifier("u2fRegistrationRecordCipherExecutor")
             final CipherExecutor u2fRegistrationRecordCipherExecutor,
@@ -101,7 +99,6 @@ public class U2FConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "u2fRegistrationRecordCipherExecutor")
-        @Autowired
         public CipherExecutor u2fRegistrationRecordCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
             if (crypto.isEnabled()) {
@@ -132,7 +129,6 @@ public class U2FConfiguration {
     public static class U2FCleanerConfiguration {
         @ConditionalOnMissingBean(name = "u2fDeviceRepositoryCleanerScheduler")
         @Bean
-        @Autowired
         @ConditionalOnProperty(prefix = "authn.mfa.u2f.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
         public Runnable u2fDeviceRepositoryCleanerScheduler(
             @Qualifier("u2fDeviceRepository")

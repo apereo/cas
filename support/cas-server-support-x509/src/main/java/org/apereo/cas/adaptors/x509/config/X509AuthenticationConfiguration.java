@@ -44,7 +44,6 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -166,7 +165,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "thresholdExpiredCRLRevocationPolicy")
-    @Autowired
     public RevocationPolicy thresholdExpiredCRLRevocationPolicy(final CasConfigurationProperties casProperties) {
         return new ThresholdExpiredCRLRevocationPolicy(casProperties.getAuthn().getX509().getRevocationPolicyThreshold());
     }
@@ -181,7 +179,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "crlDistributionPointRevocationChecker")
-    @Autowired
     public RevocationChecker crlDistributionPointRevocationChecker(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("crlFetcher")
                                                                    final CRLFetcher crlFetcher,
@@ -221,7 +218,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "resourceCrlRevocationChecker")
-    @Autowired
     public RevocationChecker resourceCrlRevocationChecker(final CasConfigurationProperties casProperties,
                                                           final ConfigurableApplicationContext applicationContext,
                                                           @Qualifier("allowRevocationPolicy")
@@ -243,7 +239,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "crlFetcher")
-    @Autowired
     public CRLFetcher crlFetcher(final CasConfigurationProperties casProperties) {
         val x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
@@ -260,7 +255,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CredentialsAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler x509CredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                                       @Qualifier("resourceCrlRevocationChecker")
                                                                       final RevocationChecker resourceCrlRevocationChecker,
@@ -284,7 +278,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SubjectPrincipalResolver(final CasConfigurationProperties casProperties,
                                                           @Qualifier("x509PrincipalFactory")
                                                           final PrincipalFactory x509PrincipalFactory,
@@ -306,7 +299,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectDNPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SubjectDNPrincipalResolver(final CasConfigurationProperties casProperties,
                                                             @Qualifier("x509PrincipalFactory")
                                                             final PrincipalFactory x509PrincipalFactory,
@@ -329,7 +321,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameUPNPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(final CasConfigurationProperties casProperties,
                                                                             @Qualifier("x509PrincipalFactory")
                                                                             final PrincipalFactory x509PrincipalFactory,
@@ -352,7 +343,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameRFC822EmailPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver(final CasConfigurationProperties casProperties,
                                                                                     @Qualifier("x509PrincipalFactory")
                                                                                     final PrincipalFactory x509PrincipalFactory,
@@ -376,7 +366,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SerialNumberPrincipalResolver(final CasConfigurationProperties casProperties,
                                                                @Qualifier("x509PrincipalFactory")
                                                                final PrincipalFactory x509PrincipalFactory,
@@ -396,7 +385,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberAndIssuerDNPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver(final CasConfigurationProperties casProperties,
                                                                           @Qualifier("x509PrincipalFactory")
                                                                           final PrincipalFactory x509PrincipalFactory,
@@ -420,7 +408,6 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CommonNameEDIPIPrincipalResolver")
-    @Autowired
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver(final CasConfigurationProperties casProperties,
                                                                   @Qualifier("x509PrincipalFactory")
                                                                   final PrincipalFactory x509PrincipalFactory,
@@ -471,7 +458,6 @@ public class X509AuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "x509AttributeExtractor")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public X509AttributeExtractor x509AttributeExtractor(final CasConfigurationProperties casProperties) {
         val x509 = casProperties.getAuthn().getX509();
         if (x509.getCnEdipi().isExtractEdipiAsAttribute()) {

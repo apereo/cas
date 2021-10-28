@@ -23,7 +23,6 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAc
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -58,7 +57,6 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnWebflowRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry webAuthnFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
@@ -76,7 +74,6 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -101,7 +98,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -116,7 +112,6 @@ public class WebAuthnWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
             @Qualifier("webAuthnMultifactorWebflowConfigurer")
             final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
@@ -134,7 +129,6 @@ public class WebAuthnWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer(
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
@@ -170,7 +164,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnStartAuthenticationAction(
             @Qualifier("webAuthnCredentialRepository")
             final RegistrationStorage webAuthnCredentialRepository) {
@@ -180,7 +173,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnStartRegistrationAction(
             @Qualifier("webAuthnCsrfTokenRepository")
             final CsrfTokenRepository webAuthnCsrfTokenRepository,
@@ -194,7 +186,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnCheckAccountRegistrationAction(
             @Qualifier("webAuthnCredentialRepository")
             final RegistrationStorage webAuthnCredentialRepository) {
@@ -204,7 +195,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnSaveAccountRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnSaveAccountRegistrationAction(
             @Qualifier("webAuthnSessionManager")
             final SessionManager webAuthnSessionManager,
@@ -216,7 +206,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationWebflowAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnAuthenticationWebflowAction(
             @Qualifier("webAuthnAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
@@ -227,7 +216,6 @@ public class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnValidateSessionCredentialTokenAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action webAuthnValidateSessionCredentialTokenAction(
             @Qualifier("webAuthnSessionManager")
             final SessionManager webAuthnSessionManager,

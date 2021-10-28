@@ -13,7 +13,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,7 +44,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcMultifactorAuthnTrustEngineConfiguration {
         @Bean
-        @Autowired
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustCipherExecutor")
@@ -64,7 +62,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
-        @Autowired
         public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("jpaBeanFactory")
                                                                 final JpaBeanFactory jpaBeanFactory) {
@@ -73,7 +70,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnPackagesToScan")
-        @Autowired
         public BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan(final CasConfigurationProperties casProperties) {
             val jpa = casProperties.getAuthn().getMfa().getTrusted().getJpa();
             val type = new JpaMultifactorAuthenticationTrustRecordEntityFactory(jpa.getDialect()).getType();
@@ -81,7 +77,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceMfaTrustedAuthn")
@@ -105,7 +100,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcMultifactorAuthnTrustTransactionConfiguration {
 
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerMfaAuthnTrust(
             @Qualifier("mfaTrustedAuthnEntityManagerFactory")
@@ -123,7 +117,6 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceMfaTrustedAuthn")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceMfaTrustedAuthn(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
         }

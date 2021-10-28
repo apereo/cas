@@ -14,7 +14,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +36,6 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getRest().getCrypto();
@@ -61,7 +59,6 @@ public class SamlIdPRestfulIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         @Qualifier("samlIdPMetadataCache")
         final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,

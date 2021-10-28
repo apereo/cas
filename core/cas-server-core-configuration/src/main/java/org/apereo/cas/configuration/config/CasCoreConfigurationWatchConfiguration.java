@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.apereo.cas.configuration.CasConfigurationWatchService;
 import org.apereo.cas.util.spring.CasEventListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(value = "cas.events.core.track-configuration-modifications", havingValue = "true")
 public class CasCoreConfigurationWatchConfiguration {
-    @Autowired
     @Bean(initMethod = "initialize")
     public CasEventListener casConfigurationWatchService(
         @Qualifier("configurationPropertiesEnvironmentManager")

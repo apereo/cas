@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -66,7 +65,6 @@ public class CasRestConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasRestResponseFactoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restServiceTicketResourceEntityResponseFactoryConfigurer")
         public ServiceTicketResourceEntityResponseFactoryConfigurer restServiceTicketResourceEntityResponseFactoryConfigurer(
@@ -82,7 +80,6 @@ public class CasRestConfiguration {
     public static class CasRestResponseFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceTicketResourceEntityResponseFactory")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory(
             final List<ServiceTicketResourceEntityResponseFactoryConfigurer> configurers) {
@@ -128,7 +125,6 @@ public class CasRestConfiguration {
     @ConditionalOnBean(AuthenticationThrottlingExecutionPlan.class)
     public static class CasRestThrottleConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
@@ -150,7 +146,6 @@ public class CasRestConfiguration {
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasRestControllerResourcesConfiguration {
         @Bean
-        @Autowired
         public TicketStatusResource ticketStatusResource(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
@@ -158,7 +153,6 @@ public class CasRestConfiguration {
         }
 
         @Bean
-        @Autowired
         public ServiceTicketResource serviceTicketResource(
             @Qualifier("serviceTicketResourceEntityResponseFactory")
             final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
@@ -176,7 +170,6 @@ public class CasRestConfiguration {
         }
 
         @Bean
-        @Autowired
         public TicketGrantingTicketResource ticketGrantingTicketResource(
             @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
             final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
@@ -193,7 +186,6 @@ public class CasRestConfiguration {
         }
 
         @Bean
-        @Autowired
         public UserAuthenticationResource userAuthenticationRestController(
             @Qualifier("userAuthenticationResourceEntityResponseFactory")
             final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,

@@ -9,7 +9,6 @@ import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthentic
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -37,7 +36,6 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
                                                       @Qualifier("casSslContext")
                                                       final CasSSLContext casSslContext) {
@@ -50,7 +48,6 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoMfaTrustedAuthnTemplate")

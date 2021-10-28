@@ -6,7 +6,6 @@ import org.apereo.cas.jmx.ticket.TicketRegistryManagedResource;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.EnableMBeanExport;
 @EnableAspectJAutoProxy
 public class CasJmxConfiguration {
 
-    @Autowired
     @Bean
     public ServicesManagerManagedResource servicesManagerManagedResource(
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -34,7 +32,6 @@ public class CasJmxConfiguration {
         return new ServicesManagerManagedResource(servicesManager);
     }
 
-    @Autowired
     @Bean
     public TicketRegistryManagedResource ticketRegistryManagedResource(
         @Qualifier(TicketRegistry.BEAN_NAME)

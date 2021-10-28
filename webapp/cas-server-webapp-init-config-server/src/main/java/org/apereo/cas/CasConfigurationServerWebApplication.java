@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -70,7 +69,6 @@ public class CasConfigurationServerWebApplication {
      * @param serverProperties the server properties
      * @return the web security configurer adapter
      */
-    @Autowired
     @Bean
     public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
         return new WebSecurityConfigurerAdapter() {

@@ -10,7 +10,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,7 +45,6 @@ public class GoogleAuthenticatorRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorConnectionFactory")
-    @Autowired
     public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getGauth().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -61,7 +59,6 @@ public class GoogleAuthenticatorRedisConfiguration {
         return RedisObjectFactory.newRedisTemplate(redisGoogleAuthenticatorConnectionFactory);
     }
 
-    @Autowired
     @Bean
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
@@ -74,7 +71,6 @@ public class GoogleAuthenticatorRedisConfiguration {
     }
 
     @Bean
-    @Autowired
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("redisGoogleAuthenticatorTemplate")
                                                                            final RedisTemplate redisGoogleAuthenticatorTemplate) {

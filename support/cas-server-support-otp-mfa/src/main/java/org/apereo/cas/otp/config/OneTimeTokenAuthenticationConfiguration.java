@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +46,6 @@ public class OneTimeTokenAuthenticationConfiguration {
     public static class OneTimeTokenAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
@@ -63,7 +61,6 @@ public class OneTimeTokenAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION)
-        @Autowired
         public Action oneTimeTokenAuthenticationWebflowAction(
             @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver) {

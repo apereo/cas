@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "authyBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator(
         final CasConfigurationProperties casProperties,
         @Qualifier("authyPrincipalMultifactorAuthenticationProviderBypass")
@@ -75,7 +73,7 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyHttpRequestMultifactorAuthenticationProviderBypass);
         }
         if (props.getGroovy().getLocation()
-            !=null) {
+            != null) {
             bypass.addMultifactorAuthenticationProviderBypassEvaluator(authyGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
@@ -87,7 +85,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "authyRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyRestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();
@@ -97,7 +94,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "authyGroovyMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();
@@ -107,7 +103,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "authyHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();
@@ -117,7 +112,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
@@ -127,7 +121,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authyCredentialMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();
@@ -137,7 +130,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authyRegisteredServiceMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(authy.getId());
@@ -146,7 +138,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authyPrincipalMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();
@@ -156,7 +147,6 @@ public class AuthyAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authyAuthenticationMultifactorAuthenticationProviderBypass")
-    @Autowired
     public MultifactorAuthenticationProviderBypassEvaluator authyAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val props = authy.getBypass();

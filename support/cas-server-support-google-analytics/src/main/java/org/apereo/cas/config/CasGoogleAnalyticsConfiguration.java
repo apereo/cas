@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.RemoveGoogleAnalyticsCookieAction;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +37,6 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasCookieBuilder casGoogleAnalyticsCookieGenerator(final CasConfigurationProperties casProperties) {
         val props = casProperties.getGoogleAnalytics().getCookie();
         return new CasGoogleAnalyticsCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -46,7 +44,6 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -63,7 +60,6 @@ public class CasGoogleAnalyticsConfiguration {
     @ConditionalOnMissingBean(name = "createGoogleAnalyticsCookieAction")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public Action createGoogleAnalyticsCookieAction(final CasConfigurationProperties casProperties,
                                                     @Qualifier("casGoogleAnalyticsCookieGenerator")
                                                     final CasCookieBuilder casGoogleAnalyticsCookieGenerator) {

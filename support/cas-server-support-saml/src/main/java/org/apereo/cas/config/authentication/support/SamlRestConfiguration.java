@@ -6,7 +6,6 @@ import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfig
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 public class SamlRestConfiguration {
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactory")
     public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory(
         @Qualifier("samlServiceTicketUniqueIdGenerator")
@@ -36,7 +34,6 @@ public class SamlRestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactoryConfigurer")
-    @Autowired
     public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer(
         @Qualifier("samlRestServiceTicketResourceEntityResponseFactory")
         final ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory) {

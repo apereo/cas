@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.login.SessionStoreTicketGrantingTicketAction;
 
 import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +41,6 @@ public class CasOAuth20WebflowConfiguration {
     public static class CasOAuth20WebflowActionConfiguration {
         @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
         @Bean
-        @Autowired
         public Action oauth20RegisteredServiceUIAction(
             @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
@@ -52,7 +50,6 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
         public Action oauth20SessionStoreTicketGrantingTicketAction(
             @Qualifier("oauthDistributedSessionStore")
@@ -65,7 +62,6 @@ public class CasOAuth20WebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ViewsConfiguration {
         @Bean
-        @Autowired
         public View oauthConfirmView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -74,7 +70,6 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         public View oauthDeviceCodeApprovalView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -83,7 +78,6 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         public View oauthDeviceCodeApprovedView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -92,7 +86,6 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         public View oauthSessionStaleMismatchErrorView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -105,7 +98,6 @@ public class CasOAuth20WebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20WebflowLogoutConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "oauth20CasLogoutWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer oauth20CasLogoutWebflowExecutionPlanConfigurer(
             @Qualifier("oauth20LogoutWebflowConfigurer")
@@ -115,7 +107,6 @@ public class CasOAuth20WebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer oauth20LogoutWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowDefinitionRegistry,

@@ -7,7 +7,6 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +41,6 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -50,7 +48,6 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("redisAcceptableUsagePolicyTemplate")
                                                                            final RedisTemplate redisAcceptableUsagePolicyTemplate,

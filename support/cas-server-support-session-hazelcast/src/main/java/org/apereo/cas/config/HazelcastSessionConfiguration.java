@@ -6,7 +6,6 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.HazelcastInstanceFactory;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +32,6 @@ public class HazelcastSessionConfiguration {
      * @throws Exception the exception
      */
     @Bean(destroyMethod = "shutdown")
-    @Autowired
     public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties) throws Exception {
         val hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
         val configUrl = hzConfigResource.getURL();

@@ -17,7 +17,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -61,7 +60,6 @@ public class CasCoreWebConfiguration {
          * @return PropertiesFactoryBean containing all common (non-i18n) messages
          */
         @Bean
-        @Autowired
         public PropertiesFactoryBean casCommonMessages(final CasConfigurationProperties casProperties) {
             val properties = new PropertiesFactoryBean();
             val resourceLoader = new DefaultResourceLoader();
@@ -80,7 +78,6 @@ public class CasCoreWebConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public HierarchicalMessageSource messageSource(
             final CasConfigurationProperties casProperties,
             @Qualifier("casCommonMessages")
@@ -100,7 +97,6 @@ public class CasCoreWebConfiguration {
     @Configuration(value = "CasCoreWebRequestsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebRequestsConfiguration {
-        @Autowired
         @Bean
         @ConditionalOnMissingBean(name = "argumentExtractor")
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
@@ -113,7 +109,6 @@ public class CasCoreWebConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "urlValidator")
-        @Autowired
         public FactoryBean<UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {
             val httpClient = casProperties.getHttpClient();
             val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();

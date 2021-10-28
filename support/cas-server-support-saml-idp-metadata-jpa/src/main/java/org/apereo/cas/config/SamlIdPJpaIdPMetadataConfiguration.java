@@ -20,7 +20,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -58,7 +57,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
-        @Autowired
         public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("jpaBeanFactory")
                                                                 final JpaBeanFactory jpaBeanFactory) {
@@ -67,7 +65,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<String> jpaSamlMetadataIdPPackagesToScan(final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val type = new JpaSamlIdPMetadataDocumentFactory(idp.getJpa().getDialect()).getType();
@@ -75,7 +72,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean samlMetadataIdPEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataIdPVendorAdapter")
@@ -98,7 +94,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPJpaIdPMetadataTransactionConfiguration {
 
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerSamlMetadataIdP(
             @Qualifier("samlMetadataIdPEntityManagerFactory")
@@ -113,7 +108,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPJpaIdPMetadataGeneratorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPJpaIdPMetadataGeneratorConfiguration {
-        @Autowired
         @Bean
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("transactionManagerSamlMetadataIdP")
@@ -131,7 +125,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     public static class SamlIdPJpaIdPMetadataBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp();
             val crypto = idp.getMetadata().getJpa().getCrypto();
@@ -162,7 +155,6 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceSamlMetadataIdP")
-        @Autowired
         public DataSource dataSourceSamlMetadataIdP(final CasConfigurationProperties casProperties) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             return JpaBeans.newDataSource(idp.getJpa());

@@ -7,7 +7,6 @@ import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 public class CasConsentLdapConfiguration {
 
     @Bean
-    @Autowired
     public ConsentRepository consentRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("consentLdapConnectionFactory")
@@ -35,7 +33,6 @@ public class CasConsentLdapConfiguration {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "consentLdapConnectionFactory")
     public ConnectionFactory consentLdapConnectionFactory(final CasConfigurationProperties casProperties) {
         val ldap = casProperties.getConsent().getLdap();

@@ -71,7 +71,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -105,7 +104,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
         @Bean
-        @Autowired
         public SamlObjectSignatureValidator samlIdPObjectSignatureValidator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -118,7 +116,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
         @Bean
-        @Autowired
         public SamlObjectSignatureValidator samlObjectSignatureValidator(final CasConfigurationProperties casProperties) {
             val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
             return new SamlObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
@@ -133,7 +130,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SSOSamlIdPPostProfileHandlerController ssoPostProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
@@ -142,7 +138,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SSOSamlIdPPostSimpleSignProfileHandlerController ssoPostSimpleSignProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -154,7 +149,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SLOSamlIdPRedirectProfileHandlerController sloRedirectProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -166,7 +160,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SLOSamlIdPPostProfileHandlerController sloPostProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -178,7 +171,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SamlIdPInitiatedProfileHandlerController idpInitiatedSamlProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
@@ -187,7 +179,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SSOSamlIdPProfileCallbackHandlerController ssoPostProfileCallbackHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
@@ -196,7 +187,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ECPSamlIdPProfileHandlerController ecpProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -211,7 +201,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SamlIdPSaml1ArtifactResolutionProfileHandlerController saml1ArtifactResolutionController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -227,7 +216,6 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
@@ -244,7 +232,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
-        @Autowired
         public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn()
@@ -259,7 +246,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
-        @Autowired
         public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
@@ -271,7 +257,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "sloRedirectProfileHandlerDecoders")
-        @Autowired
         public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
             val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
@@ -296,7 +281,6 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPSingleLogoutRedirectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public LogoutRedirectionStrategy samlIdPSingleLogoutRedirectionStrategy(
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
@@ -310,7 +294,6 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlLogoutBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutMessageCreator samlLogoutBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -328,7 +311,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
         @Bean
-        @Autowired
         public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlLogoutBuilder")
@@ -384,7 +366,6 @@ public class SamlIdPEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPServicesConfiguration {
         @Bean
-        @Autowired
         public Service samlIdPCallbackService(
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
@@ -397,7 +378,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
-        @Autowired
         public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext,
                                                                                                     @Qualifier("samlIdPCallbackService")
                                                                                                     final Service samlIdPCallbackService) {
@@ -440,7 +420,6 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
-        @Autowired
         public TicketValidator samlIdPTicketValidator(
             @Qualifier(ServicesManager.BEAN_NAME)
 
@@ -469,7 +448,6 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(final CasConfigurationProperties casProperties) {
             val cookie = casProperties.getSessionReplication().getCookie();
             return CookieUtils.buildCookieRetrievingGenerator(cookie);
@@ -478,7 +456,6 @@ public class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = DistributedJEESessionStore.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SessionStore samlIdPDistributedSessionStore(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPDistributedSessionCookieGenerator")
@@ -504,7 +481,6 @@ public class SamlIdPEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPExecutionContextConfiguration {
         @Bean
-        @Autowired
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext(
             @Qualifier("authenticationAttributeReleasePolicy")

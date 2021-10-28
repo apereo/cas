@@ -16,7 +16,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +40,6 @@ public class SamlIdPGitIdPMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gitSamlIdPMetadataCipherExecutor")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getGit().getCrypto();
@@ -49,14 +47,13 @@ public class SamlIdPGitIdPMetadataConfiguration {
             return CipherExecutorUtils.newStringCipherExecutor(crypto, GitSamlIdPMetadataCipherExecutor.class);
         }
         LOGGER.info("Git SAML IdP metadata encryption/signing is turned off and MAY NOT be safe in a production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
+                    + "Consider using other choices to handle encryption, signing and verification of metadata artifacts");
         return CipherExecutor.noOp();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitIdPMetadataRepositoryInstance")
-    @Autowired
     public GitRepository gitIdPMetadataRepositoryInstance(final CasConfigurationProperties casProperties) {
         val git = casProperties.getAuthn().getSamlIdp().getMetadata().getGit();
         return GitRepositoryBuilder.newInstance(git).build();

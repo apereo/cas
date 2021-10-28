@@ -16,7 +16,6 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +42,6 @@ public class CasCoreRestConfiguration {
     public static class CasCoreRestAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restAuthenticationService")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestAuthenticationService restAuthenticationService(
             @Qualifier("restHttpRequestCredentialFactory")
@@ -71,7 +69,6 @@ public class CasCoreRestConfiguration {
     public static class CasCoreRestCredentialFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restHttpRequestCredentialFactory")
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(
             final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {

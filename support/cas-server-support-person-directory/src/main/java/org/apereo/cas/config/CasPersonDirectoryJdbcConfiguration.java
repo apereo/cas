@@ -21,7 +21,6 @@ import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -89,7 +88,6 @@ public class CasPersonDirectoryJdbcConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcAttributeRepositories")
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<IPersonAttributeDao> jdbcAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
@@ -130,7 +128,6 @@ public class CasPersonDirectoryJdbcConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jdbcPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer jdbcPersonDirectoryAttributeRepositoryPlanConfigurer(

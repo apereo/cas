@@ -7,7 +7,6 @@ import org.apereo.cas.webauthn.LdapWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,7 +33,6 @@ public class LdapWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
                                                                      final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {

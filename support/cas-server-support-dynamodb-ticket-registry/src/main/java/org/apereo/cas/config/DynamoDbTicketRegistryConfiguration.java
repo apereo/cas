@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class DynamoDbTicketRegistryConfiguration {
     @Configuration(value = "DynamoDbTicketRegistryBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DynamoDbTicketRegistryBaseConfiguration {
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public TicketRegistry ticketRegistry(
@@ -50,7 +48,6 @@ public class DynamoDbTicketRegistryConfiguration {
     @Configuration(value = "DynamoDbTicketRegistryHelperConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DynamoDbTicketRegistryHelperConfiguration {
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(
@@ -66,7 +63,7 @@ public class DynamoDbTicketRegistryConfiguration {
             }
             return f;
         }
-        
+
     }
 
     @Configuration(value = "DynamoDbTicketRegistryClientConfiguration", proxyBeanMethods = false)
@@ -74,7 +71,6 @@ public class DynamoDbTicketRegistryConfiguration {
     public static class DynamoDbTicketRegistryClientConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
         public DynamoDbClient amazonDynamoDbTicketRegistryClient(final CasConfigurationProperties casProperties) {
             val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();

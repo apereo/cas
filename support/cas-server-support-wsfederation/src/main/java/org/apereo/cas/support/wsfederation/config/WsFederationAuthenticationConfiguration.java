@@ -13,7 +13,6 @@ import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,7 +54,6 @@ public class WsFederationAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationCookieManager")
-        @Autowired
         public WsFederationCookieManager wsFederationCookieManager(
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
@@ -70,7 +68,6 @@ public class WsFederationAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WsFederationAuthenticationControllerConfiguration {
         @Bean
-        @Autowired
         public WsFederationNavigationController wsFederationNavigationController(
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,

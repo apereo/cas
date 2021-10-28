@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +37,6 @@ public class InfinispanTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistry ticketRegistry(final CasConfigurationProperties casProperties,
                                          final EmbeddedCacheManager cacheManager) throws Exception {
         val span = casProperties.getTicket().getRegistry().getInfinispan();
@@ -48,7 +46,6 @@ public class InfinispanTicketRegistryConfiguration {
     }
 
     @Bean
-    @Autowired
     public EmbeddedCacheManager cacheManager(final CasConfigurationProperties casProperties) throws Exception {
         val loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
         return new DefaultCacheManager(loc.getInputStream());

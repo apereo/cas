@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,7 +38,6 @@ public class CasCoreServicesAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "casAttributeEncoder")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public ProtocolAttributeEncoder casAttributeEncoder(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

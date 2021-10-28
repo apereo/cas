@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,6 @@ public class ElectronicFenceWebflowConfiguration {
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
@@ -59,7 +57,6 @@ public class ElectronicFenceWebflowConfiguration {
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -73,7 +70,6 @@ public class ElectronicFenceWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer(
         @Qualifier("riskAwareAuthenticationWebflowConfigurer")

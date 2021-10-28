@@ -11,7 +11,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,7 +38,6 @@ public class CasPersonDirectoryGrouperConfiguration {
         @ConditionalOnMissingBean(name = "grouperAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public BeanContainer<IPersonAttributeDao> grouperAttributeRepositories(final CasConfigurationProperties casProperties) {
             val list = new ArrayList<IPersonAttributeDao>();
             val gp = casProperties.getAuthn().getAttributeRepository().getGrouper();
@@ -62,7 +60,6 @@ public class CasPersonDirectoryGrouperConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GrouperAttributeRepositoryPlanConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "grouperPersonDirectoryAttributeRepositoryPlanConfigurer")
         public PersonDirectoryAttributeRepositoryPlanConfigurer grouperPersonDirectoryAttributeRepositoryPlanConfigurer(

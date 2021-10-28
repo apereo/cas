@@ -17,7 +17,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,7 +45,6 @@ public class GitServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
-    @Autowired
     public GitRepository gitServiceRegistryRepositoryInstance(final CasConfigurationProperties casProperties) {
         val registry = casProperties.getServiceRegistry().getGit();
         return GitRepositoryBuilder.newInstance(registry).build();
@@ -55,7 +53,6 @@ public class GitServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
-    @Autowired
     public ServiceRegistry gitServiceRegistry(
         final CasConfigurationProperties casProperties,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,

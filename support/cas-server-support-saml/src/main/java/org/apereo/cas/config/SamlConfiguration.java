@@ -37,7 +37,6 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -82,7 +81,6 @@ public class SamlConfiguration {
         @ConditionalOnMissingBean(name = "samlResponseBuilder")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public SamlResponseBuilder samlResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -109,7 +107,6 @@ public class SamlConfiguration {
 
         @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
         @Bean
-        @Autowired
         public Saml10ObjectBuilder saml10ObjectBuilder(
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
@@ -185,7 +182,6 @@ public class SamlConfiguration {
     public static class SamlWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public SamlValidateEndpoint samlValidateEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlResponseBuilder")
@@ -206,7 +202,6 @@ public class SamlConfiguration {
         }
 
         @Bean
-        @Autowired
         public SamlValidateController samlValidateController(
             final CasConfigurationProperties casProperties,
             @Qualifier("serviceValidationViewFactory")

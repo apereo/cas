@@ -12,7 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,7 +47,6 @@ public class JpaEventsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceEvent")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceEvent(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
         }
@@ -60,7 +58,6 @@ public class JpaEventsConfiguration {
     public static class JpaEventsEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaEventVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -76,7 +73,6 @@ public class JpaEventsConfiguration {
 
         @Lazy
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaEventVendorAdapter")
@@ -100,7 +96,6 @@ public class JpaEventsConfiguration {
     @Configuration(value = "JpaEventsTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaEventsTransactionConfiguration {
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerEvents(
             @Qualifier("eventsEntityManagerFactory")
@@ -122,7 +117,6 @@ public class JpaEventsConfiguration {
         }
 
         @Bean
-        @Autowired
         public CasEventRepository casEventRepository(
             @Qualifier("transactionManagerEvents")
             final PlatformTransactionManager transactionManager,

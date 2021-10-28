@@ -10,7 +10,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +44,6 @@ public class U2FRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public RedisConnectionFactory u2fRedisConnectionFactory(final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis);
@@ -53,7 +51,6 @@ public class U2FRedisConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
                                                    @Qualifier("u2fRedisTemplate")
                                                    final RedisTemplate u2fRedisTemplate,

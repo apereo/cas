@@ -14,7 +14,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +41,6 @@ public class AmazonS3SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getAmazonS3().getCrypto();
@@ -56,7 +54,6 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(final CasConfigurationProperties casProperties,
                                                              @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
                                                              final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
@@ -70,7 +67,6 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataLocator samlIdPMetadataLocator(
         final CasConfigurationProperties casProperties,
         @Qualifier("samlIdPMetadataCache")

@@ -8,7 +8,6 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,6 @@ public class CasHazelcastThrottlingConfiguration {
     private static final String MAP_KEY = "ipMap";
 
     @Bean
-    @Autowired
     public IMap throttleSubmissionMap(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,

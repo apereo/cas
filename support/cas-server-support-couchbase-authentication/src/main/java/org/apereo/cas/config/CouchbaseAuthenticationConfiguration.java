@@ -15,7 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +45,6 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationCouchbaseClientFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CouchbaseClientFactory authenticationCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getCouchbase();
         return new CouchbaseClientFactory(couchbase);
@@ -55,7 +53,6 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler couchbaseAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                                 @Qualifier("couchbasePrincipalFactory")
                                                                 final PrincipalFactory couchbasePrincipalFactory,
@@ -73,7 +70,6 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                           @Qualifier("couchbaseAuthenticationHandler")
                                                                                                           final AuthenticationHandler couchbaseAuthenticationHandler,

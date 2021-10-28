@@ -39,7 +39,6 @@ import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -64,7 +63,7 @@ import java.util.List;
 @Configuration(value = "casValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
-    
+
     @Configuration(value = "CasValidationViewRegistrationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasValidationViewRegistrationConfiguration {
@@ -72,7 +71,6 @@ public class CasValidationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "casServiceValidationViewFactoryConfigurer")
-        @Autowired
         public ServiceValidationViewFactoryConfigurer casServiceValidationViewFactoryConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("cas3ServiceSuccessView")
@@ -113,7 +111,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas3ProtocolAttributesRenderer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasProtocolAttributesRenderer cas3ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
             switch (casProperties.getView().getCas3().getAttributeRendererType()) {
                 case INLINE:
@@ -127,7 +124,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas1ProtocolAttributesRenderer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer(final CasConfigurationProperties casProperties) {
             switch (casProperties.getView().getCas1().getAttributeRendererType()) {
                 case VALUES_PER_LINE:
@@ -146,7 +142,6 @@ public class CasValidationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidationViewFactory")
-        @Autowired
         public ServiceValidationViewFactory serviceValidationViewFactory(
             final List<ServiceValidationViewFactoryConfigurer> configurers) {
             val viewFactory = new ServiceValidationViewFactory();
@@ -162,7 +157,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateControllerValidationSpecification")
-        @Autowired
         public CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification(
             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
@@ -173,7 +167,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateControllerValidationSpecification")
-        @Autowired
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         public CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification(
             @Qualifier("cas20ProtocolValidationSpecification")
@@ -185,7 +178,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "proxyValidateControllerValidationSpecification")
-        @Autowired
         public CasProtocolValidationSpecification proxyValidateControllerValidationSpecification(
             @Qualifier("cas20ProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) {
@@ -196,7 +188,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "legacyValidateControllerValidationSpecification")
-        @Autowired
         public CasProtocolValidationSpecification legacyValidateControllerValidationSpecification(
             @Qualifier("cas10ProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas10ProtocolValidationSpecification) {
@@ -207,7 +198,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidateControllerValidationSpecification")
-        @Autowired
         public CasProtocolValidationSpecification serviceValidateControllerValidationSpecification(
             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
@@ -224,7 +214,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public View cas3ServiceSuccessView(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -244,7 +233,6 @@ public class CasValidationConfiguration {
         }
 
         @Bean
-        @Autowired
         public View cas2SuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -256,7 +244,6 @@ public class CasValidationConfiguration {
         }
 
         @Bean
-        @Autowired
         public View cas2ServiceFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -268,7 +255,6 @@ public class CasValidationConfiguration {
 
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
-        @Autowired
         public View cas2ProxyFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -281,7 +267,6 @@ public class CasValidationConfiguration {
 
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
-        @Autowired
         public View cas2ProxySuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -293,7 +278,6 @@ public class CasValidationConfiguration {
         }
 
         @Bean
-        @Autowired
         public View cas3SuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -304,7 +288,6 @@ public class CasValidationConfiguration {
         }
 
         @Bean
-        @Autowired
         public View cas3ServiceFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -316,7 +299,6 @@ public class CasValidationConfiguration {
         }
 
         @Bean
-        @Autowired
         public View casPostResponseView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -328,7 +310,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public View cas1ServiceSuccessView(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -347,7 +328,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas1ServiceFailureView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public View cas1ServiceFailureView(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -366,7 +346,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "cas2ServiceSuccessView")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public View cas2ServiceSuccessView(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -386,7 +365,6 @@ public class CasValidationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
-        @Autowired
         public View cas3ServiceJsonView(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -410,7 +388,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "proxyController")
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
-        @Autowired
         public ProxyController proxyController(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -426,10 +403,8 @@ public class CasValidationConfiguration {
         }
 
 
-
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidateController")
-        @Autowired
         public ServiceValidateController serviceValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -468,7 +443,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "legacyValidateController")
-        @Autowired
         public LegacyValidateController legacyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -507,7 +481,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "proxyValidateController")
-        @Autowired
         public ProxyValidateController proxyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -548,7 +521,6 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateController")
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
-        @Autowired
         public V3ProxyValidateController v3ProxyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -587,7 +559,6 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateController")
-        @Autowired
         public V3ServiceValidateController v3ServiceValidateController(
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,

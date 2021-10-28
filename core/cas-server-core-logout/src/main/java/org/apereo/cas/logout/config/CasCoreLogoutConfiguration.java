@@ -33,7 +33,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,7 +65,6 @@ public class CasCoreLogoutConfiguration {
         @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder(
             final List<SingleLogoutServiceLogoutUrlBuilderConfigurer> configurers) {
             val results = configurers
@@ -86,7 +84,6 @@ public class CasCoreLogoutConfiguration {
         @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceLogoutUrlBuilderConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutServiceLogoutUrlBuilderConfigurer defaultSingleLogoutServiceLogoutUrlBuilderConfigurer(
             @Qualifier("urlValidator")
             final UrlValidator urlValidator,
@@ -101,7 +98,6 @@ public class CasCoreLogoutConfiguration {
     public static class CasCoreLogoutRedirectConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "defaultLogoutRedirectionStrategy")
         public LogoutRedirectionStrategy defaultLogoutRedirectionStrategy(
             final CasConfigurationProperties casProperties,
@@ -122,7 +118,6 @@ public class CasCoreLogoutConfiguration {
         @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -156,7 +151,6 @@ public class CasCoreLogoutConfiguration {
 
         @ConditionalOnMissingBean(name = LogoutManager.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @Bean
         public LogoutManager logoutManager(
             @Qualifier("logoutExecutionPlan")
@@ -166,13 +160,12 @@ public class CasCoreLogoutConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "CasCoreLogoutExecutionPlanBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreLogoutExecutionPlanBaseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "casCoreLogoutExecutionPlanConfigurer")
         public LogoutExecutionPlanConfigurer casCoreLogoutExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
@@ -201,7 +194,6 @@ public class CasCoreLogoutConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreLogoutExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "logoutExecutionPlan")
-        @Autowired
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LogoutExecutionPlan logoutExecutionPlan(final List<LogoutExecutionPlanConfigurer> configurers) {
@@ -222,13 +214,11 @@ public class CasCoreLogoutConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ServiceFactory<WebApplicationService> logoutWebApplicationServiceFactory(final CasConfigurationProperties casProperties) {
             return new LogoutWebApplicationServiceFactory(casProperties.getLogout());
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactoryConfigurer")
         public ServiceFactoryConfigurer logoutWebApplicationServiceFactoryConfigurer(
             @Qualifier("logoutWebApplicationServiceFactory")
@@ -236,13 +226,12 @@ public class CasCoreLogoutConfiguration {
             return () -> CollectionUtils.wrap(logoutWebApplicationServiceFactory);
         }
     }
-    
+
     @Configuration(value = "CasCoreLogoutExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreLogoutExecutorConfiguration {
         @ConditionalOnMissingBean(name = "defaultSingleLogoutRequestExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @Bean
         public SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)

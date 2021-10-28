@@ -8,7 +8,6 @@ import org.apereo.cas.support.events.DynamoDbCasEventRepository;
 import org.apereo.cas.support.events.DynamoDbCasEventsFacilitator;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,7 +44,6 @@ public class CasEventsDynamoDbRepositoryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator(
         @Qualifier("dynamoDbEventRepositoryClient")
         final DynamoDbClient dynamoDbEventRepositoryClient,
@@ -61,7 +59,6 @@ public class CasEventsDynamoDbRepositoryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryClient")
-    @Autowired
     public DynamoDbClient dynamoDbEventRepositoryClient(final CasConfigurationProperties casProperties) {
         val dynamoDbProperties = casProperties.getEvents().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();

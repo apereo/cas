@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,7 +43,6 @@ public class GoogleAuthenticatorConfiguration {
     public static class GoogleAuthenticatorMultifactorWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorFlowRegistry")
-        @Autowired
         public FlowDefinitionRegistry googleAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -58,7 +56,6 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -92,7 +89,6 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer(
             @Qualifier("googleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
@@ -110,7 +106,6 @@ public class GoogleAuthenticatorConfiguration {
         }
 
         @Bean
-        @Autowired
         public CasWebflowExecutionPlanConfigurer gauthMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("gauthMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer) {

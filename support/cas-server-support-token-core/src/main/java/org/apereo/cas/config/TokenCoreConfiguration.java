@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -65,14 +64,13 @@ public class TokenCoreConfiguration {
         }
 
     }
-    
+
     @Configuration(value = "TokenCoreJwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TokenCoreJwtConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenCipherExecutor")
-        @Autowired
         public CipherExecutor tokenCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getToken().getCrypto();
             val enabled = FunctionUtils.doIf(!crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey())
@@ -111,7 +109,6 @@ public class TokenCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "tokenTicketBuilder")
-        @Autowired
         public TokenTicketBuilder tokenTicketBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenTicketValidator")
@@ -126,13 +123,12 @@ public class TokenCoreConfiguration {
                 grantingTicketExpirationPolicy, tokenTicketJwtBuilder, servicesManager, casProperties);
         }
     }
-    
+
     @Configuration(value = "TokenCoreWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TokenCoreWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        @Autowired
         public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,

@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.JdbcSessionDataSourceInitializer;
@@ -31,7 +30,6 @@ import javax.sql.DataSource;
 public class CasJdbcSessionConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    @Autowired
     JdbcSessionDataSourceInitializer jdbcSessionDataSourceInitializer(
         @SpringSessionDataSource
         final ObjectProvider<DataSource> sessionDataSource,

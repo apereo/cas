@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,7 +48,6 @@ public class CasOAuthUmaJpaConfiguration {
     public static class CasOAuthUmaJpaEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaUmaVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -64,7 +62,6 @@ public class CasOAuthUmaJpaConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaUmaVendorAdapter")
@@ -90,7 +87,6 @@ public class CasOAuthUmaJpaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaJpaTransactionConfiguration {
 
-        @Autowired
         @Bean
         public PlatformTransactionManager umaTransactionManager(
             @Qualifier("umaEntityManagerFactory")
@@ -109,7 +105,6 @@ public class CasOAuthUmaJpaConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceUma")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceUma(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
         }
