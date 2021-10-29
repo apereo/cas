@@ -51,25 +51,6 @@ refer to [the Hazelcast documentation](https://docs.hazelcast.com/imdg/latest/)
 Tokens and tickets that are managed by the Hazelcast ticket registry can be signed and encrypted.                        
 
 {% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.crypto" %}
-     
-### TLS Encryption
-
-You can use the TLS (Transport Layer Security) protocol to establish an encrypted 
-communication across your Hazelcast cluster with key stores and trust stores. Hazelcast allows you 
-to encrypt socket level communication between Hazelcast members and 
-between Hazelcast clients and members, for end to end encryption. Hazelcast provides a default 
-SSL context factory implementation, which is guided and auto-configured by CAS when enabled to use the 
-configured keystore to initialize SSL context.
-
-<div class="alert alert-info"><strong>Performance</strong><p>
-Under Linux, the JVM automatically makes use of <code>/dev/random</code> for the 
-generation of random numbers. If this entropy is insufficient to keep up with the rate 
-requiring random numbers, it can slow down the encryption/decryption since it could block for 
-minutes waiting for sufficient entropy . This can be fixed 
-by setting the <code>-Djava.security.egd=file:/dev/./urandom</code> system property.
-Note that if there is a shortage of entropy, this option will not block 
-and the returned random values could theoretically be vulnerable to a cryptographic attack.
-</p></div>
 
 ## Logging
 

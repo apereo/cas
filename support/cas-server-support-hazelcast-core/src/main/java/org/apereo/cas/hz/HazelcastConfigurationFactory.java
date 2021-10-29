@@ -139,7 +139,8 @@ public class HazelcastConfigurationFactory {
             : UUID.randomUUID().toString();
         LOGGER.trace("Configuring Hazelcast instance name [{}]", instanceName);
         return config.setInstanceName(instanceName)
-            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
+            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP,
+                BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.getNetwork().isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getCore().getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getCore().getMaxNoHeartbeatSeconds()));
@@ -149,7 +150,6 @@ public class HazelcastConfigurationFactory {
         val managementCenter = new ManagementCenterConfig();
         LOGGER.trace("Enables management center scripting: [{}]", hz.getCore().isEnableManagementCenterScripting());
         managementCenter.setScriptingEnabled(hz.getCore().isEnableManagementCenterScripting());
-
         config.setManagementCenterConfig(managementCenter);
     }
 
@@ -160,24 +160,24 @@ public class HazelcastConfigurationFactory {
         wanReplicationConfig.setName(wan.getReplicationName());
 
         wan.getTargets().forEach(target -> {
-            val nextCluster = new WanBatchPublisherConfig();
-            nextCluster.setClassName(target.getPublisherClassName());
-            nextCluster.setQueueFullBehavior(WanQueueFullBehavior.valueOf(target.getQueueFullBehavior()));
-            nextCluster.setQueueCapacity(target.getQueueCapacity());
-            nextCluster.setAcknowledgeType(WanAcknowledgeType.valueOf(target.getAcknowledgeType()));
-            nextCluster.setBatchSize(target.getBatchSize());
-            nextCluster.setBatchMaxDelayMillis(target.getBatchMaximumDelayMilliseconds());
-            nextCluster.setResponseTimeoutMillis(target.getResponseTimeoutMilliseconds());
-            nextCluster.setSnapshotEnabled(target.isSnapshotEnabled());
-            nextCluster.setTargetEndpoints(target.getEndpoints());
-            nextCluster.setClusterName(target.getClusterName());
-            nextCluster.setPublisherId(target.getPublisherId());
-            nextCluster.setMaxConcurrentInvocations(target.getExecutorThreadCount());
-            nextCluster.setInitialPublisherState(WanPublisherState.REPLICATING);
-            nextCluster.setProperties(target.getProperties());
-            nextCluster.setSyncConfig(new WanSyncConfig()
+            val publisherConfig = new WanBatchPublisherConfig();
+            publisherConfig.setClassName(target.getPublisherClassName());
+            publisherConfig.setQueueFullBehavior(WanQueueFullBehavior.valueOf(target.getQueueFullBehavior()));
+            publisherConfig.setQueueCapacity(target.getQueueCapacity());
+            publisherConfig.setAcknowledgeType(WanAcknowledgeType.valueOf(target.getAcknowledgeType()));
+            publisherConfig.setBatchSize(target.getBatchSize());
+            publisherConfig.setBatchMaxDelayMillis(target.getBatchMaximumDelayMilliseconds());
+            publisherConfig.setResponseTimeoutMillis(target.getResponseTimeoutMilliseconds());
+            publisherConfig.setSnapshotEnabled(target.isSnapshotEnabled());
+            publisherConfig.setTargetEndpoints(target.getEndpoints());
+            publisherConfig.setClusterName(target.getClusterName());
+            publisherConfig.setPublisherId(target.getPublisherId());
+            publisherConfig.setMaxConcurrentInvocations(target.getExecutorThreadCount());
+            publisherConfig.setInitialPublisherState(WanPublisherState.REPLICATING);
+            publisherConfig.setProperties(target.getProperties());
+            publisherConfig.setSyncConfig(new WanSyncConfig()
                 .setConsistencyCheckStrategy(ConsistencyCheckStrategy.valueOf(target.getConsistencyCheckStrategy())));
-            wanReplicationConfig.addBatchReplicationPublisherConfig(nextCluster);
+            wanReplicationConfig.addBatchReplicationPublisherConfig(publisherConfig);
         });
         config.addWanReplicationConfig(wanReplicationConfig);
     }

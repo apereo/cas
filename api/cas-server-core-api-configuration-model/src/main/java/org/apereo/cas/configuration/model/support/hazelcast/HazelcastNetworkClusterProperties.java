@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class HazelcastNetworkClusterProperties implements Serializable {
      * is enabled (it is disabled by default) and if Hazelcast cannot find
      * an matching interface, then it will print a message on
      * the console and will not start on that node.
-     *
+     * <p>
      * Interfaces can be separated by a comma.
      */
     private String networkInterfaces;
@@ -97,4 +98,12 @@ public class HazelcastNetworkClusterProperties implements Serializable {
      * set this setting to false.
      */
     private boolean ipv4Enabled = true;
+
+    /**
+     * You can use the SSL (Secure Sockets Layer) protocol to
+     * establish an encrypted communication across your Hazelcast
+     * cluster with key stores and trust stores.
+     */
+    @NestedConfigurationProperty
+    private HazelcastNetworkSslProperties ssl = new HazelcastNetworkSslProperties();
 }
