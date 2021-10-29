@@ -5,6 +5,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import org.opensaml.saml.common.SAMLObject;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Factory to create OAuth access tokens.
  *
@@ -22,8 +24,13 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the access token
      */
-    SamlAttributeQueryTicket create(String id, SAMLObject samlObject,
-                                    String relyingParty, TicketGrantingTicket ticketGrantingTicket);
+    SamlAttributeQueryTicket create(String id,
+                                    @NotNull
+                                    SAMLObject samlObject,
+                                    @NotNull
+                                    String relyingParty,
+                                    @NotNull
+                                    TicketGrantingTicket ticketGrantingTicket);
 
     /**
      * Create ticket id.

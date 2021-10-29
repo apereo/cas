@@ -56,13 +56,13 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
-import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
 import org.pac4j.core.context.session.SessionStore;
@@ -202,7 +202,7 @@ public class SamlIdPConfiguration {
         public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlProfileSamlNameIdBuilder")
-            final SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder,
+            final SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -425,15 +425,17 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlNameIdBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder(
+        public SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder(
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
             @Qualifier("shibbolethCompatiblePersistentIdGenerator")
             final PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean) {
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("samlObjectEncrypter")
+            final SamlIdPObjectEncrypter samlObjectEncrypter) {
             return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator,
-                casSamlIdPMetadataResolver);
+                casSamlIdPMetadataResolver, samlObjectEncrypter);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlConditionsBuilder")
@@ -496,7 +498,7 @@ public class SamlIdPConfiguration {
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
             @Qualifier("samlProfileSamlNameIdBuilder")
-            final SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder,
+            final SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlIdPServiceFactory")
