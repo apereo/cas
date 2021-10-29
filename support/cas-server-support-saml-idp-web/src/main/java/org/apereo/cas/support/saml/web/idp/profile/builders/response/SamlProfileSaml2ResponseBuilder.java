@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.CookieUtils;
@@ -26,6 +27,7 @@ import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
@@ -148,13 +150,16 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
                                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val nameId = (String) request.getAttribute(NameID.class.getName());
-        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
-            getConfigurationContext().getTicketRegistry(), request);
-
-        val ticket = getConfigurationContext().getSamlAttributeQueryTicketFactory().create(nameId,
-            assertion, adaptor.getEntityId(), ticketGrantingTicket);
-        getConfigurationContext().getTicketRegistry().addTicket(ticket);
+        val existingQuery = request.getAttribute(AttributeQuery.class.getSimpleName());
+        if (existingQuery == null) {
+            val nameId = (String) request.getAttribute(NameID.class.getName());
+            val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+                getConfigurationContext().getTicketRegistry(), request);
+            val ticket = getConfigurationContext().getSamlAttributeQueryTicketFactory().create(nameId,
+                assertion, adaptor.getEntityId(), ticketGrantingTicket);
+            getConfigurationContext().getTicketRegistry().addTicket(ticket);
+            request.setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
+        }
     }
 }

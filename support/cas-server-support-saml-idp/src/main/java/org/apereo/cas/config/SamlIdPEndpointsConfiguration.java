@@ -64,6 +64,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -532,9 +533,12 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
             @Qualifier("defaultTicketFactory")
             final TicketFactory defaultTicketFactory,
+            @Qualifier("attributeRepository")
+            final IPersonAttributeDao attributeRepository,
             @Qualifier("ssoPostProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
             return SamlProfileHandlerConfigurationContext.builder()
+                .attributeRepository(attributeRepository)
                 .samlMessageDecoders(ssoPostProfileHandlerDecoders)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .samlObjectSigner(samlObjectSigner)

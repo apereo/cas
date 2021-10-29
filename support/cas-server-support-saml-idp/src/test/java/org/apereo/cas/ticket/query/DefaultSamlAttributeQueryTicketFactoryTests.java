@@ -31,8 +31,9 @@ public class DefaultSamlAttributeQueryTicketFactoryTests extends BaseSamlIdPConf
         val ticketId = samlAttributeQueryTicketFactory.create("ATTR_QUERY",
             getAuthnRequestFor("helloworld"), "https://www.example.org", tgt);
         assertNotNull(ticketId);
+        assertNull(ticketId.getTicketGrantingTicket());
         assertNotNull(ticketId.getPrefix());
-        assertNotNull(ticketId.getTicketGrantingTicket());
+        assertNotNull(ticketId.getAuthentication());
         assertNotNull(ticketId.getObject());
         assertNotNull(ticketId.getRelyingParty());
         assertNotNull(ticketId.getExpirationPolicy());
