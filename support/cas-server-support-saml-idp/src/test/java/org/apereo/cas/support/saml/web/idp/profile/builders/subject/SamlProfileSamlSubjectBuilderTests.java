@@ -95,9 +95,6 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
-        val now = ZonedDateTime.now(ZoneOffset.UTC)
-            .plusSeconds(service.getSkewAllowance()).toInstant().truncatedTo(ChronoUnit.SECONDS);
-
         service.setRequiredNameIdFormat(NameID.ENCRYPTED);
         val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
             assertion, service, adaptor,
