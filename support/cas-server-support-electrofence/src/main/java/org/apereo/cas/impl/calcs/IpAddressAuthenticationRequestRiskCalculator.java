@@ -12,6 +12,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -33,10 +34,10 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Stream<? extends CasEvent> events) {
+                                        final Supplier<Stream<? extends CasEvent>> events) {
         val remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for ip address [{}]", remoteAddr);
-        val count = events.filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
+        val count = events.get().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
         LOGGER.debug("Total authentication events found for [{}]: [{}]", remoteAddr, count);
         return calculateScoreBasedOnEventsCount(authentication, events, count);
     }

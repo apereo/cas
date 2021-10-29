@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -46,8 +47,14 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
                                                    final RegisteredService service,
                                                    final HttpServletRequest request) {
         val principal = authentication.getPrincipal();
-        val events = getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
-        if (events.findAny().isEmpty()) {
+        val events = new Supplier<Stream<? extends CasEvent>>() {
+            @Override
+            public Stream<? extends CasEvent> get() {
+                return getCasTicketGrantingTicketCreatedEventsFor(principal.getId());
+            }
+        };
+
+        if (events.get().findAny().isEmpty()) {
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
         val score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
@@ -67,7 +74,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Stream<? extends CasEvent> events) {
+                                        final Supplier<Stream<? extends CasEvent>> events) {
         return HIGHEST_RISK_SCORE;
     }
 
@@ -95,9 +102,9 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @return the big decimal
      */
     protected BigDecimal calculateScoreBasedOnEventsCount(final Authentication authentication,
-                                                          final Stream<? extends CasEvent> events,
+                                                          final Supplier<Stream<? extends CasEvent>> events,
                                                           final long count) {
-        val eventCount = events.count();
+        val eventCount = events.get().count();
         if (count == eventCount) {
             LOGGER.debug("Principal [{}] is assigned to the lowest risk score with attempted count of [{}]",
                 authentication.getPrincipal(), count);
