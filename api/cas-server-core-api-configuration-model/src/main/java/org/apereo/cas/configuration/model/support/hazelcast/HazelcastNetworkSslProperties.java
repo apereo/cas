@@ -32,11 +32,13 @@ public class HazelcastNetworkSslProperties implements Serializable {
 
     /**
      * Path of your keystore file.
+     * Only needed when the mutual authentication is used.
      */
     private String keystore;
 
     /**
      * Password to access the key from your keystore file.
+     * Only needed when the mutual authentication is used.
      */
     private String keystorePassword;
 
@@ -44,6 +46,7 @@ public class HazelcastNetworkSslProperties implements Serializable {
      * Type of the keystore. Its default value is JKS.
      * Another commonly used type is the PKCS12. Available
      * keystore/truststore types depend on your Operating system and the Java runtime.
+     * Only needed when the mutual authentication is used.
      */
     private String keyStoreType = "JKS";
 
