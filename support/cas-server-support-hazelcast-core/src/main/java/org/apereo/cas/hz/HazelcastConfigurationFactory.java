@@ -3,6 +3,7 @@ package org.apereo.cas.hz;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ConsistencyCheckStrategy;
@@ -21,12 +22,14 @@ import com.hazelcast.config.NamedConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.ReplicatedMapConfig;
+import com.hazelcast.config.SSLConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.WanAcknowledgeType;
 import com.hazelcast.config.WanBatchPublisherConfig;
 import com.hazelcast.config.WanQueueFullBehavior;
 import com.hazelcast.config.WanReplicationConfig;
 import com.hazelcast.config.WanSyncConfig;
+import com.hazelcast.nio.ssl.BasicSSLContextFactory;
 import com.hazelcast.spi.merge.DiscardMergePolicy;
 import com.hazelcast.spi.merge.ExpirationTimeMergePolicy;
 import com.hazelcast.spi.merge.HigherHitsMergePolicy;
@@ -99,6 +102,8 @@ public class HazelcastConfigurationFactory {
             .setPort(cluster.getNetwork().getPort())
             .setPortAutoIncrement(cluster.getNetwork().isPortAutoIncrement());
 
+        buildNetworkSslConfig(networkConfig, hz);
+
         if (StringUtils.hasText(cluster.getNetwork().getNetworkInterfaces())) {
             networkConfig.getInterfaces().setEnabled(true);
             StringUtils.commaDelimitedListToSet(cluster.getNetwork().getNetworkInterfaces())
@@ -120,7 +125,7 @@ public class HazelcastConfigurationFactory {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
             }
             LOGGER.warn("Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you "
-                + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
+                        + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
             buildWanReplicationSettingsForConfig(hz, config);
         }
 
@@ -144,6 +149,25 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.getNetwork().isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getCore().getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getCore().getMaxNoHeartbeatSeconds()));
+    }
+
+    private static void buildNetworkSslConfig(final NetworkConfig networkConfig, final BaseHazelcastProperties hz) {
+        val ssl = hz.getCluster().getNetwork().getSsl();
+        val sslConfig = new SSLConfig();
+        sslConfig.setFactoryClassName(BasicSSLContextFactory.class.getName());
+        FunctionUtils.doIfNotNull(ssl.getKeystore(), value -> sslConfig.setProperty("keystore", value));
+        FunctionUtils.doIfNotNull(ssl.getProtocol(), value -> sslConfig.setProperty("protocol", value));
+        FunctionUtils.doIfNotNull(ssl.getKeystorePassword(), value -> sslConfig.setProperty("keystorePassword", value));
+        FunctionUtils.doIfNotNull(ssl.getKeyStoreType(), value -> sslConfig.setProperty("keyStoreType", value));
+        FunctionUtils.doIfNotNull(ssl.getTrustStore(), value -> sslConfig.setProperty("trustStore", value));
+        FunctionUtils.doIfNotNull(ssl.getTrustStoreType(), value -> sslConfig.setProperty("trustStoreType", value));
+        FunctionUtils.doIfNotNull(ssl.getTrustStorePassword(), value -> sslConfig.setProperty("trustStorePassword", value));
+        FunctionUtils.doIfNotNull(ssl.getMutualAuthentication(), value -> sslConfig.setProperty("mutualAuthentication", value));
+        FunctionUtils.doIfNotNull(ssl.getCipherSuites(), value -> sslConfig.setProperty("cipherSuites", value));
+        FunctionUtils.doIfNotNull(ssl.getTrustManagerAlgorithm(), value -> sslConfig.setProperty("trustManagerAlgorithm", value));
+        FunctionUtils.doIfNotNull(ssl.getKeyManagerAlgorithm(), value -> sslConfig.setProperty("keyManagerAlgorithm", value));
+        sslConfig.setProperty("validateIdentity", String.valueOf(ssl.isValidateIdentity()));
+        networkConfig.setSSLConfig(sslConfig);
     }
 
     private static void buildManagementCenterConfig(final BaseHazelcastProperties hz, final Config config) {
