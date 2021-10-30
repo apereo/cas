@@ -34,7 +34,7 @@ as memcached itself is rather unable to process and support that type of query.<
 
 ##  Spymemcached
 
-Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). This is a simple, asynchronous, 
+Enable support via the [spymemcached library](). This is a simple, asynchronous, 
 single-threaded memcached client that should be the default choice for the majority of deployments.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -102,7 +102,7 @@ failure.
 ### Object Serialization
 
 Memcached stores bytes of data, so CAS tickets must be serialized to a byte array prior to storage. CAS ships with
-a custom serialization component `KryoTranscoder` based on the [Kryo](https://code.google.com/p/kryo/) serialization
+a custom serialization component `KryoTranscoder` based on the [Kryo](https://github.com/EsotericSoftware/kryo) serialization
 framework. This component is recommended over the default Java serialization mechanism since it produces much more
 compact data, which benefits both storage requirements and throughput.
 

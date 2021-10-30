@@ -16,7 +16,7 @@ The actual memcached implementation may be supported via one of the following op
 
 ## Spymemcached
 
-Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). 
+Enable support via the [spymemcached library](https://github.com/couchbase/spymemcached). 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
