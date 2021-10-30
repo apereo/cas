@@ -23,6 +23,7 @@ import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.EncryptedID;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
@@ -60,6 +61,32 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
+    }
+
+    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
+        LOGGER.trace("Configuring Attribute's: [{}] nameFormat: [{}]", attribute, nameFormat);
+        if (StringUtils.isBlank(nameFormat)) {
+            return;
+        }
+
+        val compareFormat = nameFormat.trim().toLowerCase();
+        switch (compareFormat) {
+            case "basic":
+            case Attribute.BASIC:
+                attribute.setNameFormat(Attribute.BASIC);
+                break;
+            case "uri":
+            case Attribute.URI_REFERENCE:
+                attribute.setNameFormat(Attribute.URI_REFERENCE);
+                break;
+            case "unspecified":
+            case Attribute.UNSPECIFIED:
+                attribute.setNameFormat(Attribute.UNSPECIFIED);
+                break;
+            default:
+                attribute.setNameFormat(nameFormat);
+                break;
+        }
     }
 
     /**
@@ -339,8 +366,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param notBefore         the not before
      * @return the subject
      */
-    public Subject newSubject(final NameID nameId,
-                              final NameID subjectConfNameId,
+    public Subject newSubject(final SAMLObject nameId,
+                              final SAMLObject subjectConfNameId,
                               final String recipient,
                               final ZonedDateTime notOnOrAfter,
                               final String inResponseTo,
@@ -361,12 +388,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
-
             val ip = InetAddressUtils.getByName(inResponseTo);
             if (ip != null) {
                 data.setAddress(ip.getHostName());
             }
-
         }
 
         if (notBefore != null) {
@@ -374,16 +399,25 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         }
 
         confirmation.setSubjectConfirmationData(data);
-
         val subject = newSamlObject(Subject.class);
-        if (nameId != null) {
-            subject.setNameID(nameId);
+        subject.setNameID(null);
+        subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
-            if (subjectConfNameId != null) {
-                confirmation.setNameID(subjectConfNameId);
-            }
+        if (nameId instanceof NameID) {
+            subject.setNameID((NameID) nameId);
             subject.setEncryptedID(null);
+        }
+        if (nameId instanceof EncryptedID) {
+            subject.setNameID(null);
+            subject.setEncryptedID((EncryptedID) nameId);
+        }
+        if (subjectConfNameId instanceof NameID) {
+            confirmation.setNameID((NameID) subjectConfNameId);
             confirmation.setEncryptedID(null);
+        }
+        if (subjectConfNameId instanceof EncryptedID) {
+            confirmation.setNameID(null);
+            confirmation.setEncryptedID((EncryptedID) subjectConfNameId);
         }
         subject.getSubjectConfirmations().add(confirmation);
 
@@ -410,33 +444,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         val decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
         return inflateAuthnRequest(decodedBytes);
     }
-
-    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
-        LOGGER.trace("Configuring Attribute's: [{}] nameFormat: [{}]", attribute, nameFormat);
-        if (StringUtils.isBlank(nameFormat)) {
-            return;
-        }
-
-        val compareFormat = nameFormat.trim().toLowerCase();
-        switch (compareFormat) {
-            case "basic":
-            case Attribute.BASIC:
-                attribute.setNameFormat(Attribute.BASIC);
-                break;
-            case "uri":
-            case Attribute.URI_REFERENCE:
-                attribute.setNameFormat(Attribute.URI_REFERENCE);
-                break;
-            case "unspecified":
-            case Attribute.UNSPECIFIED:
-                attribute.setNameFormat(Attribute.UNSPECIFIED);
-                break;
-            default:
-                attribute.setNameFormat(nameFormat);
-                break;
-        }
-    }
-
 
     /**
      * New saml object.
@@ -467,7 +474,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param attributeFriendlyName the attribute friendly name
      * @param attributeName         the attribute name
      * @param attributeValue        the attribute value
-     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format will be used.
+     * @param configuredNameFormats the configured name formats. If an attribute is
+     *                              found in this collection, the linked name format will be used.
      * @param defaultNameFormat     the default name format
      * @param attributeValueTypes   the attribute value types
      * @return the attribute

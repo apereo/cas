@@ -7,11 +7,11 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test
@@ -53,8 +52,8 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto2 = getCasEvent("casuser");
         getEventRepository().save(dto2);
 
-        val col = getEventRepository().load();
-        assertEquals(2, col.count());
+        val col = getEventRepository().load().collect(Collectors.toList());
+        assertEquals(2, col.size());
 
         assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
 
@@ -86,6 +85,8 @@ public abstract class AbstractCasEventRepositoryTests {
         });
     }
 
+    public abstract CasEventRepository getEventRepository();
+
     private CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
@@ -104,6 +105,4 @@ public abstract class AbstractCasEventRepositoryTests {
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         return dto;
     }
-
-    public abstract CasEventRepository getEventRepository();
 }

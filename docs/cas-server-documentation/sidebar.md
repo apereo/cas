@@ -321,7 +321,7 @@ layout: null
         *   [Default](/cas/{{ version }}/ticketing/Default-Ticket-Registry.html)
         *   [JMS](/cas/{{ version }}/ticketing/Messaging-JMS-Ticket-Registry.html)
         *   [Hazelcast](#hazelcastticketregistry)
-            *   [Overview](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Apache-JClouds.html)
+            *   [Overview](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry.html)
             *   [WAN Replication](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-WAN-Replication.html)
             *   [Auto Discovery](#hazelcastautodiscovery)
                 *   [Apache JClouds](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Apache-JClouds.html)

@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -17,7 +18,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
@@ -37,20 +40,23 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
+public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<SAMLObject> {
     private static final long serialVersionUID = -6231886395225437320L;
 
     private final PersistentIdGenerator persistentIdGenerator;
 
     private final MetadataResolver samlIdPMetadataResolver;
 
+    private final SamlIdPObjectEncrypter samlIdPObjectEncrypter;
+
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean,
                                         final PersistentIdGenerator persistentIdGenerator,
-                                        final MetadataResolver samlIdPMetadataResolver
-    ) {
+                                        final MetadataResolver samlIdPMetadataResolver,
+                                        final SamlIdPObjectEncrypter samlIdPObjectEncrypter) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
+        this.samlIdPObjectEncrypter = samlIdPObjectEncrypter;
     }
 
     /**
@@ -87,9 +93,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
             return NameIDType.TRANSIENT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.UNSPECIFIED, fmt)) {
-            return NameIDType.UNSPECIFIED;
-        }
         if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
             return NameIDType.PERSISTENT;
         }
@@ -108,7 +111,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
             return NameIDType.ENCRYPTED;
         }
-        return fmt;
+        return NameIDType.UNSPECIFIED;
     }
 
     /**
@@ -125,14 +128,17 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
 
     @Override
-    public NameID build(final RequestAbstractType authnRequest,
-                        final HttpServletRequest request,
-                        final HttpServletResponse response,
-                        final AuthenticatedAssertionContext assertion,
-                        final SamlRegisteredService service,
-                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                        final String binding,
-                        final MessageContext messageContext) throws SamlException {
+    public SAMLObject build(final RequestAbstractType authnRequest,
+                            final HttpServletRequest request,
+                            final HttpServletResponse response,
+                            final AuthenticatedAssertionContext assertion,
+                            final SamlRegisteredService service,
+                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                            final String binding,
+                            final MessageContext messageContext) throws SamlException {
+        if (authnRequest instanceof AttributeQuery) {
+            return determineNameIdForAttributeQuery((AttributeQuery) authnRequest, service, adaptor);
+        }
         return buildNameId(authnRequest, assertion, service, adaptor, messageContext, request);
     }
 
@@ -280,7 +286,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return null;
     }
 
-
     /**
      * Prepare name id attribute idp attribute.
      *
@@ -314,5 +319,15 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             }
         }
         return principalName;
+    }
+
+    private SAMLObject determineNameIdForAttributeQuery(final AttributeQuery query,
+                                                        final SamlRegisteredService registeredService,
+                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade) {
+        val result = query.getSubject().getNameID() == null
+            ? samlIdPObjectEncrypter.decode(query.getSubject().getEncryptedID(), registeredService, facade)
+            : query.getSubject().getNameID();
+        result.detach();
+        return result;
     }
 }

@@ -35,7 +35,7 @@ this auto-configuration mode are controlled by CAS properties.
 
 <div class="alert alert-warning"><strong>Session Monitoring</strong><p>Be aware that under 
 very heavy load and given a very large collection of tickets 
-over time, <a href="../monitoring/Configuring-Monitoring.html">sessionmonitoring capabilities</a> of 
+over time, <a href="../monitoring/Configuring-Monitoring.html">session monitoring capabilities</a> of 
 CAS that report back ticket statistics based on the underlying Hazelcast ticket 
 registry may end up timing out. This is due to the concern that Hazelcast attempts 
 to run distributed queries across the entire network to collect, analyze and 
@@ -45,6 +45,12 @@ this behavior, it likely is preferable to turn off the session monitor.
 
 For more information on the Hazelcast configuration options available,
 refer to [the Hazelcast documentation](https://docs.hazelcast.com/imdg/latest/)
+
+### Security
+
+Tokens and tickets that are managed by the Hazelcast ticket registry can be signed and encrypted.                        
+
+{% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.crypto" %}
 
 ## Logging
 

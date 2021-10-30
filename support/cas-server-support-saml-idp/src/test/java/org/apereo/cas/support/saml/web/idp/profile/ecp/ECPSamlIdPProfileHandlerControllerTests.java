@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.ecp;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.HttpUtils;
@@ -17,6 +18,7 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,7 +84,9 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
         controller.handleEcpRequest(response, request);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
     }
 
     @Test
@@ -114,7 +118,9 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
         controller.handleEcpRequest(response, request);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
     }
 
 

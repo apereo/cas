@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.query;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.ServiceTicket;
 
 /**
@@ -28,4 +29,11 @@ public interface SamlAttributeQueryTicket extends ServiceTicket {
      * @return the object
      */
     String getObject();
+
+    /**
+     * Gets authentication.
+     *
+     * @return the authentication
+     */
+    Authentication getAuthentication();
 }
