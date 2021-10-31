@@ -11,7 +11,7 @@
 #### Hazelcast Cluster Networking
 
 {% capture cfgkey %}{{ include.configKey }}.cluster.network{% endcapture %}
-{% include_cached casproperties.html properties=cfgkey %}
+{% include_cached casproperties.html properties=cfgkey excludes=".ssl" %}
 
 #### Hazelcast Network TLS Encryption
 

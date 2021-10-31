@@ -74,7 +74,7 @@ be added to ensure validity of as many combinations as possible.
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are 
-approximately `190` test scenarios and we'll continue to add more in the coming releases.
+approximately `200` test scenarios and we'll continue to add more in the coming releases.
 
 ### Groovy Access Strategy
 
@@ -90,7 +90,14 @@ Various improvements to SAML2 attribute query requests:
 - SAML2 attribute query tracking tokens now gain their own expiration policy in the CAS configuration schema.
 - The expiration policies of the SAML2 attribute query token and its linked ticket-granting ticket are now taken into account. 
 - Attributes released in response to an attribute query pass through relevant attribute release policies for the service provider.
-   
+  
+### Attribute Repository States
+
+An [attribute repository](../integration/Attribute-Resolution.html) can be put into standby mode; this means the repository 
+configuration is processed and registered into the application runtime and is 
+effectively available as a Spring `@Bean`. However, it is not registered into 
+the resolution plan and can only be called and invoked explicitly when needed.
+
 ### Bootstrap Themes
        
 There is now additional, optional support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes. The collection of themes
