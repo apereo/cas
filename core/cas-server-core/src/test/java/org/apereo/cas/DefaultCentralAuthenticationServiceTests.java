@@ -415,7 +415,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
 
         val assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
         val auth = assertion.getPrimaryAuthentication();
-        assertEquals(3, auth.getPrincipal().getAttributes().size());
+        assertEquals(4, auth.getPrincipal().getAttributes().size());
     }
 
     @Test

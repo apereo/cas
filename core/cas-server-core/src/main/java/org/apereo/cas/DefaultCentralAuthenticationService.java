@@ -121,8 +121,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val selectedService = resolveServiceFromAuthenticationRequest(service);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        enforceRegisteredServiceAccess(selectedService, ticketGrantingTicket, registeredService);
-
         val currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
         RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket, credentialProvided);
         evaluateProxiedServiceIfNeeded(selectedService, ticketGrantingTicket, registeredService);
@@ -132,6 +130,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(latestAuthentication);
         val principal = latestAuthentication.getPrincipal();
+
+        val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
+        val accessPrincipal = principalFactory.createPrincipal(principal.getId(),
+            (Map) CollectionUtils.merge(principal.getAttributes(),
+                latestAuthentication.getAttributes(), policyAttributes));
+        enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
+
+
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         val serviceTicket = factory.create(ticketGrantingTicket, selectedService, credentialProvided, ServiceTicket.class);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
