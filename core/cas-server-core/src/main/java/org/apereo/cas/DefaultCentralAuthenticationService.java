@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
@@ -57,6 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
@@ -90,6 +92,20 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
             principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer,
             serviceMatchingStrategy);
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket) {
+        if (context == null) {
+            return null;
+        }
+        val currentAuthentication = context.getAuthentication();
+        if (currentAuthentication != null) {
+            val original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+            }
+        }
+        return currentAuthentication;
     }
 
     @Audit(
@@ -166,7 +182,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
         return proxyTicket;
     }
-
 
     @Audit(
         action = AuditableActions.PROXY_GRANTING_TICKET,
@@ -285,15 +300,18 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 registeredService,
                 authentication);
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
-            
+
             builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
                 CollectionUtils.wrap(serviceTicket.isFromNewLogin()));
             builder.addAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
-            
+
             val finalAuthentication = builder.build();
 
-            enforceRegisteredServiceAccess(finalAuthentication, selectedService, registeredService);
+            val accessPrincipal = principalFactory.createPrincipal(finalAuthentication.getPrincipal().getId(),
+                (Map) CollectionUtils.merge(principal.getAttributes(), authentication.getAttributes(),
+                    finalAuthentication.getPrincipal().getAttributes(), finalAuthentication.getAttributes()));
+            enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
 
@@ -302,7 +320,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
-            
+
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
@@ -352,7 +370,19 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         accessResult.throwExceptionIfNeeded();
     }
 
-    private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket, final RegisteredService registeredService) {
+    private void enforceRegisteredServiceAccess(final Service service, final RegisteredService registeredService,
+                                                final Principal principal) {
+        val audit = AuditableContext.builder()
+            .service(service)
+            .principal(principal)
+            .registeredService(registeredService)
+            .build();
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+    }
+
+    private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
+                                                final RegisteredService registeredService) {
         val audit = AuditableContext.builder()
             .service(service)
             .ticketGrantingTicket(ticket)
@@ -360,19 +390,5 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
-    }
-
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket) {
-        if (context == null) {
-            return null;
-        }
-        val currentAuthentication = context.getAuthentication();
-        if (currentAuthentication != null) {
-            val original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-        }
-        return currentAuthentication;
     }
 }

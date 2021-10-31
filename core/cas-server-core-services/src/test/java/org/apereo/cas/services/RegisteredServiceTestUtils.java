@@ -421,6 +421,15 @@ public class RegisteredServiceTestUtils {
         svc24.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc24);
 
+        val svc25 = RegisteredServiceTestUtils.getRegisteredService("accessStrategyMapped");
+        svc25.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
+            Map.of("sAMAccountName", "uid",
+                "mail", "groovy { return attributes['sAMAccountName'][0] + '@example.org'}")));
+        svc25.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(
+            Map.of("mail", Set.of(".*"))));
+        l.add(svc25);
+
+
         return l;
     }
 }

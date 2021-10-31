@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,12 +47,11 @@ public class RegisteredServiceAccessStrategyUtilsTests {
     @Test
     public void verifyPrincipalAccess() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
-        val st = mock(ServiceTicket.class);
-        when(st.getService()).thenReturn(RegisteredServiceTestUtils.getService());
-        val tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        val authentication = RegisteredServiceTestUtils.getAuthentication();
         assertThrows(PrincipalException.class, () ->
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(st, service, tgt));
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(
+                RegisteredServiceTestUtils.getService(), service, authentication.getPrincipal().getId(),
+                (Map) CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes())));
     }
 
 }

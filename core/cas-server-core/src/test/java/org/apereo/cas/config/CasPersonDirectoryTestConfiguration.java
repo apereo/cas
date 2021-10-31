@@ -47,6 +47,7 @@ public class CasPersonDirectoryTestConfiguration {
     public IPersonAttributeDao attributeRepository() {
         val attrs = CollectionUtils.wrap(
             "uid", CollectionUtils.wrap("uid"),
+            "mail", CollectionUtils.wrap("cas@apereo.org"),
             "eduPersonAffiliation", CollectionUtils.wrap("developer"),
             "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao((Map) attrs);

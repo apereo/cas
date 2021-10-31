@@ -249,6 +249,17 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
+    public void verifyValidateServiceTicketWithMappedAttrPolicy() {
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        val operativeService = getService("accessStrategyMapped");
+        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
+            operativeService, ctx);
+        assertNotNull(getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), operativeService));
+    }
+
+
+    @Test
     public void verifyValidateServiceTicketFailsTicket() {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
