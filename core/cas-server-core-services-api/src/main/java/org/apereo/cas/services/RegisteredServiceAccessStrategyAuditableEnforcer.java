@@ -8,12 +8,14 @@ import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,9 +43,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             val result = AuditableExecutionResult.of(context);
             try {
                 val serviceTicket = context.getServiceTicket().orElseThrow();
-                val authResult = context.getAuthenticationResult().orElseThrow();
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket,
-                    authResult, providedRegisteredService.get());
+                val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
+                    providedRegisteredService.get(), authResult.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -66,8 +69,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .ticketGrantingTicket(ticketGrantingTicket.get())
                 .build();
             try {
+                val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, ticketGrantingTicket.get());
+                    registeredService, authResult.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -114,6 +119,37 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         return Optional.empty();
     }
 
+    /**
+     * By service and registered service and principal optional.
+     *
+     * @param context the context
+     * @return the optional
+     */
+    public static Optional<AuditableExecutionResult> byServiceAndRegisteredServiceAndPrincipal(final AuditableContext context) {
+        val providedService = context.getService();
+        val providedRegisteredService = context.getRegisteredService();
+        val providedPrincipal = context.getPrincipal();
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedPrincipal.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val principal = providedPrincipal.get();
+
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .build();
+
+            try {
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, principal.getId(), principal.getAttributes());
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
+                result.setException(e);
+            }
+            return Optional.of(result);
+        }
+        return Optional.empty();
+    }
+
     private static Optional<AuditableExecutionResult> byServiceAndRegisteredServiceAndAuthentication(final AuditableContext context) {
         val providedService = context.getService();
         val providedRegisteredService = context.getRegisteredService();
@@ -128,10 +164,11 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .service(service)
                 .authentication(authentication)
                 .build();
-
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, authentication);
+                    registeredService, authentication.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authentication.getAttributes(),
+                        authentication.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -148,6 +185,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         return byExternalGroovyScript(context)
             .or(() -> byServiceTicketAndAuthnResultAndRegisteredService(context))
             .or(() -> byServiceAndRegisteredServiceAndTicketGrantingTicket(context))
+            .or(() -> byServiceAndRegisteredServiceAndPrincipal(context))
             .or(() -> byServiceAndRegisteredServiceAndAuthentication(context))
             .or(() -> byServiceAndRegisteredService(context))
             .or(() -> byRegisteredService(context))

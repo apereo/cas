@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -76,7 +78,9 @@ public class GenericSuccessViewAction extends AbstractAction {
                         .stream()
                         .filter(registeredService -> {
                             try {
-                                return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
+                                return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                                    registeredService, authn.getPrincipal().getId(),
+                                    (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
                             } catch (final Exception e) {
                                 LOGGER.error(e.getMessage(), e);
                                 return false;

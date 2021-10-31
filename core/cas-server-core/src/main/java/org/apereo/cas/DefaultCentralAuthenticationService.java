@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
@@ -56,6 +57,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -119,10 +121,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val selectedService = resolveServiceFromAuthenticationRequest(service);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        enforceRegisteredServiceAccess(selectedService, ticketGrantingTicket, registeredService);
-
         val currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
-        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket, credentialProvided);
+        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService,
+            selectedService, ticketGrantingTicket, credentialProvided);
         evaluateProxiedServiceIfNeeded(selectedService, ticketGrantingTicket, registeredService);
 
         getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(selectedService, registeredService));
@@ -130,6 +131,17 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(latestAuthentication);
         val principal = latestAuthentication.getPrincipal();
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(principal)
+            .build();
+        val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
+        val accessPrincipal = principalFactory.createPrincipal(principal.getId(),
+            (Map) CollectionUtils.merge(principal.getAttributes(),
+                latestAuthentication.getAttributes(), policyAttributes));
+        enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
+
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         val serviceTicket = factory.create(ticketGrantingTicket, selectedService, credentialProvided, ServiceTicket.class);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
@@ -308,7 +320,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             val finalAuthentication = builder.build();
 
-            enforceRegisteredServiceAccess(finalAuthentication, selectedService, registeredService);
+            val accessPrincipal = principalFactory.createPrincipal(finalAuthentication.getPrincipal().getId(),
+                (Map) CollectionUtils.merge(principal.getAttributes(), authentication.getAttributes(),
+                    finalAuthentication.getPrincipal().getAttributes(), finalAuthentication.getAttributes()));
+            enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
 
@@ -367,7 +382,19 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         accessResult.throwExceptionIfNeeded();
     }
 
-    private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket, final RegisteredService registeredService) {
+    private void enforceRegisteredServiceAccess(final Service service, final RegisteredService registeredService,
+                                                final Principal principal) {
+        val audit = AuditableContext.builder()
+            .service(service)
+            .principal(principal)
+            .registeredService(registeredService)
+            .build();
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
+    }
+
+    private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
+                                                final RegisteredService registeredService) {
         val audit = AuditableContext.builder()
             .service(service)
             .ticketGrantingTicket(ticket)
