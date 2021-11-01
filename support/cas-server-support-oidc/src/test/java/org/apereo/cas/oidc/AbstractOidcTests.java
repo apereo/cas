@@ -85,6 +85,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -217,6 +218,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcServiceRegistryListener")
     protected ServiceRegistryListener oidcServiceRegistryListener;
+
+    @Autowired
+    @Qualifier("oidcJsonWebKeyStoreListener")
+    protected CasEventListener oidcJsonWebKeyStoreListener;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")

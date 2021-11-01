@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
@@ -34,6 +35,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -266,6 +268,14 @@ public class OidcEndpointsConfiguration {
             return new OidcDefaultJsonWebKeystoreCacheLoader(oidcJsonWebKeystoreGeneratorService);
         }
 
+        @ConditionalOnMissingBean(name = "oidcJsonWebKeyStoreListener")
+        @Bean
+        public CasEventListener oidcJsonWebKeyStoreListener(
+            @Qualifier("oidcDefaultJsonWebKeystoreCache")
+            final LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache) {
+            return new OidcJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -283,12 +293,13 @@ public class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
         public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
             if (StringUtils.isNotBlank(oidc.getJwks().getRest().getUrl())) {
                 return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
             }
-            return new OidcDefaultJsonWebKeystoreGeneratorService(oidc);
+            return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
         }
     }
 
