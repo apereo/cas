@@ -2,13 +2,13 @@ version: "3"
 
 services:
   master:
-    image: redis:6.0.8-alpine
+    image: redis:6.2.6-alpine
     container_name: redis_server_master
     ports:
       - 6379:6379
 
   replica_1:
-    image: redis:6.0.8-alpine
+    image: redis:6.2.6-alpine
     container_name: redis_server_replica_1
     command: redis-server --slaveof master 6379
     ports:
@@ -17,7 +17,7 @@ services:
       - master
 
   replica_2:
-    image: redis:6.0.8-alpine
+    image: redis:6.2.6-alpine
     container_name: redis_server_replica_2
     command: redis-server --slaveof master 6379
     ports:

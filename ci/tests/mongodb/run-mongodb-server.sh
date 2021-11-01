@@ -6,7 +6,7 @@
 echo "Running MongoDb docker image..."
 docker stop mongodb-server || true && docker rm mongodb-server || true
 docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \
-  -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" mongo:4.4.8
+  -e MONGO_INITDB_ROOT_PASSWORD=secret --name="mongodb-server" mongo:5.0.3
 
 docker ps | grep "mongodb-server"
 retVal=$?

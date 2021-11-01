@@ -8,8 +8,10 @@ export MSYS_NO_PATHCONV=1
 
 echo "Running SQL Server docker image..."
 docker stop mssql-server || true
-docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' --name "mssql-server" --rm -d -p 1433:1433 mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04
-sleep 30
+docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
+  --name "mssql-server" --rm -d \
+  -p 1433:1433 mcr.microsoft.com/mssql/server:2019-CU13-ubuntu-20.04
+sleep 45
 docker ps | grep "mssql-server"
 retVal=$?
 if [ $retVal == 0 ]; then

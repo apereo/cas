@@ -5,7 +5,7 @@
 echo "Running InfluxDb docker image..."
 docker stop influxdb-server || true && docker rm influxdb-server || true
 docker run --rm -d -p 8083:8083 -p 8086:8086 \
-  --name="influxdb-server" influxdb:2.0
+  --name="influxdb-server" influxdb:2.0.9
 sleep 15
 docker exec influxdb-server influx setup --username \
   root --password password --org CAS --bucket casEventsDatabase --force

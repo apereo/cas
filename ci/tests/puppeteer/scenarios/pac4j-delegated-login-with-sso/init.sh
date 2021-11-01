@@ -3,7 +3,7 @@ echo -e "Mapping CAS keystore to ${CAS_KEYSTORE}"
 docker run -d \
   --mount type=bind,source="${CAS_KEYSTORE}",target=/etc/cas/thekeystore \
   -e SPRING_APPLICATION_JSON='{"cas": {"service-registry": {"core": {"init-from-json": true} } } }' \
-  -p 8444:8443 --name casserver apereo/cas:6.4.0
+  -p 8444:8443 --name casserver apereo/cas:6.4.2
 clear
 docker logs -f casserver &
 echo -e "Waiting for CAS..."
