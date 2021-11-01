@@ -102,6 +102,21 @@ the resolution plan and can only be called and invoked explicitly when needed.
        
 There is now additional, optional support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes. The collection of themes
 that ship with CAS now include a special `twbs` theme that is based on Bootstrap support.
+  
+### Docker Integration Tests
+
+Several Docker images that are used for integration tests are now updated to use more recent versions. Those are:
+
+- MongoDb
+- Apache Cassandra
+- AWS Localstack
+- DynamoDb 
+- InfluxDb
+- MariaDb
+- MySQL
+- MS SQL Server
+- Redis
+- Apache CouchDb
 
 ### Reusing Chained Attributes
 
