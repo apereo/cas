@@ -76,12 +76,12 @@ be added to ensure validity of as many combinations as possible.
 The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are 
 approximately `200` test scenarios and we'll continue to add more in the coming releases.
 
-### Groovy Access Strategy
+### Global Groovy Access Strategy
 
 Access strategy and authorization decision can be carried [using a Groovy script](../services/Configuring-Service-Access-Strategy.html) 
 for all services and applications.
   
-### SAML2 Attribute Query
+### SAML2 Attribute Queries
               
 Various improvements to SAML2 attribute query requests:
        
