@@ -129,7 +129,8 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
         val context = new MockRequestContext();
         val serviceId = UUID.randomUUID().toString();
 
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(serviceId,
+            Map.of("eduPersonAffiliation", Set.of(".*developer.*")));
         registeredService.setAttributeReleasePolicy(new ReturnMappedAttributeReleasePolicy(
             Map.of("eduPersonAffiliation", "groovy { return 'engineers' }")));
 

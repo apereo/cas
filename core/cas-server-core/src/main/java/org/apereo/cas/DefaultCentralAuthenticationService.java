@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -57,7 +58,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -136,10 +136,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .service(service)
             .principal(principal)
             .build();
+        val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
-        val accessPrincipal = principalFactory.createPrincipal(principal.getId(),
-            (Map) CollectionUtils.merge(principal.getAttributes(),
-                latestAuthentication.getAttributes(), policyAttributes));
+        var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), latestAuthentication.getAttributes(), merger);
+        accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, policyAttributes, merger);
+        val accessPrincipal = principalFactory.createPrincipal(principal.getId(), accessAttributes);
         enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
@@ -319,10 +320,19 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
 
             val finalAuthentication = builder.build();
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+            val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
+            val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+            var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authentication.getAttributes(), merger);
+            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getPrincipal().getAttributes(), merger);
+            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, finalAuthentication.getAttributes(), merger);
+            accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, policyAttributes, merger);
+            val accessPrincipal = principalFactory.createPrincipal(principal.getId(), accessAttributes);
 
-            val accessPrincipal = principalFactory.createPrincipal(finalAuthentication.getPrincipal().getId(),
-                (Map) CollectionUtils.merge(principal.getAttributes(), authentication.getAttributes(),
-                    finalAuthentication.getPrincipal().getAttributes(), finalAuthentication.getAttributes()));
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
