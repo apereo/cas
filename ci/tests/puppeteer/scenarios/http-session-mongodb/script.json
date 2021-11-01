@@ -1,0 +1,24 @@
+{
+  "dependencies": "session-mongo,reports",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--spring.session.store-type=MONGODB",
+    "--spring.session.mongodb.collection-name=MongoDbSessionRepository",
+
+    "--spring.data.mongodb.host=localhost",
+    "--spring.data.mongodb.port=27017",
+    "--spring.data.mongodb.database=sessions",
+    "--spring.data.mongodb.username=root",
+    "--spring.data.mongodb.password=secret",
+    "--spring.data.mongodb.authentication-database=admin",
+
+    "--cas.webflow.session.storage=true"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
