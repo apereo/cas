@@ -1,0 +1,16 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=debug",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks"
+  ]
+}
+
+
+
