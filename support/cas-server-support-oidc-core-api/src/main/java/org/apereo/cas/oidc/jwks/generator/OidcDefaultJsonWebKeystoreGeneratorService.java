@@ -45,7 +45,10 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             .resolve(oidcProperties.getJwks().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
         resourceWatcherService = new FileWatcherService(resource.getFile(),
-            file -> applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file)));
+            file -> {
+                LOGGER.info("Publishing event to broadcast change in [{}]", file);
+                applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
+            });
         resourceWatcherService.start(resource.getFilename());
         return generate(resource);
     }

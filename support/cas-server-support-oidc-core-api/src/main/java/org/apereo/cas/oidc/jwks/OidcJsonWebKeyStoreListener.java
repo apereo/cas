@@ -31,7 +31,7 @@ public class OidcJsonWebKeyStoreListener implements CasEventListener {
     @EventListener
     @Async
     public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {
-        LOGGER.debug("Detected change in [{}]. Will invalidating JWKS cache...", event.getFile());
+        LOGGER.debug("Detected change in [{}]. Will invalidate OIDC JWKS cache...", event.getFile());
         oidcJsonWebKeystoreCache.invalidateAll();
     }
 }
