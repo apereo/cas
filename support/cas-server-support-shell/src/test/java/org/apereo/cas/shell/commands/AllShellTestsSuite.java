@@ -9,8 +9,8 @@ import org.apereo.cas.shell.commands.jasypt.JasyptListAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListProvidersCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommandTests;
+import org.apereo.cas.shell.commands.properties.ExportPropertiesCommandTests;
 import org.apereo.cas.shell.commands.properties.FindPropertiesCommandTests;
-import org.apereo.cas.shell.commands.properties.ListUndocumentedPropertiesCommandTests;
 import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommandTests;
 import org.apereo.cas.shell.commands.services.AnonymousUsernameAttributeProviderCommandTests;
 import org.apereo.cas.shell.commands.services.GenerateYamlRegisteredServiceCommandTests;
@@ -33,6 +33,7 @@ import org.junit.platform.suite.api.Suite;
     GenerateDdlCommandTests.class,
     GenerateJwtCommandTests.class,
     ExitCommandTests.class,
+    ExportPropertiesCommandTests.class,
     AnonymousUsernameAttributeProviderCommandTests.class,
     GenerateSamlIdPMetadataCommandTests.class,
     ValidateRegisteredServiceCommandTests.class,
@@ -47,7 +48,6 @@ import org.junit.platform.suite.api.Suite;
     JasyptDecryptPropertyCommandTests.class,
     JasyptEncryptPropertyCommandTests.class,
     GenerateYamlRegisteredServiceCommandTests.class,
-    ListUndocumentedPropertiesCommandTests.class,
     AddPropertiesToConfigurationCommandTests.class
 })
 @Suite

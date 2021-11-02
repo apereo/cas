@@ -9,17 +9,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link ListUndocumentedPropertiesCommandTests}.
+ * This is {@link ExportPropertiesCommandTests}.
  *
  * @author Misagh Moayyed
- * @since 6.2.0
+ * @since 6.5.0
  */
 @EnableAutoConfiguration
 @Tag("SHELL")
-public class ListUndocumentedPropertiesCommandTests extends BaseCasShellCommandTests {
+public class ExportPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
-        assertDoesNotThrow(() -> shell.evaluate(() -> "list-undocumented"));
+        assertDoesNotThrow(() -> shell.evaluate(() -> "export-props --dir /tmp"));
     }
 }
-
