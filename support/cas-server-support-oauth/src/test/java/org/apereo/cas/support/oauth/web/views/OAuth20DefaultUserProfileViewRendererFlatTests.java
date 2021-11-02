@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("OAuth")
-@TestPropertySource(properties = "cas.authn.oauth.user-profile-view-type=FLAT")
+@TestPropertySource(properties = "cas.authn.oauth.core.user-profile-view-type=FLAT")
 public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
 
     @Autowired

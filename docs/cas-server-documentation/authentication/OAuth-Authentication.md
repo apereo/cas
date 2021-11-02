@@ -26,7 +26,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
 
-{% include_cached casproperties.html properties="cas.authn.oauth" %}
+{% include_cached casproperties.html properties="cas.authn.oauth" excludes=".uma" %}
 
 ## Endpoints
 

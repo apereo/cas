@@ -18,8 +18,8 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CsrfCookieProperties")
-public class CsrfCookieProperties extends CookieProperties {
+@JsonFilter("OAuthCsrfCookieProperties")
+public class OAuthCsrfCookieProperties extends CookieProperties {
 
     private static final long serialVersionUID = 5298598088218873282L;
 
@@ -29,7 +29,7 @@ public class CsrfCookieProperties extends CookieProperties {
      * CAS avoids setting the {@code maxAge} unless it is set to greater than -1.
      * The name of the cookie is not configurable.
      */
-    public CsrfCookieProperties() {
+    public OAuthCsrfCookieProperties() {
         setSecure(false);
         setHttpOnly(false);
     }
