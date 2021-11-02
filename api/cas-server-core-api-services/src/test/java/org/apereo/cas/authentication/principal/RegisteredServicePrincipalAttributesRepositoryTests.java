@@ -1,8 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.services.RegisteredService;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -18,7 +24,7 @@ public class RegisteredServicePrincipalAttributesRepositoryTests {
     @Test
     public void verifyOperation() {
         val policy = mock(RegisteredServicePrincipalAttributesRepository.class);
-        when(policy.getAttributeRepositoryIds()).thenCallRealMethod();
-        assertTrue(policy.getAttributeRepositoryIds().isEmpty());
+        doCallRealMethod().when(policy).update(any(), any(), any());
+        assertDoesNotThrow(() -> policy.update(UUID.randomUUID().toString(), Map.of(), mock(RegisteredService.class)));
     }
 }
