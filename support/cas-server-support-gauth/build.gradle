@@ -19,7 +19,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
-    compileOnlyApi project(":core:cas-server-core-rest")
+    compileOnlyApi project(":core:cas-server-core-rest-api")
     compileOnlyApi project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core-configuration")

@@ -10,7 +10,7 @@ dependencies {
     implementation project(":support:cas-server-support-rest")
     implementation project(":support:cas-server-support-rest-core")
 
-    implementation project(":core:cas-server-core-rest")
+    implementation project(":core:cas-server-core-rest-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-cookie")
     implementation project(":core:cas-server-core-services-api")
@@ -32,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-rest")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")

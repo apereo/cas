@@ -22,7 +22,7 @@ dependencies {
     implementation project(":support:cas-server-support-duo-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi project(":core:cas-server-core-rest")
+    compileOnlyApi project(":core:cas-server-core-rest-api")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
