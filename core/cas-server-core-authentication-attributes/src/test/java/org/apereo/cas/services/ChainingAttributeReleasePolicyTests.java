@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -12,6 +13,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,6 +80,18 @@ public class ChainingAttributeReleasePolicyTests {
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(1, values.size());
         assertEquals("CasUserPolicy2", values.iterator().next().toString());
+
+        val repository = chain.getPrincipalAttributesRepository();
+        assertTrue(repository instanceof ChainingPrincipalAttributesRepository);
+        assertNotNull(repository.getAttributes(releasePolicyContext.getPrincipal(), releasePolicyContext.getRegisteredService()));
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                repository.update(releasePolicyContext.getPrincipal().getId(),
+                    releasePolicyContext.getPrincipal().getAttributes(),
+                    releasePolicyContext.getRegisteredService());
+            }
+        });
     }
 
     @Test

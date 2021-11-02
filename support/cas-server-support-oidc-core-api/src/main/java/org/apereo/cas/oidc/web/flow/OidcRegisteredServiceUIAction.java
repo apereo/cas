@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -20,10 +21,12 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OidcRegisteredServiceUIAction extends AbstractAction {
 
-    private final transient ServicesManager servicesManager;
-    private final transient AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
+    private final ServicesManager servicesManager;
+
+    private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -32,7 +35,7 @@ public class OidcRegisteredServiceUIAction extends AbstractAction {
             val service = serviceSelectionStrategy.resolveServiceFrom(serviceCtx);
             val registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-
+            LOGGER.debug("Found registered service [{}] from the context", registeredService.getServiceId());
             if (registeredService instanceof OidcRegisteredService) {
                 val oauthService = OidcRegisteredService.class.cast(registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, new DefaultRegisteredServiceUserInterfaceInfo(oauthService));

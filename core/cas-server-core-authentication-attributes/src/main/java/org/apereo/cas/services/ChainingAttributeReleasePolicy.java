@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
 
@@ -53,6 +55,17 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
             .collect(Collectors.toCollection(LinkedHashSet::new));
         chainingConsentPolicy.addPolicies(newConsentPolicies);
         return chainingConsentPolicy;
+    }
+
+    @Override
+    public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
+        val repositories = policies
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .collect(Collectors.toList());
+        return new ChainingPrincipalAttributesRepository(repositories);
     }
 
     @Override
