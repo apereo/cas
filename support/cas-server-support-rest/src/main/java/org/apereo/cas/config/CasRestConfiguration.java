@@ -176,7 +176,7 @@ public class CasRestConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("restAuthenticationService")
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
             final RestAuthenticationService restAuthenticationService,
             @Qualifier("defaultSingleLogoutRequestExecutor")
             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
@@ -190,7 +190,7 @@ public class CasRestConfiguration {
             @Qualifier("userAuthenticationResourceEntityResponseFactory")
             final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("restAuthenticationService")
+            @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
             final RestAuthenticationService restAuthenticationService) {
             return new UserAuthenticationResource(restAuthenticationService, userAuthenticationResourceEntityResponseFactory, applicationContext);
         }

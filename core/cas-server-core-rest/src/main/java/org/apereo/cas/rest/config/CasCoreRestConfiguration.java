@@ -41,7 +41,7 @@ public class CasCoreRestConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreRestAuthenticationConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "restAuthenticationService")
+        @ConditionalOnMissingBean(name = RestAuthenticationService.DEFAULT_BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RestAuthenticationService restAuthenticationService(
             @Qualifier("restHttpRequestCredentialFactory")

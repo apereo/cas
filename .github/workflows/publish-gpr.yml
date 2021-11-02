@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'zulu'
+          distribution: 'temurin'
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'zulu'
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -80,7 +80,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
-          distribution: 'zulu'
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
