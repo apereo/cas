@@ -194,6 +194,11 @@ public abstract class AbstractJpaProperties implements Serializable {
     private boolean autocommit;
 
     /**
+     * Configures the Connections to be added to the pool as read-only Connections.
+     */
+    private boolean readOnly;
+
+    /**
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
     private String physicalNamingStrategyClassName = "org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy";
