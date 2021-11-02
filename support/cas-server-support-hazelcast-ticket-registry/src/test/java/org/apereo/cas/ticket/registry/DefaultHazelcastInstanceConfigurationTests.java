@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -68,8 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasWebApplicationServiceFactoryConfiguration.class
 },
     properties = {
-    "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance",
-    "cas.ticket.registry.hazelcast.cluster.network.port=5702"
+        "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance",
+        "cas.ticket.registry.hazelcast.cluster.network.port=5702"
     })
 @Slf4j
 @Tag("Hazelcast")
@@ -87,8 +88,13 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertTrue(config.getManagementCenterConfig().isScriptingEnabled());
         assertEquals(5702, config.getNetworkConfig().getPort());
-        config.getMapConfigs().forEach((key, value) -> LOGGER.info("Hazelcast map key [{}]", key));
-        assertEquals(5, config.getMapConfigs().size());
+        val mapConfigs = config.getMapConfigs();
+        mapConfigs.forEach((key, value) -> LOGGER.info("Hazelcast map key [{}]", key));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_PROXY_TICKET));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_PROXY_GRANTING_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_SERVICE_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_TICKET_GRANTING_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_TRANSIENT_SESSION_TICKETS));
     }
 
     @AfterEach

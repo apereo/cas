@@ -27,7 +27,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
 
     @BeforeEach
     public void setup() {
-        servicesManager.save(RegisteredServiceTestUtils.getRegisteredServicesForTests().stream());
+        servicesManager.deleteAll();
     }
 
     @Test
@@ -42,6 +42,7 @@ public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     public void verifyOidcActionWithMDUI() throws Exception {
         val ctx = new MockRequestContext();
+        servicesManager.save(getOidcRegisteredService());
         WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
             "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         val event = oidcRegisteredServiceUIAction.execute(ctx);
