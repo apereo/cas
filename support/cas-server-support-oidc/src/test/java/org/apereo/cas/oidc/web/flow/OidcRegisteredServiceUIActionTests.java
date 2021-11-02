@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
@@ -23,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 public class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
+
+    @BeforeEach
+    public void setup() {
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredServicesForTests().stream());
+    }
 
     @Test
     public void verifyOidcActionWithoutMDUI() throws Exception {
