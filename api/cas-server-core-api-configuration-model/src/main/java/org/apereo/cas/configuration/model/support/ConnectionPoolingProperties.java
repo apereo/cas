@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * This is {@link ConnectionPoolingProperties}.
@@ -58,4 +59,10 @@ public class ConnectionPoolingProperties implements Serializable {
      * pool will wait for a connection to be validated as alive.
      */
     private long timeoutMillis = 1_000;
+
+    /**
+     * Set the name of the connection pool. This is primarily used for
+     * the MBean to uniquely identify the pool configuration.
+     */
+    private String name = UUID.randomUUID().toString();
 }

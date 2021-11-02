@@ -105,6 +105,8 @@ public class JpaBeans {
         bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
+        bean.setReadOnly(jpaProperties.isReadOnly());
+        bean.setPoolName(jpaProperties.getPool().getName());
         return new DefaultCloseableDataSource(bean);
     }
 
