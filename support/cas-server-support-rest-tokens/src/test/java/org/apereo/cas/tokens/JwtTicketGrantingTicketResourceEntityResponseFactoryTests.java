@@ -1,13 +1,16 @@
 package org.apereo.cas.tokens;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -22,9 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTicketResourceEntityResponseFactoryTests {
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     public void verifyTicketGrantingTicketAsDefault() throws Exception {
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport);
@@ -37,7 +43,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwt() throws Exception {
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
 
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
@@ -64,8 +70,9 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends B
 
     @Test
     public void verifyTicketGrantingTicketAsJwtWithHeader() throws Exception {
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(CoreAuthenticationTestUtils.getService().getId());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(casProperties.getServer().getPrefix());
         servicesManager.save(registeredService);
+
         val result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);

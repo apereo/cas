@@ -338,7 +338,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             }
         };
         assertNull(policy.getConsentPolicy());
-        assertNull(policy.getPrincipalAttributesRepository());
+        assertNotNull(policy.getPrincipalAttributesRepository());
         assertTrue(policy.isAuthorizedToReleaseAuthenticationAttributes());
         assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
         assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());
