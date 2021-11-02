@@ -1,4 +1,4 @@
-description = "Apereo CAS REST API"
+description = "Apereo CAS REST Core API"
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")
@@ -9,7 +9,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-rest-api")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
