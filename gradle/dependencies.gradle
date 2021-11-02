@@ -414,8 +414,6 @@ ext.libraries = [
                 dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                 },
-                dependencies.create("commons-logging:commons-logging:$commonsLoggingVersion") {
-                },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -768,6 +766,7 @@ ext.libraries = [
         httpclient              : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                 },
                 dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
@@ -1608,8 +1607,7 @@ ext.libraries = [
         ],
         slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
-                dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion"),
-                dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
+                dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion")
         ],
         metrics                 : [
                 dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
@@ -3346,7 +3344,12 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework:spring-core:$springVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.springframework", module: "spring-jcl")
 
+                },
+                dependencies.create("org.springframework:spring-jcl:$springVersion") {
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.springframework.data:spring-data-commons:$springDataCommonsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
