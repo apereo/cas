@@ -15,6 +15,12 @@ import java.util.Optional;
  */
 @FunctionalInterface
 public interface RestAuthenticationService {
+
+    /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "restAuthenticationService";
+
     /**
      * Authenticate.
      *

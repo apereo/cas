@@ -20,9 +20,10 @@ public class AmazonCoreConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint(final CasConfigurationProperties casProperties,
-                                                                              @Qualifier("restAuthenticationService")
-                                                                              final RestAuthenticationService restAuthenticationService) {
+    public AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(RestAuthenticationService.DEFAULT_BEAN_NAME)
+        final RestAuthenticationService restAuthenticationService) {
         return new AmazonSecurityTokenServiceEndpoint(casProperties, restAuthenticationService);
     }
 }
