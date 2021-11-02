@@ -7,7 +7,7 @@ decrypt-value value {cas-cipher}Snynjp9UvY1VohHy+L5ig9ydKUw/E3yaEsWsxmS1eiQwxwJM
 jasypt-test-algorithms
 generate-idp-metadata --metadataLocation "./" --subjectAltNames "cas.example.com,cas.example.io,cas.example.net" --force
 generate-key --key-size 256
-list-undocumented
+export-props --dir /tmp
 generate-ddl --dialect HSQL --file ./cas-db-schema.sql
 generate-jwt --subject casuser
 find --name cas.server.name

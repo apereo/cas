@@ -64,6 +64,9 @@ public class ExportPropertiesCommand {
 
     /**
      * Export properties.
+     *
+     * @param dir the directory for the configuration export
+     * @throws Exception the exception
      */
     @ShellMethod(key = "export-props", value = "Export CAS properties and settings from configuration metadata.")
     public void exportProperties(
