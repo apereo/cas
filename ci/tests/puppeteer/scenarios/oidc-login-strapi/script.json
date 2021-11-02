@@ -16,7 +16,7 @@
     "--logging.level.org.apereo.cas=DEBUG",
     "--logging.level.org.apereo.services.persondir=DEBUG",
 
-    "--cas.authn.oauth.user-profile-view-type=FLAT"
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

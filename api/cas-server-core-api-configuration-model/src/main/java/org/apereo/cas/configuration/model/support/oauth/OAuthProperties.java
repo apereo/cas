@@ -41,7 +41,7 @@ public class OAuthProperties implements Serializable {
      * Control the CSRF cookie settings in OAUTH authentication flows.
      */
     @NestedConfigurationProperty
-    private CsrfCookieProperties csrfCookie = new CsrfCookieProperties();
+    private OAuthCsrfCookieProperties csrfCookie = new OAuthCsrfCookieProperties();
 
     /**
      * Crypto settings that sign/encrypt secrets.
@@ -88,27 +88,12 @@ public class OAuthProperties implements Serializable {
     private UmaProperties uma = new UmaProperties();
 
     /**
-     * User profile view type determines how the final user profile should be rendered
-     * once an access token is "validated".
+     * Settings related to oauth core behavior.
      */
-    private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
+    @NestedConfigurationProperty
+    private OAuthCoreProperties core = new OAuthCoreProperties();
 
-    /**
-     * Profile view types.
-     */
-    public enum UserProfileViewTypes {
 
-        /**
-         * Return and render the user profile view in nested mode.
-         * This is the default option, most usually.
-         */
-        NESTED,
-        /**
-         * Return and render the user profile view in flattened mode
-         * where all attributes are flattened down to one level only.
-         */
-        FLAT
-    }
 
     public OAuthProperties() {
         crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);

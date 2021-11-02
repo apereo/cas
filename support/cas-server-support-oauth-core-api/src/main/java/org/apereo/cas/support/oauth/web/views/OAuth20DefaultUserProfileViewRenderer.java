@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -60,7 +61,7 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
                                                          final OAuth20AccessToken accessToken,
                                                          final HttpServletResponse response) {
-        if (oauthProperties.getUserProfileViewType() == OAuthProperties.UserProfileViewTypes.FLAT) {
+        if (oauthProperties.getCore().getUserProfileViewType() == OAuthCoreProperties.UserProfileViewTypes.FLAT) {
             val flattened = new LinkedHashMap<String, Object>();
             if (model.containsKey(MODEL_ATTRIBUTE_ATTRIBUTES)) {
                 val attributes = Map.class.cast(model.get(MODEL_ATTRIBUTE_ATTRIBUTES));

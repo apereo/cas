@@ -11,7 +11,7 @@
     "--cas.authn.attribute-repository.stub.attributes.gender=female",
     "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
 
-    "--cas.authn.oauth.user-profile-view-type=FLAT",
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.core.include-id-token-claims=false",
     "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",

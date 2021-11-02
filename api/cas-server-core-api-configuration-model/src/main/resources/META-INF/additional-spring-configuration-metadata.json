@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.authn.oauth.user-profile-view-type",
+      "type": "org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties.UserProfileViewTypes",
+      "deprecation": {
+        "replacement": "cas.authn.oauth.core.user-profile-view-type",
+        "reason": "Setting is moved into a core sub namepace",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.pm.core.policy-pattern",
       "type": "java.lang.String",
       "deprecation": {

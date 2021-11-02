@@ -33,7 +33,7 @@ java -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n\
   --cas.service-registry.core.init-from-json=true \
   --cas.service-registry.json.location=file:"$PWD"/ci/tests/oidc-conformance/cas-config/services \
   --cas.authn.oidc.core.dynamic-client-registration-mode=OPEN \
-  --cas.authn.oauth.user-profile-view-type=FLAT \
+  --cas.authn.oauth.core.user-profile-view-type=FLAT \
   --cas.server.name=https://localhost:8446 \
   --cas.server.prefix=https://localhost:8446/cas \
   --logging.level.org.apereo.cas=debug \

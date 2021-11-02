@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 
 import java.util.HashSet;
@@ -29,7 +29,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     }
 
     @Override
-    protected boolean isConsentApprovalBypassed(final JEEContext context, final OAuthRegisteredService service) {
+    protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
             val url = context.getFullRequestURL();
             val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
@@ -47,19 +47,19 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
 
     @Override
     protected void prepareApprovalViewModel(final Map<String, Object> model,
-                                            final JEEContext ctx,
+                                            final WebContext webContext,
                                             final OAuthRegisteredService svc) throws Exception {
-        super.prepareApprovalViewModel(model, ctx, svc);
+        super.prepareApprovalViewModel(model, webContext, svc);
         if (svc instanceof OidcRegisteredService) {
             val oidcRegisteredService = (OidcRegisteredService) svc;
             model.put("dynamic", oidcRegisteredService.isDynamicallyRegistered());
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
-            supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(ctx));
+            supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(webContext));
             supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
             model.put("scopes", supportedScopes);
-            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(ctx);
+            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(webContext);
             model.put("userInfoClaims", userInfoClaims);
         }
     }
