@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://apereo.github.io",
+  "name" : "Sample",
+  "id" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+      "attributeRepositoryIds": ["java.util.HashSet", [ "MyJson" ]]
+    }
+  }
+}
