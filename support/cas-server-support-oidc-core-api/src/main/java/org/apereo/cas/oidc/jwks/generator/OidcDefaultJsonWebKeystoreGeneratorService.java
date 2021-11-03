@@ -67,6 +67,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             return file;
         }
         val jwk = generateJsonWebKey();
+        
         val data = new JsonWebKeySet(jwk).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         val location = file.getFile();
         FileUtils.write(location, data, StandardCharsets.UTF_8);

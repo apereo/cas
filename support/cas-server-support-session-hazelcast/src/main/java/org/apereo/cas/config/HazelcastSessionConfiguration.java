@@ -44,6 +44,8 @@ public class HazelcastSessionConfiguration {
      *
      * @param casProperties              the cas properties
      * @param hazelcastSessionProperties the hazelcast session properties
+     * @param sessionProperties          the session properties
+     * @param serverProperties           the server properties
      * @return the hazelcast instance
      */
     @Bean(destroyMethod = "shutdown")
