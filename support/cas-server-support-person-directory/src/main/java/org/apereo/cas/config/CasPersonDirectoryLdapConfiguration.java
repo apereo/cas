@@ -105,6 +105,7 @@ public class CasPersonDirectoryLdapConfiguration {
                         LOGGER.debug("Configured subtree searching for [{}]", ldap.getLdapUrl());
                         constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     }
+                    dao.setQueryAttributeMapping(ldap.getQueryAttributes());
                     constraints.setDerefLinkFlag(true);
                     dao.setSearchControls(constraints);
                     dao.setUseAllQueryAttributes(ldap.isUseAllQueryAttributes());

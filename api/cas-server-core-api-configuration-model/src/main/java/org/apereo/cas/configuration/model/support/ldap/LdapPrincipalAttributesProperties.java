@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -67,4 +68,10 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      */
     private boolean useAllQueryAttributes = true;
 
+    /**
+     * Define a {@code Map} of query attribute names to data-layer attribute names to use when building the query.
+     * The key is always the name of the query attribute that is defined by CAS and passed internally,
+     * and the value is the column/field that should map.
+     */
+    private Map<String, String> queryAttributes = new HashMap<>(0);
 }
