@@ -36,15 +36,16 @@ const path = require("path");
     let config = JSON.parse(fs.readFileSync(configFilePath));
     config.casuser.firstName[0] = newFirstName;
     await fs.writeFileSync(configFilePath, JSON.stringify(config));
-    await cas.sleep(2000)
+    await cas.sleep(1000)
 
-    await cas.logg("Validating again to get attribute updates; still within cache time window")
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    console.log(body)
-    json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
-    assert(json.firstName[0] === originalFirstName);
-    await cas.sleep(4000)
-
+    for (let i = 1; i <= 3; i++) {
+        await cas.logg(`Validation attempt ${i}; still within cache time window`)
+        body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+        console.log(body)
+        json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
+        assert(json.firstName[0] === originalFirstName);
+    }
+    await cas.sleep(5500)
     await cas.logg(`Validating again to get new attribute updates, expecting ${newFirstName}`)
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
     console.log(body)
