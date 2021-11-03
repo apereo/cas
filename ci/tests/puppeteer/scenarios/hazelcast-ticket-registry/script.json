@@ -8,6 +8,10 @@
     "--management.health.hazelcastHealthIndicator.enabled=true",
     "--management.endpoints.web.exposure.include=health",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.ticket.registry.hazelcast.crypto.enabled=true",
+    "--cas.ticket.registry.hazelcast.crypto.signing.key-size=512",
+    "--cas.ticket.registry.hazelcast.crypto.encryption.key-size=256"
   ]
 }
