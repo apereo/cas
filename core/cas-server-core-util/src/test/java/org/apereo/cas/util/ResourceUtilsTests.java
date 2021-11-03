@@ -12,6 +12,7 @@ import org.springframework.core.io.UrlResource;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,6 +32,7 @@ public class ResourceUtilsTests {
         val resourceLoader = mock(ResourceLoader.class);
         when(resourceLoader.getResource(anyString())).thenThrow(new RuntimeException());
         assertFalse(ResourceUtils.doesResourceExist("bad-resource", resourceLoader));
+        assertFalse(ResourceUtils.doesResourceExist(null, resourceLoader));
         assertFalse(ResourceUtils.doesResourceExist("invalid.json"));
         assertTrue(ResourceUtils.doesResourceExist("classpath:valid.json",
             new DefaultResourceLoader(ResourceUtilsTests.class.getClassLoader())));
@@ -70,7 +72,7 @@ public class ResourceUtilsTests {
 
         val res = new ClassPathResource("valid.json");
         val file = new File(FileUtils.getTempDirectory(), "/one/two");
-        FileUtils.write(new File(file, res.getFilename()), "data", StandardCharsets.UTF_8);
+        FileUtils.write(new File(file, Objects.requireNonNull(res.getFilename())), "data", StandardCharsets.UTF_8);
         assertNotNull(ResourceUtils.exportClasspathResourceToFile(file, res));
     }
 }

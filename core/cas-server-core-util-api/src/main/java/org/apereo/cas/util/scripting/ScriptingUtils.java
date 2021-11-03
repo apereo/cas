@@ -474,8 +474,8 @@ public class ScriptingUtils {
 
             if (!expectedType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Result [" + result
-                    + " is of type " + result.getClass()
-                    + " when we were expecting " + expectedType);
+                                             + " is of type " + result.getClass()
+                                             + " when we were expecting " + expectedType);
             }
             return (T) result;
         } catch (final Exception e) {

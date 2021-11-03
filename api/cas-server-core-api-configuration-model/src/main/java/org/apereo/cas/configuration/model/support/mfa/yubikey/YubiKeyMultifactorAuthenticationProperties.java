@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * Yubikey secret key.
      */
     @RequiredProperty
+    @Nonnull
     private String secretKey = StringUtils.EMPTY;
 
     /**
