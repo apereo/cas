@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -61,7 +64,8 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @BeforeEach
     public void beforeEach() {
-        ApplicationContextProvider.getScriptResourceCacheManager().get().clear();
+        ApplicationContextProvider.getScriptResourceCacheManager()
+            .ifPresent(ScriptResourceCacheManager::clear);
     }
 
     @Test
