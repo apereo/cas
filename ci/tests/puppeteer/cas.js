@@ -28,6 +28,10 @@ exports.browserOptions = (opt) => {
     };
 };
 
+exports.logg = async(text) => {
+    console.log(colors.green(text));
+}
+
 exports.removeDirectory = async (directory) => {
     console.log(colors.green(`Removing directory ${directory}`));
     fs.rmdir(directory, {recursive: true}, () => {
