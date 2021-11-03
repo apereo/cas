@@ -107,6 +107,7 @@ public class CasPersonDirectoryLdapConfiguration {
                     }
                     constraints.setDerefLinkFlag(true);
                     dao.setSearchControls(constraints);
+                    dao.setUseAllQueryAttributes(ldap.isUseAllQueryAttributes());
                     dao.setOrder(ldap.getOrder());
                     LOGGER.debug("Adding LDAP attribute source for [{}]", ldap.getLdapUrl());
                     list.add(dao);

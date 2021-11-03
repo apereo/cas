@@ -83,6 +83,8 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
                 .build();
 
             val principalAttributes = registeredService.getAttributeReleasePolicy().getConsentableAttributes(context);
+            LOGGER.debug("Initial consentable principal attributes are [{}]", principalAttributes);
+
             val authenticationAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
                 .getAuthenticationAttributesForRelease(authentication, null, Map.of(), registeredService);
             val finalAttributes = CollectionUtils.merge(principalAttributes, authenticationAttributes);
@@ -90,8 +92,8 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val principalId = registeredService.getUsernameAttributeProvider()
                 .resolveUsername(authentication.getPrincipal(), ticket.getService(), registeredService);
             LOGGER.debug("Principal id used for attribute query response should be [{}]", principalId);
+            LOGGER.debug("Final attributes to be processed for the SAML2 response are [{}]", finalAttributes);
 
-            LOGGER.trace("Final attributes for attribute query are [{}]", finalAttributes);
             val casAssertion = buildCasAssertion(principalId, registeredService, finalAttributes);
             request.setAttribute(AttributeQuery.class.getSimpleName(), query);
             getConfigurationContext().getResponseBuilder().build(query, request, response, casAssertion,
@@ -121,6 +123,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             .currentPrincipal(principal)
             .build()
             .retrieve();
+        LOGGER.debug("Attributes retrieved from attribute repositories are [{}]", attributes);
         return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principal.getId(), attributes);
     }
 

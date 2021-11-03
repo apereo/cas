@@ -80,9 +80,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         if (supports(context)) {
-            LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-                context.getPrincipal().getId(), context.getService(), context.getRegisteredService().getServiceId());
-            LOGGER.trace("Locating principal attributes for [{}]", context.getPrincipal().getId());
+            LOGGER.debug("Initiating attributes release phase via [{}] for principal [{}] "
+                         + "accessing service [{}] defined by registered service [{}]...",
+                getClass().getSimpleName(), context.getPrincipal().getId(),
+                context.getService(), context.getRegisteredService().getServiceId());
 
             val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(context.getPrincipal(), context.getRegisteredService());
             LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, context.getPrincipal().getId());
@@ -190,15 +191,17 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             .map(attributeDefinitionStore -> {
                 if (attributeDefinitionStore.isEmpty()) {
                     LOGGER.trace("No attribute definitions are defined in the attribute definition "
-                        + "store, or no attribute definitions are requested.");
+                                 + "store, or no attribute definitions are requested.");
                     return principalAttributes;
                 }
                 val requestedDefinitions = new ArrayList<>(determineRequestedAttributeDefinitions(context));
                 requestedDefinitions.addAll(principalAttributes.keySet());
-                LOGGER.trace("Finding requested attribute definitions [{}]", requestedDefinitions);
+
                 val availableAttributes = new LinkedHashMap<>(principalAttributes);
                 availableAttributes.putAll(context.getReleasingAttributes());
 
+                LOGGER.debug("Finding requested attribute definitions [{}] based on available attributes [{}]",
+                    requestedDefinitions, availableAttributes);
                 return attributeDefinitionStore.resolveAttributeValues(requestedDefinitions,
                     availableAttributes, context.getRegisteredService());
             })
@@ -217,12 +220,14 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      */
     protected Map<String, List<Object>> resolveAttributesFromPrincipalAttributeRepository(final Principal principal,
                                                                                           final RegisteredService registeredService) {
-        return getRegisteredServicePrincipalAttributesRepository()
+        val attributes = getRegisteredServicePrincipalAttributesRepository()
             .map(repository -> {
                 LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
                 return repository.getAttributes(principal, registeredService);
             })
             .orElseGet(principal::getAttributes);
+        LOGGER.debug("Attributes retrieved from principal attribute repository for [{}] are [{}]", principal.getId(), attributes);
+        return attributes;
     }
 
     /**
