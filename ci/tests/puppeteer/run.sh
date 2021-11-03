@@ -143,7 +143,6 @@ if [[ $project == starter* ]]; then
   projectType=jar
 fi
 
-
 casWebApplicationFile="${PWD}/webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}"
 if [[ ! -f "$casWebApplicationFile" ]]; then
   printyellow "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
@@ -208,7 +207,7 @@ if [[ "${RERUN}" != "true" ]]; then
     runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
   fi
   echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
-  java ${runArgs} -jar "$PWD"/cas.${projectType} ${properties} \
+  java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} ${properties} \
     -Dcom.sun.net.ssl.checkRevocation=false \
     --spring.profiles.active=none --server.ssl.key-store="$keystore" &
   pid=$!

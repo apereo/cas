@@ -128,10 +128,12 @@ value is constructed based on a dynamic construct such as `A1 + '-Hello'`.
 ## Other Stuff
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
+- Cipher executor components, particularly those that operate on binary data, are now allowed to use larger key sizes (`128`, `256`, etc.) for encryption operations.
 - Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
 - [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) is adjusted to work well with timeout expiration policy assigned to ticket-granting tickets. 
 - [Duo Security Universal Prompt](../mfa/DuoSecurity-Authentication.html) can 
   handle [impersonation requests](../authentication/Surrogate-Authentication.html) that require user selection.
+- Bypassing OAuth or OpenID Connect approval screen can now be done globally via CAS configuration.
 
 ## Library Upgrades
             

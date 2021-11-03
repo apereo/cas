@@ -1,0 +1,20 @@
+{
+  "dependencies": "session-hazelcast,reports",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--logging.level.com.hazelcast=debug",
+    
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--spring.session.store-type=HAZELCAST",
+
+    "--cas.webflow.session.hazelcast.cluster.network.port-auto-increment=false",
+    "--cas.webflow.session.hazelcast.cluster.network.port=5703",
+
+    "--cas.webflow.session.storage=true"
+  ]
+}

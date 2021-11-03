@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -127,6 +128,7 @@ public class HazelcastCoreClusterProperties implements Serializable {
      * The instance name.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String instanceName;
 
     /**
