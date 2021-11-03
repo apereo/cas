@@ -18,9 +18,13 @@
 You can use the TLS (Transport Layer Security) protocol to establish an encrypted
 communication across your Hazelcast cluster with key stores and trust stores. Hazelcast allows you
 to encrypt socket level communication between Hazelcast members and
-between Hazelcast clients and members, for end to end encryption. Hazelcast provides a default
-SSL context factory implementation, which is guided and auto-configured by CAS when enabled to use the
-configured keystore to initialize SSL context.
+between Hazelcast clients and members, for end to end encryption. 
+
+<div class="alert alert-info"><strong>Usage</strong><p>
+Hazelcast SSL is an enterprise feature. You will need a proper Hazelcast Enterprise License to use this facility.</p></div>
+
+Hazelcast provides a default SSL context factory implementation, which is guided 
+and auto-configured by CAS when enabled to use the configured keystore to initialize SSL context.
 
 {% capture cfgkey %}{{ include.configKey }}.cluster.network.ssl{% endcapture %}
 {% include_cached casproperties.html properties=cfgkey %}
