@@ -33,7 +33,7 @@ exports.logg = async(text) => {
 }
 
 exports.removeDirectory = async (directory) => {
-    console.log(colors.green(`Removing directory ${directory}`));
+    await this.logg(`Removing directory ${directory}`)
     fs.rmdir(directory, {recursive: true}, () => {
     });
 }
@@ -77,7 +77,7 @@ exports.uploadImage = async (imagePath) => {
         console.log(`Uploading image ${imagePath}`);
         const client = new ImgurClient({clientId: clientId});
         const response = await client.upload(imagePath);
-        console.log(colors.green(response.data.link));
+        await this.logg(response.data.link);
     }
 }
 
@@ -174,6 +174,7 @@ exports.assertMissingParameter = async (page, param) => {
 
 exports.sleep = async (ms) => {
     return new Promise((resolve) => {
+        this.logg(`Waiting for ${ms / 1000} second(s)...`)
         setTimeout(resolve, ms);
     });
 }
@@ -363,10 +364,10 @@ exports.decodeJwt = async (token, complete = false) => {
     if (complete) {
         console.log(`Decoded token header: ${colors.green(decoded.header)}`);
         console.log("Decoded token payload:");
-        console.log(colors.green(decoded.payload));
+        await this.logg(decoded.payload);
     } else {
         console.log("Decoded token payload:");
-        console.log(colors.green(decoded));
+        await this.logg(decoded);
     }
     return decoded;
 }
@@ -408,7 +409,7 @@ exports.screenshot = async (page) => {
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     try {
         await page.screenshot({path: filePath, fullPage: true});
-        console.log(colors.green(`Screenshot saved at ${filePath}`));
+        await this.logg(`Screenshot saved at ${filePath}`);
         await this.uploadImage(filePath);
     } catch (e)  {
         console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));

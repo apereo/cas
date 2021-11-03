@@ -23,8 +23,8 @@
     "--cas.authn.attribute-repository.stub.attributes.cn=cas",
     "--cas.authn.attribute-repository.stub.attributes.displayName=Apereo CAS",
     
-    "--cas.authn.attribute-repository.core.expirationTime=5",
-    "--cas.authn.attribute-repository.core.expirationTimeUnit=seconds",
+    "--cas.authn.attribute-repository.core.expiration-time=5",
+    "--cas.authn.attribute-repository.core.expiration-time-unit=seconds",
     "--cas.authn.attribute-repository.core.merger=multivalued",
 
     "--cas.person-directory.attribute-resolution-enabled=false"
