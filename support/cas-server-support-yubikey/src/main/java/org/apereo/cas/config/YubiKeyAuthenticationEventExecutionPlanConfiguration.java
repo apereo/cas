@@ -64,13 +64,15 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                  @Qualifier("yubikeyAuthenticationHandler")
-                                                                                  final AuthenticationHandler yubikeyAuthenticationHandler,
-                                                                                  @Qualifier("yubikeyMultifactorAuthenticationProvider")
-                                                                                  final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
+    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyAuthenticationHandler")
+        final AuthenticationHandler yubikeyAuthenticationHandler,
+        @Qualifier("yubikeyMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler, yubikeyMultifactorAuthenticationProvider.getId());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+            yubikeyAuthenticationHandler, yubikeyMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
@@ -85,12 +87,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "yubicoClient")
     public YubicoClient yubicoClient(final CasConfigurationProperties casProperties) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        if (StringUtils.isBlank(yubi.getSecretKey())) {
-            throw new IllegalArgumentException("Yubikey secret key cannot be blank");
-        }
-        if (yubi.getClientId() <= 0) {
-            throw new IllegalArgumentException("Yubikey client id is undefined");
-        }
         val client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
         if (!yubi.getApiUrls().isEmpty()) {
             val urls = yubi.getApiUrls().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
