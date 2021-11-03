@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastPropert
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ConsistencyCheckStrategy;
@@ -140,7 +141,7 @@ public class HazelcastConfigurationFactory {
         config.getSerializationConfig().setEnableCompression(hz.getCore().isEnableCompression());
 
         val instanceName = StringUtils.hasText(cluster.getCore().getInstanceName())
-            ? cluster.getCore().getInstanceName()
+            ? SpringExpressionLanguageValueResolver.getInstance().resolve(cluster.getCore().getInstanceName())
             : UUID.randomUUID().toString();
         LOGGER.trace("Configuring Hazelcast instance name [{}]", instanceName);
         return config.setInstanceName(instanceName)

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.flow;
 
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -7,8 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -59,9 +59,9 @@ public class WebflowSessionManagementProperties implements Serializable {
     private boolean storage;
 
     /**
-     * If sessions are to be replicated via Hazelcast, defines the location of a {@code hazelcast.xml}
-     * file that defines how state should be replicated.
+     * If sessions are to be replicated via Hazelcast, controls and defines how state should be replicated.
      * Only relevant if session storage is done on the server.
      */
-    private transient Resource hzLocation = new ClassPathResource("hazelcast.xml");
+    @NestedConfigurationProperty
+    private BaseHazelcastProperties hazelcast = new BaseHazelcastProperties();
 }
