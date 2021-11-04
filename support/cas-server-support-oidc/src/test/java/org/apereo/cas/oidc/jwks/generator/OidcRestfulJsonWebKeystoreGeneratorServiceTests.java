@@ -36,8 +36,8 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
 
     @BeforeAll
     public static void setup() {
-        val webkey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
-        val data = webkey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        val webKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
+        val data = webKey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         SERVER = new MockWebServer(9521,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
