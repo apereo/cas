@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -29,7 +30,8 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     /**
      * Timeout that indicates how long should the JWKS file be kept in cache.
      */
-    private int jwksCacheInMinutes = 60;
+    @DurationCapable
+    private String jwksCacheExpiration = "PT60M";
 
     /**
      * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
@@ -53,6 +55,11 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      * Accepted values are {@code RSA} or {@code EC}.
      */
     private String jwksType = "RSA";
+
+    /**
+     * The key identifier to set for the generated key in the keystore.
+     */
+    private String jwksKeyId = "cas";
 
     /**
      * Fetch JWKS via a REST endpoint.
