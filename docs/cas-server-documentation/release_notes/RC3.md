@@ -59,9 +59,17 @@ The following items are new improvements and enhancements presented in this rele
     
 ### Account (Self-Service) Registration
 
-CAS provides a modest workflow to handle [self-service account registration](../registration/Account-Registration-Overview.html).
+CAS provides a modest workflow to 
+handle [self-service account registration](../registration/Account-Registration-Overview.html).
 This capability was developed and first released in `6.5.0-RC1`, and it will be repeatedly refined
 and improved in the future to match and accommodate realistic workflows deployed today as much as possible. 
+ 
+### OpenID Connect Key Rotation
+     
+CAS can now be configured to rotating keys in the OpenID Connect keystore automatically 
+based on a predefined schedule. Rotation will include previous keys as well as current and future
+keys to assist with integrations and caching concerns. There is also a revocation schedule for old
+inactive keys that should be put removed from the keystore.
 
 ## Other Stuff
 
