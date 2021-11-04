@@ -26,6 +26,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicyTests;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
@@ -141,6 +142,7 @@ import org.junit.platform.suite.api.Suite;
     OidcWebFingerUserInfoRepositoryTests.class,
     OidcClientRegistrationResponseTests.class,
     OidcCallbackAuthorizeViewResolverTests.class,
+    OidcGroovyJsonWebKeystoreGeneratorServiceTests.class,
     OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests.class,
     OidcRestfulJsonWebKeystoreGeneratorServiceTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,

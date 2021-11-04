@@ -134,9 +134,10 @@ To help simplify the testing process, you may use the following bash function in
 
 ```bash
 function pupcas() {
+  cd /path/to/cas
   scenario=$1
-  cd /path/to/cas 
-  ./ci/tests/puppeteer/run.sh --scenario ./ci/tests/puppeteer/scenarios/"${scenario}"
+  shift 1
+  ./ci/tests/puppeteer/run.sh --scenario ./ci/tests/puppeteer/scenarios/"$scenario" $@
 }
 ```
 
