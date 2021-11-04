@@ -61,7 +61,7 @@ public class PersonDirectoryPrincipalResolverLdapTests {
 
     @Test
     public void verifyResolver() {
-        var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
             this.attributeRepository, attributeMerger, casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
