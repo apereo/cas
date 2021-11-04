@@ -38,6 +38,13 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
 
     private WatcherService resourceWatcherService;
 
+    @Override
+    public void destroy() {
+        if (this.resourceWatcherService != null) {
+            this.resourceWatcherService.close();
+        }
+    }
+
     @SneakyThrows
     @Override
     public Resource generate() {
@@ -53,7 +60,6 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         return generate(resource);
     }
 
-
     /**
      * Generate.
      *
@@ -67,7 +73,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             return file;
         }
         val jwk = generateJsonWebKey();
-        
+
         val data = new JsonWebKeySet(jwk).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         val location = file.getFile();
         FileUtils.write(location, data, StandardCharsets.UTF_8);
@@ -82,14 +88,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
      */
     @SneakyThrows
     protected PublicJsonWebKey generateJsonWebKey() {
-        val jwks = oidcProperties.getJwks();
-        return OidcJsonWebKeyStoreUtils.generateJsonWebKey(jwks.getJwksType(), jwks.getJwksKeySize());
-    }
-
-    @Override
-    public void destroy() {
-        if (this.resourceWatcherService != null) {
-            this.resourceWatcherService.close();
-        }
+        val properties = oidcProperties.getJwks();
+        val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(properties.getJwksType(), properties.getJwksKeySize());
+        jsonWebKey.setKeyId(properties.getJwksKeyId());
+        return jsonWebKey;
     }
 }

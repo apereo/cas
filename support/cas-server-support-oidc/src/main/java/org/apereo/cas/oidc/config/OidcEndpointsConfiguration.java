@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -80,7 +81,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -284,8 +284,11 @@ public class OidcEndpointsConfiguration {
             final CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
-            return Caffeine.newBuilder().maximumSize(1)
-                .expireAfterWrite(Duration.ofMinutes(oidc.getJwks().getJwksCacheInMinutes()))
+
+            val expiration = Beans.newDuration(oidc.getJwks().getJwksCacheExpiration());
+            return Caffeine.newBuilder()
+                .maximumSize(100)
+                .expireAfterWrite(expiration)
                 .build(oidcDefaultJsonWebKeystoreCacheLoader);
         }
 
