@@ -97,7 +97,6 @@ Please [see this guide](Passwordless-Authentication-Tokens-JPA.html).
 
 Please [see this guide](Passwordless-Authentication-Tokens-Rest.html).
 
-
 ### Custom
 
 Please [see this guide](Passwordless-Authentication-Tokens-Custom.html).
