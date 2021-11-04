@@ -66,7 +66,7 @@ public class PrincipalAttributeRepositoryFetcher {
         query.putAll(queryAttributes);
         query.put("username", principalId.trim());
 
-        LOGGER.trace("Fetching person attributes for query [{}]", query);
+        LOGGER.debug("Fetching person attributes for query [{}]", query);
         val people = attributeRepository.getPeople(query, filter);
         if (people == null || people.isEmpty()) {
             LOGGER.warn("No person records were fetched from attribute repositories for [{}]", query);
