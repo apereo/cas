@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -22,8 +23,10 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -62,8 +65,13 @@ public class ReturnMappedAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
     public void beforeEach() {
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            new GroovyScriptResourceCacheManager(), ScriptResourceCacheManager.BEAN_NAME);
         ApplicationContextProvider.getScriptResourceCacheManager()
             .ifPresent(ScriptResourceCacheManager::clear);
     }

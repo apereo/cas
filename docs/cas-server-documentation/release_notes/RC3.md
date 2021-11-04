@@ -56,8 +56,16 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+    
+### Account (Self-Service) Registration
+
+CAS provides a modest workflow to handle [self-service account registration](../registration/Account-Registration-Overview.html).
+This capability was developed and first released in `6.5.0-RC1`, and it will be repeatedly refined
+and improved in the future to match and accommodate realistic workflows deployed today as much as possible. 
 
 ## Other Stuff
 
 ## Library Upgrades
+
+- Spring Boot
 
