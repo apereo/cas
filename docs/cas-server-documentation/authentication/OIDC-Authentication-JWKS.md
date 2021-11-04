@@ -49,6 +49,12 @@ and share an <strong>identical and exact copy</strong> of the keystore file. Key
 will lead to various validation failures and application integration issues.
 </p></div>
 
+<div class="alert alert-info"><strong>Key Rotation</strong><p>
+Allowing CAS to rotate keys in the keystore is only applicable and relevant with this option,
+where CAS is in charge of the keystore location and generation directly. If you outsource the
+keystore generation task, you are also taking on the responsibility of rotation.
+</p></div>
+
 This keystore is cached, and is then automatically watched and monitored by CAS for changes. As changes are detected, CAS
 will invalidate the cache and will reload the keystore once again.
 
@@ -108,9 +114,9 @@ You can manually rotate keys periodically to change the JSON web key (JWK) key, 
 in CAS configuration so it would automatically rotate keys for you. 
 
 <div class="alert alert-info"><strong>Rotation Guidance</strong><p>
-NIST guidelines seem to recommend a rotation schedule of at least once every two years, or
-before approximately <code>2^32</code> crypto operations have been performed, assuming <code>AES-256</code>. 
-In practice, modest CAS deployments in size and scale tend to rotate keys once every six months.
+NIST guidelines seem to recommend a rotation schedule of at least once every two years. 
+In practice, modest CAS deployments in size and scale tend to rotate keys once every six months, either 
+manually or automatically on a schedule.
 </p></div>
 
 CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore.
