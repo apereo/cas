@@ -66,6 +66,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -299,10 +300,20 @@ public class OidcEndpointsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
-            if (StringUtils.isNotBlank(oidc.getJwks().getRest().getUrl())) {
-                return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
-            }
             return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
+        }
+    }
+
+    @Configuration(value = "OidcEndpointsJwksRestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnProperty(name = "cas.authn.oidc.jwks.rest.url")
+    public static class OidcEndpointsJwksRestConfiguration {
+        @Bean(initMethod = "generate")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final CasConfigurationProperties casProperties) {
+            val oidc = casProperties.getAuthn().getOidc();
+            return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
         }
     }
 
