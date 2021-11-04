@@ -518,7 +518,7 @@ subprojects {
         api libraries.quartz
         api libraries.bvalidator
         api libraries.groovy
-        api libraries.caffein
+        api libraries.caffeine
         api libraries.springcloud
         api libraries.springboot
         api libraries.springsecurity

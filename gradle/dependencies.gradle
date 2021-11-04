@@ -556,11 +556,11 @@ ext.libraries = [
                 dependencies.create("com.squareup.okio:okio:$okioVersion") {
                 }
         ],
-        caffein                 : [
-                dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeinVersion") {
+        caffeine                : [
+                dependencies.create("com.github.ben-manes.caffeine:caffeine:$caffeineVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("com.github.ben-manes.caffeine:guava:$caffeinVersion") {
+                dependencies.create("com.github.ben-manes.caffeine:guava:$caffeineVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }

@@ -71,7 +71,7 @@ configurations.all {
                     details.useVersion("${couchbaseVersion}")
                 }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
-                    details.useVersion("${caffeinVersion}")
+                    details.useVersion("${caffeineVersion}")
                 }
                 if (requested.group == "org.apache.logging.log4j")  {
                     details.useVersion("${log4jVersion}")
@@ -131,7 +131,7 @@ configurations.all {
 }
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
-ext["caffeine.version"] = ext["caffeinVersion"]
+ext["caffeine.version"] = ext["caffeineVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
