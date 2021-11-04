@@ -10,7 +10,7 @@ category: Protocols
 The JWKS (JSON Web Key Set) endpoint and functionality returns a JWKS containing public keys that enable 
 clients to validate a JSON Web Token (JWT) issued by CAS as an OpenID Connect Provider.
 
-{% include_cached casproperties.html properties="cas.authn.oidc.jwks" excludes=".rest" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks" excludes=".rest,.groovy" %}
 
 ## Keystores
        
@@ -55,15 +55,33 @@ will invalidate the cache and will reload the keystore once again.
 ### REST
 
 Keystore generation can be outsourced to an external REST API. Endpoints must be designed to
-accept/process `application/json`. 
+accept/process `application/json` and generally should return a `2xx` response status code. 
 
 The following requests are made by CAS to the endpoint:
 
 | Operation        | Parameters      | Description      | Result
 |------------------|-----------------|------------------|----------------------------------------------------
-| `GET` | N/A    | Retrieve the keystore.     | `200` status code; JWKS resource in response body.
+| `GET`            | N/A             | Retrieve the keystore.  | `2xx` status code; JWKS resource in response body.
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.rest" %}
+  
+### Groovy
+
+Keystore generation can be outsourced to an external Groovy script whose body should be defined as such: 
+
+```groovy
+import org.apereo.cas.oidc.jwks.*
+import org.jose4j.jwk.*
+
+def run(Object[] args) {
+    def logger = args[0]
+    logger.info("Generating JWKS for CAS...")
+    def jsonWebKeySet = "{ \"keys\": [...] }"
+    return jsonWebKeySet
+}
+```
+
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks.groovy" %}
 
 ### Custom
 

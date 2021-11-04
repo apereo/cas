@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -67,4 +68,9 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     @NestedConfigurationProperty
     private RestfulOidcJsonWebKeystoreProperties rest = new RestfulOidcJsonWebKeystoreProperties();
 
+    /**
+     * Fetch JWKS via a Groovy script.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties groovy = new SpringResourceProperties();
 }
