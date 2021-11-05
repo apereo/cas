@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasThymeleafConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasThemesConfiguration.class,
     OidcConfiguration.class,
     OidcResponseConfiguration.class,
@@ -54,7 +55,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20ThrottleConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
-    CasThrottlingConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
