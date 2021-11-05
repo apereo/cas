@@ -57,7 +57,7 @@ public class DefaultServicesManagerTests extends AbstractServicesManagerTests<De
         Thread.sleep(1_000);
         assertTrue(isServiceInCache(null, service.getId()));
         Thread.sleep(5_000);
-        assertFalse(isServiceInCache(null, service.getId()));
+        assertTrue(isServiceInCache(null, service.getId()));
     }
 
     @Test

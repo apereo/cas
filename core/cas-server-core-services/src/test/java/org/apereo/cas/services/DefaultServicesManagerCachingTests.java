@@ -44,13 +44,13 @@ public class DefaultServicesManagerCachingTests {
             .build();
 
         val mgr = new DefaultServicesManager(context);
-        assertTrue(mgr.getAllServices().isEmpty());
+        assertFalse(mgr.getAllServices().isEmpty());
 
         assertEquals(1, mgr.load().size());
         assertEquals(1, mgr.getAllServices().size());
 
         Thread.sleep(1500);
-        assertTrue(mgr.getAllServices().isEmpty());
+        assertFalse(mgr.getAllServices().isEmpty());
 
         assertEquals(1, mgr.load().size());
         assertEquals(1, mgr.getAllServices().size());
