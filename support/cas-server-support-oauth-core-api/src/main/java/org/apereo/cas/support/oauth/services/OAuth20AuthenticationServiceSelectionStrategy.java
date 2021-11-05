@@ -93,7 +93,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
 
         if (clientId.isPresent()) {
             service.getAttributes().putIfAbsent(OAuth20Constants.CLIENT_ID,
-                CollectionUtils.wrapList(clientId.get()));
+                CollectionUtils.wrapList(clientId.get().getValue()));
 
             val redirectUri = resolveRedirectUri(service);
             if (redirectUri.isPresent()) {

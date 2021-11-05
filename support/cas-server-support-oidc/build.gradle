@@ -8,7 +8,6 @@ dependencies {
 
     compileOnlyApi  project(":support:cas-server-support-jpa-util")
 
-    implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oidc-core-api")
@@ -55,9 +54,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-services")
-    
+
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-throttle")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
