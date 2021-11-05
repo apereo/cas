@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.Ordered;
 
-import java.util.List;
-
 /**
  * This is {@link OidcServicesManagerRegisteredServiceLocator}.
  *
