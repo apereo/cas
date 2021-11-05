@@ -66,10 +66,10 @@ and improved in the future to match and accommodate realistic workflows deployed
  
 ### OpenID Connect Key Rotation
      
-CAS can now be configured to rotating keys in the OpenID Connect keystore automatically 
+CAS can now be configured to rotate keys in the OpenID Connect keystore automatically 
 based on a predefined schedule. Rotation will include previous keys as well as current and future
 keys to assist with integrations and caching concerns. There is also a revocation schedule for old
-inactive keys that should be put removed from the keystore.
+inactive keys that should be removed from the keystore.
 
 ## Other Stuff
 
