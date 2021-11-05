@@ -18,17 +18,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +52,6 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -70,6 +64,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @BeforeEach
     public void beforeEach() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             new GroovyScriptResourceCacheManager(), ScriptResourceCacheManager.BEAN_NAME);
         ApplicationContextProvider.getScriptResourceCacheManager()
@@ -77,7 +72,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(0)
     public void verifyAttributeMappingWorksForCollections() throws IOException {
         val map = new TreeMap();
         map.put("test1", "newTest1");
@@ -107,7 +101,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(1)
     public void verifySerializeAndReturnMappedAttributeReleasePolicyToJson() throws IOException {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("keyOne", "valueOne");
@@ -120,7 +113,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(2)
     public void verifyInlinedGroovyAttributes() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return 'DOMAIN\\\\' + attributes['uid'][0] }");
@@ -141,7 +133,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(3)
     public void verifyInlinedGroovyMultipleAttributes() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
@@ -163,7 +154,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(4)
     public void verifyExternalGroovyAttributes() throws Exception {
         val file = new File(FileUtils.getTempDirectoryPath(), "script.groovy");
         val script = IOUtils.toString(
@@ -192,7 +182,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
 
     @Test
-    @Order(5)
     public void verifyMappingWithoutAttributeValue() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
@@ -224,7 +213,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(6)
     public void verifyClasspathGroovy() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
@@ -249,7 +237,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
 
     @Test
-    @Order(7)
     public void verifyInlinedGroovyWithCache() {
         val allowed1 = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
@@ -291,7 +278,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(8)
     public void verifyExternalGroovyWithCache() {
         val allowed1 = ArrayListMultimap.<String, Object>create();
         val attributeName = UUID.randomUUID().toString();
@@ -316,7 +302,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(9)
     public void verifyMappedExisting() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val p1 = new ReturnMappedAttributeReleasePolicy(allowed1);
@@ -343,7 +328,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(9)
     public void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy(allowed1);
@@ -358,7 +342,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(10)
     public void verifyInlinedGroovyFailsPartially() {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("attr1", "groovy { $bad-script-here$ }");
@@ -382,7 +365,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(11)
     public void verifyExternalGroovyFailsPartially() throws Exception {
         val allowed1 = ArrayListMultimap.<String, Object>create();
         val file = File.createTempFile("something", ".groovy");
@@ -408,7 +390,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(12)
     public void verifyConcurrentScript() throws Exception {
         val allowedAttributes = ArrayListMultimap.<String, Object>create();
         allowedAttributes.put("taxId", "groovy { attributes['fiscalNumber'][0] }");
@@ -447,7 +428,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    @Order(13)
     public void verifyChainDependingOnPreviousAttributes() {
         val policy1 = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap("uid", "my-userid"));
         policy1.setOrder(1);
