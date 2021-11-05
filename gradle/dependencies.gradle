@@ -1618,7 +1618,7 @@ ext.libraries = [
                 dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
+                dependencies.create("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-layout-template-json:$log4jVersion") {
