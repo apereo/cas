@@ -145,6 +145,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("singleLogoutRequests", sloRequests);
+            centralAuthenticationService.deleteTicket(ticketGrantingTicket);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             sessionsMap.put(STATUS, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
