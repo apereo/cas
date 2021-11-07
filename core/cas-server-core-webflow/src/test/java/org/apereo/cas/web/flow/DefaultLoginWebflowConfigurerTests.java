@@ -8,6 +8,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Flow;
@@ -35,6 +37,10 @@ public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTes
     @Test
     public void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
+        val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
+        assertEquals(2, interceptors.size());
+        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof LocaleChangeInterceptor));
+        assertTrue(interceptors.stream().anyMatch(interceptor -> interceptor instanceof ResourceUrlProviderExposingInterceptor));
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
