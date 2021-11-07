@@ -45,6 +45,8 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -150,11 +152,13 @@ public class CasWebflowContextConfiguration {
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowRegistry,
             @Qualifier("localeChangeInterceptor")
-            final LocaleChangeInterceptor localeChangeInterceptor) {
+            final LocaleChangeInterceptor localeChangeInterceptor,
+            @Qualifier("resourceUrlProviderExposingInterceptor")
+            final ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor) {
             val handler = new FlowHandlerMapping();
             handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
             handler.setFlowRegistry(logoutFlowRegistry);
-            handler.setInterceptors(localeChangeInterceptor);
+            handler.setInterceptors(localeChangeInterceptor, resourceUrlProviderExposingInterceptor);
             return handler;
         }
 
@@ -212,6 +216,13 @@ public class CasWebflowContextConfiguration {
                 CasWebflowConfigurer.FLOW_ID_LOGOUT,
                 CasWebflowConfigurer.FLOW_ID_LOGIN));
             return interceptor;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "resourceUrlProviderExposingInterceptor")
+        public ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor(
+                @Qualifier("mvcResourceUrlProvider") final ObjectProvider<ResourceUrlProvider> resourceUrlProvider) {
+            return new ResourceUrlProviderExposingInterceptor(resourceUrlProvider.getObject());
         }
     }
 
@@ -282,6 +293,8 @@ public class CasWebflowContextConfiguration {
             final CasWebflowConfigurer groovyWebflowConfigurer,
             @Qualifier("localeChangeInterceptor")
             final LocaleChangeInterceptor localeChangeInterceptor,
+            @Qualifier("resourceUrlProviderExposingInterceptor")
+            final ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor,
             @Qualifier("themeChangeInterceptor")
             final ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor,
             @Qualifier("authenticationThrottlingExecutionPlan")
@@ -292,6 +305,7 @@ public class CasWebflowContextConfiguration {
                 plan.registerWebflowConfigurer(groovyWebflowConfigurer);
 
                 plan.registerWebflowInterceptor(localeChangeInterceptor);
+                plan.registerWebflowInterceptor(resourceUrlProviderExposingInterceptor);
                 themeChangeInterceptor.ifAvailable(plan::registerWebflowInterceptor);
 
                 authenticationThrottlingExecutionPlan.ifAvailable(
