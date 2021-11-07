@@ -36,6 +36,12 @@ public interface CasSSLContext {
     static CasSSLContext system() {
         return new CasSSLContext() {
             @Override
+            @SneakyThrows
+            public KeyManagerFactory getKeyManagerFactory() {
+                return KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            }
+
+            @Override
             public SSLContext getSslContext() {
                 return SSLContexts.createSystemDefault();
             }
@@ -114,6 +120,13 @@ public interface CasSSLContext {
      */
     TrustManagerFactory getTrustManagerFactory();
 
+    /**
+     * Gets key manager factory.
+     *
+     * @return the key manager factory
+     */
+    KeyManagerFactory getKeyManagerFactory();
+
     class DisabledCasSslContext implements CasSSLContext {
         private static final X509Certificate[] ACCEPTED_ISSUERS = {};
 
@@ -140,6 +153,12 @@ public interface CasSSLContext {
             val sc = SSLContext.getInstance("SSL");
             sc.init(getKeyManagers(), getTrustManagers(), null);
             return sc;
+        }
+
+        @Override
+        @SneakyThrows
+        public KeyManagerFactory getKeyManagerFactory() {
+            return KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
         }
 
         @Override

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.RedisYubiKeyAccountRegistry;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -42,9 +43,12 @@ public class RedisYubiKeyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisConnectionFactory redisYubiKeyConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisYubiKeyConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getYubikey().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

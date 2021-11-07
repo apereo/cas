@@ -1,11 +1,13 @@
 package org.apereo.cas.redis.core;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.SocketOptions;
+import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
@@ -66,29 +68,33 @@ public class RedisObjectFactory {
     /**
      * New redis connection factory.
      *
-     * @param redis the redis
+     * @param redis         the redis
+     * @param casSslContext the cas ssl context
      * @return the redis connection factory
      */
-    public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-        return newRedisConnectionFactory(redis, false);
+    public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
+                                                                   final CasSSLContext casSslContext) {
+        return newRedisConnectionFactory(redis, false, casSslContext);
     }
 
     /**
      * New redis connection factory.
      *
-     * @param redis      the redis
-     * @param initialize the initialize
+     * @param redis         the redis
+     * @param initialize    the initialize
+     * @param casSslContext the cas ssl context
      * @return the redis connection factory
      */
     public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis,
-                                                                   final boolean initialize) {
+                                                                   final boolean initialize,
+                                                                   final CasSSLContext casSslContext) {
         var factory = (LettuceConnectionFactory) null;
         if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
-            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true));
+            factory = new LettuceConnectionFactory(getSentinelConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
         } else if (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty()) {
-            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, true));
+            factory = new LettuceConnectionFactory(getClusterConfig(redis), getRedisPoolClientConfig(redis, true, casSslContext));
         } else {
-            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, false));
+            factory = new LettuceConnectionFactory(getStandaloneConfig(redis), getRedisPoolClientConfig(redis, false, casSslContext));
         }
 
         if (initialize) {
@@ -133,7 +139,9 @@ public class RedisObjectFactory {
         return redisConfiguration;
     }
 
-    private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis, final boolean cluster) {
+    private static LettucePoolingClientConfiguration getRedisPoolClientConfig(final BaseRedisProperties redis,
+                                                                              final boolean cluster,
+                                                                              final CasSSLContext casSslContext) {
         val poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
             poolingClientConfig.useSsl();
@@ -153,7 +161,7 @@ public class RedisObjectFactory {
             }
         }
 
-        poolingClientConfig.clientOptions(createClientOptions(redis, cluster));
+        poolingClientConfig.clientOptions(createClientOptions(redis, cluster, casSslContext));
 
         val pool = redis.getPool();
         if (pool != null && pool.isEnabled()) {
@@ -183,13 +191,22 @@ public class RedisObjectFactory {
         return poolingClientConfig.build();
     }
 
-    private static ClientOptions createClientOptions(final BaseRedisProperties redis, final boolean cluster) {
+    private static ClientOptions createClientOptions(final BaseRedisProperties redis, final boolean cluster,
+                                                     final CasSSLContext casSslContext) {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis, cluster);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
             clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
         }
-        return clientOptionsBuilder.timeoutOptions(TimeoutOptions.enabled()).build();
+        val sslOptions = SslOptions.builder()
+            .jdkSslProvider()
+            .keyManager(casSslContext.getKeyManagerFactory())
+            .trustManager(casSslContext.getTrustManagerFactory())
+            .build();
+        return clientOptionsBuilder
+            .timeoutOptions(TimeoutOptions.enabled())
+            .sslOptions(sslOptions)
+            .build();
     }
 
     private static ClientOptions.Builder initializeClientOptionsBuilder(final BaseRedisProperties redis, final boolean cluster) {

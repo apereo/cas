@@ -45,6 +45,8 @@ public class DefaultCasSSLContext implements CasSSLContext {
 
     private final KeyStore casTrustStore;
 
+    private final KeyManagerFactory keyManagerFactory;
+
     public DefaultCasSSLContext(final Resource trustStoreFile,
                                 final String trustStorePassword,
                                 final String trustStoreType,
@@ -53,6 +55,7 @@ public class DefaultCasSSLContext implements CasSSLContext {
         val disabled = httpClientProperties.getHostNameVerifier().equalsIgnoreCase("none");
         if (disabled) {
             this.trustManagers = CasSSLContext.disabled().getTrustManagers();
+            this.keyManagerFactory = CasSSLContext.disabled().getKeyManagerFactory();
             this.casTrustStore = null;
             this.keyManagers = CasSSLContext.disabled().getKeyManagers();
         } else {
@@ -61,9 +64,15 @@ public class DefaultCasSSLContext implements CasSSLContext {
             try (val casStream = trustStoreFile.getInputStream()) {
                 casTrustStore.load(casStream, trustStorePasswordCharArray);
             }
+
+            this.keyManagerFactory = getKeyManagerFactory(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
+            val customKeyManager = (X509KeyManager) keyManagerFactory.getKeyManagers()[0];
+
             val defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-            val customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
-            val jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
+
+            val jvmKeyManagerFactory = getKeyManagerFactory(defaultAlgorithm, null, null);
+            val jvmKeyManager = (X509KeyManager) jvmKeyManagerFactory.getKeyManagers()[0];
+
             val defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             val customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
             val jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
@@ -79,21 +88,14 @@ public class DefaultCasSSLContext implements CasSSLContext {
         this.hostnameVerifier = hostnameVerifier;
     }
 
-    @Override
     @SneakyThrows
-    public TrustManagerFactory getTrustManagerFactory() {
-        val factory = TrustManagerFactory.getInstance(ALG_NAME_PKIX);
-        factory.init(this.casTrustStore);
+    private static KeyManagerFactory getKeyManagerFactory(final String algorithm, final KeyStore keystore,
+                                                          final char[] password) {
+        val factory = KeyManagerFactory.getInstance(algorithm);
+        factory.init(keystore, password);
         return factory;
     }
 
-    @SneakyThrows
-    private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore, final char[] password) {
-        val factory = KeyManagerFactory.getInstance(algorithm);
-        factory.init(keystore, password);
-        return (X509KeyManager) factory.getKeyManagers()[0];
-    }
-    
     @SneakyThrows
     private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) {
         val factory = TrustManagerFactory.getInstance(algorithm);
@@ -102,5 +104,13 @@ public class DefaultCasSSLContext implements CasSSLContext {
             .filter(e -> e instanceof X509TrustManager)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    @SneakyThrows
+    public TrustManagerFactory getTrustManagerFactory() {
+        val factory = TrustManagerFactory.getInstance(ALG_NAME_PKIX);
+        factory.init(this.casTrustStore);
+        return factory;
     }
 }

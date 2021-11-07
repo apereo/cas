@@ -10,6 +10,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-redis-core")
 
     testImplementation project(":core:cas-server-core-services")

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.RedisGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorRedisTokenRepository;
@@ -45,9 +46,12 @@ public class GoogleAuthenticatorRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorConnectionFactory")
-    public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getGauth().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

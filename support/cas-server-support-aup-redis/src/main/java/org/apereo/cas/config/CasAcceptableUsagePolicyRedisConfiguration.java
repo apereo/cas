@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.RedisAcceptableUsagePolicyRepository;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -41,9 +42,12 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.core;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -32,7 +33,7 @@ public class RedisObjectFactoryTests {
         props.getPool().setMinEvictableIdleTimeMillis(2000);
         props.getPool().setNumTestsPerEvictionRun(1);
         props.getPool().setSoftMinEvictableIdleTimeMillis(1);
-        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
@@ -64,7 +65,7 @@ public class RedisObjectFactoryTests {
 
         props.getCluster().setMaxRedirects(3);
         props.getCluster().setTopologyRefreshPeriod("PT5S");
-        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
@@ -99,7 +100,7 @@ public class RedisObjectFactoryTests {
         props.getCluster().setAdaptiveTopologyRefresh(true);
         props.getCluster().setDynamicRefreshSources(true);
         props.getCluster().setMaxRedirects(3);
-        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true);
+        val connection = RedisObjectFactory.newRedisConnectionFactory(props, true, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
