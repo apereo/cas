@@ -56,7 +56,20 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-    
+     
+### Spring Boot `2.6.x`
+
+CAS has now switched to use the Spring Boot `2.6.x` release line, and all other relevant dependencies
+such as Spring Cloud, Spring Data, Spring Security, etc have also been upgraded. While this is a somewhat significant
+upgrade, its effects and consequences should largely remain invisible to the end-user. Aside from all the usual 
+reasons, this upgrade should allow CAS to be one step closer to native build using the likes of GraalVM. 
+
+<div class="alert alert-info">
+<strong>Remember</strong><br/>Be sure to review your CAS Overlay configuration
+to make sure the Spring Boot version correctly matches that of CAS. Creating a CAS Overlay
+project using the CAS Initializr service should already account for this change.
+</div>
+
 ### Account (Self-Service) Registration
 
 CAS provides a modest workflow to 
@@ -73,9 +86,14 @@ inactive keys that should be removed from the keystore.
 
 ## Other Stuff
        
-- Redis integrations are now able to support TLS options.
+- All Redis integrations are now able to support TLS options for encrypted connections and transports.
+- All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
 
 ## Library Upgrades
 
 - Spring Boot
+- Spring Data
+- Spring Security
+- Spring Cloud
+- Micrometer
 
