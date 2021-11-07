@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataCipherExecutor;
@@ -54,9 +55,12 @@ public class SamlIdPRedisIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataConnectionFactory")
-    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getSamlIdp().getMetadata().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataTemplate")

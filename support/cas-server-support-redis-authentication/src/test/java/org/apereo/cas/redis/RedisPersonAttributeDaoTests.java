@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -93,7 +94,7 @@ public class RedisPersonAttributeDaoTests {
     @BeforeEach
     public void initialize() {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis().get(0);
-        val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true);
+        val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true, CasSSLContext.disabled());
         val template = RedisObjectFactory.newRedisTemplate(conn);
         template.afterPropertiesSet();
         val attr = new HashMap<String, List<Object>>();

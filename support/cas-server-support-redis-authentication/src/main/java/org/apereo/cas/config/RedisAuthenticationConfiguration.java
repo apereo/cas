@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
@@ -54,9 +55,12 @@ public class RedisAuthenticationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisConnectionFactory redisAuthenticationConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisAuthenticationConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean(name = {"authenticationRedisTemplate", "redisTemplate"})
@@ -99,10 +103,13 @@ public class RedisAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public List<IPersonAttributeDao> redisPersonAttributeDaos(final CasConfigurationProperties casProperties) {
+    public List<IPersonAttributeDao> redisPersonAttributeDaos(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis();
         return redis.stream().filter(r -> StringUtils.isNotBlank(r.getHost())).map(r -> {
-            val conn = RedisObjectFactory.newRedisConnectionFactory(r, true);
+            val conn = RedisObjectFactory.newRedisConnectionFactory(r, true, casSslContext);
             val template = RedisObjectFactory.newRedisTemplate(conn);
             template.afterPropertiesSet();
             val cb = new RedisPersonAttributeDao(template);

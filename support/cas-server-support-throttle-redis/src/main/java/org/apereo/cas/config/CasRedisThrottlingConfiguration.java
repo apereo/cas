@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.web.support.RedisThrottledSubmissionHandlerInterceptorAdapter;
@@ -31,9 +32,12 @@ public class CasRedisThrottlingConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
-    public RedisConnectionFactory redisThrottleConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisThrottleConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean

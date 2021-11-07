@@ -72,6 +72,8 @@ keys to assist with integrations and caching concerns. There is also a revocatio
 inactive keys that should be removed from the keystore.
 
 ## Other Stuff
+       
+- Redis integrations are now able to support TLS options.
 
 ## Library Upgrades
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
@@ -33,9 +34,12 @@ public class RedisTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisConnectionFactory redisTicketConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisTicketConnectionFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext) {
         val redis = casProperties.getTicket().getRegistry().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.RedisConsentRepository;
@@ -35,10 +36,12 @@ public class CasConsentRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisConsentConnectionFactory")
-    public RedisConnectionFactory redisConsentConnectionFactory(final CasConfigurationProperties casProperties) {
-        val redis = casProperties.getConsent()
-            .getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+    public RedisConnectionFactory redisConsentConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
+        val redis = casProperties.getConsent().getRedis();
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean

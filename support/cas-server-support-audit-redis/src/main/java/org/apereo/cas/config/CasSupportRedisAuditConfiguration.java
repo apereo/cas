@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RedisAuditTrailManager;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 
@@ -38,9 +39,12 @@ public class CasSupportRedisAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
-    public RedisConnectionFactory redisAuditConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisAuditConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean
