@@ -90,6 +90,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     }
 
     bootRun {
+        mainClass.set(project.ext.mainClassName)
+        
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
