@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     SamlIdPRedisIdPMetadataConfiguration.class
 }, properties = {
