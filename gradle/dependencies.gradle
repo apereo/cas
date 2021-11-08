@@ -1981,7 +1981,9 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-core")
-
+                },
+                dependencies.create("org.apache.santuario:xmlsec:$xmlSecVersion") {
+                    exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
         pac4jcore               : [
@@ -3635,6 +3637,9 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                },
+                dependencies.create("org.apache.santuario:xmlsec:$xmlSecVersion") {
+                    exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),
