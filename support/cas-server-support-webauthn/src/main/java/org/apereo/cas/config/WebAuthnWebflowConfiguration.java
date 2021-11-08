@@ -166,8 +166,10 @@ public class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartAuthenticationAction(
             @Qualifier("webAuthnCredentialRepository")
-            final RegistrationStorage webAuthnCredentialRepository) {
-            return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository);
+            final RegistrationStorage webAuthnCredentialRepository,
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
+            return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository, webAuthnCsrfTokenRepository);
         }
 
         @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,8 +25,12 @@ import org.springframework.webflow.execution.RequestContext;
 public class WebAuthnStartAuthenticationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
     private final RegistrationStorage webAuthnCredentialRepository;
 
+    private final CsrfTokenRepository csrfTokenRepository;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+        WebAuthnActionHelper.addCsrfTokenToFlowScope(requestContext, csrfTokenRepository);
+
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal());
         LOGGER.trace("Checking registration record for [{}]", principal.getId());

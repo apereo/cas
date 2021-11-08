@@ -15,8 +15,6 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * This is {@link WebAuthnStartRegistrationAction}.
  *
@@ -56,16 +54,7 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
         }
         flowScope.put(FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID, webAuthn.getApplicationId());
 
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        request.setAttribute(HttpServletResponse.class.getName(), response);
-
-        var csrfToken = csrfTokenRepository.loadToken(request);
-        if (csrfToken == null) {
-            csrfToken = csrfTokenRepository.generateToken(request);
-            csrfTokenRepository.saveToken(csrfToken, request, response);
-        }
-        flowScope.put(csrfToken.getParameterName(), csrfToken);
+        WebAuthnActionHelper.addCsrfTokenToFlowScope(requestContext, csrfTokenRepository);
         return null;
     }
 }

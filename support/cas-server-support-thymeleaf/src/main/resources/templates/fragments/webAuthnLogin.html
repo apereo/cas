@@ -122,7 +122,11 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
+        <input type="hidden" id="registerCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
         <script type="text/javascript">
+            const csrfToken = $('#registerCsrfToken').val();
+
             let div = document.querySelector('#divDeviceInfo');
             new mdc.dataTable.MDCDataTable(div);
 
