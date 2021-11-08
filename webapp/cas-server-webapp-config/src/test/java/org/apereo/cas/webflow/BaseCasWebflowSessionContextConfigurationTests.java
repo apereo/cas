@@ -92,7 +92,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
@@ -128,7 +127,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    WebMvcAutoConfiguration.class,
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
