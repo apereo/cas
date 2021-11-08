@@ -172,7 +172,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         }
     }
 
-    @Configuration(value = "CasSimpleMultifactorAuthenticationTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasSimpleMultifactorAuthenticationTicketSerializationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationTicketSerializationConfiguration {
         @Bean
