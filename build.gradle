@@ -43,6 +43,8 @@ ext {
 
     publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").forUseAtConfigurationTime().present
 
+    disableNexus = providers.systemProperty("disableNexus").forUseAtConfigurationTime().present
+
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
 
@@ -77,22 +79,23 @@ def isArtifactSigningRequired = {
     return publishReleases && !skipArtifactSigning
 }
 
-apply plugin: "io.github.gradle-nexus.publish-plugin"
-nexusPublishing {
-    packageGroup = "org.apereo"
-    repositories {
-        sonatype {
-            stagingProfileId = "11d1ddbbdeae9d"
-            username = "${repositoryUsername}"
-            password = "${repositoryPassword}"
+if (!disableNexus) {
+    apply plugin: "io.github.gradle-nexus.publish-plugin"
+    nexusPublishing {
+        packageGroup = "org.apereo"
+        repositories {
+            sonatype {
+                stagingProfileId = "11d1ddbbdeae9d"
+                username = "${repositoryUsername}"
+                password = "${repositoryPassword}"
+            }
         }
-    }
-    
-    clientTimeout = java.time.Duration.ofSeconds(120)
-    connectTimeout = java.time.Duration.ofSeconds(120)
-    transitionCheckOptions {
-        maxRetries.set(60)
-        delayBetween.set(java.time.Duration.ofMillis(60000))
+        clientTimeout = java.time.Duration.ofSeconds(120)
+        connectTimeout = java.time.Duration.ofSeconds(120)
+        transitionCheckOptions {
+            maxRetries.set(60)
+            delayBetween.set(java.time.Duration.ofMillis(60000))
+        }
     }
 }
 
