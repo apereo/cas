@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketExpirationPolicyBuilder;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator;
 import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
@@ -14,7 +16,9 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -165,6 +169,29 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             return new DefaultCasSimpleMultifactorAuthenticationTicketFactory(
                 casSimpleMultifactorAuthenticationTicketExpirationPolicy,
                 casSimpleMultifactorAuthenticationUniqueTicketIdGenerator);
+        }
+    }
+
+    @Configuration(value = "CasSimpleMultifactorAuthenticationTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSimpleMultifactorAuthenticationTicketSerializationConfiguration {
+        @Bean
+        public TicketSerializationExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketSerializationExecutionPlanConfigurer() {
+            return plan -> {
+                plan.registerTicketSerializer(new CasSimpleMultifactorAuthenticationTicketStringSerializer());
+                plan.registerTicketSerializer(CasSimpleMultifactorAuthenticationTicket.class.getName(),
+                    new CasSimpleMultifactorAuthenticationTicketStringSerializer());
+            };
+        }
+
+        private static class CasSimpleMultifactorAuthenticationTicketStringSerializer
+            extends AbstractJacksonBackedStringSerializer<CasSimpleMultifactorAuthenticationTicketImpl> {
+            private static final long serialVersionUID = -2198623586274810263L;
+
+            @Override
+            public Class<CasSimpleMultifactorAuthenticationTicketImpl> getTypeToSerialize() {
+                return CasSimpleMultifactorAuthenticationTicketImpl.class;
+            }
         }
     }
 
