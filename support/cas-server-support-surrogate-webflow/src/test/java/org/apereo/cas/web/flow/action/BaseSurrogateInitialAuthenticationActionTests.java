@@ -50,7 +50,6 @@ import org.springframework.context.annotation.Lazy;
     BaseSurrogateInitialAuthenticationActionTests.TestAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     MailSenderAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -78,8 +77,9 @@ import org.springframework.context.annotation.Lazy;
     CasCookieConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = 
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    WebMvcAutoConfiguration.class
+}, properties =
     "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"
 )
 public class BaseSurrogateInitialAuthenticationActionTests {
