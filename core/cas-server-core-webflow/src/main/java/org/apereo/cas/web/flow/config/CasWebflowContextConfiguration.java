@@ -221,8 +221,8 @@ public class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "resourceUrlProviderExposingInterceptor")
         public ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor(
-                @Qualifier("mvcResourceUrlProvider") final ObjectProvider<ResourceUrlProvider> resourceUrlProvider) {
-            return new ResourceUrlProviderExposingInterceptor(resourceUrlProvider.getObject());
+                @Qualifier("mvcResourceUrlProvider") final ResourceUrlProvider resourceUrlProvider) {
+            return new ResourceUrlProviderExposingInterceptor(resourceUrlProvider);
         }
     }
 

@@ -138,6 +138,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.main.allow-bean-definition-overriding=true",
+        "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })

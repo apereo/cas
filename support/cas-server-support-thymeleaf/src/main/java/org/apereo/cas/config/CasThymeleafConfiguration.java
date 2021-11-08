@@ -199,7 +199,8 @@ public class CasThymeleafConfiguration {
         }
 
         @Bean
-        public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties, final ObjectProvider<ITemplateResolver> templateResolvers,
+        public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties,
+                                                   final ObjectProvider<ITemplateResolver> templateResolvers,
                                                    final ObjectProvider<IDialect> dialects) {
             val engine = new SpringTemplateEngine();
             engine.setEnableSpringELCompiler(thymeleafProperties.isEnableSpringElCompiler());
