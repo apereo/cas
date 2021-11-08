@@ -13,6 +13,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
@@ -29,7 +30,9 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    WebMvcAutoConfiguration.class,
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.audit.dynamo-db.endpoint=http://localhost:8000",
         "cas.audit.dynamo-db.drop-tables-on-startup=true",

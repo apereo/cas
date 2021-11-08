@@ -13,6 +13,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -28,7 +29,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class},
+    WebMvcAutoConfiguration.class,
+    CasCoreWebConfiguration.class
+},
     properties = {
         "cas.audit.redis.host=localhost",
         "cas.audit.redis.port=6379",
