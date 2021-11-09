@@ -49,7 +49,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -84,18 +83,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
     }
 
     @Configuration(value = "DelegatedAuthenticationWebflowErrorConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties({CasConfigurationProperties.class, ResourceProperties.class, WebProperties.class, WebMvcProperties.class})
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})
     public static class DelegatedAuthenticationWebflowErrorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ErrorViewResolver pac4jErrorViewResolver(
             final WebProperties webProperties,
-            final ResourceProperties resourceProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val resources = (WebProperties.Resources) (webProperties.getResources().hasBeenCustomized()
-                ? webProperties.getResources() : resourceProperties);
-            return new DelegatedAuthenticationErrorViewResolver(applicationContext, resources);
+            return new DelegatedAuthenticationErrorViewResolver(applicationContext, webProperties.getResources());
         }
     }
 

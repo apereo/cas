@@ -47,6 +47,7 @@ import org.jasig.cas.client.validation.AssertionImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -64,6 +65,7 @@ import java.util.List;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
     CasCoreRestConfiguration.class,
     CasRestTokensConfiguration.class,

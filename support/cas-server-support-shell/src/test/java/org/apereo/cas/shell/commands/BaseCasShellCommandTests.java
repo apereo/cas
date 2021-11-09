@@ -25,7 +25,10 @@ import org.springframework.shell.standard.StandardAPIAutoConfiguration;
     JLineShellAutoConfiguration.class,
     StandardAPIAutoConfiguration.class,
     CasCommandLineShellConfiguration.class
-}, properties = "spring.shell.interactive.enabled=false")
+}, properties = {
+    "spring.main.allow-circular-references=true",
+    "spring.shell.interactive.enabled=false"
+})
 @ComponentScan(basePackages = "org.apereo.cas.shell.commands")
 @EnableAutoConfiguration
 public abstract class BaseCasShellCommandTests {

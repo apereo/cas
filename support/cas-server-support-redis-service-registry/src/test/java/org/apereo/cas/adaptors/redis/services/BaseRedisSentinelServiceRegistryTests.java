@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @EnableScheduling
