@@ -6,12 +6,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurer;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -31,7 +29,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "coreWsSecurityIdentityProviderWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasCoreWebflowConfiguration.class)
 public class CoreWsSecurityIdentityProviderWebflowConfiguration {
 
     @Bean

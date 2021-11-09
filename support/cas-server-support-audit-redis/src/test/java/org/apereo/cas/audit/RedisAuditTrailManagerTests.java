@@ -29,7 +29,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasSupportRedisAuditConfiguration.class,
-    CasCoreUtilConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
