@@ -185,7 +185,11 @@ public class CasWebflowContextConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "resourceUrlProviderExposingInterceptor")
     public ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor() {
-        return new ResourceUrlProviderExposingInterceptor(resourceUrlProvider.getObject());
+        val provider = resourceUrlProvider.getIfAvailable();
+        if (provider != null) {
+            return new ResourceUrlProviderExposingInterceptor(provider);
+        }
+        return null;
     }
 
     @Lazy(false)
@@ -194,7 +198,13 @@ public class CasWebflowContextConfiguration {
         val handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
         handler.setFlowRegistry(logoutFlowRegistry());
-        val interceptors = new Object[]{localeChangeInterceptor(), resourceUrlProviderExposingInterceptor()};
+        val interceptor = resourceUrlProviderExposingInterceptor();
+        final Object[] interceptors;
+        if (interceptor != null) {
+            interceptors = new Object[]{localeChangeInterceptor(), interceptor};
+        } else {
+            interceptors = new Object[]{localeChangeInterceptor()};
+        }
         handler.setInterceptors(interceptors);
         return handler;
     }
@@ -308,7 +318,10 @@ public class CasWebflowContextConfiguration {
             plan.registerWebflowConfigurer(groovyWebflowConfigurer());
 
             plan.registerWebflowInterceptor(localeChangeInterceptor());
-            plan.registerWebflowInterceptor(resourceUrlProviderExposingInterceptor());
+            val interceptor = resourceUrlProviderExposingInterceptor();
+            if (interceptor != null) {
+                plan.registerWebflowInterceptor(interceptor);
+            }
             themeChangeInterceptor.ifAvailable(plan::registerWebflowInterceptor);
 
             authenticationThrottlingExecutionPlan.ifAvailable(
