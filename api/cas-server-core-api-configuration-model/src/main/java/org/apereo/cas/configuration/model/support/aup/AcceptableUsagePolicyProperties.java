@@ -33,13 +33,13 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private List<LdapAcceptableUsagePolicyProperties> ldap = new ArrayList<>();
 
     /**
-     * Control AUP via Redis.
+     * Control AUP via JDBC.
      */
     @NestedConfigurationProperty
     private JdbcAcceptableUsagePolicyProperties jdbc = new JdbcAcceptableUsagePolicyProperties();
 
     /**
-     * Control AUP via Redis.
+     * Control AUP via REST.
      */
     @NestedConfigurationProperty
     private RestAcceptableUsagePolicyProperties rest = new RestAcceptableUsagePolicyProperties();

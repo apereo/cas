@@ -68,7 +68,7 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeAOAuthRegisteredServiceToJson() {
+    public void verifySerializeOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");
@@ -84,5 +84,16 @@ public class OAuthRegisteredServiceTests {
         serializer.to(JSON_FILE, serviceWritten);
         val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);
+    }
+
+    @Test
+    public void verifyInitialization() {
+        val service = new OAuthRegisteredService();
+        assertEquals(service.newInstance().getClass(), service.getClass());
+        service.setSupportedGrantTypes(null);
+        service.setSupportedResponseTypes(null);
+        service.initialize();
+        assertNotNull(service.getSupportedGrantTypes());
+        assertNotNull(service.getSupportedResponseTypes());
     }
 }

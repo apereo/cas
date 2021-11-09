@@ -1,3 +1,3 @@
-FROM library/postgres:12.2
+FROM library/postgres:14.0
 
 COPY init_cas.sql /docker-entrypoint-initdb.d/

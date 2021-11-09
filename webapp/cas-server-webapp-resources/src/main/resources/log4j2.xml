@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
 All loggers are asynchronous because of log42.component.properties in cas-server-core-logging-api.
-Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector or override log42.component.properties to turn off async
+Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector
+or override log42.component.properties to turn off async
 -->
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="5" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
-        <Property name="cas.log.level">info</Property>
-        <Property name="spring.webflow.log.level">warn</Property>
+        
+        <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
+        <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-warn}</Property>
         <Property name="spring.security.log.level">info</Property>
         <Property name="spring.cloud.log.level">warn</Property>
-        <Property name="spring.web.log.level">warn</Property>
+        <Property name="spring.web.log.level">${main:\--logging.level.org.springframework.web:-warn}</Property>
         <Property name="spring.boot.log.level">warn</Property>
-        <Property name="ldap.log.level">warn</Property>
-        <Property name="pac4j.log.level">warn</Property>
-        <Property name="opensaml.log.level">warn</Property>
-        <Property name="hazelcast.log.level">warn</Property>
+        <Property name="ldap.log.level">${main:\--logging.level.org.ldaptive:-warn}</Property>
+        <Property name="pac4j.log.level">${main:\--logging.level.org.pac4j:-warn}</Property>
+        <Property name="opensaml.log.level">${main:\--logging.level.org.opensaml:-warn}</Property>
+        <Property name="hazelcast.log.level">${main:\--logging.level.com.hazelcast:-warn}</Property>
+        
         <Property name="log.console.stacktraces">false</Property>
         <Property name="log.file.stacktraces">false</Property>
         <!-- -Dlog.stacktraceappender=null to disable stacktrace log -->

@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
@@ -67,15 +68,16 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             .forEach(metadataResolvers::addAll);
 
         if (metadataResolvers.isEmpty()) {
+            val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
-                + " with metadata location " + service.getMetadataLocation());
+                + " with metadata location " + metadataLocation);
         }
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", size);
+        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", metadataResolvers.size());
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 
-        LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolver);
+        LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolvers);
         return metadataResolver;
 
     }

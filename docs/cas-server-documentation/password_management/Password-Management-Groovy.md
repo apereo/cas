@@ -43,6 +43,12 @@ def getSecurityQuestions(Object[] args) {
     def logger = args[1]
     return [securityQuestion1: "securityAnswer1"]
 }
+
+def updateSecurityQuestions(Object[] args) {
+    def query = args[0] as PasswordManagementQuery
+    def logger = args[1]
+    // Execute update...
+}
 ```
 
-{% include casproperties.html properties="cas.authn.pm.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.pm.groovy" %}

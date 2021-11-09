@@ -1,4 +1,3 @@
-
 package org.apereo.cas;
 
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurerTests;
@@ -15,13 +14,11 @@ import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsActionEm
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsActionTests;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTests;
 import org.apereo.cas.pm.web.flow.actions.ValidatePasswordResetTokenActionTests;
-import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionSecurityQuestionsDisabledTests;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionTests;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -40,7 +37,6 @@ import org.junit.runner.RunWith;
     ForgotUsernameCaptchaWebflowConfigurerTests.class,
     ValidatePasswordResetTokenActionTests.class,
     SendForgotUsernameInstructionsActionEmailMessageBodyTests.class,
-    VerifyPasswordResetRequestActionSecurityQuestionsDisabledTests.class,
     PasswordManagementCaptchaWebflowConfigurerTests.class,
     PasswordManagementSingleSignOnParticipationStrategyTests.class,
     PasswordManagementWebflowConfigurerEnabledTests.class,
@@ -48,6 +44,6 @@ import org.junit.runner.RunWith;
     VerifyPasswordResetRequestActionTests.class,
     HandlePasswordExpirationWarningMessagesActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -51,7 +51,6 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     private void convertToSurrogateCredential(final RequestContext context, final UsernamePasswordCredential up) {
-        val sc = new SurrogateUsernamePasswordCredential();
 
         val tUsername = up.getUsername();
         val surrogateUsername = tUsername.substring(0, tUsername.indexOf(this.separator));
@@ -60,20 +59,21 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
 
         if (StringUtils.isBlank(surrogateUsername)) {
             up.setUsername(realUsername);
-            WebUtils.putRequestSurrogateAuthentication(context, Boolean.TRUE);
+            WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
             WebUtils.putCredential(context, up);
 
             LOGGER.debug("No surrogate username is defined; Signal webflow to request for surrogate credentials");
             return;
         }
 
+        val sc = new SurrogateUsernamePasswordCredential();
         sc.setUsername(realUsername);
         sc.setSurrogateUsername(surrogateUsername);
         sc.setPassword(up.getPassword());
         if (up instanceof RememberMeCredential) {
             sc.setRememberMe(((RememberMeCredential) up).isRememberMe());
         }
-        WebUtils.putRequestSurrogateAuthentication(context, Boolean.FALSE);
+        WebUtils.putSurrogateAuthenticationRequest(context, Boolean.FALSE);
         LOGGER.debug("Converted credential to surrogate for username [{}] and assigned it to webflow", realUsername);
         WebUtils.putCredential(context, sc);
     }

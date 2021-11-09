@@ -39,7 +39,6 @@ public class HardTimeoutExpirationPolicyTests {
     @BeforeEach
     public void initialize() {
         this.expirationPolicy = new HardTimeoutExpirationPolicy(TIMEOUT);
-
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
                 .getAuthentication(), this.expirationPolicy);
     }
@@ -59,6 +58,7 @@ public class HardTimeoutExpirationPolicyTests {
     public void verifyTicketIsExpired() {
         this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).plusNanos(1), ZoneOffset.UTC));
         assertTrue(this.ticket.isExpired());
+        assertEquals(0, this.expirationPolicy.getTimeToIdle());
     }
 
     @Test

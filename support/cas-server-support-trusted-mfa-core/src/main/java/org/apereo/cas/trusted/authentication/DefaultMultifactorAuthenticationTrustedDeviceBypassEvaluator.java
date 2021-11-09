@@ -31,7 +31,6 @@ public class DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator implem
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();

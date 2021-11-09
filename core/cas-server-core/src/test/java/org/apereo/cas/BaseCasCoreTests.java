@@ -40,6 +40,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -47,7 +48,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -56,8 +56,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @since 6.0.0
  */
 @SpringBootTest(classes = BaseCasCoreTests.SharedTestConfiguration.class)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
+@EnableAspectJAutoProxy
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasCoreTests {
@@ -87,6 +86,7 @@ public abstract class BaseCasCoreTests {
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -94,7 +94,6 @@ public abstract class BaseCasCoreTests {
         CasCookieConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,

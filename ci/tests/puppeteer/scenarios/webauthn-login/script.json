@@ -1,13 +1,21 @@
 {
   "dependencies": "webauthn",
   "properties": [
-    "--cas.authn.mfa.web-authn.allowed-origins=https://localhost:8443",
-    "--cas.authn.mfa.web-authn.application-id=https://localhost:8443",
-    "--cas.authn.mfa.web-authn.relying-party-name=CAS WebAuthn Demo",
-    "--cas.authn.mfa.web-authn.relying-party-id=cas.example.org",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+    "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.web-authn.crypto.enabled=false",
-    "--cas.authn.mfa.web-authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/webauthn-login/accounts.json"
+    "--cas.authn.mfa.web-authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=health,webAuthnDevices",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
   ]
 }

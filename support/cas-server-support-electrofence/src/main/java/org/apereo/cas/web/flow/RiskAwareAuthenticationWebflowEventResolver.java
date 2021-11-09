@@ -68,14 +68,14 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request, final Authentication authentication,
         final RegisteredService service) {
 
-        val applicationContext = getWebflowEventResolutionConfigurationContext().getApplicationContext();
+        val applicationContext = getConfigurationContext().getApplicationContext();
         applicationContext
             .publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
 
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
-        val threshold = getWebflowEventResolutionConfigurationContext()
+        val threshold = getConfigurationContext()
             .getCasProperties().getAuthn().getAdaptive().getRisk().getThreshold();
         if (score.isRiskGreaterThan(threshold)) {
             applicationContext

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 
@@ -50,14 +51,13 @@ public class Beans {
      * @param p the properties
      * @return the person attribute dao
      */
-    @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         val dao = new NamedStubPersonAttributeDao();
-        val pdirMap = new LinkedHashMap<String, List<Object>>();
+        val backingMap = new LinkedHashMap<String, List<Object>>();
         val stub = p.getStub();
         stub.getAttributes().forEach((key, value) -> {
             val vals = StringUtils.commaDelimitedListToStringArray(value);
-            pdirMap.put(key, Arrays.stream(vals)
+            backingMap.put(key, Arrays.stream(vals)
                 .map(v -> {
                     val bool = BooleanUtils.toBooleanObject(v);
                     if (bool != null) {
@@ -67,8 +67,10 @@ public class Beans {
                 })
                 .collect(Collectors.toList()));
         });
-        dao.setBackingMap(pdirMap);
+        dao.setBackingMap(backingMap);
         dao.setOrder(stub.getOrder());
+        dao.setEnabled(stub.getState() != AttributeRepositoryStates.DISABLED);
+        dao.putTag("state", stub.getState() == AttributeRepositoryStates.ACTIVE);
         if (StringUtils.hasText(stub.getId())) {
             dao.setId(stub.getId());
         }

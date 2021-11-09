@@ -14,7 +14,7 @@ flexibility of producing SP metadata using any programming language or framework
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-rest" %}
 
 Use the below snippet as an example to fetch metadata from REST endpoints:
 
@@ -46,7 +46,7 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
 
 ## Identity Provider Metadata
 

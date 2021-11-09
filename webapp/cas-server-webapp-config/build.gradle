@@ -1,13 +1,16 @@
 description = "Apereo CAS Web Application Configuration"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
-
+    api project(":api:cas-server-core-api-audit")
+    
     implementation libraries.pac4jcore
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     implementation libraries.ldaptive
     
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -41,10 +44,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow-api")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

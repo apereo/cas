@@ -8,13 +8,54 @@ category: Developer
 
 # Test Process
 
-This page documents the steps that a CAS developer/contributor should take for testing a CAS server deployment during development. For additional
+This page documents the steps that a CAS developer/contributor should take for testing a CAS 
+server deployment during development. For additional
 instructions and guidance on the general build process, please [see this page](Build-Process.html).
 
 <div class="alert alert-info"><strong>Contributions</strong><p>Patches submitted to the CAS codebase 
 in form of pull requests must pass all automated unit or integration tests, and/or 
 provide adequate unit or integration tests for the proposed changes. In the absence of appropriate test cases,
 the contribution most likely will not be accepted into the codebase and ultimately may be closed.</p></div>
+
+## Test Cases
+
+The following types of test cases in the project are those that CAS developers/contributors need to review,
+
+<div class="alert alert-info mt-3"><strong>Remember</strong><p>
+If you are about to describe a problem, please try to put together a test case that concretely demonstrates
+the issue in an automated fashion in an environment that is fairly 
+isolated, <strong>WITHOUT</strong> manual instructions and guidance 
+as much as possible. Descriptive instructions and language
+to explain what one must manually do (i.e. go here, click there, wait 3 seconds, etc) in order 
+to reproduce an issue or environment are not as effective or
+acceptable as evidence of an issue, and may require a significant time and research investment to ultimately
+get to a root cause. Save yourself and everyone else time and headache,
+and put together automated, repeatable, verifiable <i>reproducers</i>.
+</p></div>
+
+### Unit Tests
+
+Unit tests are composed of small pieces of work or functionality that generally can be tested in isolation. They 
+are created as Java test classes, and individual test scenarios are typically annotated 
+with the `@Test` annotation and then executed by the test framework. 
+
+For example, a `src/main/java/Extractor.java` type of component would have 
+its test cases inside a `src/test/java/ExtractorTests.java` test class.
+
+In some scenarios unit tests also run a series of tests against databases, external systems or APIs to verify functionality
+and correctness of integration. For example, a `MongoDbTicketRegistry` type of component would 
+require a MongoDb running instance and special markup
+and annotations to run tests when that external instance is up 
+and running. Structurally speaking, such tests are
+almost identical to plain vanilla unit tests and may only contain additional 
+decorations and annotations,depending on the test system.
+
+### Functional Tests
+            
+Functional tests are categories of tests that verify combinations of scenarios and behaviors from the perspective
+of an end-user. Such tests typically are composed of an execution script and scenario, and may involve a headless browser
+to run through a scenario, verify data elements on the screen, etc. This category of tests is usually very effective
+at reproducing scenarios related to an issue or possible defect, and can be very helpful in troubleshooting and issue diagnosis.
 
 ## Testing Modules
 
@@ -26,22 +67,10 @@ To test the functionality provided by a given CAS module, execute the following 
 implementation project(":support:cas-server-support-modulename")
 ```
 
-- Alternatively, set a `casModules` property in the root project's `gradle.properties` or `~/.gradle/gradle.properties` to a 
-comma separated list of modules without the `cas-server-` prefix:
-
-For example:
-
-```properties
-casModules=monitor,\
-    ldap,\
-    x509,\
-    bootadmin-client
-```
-
-Or set the property on the command-line:
+Alternatively, pass the required modules automatically: 
 
 ```bash
-bc -PcasModules=ldap,x509
+bc ldap,x509
 ```
 
 ...where `bc` is an [alias for building CAS](Build-Process.html#sample-build-aliases).
@@ -89,19 +118,26 @@ Automated browser testing is done via the [Puppeteer framework](https://pptr.dev
 API to control Chrome or Chromium over the DevTools Protocol and runs headless by default.
 
 Functional tests start by generating a plain CAS overlay as a baseline that is able to run under HTTPS using a pre-generated keystore.
-This overlay is supplied the test scenario configuration that explain the required modules, properties, etc to use when CAS is deployed
+This overlay is supplied the test scenario configuration that explains the required modules, properties, etc to use when CAS is deployed
 inside an embedded Apache Tomcat container. Once running, the Puppeteer script is executed by Node for the given test scenario to verify
 specific functionality such as successful logins, generation of tickets, etc.
 
-All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). If you 
-are adding a new batch of tests, make sure the scenario (i.e. test) name is included in the CI configuration.
+All functional and browser tests are executed by the [continuous integration system](Test-Process.html#continuous-integration). 
+  
+To install Puppeteer once:
+
+```bash
+npm i -g puppeteer
+```
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
 ```bash
 function pupcas() {
+  cd /path/to/cas
   scenario=$1
-  /path/to/cas/ci/tests/puppeteer/run.sh /path/to/cas/ci/tests/puppeteer/scenarios/"${scenario}"
+  shift 1
+  ./ci/tests/puppeteer/run.sh --scenario ./ci/tests/puppeteer/scenarios/"$scenario" $@
 }
 ```
 
@@ -110,8 +146,25 @@ function pupcas() {
 ```bash
 pupcas <scenario-name>
 ```
- 
-To successfully run tests, you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+                                 
+To see the list of available test scenarios:
+
+```bash
+./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
+```
+
+Remote debugging is available on port `5000`. To successfully run tests, 
+you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+
+### MacOS Firewall Popup
+                      
+To allow the firewall to accept incoming network connections for Chromium on MacOS, 
+you may apply the following command:
+
+```bash
+chromium="/path/to/cas/ci/tests/puppeteer/node_modules/puppeteer/.local-chromium"
+sudo codesign --force --deep --sign - "${chromium}/mac-*/chrome-mac/Chromium.app"
+```
 
 ## Continuous Integration
 

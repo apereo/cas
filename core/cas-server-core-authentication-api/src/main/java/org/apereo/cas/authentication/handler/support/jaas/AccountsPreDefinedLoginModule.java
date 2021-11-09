@@ -30,8 +30,6 @@ import java.util.Map;
  */
 @Slf4j
 public class AccountsPreDefinedLoginModule implements LoginModule {
-    private static final int MAP_SIZE = 8;
-
     private Subject subject;
 
     private CallbackHandler callbackHandler;
@@ -45,7 +43,7 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
                            final Map<String, ?> sharedState, final Map<String, ?> options) {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
-        this.accounts = new LinkedHashMap<>(MAP_SIZE);
+        this.accounts = new LinkedHashMap<>();
 
         val providedAccounts = options.containsKey("accounts") ? options.get("accounts").toString() : null;
         if (StringUtils.isNotBlank(providedAccounts)) {

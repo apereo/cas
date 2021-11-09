@@ -3,11 +3,11 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryGroovyConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJdbcConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryJsonConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryLdapConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryRestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryScriptedConfiguration;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -33,10 +33,10 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasPersonDirectoryConfiguration.class,
         CasPersonDirectoryJdbcConfiguration.class,
         CasPersonDirectoryLdapConfiguration.class,
-        CasPersonDirectoryGrouperConfiguration.class,
         CasPersonDirectoryGroovyConfiguration.class,
         CasPersonDirectoryRestConfiguration.class,
         CasPersonDirectoryJsonConfiguration.class,
+        CasPersonDirectoryScriptedConfiguration.class,
         CasCoreUtilConfiguration.class
     })
     public static class SharedTestConfiguration {

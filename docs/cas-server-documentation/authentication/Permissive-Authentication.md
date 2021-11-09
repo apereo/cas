@@ -15,9 +15,9 @@ stored directly in the configuration and those that accept a set of credentials 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-generic" %}
 
-{% include casproperties.html properties="cas.authn.file" %}
+{% include_cached casproperties.html properties="cas.authn.file" %}
 
 ## Example Password File
 
@@ -44,13 +44,14 @@ specify additional account details mostly useful for development and basic testi
       "lastName" : [ "java.util.List", ["CAS"]]
     },
     "status" : "OK",
-    "expirationDate" : "2050-01-01"
+    "expirationDate" : "2050-01-01",
+    "warnings" : [ "java.util.ArrayList", [ "warning.message.code1" ] ]
   }
 }
 ```
 
 The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`.
 
-{% include {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
+{% include_cached {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
 
-{% include casproperties.html properties="cas.authn.json"  %}
+{% include_cached casproperties.html properties="cas.authn.json"  %}

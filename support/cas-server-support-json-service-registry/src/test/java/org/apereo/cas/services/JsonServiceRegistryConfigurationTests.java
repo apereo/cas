@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.JsonServiceRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
@@ -25,9 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesConfiguration.class,
-    JsonServiceRegistryConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    JsonServiceRegistryConfiguration.class
 },
 properties = "cas.service-registry.json.location=classpath:/services")
 @Tag("FileSystem")

@@ -145,7 +145,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return false;
     }
 
-    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource, final SamlRegisteredService service) {
+    private void cleanUpExpiredBackupMetadataFilesFor(final AbstractResource metadataResource,
+                                                      final SamlRegisteredService service) {
         val prefix = getBackupMetadataFilenamePrefix(metadataResource, service);
         val backups = FileUtils.listFiles(this.metadataBackupDirectory,
             new AndFileFilter(CollectionUtils.wrapList(new PrefixFileFilter(prefix, IOCase.INSENSITIVE),
@@ -197,7 +198,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      */
     protected HttpResponse fetchMetadata(final SamlRegisteredService service,
                                          final String metadataLocation,
-                                         final CriteriaSet criteriaSet, final File backupFile) {
+                                         final CriteriaSet criteriaSet,
+                                         final File backupFile) {
         LOGGER.debug("Fetching metadata from [{}]", metadataLocation);
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
@@ -251,7 +253,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * @param service          the service
      * @return the backup metadata filename prefix
      */
-    @SneakyThrows
     protected String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final SamlRegisteredService service) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
         val fileName = SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation)

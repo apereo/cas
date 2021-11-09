@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 
 import org.springframework.core.Ordered;
 
@@ -20,6 +21,30 @@ public interface AuthenticationHandler extends Ordered {
      * Attribute name containing collection of handler names that successfully authenticated credential.
      */
     String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";
+
+    /**
+     * Disabled authentication handler.
+     *
+     * @return the authentication handler
+     */
+    static AuthenticationHandler disabled() {
+        return new AuthenticationHandler() {
+            @Override
+            public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws PreventedException {
+                throw new PreventedException("Authentication handler is disabled");
+            }
+
+            @Override
+            public boolean supports(final Credential credential) {
+                return false;
+            }
+
+            @Override
+            public boolean supports(final Class<? extends Credential> clazz) {
+                return false;
+            }
+        };
+    }
 
     /**
      * Authenticates the given credential. There are three possible outcomes of this process, and implementers
@@ -77,7 +102,7 @@ public interface AuthenticationHandler extends Ordered {
     default boolean supports(final Class<? extends Credential> clazz) {
         return false;
     }
-    
+
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
      * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
@@ -95,26 +120,12 @@ public interface AuthenticationHandler extends Ordered {
     }
 
     /**
-     * Disabled authentication handler.
+     * Define the state of the authentication handler.
      *
-     * @return the authentication handler
+     * @return the state
      */
-    static AuthenticationHandler disabled() {
-        return new AuthenticationHandler() {
-            @Override
-            public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws PreventedException {
-                throw new PreventedException("Authentication handler is disabled");
-            }
-
-            @Override
-            public boolean supports(final Credential credential) {
-                return false;
-            }
-
-            @Override
-            public boolean supports(final Class<? extends Credential> clazz) {
-                return false;
-            }
-        };
+    default AuthenticationHandlerStates getState() {
+        return AuthenticationHandlerStates.ACTIVE;
     }
+
 }

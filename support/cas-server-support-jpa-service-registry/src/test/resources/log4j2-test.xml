@@ -6,7 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false" />
+        <Logger name="org.apereo" level="off" />
+        <Logger name="org.hibernate.stat" level="debug" />
+        <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="info" />
+        <Logger name="org.hibernate" level="info" />
+        <Logger name="org.hibernate.SQL_SLOW" level="info" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

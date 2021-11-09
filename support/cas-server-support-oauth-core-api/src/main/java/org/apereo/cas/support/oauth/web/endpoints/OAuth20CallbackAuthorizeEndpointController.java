@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
-public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller {
+public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
 
     public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -43,13 +43,13 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val callback = new OAuth20CallbackLogic();
         val context = new JEEContext(request, response);
-        callback.perform(context, getOAuthConfigurationContext().getSessionStore(),
-            getOAuthConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
+        callback.perform(context, getConfigurationContext().getSessionStore(),
+            getConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
             context.getFullRequestURL(), Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
         val url = callback.getRedirectUrl();
-        val manager = new ProfileManager(context, getOAuthConfigurationContext().getSessionStore());
+        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
         LOGGER.trace("OAuth callback URL is [{}]", url);
-        return getOAuthConfigurationContext().getCallbackAuthorizeViewResolver().resolve(context, manager, url);
+        return getConfigurationContext().getCallbackAuthorizeViewResolver().resolve(context, manager, url);
     }
 
     @Getter
@@ -58,7 +58,8 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
 
         @Override
         protected HttpAction redirectToOriginallyRequestedUrl(final WebContext context,
-                                                              final SessionStore sessionStore, final String defaultUrl) {
+                                                              final SessionStore sessionStore,
+                                                              final String defaultUrl) {
             val result = getSavedRequestHandler().restore(context, sessionStore, defaultUrl);
             if (result instanceof WithLocationAction) {
                 redirectUrl = WithLocationAction.class.cast(result).getLocation();

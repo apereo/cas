@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.web.Bucket4jBlockingThrottledRequestExecutorTests;
 import org.apereo.cas.web.Bucket4jThrottledRequestExecutorTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     Bucket4jThrottledRequestExecutorTests.class,
     Bucket4jBlockingThrottledRequestExecutorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

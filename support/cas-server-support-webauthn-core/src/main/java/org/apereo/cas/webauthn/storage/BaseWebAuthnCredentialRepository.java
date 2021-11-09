@@ -21,10 +21,10 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link BaseWebAuthnCredentialRepository}.
@@ -57,7 +57,7 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUserHandle(final ByteArray handle) {
-        return load()
+        return stream()
             .filter(credentialRegistration -> handle.equals(credentialRegistration.getUserIdentity().getId()))
             .collect(Collectors.toList());
     }
@@ -113,7 +113,8 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Optional<RegisteredCredential> lookup(final ByteArray credentialId, final ByteArray userHandle) {
-        val registration = load()
+        val registration = stream()
+            .filter(Objects::nonNull)
             .filter(credReg -> credentialId.equals(credReg.getCredential().getCredentialId()))
             .findAny();
 
@@ -127,7 +128,8 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public Set<RegisteredCredential> lookupAll(final ByteArray credentialId) {
-        return load()
+        return stream()
+            .filter(Objects::nonNull)
             .filter(reg -> reg.getCredential().getCredentialId().equals(credentialId))
             .map(reg -> RegisteredCredential.builder()
                 .credentialId(reg.getCredential().getCredentialId())
@@ -141,14 +143,15 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
     @Override
     public void clean() {
         try {
-            val webAuthn = properties.getAuthn().getMfa().getWebAuthn();
+            val webAuthn = properties.getAuthn().getMfa().getWebAuthn().getCore();
             val expirationDate = LocalDate.now(ZoneOffset.UTC)
                 .minus(webAuthn.getExpireDevices(), DateTimeUtils.toChronoUnit(webAuthn.getExpireDevicesTimeUnit()));
             LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
 
             val expInstant = expirationDate.atStartOfDay(ZoneOffset.UTC).toInstant();
-            val removingDevices = load()
-                .filter(d -> d.getRegistrationTime().isBefore(expInstant))
+            val removingDevices = stream()
+                .filter(Objects::nonNull)
+                .filter(d -> d.getRegistrationTime() != null && d.getRegistrationTime().isBefore(expInstant))
                 .collect(Collectors.toList());
             if (!removingDevices.isEmpty()) {
                 LOGGER.debug("There are [{}] expired device(s) remaining in repository. Cleaning...", removingDevices.size());
@@ -158,13 +161,6 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
             LoggingUtils.error(LOGGER, e);
         }
     }
-
-    /**
-     * Load records as stream.
-     *
-     * @return the stream
-     */
-    protected abstract Stream<CredentialRegistration> load();
 
     /**
      * Update records by user.

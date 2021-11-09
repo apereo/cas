@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -67,16 +68,28 @@ public class ServiceTicketResource {
      * @param tgtId              ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}",
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
+        },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
+        })
     public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
                                                       @RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
-            val authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
+            val authn = this.ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
             val service = this.argumentExtractor.extractService(httpServletRequest);
             if (service == null) {
                 throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
@@ -87,7 +100,7 @@ public class ServiceTicketResource {
                     throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
                 }
                 val authenticationResult =
-                    authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                    authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
 
                 return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
@@ -98,15 +111,15 @@ public class ServiceTicketResource {
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
 
         } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, httpServletRequest, applicationContext);
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             AuthenticationCredentialsThreadLocalBinder.clear();
         }

@@ -21,14 +21,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Hazelcast")
 public class HazelcastConfigurationFactoryTests {
     @Test
+    public void verifyReplicationMaps() {
+        val hz = new BaseHazelcastProperties();
+        hz.getCluster().getCore().setReplicated(true);
+        hz.getCluster().getCore().setPartitionMemberGroupType("ZONE_AWARE");
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
+        assertNotNull(mapConfig);
+        assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
+    }
+
+    @Test
     public void verifyMergePolicy() {
         val policies = new String[]{"discard", "pass_through", "expiration_time", "higher_hits",
             "latest_update", "latest_access", "put_if_absent", "other"};
         Arrays.stream(policies).forEach(policy -> {
             val hz = new BaseHazelcastProperties();
             hz.getCluster().getCore().setMapMergePolicy(policy);
-            val result = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
-            assertNotNull(result);
+            val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
+            assertNotNull(mapConfig);
+            assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
         });
     }
 

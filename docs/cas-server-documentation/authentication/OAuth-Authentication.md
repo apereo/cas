@@ -14,21 +14,19 @@ Allow CAS to act as an OAuth authentication provider. Please [review the specifi
 OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+   
 The following endpoints are provided by CAS:
 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `oauthTokens`            | Manage and control [OAuth2 access tokens](OAuth-Authentication.html). A `GET` operation produces a list of all access/refresh tokens. A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`). A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched access/refresh token.
+{% include_cached actuators.html endpoints="oauthTokens" %}
 
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-webflow" %}
 
-{% include casproperties.html properties="cas.authn.oauth,cas.client." %}
+{% include_cached casproperties.html properties="cas.authn.oauth" excludes=".uma" %}
 
 ## Endpoints
 
@@ -182,14 +180,9 @@ also the option to generate JWTs as access tokens on a per-service basis:
 }
 ```
 
-The following cipher strategy types are available:
-
-| Type                | Description
-|---------------------|---------------------------------------------------
-| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign.
-| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
-
 Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+
+{% include_cached registeredserviceproperties.html groups="JWT_ACCESS_TOKENS" %}
 
 ## OAuth User Profile Structure
 
@@ -206,7 +199,7 @@ endpoints that are supported for throttling.
 
 ## CSRF Cookie Configuration
 
-{% include casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.csrf-cookie" %}
 
 ## Server Configuration
 
@@ -217,8 +210,8 @@ environment and load balancers accordingly.
 
 ## Session Replication
 
-{% include casproperties.html properties="cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.session-replication" %}
 
 ## Sample Client Applications
 
-- [OAuth2 Sample Webapp](https://github.com/cas-projects/oauth2-sample-java-webapp)
+- [OAuth2 Sample Webapp](https://github.com/apereo/oauth2-sample-java-webapp)

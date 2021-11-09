@@ -6,6 +6,8 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-services")
+
+    implementation libraries.hibernate
     
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services")
@@ -30,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication-attributes")
 

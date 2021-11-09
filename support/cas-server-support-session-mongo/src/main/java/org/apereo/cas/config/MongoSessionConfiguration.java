@@ -2,6 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +20,9 @@ import java.time.Duration;
  * @since 5.0.0
  */
 @Configuration(value = "mongoSessionConfiguration", proxyBeanMethods = false)
-@EnableMongoHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ImportAutoConfiguration({MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@EnableMongoHttpSession
 public class MongoSessionConfiguration {
     private static final int DURATION_MINUTES = 15;
 

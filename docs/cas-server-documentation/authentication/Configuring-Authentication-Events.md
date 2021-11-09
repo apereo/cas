@@ -20,11 +20,11 @@ audit data is targeted at deployers for end-user functionality and reporting.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-events" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html properties="cas.events.core." %}
+{% include_cached casproperties.html properties="cas.events.core." %}
 
 ## Recorded Data
 
@@ -50,13 +50,11 @@ the browser to ask for user's consent.  Should consent not be granted or geoloca
 not supported by the browser, CAS will ignore the geolocation data when it attempts to
 record the event. To learn more, please [review this guide](GeoTracking-Authentication-Requests.html).
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `events`                 | Provides a JSON representation of all CAS recorded events.
+
+{% include_cached actuators.html endpoints="events" %}
   
 ## Storage
 

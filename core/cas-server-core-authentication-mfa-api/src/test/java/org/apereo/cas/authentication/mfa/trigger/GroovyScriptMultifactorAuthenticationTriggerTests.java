@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-@DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
@@ -71,7 +69,7 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         assertFalse(result.isPresent());
 
         result = trigger.isActivated(authentication, null, this.httpRequest, mock(Service.class));
-        assertFalse(result.isPresent());
+        assertTrue(result.isPresent());
 
         result = trigger.isActivated(authentication, registeredService, this.httpRequest, null);
         assertFalse(result.isPresent());

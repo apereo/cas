@@ -1,6 +1,8 @@
 package org.apereo.cas.discovery;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -13,7 +15,6 @@ import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -39,9 +40,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final CasConfigurationProperties casProperties;
+
     private final Clients clients;
 
     private final Set<String> availableAttributes;
+
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private ApplicationContext applicationContext;
 
@@ -59,16 +63,33 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     }
 
     private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
-                                                     final Class parentType, final Predicate filter, final String packageNamespace) {
+                                                     final Class parentType, final Predicate filter,
+                                                     final String packageNamespace) {
         val reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(ClasspathHelper.forPackage(packageNamespace))
-            .setScanners(new SubTypesScanner(false)));
+            .setUrls(ClasspathHelper.forPackage(packageNamespace)));
+
         val subTypes = (Set<Class<?>>) reflections.getSubTypesOf(parentType);
         return subTypes.stream()
             .filter(c -> !Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers()) && filter.test(c))
             .map(mapper)
             .filter(Objects::nonNull)
             .collect(collector);
+    }
+
+    /**
+     * Gets profile.
+     *
+     * @return the profile
+     */
+    public CasServerProfile getProfile() {
+        val profile = new CasServerProfile();
+        profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
+        profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
+        profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
+        profile.setAvailableAttributes(this.availableAttributes);
+        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
+        profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
+        return profile;
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
@@ -86,18 +107,10 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
     }
 
-    /**
-     * Gets profile.
-     *
-     * @return the profile
-     */
-    public CasServerProfile getProfile() {
-        val profile = new CasServerProfile();
-        profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
-        profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
-        profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
-        profile.setAvailableAttributes(this.availableAttributes);
-        profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
-        return profile;
+    private Set<String> locateAvailableAuthenticationHandlers() {
+        return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
+            .stream()
+            .map(AuthenticationHandler::getName)
+            .collect(Collectors.toSet());
     }
 }

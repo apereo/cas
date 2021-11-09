@@ -170,9 +170,12 @@ public class LdapTestUtils {
             val modify = new ModifyOperation(connectionFactory);
             val request = new ModifyRequest(dn, new AttributeModification(add, attr));
             LOGGER.debug("Executing modification request [{}] with type [{}] for [{}]", request, add, dn);
-            modify.execute(request);
+            val result = modify.execute(request);
+            if (!result.isSuccess()) {
+                LOGGER.warn("Result [{}]:[{}]", result.getResultCode(), result.getDiagnosticMessage());
+            }
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.info(e.getMessage(), e);
         } finally {
             connectionFactory.close();
         }
@@ -201,6 +204,19 @@ public class LdapTestUtils {
      */
     public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn,
                                        final LdapAttribute attr) {
-        modifyLdapEntry(serverCon, dn.getDn(), attr, AttributeModification.Type.ADD, null);
+        modifyLdapEntry(serverCon, dn.getDn(), attr, null);
+    }
+
+    /**
+     * Modify ldap entry.
+     *
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     */
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
+                                       final LdapAttribute attr,
+                                       final BindConnectionInitializer connInit) {
+        modifyLdapEntry(serverCon, dn, attr, AttributeModification.Type.ADD, connInit);
     }
 }

@@ -16,9 +16,9 @@ import java.util.List;
  * Generic class that applies a list of {@link BaseMultifactorAuthenticationProviderProperties} to a provided
  * {@link MultifactorAuthenticationProviderFactoryBean} to create instances of {@link MultifactorAuthenticationProvider}.
  *
+ * @author Travis Schmidt
  * @param <T> - Type of {@link MultifactorAuthenticationProvider}
  * @param <P> - Type of {@link BaseMultifactorAuthenticationProviderProperties}
- * @author Travis Schmidt
  * @since 6.0
  */
 @RequiredArgsConstructor

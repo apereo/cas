@@ -33,6 +33,6 @@ public class StringCipherExecutorTests {
         assertNotNull(cipher.getEncryptionKeySetting());
         assertNotNull(cipher.getSigningKeySetting());
         assertNotNull(cipher.getSigningKey());
-        assertNotNull(cipher.getSecretKeyEncryptionKey());
+        assertNotNull(cipher.getEncryptionKey());
     }
 }

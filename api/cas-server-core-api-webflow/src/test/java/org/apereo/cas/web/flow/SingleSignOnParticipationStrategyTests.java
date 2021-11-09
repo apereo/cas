@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +27,11 @@ public class SingleSignOnParticipationStrategyTests {
         when(input.getOrder()).thenCallRealMethod();
         when(input.isCreateCookieOnRenewedAuthentication(any())).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
-        assertEquals(TriStateBoolean.UNDEFINED, input.isCreateCookieOnRenewedAuthentication(new MockRequestContext()));
-    }
 
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(new MockHttpServletRequest())
+            .requestContext(new MockRequestContext())
+            .build();
+        assertEquals(TriStateBoolean.UNDEFINED, input.isCreateCookieOnRenewedAuthentication(ssoRequest));
+    }
 }

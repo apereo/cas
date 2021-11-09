@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ChainingServiceRegistry;
+import org.apereo.cas.services.DefaultServiceRegistryInitializer;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -15,14 +16,15 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -33,7 +35,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -41,8 +43,11 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CasServiceRegistryInitializationConfiguration}.
@@ -50,7 +55,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casServiceRegistryInitializationConfiguration")
+@Configuration(value = "casServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
@@ -59,81 +64,85 @@ import java.util.Collection;
 @ConditionalOnBean(ServicesManager.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.core", name = "init-from-json", havingValue = "true")
 @Slf4j
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableAsync
+@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
 
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("serviceRegistry")
-    private ObjectProvider<ChainingServiceRegistry> serviceRegistry;
-
-    @Lazy(false)
-    @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer() {
-        val serviceRegistryInstance = serviceRegistry.getObject();
-        val initializer = new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
-            serviceRegistryInstance, servicesManager.getObject());
-        LOGGER.info("Attempting to initialize the service registry [{}]", serviceRegistryInstance.getName());
-        initializer.initServiceRegistryIfNecessary();
-        return initializer;
-    }
-
-    @Bean
-    public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener() {
-        return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer());
-    }
-
-    @RefreshScope
-    @Bean
-    @SneakyThrows
-    @Lazy(false)
-    public ServiceRegistry embeddedJsonServiceRegistry() {
-        val location = getServiceRegistryInitializerServicesDirectoryResource();
-        val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
-            serviceRegistryListeners.getObject(), WatcherService.noOp());
-        if (!(location instanceof ClassPathResource)) {
-            registry.enableDefaultWatcherService();
+    @Configuration(value = "CasServiceRegistryInitializationEventsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasServiceRegistryInitializationEventsConfiguration {
+        @Bean
+        public CasEventListener serviceRegistryInitializerConfigurationEventListener(
+            @Qualifier("serviceRegistryInitializer")
+            final ServiceRegistryInitializer serviceRegistryInitializer) {
+            return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer);
         }
-        return registry;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry());
+    @Configuration(value = "CasServiceRegistryInitializationBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasServiceRegistryInitializationBaseConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceRegistryInitializer serviceRegistryInitializer(
+            @Qualifier("embeddedJsonServiceRegistry")
+            final ServiceRegistry embeddedJsonServiceRegistry,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("serviceRegistry")
+            final ChainingServiceRegistry serviceRegistry) {
+            return new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
+        }
+
     }
 
-    @SneakyThrows
-    private Resource getServiceRegistryInitializerServicesDirectoryResource() {
-        val registry = casProperties.getServiceRegistry().getJson();
-        if (ResourceUtils.doesResourceExist(registry.getLocation())) {
-            LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
-            return registry.getLocation();
+    @Configuration(value = "CasServiceRegistryEmbeddedConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasServiceRegistryEmbeddedConfiguration {
+        @SneakyThrows
+        private static Resource getServiceRegistryInitializerServicesDirectoryResource(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            val registry = casProperties.getServiceRegistry().getJson();
+            if (ResourceUtils.doesResourceExist(registry.getLocation())) {
+                LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());
+                return registry.getLocation();
+            }
+            val parent = new File(FileUtils.getTempDirectory(), "cas");
+            if (!parent.mkdirs()) {
+                LOGGER.warn("Unable to create folder [{}]", parent);
+            }
+            val resources = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
+                .getResources("classpath*:/services/*.json");
+            Arrays.stream(resources)
+                .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
+            LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
+            return new FileSystemResource(parent);
         }
-        val parent = new File(FileUtils.getTempDirectory(), "cas");
-        if (!parent.mkdirs()) {
-            LOGGER.warn("Unable to create folder [{}]", parent);
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public ServiceRegistry embeddedJsonServiceRegistry(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+            val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
+            val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
+                Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
+            if (!(location instanceof ClassPathResource)) {
+                registry.enableDefaultWatcherService();
+            }
+            return registry;
         }
-        val resources = ResourcePatternUtils.getResourcePatternResolver(applicationContext)
-            .getResources("classpath*:/services/*.json");
-        Arrays.stream(resources)
-            .forEach(resource -> ResourceUtils.exportClasspathResourceToFile(parent, resource));
-        LOGGER.debug("Using service registry location [{}] for embedded service definitions", parent);
-        return new FileSystemResource(parent);
+
+        @Bean
+        @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
+        public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
+            @Qualifier("embeddedJsonServiceRegistry")
+            final ServiceRegistry embeddedJsonServiceRegistry) {
+            return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry);
+        }
     }
 
     /**

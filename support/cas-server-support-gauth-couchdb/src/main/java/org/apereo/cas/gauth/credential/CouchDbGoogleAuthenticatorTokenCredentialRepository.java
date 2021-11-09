@@ -86,6 +86,12 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     }
 
     @Override
+    public void delete(final long id) {
+        val entity = (CouchDbGoogleAuthenticatorAccount) couchDbRepository.findById(id);
+        couchDbRepository.deleteTokenAccount(entity);
+    }
+
+    @Override
     public long count() {
         return couchDbRepository.count();
     }

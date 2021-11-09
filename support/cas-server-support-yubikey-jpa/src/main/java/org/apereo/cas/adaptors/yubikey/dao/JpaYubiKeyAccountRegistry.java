@@ -24,7 +24,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerYubiKey")
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
@@ -86,6 +86,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val jpaAccount = JpaYubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(CollectionUtils.wrapList(device))
+            .build();
+        return this.entityManager.merge(jpaAccount);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        val jpaAccount = JpaYubiKeyAccount.builder()
+            .username(account.getUsername())
+            .devices(account.getDevices())
             .build();
         return this.entityManager.merge(jpaAccount);
     }

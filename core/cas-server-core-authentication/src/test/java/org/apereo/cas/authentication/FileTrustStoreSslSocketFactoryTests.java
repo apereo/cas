@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,26 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE_P12 = new ClassPathResource("truststore.p12");
 
+    @SneakyThrows
+    private static SSLConnectionSocketFactory sslFactory(final Resource resource,
+                                                         final String password,
+                                                         final String trustStoreType) {
+        return new SSLConnectionSocketFactory(
+            new DefaultCasSSLContext(resource, password, trustStoreType,
+                new HttpClientProperties(), NoopHostnameVerifier.INSTANCE).getSslContext());
+    }
+
+    private static SSLConnectionSocketFactory sslFactory() {
+        return sslFactory(RESOURCE, "changeit", "JKS");
+    }
+
+    private static SimpleHttpClient getSimpleHttpClient(final SSLConnectionSocketFactory sslConnectionSocketFactory) {
+        val clientFactory = new SimpleHttpClientFactoryBean();
+        clientFactory.setSslSocketFactory(sslConnectionSocketFactory);
+        val client = clientFactory.getObject();
+        assertNotNull(client);
+        return client;
+    }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
@@ -63,25 +85,5 @@ public class FileTrustStoreSslSocketFactoryTests {
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
         val client = getSimpleHttpClient(sslFactory());
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
-    }
-
-    @SneakyThrows
-    private static SSLConnectionSocketFactory sslFactory(final Resource resource,
-                                                         final String password,
-                                                         final String trustStoreType) {
-        return new SSLConnectionSocketFactory(new DefaultCasSSLContext(resource, password, trustStoreType)
-                .getSslContext());
-    }
-
-    private static SSLConnectionSocketFactory sslFactory() {
-        return sslFactory(RESOURCE, "changeit", "JKS");
-    }
-
-    private static SimpleHttpClient getSimpleHttpClient(final SSLConnectionSocketFactory sslConnectionSocketFactory) {
-        val clientFactory = new SimpleHttpClientFactoryBean();
-        clientFactory.setSslSocketFactory(sslConnectionSocketFactory);
-        val client = clientFactory.getObject();
-        assertNotNull(client);
-        return client;
     }
 }

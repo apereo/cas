@@ -34,8 +34,11 @@ import org.springframework.webflow.execution.RequestContext;
 public class SamlMetadataUIParserAction extends AbstractAction {
 
     private final String entityIdParameterName;
+
     private final MetadataResolverAdapter metadataAdapter;
+
     private final ServiceFactory<WebApplicationService> serviceFactory;
+
     private final ServicesManager servicesManager;
 
     @Override

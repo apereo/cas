@@ -24,7 +24,7 @@ public class TicketRegistryManagedResource {
     @ManagedOperation
     public Collection<String> getTickets() {
         return ticketRegistry
-            .getTicketsStream()
+            .stream()
             .map(Ticket::getId)
             .collect(Collectors.toSet());
     }

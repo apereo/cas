@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasGeoLocationMaxmindConfiguration.class
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class CasGeoLocationMaxmindConfigurationTests {
     @Autowired
     @Qualifier("geoLocationService")

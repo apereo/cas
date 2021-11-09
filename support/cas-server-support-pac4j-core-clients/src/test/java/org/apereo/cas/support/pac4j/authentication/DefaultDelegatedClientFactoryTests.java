@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
@@ -8,10 +10,12 @@ import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProper
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
@@ -19,11 +23,19 @@ import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
+import org.pac4j.saml.store.SAMLMessageStoreFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultDelegatedClientFactoryTests}.
@@ -31,8 +43,56 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Delegation")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class
+})
 public class DefaultDelegatedClientFactoryTests {
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("casSslContext")
+    private CasSSLContext casSslContext;
+
+    private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
+        val saml = new Pac4jSamlClientProperties();
+        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
+        saml.setKeystoreAlias("alias1");
+        saml.setCallbackUrlType(Pac4jBaseClientProperties.CallbackUrlTypes.NONE);
+        saml.setKeystorePassword("1234567890");
+        saml.setPrivateKeyPassword("1234567890");
+        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
+        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
+        saml.setServiceProviderEntityId("test-entityid");
+        saml.setForceKeystoreGeneration(true);
+        saml.setMessageStoreFactory(sessionFactory);
+        saml.setPrincipalIdAttribute("givenName");
+        saml.setAssertionConsumerServiceIndex(1);
+        saml.setAuthnContextClassRef(List.of("classRef1"));
+        saml.setNameIdPolicyFormat("transient");
+        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
+        saml.setSignatureAlgorithms(List.of("sha-256"));
+        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
+        saml.getRequestedAttributes().add(
+            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
+                .setName("requestedAttribute")
+                .setFriendlyName("friendlyRequestedName"));
+        saml.setMappedAttributes(List.of("attr1->givenName"));
+        return saml;
+    }
+
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+        props.setId("TestId");
+        props.setSecret("TestSecret");
+    }
+
+    @BeforeEach
+    public void setup() {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+    }
 
     @Test
     public void verifyFactoryForIdentifiableClients() {
@@ -52,7 +112,6 @@ public class DefaultDelegatedClientFactoryTests {
         configureIdentifiableClient(props.getLinkedIn());
         props.getLinkedIn().setScope("scope1");
 
-        configureIdentifiableClient(props.getOrcid());
         configureIdentifiableClient(props.getPaypal());
         configureIdentifiableClient(props.getTwitter());
         configureIdentifiableClient(props.getWindowsLive());
@@ -63,9 +122,9 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
-        assertEquals(14, clients.size());
+        assertEquals(13, clients.size());
         factory.destroy();
     }
 
@@ -77,12 +136,13 @@ public class DefaultDelegatedClientFactoryTests {
         cas.setProtocol(CasProtocol.SAML.name());
         cas.setPrincipalAttributeId("uid");
         cas.setCssClass("cssclass");
+        cas.setDisplayName("My CAS Server");
         props.getCore().setLazyInit(false);
         props.getCas().add(cas);
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -97,7 +157,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
         val client = (CasClient) clients.iterator().next();
@@ -112,7 +172,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
 
@@ -128,7 +188,23 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
+        val clients = factory.build();
+        assertEquals(1, clients.size());
+    }
+
+    @Test
+    public void verifySamlClientCustomMessageStoreFactory() throws Exception {
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            mock(SAMLMessageStoreFactory.class), DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY);
+
+        val props = new Pac4jDelegatedAuthenticationProperties();
+        val saml = getPac4jSamlClientProperties("bad.type.name.ignored.for.bean");
+        props.getSaml().add(saml);
+
+        val casSettings = new CasConfigurationProperties();
+        casSettings.getAuthn().setPac4j(props);
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -142,7 +218,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -154,7 +230,7 @@ public class DefaultDelegatedClientFactoryTests {
         props.getGithub().setScope("user");
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
         val client = (GitHubClient) clients.iterator().next();
@@ -180,7 +256,7 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(1, clients.size());
     }
@@ -197,6 +273,7 @@ public class DefaultDelegatedClientFactoryTests {
         oidc1.getGeneric().setTokenExpirationAdvance("PT5S");
         oidc1.getGeneric().setPreferredJwsAlgorithm(JWSAlgorithm.RS256.getName());
         oidc1.getGeneric().setDiscoveryUri("https://dev-425954.oktapreview.com/.well-known/openid-configuration");
+        oidc1.getGeneric().getMappedClaims().add("claim1->attribute1");
         props.getOidc().add(oidc1);
 
         val oidc2 = new Pac4jOidcClientProperties();
@@ -217,41 +294,12 @@ public class DefaultDelegatedClientFactoryTests {
 
         val casSettings = new CasConfigurationProperties();
         casSettings.getAuthn().setPac4j(props);
-        val factory = new DefaultDelegatedClientFactory(casSettings, List.of());
+        val factory = getDefaultDelegatedClientFactory(casSettings);
         val clients = factory.build();
         assertEquals(4, clients.size());
     }
 
-    private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {
-        val saml = new Pac4jSamlClientProperties();
-        saml.setKeystorePath(new File(FileUtils.getTempDirectoryPath(), "keystore.jks").getCanonicalPath());
-        saml.setKeystoreAlias("alias1");
-        saml.setCallbackUrlType(Pac4jBaseClientProperties.CallbackUrlTypes.NONE);
-        saml.setKeystorePassword("1234567890");
-        saml.setPrivateKeyPassword("1234567890");
-        saml.setIdentityProviderMetadataPath("classpath:idp-metadata.xml");
-        saml.setServiceProviderMetadataPath(new File(FileUtils.getTempDirectoryPath(), "sp.xml").getCanonicalPath());
-        saml.setServiceProviderEntityId("test-entityid");
-        saml.setForceKeystoreGeneration(true);
-        saml.setMessageStoreFactory(sessionFactory);
-        saml.setPrincipalIdAttribute("givenName");
-        saml.setAssertionConsumerServiceIndex(1);
-        saml.setAuthnContextClassRef(List.of("classRef1"));
-        saml.setNameIdPolicyFormat("transient");
-        saml.setBlockedSignatureSigningAlgorithms(List.of("sha-1"));
-        saml.setSignatureAlgorithms(List.of("sha-256"));
-        saml.setSignatureReferenceDigestMethods(List.of("sha-256"));
-        saml.getRequestedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderRequestedAttribute()
-                .setName("requestedAttribute")
-                .setFriendlyName("friendlyRequestedName"));
-        saml.getMappedAttributes().add(
-            new Pac4jSamlClientProperties.ServiceProviderMappedAttribute().setName("attr1").setMappedTo("givenName"));
-        return saml;
-    }
-
-    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-        props.setId("TestId");
-        props.setSecret("TestSecret");
+    private DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
+        return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
     }
 }

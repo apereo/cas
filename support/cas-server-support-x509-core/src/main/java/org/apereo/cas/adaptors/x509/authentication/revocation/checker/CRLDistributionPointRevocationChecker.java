@@ -15,7 +15,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.ehcache.StateTransitionException;
 import org.ehcache.Status;
 import org.ehcache.UserManagedCache;
 import org.springframework.beans.factory.DisposableBean;
@@ -88,9 +87,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     public void destroy() {
         try {
-            this.crlCache.close();
-        } catch (final StateTransitionException e) {
-            LOGGER.warn("Error closing CRL cache [{}]", e.getMessage(), e);
+            if (!Status.UNINITIALIZED.equals(this.crlCache.getStatus())) {
+                this.crlCache.close();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 
@@ -150,7 +151,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 list.add(new URI(uriString));
             }
         } catch (final Exception e) {
-            LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
+            LoggingUtils.warn(LOGGER, e);
         }
     }
 

@@ -180,14 +180,14 @@ ext.createPomRepositories = { node ->
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jitpack")
-    repository.appendNode("url", "https://jitpack.io")
+    repository.appendNode("id", "couchbase")
+    repository.appendNode("url", "https://files.couchbase.com/maven2/")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "couchbase")
-    repository.appendNode("url", "https://files.couchbase.com/maven2/")
+    repository.appendNode("id", "jitpack")
+    repository.appendNode("url", "https://jitpack.io")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
@@ -198,8 +198,8 @@ ext.createPomRepositories = { node ->
     repository.appendNode("releases").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jfrog-snapshot")
-    repository.appendNode("url", "https://oss.jfrog.org/artifactory/oss-snapshot-local")
+    repository.appendNode("id", "apache-snapshot")
+    repository.appendNode("url", "https://repository.apache.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
     repository.appendNode("releases").appendNode("enabled", "false")
 }

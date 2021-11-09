@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -35,7 +36,9 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreAuthenticationSupportConfigurationTests.CasCoreAuthenticationSupportConfigurationTestConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
@@ -82,15 +85,15 @@ public class CasCoreAuthenticationSupportConfigurationTests {
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(groovyAuthenticationProcessorExecutionPlanConfigurer);
         assertTrue(authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-            CoreAuthenticationTestUtils.getAuthentication(),
-            mock(Assertion.class), Map.of(), CoreAuthenticationTestUtils.getRegisteredService())
+                CoreAuthenticationTestUtils.getAuthentication(),
+                mock(Assertion.class), Map.of(), CoreAuthenticationTestUtils.getRegisteredService())
             .isEmpty());
     }
 
     @TestConfiguration("CasCoreAuthenticationSupportConfigurationTestConfiguration")
     public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return mock(AuthenticationServiceSelectionPlan.class);
         }

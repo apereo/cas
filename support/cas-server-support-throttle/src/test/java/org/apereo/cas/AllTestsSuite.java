@@ -4,9 +4,8 @@ import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsern
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerEndpointTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests.class,
     ThrottledSubmissionHandlerEndpointTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

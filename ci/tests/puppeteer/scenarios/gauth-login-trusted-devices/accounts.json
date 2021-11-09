@@ -1,0 +1,29 @@
+{
+  "@class": "java.util.HashMap",
+  "casuser":
+  [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
+        "scratchCodes":
+        [
+          "java.util.ArrayList",
+          [
+            83766843,
+            11040740,
+            63605147,
+            62216081,
+            20207704
+          ]
+        ],
+        "id": 1,
+        "secretKey": "S3cr3t198$",
+        "validationCode": 999666,
+        "username": "casuser",
+        "name": "RecordName",
+        "registrationDate": 1607843237.905141
+      }
+    ]
+  ]
+}

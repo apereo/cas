@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -58,6 +59,7 @@ import javax.sql.DataSource;
     CasPersonDirectoryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -69,20 +71,23 @@ import javax.sql.DataSource;
     JdbcPasswordHistoryManagementConfiguration.class,
     PasswordManagementConfiguration.class
 }, properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.pm.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
     "cas.authn.pm.jdbc.auto-commit=false",
-    "cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+
+    "cas.authn.pm.jdbc.sql-get-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-delete-security-questions=DELETE FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-update-security-questions=INSERT INTO pm_table_questions(userid, question, answer) VALUES (?,?,?);",
     "cas.authn.pm.jdbc.sql-find-email=SELECT email FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sql-find-user=SELECT userid FROM pm_table_accounts WHERE email=?",
     "cas.authn.pm.jdbc.sql-find-phone=SELECT phone FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sql-change-password=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordChangeService;
 
     @Autowired

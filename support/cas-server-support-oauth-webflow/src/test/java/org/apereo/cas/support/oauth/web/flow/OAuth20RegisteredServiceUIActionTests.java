@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.flow;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
@@ -17,6 +18,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.Serializable;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +37,7 @@ public class OAuth20RegisteredServiceUIActionTests {
     private Action oauth20RegisteredServiceUIAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test
@@ -66,8 +68,10 @@ public class OAuth20RegisteredServiceUIActionTests {
         servicesManager.save(svc);
 
         val ctx = new MockRequestContext();
-        WebUtils.putServiceIntoFlowScope(ctx, RegisteredServiceTestUtils.getService(
-            "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
+        val service = RegisteredServiceTestUtils.getService("https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org");
+        service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of("id"));
+        
+        WebUtils.putServiceIntoFlowScope(ctx, service);
         val event = oauth20RegisteredServiceUIAction.execute(ctx);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         val mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
@@ -78,6 +82,5 @@ public class OAuth20RegisteredServiceUIActionTests {
         assertEquals(mdui.getDescription(), svc.getDescription());
         assertEquals(mdui.getPrivacyStatementURL(), svc.getPrivacyUrl());
         assertEquals(mdui.getLogoUrl(), svc.getLogo());
-
     }
 }

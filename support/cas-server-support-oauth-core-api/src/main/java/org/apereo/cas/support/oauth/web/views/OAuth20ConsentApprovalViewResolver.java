@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,11 +38,11 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected final SessionStore sessionStore;
 
     @Override
-    public ModelAndView resolve(final JEEContext context, final OAuthRegisteredService service) {
+    public ModelAndView resolve(final WebContext context, final OAuthRegisteredService service) {
         var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(bypassApprovalParameter)) {
-            bypassApprovalParameter = (String) this.sessionStore
+            bypassApprovalParameter = sessionStore
                 .get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
         }
@@ -61,8 +61,9 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @param service the service
      * @return true/false
      */
-    protected boolean isConsentApprovalBypassed(final JEEContext context, final OAuthRegisteredService service) {
-        return service.isBypassApprovalPrompt();
+    protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
+        return service.isBypassApprovalPrompt()
+               || casProperties.getAuthn().getOauth().getCore().isBypassApprovalPrompt();
     }
 
     /**
@@ -73,7 +74,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @return the model and view
      */
     @SneakyThrows
-    protected ModelAndView redirectToApproveView(final JEEContext ctx, final OAuthRegisteredService svc) {
+    protected ModelAndView redirectToApproveView(final WebContext ctx, final OAuthRegisteredService svc) {
         val callbackUrl = ctx.getFullRequestURL();
         LOGGER.trace("callbackUrl: [{}]", callbackUrl);
 
@@ -116,7 +117,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @param svc   the svc
      * @throws Exception the exception
      */
-    protected void prepareApprovalViewModel(final Map<String, Object> model, final JEEContext ctx,
+    protected void prepareApprovalViewModel(final Map<String, Object> model, final WebContext ctx,
                                             final OAuthRegisteredService svc) throws Exception {
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.Optional;
 
@@ -56,6 +57,7 @@ public class SwivelAuthenticationWebflowActionTests {
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getRequestScope()).thenReturn(new LocalAttributeMap<>());

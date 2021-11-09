@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilConfiguration.class
 })
 @Tag("JDBC")
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasHibernateJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -62,7 +62,7 @@ public class CasHibernateJpaBeanFactoryTests {
             .jpaVendorAdapter(adapter)
             .persistenceUnitName("sampleContext")
             .dataSource(dataSource())
-            .packagesToScan(CollectionUtils.wrap(SampleEntity.class.getPackage().getName()))
+            .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .build();
         assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()));
     }

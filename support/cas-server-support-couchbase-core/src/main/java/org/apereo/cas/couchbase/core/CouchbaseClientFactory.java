@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import com.couchbase.client.core.cnc.tracing.ThresholdRequestTracer;
 import com.couchbase.client.core.env.IoConfig;
 import com.couchbase.client.core.env.NetworkResolution;
 import com.couchbase.client.core.env.SeedNode;
@@ -109,15 +108,6 @@ public class CouchbaseClientFactory {
      */
     public Duration getIdleConnectionTimeout() {
         return Beans.newDuration(properties.getIdleConnectionTimeout());
-    }
-
-    /**
-     * Gets query threshold.
-     *
-     * @return the query threshold
-     */
-    public Duration getQueryThreshold() {
-        return Beans.newDuration(properties.getQueryThreshold());
     }
 
     /**
@@ -373,10 +363,6 @@ public class CouchbaseClientFactory {
                 .idleHttpConnectionTimeout(getIdleConnectionTimeout())
                 .maxHttpConnections(properties.getMaxHttpConnections())
                 .networkResolution(NetworkResolution.AUTO))
-            .requestTracer(ThresholdRequestTracer
-                .builder(null)
-                .queryThreshold(getQueryThreshold())
-                .build())
             .build();
 
         val listOfNodes = properties.getAddresses()

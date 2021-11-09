@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.support.InvalidCookieException;
 
@@ -46,8 +47,9 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
         if (cookieProperties.isPinToSession()) {
             val clientInfo = ClientInfoHolder.getClientInfo();
-            builder.append(COOKIE_FIELD_SEPARATOR).append(clientInfo.getClientIpAddress());
-
+            if (clientInfo != null) {
+                builder.append(COOKIE_FIELD_SEPARATOR).append(clientInfo.getClientIpAddress());
+            }
             val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
             if (StringUtils.isBlank(userAgent)) {
                 throw new IllegalStateException("Request does not specify a user-agent");
@@ -61,39 +63,45 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     }
 
     @Override
-    protected String obtainValueFromCompoundCookie(final String cookieValue, final HttpServletRequest request) {
-        val cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(cookieValue);
-        val value = cookieParts.get(0);
+    protected String obtainValueFromCompoundCookie(final String value, final HttpServletRequest request) {
+        val cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(value);
+
+        val cookieValue = cookieParts.get(0);
         if (!cookieProperties.isPinToSession()) {
             LOGGER.trace("Cookie session-pinning is disabled. Returning cookie value as it was provided");
-            return value;
+            return cookieValue;
         }
 
         if (cookieParts.size() != COOKIE_FIELDS_LENGTH) {
             throw new InvalidCookieException("Invalid cookie. Required fields are missing");
         }
-        val remoteAddr = cookieParts.get(1);
-        val userAgent = cookieParts.get(2);
+        val cookieIpAddress = cookieParts.get(1);
+        val cookieUserAgent = cookieParts.get(2);
 
-        if (Stream.of(value, remoteAddr, userAgent).anyMatch(StringUtils::isBlank)) {
+        if (Stream.of(cookieValue, cookieIpAddress, cookieUserAgent).anyMatch(StringUtils::isBlank)) {
             throw new InvalidCookieException("Invalid cookie. Required fields are empty");
         }
 
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null) {
             throw new InvalidCookieException("Unable to match required remote address "
-                    + remoteAddr + " because client ip at time of cookie creation is unknown");
+                    + cookieIpAddress + " because client ip at time of cookie creation is unknown");
         }
 
-        if (!remoteAddr.equals(clientInfo.getClientIpAddress())) {
-            throw new InvalidCookieException("Invalid cookie. Required remote address "
-                    + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
+        if (!cookieIpAddress.equals(clientInfo.getClientIpAddress())) {
+            if (StringUtils.isBlank(cookieProperties.getAllowedIpAddressesPattern())
+                || !RegexUtils.find(cookieProperties.getAllowedIpAddressesPattern(), clientInfo.getClientIpAddress())) {
+                throw new InvalidCookieException("Invalid cookie. Required remote address "
+                    + cookieIpAddress + " does not match " + clientInfo.getClientIpAddress());
+            }
+            LOGGER.debug("Required remote address [{}] does not match [{}], but it's authorized proceed",
+                cookieIpAddress, clientInfo.getClientIpAddress());
         }
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
-        if (!userAgent.equals(agent)) {
-            throw new InvalidCookieException("Invalid cookie. Required user-agent " + userAgent + " does not match " + agent);
+        if (!cookieUserAgent.equals(agent)) {
+            throw new InvalidCookieException("Invalid cookie. Required user-agent " + cookieUserAgent + " does not match " + agent);
         }
-        return value;
+        return cookieValue;
     }
 }

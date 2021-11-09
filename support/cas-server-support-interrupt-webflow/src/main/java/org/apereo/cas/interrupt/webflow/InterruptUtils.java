@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCoreProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
 
 import lombok.experimental.UtilityClass;
@@ -31,5 +32,16 @@ public class InterruptUtils {
      */
     public static void putInterruptIn(final RequestContext requestContext, final InterruptResponse response) {
         requestContext.getFlowScope().put("interrupt", response);
+    }
+
+    /**
+     * Put interrupt trigger mode.
+     *
+     * @param requestContext the request context
+     * @param triggerMode    the trigger mode
+     */
+    public static void putInterruptTriggerMode(final RequestContext requestContext,
+                                               final InterruptCoreProperties.InterruptTriggerModes triggerMode) {
+        requestContext.getFlowScope().put("interruptTriggerMode", triggerMode.name());
     }
 }

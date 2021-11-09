@@ -30,11 +30,9 @@ public class JasyptListProvidersCommand {
      */
     @ShellMethod(key = "jasypt-list-providers", value = "List encryption providers with PBE Ciphers you can use with Jasypt")
     public void listProviders(@ShellOption(value = {"includeBC", "--includeBC"},
-        help = "Include Bouncy Castle provider") final boolean includeBC) {
+        help = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
         if (includeBC) {
-            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
+            Security.addProvider(new BouncyCastleProvider());
         } else {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         }

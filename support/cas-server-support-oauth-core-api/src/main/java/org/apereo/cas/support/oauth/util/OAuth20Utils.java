@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -24,7 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
-import org.pac4j.core.context.JEEContext;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -42,8 +43,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -109,10 +110,8 @@ public class OAuth20Utils {
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
-        val services = servicesManager.getAllServices();
+        val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
         return services.stream()
-            .filter(OAuthRegisteredService.class::isInstance)
-            .map(OAuthRegisteredService.class::cast)
             .filter(predicate)
             .findFirst()
             .orElse(null);
@@ -125,29 +124,79 @@ public class OAuth20Utils {
      * @param context    the context
      * @return the attributes
      */
-    public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
+    public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final WebContext context) {
         return attributes
             .stream()
-            .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
-            .map(m -> {
-                val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<>(values.length);
-                if (values.length > 0) {
-                    Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
-                }
-                return Pair.of(m, valuesSet);
+            .map(name -> {
+                val values = getRequestParameter(context, name)
+                    .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
+                    .orElse(Set.of());
+                return Pair.of(name, values);
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     /**
-     * Gets requested scopes.
+     * Gets authorization parameter.
      *
      * @param context the context
-     * @return the requested scopes
+     * @param name    the name
+     * @return the authorization parameter
      */
-    public static Collection<String> getRequestedScopes(final JEEContext context) {
-        return getRequestedScopes(context.getNativeRequest());
+    public static Optional<String> getRequestParameter(final WebContext context,
+                                                       final String name) {
+        return getRequestParameter(context, name, String.class);
+    }
+
+    /**
+     * Gets request parameter.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param name    the name
+     * @param clazz   the clazz
+     * @return the request parameter
+     */
+    public static <T> Optional<T> getRequestParameter(final WebContext context,
+                                                      final String name,
+                                                      final Class<T> clazz) {
+        return context.getRequestParameter(OAuth20Constants.REQUEST)
+            .map(Unchecked.function(jwtRequest -> getJwtRequestParameter(jwtRequest, name, clazz)))
+            .or(() -> {
+                val values = context.getRequestParameters().get(name);
+                if (values != null && values.length > 0) {
+                    if (clazz.isArray()) {
+                        return Optional.<T>of(clazz.cast(values));
+                    }
+                    if (Collection.class.isAssignableFrom(clazz)) {
+                        return Optional.<T>of(clazz.cast(CollectionUtils.wrapArrayList(values)));
+                    }
+                    return Optional.<T>of(clazz.cast(values[0]));
+                }
+                return Optional.<T>empty();
+            });
+    }
+
+    /**
+     * Gets jwt request parameter.
+     *
+     * @param <T>        the type parameter
+     * @param jwtRequest the jwt request
+     * @param name       the name
+     * @param clazz      the clazz
+     * @return the jwt request parameter
+     * @throws Exception the exception
+     */
+    public static <T> T getJwtRequestParameter(final String jwtRequest, final String name,
+                                               final Class<T> clazz) throws Exception {
+        val jwt = JwtBuilder.parse(jwtRequest);
+        if (clazz.isArray()) {
+            return clazz.cast(jwt.getStringArrayClaim(name));
+        }
+        if (Collection.class.isAssignableFrom(clazz)) {
+            return clazz.cast(jwt.getStringListClaim(name));
+        }
+        return clazz.cast(jwt.getStringClaim(name));
     }
 
     /**
@@ -156,7 +205,7 @@ public class OAuth20Utils {
      * @param context the context
      * @return the requested scopes
      */
-    public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
+    public static Collection<String> getRequestedScopes(final WebContext context) {
         val map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
@@ -170,7 +219,18 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+        return produceUnauthorizedErrorView(HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce unauthorized error view.
+     *
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView(final HttpStatus status) {
+        val ex = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        return produceErrorView(ex, status);
     }
 
     /**
@@ -180,7 +240,21 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        return produceErrorView(e, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce error view.
+     *
+     * @param e      the exception
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e, final HttpStatus status) {
+        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
+        mv.setStatus(status);
+        return mv;
     }
 
     /**
@@ -222,8 +296,8 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseTypes getResponseType(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
+    public static OAuth20ResponseTypes getResponseType(final WebContext context) {
+        val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -239,8 +313,8 @@ public class OAuth20Utils {
      * @param context the context
      * @return the response type
      */
-    public static OAuth20ResponseModeTypes getResponseModeType(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE)
+    public static OAuth20ResponseModeTypes getResponseModeType(final WebContext context) {
+        val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseModeTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
@@ -290,9 +364,9 @@ public class OAuth20Utils {
      * @param registeredService the registered service
      * @return true/false
      */
-    public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
+    public static boolean isAuthorizedResponseTypeForService(final WebContext context, final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
-            val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
+            val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
             if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
                 return true;
             }
@@ -334,10 +408,9 @@ public class OAuth20Utils {
      * @param registeredService the registered service
      * @return true/false
      */
-    public static boolean isAuthorizedGrantTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
-        return isAuthorizedGrantTypeForService(
-            context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY),
-            registeredService);
+    public static boolean isAuthorizedGrantTypeForService(final WebContext context, final OAuthRegisteredService registeredService) {
+        val grantType = getRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
+        return isAuthorizedGrantTypeForService(grantType, registeredService);
     }
 
     /**
@@ -346,22 +419,12 @@ public class OAuth20Utils {
      * @param context the context
      * @return the set
      */
-    public static Set<String> parseRequestScopes(final JEEContext context) {
-        return parseRequestScopes(context.getNativeRequest());
-    }
-
-    /**
-     * Parse request scopes set.
-     *
-     * @param context the context
-     * @return the set
-     */
-    public static Set<String> parseRequestScopes(final HttpServletRequest context) {
-        val parameterValues = context.getParameter(OAuth20Constants.SCOPE);
-        if (StringUtils.isBlank(parameterValues)) {
+    public static Set<String> parseRequestScopes(final WebContext context) {
+        val parameterValues = getRequestParameter(context, OAuth20Constants.SCOPE);
+        if (parameterValues.isEmpty()) {
             return new HashSet<>(0);
         }
-        return CollectionUtils.wrapSet(parameterValues.split(" "));
+        return CollectionUtils.wrapSet(parameterValues.get().split(" "));
     }
 
     /**
@@ -388,13 +451,14 @@ public class OAuth20Utils {
      * @param redirectUri       the callback url
      * @return whether the callback url is valid
      */
-    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService, final String redirectUri) {
-        val registeredServiceId = registeredService.getServiceId();
-        if (!redirectUri.matches(registeredServiceId)) {
+    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
+                                             final String redirectUri) {
+        val matchingStrategy = registeredService != null ? registeredService.getMatchingStrategy() : null;
+        if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
-                    + "Service is considered unauthorized. Verify the service definition in the registry is correct "
-                    + "and does in fact match the client [{}]",
-                OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId, redirectUri);
+                    + "Service is considered unauthorized. Verify the service matching strategy used in the service "
+                    + "definition is correct and does in fact match the client [{}]",
+                OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }
         return true;
@@ -462,8 +526,8 @@ public class OAuth20Utils {
      * @return the map
      * @throws Exception the exception
      */
-    public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
-        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
+    public static Map<String, Map<String, Object>> parseRequestClaims(final WebContext context) throws Exception {
+        val claims = getRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }
@@ -487,9 +551,9 @@ public class OAuth20Utils {
      * @return the set
      * @throws Exception the exception
      */
-    public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
+    public static Set<String> parseUserInfoRequestClaims(final WebContext context) throws Exception {
         val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
+        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>(0)).keySet();
     }
 
     /**
@@ -506,9 +570,9 @@ public class OAuth20Utils {
             val upc = (UsernamePasswordCredentials) upcResult.get();
             return Pair.of(upc.getUsername(), upc.getPassword());
         }
-        val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        val clientId = getRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = webContext.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
+        val clientSecret = getRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
     }

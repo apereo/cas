@@ -49,8 +49,8 @@ public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
             LOGGER.trace("Attribute values found for [{}] are [{}]", attributeName, values);
             val cookieValue = values
                 .stream()
-                .filter(value -> RegexUtils.find(attributeValuePattern, value.toString()))
                 .map(Object::toString)
+                .filter(string -> RegexUtils.find(attributeValuePattern, string))
                 .collect(Collectors.joining(","));
             LOGGER.trace("Google analytics final cookie value is [{}]", cookieValue);
 

@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasBucket4jThrottlingConfiguration.class
 })
-@Tag("Simple")
+@Tag("AuthenticationThrottling")
 public class Bucket4jThrottledRequestExecutorTests {
     @Autowired
-    @Qualifier("throttledRequestExecutor")
+    @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
     private ThrottledRequestExecutor throttledRequestExecutor;
 
     @Test

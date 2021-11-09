@@ -1,6 +1,8 @@
 package org.apereo.cas.util;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class RandomUtilsTests {
+
+    @BeforeEach
+    public void beforeEach() {
+        System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, StringUtils.EMPTY);
+    }
+    
+    @Test
+    public void verifyUnknownAlg() {
+        System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, "bad-algorithm");
+        assertNotNull(RandomUtils.getNativeInstance());
+    }
+
     @Test
     public void verifyOperation() {
         val value = RandomUtils.generateSecureRandomId();
@@ -54,5 +68,17 @@ public class RandomUtilsTests {
 
         value = RandomUtils.nextDouble(5, 5);
         assertNotNull(value);
+    }
+
+    @Test
+    public void verifyValidation() {
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextDouble(10, 1));
+        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextDouble(-1, -1));
+
+        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextInt(10, 1));
+        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextInt(-1, -1));
+
+        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextLong(10, 1));
+        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextLong(-1, -1));
     }
 }

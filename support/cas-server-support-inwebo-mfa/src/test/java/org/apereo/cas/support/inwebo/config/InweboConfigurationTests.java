@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.inwebo.bypass.groovy.location=classpath:GroovyBypass.groovy",
         "cas.authn.mfa.inwebo.bypass.rest.url=http://localhost:8080/bypass"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class InweboConfigurationTests {
      @Autowired
      @Qualifier("inweboService")

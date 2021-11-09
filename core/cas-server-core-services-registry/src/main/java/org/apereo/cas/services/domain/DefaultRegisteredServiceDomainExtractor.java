@@ -23,7 +23,9 @@ public class DefaultRegisteredServiceDomainExtractor implements RegisteredServic
 
     @Override
     public String extract(final String service) {
-        val extractor = this.domainExtractor.matcher(service.toLowerCase());
+        var value = StringUtils.remove(service.toLowerCase(), ".+");
+        value = StringUtils.remove(value, ".*");
+        val extractor = this.domainExtractor.matcher(value);
         return extractor.lookingAt() ? validate(extractor.group(1)) : DOMAIN_DEFAULT;
     }
 

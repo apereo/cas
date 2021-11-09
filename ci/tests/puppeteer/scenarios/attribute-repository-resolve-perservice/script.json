@@ -1,0 +1,34 @@
+{
+  "dependencies": "generic,reports",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.ticket.st.number-of-uses=1000",
+    "--cas.ticket.st.time-to-kill-in-seconds=900",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson",
+
+    "--cas.authn.attribute-repository.stub.id=StaticStub",
+    "--cas.authn.attribute-repository.stub.attributes.cn=cas",
+    "--cas.authn.attribute-repository.stub.attributes.displayName=Apereo CAS",
+    
+    "--cas.authn.attribute-repository.core.expiration-time=0",
+    "--cas.authn.attribute-repository.core.expiration-time-unit=seconds",
+    "--cas.authn.attribute-repository.core.merger=multivalued",
+
+    "--cas.person-directory.attribute-resolution-enabled=false"
+  ]
+}
+
+

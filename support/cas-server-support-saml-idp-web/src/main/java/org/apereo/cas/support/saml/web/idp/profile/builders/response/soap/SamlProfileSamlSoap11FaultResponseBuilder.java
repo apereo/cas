@@ -6,11 +6,14 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 
 import lombok.val;
+import org.apache.http.HttpStatus;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
@@ -21,6 +24,7 @@ import org.opensaml.soap.soap11.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * The {@link SamlProfileSamlSoap11FaultResponseBuilder} is responsible for
@@ -32,15 +36,15 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
     private static final long serialVersionUID = -1875903354216171261L;
 
-    public SamlProfileSamlSoap11FaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+    public SamlProfileSamlSoap11FaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
     public Envelope build(final RequestAbstractType authnRequest,
                           final HttpServletRequest request,
                           final HttpServletResponse response,
-                          final Object casAssertion,
+                          final AuthenticatedAssertionContext casAssertion,
                           final SamlRegisteredService service,
                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                           final String binding,
@@ -65,15 +69,17 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
             faultString.setValue("SOAP failure");
         }
         fault.setMessage(faultString);
-
         body.getUnknownXMLObjects().add(fault);
         
         val envelope = SamlUtils.newSoapObject(Envelope.class);
         val header = SamlUtils.newSoapObject(Header.class);
         envelope.setHeader(header);
         envelope.setBody(body);
+        val ctx = messageContext.getSubcontext(SOAP11Context.class, true);
+        Objects.requireNonNull(ctx).setHTTPResponseStatus(HttpStatus.SC_OK);
         encodeFinalResponse(request, response, service, adaptor, envelope,
             binding, authnRequest, casAssertion, messageContext);
+        request.setAttribute(FaultString.class.getSimpleName(), error);
         return envelope;
     }
 }

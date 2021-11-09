@@ -13,8 +13,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * adjusting the CAS webflow context for openid integration.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
 public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {

@@ -16,8 +16,8 @@ public class MyConfiguration {
 
   @Bean
   public List inMemoryRegisteredServices() {
-      final List services = new ArrayList<>();
-      final RegexRegisteredService service = new RegexRegisteredService();
+      var services = new ArrayList<>();
+      var service = new RegexRegisteredService();
       ...
       services.add(service);
       return services;

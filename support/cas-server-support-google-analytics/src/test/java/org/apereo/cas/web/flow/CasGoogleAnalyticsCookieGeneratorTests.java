@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.tgc.cookie.same-site-policy=lax"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Cookie")
 public class CasGoogleAnalyticsCookieGeneratorTests {
 
     @Autowired

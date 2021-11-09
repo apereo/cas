@@ -10,7 +10,7 @@ category: Logs & Audits
 
 Log data can be automatically routed to [Splunk](https://splunk.com/). Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-logging-config-splunk" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-logging-config-splunk" %}
 
 You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
 

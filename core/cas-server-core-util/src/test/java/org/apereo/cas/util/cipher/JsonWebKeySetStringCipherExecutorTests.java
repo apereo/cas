@@ -5,7 +5,6 @@ import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
@@ -21,6 +20,7 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ArrayUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,14 +31,20 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 public class JsonWebKeySetStringCipherExecutorTests {
+    private static File getKeystoreFile() throws Exception {
+        val jwksKeystore = new ClassPathResource("sample.jwks");
+        val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
+        val keystoreFile = new File(FileUtils.getTempDirectoryPath(), "sample.jwks");
+        FileUtils.write(keystoreFile, data, StandardCharsets.UTF_8);
+        return keystoreFile;
+    }
+
     @Test
     public void verifyAction() throws Exception {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
 
-        val keystoreFile = new File(FileUtils.getTempDirectoryPath(), "sample.jwks");
-        FileUtils.write(keystoreFile, data, StandardCharsets.UTF_8);
-
+        val keystoreFile = getKeystoreFile();
         try (val webServer = new MockWebServer(8435,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE);
              val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, "http://localhost:8435")) {
@@ -51,12 +57,14 @@ public class JsonWebKeySetStringCipherExecutorTests {
         }
     }
 
+    
+
     @Test
     public void verifyEmptyFileForEncoding() throws Exception {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile);
-        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", ArrayUtils.EMPTY_OBJECT_ARRAY));
+        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
     }
 
     @Test
@@ -67,7 +75,7 @@ public class JsonWebKeySetStringCipherExecutorTests {
         val keystoreFile = File.createTempFile("keystorepub", ".json");
         FileUtils.write(keystoreFile, json, StandardCharsets.UTF_8);
         val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("cas"));
-        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", ArrayUtils.EMPTY_OBJECT_ARRAY));
+        assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
     }
 
     @Test
@@ -75,6 +83,25 @@ public class JsonWebKeySetStringCipherExecutorTests {
         val keystoreFile = File.createTempFile("keystore", ".json");
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("kid"));
-        assertThrows(IllegalArgumentException.class, () -> cipher.decode("value", ArrayUtils.EMPTY_OBJECT_ARRAY));
+        assertThrows(IllegalArgumentException.class, () -> cipher.decode("value", EMPTY_OBJECT_ARRAY));
+    }
+
+    @Test
+    public void verifyEmptyJwks() throws Exception {
+        val keystoreFile = getKeystoreFile();
+        val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.empty(), null);
+        assertNotNull(cipher.decode("value", EMPTY_OBJECT_ARRAY));
+    }
+
+    @Test
+    public void verifyEmptyPayload() throws Exception {
+        val data = "{ \"keys\": [] }";
+        val keystoreFile = getKeystoreFile();
+        try (val webServer = new MockWebServer(8435,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE);
+             val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, "http://localhost:8435")) {
+            webServer.start();
+            assertThrows(IllegalArgumentException.class, () -> cipher.encode("Misagh"));
+        }
     }
 }

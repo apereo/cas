@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
@@ -48,7 +50,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
 
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL);
+            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
 
         val registeredService = getOidcRegisteredService();
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
@@ -104,7 +106,8 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
             StringUtils.EMPTY, StringUtils.EMPTY,
-            clientId, new HashMap<>());
+            clientId, new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(code);
         request.addParameter(OAuth20Constants.CODE, code.getId());
         return credentials;

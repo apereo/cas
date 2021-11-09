@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * This is {@link NeverRegisteredServiceSingleSignOnParticipationPolicy}.
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Accessors(chain = true)
 @RequiredArgsConstructor
 public class NeverRegisteredServiceSingleSignOnParticipationPolicy implements RegisteredServiceSingleSignOnParticipationPolicy {
     private static final long serialVersionUID = -1123946898337761319L;

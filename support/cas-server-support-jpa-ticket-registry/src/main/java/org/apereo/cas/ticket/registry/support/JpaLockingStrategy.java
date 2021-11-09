@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.support;
 
+import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,16 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -34,12 +29,6 @@ import java.time.ZonedDateTime;
 @Setter
 @RequiredArgsConstructor
 public class JpaLockingStrategy implements LockingStrategy {
-    /**
-     * Transactional entity manager from Spring context.
-     */
-    @PersistenceContext(unitName = "ticketEntityManagerFactory")
-    protected EntityManager entityManager;
-
     /**
      * Application identifier that identifies rows in the locking table,
      * each one of which may be for a different application or usage within
@@ -58,12 +47,18 @@ public class JpaLockingStrategy implements LockingStrategy {
     private final long lockTimeout;
 
     /**
+     * Transactional entity manager from Spring context.
+     */
+    @PersistenceContext(unitName = "ticketEntityManagerFactory")
+    private EntityManager entityManager;
+
+    /**
      * Acquire the lock object.
      *
      * @param lock the lock
      * @return true, if successful
      */
-    public boolean acquire(final Lock lock) {
+    public boolean acquire(final JpaLockEntity lock) {
         lock.setUniqueId(this.uniqueId);
         if (this.lockTimeout > 0) {
             lock.setExpirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.lockTimeout));
@@ -91,7 +86,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Override
     public boolean acquire() {
         try {
-            val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+            val lock = this.entityManager.find(JpaLockEntity.class, this.applicationId, LockModeType.OPTIMISTIC);
             var result = false;
             if (lock != null) {
                 val expDate = lock.getExpirationDate();
@@ -104,7 +99,7 @@ public class JpaLockingStrategy implements LockingStrategy {
                 }
             } else {
                 LOGGER.debug("Creating [{}] lock initially held by [{}].", applicationId, uniqueId);
-                result = acquire(new Lock());
+                result = acquire(new JpaLockEntity());
             }
             return result;
         } catch (final Exception e) {
@@ -115,7 +110,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     @Override
     public void release() {
-        val lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
+        val lock = this.entityManager.find(JpaLockEntity.class, this.applicationId, LockModeType.OPTIMISTIC);
         if (lock == null) {
             return;
         }
@@ -129,42 +124,4 @@ public class JpaLockingStrategy implements LockingStrategy {
         this.entityManager.persist(lock);
     }
 
-    /**
-     * Describes a database lock.
-     *
-     * @author Marvin S. Addison
-     */
-    @Entity
-    @Table(name = "locks")
-    @Getter
-    @Setter
-    @Embeddable
-    public static class Lock implements Serializable {
-
-        private static final long serialVersionUID = -5750740484289616656L;
-
-        @Version
-        @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
-        private final Long version = 0L;
-
-        /**
-         * column name that holds application identifier.
-         */
-        @org.springframework.data.annotation.Id
-        @Id
-        @Column(name = "application_id")
-        private String applicationId;
-
-        /**
-         * Database column name that holds unique identifier.
-         */
-        @Column(name = "unique_id")
-        private String uniqueId;
-
-        /**
-         * Database column name that holds expiration date.
-         */
-        @Column(name = "expiration_date")
-        private ZonedDateTime expirationDate;
-    }
 }

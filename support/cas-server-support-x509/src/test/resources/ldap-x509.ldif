@@ -1,0 +1,12 @@
+dn: CN=x509,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: cRLDistributionPoint
+cn: Misagh Moayyed
+sn: Moayyed
+givenName: Misagh
+displayName: Misagh Moayyed
+userPassword: misagh
+

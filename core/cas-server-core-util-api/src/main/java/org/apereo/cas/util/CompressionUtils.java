@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.io.TemporaryFileSystemResource;
+
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -7,11 +9,24 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
+import org.springframework.core.io.WritableResource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
@@ -119,7 +134,7 @@ public class CompressionUtils {
                 baos.write(buf, 0, count);
                 count = iis.read(buf);
             }
-            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return baos.toString(StandardCharsets.UTF_8);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return null;
@@ -144,5 +159,35 @@ public class CompressionUtils {
             val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         }
+    }
+
+    /**
+     * To zip file.
+     *
+     * @param dataStream the data stream
+     * @param converter  the converter
+     * @param prefix     the prefix
+     * @return the writable resource
+     */
+    @SneakyThrows
+    public static WritableResource toZipFile(final Stream<?> dataStream,
+                                             final Function<Object, File> converter,
+                                             final String prefix) {
+        val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
+        val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
+        Files.deleteIfExists(file.toPath());
+        val env = new HashMap<String, Object>();
+        env.put("create", "true");
+        env.put("encoding", StandardCharsets.UTF_8.name());
+        try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
+            dataStream.forEach(Unchecked.consumer(entry -> {
+                var sourceFile = converter.apply(entry);
+                if (sourceFile.exists()) {
+                    val pathInZipfile = zipfs.getPath("/".concat(sourceFile.getName()));
+                    Files.copy(sourceFile.toPath(), pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }));
+        }
+        return new TemporaryFileSystemResource(file);
     }
 }

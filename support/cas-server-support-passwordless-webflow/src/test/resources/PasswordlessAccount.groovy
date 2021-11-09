@@ -13,7 +13,7 @@ def run(Object[] args) {
         return PasswordlessUserAccount.builder()
                 .username("nouserinfo")
                 .name("CAS")
-                .build();
+                .build()
     }
 
     if (username.equals("needs-password")) {
@@ -23,7 +23,7 @@ def run(Object[] args) {
                 .email("casuser@example.org")
                 .phone("123-456-7890")
                 .requestPassword(true)
-                .build();
+                .build()
     }
 
     return PasswordlessUserAccount.builder()
@@ -31,5 +31,5 @@ def run(Object[] args) {
             .phone("123-456-7890")
             .username("casuser")
             .name("CAS")
-            .build();
+            .build()
 }

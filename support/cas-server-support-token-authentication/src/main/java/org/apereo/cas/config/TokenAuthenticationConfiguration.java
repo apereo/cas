@@ -12,8 +12,6 @@ import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 
 import lombok.val;
 import org.pac4j.core.context.session.JEESessionStore;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,19 +25,9 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration("tokenAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "tokenAuthenticationConfiguration", proxyBeanMethods = false)
 public class TokenAuthenticationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
     @Bean
@@ -49,16 +37,25 @@ public class TokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
-    public AuthenticationHandler tokenAuthenticationHandler() {
+    public AuthenticationHandler tokenAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                            @Qualifier("tokenPrincipalFactory")
+                                                            final PrincipalFactory tokenPrincipalFactory,
+                                                            @Qualifier(ServicesManager.BEAN_NAME)
+                                                            final ServicesManager servicesManager) {
         val token = casProperties.getAuthn().getToken();
         val principalNameTransformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation());
-        return new TokenAuthenticationHandler(token.getName(), servicesManager.getObject(),
-            tokenPrincipalFactory(), principalNameTransformer, JEESessionStore.INSTANCE);
+        val handler = new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory, principalNameTransformer, JEESessionStore.INSTANCE);
+        handler.setState(token.getState());
+        return handler;
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
+    public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("tokenAuthenticationHandler")
+        final AuthenticationHandler tokenAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler, defaultPrincipalResolver);
     }
 }

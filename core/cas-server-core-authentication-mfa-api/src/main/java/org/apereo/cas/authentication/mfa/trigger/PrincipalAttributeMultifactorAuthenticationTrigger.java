@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -27,7 +29,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToSet;
+import static org.springframework.util.StringUtils.*;
 
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationTrigger}.
@@ -51,7 +53,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
@@ -91,6 +94,25 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     protected Set<Event> resolveMultifactorAuthenticationProvider(final Optional<RequestContext> context,
                                                                   final RegisteredService service,
                                                                   final Principal principal) {
+        val events = determineMultifactorAuthenticationEvent(context, service, principal);
+        val deny = casProperties.getAuthn().getMfa().getTriggers().getPrincipal().isDenyIfUnmatched();
+        if (deny && (events == null || events.isEmpty())) {
+            throw new AuthenticationException(new MultifactorAuthenticationRequiredException(service, principal));
+        }
+        return events;
+    }
+
+    /**
+     * Determine multifactor authentication event.
+     *
+     * @param context   the context
+     * @param service   the service
+     * @param principal the principal
+     * @return the set
+     */
+    protected Set<Event> determineMultifactorAuthenticationEvent(final Optional<RequestContext> context,
+                                                                 final RegisteredService service,
+                                                                 final Principal principal) {
         val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);

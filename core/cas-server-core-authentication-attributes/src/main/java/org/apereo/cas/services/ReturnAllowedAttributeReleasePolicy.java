@@ -1,8 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,26 +38,24 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     private List<String> allowedAttributes = new ArrayList<>(0);
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
-        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
+    public Map<String, List<Object>> getAttributesInternal(
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> attributes) {
+        return authorizeReleaseOfAllowedAttributes(context, attributes);
     }
 
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param principal         the principal
-     * @param attrs             the attributes
-     * @param registeredService the registered service
-     * @param selectedService   the selected service
+     * @param context    the context
+     * @param attributes the attributes
      * @return the map
      */
-    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                            final Map<String, List<Object>> attrs,
-                                                                            final RegisteredService registeredService,
-                                                                            final Service selectedService) {
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> attributes) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attrs);
+        resolvedAttributes.putAll(attributes);
         val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes()
             .stream()
@@ -73,7 +68,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    protected List<String> determineRequestedAttributeDefinitions() {
+    protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return getAllowedAttributes();
     }
 }

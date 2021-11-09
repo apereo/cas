@@ -17,9 +17,11 @@ and/or acceptance of the policy would be handled via an external storage mechani
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
+Customize the policy by modifying the `casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to 
+learn more about user interface customizations. Note that the view here should have full access to the 
+resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
 
 <div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
 after a successful authentication event where CAS has already established the authentication principal, since the 
@@ -27,7 +29,7 @@ policy record is strongly tied to the identified user record. Implementing this 
 would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.core."%}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.core." %}
 
 ## Per Service 
 

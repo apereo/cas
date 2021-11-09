@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,15 +27,17 @@ import java.time.Duration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasEventsInMemoryRepositoryConfiguration {
-    
+
     private static final int INITIAL_CACHE_SIZE = 50;
+
     private static final long MAX_CACHE_SIZE = 1_000_000;
+
     private static final long EXPIRATION_TIME = 2;
 
     @Bean
-    @Autowired
-    public CasEventRepository casEventRepository(@Qualifier("casEventRepositoryFilter")
-                                                 final CasEventRepositoryFilter casEventRepositoryFilter) {
+    public CasEventRepository casEventRepository(
+        @Qualifier("casEventRepositoryFilter")
+        final CasEventRepositoryFilter casEventRepositoryFilter) {
         final LoadingCache<String, CasEvent> storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)

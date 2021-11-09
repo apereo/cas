@@ -84,8 +84,10 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * and then transformed/renamed using map values before they are put into a profile.
      * An example might be to fetch {@code givenName} from credential and rename it to {@code urn:oid:2.5.4.42} or vice versa.
      * Note that this setting only applies to attribute names, and not friendly-names.
+     * List arbitrary mappings of claims. Uses a "directed list" where the allowed
+     * syntax would be {@code givenName->urn:oid:2.5.4.42}.
      */
-    private List<ServiceProviderMappedAttribute> mappedAttributes = new ArrayList<>(0);
+    private List<String> mappedAttributes = new ArrayList<>(0);
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -130,6 +132,20 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     private boolean forceKeystoreGeneration;
 
     /**
+     * Define the validity period for the certificate
+     * in number of days. The end-date of the certificate
+     * is controlled by this setting, when defined as a value
+     * greater than zero.
+     */
+    private int certificateExpirationDays = 365 * 20;
+
+    /**
+     * Certificate signature algorithm to use
+     * when generating the certificate.
+     */
+    private String certificateSignatureAlg = "SHA1WithRSA";
+
+    /**
      * The key alias used in the keystore.
      */
     private String keystoreAlias;
@@ -156,7 +172,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
-    
+
     /**
      * Whether a response has to be mandatory signed.
      */
@@ -247,8 +263,21 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
     /**
      * Factory implementing this interface provides services for storing and retrieval of SAML messages for
      * e.g. verification of retrieved responses. The default factory is an always empty store.
-     * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows SAML messages to be stored in a distributed session store
+     * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows
+     * SAML messages to be stored in a distributed session store
      * specially required for high availability deployments and validation operations.
+     * <p>
+     * Available options are:
+     *
+     * <ul>
+     *     <li>{@code EMPTY}: Uses the {@code EmptyStoreFactory}</li>
+     *     <li>{@code SESSION}: Uses the {@code HttpSessionStore} </li>
+     *     <li>Fully-qualified class name of the message store implementation.</li>
+     * </ul>
+     * <p>
+     * Also note that the message store implementation can be supplied and configured at runtime as
+     * a Spring {@code @Bean} with the type {@code SAMLMessageStoreFactory} which, if found in the available
+     * application context, will override all other options.
      */
     private String messageStoreFactory = "org.pac4j.saml.store.EmptyStoreFactory";
 
@@ -279,23 +308,5 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties impleme
          * be marked so in the metadata.
          */
         private boolean required;
-    }
-
-    @RequiresModule(name = "cas-server-support-pac4j-webflow")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class ServiceProviderMappedAttribute implements Serializable {
-        private static final long serialVersionUID = -762819796533384951L;
-
-        /**
-         * Attribute name.
-         */
-        private String name;
-
-        /**
-         * The name that should be used to rename {@link #name}.
-         */
-        private String mappedTo;
     }
 }

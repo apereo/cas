@@ -16,9 +16,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.jpa.password=password",
     "cas.service-registry.jpa.driver-class=org.postgresql.Driver",
     "cas.service-registry.jpa.url=jdbc:postgresql://localhost:5432/services",
-    "cas.service-registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "cas.service-registry.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect"
 })
 @EnabledIfPortOpen(port = 5432)
 @Tag("Postgres")
 public class JpaServiceRegistryPostgresTests extends JpaServiceRegistryTests {
+
 }

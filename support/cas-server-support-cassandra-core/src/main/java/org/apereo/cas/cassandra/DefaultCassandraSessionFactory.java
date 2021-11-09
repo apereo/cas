@@ -58,9 +58,10 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     private CqlSession initializeCassandraSession(final BaseCassandraProperties cassandra) {
-        val builder = CqlSession.builder()
-            .withKeyspace(cassandra.getKeyspace())
-            .withAuthCredentials(cassandra.getUsername(), cassandra.getPassword());
+        val builder = CqlSession.builder().withKeyspace(cassandra.getKeyspace());
+        if (StringUtils.isNotBlank(cassandra.getUsername()) && StringUtils.isNotBlank(cassandra.getPassword())) {
+            builder.withAuthCredentials(cassandra.getUsername(), cassandra.getPassword());
+        }
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             builder.withLocalDatacenter(cassandra.getLocalDc());
         }
@@ -74,7 +75,6 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                 return new InetSocketAddress(host, port);
             })
             .forEach(builder::addContactPoint);
-
         return builder.build();
     }
 }

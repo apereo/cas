@@ -86,7 +86,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.azure-active-directory[0].client-id=12345678-bc3b-4e2d-a9bf-bf6c7ded8b7e",
         "cas.authn.attribute-repository.azure-active-directory[0].client-secret=msdbdsf84d"
     })
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AzureActiveDirectoryAuthenticationHandlerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -100,7 +100,7 @@ public class AzureActiveDirectoryAuthenticationHandlerTests {
     private List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired

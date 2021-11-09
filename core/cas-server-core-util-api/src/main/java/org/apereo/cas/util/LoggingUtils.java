@@ -16,6 +16,15 @@ import java.util.Objects;
  */
 @UtilityClass
 public class LoggingUtils {
+    /**
+     * Error.
+     *
+     * @param logger the logger
+     * @param msg    the msg
+     */
+    public static void error(final Logger logger, final String msg) {
+        logger.error(msg);
+    }
 
     /**
      * Error.
@@ -35,7 +44,6 @@ public class LoggingUtils {
      * @param throwable the throwable
      */
     public static void error(final Logger logger, final Throwable throwable) {
-
         error(logger, getMessage(throwable), throwable);
     }
 

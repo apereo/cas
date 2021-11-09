@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
 import lombok.val;
@@ -32,7 +34,8 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
     private final CasConfigurationProperties casProperties;
 
-    public SamlProfileSamlConditionsBuilder(final OpenSamlConfigBean configBean, final CasConfigurationProperties casProperties) {
+    public SamlProfileSamlConditionsBuilder(final OpenSamlConfigBean configBean,
+                                            final CasConfigurationProperties casProperties) {
         super(configBean);
         this.casProperties = casProperties;
     }
@@ -40,7 +43,8 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     @Override
     public Conditions build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                             final HttpServletResponse response,
-                            final Object assertion, final SamlRegisteredService service,
+                            final AuthenticatedAssertionContext assertion,
+                            final SamlRegisteredService service,
                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                             final String binding, final MessageContext messageContext) throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor, messageContext);
@@ -58,17 +62,17 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
      * @throws SamlException the saml exception
      */
     protected Conditions buildConditions(final RequestAbstractType authnRequest,
-                                         final Object assertion, final SamlRegisteredService service,
+                                         final AuthenticatedAssertionContext assertion,
+                                         final SamlRegisteredService service,
                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                          final MessageContext messageContext) throws SamlException {
 
         val currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-
         var skewAllowance = service.getSkewAllowance() > 0
             ? service.getSkewAllowance()
-            : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance();
+            : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();
         if (skewAllowance <= 0) {
-            skewAllowance = casProperties.getSamlCore().getSkewAllowance();
+            skewAllowance = Beans.newDuration(casProperties.getSamlCore().getSkewAllowance()).toSeconds();
         }
 
         val audienceUrls = new ArrayList<String>(2);

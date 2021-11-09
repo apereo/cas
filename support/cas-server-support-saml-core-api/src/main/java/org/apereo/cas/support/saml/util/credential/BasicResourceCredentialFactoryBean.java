@@ -117,6 +117,24 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         }
     }
 
+    /**
+     * Form of encoding for SecretKey info.
+     */
+    enum SecretKeyEncoding {
+        /**
+         * Raw binary encoding.
+         */
+        BINARY,
+        /**
+         * Hexidecimal encoding.
+         */
+        HEX,
+        /**
+         * Base64 encoding.
+         */
+        BASE64
+    }
+
     private PrivateKey getPrivateKey() {
         if (null == getPrivateKeyInfo()) {
             return null;
@@ -135,10 +153,8 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
             case HEX:
                 return Hex.decode(data);
             case BASE64:
-                return Base64.decodeBase64(data);
             default:
-                throw new IllegalArgumentException("Unsupported encoding");
-
+                return Base64.decodeBase64(data);
         }
     }
 
@@ -151,23 +167,5 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
         } catch (final Exception e) {
             throw new BeanCreationException("Could not decode secret key", e);
         }
-    }
-
-    /**
-     * Form of encoding for SecretKey info.
-     */
-    enum SecretKeyEncoding {
-        /**
-         * Raw binary encoding.
-         */
-        BINARY,
-        /**
-         * Hexidecimal encoding.
-         */
-        HEX,
-        /**
-         * Base64 encoding.
-         */
-        BASE64
     }
 }

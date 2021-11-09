@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 
@@ -48,13 +49,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationHandlersConfigurationTestConfiguration.class,
     CasCoreWebConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
@@ -107,13 +109,13 @@ public class JaasAuthenticationHandlersConfigurationTests {
         }
         
         @Bean
-        @ConditionalOnMissingBean(name = "authenticationServiceSelectionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {
             return new DefaultAuthenticationServiceSelectionPlan();
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "servicesManager")
+        @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
         public ServicesManager servicesManager() {
             return mock(ServicesManager.class);
         }

@@ -70,7 +70,7 @@ The local trust store should only be used for CAS-related functionality of cours
 can be carried over across CAS and Java upgrades, and certainly managed by the source control system that should
 host all CAS configuration.
 
-{% include casproperties.html properties="cas.http-client." %}
+{% include_cached casproperties.html properties="cas.http-client." %}
 
 ## PGT in Validation Response
 

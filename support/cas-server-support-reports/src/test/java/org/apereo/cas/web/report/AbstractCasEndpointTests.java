@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.spi.MockAuditTrailManager;
@@ -26,7 +25,7 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -46,6 +45,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -54,7 +54,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This is {@link AbstractCasEndpointTests}.
@@ -64,19 +63,18 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = "management.endpoints.web.exposure.include=*")
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@DirtiesContext
+@EnableAspectJAutoProxy
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractCasEndpointTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
-    
+
     @TestConfiguration
     @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
@@ -89,6 +87,7 @@ public abstract class AbstractCasEndpointTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -96,7 +95,6 @@ public abstract class AbstractCasEndpointTests {
         CasReportsConfiguration.class,
         CasLoggingConfiguration.class,
         CasCoreAuditConfiguration.class,
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
         AbstractCasEndpointTests.AuditTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesConfiguration.class,
@@ -122,7 +120,7 @@ public abstract class AbstractCasEndpointTests {
         CasCoreWebConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreNotificationsConfiguration.class,

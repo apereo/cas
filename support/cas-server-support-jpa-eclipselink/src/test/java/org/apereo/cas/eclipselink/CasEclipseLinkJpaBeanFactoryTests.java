@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasEclipseLinkJpaConfiguration.class,
     CasCoreUtilConfiguration.class
-}, properties = "cas.jdbc.show-sql=true")
+}, properties = "cas.jdbc.show-sql=false")
 @Tag("JDBC")
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasEclipseLinkJpaBeanFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +60,7 @@ public class CasEclipseLinkJpaBeanFactoryTests {
 
         val ctx = JpaConfigurationContext.builder()
             .dataSource(dataSource())
-            .packagesToScan(CollectionUtils.wrap(SampleEntity.class.getPackage().getName()))
+            .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .persistenceUnitName("sampleContext")
             .jpaVendorAdapter(adapter)
             .build();

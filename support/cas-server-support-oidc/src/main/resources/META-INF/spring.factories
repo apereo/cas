@@ -1,3 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.oidc.config.OidcConfiguration,\
+  org.apereo.cas.oidc.config.OidcResponseConfiguration,\
+  org.apereo.cas.oidc.config.OidcEndpointsConfiguration,\
+  org.apereo.cas.oidc.config.OidcLogoutConfiguration,\
   org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration,\
   org.apereo.cas.oidc.config.OidcThrottleConfiguration

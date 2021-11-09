@@ -33,8 +33,8 @@ import java.util.HashMap;
 @Slf4j
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
 
-    public WSFederationValidateRequestCallbackController(final WSFederationRequestConfigurationContext wsFederationRequestConfigurationContext) {
-        super(wsFederationRequestConfigurationContext);
+    public WSFederationValidateRequestCallbackController(final WSFederationRequestConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     /**
@@ -53,6 +53,9 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         val targetService = getConfigContext().getServiceSelectionStrategy()
             .resolveServiceFrom(getConfigContext().getWebApplicationServiceFactory().createService(serviceUrl));
+        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.getWreply()));
+        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.getWtrealm()));
+        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.getWctx()));
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located matching service [{}]", service);
 

@@ -35,7 +35,6 @@ public class SurrogateAuthorizationAction extends AbstractAction {
                     .service(service)
                     .authentication(authentication)
                     .registeredService(svc)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();

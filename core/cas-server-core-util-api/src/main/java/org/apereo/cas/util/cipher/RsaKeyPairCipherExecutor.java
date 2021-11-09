@@ -70,13 +70,13 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     private void configureEncryptionParametersForDecoding() {
-        setSecretKeyEncryptionKey(privateKeyEncryption);
+        setEncryptionKey(privateKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
     private void configureEncryptionParametersForEncoding() {
-        setSecretKeyEncryptionKey(publicKeyEncryption);
+        setEncryptionKey(publicKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }

@@ -19,15 +19,13 @@ import java.util.Map;
 @RedisHash("RedisUserAccount")
 @AllArgsConstructor
 public class RedisUserAccount implements Serializable {
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = 7655148747303981918L;
 
     private String username;
 
     private String password;
 
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     private AccountStatus status = AccountStatus.OK;
 

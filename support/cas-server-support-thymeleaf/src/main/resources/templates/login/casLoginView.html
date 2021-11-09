@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.login.pagetitle}">CAS Login View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+
+</head>
+
+<body class="login mdc-typography">
+<div layout:fragment="content" class="d-flex justify-content-center">
+   <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content card flex-grow-1"
+         th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
+                  loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+        <section id="loginForm"
+                 th:if="${loginFormViewable and loginFormEnabled}"
+                 class="login-section login-form card-body">
+            <div th:replace="fragments/loginform :: loginform">
+                <a href="fragments/loginform.html">Login Form goes here</a>
+            </div>
+        </section>
+        <span th:if="${#bools.isFalse(delegatedAuthenticationDynamicProviderSelection)}">
+            <section id="loginProviders" class="login-section login-providers card-body"
+                    th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
+                <div th:replace="fragments/loginProviders :: loginProviders">
+                    <a href="fragments/loginProviders.html">loginProviders</a>
+                </div>
+            </section>
+        </span>
+        <section id="acceptto" class="login-section login-qr d-xs-none d-md-block" th:if="${accepttoApplicationId}">
+            <div th:replace="fragments/accepttoQRCode :: accepttoQRCode">
+                <a href="fragments/accepttoQRCode.html">accepttoQRCode</a>
+            </div>
+        </section>
+        <section id="qrlogin" class="login-section login-qr d-xs-none d-md-block card-body" th:if="${qrAuthenticationEnabled}">
+            <div th:replace="fragments/qrAuthentication :: qrAuthentication">
+                <a href="fragments/qrAuthentication.html">qrAuthentication</a>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+
+</html>

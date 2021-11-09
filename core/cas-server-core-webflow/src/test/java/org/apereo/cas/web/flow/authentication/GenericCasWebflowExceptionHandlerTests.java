@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class GenericCasWebflowExceptionHandlerTests {
     @Test
     public void verifyOperation() {
@@ -35,14 +36,17 @@ public class GenericCasWebflowExceptionHandlerTests {
         errors.add(AccountLockedException.class);
         errors.add(CredentialExpiredException.class);
         errors.add(AccountExpiredException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
-        val handler = new GenericCasWebflowExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        val handler = new GenericCasWebflowExceptionHandler(catalog, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
         assertTrue(handler.supports(new AccountExpiredException(), context));
 
         val event = handler.handle(new CredentialExpiredException(), context);

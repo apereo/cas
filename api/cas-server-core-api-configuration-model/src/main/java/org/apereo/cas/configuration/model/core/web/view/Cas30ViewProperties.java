@@ -36,12 +36,6 @@ public class Cas30ViewProperties implements Serializable {
 
     /**
      * Indicates how attributes in the final validation response should be formatted.
-     * Options available are:
-     *
-     * <ul>
-     * <li>{@code DEFAULT}: The default option implements the rendering strategy specified by the CAS protocol.</li>
-     * <li>{@code INLINE}: Includes the attribute name and value as XML attributes.</li>
-     * </ul>
      */
     private ValidationAttributesRendererTypes attributeRendererType = ValidationAttributesRendererTypes.DEFAULT;
 

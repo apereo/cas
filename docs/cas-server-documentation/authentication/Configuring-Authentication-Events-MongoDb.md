@@ -9,7 +9,7 @@ category: Authentication
 
 Stores authentication events into a MongoDb NoSQL database.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-events-mongo" %}
 
-{% include casproperties.html properties="cas.events.mongo" %}
+{% include_cached casproperties.html properties="cas.events.mongo" %}
 

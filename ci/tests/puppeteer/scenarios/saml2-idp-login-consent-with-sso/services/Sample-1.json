@@ -1,0 +1,28 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://samltest.id/.+",
+  "name": "Sample",
+  "id": 1,
+  "evaluationOrder": 1,
+  "metadataLocation": "https://samltest.id/saml/sp",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "REPLACE",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+          "salt": "SomahRah5oYo",
+          "attribute": "uid"
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "first-name", "last-name", "email", "displayName" ] ]
+        }
+      ]
+    ]
+  }
+}
+
+

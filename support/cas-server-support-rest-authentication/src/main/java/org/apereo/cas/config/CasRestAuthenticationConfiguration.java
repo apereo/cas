@@ -12,11 +12,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,33 +34,19 @@ import java.nio.charset.Charset;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "casRestAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasRestAuthenticationConfiguration {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("defaultPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
 
     @Bean
-    @RefreshScope
-    @SneakyThrows
-    public RestTemplate restAuthenticationTemplate() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public RestTemplate restAuthenticationTemplate(final CasConfigurationProperties casProperties) {
         val rest = casProperties.getAuthn().getRest();
         val template = new RestTemplate();
-        template.getMessageConverters().stream()
+        template.getMessageConverters()
+            .stream()
             .filter(c -> c instanceof MappingJackson2HttpMessageConverter)
             .map(MappingJackson2HttpMessageConverter.class::cast)
             .findFirst()
@@ -76,26 +60,38 @@ public class CasRestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "restAuthenticationPrincipalFactory")
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory restAuthenticationPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
-    public AuthenticationHandler restAuthenticationHandler() {
+    public AuthenticationHandler restAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("restAuthenticationPrincipalFactory")
+        final PrincipalFactory restAuthenticationPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val rest = casProperties.getAuthn().getRest();
-        val r = new RestAuthenticationHandler(servicesManager.getObject(), restAuthenticationPrincipalFactory(), rest);
+        val r = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, rest);
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder(), applicationContext));
+        r.setState(rest.getState());
         return r;
     }
 
     @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer() {
+    public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("restAuthenticationHandler")
+        final AuthenticationHandler restAuthenticationHandler,
+        @Qualifier("defaultPrincipalResolver")
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), defaultPrincipalResolver.getObject());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler, defaultPrincipalResolver);
             }
         };
     }

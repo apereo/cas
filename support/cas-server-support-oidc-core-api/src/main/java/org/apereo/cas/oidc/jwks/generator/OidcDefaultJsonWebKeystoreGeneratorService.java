@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,8 @@ import org.apache.commons.io.FileUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
@@ -26,9 +30,20 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
+public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService, DisposableBean {
 
     private final OidcProperties oidcProperties;
+
+    private final ConfigurableApplicationContext applicationContext;
+
+    private WatcherService resourceWatcherService;
+
+    @Override
+    public void destroy() {
+        if (this.resourceWatcherService != null) {
+            this.resourceWatcherService.close();
+        }
+    }
 
     @SneakyThrows
     @Override
@@ -36,6 +51,12 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val resolve = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
+        resourceWatcherService = new FileWatcherService(resource.getFile(),
+            file -> {
+                LOGGER.info("Publishing event to broadcast change in [{}]", file);
+                applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
+            });
+        resourceWatcherService.start(resource.getFilename());
         return generate(resource);
     }
 
@@ -48,10 +69,11 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @SneakyThrows
     protected Resource generate(final Resource file) {
         if (ResourceUtils.doesResourceExist(file)) {
-            LOGGER.debug("Located JSON web keystore at [{}]", file);
+            LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
         val jwk = generateJsonWebKey();
+
         val data = new JsonWebKeySet(jwk).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         val location = file.getFile();
         FileUtils.write(location, data, StandardCharsets.UTF_8);
@@ -66,7 +88,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
      */
     @SneakyThrows
     protected PublicJsonWebKey generateJsonWebKey() {
-        val jwks = oidcProperties.getJwks();
-        return OidcJsonWebKeyStoreUtils.generateJsonWebKey(jwks.getJwksType(), jwks.getJwksKeySize());
+        val properties = oidcProperties.getJwks();
+        val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(properties.getJwksType(), properties.getJwksKeySize());
+        jsonWebKey.setKeyId(properties.getJwksKeyId());
+        return jsonWebKey;
     }
 }

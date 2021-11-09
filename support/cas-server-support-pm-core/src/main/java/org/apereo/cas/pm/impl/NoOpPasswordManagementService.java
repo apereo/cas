@@ -1,12 +1,14 @@
 package org.apereo.cas.pm.impl;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.InvalidPasswordException;
+import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link NoOpPasswordManagementService}.
@@ -14,6 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class NoOpPasswordManagementService extends BasePasswordManagementService {
     public NoOpPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
@@ -22,7 +25,8 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        return null;
+    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) throws InvalidPasswordException {
+        LOGGER.warn("Using no-op password change impl. Appropriate password management service is not configured.");
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -25,13 +26,13 @@ public class DuoSecurityPrepareWebLoginFormAction extends AbstractMultifactorAut
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal());
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoSecurityCredential.class);
         Objects.requireNonNull(credential).setUsername(principal.getId());
-        credential.setProviderId(provider.createUniqueId());
-
+        credential.setProviderId(provider.getId());
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         val viewScope = requestContext.getViewScope();
         duoAuthenticationService.signRequestToken(principal.getId())
             .ifPresent(value -> viewScope.put("sigRequest", value));
-        viewScope.put("apiHost", duoAuthenticationService.getApiHost());
+        viewScope.put("apiHost", resolver.resolve(duoAuthenticationService.getProperties().getDuoApiHost()));
         viewScope.put("principal", principal);
         return success();
     }

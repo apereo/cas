@@ -38,14 +38,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @JsonProperty("numberOfUses")
     private long numberOfUses;
 
-    /**
-     * Instantiates a new multi time use or timeout expiration policy.
-     *
-     * @param numberOfUses        the number of uses
-     * @param timeToKillInSeconds the time to kill in seconds
-     */
     @JsonCreator
-    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses,
+                                                 @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
@@ -68,7 +63,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (systemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket [{}] has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
+            LOGGER.debug("Ticket [{}] has expired; difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
                 ticketState.getId(), systemTime, lastTimeUsed, this.timeToKillInSeconds);
             return true;
         }
@@ -102,7 +97,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses,
+                                           @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -116,14 +112,25 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
         private static final long serialVersionUID = -5814201080268311070L;
 
-        /**
-         * Instantiates a new Service ticket expiration policy.
-         *
-         * @param numberOfUses        the number of uses
-         * @param timeToKillInSeconds the time to kill in seconds
-         */
         @JsonCreator
-        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses,
+                                             @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
+        }
+    }
+
+    /**
+     * The Service ticket expiration policy.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    @ToString(callSuper = true)
+    public static class TransientSessionTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+
+        private static final long serialVersionUID = -5814201080268311070L;
+
+        @JsonCreator
+        public TransientSessionTicketExpirationPolicy(@JsonProperty("numberOfUses") final long numberOfUses,
+                                                      @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

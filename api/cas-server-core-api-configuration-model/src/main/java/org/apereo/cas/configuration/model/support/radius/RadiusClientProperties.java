@@ -51,4 +51,25 @@ public class RadiusClientProperties implements Serializable {
      * The accounting port.
      */
     private int accountingPort = 1813;
+
+    /**
+     * Transport type to use by this client
+     * to connect to the server.
+     */
+    private RadiusClientTransportTypes transportType = RadiusClientTransportTypes.UDP;
+
+    /**
+     * Transport layer options.
+     */
+    public enum RadiusClientTransportTypes {
+        /**
+         * Default. UDP client transport type.
+         */
+        UDP,
+        /**
+         * RadSec is a protocol which allows RADIUS servers to
+         * transfer data over TCP and TLS for increased security.
+         */
+        RADSEC
+    }
 }

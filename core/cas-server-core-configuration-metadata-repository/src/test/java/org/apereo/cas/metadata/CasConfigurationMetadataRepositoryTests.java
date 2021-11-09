@@ -1,7 +1,7 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +27,7 @@ public class CasConfigurationMetadataRepositoryTests {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
         assertTrue(properties.isEmpty());
-        properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorAuthenticationProperties.class);
+        properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorProperties.class);
         assertTrue(properties.isEmpty());
         properties = repository.getPropertiesWithType(Set.class);
         assertFalse(properties.isEmpty());

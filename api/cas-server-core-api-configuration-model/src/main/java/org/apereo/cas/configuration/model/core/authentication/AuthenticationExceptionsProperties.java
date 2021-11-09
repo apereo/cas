@@ -2,9 +2,11 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("AuthenticationExceptionsProperties")
 public class AuthenticationExceptionsProperties implements Serializable {
 
     private static final long serialVersionUID = -2385347572099983874L;
@@ -34,5 +37,11 @@ public class AuthenticationExceptionsProperties implements Serializable {
      * To map custom exceptions, one would need map the exception, they can be defined here
      * and then linked to custom messages.
      */
-    private List<Class<? extends Exception>> exceptions = new ArrayList<>(0);
+    private List<Class<? extends Throwable>> exceptions = new ArrayList<>(0);
+
+    /**
+     * Handle exceptions using a groovy script.
+     */
+    @NestedConfigurationProperty
+    private GroovyAuthenticationExceptionsProperties groovy = new GroovyAuthenticationExceptionsProperties();
 }

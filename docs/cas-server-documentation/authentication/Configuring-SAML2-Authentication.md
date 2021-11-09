@@ -45,7 +45,7 @@ can be done in a few ways. To learn more, please [review this guide](../installa
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
@@ -59,15 +59,13 @@ repositories {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core,cas.session-replication" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|-------------------------------------------------------------------------------------------------------
-| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password` and `entityId` as parameters.
+
+{% include_cached actuators.html endpoints="samlPostProfileResponse" %}
 
 ### SAML Services
 
@@ -101,15 +99,8 @@ SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
 ## Attribute Queries
 
-In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
-the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
-and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
-`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider 
-needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default 
-will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
+Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) for more details.
 
-Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
-CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
 ## Client Libraries
 
@@ -120,7 +111,7 @@ For Java-based applications, the following frameworks may be used to integrate y
 
 ## Sample Client Applications
 
-- [Spring Security SAML Sample Webapp](https://github.com/cas-projects/saml2-sample-java-webapp)
+- [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
 - [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
 
 ## Troubleshooting

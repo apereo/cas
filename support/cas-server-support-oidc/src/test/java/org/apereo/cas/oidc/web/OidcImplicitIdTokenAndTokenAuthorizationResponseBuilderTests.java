@@ -50,13 +50,15 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));
-        
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val code = addCode(principal, registeredService);
         val holder = AccessTokenRequestDataHolder.builder()
+            .token(code)
             .clientId(registeredService.getClientId())
             .service(CoreAuthenticationTestUtils.getService())
-            .authentication(RegisteredServiceTestUtils.getAuthentication(
-                CoreAuthenticationTestUtils.getPrincipal("casuser"), attributes))
+            .authentication(RegisteredServiceTestUtils.getAuthentication(principal, attributes))
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)

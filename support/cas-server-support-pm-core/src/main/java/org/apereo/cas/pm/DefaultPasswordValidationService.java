@@ -25,6 +25,10 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
             LOGGER.error("Provided password is blank");
             return false;
         }
+        if (bean.getPassword().equals(c.getPassword())) {
+            LOGGER.error("Provided password cannot be the same as the current password");
+            return false;
+        }
         if (!bean.getPassword().equals(bean.getConfirmedPassword())) {
             LOGGER.error("Provided password does not match the confirmed password");
             return false;

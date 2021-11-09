@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 
 import lombok.val;
@@ -23,14 +24,15 @@ import static org.mockito.Mockito.*;
 public class DefaultTicketRegistryCleanerTests {
 
     @Test
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = new DefaultTicketRegistry();
-        val casuser = new MockTicketGrantingTicket("casuser");
-        casuser.markTicketExpired();
-        ticketRegistry.addTicket(casuser);
+        val tgt = new MockTicketGrantingTicket("casuser");
+        tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+        ticketRegistry.addTicket(tgt);
         assertEquals(ticketRegistry.getTickets().size(), 1);
         val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
+        tgt.markTicketExpired();
         c.clean();
         assertEquals(ticketRegistry.sessionCount(), 0);
     }
@@ -49,7 +51,7 @@ public class DefaultTicketRegistryCleanerTests {
     public void verifyCleanFail() {
         val logoutManager = mock(LogoutManager.class);
         val ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicketsStream()).thenThrow(IllegalArgumentException.class);
+        when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
         val c = new DefaultTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, ticketRegistry);
         assertEquals(c.clean(), 0);
     }

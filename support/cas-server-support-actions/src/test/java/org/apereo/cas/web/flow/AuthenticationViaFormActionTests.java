@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST = "test";
@@ -37,7 +37,7 @@ public class AuthenticationViaFormActionTests extends AbstractWebflowActionsTest
     private static final String PASSWORD_PARAM = "password";
 
     @Autowired
-    @Qualifier("authenticationViaFormAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
     private Action action;
 
     @Autowired

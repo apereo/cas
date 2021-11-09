@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.Transient;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Transient;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -26,8 +22,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Entity
-@DiscriminatorValue("oidc")
 @ToString(callSuper = true)
 @Getter
 @Setter
@@ -37,67 +31,50 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
-    @Column
     private String jwks;
 
-    @Column
+    private String jwksKeyId;
+    
     private long jwksCacheDuration;
 
-    @Column
     private String jwksCacheTimeUnit;
 
-    @Column(name = "token_auth_method")
     private String tokenEndpointAuthenticationMethod = "client_secret_basic";
 
-    @Column
     private boolean signIdToken = true;
 
-    @Column
     private boolean encryptIdToken;
 
-    @Column
     private String idTokenEncryptionAlg;
 
-    @Column
     private String idTokenSigningAlg;
 
-    @Column
     private String userInfoSigningAlg;
 
-    @Column(name = "userinfo_enc_alg")
     private String userInfoEncryptedResponseAlg;
 
-    @Column(name = "userinfo_enc_enc")
     private String userInfoEncryptedResponseEncoding;
 
-    @Column
     private String idTokenEncryptionEncoding;
 
-    @Column
-    private String sectorIdentifierUri;
+    private String idTokenIssuer;
 
-    @Column
+    private String sectorIdentifierUri;
+    
     private String applicationType = "web";
 
-    @Column
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();
 
-    @Column
     private boolean dynamicallyRegistered;
 
     @JsonIgnore
-    @Column
     @Deprecated(since = "6.2.0")
     @Transient
-    @org.springframework.data.annotation.Transient
     private transient boolean implicit;
 
-    @Column(name = "DYNAMIC_REG_TIME")
     private ZonedDateTime dynamicRegistrationDateTime;
 
-    @Lob
-    @Column(name = "scopes", length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>(0);
+    private Set<String> scopes = new HashSet<>(0);
 
     /**
      * Gets subject type.
@@ -154,20 +131,20 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         }
     }
 
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new OidcRegisteredService();
-    }
-
     @JsonIgnore
     @Override
     public int getEvaluationPriority() {
         return 1;
     }
-    
+
     @JsonIgnore
     @Override
     public String getFriendlyName() {
         return "OpenID Connect Relying Party";
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OidcRegisteredService();
     }
 }

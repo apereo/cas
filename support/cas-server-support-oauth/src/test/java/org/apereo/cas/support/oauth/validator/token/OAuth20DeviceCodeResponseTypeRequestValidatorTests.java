@@ -50,6 +50,7 @@ public class OAuth20DeviceCodeResponseTypeRequestValidatorTests extends Abstract
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.DEVICE_CODE.getType());
         assertFalse(validator.validate(context));
 
+        addRegisteredService();
         request.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         assertTrue(validator.validate(context));
     }

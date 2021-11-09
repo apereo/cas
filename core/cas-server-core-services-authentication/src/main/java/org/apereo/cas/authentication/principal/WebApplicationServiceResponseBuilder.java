@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Response.ResponseType;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,12 +32,14 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     private int order = Integer.MAX_VALUE;
 
-    public WebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
-        super(servicesManager);
+    public WebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
+                                                final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
     }
 
     @Override
-    public Response build(final WebApplicationService service, final String serviceTicketId, final Authentication authentication) {
+    public Response build(final WebApplicationService service, final String serviceTicketId,
+                          final Authentication authentication) {
         val parameters = new HashMap<String, String>();
         if (StringUtils.hasText(serviceTicketId)) {
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);

@@ -10,9 +10,9 @@ category: Ticketing
 
 Infinispan integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-infinispan-ticket-registry" %}
 
-{% include casproperties.html properties="cas.ticket.registry.infinispan" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.infinispan" %}
 
 [Infinispan](http://infinispan.org/) is a distributed in-memory key/value data store with optional schema.
 It can be used both as an embedded Java library and as a language-independent service accessed remotely over a variety of protocols.

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,13 +66,17 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
 
     @JsonIgnore
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication() {
-        return TriStateBoolean.UNDEFINED;
+    public TriStateBoolean getCreateCookieOnRenewedAuthentication() {
+        val result = policies
+            .stream()
+            .filter(p -> p.getCreateCookieOnRenewedAuthentication() != null)
+            .allMatch(p -> p.getCreateCookieOnRenewedAuthentication().isTrue() || p.getCreateCookieOnRenewedAuthentication().isUndefined());
+        return TriStateBoolean.fromBoolean(result);
     }
 
     @Override
     public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
-        AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
-        return policies.stream().allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
+        return policies.stream()
+            .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }
 }

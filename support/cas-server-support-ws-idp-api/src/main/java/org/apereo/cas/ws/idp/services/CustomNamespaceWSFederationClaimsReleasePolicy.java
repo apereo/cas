@@ -1,9 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import com.google.common.collect.Maps;
@@ -45,10 +43,10 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     }
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attributes) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attrs);
+        resolvedAttributes.putAll(attributes);
         val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(resolvedAttributes.size());
         getAllowedAttributes().forEach((key, value) -> {
             if (resolvedAttributes.containsKey(value)) {
@@ -64,7 +62,7 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

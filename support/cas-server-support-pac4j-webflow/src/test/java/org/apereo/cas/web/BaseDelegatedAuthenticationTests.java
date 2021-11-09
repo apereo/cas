@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -30,16 +31,21 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+import org.apereo.cas.web.flow.config.DelegatedAuthenticationDynamicDiscoverySelectionConfiguration;
 import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.exception.http.OkAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -64,6 +70,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link BaseDelegatedAuthenticationTests}.
@@ -109,12 +117,14 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasPersonDirectoryTestConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         DelegatedAuthenticationWebflowTestConfiguration.class,
         Pac4jDelegatedAuthenticationConfiguration.class,
         Pac4jAuthenticationEventExecutionPlanConfiguration.class,
         Pac4jDelegatedAuthenticationSerializationConfiguration.class,
-        DelegatedAuthenticationWebflowConfiguration.class
+        DelegatedAuthenticationWebflowConfiguration.class,
+        DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
@@ -168,7 +178,17 @@ public abstract class BaseDelegatedAuthenticationTests {
             });
             facebookClient.setName(FacebookClient.class.getSimpleName());
 
-            return new Clients("https://cas.login.com", List.of(saml2Client, casClient, facebookClient, oidcClient));
+            val mockClientNoCredentials = mock(BaseClient.class);
+            when(mockClientNoCredentials.getName()).thenReturn("MockClientNoCredentials");
+            when(mockClientNoCredentials.getCredentials(any(), any())).thenThrow(new OkAction(StringUtils.EMPTY));
+            when(mockClientNoCredentials.isInitialized()).thenReturn(true);
+
+            val failingClient = mock(IndirectClient.class);
+            when(failingClient.getName()).thenReturn("FailingIndirectClient");
+            doThrow(new IllegalArgumentException("Unable to init")).when(failingClient).init();
+
+            return new Clients("https://cas.login.com", List.of(saml2Client, casClient,
+                facebookClient, oidcClient, mockClientNoCredentials, failingClient));
         }
     }
 }

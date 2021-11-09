@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowActions")
-@TestPropertySource(properties = "cas.authn.pm.core.policy-pattern=P@ss.+")
+@TestPropertySource(properties = "cas.authn.pm.core.password-policy-pattern=P@ss.+")
 public class PasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("passwordChangeAction")
@@ -79,7 +79,7 @@ public class PasswordChangeActionTests extends BasePasswordManagementActionTests
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         WebUtils.putCredential(context,
-            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "P@ssword"));
+            RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Th!$isT3$t"));
 
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");

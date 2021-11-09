@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -85,7 +86,8 @@ public class X509Properties implements Serializable {
     /**
      * Indicates the type of principal resolution for X509.
      */
-    private PrincipalTypes principalType;
+    @RequiredProperty
+    private PrincipalTypes principalType = PrincipalTypes.SUBJECT_DN;
 
     /**
      * Revocation certificate checking can be carried out in one of the following ways:
@@ -311,8 +313,7 @@ public class X509Properties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private X509WebflowAutoConfigurationProperties webflow =
-        new X509WebflowAutoConfigurationProperties();
+    private X509WebflowAutoConfigurationProperties webflow = new X509WebflowAutoConfigurationProperties();
 
     /**
      * Principal transformation properties.

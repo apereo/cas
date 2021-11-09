@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -24,7 +25,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(NamedQueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
 
@@ -73,11 +74,12 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     public void verifySuccess() throws Exception {
         val sql = "SELECT * FROM CAS_NAMED_USERS where username=:username";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
-        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
-            null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
-            this.dataSource, sql, "password",
-            null, null,
-            CollectionUtils.wrap(map));
+
+        val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
+        properties.setName("namedHandler");
+        val q = new QueryDatabaseAuthenticationHandler(properties,
+            null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
         assertNotNull(result);
@@ -89,11 +91,11 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     public void verifySuccessWithCount() throws Exception {
         val sql = "SELECT count(*) as total FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
-        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
-            null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
-            this.dataSource, sql, null,
-            null, null,
-            CollectionUtils.wrap(map));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(sql);
+        properties.setName("namedHandler");
+        val q = new QueryDatabaseAuthenticationHandler(properties,
+            null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
         assertNotNull(result);
@@ -104,21 +106,21 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
     @Test
     public void verifyFailsWithMissingTotalField() {
         val sql = "SELECT count(*) FROM CAS_NAMED_USERS where username=:username AND password=:password";
-        val q = new QueryDatabaseAuthenticationHandler("namedHandler",
-            null, PrincipalFactoryUtils.newPrincipalFactory(), 0,
-            this.dataSource, sql, null,
-            null, null,
-            new LinkedHashMap<>());
+        val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
+        properties.setName("namedHandler");
+        val q = new QueryDatabaseAuthenticationHandler(properties,
+            null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>());
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0")));
     }
 
     @TestConfiguration("TestConfiguration")
     public static class DatabaseTestConfiguration {
-         @Bean
+        @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
-             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(UsersTable.class.getName()));
-         }
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(UsersTable.class.getName()));
+        }
     }
 
     @Entity(name = "CAS_NAMED_USERS")

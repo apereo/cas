@@ -11,8 +11,8 @@ import java.io.Serializable;
  * Represents the task of building a CAS response
  * that is returned by a service.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 4.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)

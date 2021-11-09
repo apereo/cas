@@ -6,20 +6,28 @@ category: Planning
 
 # RC3 Release Notes
 
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
-you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain
-confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+We strongly recommend that you take advantage of the release candidates as they come out. Waiting
+for a `GA` release is only going to set you up for unpleasant surprises. A `GA`
+is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
+releases are *strictly* time-based releases; they are not scheduled or based on
+specific benchmarks, statistics or completion of features. To gain confidence in
+a particular release, it is strongly recommended that you start early by
+experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
-and financially support the project at a capacity that best suits your deployment. Note that all development activity
-is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
-sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs
-and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+If you benefit from Apereo CAS as free and open-source software, we
+invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
+and financially support the project at a capacity that best suits your
+deployment. Note that all development activity is performed
+*almost exclusively* on a voluntary basis with no expectations, commitments or strings
+attached. Having the financial means to better sustain engineering activities will allow
+the developer community to allocate *dedicated and committed* time for long-term
+support, maintenance and release planning, especially when it comes to addressing
+critical and security issues in a timely manner. Funding will ensure support for
+the software you rely on and you gain an advantage and say in the way Apereo, and
+the CAS project at that, runs and operates. If you consider your CAS deployment to
+be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 
@@ -37,61 +45,55 @@ and operates. If you consider your CAS deployment to be a critical part of the i
 In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html), adjust the following setting:
 
 ```properties
-cas.version=6.4.0-RC3
+cas.version=6.5.0-RC3
 ```
 
 <div class="alert alert-info">
-  <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the 
+minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+     
+### Spring Boot `2.6.x`
 
-## CAS Initializr
-
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now moved to its own separate repository.
+CAS has now switched to use the Spring Boot `2.6.x` release line, and all other relevant dependencies
+such as Spring Cloud, Spring Data, Spring Security, etc have also been upgraded. While this is a somewhat significant
+upgrade, its effects and consequences should largely remain invisible to the end-user. Aside from all the usual 
+reasons, this upgrade should allow CAS to be one step closer to native build using the likes of GraalVM. 
 
 <div class="alert alert-info">
-<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing
-WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr
-to be the one true way to generate a starting template project for all CAS deployments.
+<strong>Remember</strong><br/>Be sure to review your CAS Overlay configuration
+to make sure the Spring Boot version correctly matches that of CAS. Creating a CAS Overlay
+project using the CAS Initializr service should already account for this change.
 </div>
 
-## Okta Attribute Resolution
+### Account (Self-Service) Registration
 
-CAS attribute resolution engine now allows for fetching [user attributes from Okta](../integration/Attribute-Resolution-Okta.html).
+CAS provides a modest workflow to 
+handle [self-service account registration](../registration/Account-Registration-Overview.html).
+This capability was developed and first released in `6.5.0-RC1`, and it will be repeatedly refined
+and improved in the future to match and accommodate realistic workflows deployed today as much as possible. 
+ 
+### OpenID Connect Key Rotation
+     
+CAS can now be configured to rotate keys in the OpenID Connect keystore automatically 
+based on a predefined schedule. Rotation will include previous keys as well as current and future
+keys to assist with integrations and caching concerns. There is also a revocation schedule for old
+inactive keys that should be removed from the keystore.
 
 ## Other Stuff
-         
-- SAML2 registered services that define a `whiteListBlackListPrecedence` setting are now required to use `INCLUDE` or `EXCLUDE` as the accepted value.
-- SAML2 metadata cache for MDQ is modified to correctly calculate the cache key for entity requests.
-- Ordering and sorting of the attribute repositories is now restored to respect the `order` setting.
-- Thymeleaf views specified via template prefixes in the configuration can now support `classpath` resources.
-- SAML2 metadata cache can determine its expiration policy using [service expiration policy](../services/Configuring-Service-Expiration-Policy.html) if defined.
-- User interface forms that contain a `username` field are set to prevent spell check and auto capitalization.
-- [X509 EDIPI](../authentication/X509-Authentication.html) can now be extracted as an attribute, when available.
-- [Syncope authentication](../authentication/Syncope-Authentication.html) adds support for multiple relationships of the same type.
-- User interfaces fixes for login sizing related to flexbox in IE11 where the login page is far too thin to be usable.
-- [Surrogate authentication](../authentication/Surrogate-Authentication.html) can correctly identify the primary principal's attributes for MFA activation.
-- SAML2 registered services are correctly located from the authentication request and are matched against service provider's entity id.
-- Person directory principal resolution can use attributes from the *current authentication attempt* to build the final principal.
-- The ability to retry failing tests is removed from CI to prevent test coverage miscalculations.
-- Triggering CI jobs and workflow runs is no longer automatically triggered to help reduce the load on the backlog.
-- Small improvements to CI test execution to ensure coverage results can be correctly calculated.
+       
+- All Redis integrations are now able to support TLS options for encrypted connections and transports.
+- All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
 
 ## Library Upgrades
 
-- TestContainers
-- JUnit Pioneer
-- Person Directory
 - Spring Boot
-- Spring
-- Hibernate
-- Apache Velocity
-- Apache jClouds
-- Kryo
-- Okta
-- OpenSAML  
-- Hazelcast
-- Infinispan
+- Spring Data
+- Spring Security
+- Spring Cloud
+- Micrometer
+

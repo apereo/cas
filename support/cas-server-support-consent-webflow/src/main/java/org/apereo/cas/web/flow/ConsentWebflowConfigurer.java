@@ -28,7 +28,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
                                     final ConfigurableApplicationContext applicationContext,
                                     final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setOrder(casProperties.getConsent().getWebflow().getOrder());
+        setOrder(casProperties.getConsent().getCore().getWebflow().getOrder());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createConsentView(final Flow flow) {
-        val state = createViewState(flow, VIEW_ID_CONSENT_VIEW, VIEW_ID_CONSENT_VIEW);
+        val state = createViewState(flow, VIEW_ID_CONSENT_VIEW, "consent/casConsentView");
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CONFIRM, STATE_ID_CONSENT_CONFIRM);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 

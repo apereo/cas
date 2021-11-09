@@ -31,9 +31,9 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-        final MongoOperations mongoTemplate,
-        final String collectionName,
-        final CipherExecutor<String, String> tokenCredentialCipher) {
+                                                               final MongoOperations mongoTemplate,
+                                                               final String collectionName,
+                                                               final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
@@ -96,6 +96,14 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     public void delete(final String username) {
         val query = new Query();
         query.addCriteria(Criteria.where("username").is(username.trim()))
+            .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
+    }
+
+    @Override
+    public void delete(final long id) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").is(id))
             .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }

@@ -18,6 +18,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [October 18 2021 Vulnerability Disclosure](https://apereo.github.io/2021/10/18/restvuln/)
 - [Feb 13 2021 Vulnerability Disclosure](https://apereo.github.io/2021/02/13/gauthvuln/)
 - [Oct 14 2020 Vulnerability Disclosure](https://apereo.github.io/2020/10/14/gauthvuln/)
 - [July 24 2020 Vulnerability Disclosure](https://apereo.github.io/2020/07/24/credvuln/)
@@ -51,7 +52,7 @@ from the CAS server to the application must be done using HTTPS:
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
-{% include casproperties.html properties="cas.http-client." %}
+{% include_cached casproperties.html properties="cas.http-client." %}
 
 ### Connections to Dependent Systems
 
@@ -174,20 +175,13 @@ Protocol tickets that are issued by CAS and shared with other applications such 
 <div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
 
-{% include {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
+{% include_cached {{ version }}/signing-encryption-configuration.md configKey="cas.ticket" signingKeySize="512" encryptionKeySize="256" encryptionAlg="AES_128_CBC_HMAC_SHA_256" %}
 
 
 ### Ticket Registry Encryption
 
 Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
-
-### Administrative Pages Security
-
-CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
-These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to
-native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to
-authorized parties. Please [see this guide](../monitoring/Monitoring-Statistics.html) for more info.
 
 ### Ticket Expiration Policies
 
@@ -249,7 +243,7 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-{% include casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request" %}
 
 #### Security Response Headers
 
@@ -257,7 +251,7 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently on by default.
 
-{% include casproperties.html properties="cas.http-web-request" %}
+{% include_cached casproperties.html properties="cas.http-web-request" %}
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

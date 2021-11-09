@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 10389)
 public class LdapPasswordSynchronizationConfigurationTests {
     @Autowired
-    @Qualifier("authenticationEventExecutionPlan")
+    @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Test

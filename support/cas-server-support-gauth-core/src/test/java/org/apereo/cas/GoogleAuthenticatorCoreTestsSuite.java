@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandlerTests;
 import org.apereo.cas.gauth.GoogleAuthenticatorServiceTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link GoogleAuthenticatorCoreTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     GoogleAuthenticatorAuthenticationHandlerTests.class,
     GoogleAuthenticatorServiceTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class GoogleAuthenticatorCoreTestsSuite {
 }

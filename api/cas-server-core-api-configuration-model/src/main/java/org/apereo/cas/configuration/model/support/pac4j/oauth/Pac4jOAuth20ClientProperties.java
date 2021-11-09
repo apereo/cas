@@ -68,6 +68,15 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
 
     /**
      * Profile attributes to request and collect in form of key-value pairs.
+     * Key is the attribute name, and value is the mapped attribute name, if necessary.
+     * If remapping is not required, key and value should match.
+     * It's also possible to define values as {@code CONVERTER|mapped-attribute}.
+     * {@code CONVERTER} should be the attribute converter specified by its acceptable type
+     * and when acceptable, the converter attempts to transform the provided attribute value.
+     * Accepted converters are {@code Locale, Integer, Color, Date, Gender, Boolean, Long, String, Url}.
+     * CAS can also provide a special attribute converter that does the transformation and conversion
+     * based on an <i>inline groovy script</i>. This special groovy converter can be specified
+     * using this example syntax for the value, {@code groovy { return attribute + '-test'}|mapped-attribute}.
      */
     private Map<String, String> profileAttrs = new LinkedHashMap<>(1);
 

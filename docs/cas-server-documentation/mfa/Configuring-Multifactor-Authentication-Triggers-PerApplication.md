@@ -30,6 +30,6 @@ The following fields are accepted by the policy definition
 | Field                 | Description
 |-----------------------|----------------------------------------------------------------------------
 | `multifactorAuthenticationProviders` | Set of multifactor provider ids that should trigger for this application.
-| `script`                  | Path to a script, whether external or internal, to trigger multifactor authentication dynamically.
-| `bypassEnabled`           | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.
-| `forceExecution`          | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.
+| `script`              | Path to a script, whether external or internal, to trigger multifactor authentication dynamically.
+| `bypassEnabled`       | Whether multifactor authentication should be [bypassed](Configuring-Multifactor-Authentication-Bypass.html) for this service.
+| `forceExecution`      | Whether multifactor authentication should forcefully trigger, even if the existing authentication context can be satisfied without MFA.

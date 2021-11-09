@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{cas.login.pagetitle}">Gua Get User Id View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content" id="login" class="d-flex justify-content-center">
+            <div class="mdc-card card mdc-card-content w-lg-50 p-4">
+                <form method="post" id="fm1" th:action="@{/login}">
+                    <input type="hidden" name="_eventId_submit" value="LOGIN" />
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                    <div class="cas-field form-group my-3">
+                        <div class="w-100">
+
+                            <label for="username" class="mdc-text-field mdc-text-field--outlined control-label">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control"
+                                       name="username"
+                                       id="username"
+                                       size="25"
+                                       th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                                       autocapitalize="none"
+                                       spellcheck="false"
+                                       autocomplete="username" required />
+                            </label>
+
+                        </div>
+                    </div>
+                    <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l" type="submit">
+                        <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

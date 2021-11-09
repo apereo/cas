@@ -49,7 +49,8 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-        
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
         val props = new AcceptableUsagePolicyProperties();
         props.getRest().setUrl("http://localhost:9298");
@@ -61,7 +62,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertFalse(r.isUsagePolicyAcceptedBy(CoreAuthenticationTestUtils.getPrincipal()));
-            assertTrue(r.submit(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+            assertTrue(r.submit(context));
         }
     }
 
@@ -73,6 +74,7 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
         ExternalContextHolder.setExternalContext(context.getExternalContext());
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
@@ -85,8 +87,8 @@ public class RestAcceptableUsagePolicyRepositoryTests {
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.SERVICE_UNAVAILABLE)) {
             webServer.start();
-            assertFalse(r.fetchPolicy(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()).isPresent());
-            assertFalse(r.submit(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+            assertFalse(r.fetchPolicy(context).isPresent());
+            assertFalse(r.submit(context));
         }
     }
 
@@ -107,9 +109,10 @@ public class RestAcceptableUsagePolicyRepositoryTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val context = new MockRequestContext();
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
             val request = new MockHttpServletRequest();
             context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-            val terms = r.fetchPolicy(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            val terms = r.fetchPolicy(context);
             assertTrue(terms.isPresent());
             assertEquals(terms.get(), input);
         }

@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -24,11 +23,9 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Override
-    public void configureTicketCatalog(final TicketCatalog plan) {
+    public void configureTicketCatalog(final TicketCatalog plan,
+                                       final CasConfigurationProperties casProperties) {
         LOGGER.debug("Registering core WS security token ticket definitions...");
         val definition = buildTicketDefinition(plan, SecurityTokenTicket.PREFIX, DefaultSecurityTokenTicket.class, Ordered.HIGHEST_PRECEDENCE);
         val properties = definition.getProperties();

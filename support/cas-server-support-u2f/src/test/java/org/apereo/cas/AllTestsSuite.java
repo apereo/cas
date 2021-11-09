@@ -2,6 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.u2f.storage.FailingResourceU2FDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
@@ -13,9 +14,8 @@ import org.apereo.cas.adaptors.u2f.web.flow.U2FMultifactorWebflowConfigurerTests
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartAuthenticationActionTests;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FStartRegistrationActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    FailingResourceU2FDeviceRepositoryTests.class,
     U2FAccountSaveRegistrationActionTests.class,
     U2FAccountCheckRegistrationActionTests.class,
     U2FStartRegistrationActionTests.class,
@@ -36,6 +37,6 @@ import org.junit.runner.RunWith;
     U2FInMemoryDeviceRepositoryTests.class,
     U2FAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

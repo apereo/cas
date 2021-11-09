@@ -15,15 +15,15 @@ import org.apereo.cas.web.flow.actions.RenewAuthenticationRequestCheckActionTest
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandlerTests;
+import org.apereo.cas.web.flow.authentication.GroovyCasWebflowAuthenticationExceptionHandlerTests;
 import org.apereo.cas.web.flow.authentication.RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests;
 import org.apereo.cas.web.flow.configurer.CasWebflowConfigurerTests;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurerTests;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionKeyTests;
 import org.apereo.cas.web.flow.executor.WebflowCipherBeanTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -44,6 +44,7 @@ import org.junit.runner.RunWith;
     ClearWebflowCredentialActionTests.class,
     CasWebflowConfigurerTests.class,
     WebflowCipherBeanTests.class,
+    GroovyCasWebflowAuthenticationExceptionHandlerTests.class,
     RenewAuthenticationRequestCheckActionTests.class,
     DefaultCasWebflowAbstractTicketExceptionHandlerTests.class,
     DefaultCasWebflowAuthenticationExceptionHandlerTests.class,
@@ -53,6 +54,6 @@ import org.junit.runner.RunWith;
     ChainingSingleSignOnParticipationStrategyTests.class,
     AuthenticationExceptionHandlerActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

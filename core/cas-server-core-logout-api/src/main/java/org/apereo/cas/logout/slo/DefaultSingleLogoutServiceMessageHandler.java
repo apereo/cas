@@ -1,6 +1,10 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -13,7 +17,6 @@ import org.apereo.cas.util.http.HttpClient;
  */
 public class DefaultSingleLogoutServiceMessageHandler extends BaseSingleLogoutServiceMessageHandler {
 
-
     public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient,
                                                     final SingleLogoutMessageCreator logoutMessageBuilder,
                                                     final ServicesManager servicesManager,
@@ -22,5 +25,13 @@ public class DefaultSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         super(httpClient, logoutMessageBuilder, servicesManager, singleLogoutServiceLogoutUrlBuilder,
             asynchronous, authenticationRequestServiceSelectionStrategies);
+    }
+
+    @Override
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService,
+                                       final RegisteredService registeredService,
+                                       final SingleLogoutExecutionRequest context) {
+        return super.supportsInternal(singleLogoutService, registeredService, context)
+            && registeredService.getFriendlyName().equalsIgnoreCase(RegexRegisteredService.FRIENDLY_NAME);
     }
 }

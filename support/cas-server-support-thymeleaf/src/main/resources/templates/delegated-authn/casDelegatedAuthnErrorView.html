@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.service.error.header}">Delegated Authentication Error View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
+        <h2 th:utext="#{screen.delauthn.error.header}">Delegated Authentication Failure</h2>
+        <p th:utext="#{screen.delauthn.error.message}">CAS is unable to complete the delegated authentication scenario,
+            or redirect to the selected identity provider. Please examine the original authentication request and try again.
+            You may need to close your browser and start again.
+        </p>
+    </div>
+</main>
+</body>
+</html>

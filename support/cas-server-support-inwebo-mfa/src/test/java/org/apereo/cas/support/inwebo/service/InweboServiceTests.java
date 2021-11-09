@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class InweboServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

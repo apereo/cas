@@ -42,10 +42,6 @@ public interface WebflowConstants {
      */
     String SITE_DESCRIPTION = "siteDescription";
     /**
-     * The inweboErrorMessage flow scope parameter.
-     */
-    String INWEBO_ERROR_MESSAGE = "inweboErrorMessage";
-    /**
      * The login flow scope parameter.
      */
     String LOGIN = "login";

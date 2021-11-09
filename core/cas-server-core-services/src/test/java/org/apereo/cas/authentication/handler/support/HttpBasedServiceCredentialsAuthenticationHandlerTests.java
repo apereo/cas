@@ -4,7 +4,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
@@ -42,8 +41,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAcceptsProperCertificateCredentials() {
+    public void verifyAcceptsProperCertificateCredentials() throws Exception {
         assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
     }
 
@@ -54,8 +52,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAcceptsNonHttpsCredentials() {
+    public void verifyAcceptsNonHttpsCredentials() throws Exception {
         assertNotNull(this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com")));
     }
 

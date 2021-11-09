@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-rest")
+    implementation project(":core:cas-server-core-rest-api")
 
     testImplementation project(":core:cas-server-core-util")
     
@@ -24,4 +25,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
 }

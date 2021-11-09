@@ -7,7 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
@@ -32,7 +31,12 @@ public class ChainingSingleSignOnParticipationStrategyTests {
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(SingleSignOnParticipationStrategy.alwaysParticipating());
         chain.addStrategy(SingleSignOnParticipationStrategy.neverParticipating());
-        assertFalse(chain.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertFalse(chain.isParticipating(ssoRequest));
     }
 
     @Test
@@ -43,7 +47,12 @@ public class ChainingSingleSignOnParticipationStrategyTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(List.of());
-        assertTrue(chain.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(chain.isParticipating(ssoRequest));
     }
 
     @Test
@@ -55,7 +64,12 @@ public class ChainingSingleSignOnParticipationStrategyTests {
 
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(SingleSignOnParticipationStrategy.alwaysParticipating());
-        assertTrue(chain.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(chain.isParticipating(ssoRequest));
     }
 
     @Test
@@ -68,16 +82,21 @@ public class ChainingSingleSignOnParticipationStrategyTests {
         val chain = new ChainingSingleSignOnParticipationStrategy();
         chain.addStrategy(new SingleSignOnParticipationStrategy() {
             @Override
-            public boolean isParticipating(final RequestContext context) {
+            public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
                 return true;
             }
 
             @Override
-            public boolean supports(final RequestContext context) {
+            public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
                 return false;
             }
         });
         chain.addStrategy(SingleSignOnParticipationStrategy.neverParticipating());
-        assertFalse(chain.isParticipating(context));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertFalse(chain.isParticipating(ssoRequest));
     }
 }

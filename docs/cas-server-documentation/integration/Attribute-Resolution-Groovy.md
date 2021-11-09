@@ -10,7 +10,7 @@ category: Attributes
      
 The following configuration describes how to fetch and retrieve attributes from Groovy attribute repositories.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.groovy" %}
 
 The Groovy script may be designed as:
 

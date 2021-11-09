@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card p-4 m-auto w-lg-50">
+
+        <form method="post" id="fm1">
+            <input type="hidden" id="sessionStorage" name="sessionStorage"/>
+            <input type="submit" style="display: none" />
+        </form>
+        
+        <script>
+            let payload = readFromSessionStorage();
+            document.getElementById("sessionStorage").value = payload;
+            document.getElementById("fm1").submit();
+        </script>
+    </div>
+</main>
+</body>
+</html>

@@ -18,11 +18,15 @@ if (tasks.findByName("install") != null) {
 }
 
 dependencies {
-    api project(":api:cas-server-core-api-configuration-model")
-
-    implementation project(":core:cas-server-core-configuration-metadata-repository")
-
     libraries.each {
         implementation it.value
+    }
+
+    rootProject.subprojects.each {
+        if (it.publishable) {
+            implementation it
+        } else {
+            logger.debug("Skipping project for documentation processing: ${it.name}")
+        }
     }
 }

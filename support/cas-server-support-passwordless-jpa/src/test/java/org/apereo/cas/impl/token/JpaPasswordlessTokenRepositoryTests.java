@@ -29,15 +29,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @Getter
 @Tag("JDBC")
 @Import({
     CasHibernateJpaConfiguration.class,
     JpaPasswordlessAuthenticationConfiguration.class
 })
-@TestPropertySource(properties = "cas.jdbc.show-sql=true")
+@TestPropertySource(properties = "cas.jdbc.show-sql=false")
 public class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier("passwordlessTokenRepository")

@@ -23,14 +23,10 @@ is used, but when working with Unicode strings as properties values it does matt
 files using the `ISO-8859-1` encoding. YAML files are loaded with UTF-8 encoding. If you are setting Unicode
 values try using a YAML configuration file.</p></div>
 
-{% include casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
+{% include_cached casproperties.html properties="cas.server.name,cas.server.prefix,cas.server.scope,cas.host." %}
 
 On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
-
-CAS may also be conditionally configured to report, as part of the
-banner, whether a newer CAS release is available for an upgrade.
-This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
 On startup, CAS will perform many tasks related to the application lifecycle, the beans lifecycle
 or even processing application events. Such events can be tracked at startup and collected
@@ -65,19 +61,27 @@ are considered in the following order:
 the CAS configuration, you should configure access
 to <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include_cached actuators.html endpoints="configProps,env,beans,conditions" %}
+
 ## Configuration Server
 
 CAS provides a built-in configuration server that is responsible for bootstrapping the configuration
 environment and loading of externalized settings in a distributed system. You may have a central
-place to manage external properties for CAS nodes across all environments. To learn more about how to manage the CAS configuration, please [review this guide](Configuration-Server-Management.html).
+place to manage external properties for CAS nodes across all environments. To learn 
+more about how to manage the CAS configuration, please [review this guide](Configuration-Server-Management.html).
 
 ## Extending CAS Configuration
 
-To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
+To learn more about how to extend and customize the CAS 
+configuration, please [review this guide](Configuration-Management-Extensions.html).
 
 ## Custom CAS Settings
 
-{% include casproperties.html properties="cas.custom.properties" %}
+{% include_cached casproperties.html properties="cas.custom.properties" %}
 
 ## Auto Configuration Strategy
 

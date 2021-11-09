@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.GrouperMultifactorAuthenticationConfiguration,\
+  org.apereo.cas.config.CasPersonDirectoryGrouperConfiguration

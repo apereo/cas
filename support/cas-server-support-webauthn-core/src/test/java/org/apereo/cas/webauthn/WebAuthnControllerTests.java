@@ -26,6 +26,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -42,7 +44,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class WebAuthnControllerTests {
 
     @Test
@@ -159,11 +161,13 @@ public class WebAuthnControllerTests {
         when(server.startRegistration(anyString(), any(), any(), anyBoolean(), any()))
             .thenReturn(Either.right(registrationRequest));
 
-        var result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken");
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        var result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
         when(server.startRegistration(anyString(), any(), any(), anyBoolean(), any())).thenReturn(Either.left("failed"));
-        result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken");
+        result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 

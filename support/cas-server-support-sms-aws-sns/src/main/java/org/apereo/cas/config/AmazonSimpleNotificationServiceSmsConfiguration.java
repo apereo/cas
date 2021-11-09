@@ -7,11 +7,11 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.AmazonSimpleNotificationServiceSmsSender;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.sns.SnsClient;
 
 /**
@@ -23,17 +23,14 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration(value = "amazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSimpleNotificationServiceSmsConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public SmsSender smsSender() {
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val sns = casProperties.getSmsProvider().getSns();
         val clientBuilder = SnsClient.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(clientBuilder,
-            ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(),
-                sns.getCredentialSecretKey(), sns.getProfilePath(), sns.getProfileName()), sns);
+            ChainingAWSCredentialsProvider.getInstance(sns.getCredentialAccessKey(), sns.getCredentialSecretKey(), sns.getProfilePath(), sns.getProfileName()), sns);
         return new AmazonSimpleNotificationServiceSmsSender(clientBuilder.build(), sns);
     }
 }

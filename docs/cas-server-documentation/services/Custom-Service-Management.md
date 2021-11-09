@@ -18,7 +18,7 @@ package org.apereo.cas.support;
 public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
   @Bean
-  @RefreshScope
+  @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
   public ServiceRegistryDao serviceRegistry() {
       ...
   }
@@ -32,6 +32,6 @@ public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
 At a minimum, your overlay will need to include the following modules:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-services" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-services" %}
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

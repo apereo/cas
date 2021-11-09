@@ -30,7 +30,6 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
-    implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-pac4j-api")
 
     testImplementation project(":core:cas-server-core-util")
@@ -45,11 +44,14 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-cookie")
-    
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-throttle")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

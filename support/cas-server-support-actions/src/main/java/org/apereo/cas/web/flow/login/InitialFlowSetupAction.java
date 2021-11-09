@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -7,8 +8,10 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
@@ -19,11 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +66,18 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;
 
+    /**
+     * Configure the POST parameters in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected static void configureWebflowForPostParameters(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
+            WebUtils.putInitialHttpRequestPostParameters(context);
+        }
+    }
+
     @Override
     public Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
@@ -76,14 +93,13 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
-    private static void configureWebflowForPostParameters(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST.name())) {
-            WebUtils.putInitialHttpRequestPostParameters(context);
-        }
-    }
-
-    private String configureWebflowForTicketGrantingTicket(final RequestContext context) {
+    /**
+     * Configure the ticket granting ticket in webflow.
+     *
+     * @param context the webflow context
+     * @return the TGT identifier or {@code null}
+     */
+    protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
@@ -93,15 +109,31 @@ public class InitialFlowSetupAction extends AbstractAction {
             return ticket.getId();
         }
         ticketGrantingTicketCookieGenerator.removeCookie(response);
+        ticketGrantingTicketCookieGenerator.removeAll(request, response);
         WebUtils.putTicketGrantingTicketInScopes(context, StringUtils.EMPTY);
         return null;
     }
 
-    private void configureWebflowForCustomFields(final RequestContext context) {
+    /**
+     * Configure the custom fields in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowForCustomFields(final RequestContext context) {
         WebUtils.putCustomLoginFormFields(context, casProperties.getView().getCustomLoginFormFields());
     }
 
-    private void configureWebflowForServices(final RequestContext context) {
+    /**
+     * Configure the services in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowForServices(final RequestContext context) {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        if (HttpStatus.valueOf(response.getStatus()).isError()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        }
+
         val service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
@@ -122,25 +154,35 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
+            WebUtils.putServiceIntoFlowScope(context, service);
         }
-        WebUtils.putServiceIntoFlowScope(context, service);
     }
 
-    private void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
-        val ssoParticipation = this.renewalStrategy.supports(context) && this.renewalStrategy.isParticipating(context);
+    /**
+     * Configure the SSO participation in webflow.
+     *
+     * @param context                the webflow context
+     * @param ticketGrantingTicketId the TGT identifier
+     */
+    protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) {
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(context)
+            .build();
+        val ssoParticipation = renewalStrategy.supports(ssoRequest) && renewalStrategy.isParticipating(ssoRequest);
         if (!ssoParticipation && StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
-            if (auth != null) {
-                WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
-                WebUtils.putExistingSingleSignOnSessionPrincipal(context, auth.getPrincipal());
-            } else {
-                WebUtils.putExistingSingleSignOnSessionAvailable(context, false);
-                WebUtils.putExistingSingleSignOnSessionPrincipal(context, NullPrincipal.getInstance());
-            }
+            WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
+            WebUtils.putExistingSingleSignOnSessionPrincipal(context,
+                Optional.ofNullable(auth).map(Authentication::getPrincipal).orElse(NullPrincipal.getInstance()));
         }
     }
 
-    private void configureWebflowContext(final RequestContext context) {
+    /**
+     * Configure the webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureWebflowContext(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
@@ -164,7 +206,12 @@ public class InitialFlowSetupAction extends AbstractAction {
         }
     }
 
-    private void configureCookieGenerators(final RequestContext context) {
+    /**
+     * Configure the cookie generators in webflow.
+     *
+     * @param context the webflow context
+     */
+    protected void configureCookieGenerators(final RequestContext context) {
         val contextPath = context.getExternalContext().getContextPath();
         val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 

@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockServletContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.val;
@@ -20,6 +21,8 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +39,7 @@ public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentit
     private Action wsFederationMetadataUIAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test
@@ -57,7 +60,10 @@ public class WSFederationMetadataUIActionTests extends BaseCoreWsSecurityIdentit
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);
 
-        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("http://app.example5.org/wsfed-idp"));
+        val service = RegisteredServiceTestUtils.getService("http://app.example5.org/wsfed-idp");
+        service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
+        
+        WebUtils.putServiceIntoFlowScope(context, service);
         val event = wsFederationMetadataUIAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

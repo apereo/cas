@@ -1,18 +1,19 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
@@ -36,8 +37,17 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
     protected OidcDynamicClientRegistrationEndpointController controller;
 
     @Test
+    public void verifyBadEndpointRequest() {
+        val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
+        val response = new MockHttpServletResponse();
+        val mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
+        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());
+    }
+
+    @Test
     public void verifyBadInput() {
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
         assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCodeValue());
     }
@@ -52,7 +62,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
             + "  }";
 
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
         assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal(registrationReq, request, response).getStatusCodeValue());
     }
@@ -87,7 +97,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
             + "  }";
 
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
 
         val entity = MAPPER.writeValueAsString(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
@@ -126,7 +136,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
             + "  }";
 
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
 
         val entity = MAPPER.writeValueAsString(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));

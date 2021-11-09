@@ -43,14 +43,12 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     private final PasswordEncoder passwordEncoder;
 
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-        final String issuer,
-        final PasswordManagementProperties passwordManagementProperties,
-        @NonNull
-        final DataSource dataSource,
-        @NonNull
-        final TransactionTemplate transactionTemplate,
-        final PasswordHistoryService passwordHistoryService,
-        final PasswordEncoder passwordEncoder) {
+                                         final String issuer,
+                                         final PasswordManagementProperties passwordManagementProperties,
+                                         @NonNull final DataSource dataSource,
+                                         @NonNull final TransactionTemplate transactionTemplate,
+                                         final PasswordHistoryService passwordHistoryService,
+                                         final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
@@ -127,7 +125,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return this.transactionTemplate.execute(action -> {
-            val sqlSecurityQuestions = properties.getJdbc().getSqlSecurityQuestions();
+            val sqlSecurityQuestions = properties.getJdbc().getSqlGetSecurityQuestions();
             val map = new HashMap<String, String>();
             val results = jdbcTemplate.queryForList(sqlSecurityQuestions, query.getUsername());
             results.forEach(row -> {
@@ -138,5 +136,13 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Found [{}] security questions for [{}]", map.size(), query.getUsername());
             return map;
         });
+    }
+
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        jdbcTemplate.update(properties.getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
+        query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
+            jdbcTemplate.update(properties.getJdbc().getSqlUpdateSecurityQuestions(),
+                query.getUsername(), question, answer)));
     }
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test

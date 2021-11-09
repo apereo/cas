@@ -60,7 +60,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
 
         if (StringUtils.isBlank(this.usernameAttribute)) {
             LOGGER.warn("No username attribute is defined for service [{}]. CAS will fall back onto using the default principal id. "
-                + "This is likely a mistake in the configuration of the registered service definition.", registeredService.getName());
+                        + "This is likely a mistake in the configuration of the registered service definition.", registeredService.getName());
         } else if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                 registeredService.getServiceId(), this.usernameAttribute);
@@ -68,17 +68,17 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
-                    + "principal attribute and not through the attribute release policy for service [{}]. "
-                    + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
-                    + "is explicitly authorized for release via the service attribute release policy.",
+                         + "principal attribute and not through the attribute release policy for service [{}]. "
+                         + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                         + "is explicitly authorized for release via the service attribute release policy.",
                 this.usernameAttribute, service, this.usernameAttribute);
             val value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
-                + "provide the user attribute the service expects. "
-                + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
-                + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
+                        + "provide the user attribute the service expects. "
+                        + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
+                        + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
         }
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();
@@ -90,19 +90,25 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
      * that instance to locate attributes. If none is available,
      * will use the default principal attributes.
      *
-     * @param p                 the principal
+     * @param principal         the principal
      * @param service           the service
      * @param registeredService the registered service
      * @return the principal attributes
      */
-    protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
+    protected Map<String, List<Object>> getPrincipalAttributesFromReleasePolicy(
+        final Principal principal, final Service service, final RegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, p.getId());
+            LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, principal.getId());
             if (registeredService.getAttributeReleasePolicy() == null) {
                 LOGGER.debug("No attribute release policy is defined for [{}]. Returning default principal attributes", service.getId());
-                return p.getAttributes();
+                return principal.getAttributes();
             }
-            return registeredService.getAttributeReleasePolicy().getAttributes(p, service, registeredService);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+            return registeredService.getAttributeReleasePolicy().getAttributes(context);
         }
         LOGGER.debug("Could not locate service [{}] in the registry.", service.getId());
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);

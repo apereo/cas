@@ -8,7 +8,7 @@ category: Authentication
 
 # Access Strategy - Surrogate Authentication
 
-Each surrogate account storage is able to determine the list of impersonatees to enforce 
+Each surrogate account storage is able to determine the list of *impersonatees* to enforce 
 authorization rules. Additionally, you may on a per-service level define whether an 
 application is authorized to leverage surrogate authentication. The surrogate access 
 strategy is only activated if the establish authentication and SSO session is one of impersonation.

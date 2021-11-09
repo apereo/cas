@@ -28,7 +28,7 @@ public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
      *
      * @param plan the plan
      */
-    void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan);
+    void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan) throws Exception;
 
     /**
      * Gets name.

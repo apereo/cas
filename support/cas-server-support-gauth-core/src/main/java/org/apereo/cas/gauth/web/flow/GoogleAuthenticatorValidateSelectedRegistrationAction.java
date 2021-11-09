@@ -6,7 +6,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,15 +21,11 @@ public class GoogleAuthenticatorValidateSelectedRegistrationAction extends Abstr
     private static final String CODE = "screen.authentication.gauth.invalid";
 
     private static void addErrorMessageToContext(final RequestContext requestContext) {
-        val msg = new MessageBuilder()
-            .error()
-            .code(CODE)
-            .build();
-        requestContext.getMessageContext().addMessage(msg);
+        WebUtils.addErrorMessageToContext(requestContext, CODE);
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val account = WebUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
         if (account == null) {
             LOGGER.warn("Unable to determine google authenticator account");

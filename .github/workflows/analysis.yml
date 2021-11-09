@@ -6,7 +6,7 @@ env:
   GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   TERM: xterm-256color
-  JDK_CURRENT: 11.0.10
+  JDK_CURRENT: 11.0.13
 
 ##########################################################################
 
@@ -25,7 +25,7 @@ jobs:
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.7.0
+      - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
           
@@ -35,9 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -49,9 +50,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -66,40 +68,41 @@ jobs:
 
 ##########################################################################
 
-  codeql-analysis:
-    runs-on: ubuntu-latest
-    needs: [cache]
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-      - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: java
-          queries: security-and-quality
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v1
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+#  codeql-analysis:
+#    runs-on: ubuntu-latest
+#    needs: [cache]
+#    continue-on-error: true
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#          distribution: 'temurin'
+#      - name: Initialize
+#        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+#      - uses: actions/cache@v2
+#        with:
+#          path: ~/.gradle/caches
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#      - name: Initialize CodeQL
+#        uses: github/codeql-action/init@v1
+#        with:
+#          languages: java
+#          queries: security-and-quality
+#      - name: Autobuild
+#        uses: github/codeql-action/autobuild@v1
+#      - name: Perform CodeQL Analysis
+#        uses: github/codeql-action/analyze@v1
 
 ##########################################################################
 
   static-analysis:
     runs-on: ubuntu-latest
     needs: [cache]
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       matrix:
         category:
@@ -108,14 +111,16 @@ jobs:
           - checkstyleMain
           - checkstyleTest
           - checkLicense
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
@@ -125,7 +130,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Run Analysis
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true
         
 ##########################################################################
 
@@ -149,12 +154,16 @@ jobs:
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
           - CheckRequiredModuleAnnotationReferences
+          - CheckMixingSpringBeanWithDependencyInjection
+          - CheckMissingPuppeteerConfig
+    name: ${{ matrix.check }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
@@ -167,4 +176,3 @@ jobs:
         run: java ./ci/checks/${{ matrix.check }}.java .
         
 ##########################################################################
-

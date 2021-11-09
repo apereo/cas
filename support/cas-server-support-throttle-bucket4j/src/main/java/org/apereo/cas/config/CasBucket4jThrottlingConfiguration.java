@@ -5,7 +5,6 @@ import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.web.Bucket4jThrottledRequestExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +18,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "casBucket4jThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasBucket4jThrottlingConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public ThrottledRequestExecutor throttledRequestExecutor() {
+    public ThrottledRequestExecutor throttledRequestExecutor(final CasConfigurationProperties casProperties) {
         val throttle = casProperties.getAuthn().getThrottle();
         return new Bucket4jThrottledRequestExecutor(throttle.getBucket4j());
     }

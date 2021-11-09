@@ -20,9 +20,9 @@ Opera seem to exist, you should always verify that U2F support is available for 
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-u2f" %}
 
-{% include casproperties.html properties="cas.authn.mfa.u2f" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.core" %}
 
 
 ## Registration
@@ -36,20 +36,18 @@ expire after a fixed period since a user registered the U2F token
 MFA for a setup where tokens are centrally distributed and revoked, 
 you may want to extend the interval.
 
-{% include casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.u2f.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a 
 clustered CAS deployment, it is best to keep the cleaner running on one designated 
 CAS node only and turn it off on all others via CAS settings. Keeping the 
 cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `u2fDevices`  | A `GET` request presents the collection of registered devices. Registered devices for a single user can be queried via `GET` by using a selector path (i.e. `u2fDevices/{username}`). Registered devices for a single user can be deleted via `DELETE` by using a selector path (i.e. `u2fDevices/{username}`). A single registered devices for a single user can be deleted via `DELETE` by using a selector path (i.e. `u2fDevices/{username}/{id}`).
+
+{% include_cached actuators.html endpoints="u2fDevices" %}
 
 ### Default
 

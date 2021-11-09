@@ -1,3 +1,5 @@
+import org.apereo.cas.pm.PasswordManagementQuery
+
 def change(Object[] args) {
     def credential = args[0]
     def passwordChangeBean = args[1]
@@ -27,4 +29,10 @@ def getSecurityQuestions(Object[] args) {
     def username = args[0].getUsername()
     def logger = args[1]
     return [securityQuestion1: "securityAnswer1"]
+}
+
+def updateSecurityQuestions(Object[] args) {
+    def query = args[0] as PasswordManagementQuery
+    def logger = args[1]
+    assert query.username != null
 }

@@ -39,7 +39,7 @@ public abstract class BaseMongoDbSamlMetadataTests {
     protected SamlRegisteredServiceMetadataResolver resolver;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired

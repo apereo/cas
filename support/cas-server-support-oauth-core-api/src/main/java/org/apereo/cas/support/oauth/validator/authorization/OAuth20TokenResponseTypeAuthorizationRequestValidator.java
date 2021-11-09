@@ -19,12 +19,7 @@ public class OAuth20TokenResponseTypeAuthorizationRequestValidator extends OAuth
                                                                  final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
-
-    /**
-     * Gets response type.
-     *
-     * @return the response type
-     */
+    
     @Override
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.TOKEN;

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +24,6 @@ import java.util.Set;
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@FunctionalInterface
 public interface RegisteredServicePrincipalAttributesRepository extends Serializable {
     Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributesRepository.class);
 
@@ -45,9 +43,7 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
      *
      * @return the attribute repository ids
      */
-    default Set<String> getAttributeRepositoryIds() {
-        return new HashSet<>(0);
-    }
+    Set<String> getAttributeRepositoryIds();
 
     /**
      * Add principal attributes into the underlying cache instance.
@@ -58,6 +54,6 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
      * @since 4.2
      */
     default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredService registeredService) {
-        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes.", id, getClass().getSimpleName());
+        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes [{}]", id, getClass().getSimpleName(), attributes);
     }
 }

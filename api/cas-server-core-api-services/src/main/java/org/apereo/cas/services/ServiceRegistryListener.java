@@ -35,4 +35,14 @@ public interface ServiceRegistryListener extends Serializable, Ordered {
     default int getOrder() {
         return 0;
     }
+
+    /**
+     * No op service registry listener.
+     *
+     * @return the service registry listener
+     */
+    static ServiceRegistryListener noOp() {
+        return new ServiceRegistryListener() {
+        };
+    }
 }

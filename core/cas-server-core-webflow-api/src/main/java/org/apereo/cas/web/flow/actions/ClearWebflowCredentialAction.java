@@ -20,7 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Slf4j
 public class ClearWebflowCredentialAction extends AbstractAction {
 
@@ -38,7 +37,7 @@ public class ClearWebflowCredentialAction extends AbstractAction {
         WebUtils.removeCredential(requestContext);
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
-            LOGGER.debug("Current event signaled a failure. Recreating credentials instance from the context");
+            LOGGER.trace("Current event signaled a failure. Recreating credentials instance from the context");
             WebUtils.createCredential(requestContext);
         }
         return null;

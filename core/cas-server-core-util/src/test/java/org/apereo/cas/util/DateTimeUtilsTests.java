@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +59,11 @@ public class DateTimeUtilsTests {
         assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-12T07:00:00.000Z"));
     }
 
+    @Test
+    public void verifyParsingBadDateTime() {
+        assertNull(DateTimeUtils.zonedDateTimeOf(UUID.randomUUID().toString()));
+        assertNull(DateTimeUtils.localDateTimeOf(UUID.randomUUID().toString()));
+    }
     @Test
     public void verifyParsingCalendar() {
         val calendar = Calendar.getInstance();

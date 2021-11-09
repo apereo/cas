@@ -27,6 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Getter
 public class EhCache3TerracottaTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 }

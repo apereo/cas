@@ -89,7 +89,7 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
     private void readFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
             try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, String>> personList = new TypeReference<>() {
+                val personList = new TypeReference<Map<String, String>>() {
                 };
                 val results = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
                 devices.clear();

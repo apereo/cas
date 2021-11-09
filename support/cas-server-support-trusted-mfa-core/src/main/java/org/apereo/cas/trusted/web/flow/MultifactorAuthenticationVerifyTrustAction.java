@@ -58,7 +58,9 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
-        val fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext, false);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
         LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);

@@ -5,9 +5,8 @@ import org.apereo.cas.webauthn.MariaDbJpaWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.MySQLJpaWebAuthnCredentialRepositoryTests;
 import org.apereo.cas.webauthn.PostgresJpaWebAuthnCredentialRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllJpaWebAuthnTestsSuite}.
@@ -21,6 +20,6 @@ import org.junit.runner.RunWith;
     MariaDbJpaWebAuthnCredentialRepositoryTests.class,
     MySQLJpaWebAuthnCredentialRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllJpaWebAuthnTestsSuite {
 }

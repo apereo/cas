@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -28,11 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
     PasswordManagementConfiguration.class,
     MailSenderAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreUtilConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
-    "cas.authn.pm.core.policy-pattern=^Th!.+{8,10}"
+    "cas.authn.pm.core.password-policy-pattern=^Th!.+{8,10}"
 })
 @Tag("PasswordOps")
 public class DefaultPasswordValidationServiceTests {
@@ -43,6 +45,18 @@ public class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier("passwordHistoryService")
     private PasswordHistoryService passwordHistoryService;
+
+    @Test
+    public void verifyReuseOldPassword() {
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "This!$P@$$");
+        assertFalse(passwordValidationService.isValid(
+            creds,
+            new PasswordChangeRequest("user", "123456", "123456")));
+
+        assertFalse(passwordValidationService.isValid(
+            creds,
+            new PasswordChangeRequest("user", "This!$P@$$", "This!$P@$$")));
+    }
 
     @Test
     public void verifyValidity() {

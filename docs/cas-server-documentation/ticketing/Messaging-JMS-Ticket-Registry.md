@@ -11,11 +11,11 @@ category: Ticketing
 CAS can be enabled with a variety of messaging systems in order to distribute and share ticket data: 
 from simplified use of the JMS API to a complete infrastructure to receive messages asynchronously. 
 Integration with messaging systems is entirely built on 
-top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-messaging.html).
+top of [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/).
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jms-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jms-ticket-registry" %}
 
 This registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
 The difference is that ticket operations applied to the registry are broadcasted using a messaging queue 
@@ -26,7 +26,7 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.jms" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.jms" %}
 
 ## ActiveMQ
 
@@ -36,7 +36,7 @@ configured automatically, as long as no broker URL is specified through configur
 By default, ActiveMQ creates a destination if it does not exist yet, so 
 destinations are resolved against their provided names.
 
-{% include casproperties.html properties="spring.activemq" %}
+{% include_cached casproperties.html properties="spring.activemq" %}
 
 The default setting for ActiveMQ is that all persistent messages outside of a transaction 
 are sent to a broker are synchronous. This means that the send method is blocked until the 
@@ -55,9 +55,9 @@ When the latter is configured, CAS configures the registry connecting to a broke
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="spring-boot-starter-artemis" %}
 
-{% include casproperties.html properties="spring.artemis" %}
+{% include_cached casproperties.html properties="spring.artemis" %}
 
 ## JNDI
 
@@ -65,7 +65,7 @@ If you are [running CAS in an application server](../installation/Configuring-Se
 CAS will attempt to locate a JMS connection using JNDI. By default, the locations 
 `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. 
 
-{% include casproperties.html properties="spring.jms" %}
+{% include_cached casproperties.html properties="spring.jms" %}
 
 ## Troubleshooting
 

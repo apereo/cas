@@ -49,7 +49,7 @@ The parameters passed are as follows:
 | `applicationContext`  | The Spring application context.
 | `logger`              | Logger object used to issue log messages where needed.
 
-{% include casproperties.html properties="cas.webflow.login-decorator.groovy" %}
+{% include_cached casproperties.html properties="cas.webflow.login-decorator.groovy" %}
 
 ## REST Decorators
 
@@ -61,5 +61,5 @@ Please remember that data stuffed into the webflow **MUST** be serializable and
 if you intend to pass along complex objects types and fancy data structures, you 
 need to make sure they can safely and ultimately transform into a simple `byte[]`.
 
-{% include casproperties.html properties="cas.webflow.login-decorator.rest" %}
+{% include_cached casproperties.html properties="cas.webflow.login-decorator.rest" %}
 

@@ -15,7 +15,7 @@ The group's comparing factor **MUST** be defined in CAS to activate this behavio
 and it can be based on the group's name, display name, etc where
 a successful match against a provider id shall activate the chosen MFA provider.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-grouper" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-grouper" %}
 
 You will also need to ensure `grouper.client.properties` is available on the classpath
 with the following configured properties:
@@ -26,4 +26,4 @@ grouperClient.webService.login = banderson
 grouperClient.webService.password = password
 ```
 
-{% include casproperties.html properties="cas.authn.mfa.grouper-" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.triggers.grouper" %}

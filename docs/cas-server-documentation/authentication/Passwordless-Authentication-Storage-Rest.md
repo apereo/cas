@@ -25,4 +25,4 @@ would produce a response body similar to the following:
 }
 ```
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.rest" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.rest" %}

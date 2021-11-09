@@ -18,7 +18,7 @@ service registry that stores one or more registered services containing metadata
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
 * [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
     
-{% include casproperties.html properties="cas.service-registry.core" %}
+{% include_cached casproperties.html properties="cas.service-registry.core" %}
 
 ## Caching Services
 
@@ -29,7 +29,7 @@ For example, misconfiguration can lead to scenarios where the cache might be run
 few minutes/seconds late. With an empty cache, authentication requests from applications might not be immediately authorized
 util the scheduled loader has had a chance to re-populate and reconstruct the cache.
 
-{% include casproperties.html properties="cas.service-registry.cache" %}
+{% include_cached casproperties.html properties="cas.service-registry.cache" %}
 
 ## Scheduler Loader
 
@@ -37,17 +37,13 @@ CAS can be configured to load service definitions from connected sources and ser
 are loaded as background-running job, and the operation forces CAS to flush and invalidate cached version of service definitions
 and start anew.
 
-{% include casproperties.html properties="cas.service-registry.schedule" %}
+{% include_cached casproperties.html properties="cas.service-registry.schedule" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `registeredServices`     | Provides a JSON representation of the [CAS service registry](Service-Management.html). The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output. A `GET` operation with a parameter selector of `/{id}` will fetch a specific service definition. A `DELETE` operation with a parameter selector of `/{id}` will delete the specific service definition by its id.
-| `exportRegisteredServices`    | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
-| `importRegisteredServices`    | Import service definitions into the [CAS service registry](Service-Management.html). The request body is expected to be the service definition itself.
+
+{% include_cached actuators.html endpoints="registeredServices" casModule="cas-server-support-reports" %}
 
 ## Service Management Web Application
 
@@ -70,6 +66,7 @@ Registered services present the following metadata:
 | `redirectUrl`                     | Optional URL to use when returning an authentication response back to applications.
 | `logo`                            | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name. The value may be a relative path to the `images` directory of the CAS web application or it may be a full URL.
 | `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches.
+| `locale`                          | Optional locale name that may be used to customize the CAS UI when the service requests a ticket. Values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. See [this guide](../ux/User-Interface-Customization-Localization.html) for more details.
 | `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. Values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax. See [this guide](../ux/User-Interface-Customization.html) for more details.
 | `proxyPolicy`                     | Determines whether the service is able to proxy authentication. See [this guide](Configuring-Service-Proxy-Policy.html) for more info.
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
@@ -78,7 +75,7 @@ Registered services present the following metadata:
 | `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](../installation/Logout-Single-Signout.html) for more details on logout.
 | `responseType`                      | Defines how CAS should respond to requests for this service. See [this guide](Configuring-Service-Response-Type.html) for more details.
 | `usernameAttributeProvider`       | The provider configuration which dictates what value as the "username" should be sent back to the application. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
-| `accessStrategy`                  | The strategy configuration that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
+| `accessStrategy`                  | The [strategy configuration](Configuring-Service-Access-Strategy.html) that outlines and access rules for this service. It describes whether the service is allowed, authorized to participate in SSO, or can be granted access from the CAS perspective based on a particular attribute-defined role, aka RBAC. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](../authentication/Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](../installation/Logout-Single-Signout.html) for more details
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.

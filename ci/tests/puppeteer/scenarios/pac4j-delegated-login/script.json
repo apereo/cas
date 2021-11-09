@@ -1,16 +1,19 @@
 {
   "dependencies": "pac4j-webflow",
   "properties": [
-     "--cas.authn.pac4j.github.client-name=GitHubClient",
-     "--cas.authn.pac4j.github.id=84cfb715b8237728e567",
-     "--cas.authn.pac4j.github.secret=71a294b6c9f5b00333f4bfb369bbbafa36a86bad",
+    "--cas.authn.pac4j.github.client-name=GitHubClient",
+    "--cas.authn.pac4j.github.id=84cfb715b8237728e567",
+    "--cas.authn.pac4j.github.secret=71a294b6c9f5b00333f4bfb369bbbafa36a86bad",
 
-     "--cas.authn.pac4j.twitter.client-name=TwitterClient",
-     "--cas.authn.pac4j.twitter.id=Dsw8eftYNLXM0tjsxC06dEjGS",
-     "--cas.authn.pac4j.twitter.secret=aYNpkBbvK7lGnFY4BTQqaX2bEqygCHiN825erOBXkXT0pINBUy",
+    "--cas.authn.pac4j.twitter.client-name=TwitterClient",
+    "--cas.authn.pac4j.twitter.id=Dsw8eftYNLXM0tjsxC06dEjGS",
+    "--cas.authn.pac4j.twitter.secret=aYNpkBbvK7lGnFY4BTQqaX2bEqygCHiN825erOBXkXT0pINBUy",
 
-    "--cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

@@ -5,11 +5,12 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+
+import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
@@ -24,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
 @Tag("DynamoDb")
 public class DynamoDbTicketRegistryFacilitatorTests {
 
@@ -69,7 +69,7 @@ public class DynamoDbTicketRegistryFacilitatorTests {
         @Test
         public void verifyCreateTableWithOnDemandBilling() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
-            DynamoDbClient client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
+            val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
             dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
                 DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
                         .tableName(td.getProperties().getStorageName())

@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -42,10 +42,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).singleValueAsArray(true).build().toObjectMapper();
 
-    private final GoogleAuthenticatorMultifactorAuthenticationProperties gauth;
+    private final GoogleAuthenticatorMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-        final GoogleAuthenticatorMultifactorAuthenticationProperties gauth,
+        final GoogleAuthenticatorMultifactorProperties gauth,
         final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.gauth = gauth;
@@ -265,7 +265,27 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         val rest = gauth.getRest();
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "username", username);
+            headers.putAll(rest.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(rest.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void delete(final long id) {
+        val rest = gauth.getRest();
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.wrap("Accept", MediaType.APPLICATION_JSON_VALUE, "id", id);
             headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())

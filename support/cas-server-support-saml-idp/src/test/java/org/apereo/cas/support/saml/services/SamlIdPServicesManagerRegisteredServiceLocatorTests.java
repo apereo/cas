@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
@@ -11,12 +12,17 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.jasig.cas.client.util.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("SAML")
+@SuppressWarnings("InlineFormatString")
 public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "
         + "xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" AssertionConsumerServiceURL=\"http://localhost:8081/callback"
@@ -40,6 +47,14 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         + "ProtocolBinding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Version=\"2.0\"><saml2:Issuer "
         + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s</saml2:Issuer><saml2p:NameIDPolicy "
         + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
+
+    private static final String SAML_LOGOUT_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<saml2p:LogoutRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+        + " Destination=\"http://localhost:8081/callback?client_name=SAML2Client\" ID=\"_81838f9e55714ae79732d8525266bc230c53dbe\""
+        + " IssueInstant=\"2021-04-06T12:22:57.210Z\" Version=\"2.0\"><saml2:Issuer xmlns:saml2=\"urn:oasis:names:tc:SAML:2"
+        + ".0:assertion\">%s</saml2:Issuer><saml2:NameID xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+        + " Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent\">bellini</saml2:NameID><saml2p:SessionIndex>ST-1-7EEGV0DEBGW5I"
+        + "-FhzInvmTzVG8o</saml2p:SessionIndex></saml2p:LogoutRequest>";
 
     private static final String SAML_AUTHN_REQUEST2 = "fVNdj9owEHyv1P9g+Z3E5OAoFlBR6AcShYjQPvSlMvbmsJTYrte5o/++ToATlVqeYtkzszO7mwmKunJ83"
         + "oSj2cGvBjCQU10Z5N3DlDbecCtQIzeiBuRB8mL+dc2zhHHnbbDSVvSGcp8hEMEHbQ0lq+WUbjcf19vPq83Pd2w8YqOSsQcmhoqxx4z"
@@ -56,7 +71,59 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
     public void setup() {
         servicesManager.deleteAll();
     }
-    
+
+    @Test
+    public void verifyInCommonAggregateWithCallback() {
+        val callbackUrl = "http://localhost:8443/cas" + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
+
+        val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
+        service0.setEvaluationOrder(0);
+
+        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        service1.setEvaluationOrder(100);
+
+        val service2 = getSamlRegisteredServiceFor(".+");
+        service2.setMetadataLocation("https://mdq.incommon.org/entities");
+        service2.setEvaluationOrder(1000);
+
+        val candidateServices = CollectionUtils.wrapList(service0, service1, service2);
+        servicesManager.save(candidateServices.toArray(new RegisteredService[0]));
+
+        Collections.sort(candidateServices);
+
+        val url = new URIBuilder(callbackUrl + "?entityId=https://sp.testshib.org/shibboleth-sp");
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(callbackUrl);
+        url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = webApplicationServiceFactory.createService(url.toString());
+
+        val result = servicesManager.findServiceBy(service);
+        assertEquals(result, service1);
+    }
+
+    @Test
+    public void verifyLogoutOperation() {
+        assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
+        assertEquals(Ordered.HIGHEST_PRECEDENCE, samlIdPServicesManagerRegisteredServiceLocator.getOrder());
+        val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
+        service1.setEvaluationOrder(10);
+
+        val service2 = getSamlRegisteredServiceFor(false, false, false, ".+");
+        service2.setEvaluationOrder(9);
+
+        val candidateServices = CollectionUtils.wrapList(service1, service2);
+        Collections.sort(candidateServices);
+
+        val service = webApplicationServiceFactory.createService("https://sp.testshib.org/shibboleth-sp");
+        val samlRequest = EncodingUtils.encodeBase64(String.format(SAML_LOGOUT_REQUEST1, service.getId()));
+        service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
+
+        val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
+            (List) candidateServices, service);
+        assertNotNull(result);
+    }
+
     @Test
     public void verifyOperation() {
         assertNotNull(samlIdPServicesManagerRegisteredServiceLocator);
@@ -75,8 +142,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(samlRequest)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -97,8 +163,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.of(SAML_AUTHN_REQUEST2)));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("mmoayyed.unicon.net"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -119,8 +184,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -141,8 +205,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
         service.setAttributes(Map.of(SamlIdPConstants.PROVIDER_ID, List.of(service.getId())));
 
         val result = samlIdPServicesManagerRegisteredServiceLocator.locate(
-            (List) candidateServices,
-            service, r -> r.matches("https://sp.testshib.org/shibboleth-sp"));
+            (List) candidateServices, service);
         assertNotNull(result);
     }
 
@@ -242,5 +305,41 @@ public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSam
             val res1 = servicesManager.findServiceBy(service);
             assertNull(res1);
         }
+    }
+
+    @Test
+    public void verifyWithSelectionStrategy() {
+        val prefix = "http://localhost:8443/cas";
+        val callbackUrl = prefix + SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK;
+
+        val service0 = RegisteredServiceTestUtils.getRegisteredService(callbackUrl + ".*");
+        service0.setEvaluationOrder(0);
+
+        val service1 = getSamlRegisteredServiceFor("https://sp.testshib.org/shibboleth-sp");
+        service1.setEvaluationOrder(100);
+
+        val service2 = getSamlRegisteredServiceFor(".+");
+        service2.setMetadataLocation("https://example.org");
+        service2.setEvaluationOrder(1000);
+
+        val candidateServices = CollectionUtils.wrapList(service0, service1, service2);
+        servicesManager.save(candidateServices.toArray(new RegisteredService[0]));
+
+        Collections.sort(candidateServices);
+
+        val url = new URIBuilder(callbackUrl + "?entityId=https%3A%2F%2Fsp.testshib.org%2Fshibboleth-sp");
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(callbackUrl);
+        url.getQueryParams().forEach(param -> request.addParameter(param.getName(), param.getValue()));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = webApplicationServiceFactory.createService(url.toString());
+        assertFalse(service.getAttributes().isEmpty());
+        val selectionStrategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, webApplicationServiceFactory, prefix);
+        val extracted = selectionStrategy.resolveServiceFrom(service);
+        assertNotNull(extracted);
+        assertFalse(extracted.getAttributes().isEmpty());
+
+        val result = servicesManager.findServiceBy(extracted);
+        assertEquals(service1, result);
     }
 }

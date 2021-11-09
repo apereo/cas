@@ -1,13 +1,14 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import com.google.common.collect.Iterables;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -15,19 +16,21 @@ import lombok.val;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.core.criterion.EntityIdCriterion;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.criterion.BindingCriterion;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -35,13 +38,15 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.Inflater;
@@ -60,26 +65,26 @@ public class SamlIdPUtils {
     /**
      * Retrieve authn request authn request.
      *
-     * @param <T>                the type parameter
      * @param context            the context
      * @param sessionStore       the session store
      * @param openSamlConfigBean the open saml config bean
      * @param clazz              the clazz
      * @return the request
      */
-    public static <T extends RequestAbstractType> T retrieveSamlRequest(final WebContext context,
-                                                                        final SessionStore sessionStore,
-                                                                        final OpenSamlConfigBean openSamlConfigBean,
-                                                                        final Class<T> clazz) {
+    public static Optional<Pair<? extends RequestAbstractType, MessageContext>> retrieveSamlRequest(final WebContext context,
+                                                                                                    final SessionStore sessionStore,
+                                                                                                    final OpenSamlConfigBean openSamlConfigBean,
+                                                                                                    final Class<? extends RequestAbstractType> clazz) {
         LOGGER.trace("Retrieving authentication request from scope");
-        val requestValue = sessionStore
+        val authnContext = sessionStore
             .get(context, SamlProtocolConstants.PARAMETER_SAML_REQUEST)
-            .orElse(StringUtils.EMPTY)
-            .toString();
-        if (StringUtils.isBlank(requestValue)) {
-            throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
-        }
-        return retrieveSamlRequest(openSamlConfigBean, clazz, requestValue);
+            .map(String.class::cast)
+            .map(value -> retrieveSamlRequest(openSamlConfigBean, clazz, value))
+            .flatMap(authnRequest -> sessionStore
+                .get(context, MessageContext.class.getName())
+                .map(String.class::cast)
+                .map(result -> SamlIdPAuthenticationContext.decode(result).toMessageContext(authnRequest)));
+        return authnContext.map(ctx -> Pair.of((AuthnRequest) ctx.getMessage(), ctx));
     }
 
     /**
@@ -113,13 +118,13 @@ public class SamlIdPUtils {
     /**
      * Prepare peer entity saml endpoint.
      *
-     * @param request         the authn request
+     * @param authnContext    the authn context
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType request,
+    public static void preparePeerEntitySamlEndpointContext(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
@@ -129,17 +134,10 @@ public class SamlIdPUtils {
         }
 
         val peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
-        if (peerEntityContext == null) {
-            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + entityId);
-        }
         peerEntityContext.setEntityId(entityId);
 
         val endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-        if (endpointContext == null) {
-            throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
-        }
-
-        val endpoint = determineEndpointForRequest(request, adaptor, binding);
+        val endpoint = determineEndpointForRequest(authnContext, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
@@ -147,33 +145,32 @@ public class SamlIdPUtils {
     /**
      * Determine assertion consumer service assertion consumer service.
      *
-     * @param authnRequest the authn request
+     * @param authnContext the authn context
      * @param adaptor      the adaptor
      * @param binding      the binding
      * @return the assertion consumer service
      */
-    public static Endpoint determineEndpointForRequest(final RequestAbstractType authnRequest,
+    public static Endpoint determineEndpointForRequest(final Pair<? extends RequestAbstractType, MessageContext> authnContext,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                        final String binding) {
         var endpoint = (Endpoint) null;
+        val authnRequest = authnContext.getLeft();
         if (authnRequest instanceof LogoutRequest) {
             endpoint = adaptor.getSingleLogoutService(binding);
         } else {
             val acsEndpointFromReq = getAssertionConsumerServiceFromRequest(authnRequest, binding, adaptor);
             val acsEndpointFromMetadata = adaptor.getAssertionConsumerService(binding);
-            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding, acsEndpointFromReq, acsEndpointFromMetadata);
+            endpoint = determineEndpointForRequest(authnRequest, adaptor, binding,
+                acsEndpointFromReq, acsEndpointFromMetadata, authnContext.getRight());
         }
-
-        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
-            throw new SamlException("Endpoint for "
-                + authnRequest.getSchemaType()
-                + " is not available or does not define a binding for " + binding);
+        if (endpoint == null) {
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
+                                    + " is not available or does not define a binding for " + binding);
         }
-        val location = StringUtils.isBlank(endpoint.getResponseLocation()) ? endpoint.getLocation() : endpoint.getResponseLocation();
-        if (StringUtils.isBlank(location)) {
-            throw new SamlException("Endpoint for"
-                + authnRequest.getSchemaType()
-                + " does not define a target location for " + binding);
+        val missingLocation = StringUtils.isBlank(endpoint.getResponseLocation()) && StringUtils.isBlank(endpoint.getLocation());
+        if (StringUtils.isBlank(endpoint.getBinding()) || missingLocation) {
+            throw new SamlException("Endpoint for " + authnRequest.getSchemaType()
+                                    + " does not define a binding or location for binding " + binding);
         }
         return endpoint;
     }
@@ -182,10 +179,16 @@ public class SamlIdPUtils {
                                                                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                         final String binding,
                                                                         final AssertionConsumerService acsFromRequest,
-                                                                        final AssertionConsumerService acsFromMetadata) {
+                                                                        final AssertionConsumerService acsFromMetadata,
+                                                                        final MessageContext authenticationContext) {
+        LOGGER.trace("ACS from authentication request is [{}], ACS from metadata is [{}] with binding [{}]",
+            acsFromRequest, acsFromMetadata, binding);
+
         if (acsFromRequest != null) {
-            if (!authnRequest.isSigned()) {
-                val locations = adaptor.getAssertionConsumerServiceLocations(binding);
+            if (!authnRequest.isSigned() && !SAMLBindingSupport.isMessageSigned(authenticationContext)) {
+                val locations = StringUtils.isNotBlank(binding)
+                    ? adaptor.getAssertionConsumerServiceLocations(binding)
+                    : adaptor.getAssertionConsumerServiceLocations();
                 val acsUrl = StringUtils.defaultIfBlank(acsFromRequest.getResponseLocation(), acsFromRequest.getLocation());
                 val acsIndex = authnRequest instanceof AuthnRequest
                     ? AuthnRequest.class.cast(authnRequest).getAssertionConsumerServiceIndex()
@@ -253,59 +256,6 @@ public class SamlIdPUtils {
     }
 
     /**
-     * Gets assertion consumer service for.
-     *
-     * @param authnRequest    the authn request
-     * @param servicesManager the services manager
-     * @param resolver        the resolver
-     * @return the assertion consumer service for
-     */
-    public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
-                                                                          final ServicesManager servicesManager,
-                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
-        try {
-            var acs = (AssertionConsumerService) null;
-            if (authnRequest.getAssertionConsumerServiceIndex() != null) {
-                val issuer = getIssuerFromSamlRequest(authnRequest);
-                val samlResolver = getMetadataResolverForAllSamlServices(servicesManager, issuer, resolver);
-                val criteriaSet = new CriteriaSet();
-                criteriaSet.add(new EntityIdCriterion(issuer));
-                criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
-
-                val entityDescriptor = Iterables.get(samlResolver.resolve(criteriaSet), 0);
-                val spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-                val acsEndpoints = spssoDescriptor.getAssertionConsumerServices();
-                if (acsEndpoints.isEmpty()) {
-                    throw new IllegalArgumentException("Metadata resolved for entity id " + issuer + " has no defined ACS endpoints");
-                }
-                val acsIndex = authnRequest.getAssertionConsumerServiceIndex();
-                if (acsIndex + 1 > acsEndpoints.size()) {
-                    throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
-                        + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
-                }
-                val foundAcs = acsEndpoints.get(acsIndex);
-                acs = buildAssertionConsumerService(foundAcs.getBinding(),
-                    StringUtils.defaultIfBlank(foundAcs.getResponseLocation(), foundAcs.getLocation()), acsIndex);
-
-            } else {
-                acs = buildAssertionConsumerService(authnRequest.getProtocolBinding(), authnRequest.getAssertionConsumerServiceURL(), null);
-            }
-
-            LOGGER.debug("Resolved AssertionConsumerService from the request is [{}]", acs);
-            if (StringUtils.isBlank(acs.getBinding())) {
-                throw new SamlException("AssertionConsumerService has no protocol binding defined");
-            }
-            if (StringUtils.isBlank(acs.getLocation()) && StringUtils.isBlank(acs.getResponseLocation())) {
-                throw new SamlException("AssertionConsumerService has no location or response location defined");
-            }
-            return acs;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(new SamlException(e.getMessage(), e));
-        }
-    }
-
-    /**
      * Gets issuer from saml object.
      *
      * @param object the object
@@ -317,6 +267,9 @@ public class SamlIdPUtils {
         }
         if (object instanceof StatusResponseType) {
             return StatusResponseType.class.cast(object).getIssuer().getValue();
+        }
+        if (object instanceof Assertion) {
+            return Assertion.class.cast(object).getIssuer().getValue();
         }
         return null;
     }
@@ -401,13 +354,55 @@ public class SamlIdPUtils {
     }
 
     /**
-     * Gets issuer from saml request.
+     * Store saml request.
      *
-     * @param request the request
-     * @return the issuer from saml request
+     * @param webContext         the web context
+     * @param openSamlConfigBean the open saml config bean
+     * @param sessionStore       the session store
+     * @param context            the context
+     * @throws Exception the exception
      */
-    private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
-        return request.getIssuer().getValue();
+    public static void storeSamlRequest(final JEEContext webContext,
+                                        final OpenSamlConfigBean openSamlConfigBean,
+                                        final SessionStore sessionStore,
+                                        final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+        val authnRequest = (AuthnRequest) context.getLeft();
+        val messageContext = context.getValue();
+        try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest)) {
+            val samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlRequest);
+            sessionStore.set(webContext, SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, SAMLBindingSupport.getRelayState(messageContext));
+
+            val authnContext = SamlIdPAuthenticationContext.from(messageContext).encode();
+            sessionStore.set(webContext, MessageContext.class.getName(), authnContext);
+        }
+    }
+
+    /**
+     * Determine name id name qualifier string.
+     *
+     * @param samlRegisteredService   the saml registered service
+     * @param samlIdPMetadataResolver the saml id p metadata resolver
+     * @return the string
+     */
+    public static String determineNameIdNameQualifier(final SamlRegisteredService samlRegisteredService,
+                                                      final MetadataResolver samlIdPMetadataResolver) {
+        if (StringUtils.isNotBlank(samlRegisteredService.getNameIdQualifier())) {
+            return samlRegisteredService.getNameIdQualifier();
+        }
+        val nameQualifier = FunctionUtils.doIf(StringUtils.isNotBlank(samlRegisteredService.getIssuerEntityId()),
+                samlRegisteredService::getIssuerEntityId,
+                Unchecked.supplier(() -> {
+                    val criteriaSet = new CriteriaSet(
+                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                        new SamlIdPSamlRegisteredServiceCriterion(samlRegisteredService));
+                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", samlRegisteredService.getName());
+                    val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                    return entityDescriptor.getEntityID();
+                }))
+            .get();
+        LOGGER.debug("Using name qualifier [{}] for the Name ID", nameQualifier);
+        return nameQualifier;
     }
 }
 

@@ -53,7 +53,10 @@ Docker images published to Docker Hub, and as a baseline for
 browser/UI tests run by the CAS CI for each relevant feature.
 CAS Initializr uses itself to test itself!
 
-## Overlay Project Types
+To properly initialize and generate a CAS overlay, you may want to make
+sure you have `curl`, `http` and/or [jq](https://stedolan.github.io/jq/) installed.
+
+## Project Types
 
 The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
 The project selection is indicated using a `type` parameter. The following types are supported:
@@ -64,15 +67,36 @@ The project selection is indicated using a `type` parameter. The following types
 | `cas-bootadmin-server-overlay`          | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).
 | `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
 | `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
-| `cas-mgmt-overlay`                      | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+| `cas-management-overlay`                | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+
+## Project Versions
+
+The [CAS Initializr][initializr] can be instructed to prepare an overlay project for a specific version.
+The following request parameters control the version selection:
+
+| Type                                    | Description
+|-----------------------------------------|-----------------------------------------------
+| `casVersion`                            | Specify the CAS version for the overlay.
+| `bootVersion`                           | Specify the Spring Boot version for the overlay.
+
+Note that mixing and matching different versions generally will lead to 
+unstable projects builds. Do so at your own risk! The specification
+of version numbers in the project generation request is unnecessary, and [CAS Initializr][initializr] will always
+use trusted defaults to handle the generation task.
+
+To review the list of supported versions for the CAS Initializr on [Heroku][initializr], you may use:
+
+```bash
+curl https://casinit.herokuapp.com/actuator/supportedVersions | jq
+```
 
 ## Source Code
 
 [CAS Initializr][initializr] is available at:
 
-| Source Repository      | Location | Heroku
-|--------------------|---------------------------------------|---------------------------------------
-| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinit)
+| Source Repository      | Location 
+|--------------------|-------------------------------------------------------------
+| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com)
 
 ## Project Generation
 
@@ -81,13 +105,52 @@ the CAS Initializr, the following strategies can be used.
 
 ### Heroku
 
-The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
+The CAS projects provides a public **free** instance of the CAS Initializr on [Heroku][initializr], paid for by the
+Apereo CAS support subscribers. To get started with this instance, a simple way might be to include the following function in your bash profile:
 
 ```bash
 function getcas(){
-    curl https://casinit.herokuapp.com/starter.tgz \
-      -d type=[project-type] -d baseDir=overlay -d dependencies="$1" | tar -xzvf -
-    ls
+  url="https://casinit.herokuapp.com/starter.tgz"
+  projectType="cas-overlay"
+  dependencies=""
+  directory="overlay"
+  for arg in $@; do
+    case "$arg" in
+    --url|-u)
+      url=$2
+      shift 1
+      ;;
+    --type|-t)
+      projectType=$2
+      shift 1
+      ;;
+    --directory|--dir|-d)
+      directory=$2
+      shift 1
+      ;;
+    --casVersion|--cas)
+      casVersion="-d casVersion=$2"
+      shift 1
+      ;;
+    --bootVersion|--springBootVersion|--boot)
+      bootVersion="-d bootVersion=$2"
+      shift 1
+      ;;
+    --modules|--dependencies|--extensions|-m)
+      dependencies="-d dependencies=$2"
+      shift 1
+      ;;
+    *)
+      shift
+      ;;
+    esac
+  done
+  rm -Rf ./${directory}
+  echo -e "Generating project ${projectType} with dependencies ${dependencies}..."
+  cmd="curl ${url} -d type=${projectType} -d baseDir=${directory} ${dependencies} ${casVersion} ${bootVersion} | tar -xzvf -"
+  echo -e "${cmd}"
+  eval "${cmd}"
+  ls
 }
 ```
 
@@ -98,7 +161,7 @@ If you prefer, you could invoke the <code>/starter.zip</code> endpoint to get ba
 This allows you to generate a CAS overlay project in the `overlay` directory using:
 
 ```bash
-getcas duo,oidc
+getcas --modules duo,oidc
 ```
 
 …which generates a CAS overlay project prepared with multifactor authentication
@@ -132,11 +195,11 @@ curl https://casinit.herokuapp.com/dependencies
 ```
 
 Typically, dependency identifiers match CAS server dependency/module artifact names without
-the `cas-server-` prefix. Furthermore, certain dependencies can are assigned aliases as
+the `cas-server-` prefix. Furthermore, certain dependencies are assigned aliases as
 shortcuts to simplify requests. To see the full list of dependencies and their aliases, you may use:
 
 ```bash
-curl https://casinit.herokuapp.com/actuator/info
+curl https://casinit.herokuapp.com/actuator/info | jq
 ```
 
 Furthermore, CAS Initializr publishes metadata about its capabilities, that is the
@@ -146,13 +209,13 @@ service uses that information to initialize the select options and the tree of a
 You can grab the metadata on the root endpoint with the appropriate `Accept` header:
 
 ```bash
-curl -H 'Accept: application/json' https://casinit.herokuapp.com
+curl -H 'Accept: application/json' https://casinit.herokuapp.com | jq
 ```
 
 Or using HTTPie:
 
 ```bash
-http https://casinit.herokuapp.com Accept:application/json
+http https://casinit.herokuapp.com Accept:application/json | jq
 ```
 
 ### Dependency Management

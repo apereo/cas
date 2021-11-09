@@ -34,7 +34,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.junit.jupiter.params.provider.Arguments.*;
 
 
 /**
@@ -51,28 +51,6 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
      * Answers requests for CRLs made to localhost:8085.
      */
     private MockWebServer webServer;
-
-    @ParameterizedTest
-    @MethodSource("getTestParameters")
-    public void checkCertificate(
-        final CRLDistributionPointRevocationChecker checker,
-        final String[] certFiles,
-        final String crlFile,
-        final GeneralSecurityException expected) throws IOException, InterruptedException {
-
-        val file = new File(FileUtils.getTempDirectory(), "ca.crl");
-        val out = new FileOutputStream(file);
-        IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
-
-        this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
-
-        this.webServer.start();
-        LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
-        Thread.sleep(500);
-
-        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
-        checker.close();
-    }
 
     private static UserManagedCache<URI, byte[]> getCache(final int entries) {
         return UserManagedCacheBuilder.newUserManagedCacheBuilder(URI.class, byte[].class)
@@ -185,6 +163,28 @@ public class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocatio
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestParameters")
+    public void checkCertificate(
+        final CRLDistributionPointRevocationChecker checker,
+        final String[] certFiles,
+        final String crlFile,
+        final GeneralSecurityException expected) throws IOException, InterruptedException {
+
+        val file = new File(FileUtils.getTempDirectory(), "ca.crl");
+        val out = new FileOutputStream(file);
+        IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
+
+        this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
+
+        this.webServer.start();
+        LOGGER.debug("Web server listening on port 8085 serving file [{}]", crlFile);
+        Thread.sleep(500);
+
+        BaseCRLRevocationCheckerTests.checkCertificate(checker, certFiles, expected);
+        checker.close();
     }
 
     /**

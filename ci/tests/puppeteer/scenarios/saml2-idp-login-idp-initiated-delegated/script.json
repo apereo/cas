@@ -1,0 +1,26 @@
+{
+  "dependencies": "saml-idp,pac4j-webflow",
+  "properties": [
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--logging.level.org.apereo.cas=info",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirect.groovy",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient"
+  ,
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

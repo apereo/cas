@@ -12,7 +12,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,8 +20,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link LdapServiceRegistryConfiguration}.
@@ -30,45 +32,43 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("ldapServiceRegistryConfiguration")
+@Configuration(value = "ldapServiceRegistryConfiguration", proxyBeanMethods = false)
 @ConditionalOnProperty(prefix = "cas.service-registry.ldap", name = "ldap-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class LdapServiceRegistryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
-
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapServiceRegistryMapper")
-    public LdapRegisteredServiceMapper ldapServiceRegistryMapper() {
+    public LdapRegisteredServiceMapper ldapServiceRegistryMapper(final CasConfigurationProperties casProperties) {
         return new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapServiceRegistry")
-    public ServiceRegistry ldapServiceRegistry() {
+    public ServiceRegistry ldapServiceRegistry(
+        @Qualifier("ldapServiceRegistryMapper")
+        final LdapRegisteredServiceMapper ldapServiceRegistryMapper,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) {
         val ldap = casProperties.getServiceRegistry().getLdap();
         val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         LOGGER.debug("Configured LDAP service registry search filter to [{}] and load filter to [{}]",
             ldap.getSearchFilter(), ldap.getLoadFilter());
-        return new LdapServiceRegistry(connectionFactory, ldapServiceRegistryMapper(),
-            ldap, applicationContext, serviceRegistryListeners.getObject());
+        return new LdapServiceRegistry(connectionFactory, ldapServiceRegistryMapper,
+            ldap, applicationContext,
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer ldapServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(ldapServiceRegistry());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ServiceRegistryExecutionPlanConfigurer ldapServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("ldapServiceRegistry")
+        final ServiceRegistry ldapServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(ldapServiceRegistry);
     }
 }

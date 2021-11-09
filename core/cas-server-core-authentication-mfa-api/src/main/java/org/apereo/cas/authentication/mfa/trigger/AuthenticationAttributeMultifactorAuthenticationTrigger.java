@@ -20,10 +20,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToSet;
+import static org.springframework.util.StringUtils.*;
 
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationTrigger}.
@@ -85,10 +84,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             (attributeValue, mfaProvider) -> attributeValue != null && mfaProvider.matches(attributeValue));
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return Optional.empty();
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
+            return id.flatMap(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), applicationContext));
         }
         return Optional.empty();
     }

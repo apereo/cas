@@ -9,14 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link DefaultUmaPermissionTicket}.
@@ -27,23 +24,14 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
-@Entity
-@DiscriminatorValue(UmaPermissionTicket.PREFIX)
 @NoArgsConstructor(force = true)
 public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPermissionTicket {
     private static final long serialVersionUID = 2963749819727757623L;
-    private static final int MAP_SIZE = 8;
 
-    @Lob
-    @Column
-    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, Object> claims = new LinkedHashMap<>();
 
-    @Lob
-    @Column
-    private LinkedHashSet<String> scopes = new LinkedHashSet<>(MAP_SIZE);
+    private Set<String> scopes = new LinkedHashSet<>();
 
-    @Lob
-    @Column
     private ResourceSet resourceSet = new ResourceSet();
 
     public DefaultUmaPermissionTicket(final String id, final ResourceSet resourceSet,

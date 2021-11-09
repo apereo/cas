@@ -1,7 +1,7 @@
 {
   "dependencies": "generic",
   "properties": [
-    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/account-invalidloc-login/accounts.json",
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.accept.enabled=false"
   ]
 }

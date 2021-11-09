@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.json-file="
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class YubiKeyConfigurationOpenRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

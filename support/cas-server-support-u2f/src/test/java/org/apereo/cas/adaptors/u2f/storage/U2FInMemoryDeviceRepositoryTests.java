@@ -13,6 +13,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("MFAProvider")
 @Getter
 public class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
@@ -37,5 +39,6 @@ public class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositor
     @Test
     public void verifyOperation() {
         assertNotNull(deviceRepository);
+        assertTrue(deviceRepository.getRegisteredDevices(UUID.randomUUID().toString()).isEmpty());
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -30,6 +31,7 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint 
     }
 
     @ReadOperation
+    @Operation(summary = "Get throttled authentication records")
     public List getRecords() {
         return (List) authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
             .stream()

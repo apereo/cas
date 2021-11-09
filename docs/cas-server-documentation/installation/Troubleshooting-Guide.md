@@ -43,13 +43,15 @@ If you have a question about tuning and configuration of external components uti
 and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
 addressed by the community in charge of that component's development and support. As a general rule,
 you should always pick a technology with which you are most familiar, or otherwise, shoot a question to
-the Spring Webflow, MongoDb, Hazelcast, etc forums to have experts review and recommend ideas.
+the Spring Webflow, MongoDb, Hazelcast, Redis, etc forums to have experts review and recommend ideas.
 
 Typical questions in this category that are best answered elsewhere are:
-
-- How do I configure SSL for Apache Tomcat, Jetty, etc?
+           
+- Why does Azure/AWS/GCP work this way? 
+- How do I configure SSL for Apache Tomcat, Jetty, Active Directory, etc?
 - How do I pass variables from one flow to the next in Spring webflow?
 - How do I tune up a hazelcast cluster?
+- Can you explain the steps needed to configure Redis Sentinel? 
 - What is the recommended strategy for making MongoDb highly available? 
 
 ## Using `SNAPSHOT` Versions

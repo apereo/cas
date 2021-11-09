@@ -12,9 +12,8 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserActionTests
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollActionTests;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is all the Inwebo tests.
@@ -36,6 +35,6 @@ import org.junit.runner.RunWith;
     InweboServiceTests.class,
     InweboMultifactorWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllInweboTestsSuite {
 }

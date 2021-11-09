@@ -6,7 +6,6 @@ import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
 
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -33,21 +32,19 @@ import org.springframework.core.Ordered;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasEmbeddedContainerTomcatConfiguration {
 
-    @Autowired
-    private ServerProperties serverProperties;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
-    public ConfigurableServletWebServerFactory casServletWebServerFactory() {
+    public ConfigurableServletWebServerFactory casServletWebServerFactory(
+        final ServerProperties serverProperties,
+        final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactory(casProperties, serverProperties);
     }
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
     @Bean
-    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer() {
+    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer(
+        final ServerProperties serverProperties,
+        final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
     }
 }

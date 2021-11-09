@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.authorize;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,7 +18,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -38,16 +39,26 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
     protected OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
 
     @Test
+    public void verifyBadEndpointRequest() throws Exception {
+        val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
+        val response = new MockHttpServletResponse();
+        val mv = oidcAuthorizeEndpointController.handleRequest(request, response);
+        assertEquals(HttpStatus.NOT_FOUND, mv.getStatus());
+    }
+
+    @Test
     public void verify() throws Exception {
         val id = UUID.randomUUID().toString();
-        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), OAuth20Constants.AUTHORIZE_URL);
+        val mockRequest = getHttpRequestForEndpoint(OidcConstants.AUTHORIZE_URL);
+        mockRequest.setMethod(HttpMethod.GET.name());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, id);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org/");
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase());
         mockRequest.setContextPath(StringUtils.EMPTY);
         val mockResponse = new MockHttpServletResponse();
 
-        val oauthContext = oidcAuthorizeEndpointController.getOAuthConfigurationContext();
+        val oauthContext = oidcAuthorizeEndpointController.getConfigurationContext();
         oauthContext.getCasProperties().getSessionReplication().getCookie().setAutoConfigureCookiePath(false);
         oauthContext.getOauthDistributedSessionCookieGenerator().setCookiePath(StringUtils.EMPTY);
 
@@ -58,12 +69,13 @@ public class OidcAuthorizeEndpointControllerTests extends AbstractOidcTests {
         val profile = new CasProfile();
         profile.setId("casuser");
 
-        val sessionStore = oidcAuthorizeEndpointController.getOAuthConfigurationContext().getSessionStore();
+        val sessionStore = oidcAuthorizeEndpointController.getConfigurationContext().getSessionStore();
         val context = new JEEContext(mockRequest, mockResponse);
         val ticket = new MockTicketGrantingTicket("casuser");
-        oidcAuthorizeEndpointController.getOAuthConfigurationContext().getTicketRegistry().addTicket(ticket);
+        oidcAuthorizeEndpointController.getConfigurationContext().getTicketRegistry().addTicket(ticket);
         sessionStore.set(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticket.getId());
-        sessionStore.set(context, Pac4jConstants.USER_PROFILES, CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
+        sessionStore.set(context, Pac4jConstants.USER_PROFILES,
+            CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
         var modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         var view = modelAndView.getView();

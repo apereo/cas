@@ -74,6 +74,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected ObjectProvider<TicketRegistry> ticketRegistry;
 }

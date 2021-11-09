@@ -1,16 +1,15 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
-import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,46 +41,42 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RequiredArgsConstructor
 public class UserAuthenticationResource {
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-
-    private final RestHttpRequestCredentialFactory credentialFactory;
-
-    private final ServiceFactory serviceFactory;
+    private final RestAuthenticationService authenticationService;
 
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
 
     private final ApplicationContext applicationContext;
 
     /**
-     * Create new ticket granting ticket.
+     * Authenticate requests.
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_USERS, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request) {
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_USERS,
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+        })
+    public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                      final HttpServletRequest request) {
         try {
-            val credential = this.credentialFactory.fromRequest(request, requestBody);
-            if (credential == null || credential.isEmpty()) {
-                throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
-            }
-            val service = this.serviceFactory.createService(request);
-            val authenticationResult =
-                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-            if (authenticationResult == null) {
-                throw new FailedLoginException("Authentication failed");
-            }
-            return this.userAuthenticationResourceEntityResponseFactory.build(authenticationResult, request);
+            val authenticationResult = authenticationService.authenticate(requestBody, request);
+            val result = authenticationResult.orElseThrow(FailedLoginException::new);
+            return this.userAuthenticationResourceEntityResponseFactory.build(result, request);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

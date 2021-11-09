@@ -1,12 +1,13 @@
 package org.apereo.cas.cassandra;
 
 /**
- * This is {@link DefaultCassandraSessionFactoryTests}.
+ * This is {@link org.apereo.cas.cassandra.DefaultCassandraSessionFactoryTests}.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -14,14 +15,11 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import javax.net.ssl.SSLContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,17 +41,16 @@ public class DefaultCassandraSessionFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("sslContext")
-    private ObjectProvider<SSLContext> sslContext;
+    @Qualifier("casSslContext")
+    private CasSSLContext casSslContext;
 
     @Test
     public void verifyOperation() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val factory = new DefaultCassandraSessionFactory(cassandra, sslContext.getObject());
+        val factory = new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
         assertNotNull(factory.getCassandraTemplate());
         assertNotNull(factory.getCqlTemplate());
         assertNotNull(factory.getSession());
         factory.close();
     }
-
 }

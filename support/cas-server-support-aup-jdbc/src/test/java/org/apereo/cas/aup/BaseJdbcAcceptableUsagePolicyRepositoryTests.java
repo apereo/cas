@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowConfiguration;
@@ -34,6 +35,7 @@ import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,6 +57,7 @@ import java.util.Map;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -80,6 +83,7 @@ import java.util.Map;
     CasCoreLogoutConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
@@ -93,7 +97,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
     protected TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired

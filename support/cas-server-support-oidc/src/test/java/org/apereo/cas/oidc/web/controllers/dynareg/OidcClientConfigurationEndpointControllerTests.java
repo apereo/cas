@@ -1,14 +1,15 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.UUID;
@@ -28,8 +29,17 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
     protected OidcClientConfigurationEndpointController controller;
 
     @Test
+    public void verifyBadEndpointRequest() {
+        val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
+        val response = new MockHttpServletResponse();
+        val mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
+        assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, mv.getStatusCode());
+    }
+
+    @Test
     public void verifyOperation() {
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         servicesManager.save(getOidcRegisteredService(clientId));
@@ -39,7 +49,7 @@ public class OidcClientConfigurationEndpointControllerTests extends AbstractOidc
 
     @Test
     public void verifyBadRequest() {
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
         assertEquals(HttpStatus.SC_BAD_REQUEST,

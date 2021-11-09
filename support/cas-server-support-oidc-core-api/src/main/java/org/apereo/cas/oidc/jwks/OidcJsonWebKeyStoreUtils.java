@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.EcJwkGenerator;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
@@ -56,7 +57,8 @@ public class OidcJsonWebKeyStoreUtils {
                 LOGGER.warn("No JSON web keys or keystore resource could be found for [{}]", service);
                 return Optional.empty();
             }
-            val jsonWebKeySet = buildJsonWebKeySet(resource);
+            val requestedKid = Optional.ofNullable(service.getJwksKeyId());
+            val jsonWebKeySet = buildJsonWebKeySet(resource, requestedKid);
 
             if (jsonWebKeySet == null || jsonWebKeySet.getJsonWebKeys().isEmpty()) {
                 LOGGER.warn("No JSON web keys could be found for [{}]", service);
@@ -65,15 +67,15 @@ public class OidcJsonWebKeyStoreUtils {
 
             val badKeysCount = jsonWebKeySet.getJsonWebKeys().stream().filter(k ->
                 StringUtils.isBlank(k.getAlgorithm())
-                    && StringUtils.isBlank(k.getKeyId())
-                    && StringUtils.isBlank(k.getKeyType())).count();
+                && StringUtils.isBlank(k.getKeyId())
+                && StringUtils.isBlank(k.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                 LOGGER.warn("No valid JSON web keys could be found for [{}]", service);
                 return Optional.empty();
             }
 
-            val webKey = getJsonWebKeyFromJsonWebKeySet(jsonWebKeySet);
+            val webKey = getJsonWebKeyFromJsonWebKeySet(jsonWebKeySet, requestedKid);
             if (Objects.requireNonNull(webKey).getPublicKey() == null) {
                 LOGGER.warn("JSON web key retrieved [{}] has no associated public key", webKey.getKeyId());
                 return Optional.empty();
@@ -91,15 +93,22 @@ public class OidcJsonWebKeyStoreUtils {
      * Gets json web key from jwks.
      *
      * @param jwks the jwks
+     * @param kid  the kid
      * @return the json web key from jwks
      */
-    public static PublicJsonWebKey getJsonWebKeyFromJsonWebKeySet(final JsonWebKeySet jwks) {
+    public static PublicJsonWebKey getJsonWebKeyFromJsonWebKeySet(final JsonWebKeySet jwks,
+                                                                  final Optional<String> kid) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
             return null;
         }
 
-        val key = (PublicJsonWebKey) jwks.getJsonWebKeys().get(0);
+        val key = getJsonWebKeyByKeyId(jwks, kid);
+        if (key == null) {
+            LOGGER.warn("Unable to locate JSON web key for [{}]", kid.map(Object::toString));
+            return null;
+        }
+        LOGGER.trace("Located JSON web key [{}]", key.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
         if (StringUtils.isBlank(key.getAlgorithm())) {
             LOGGER.warn("Located JSON web key [{}] has no algorithm defined", key);
         }
@@ -114,16 +123,30 @@ public class OidcJsonWebKeyStoreUtils {
         return key;
     }
 
-    private static JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
+    private static PublicJsonWebKey getJsonWebKeyByKeyId(final JsonWebKeySet jwks, final Optional<String> kid) {
+        if (kid.isEmpty()) {
+            return (PublicJsonWebKey) jwks.getJsonWebKeys().get(0);
+        }
+
+        val keyId = kid.get();
+        return jwks.getJsonWebKeys()
+            .stream()
+            .filter(k -> StringUtils.equalsIgnoreCase(k.getKeyId(), keyId))
+            .findFirst()
+            .map(PublicJsonWebKey.class::cast)
+            .orElse(null);
+    }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final Resource resource, final Optional<String> keyId) throws Exception {
         LOGGER.debug("Loading JSON web key from [{}]", resource);
         val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
-        return buildJsonWebKeySet(json);
+        return buildJsonWebKeySet(json, keyId);
     }
 
-    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+    private static JsonWebKeySet buildJsonWebKeySet(final String json, final Optional<String> keyId) throws Exception {
         val jsonWebKeySet = new JsonWebKeySet(json);
-        val webKey = getJsonWebKeyFromJsonWebKeySet(jsonWebKeySet);
+        val webKey = getJsonWebKeyFromJsonWebKeySet(jsonWebKeySet, keyId);
         if (webKey == null || webKey.getPublicKey() == null) {
             LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated public key", webKey);
             return null;
@@ -182,7 +205,9 @@ public class OidcJsonWebKeyStoreUtils {
                 return jwk;
             case "rsa":
             default:
-                return RsaJwkGenerator.generateJwk(jwksKeySize);
+                val newJwk = RsaJwkGenerator.generateJwk(jwksKeySize);
+                newJwk.setKeyId(UUID.randomUUID().toString());
+                return newJwk;
         }
     }
 }

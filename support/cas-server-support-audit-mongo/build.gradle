@@ -6,6 +6,7 @@ dependencies {
     implementation libraries.mongo
 
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":support:cas-server-support-mongo-core")
 

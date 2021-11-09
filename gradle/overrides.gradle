@@ -1,6 +1,6 @@
 configurations.all {
     resolutionStrategy {
-        if (!Boolean.getBoolean("skipVersionConflict")) {
+        if (!providers.systemProperty("skipVersionConflict").forUseAtConfigurationTime().present) {
             failOnVersionConflict()
         }
         preferProjectModules()
@@ -14,6 +14,9 @@ configurations.all {
                 def requested = details.requested
                 if (requested.group == "gnu-getopt")  {
                     details.useTarget group: "gnu.getopt", name: "java-getopt", version: details.requested.version
+                }
+                if (requested.group == "org.opensaml")  {
+                    details.useVersion("${opensamlVersion}")
                 }
                 if (requested.group == "com.h2database")  {
                     details.useVersion("${h2Version}")
@@ -68,7 +71,7 @@ configurations.all {
                     details.useVersion("${couchbaseVersion}")
                 }
                 if (requested.group == "com.github.ben-manes.caffeine")  {
-                    details.useVersion("${caffeinVersion}")
+                    details.useVersion("${caffeineVersion}")
                 }
                 if (requested.group == "org.apache.logging.log4j")  {
                     details.useVersion("${log4jVersion}")
@@ -110,6 +113,9 @@ configurations.all {
                 if (requested.group == "com.signalfx.public")  {
                     details.useVersion("${signalFxVersion}")
                 }
+                if (requested.group == "org.apache.wss4j")  {
+                    details.useVersion("${wss4jVersion}")
+                }
             }
         }
     }
@@ -117,12 +123,15 @@ configurations.all {
     exclude(group: "cglib", module: "cglib-full")
     exclude(group: "org.slf4j", module: "slf4j-log4j12")
     exclude(group: "org.slf4j", module: "slf4j-simple")
+    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
     exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     exclude(group: "pull-parser", module: "pull-parser")
+    exclude(group: "javax.servlet", module: "servlet-api")
+    exclude(group: "commons-logging", module: "commons-logging")
 }
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
-ext["caffeine.version"] = ext["caffeinVersion"]
+ext["caffeine.version"] = ext["caffeineVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
@@ -133,9 +142,9 @@ ext["spring.version"] = ext["springVersion"]
 ext["jackson.version"] = ext["jacksonVersion"]
 ext["thymeleaf.version"] = ext["thymeleafVersion"]
 ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
-ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
 ext["httpcore.version"] = ext["httpCoreVersion"]
+ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]

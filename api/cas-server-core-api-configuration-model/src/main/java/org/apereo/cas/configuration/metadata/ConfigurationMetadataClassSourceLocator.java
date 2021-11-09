@@ -3,8 +3,6 @@ package org.apereo.cas.configuration.metadata;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import lombok.val;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -60,19 +58,12 @@ public class ConfigurationMetadataClassSourceLocator {
         if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
             return cachedPropertiesClasses.get(type.getNameAsString());
         }
-
         val urls = new ArrayList<>(ClasspathHelper.forPackage("org.apereo.cas"));
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
-                .setUrls(urls)
-                .setScanners(new TypeElementsScanner()
-                        .includeFields(false)
-                        .includeMethods(false)
-                        .includeAnnotations(false)
-                        .filterResultsBy(s -> s != null && s.endsWith(type.getNameAsString())),
-                    new SubTypesScanner(false)));
-        val clz = reflections.getSubTypesOf(Serializable.class).stream()
+        val reflections = new Reflections(new ConfigurationBuilder()
+            .filterInputsBy(s -> s != null && s.contains(type.getNameAsString()))
+            .setUrls(urls));
+        val clz = reflections.getSubTypesOf(Serializable.class)
+            .stream()
             .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));

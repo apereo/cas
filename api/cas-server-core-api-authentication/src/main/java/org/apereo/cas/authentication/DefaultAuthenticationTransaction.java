@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,22 +31,19 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
 
     private final Collection<Credential> credentials;
 
-    /**
-     * Gets the first (primary) credential in the chain.
-     *
-     * @return the credential
-     */
+    private final Collection<Authentication> authentications = new ArrayList<>();
+
+    @Override
+    public AuthenticationTransaction collect(final Collection<Authentication> authentications) {
+        this.authentications.addAll(authentications);
+        return this;
+    }
+
     @Override
     public Optional<Credential> getPrimaryCredential() {
         return Objects.requireNonNull(credentials).stream().findFirst();
     }
 
-    /**
-     * Does this AuthenticationTransaction contain a credential of the given type?
-     *
-     * @param type the credential type to check for
-     * @return true if this AuthenticationTransaction contains a credential of the specified type
-     */
     @Override
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return Objects.requireNonNull(credentials).stream().anyMatch(type::isInstance);

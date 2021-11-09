@@ -1,3 +1,16 @@
+/*
+ * The following resolution strategy
+ * is required for JRadius library that relies
+ * on an old version of bouncycastle.
+ */
+def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
+if (!dependencyUpdates) {
+    ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
+        def cfg = configurations.findByName(name)
+        cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"
+    })
+}
+
 description = "Apereo CAS RADIUS RSA MFA Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
@@ -31,6 +44,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-audit")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")

@@ -11,8 +11,10 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
@@ -48,98 +50,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("Simple")
+@Tag("Delegation")
 public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
-    @Test
-    public void verifyNoServiceOrPolicy() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
-        val policy = new DefaultRegisteredServiceAccessStrategy();
-        when(svc.getAccessStrategy()).thenReturn(policy);
-        val ticketRegistry = new DefaultTicketRegistry();
-        
-        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
-        assertFalse(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
-
-        WebUtils.putRegisteredService(context, svc);
-        assertEquals(0, strategy.getOrder());
-        assertTrue(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
-
-        policy.setDelegatedAuthenticationPolicy(null);
-        assertFalse(strategy.supports(context));
-        assertTrue(strategy.isParticipating(context));
-    }
-
-    @Test
-    public void verifySsoWithMismatchedClient() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
-        val policy = new DefaultRegisteredServiceAccessStrategy();
-        policy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy().setAllowedProviders(List.of("Client2")));
-        when(svc.getAccessStrategy()).thenReturn(policy);
-        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
-
-        val ticketRegistry = new DefaultTicketRegistry();
-        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
-
-        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
-        val authentication = CoreAuthenticationTestUtils.getAuthentication(
-            Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("CAS")));
-
-        val tgt = new MockTicketGrantingTicket(authentication);
-        ticketRegistry.addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
-    }
-
-    @Test
-    public void verifySsoWithMissingClientAndExclusive() {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
-        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
-        val policy = new DefaultRegisteredServiceAccessStrategy();
-        policy.setDelegatedAuthenticationPolicy(
-            new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
-                .setExclusive(true)
-                .setAllowedProviders(List.of("CAS")));
-        when(svc.getAccessStrategy()).thenReturn(policy);
-        when(svc.matches(anyString())).thenReturn(Boolean.TRUE);
-
-        val ticketRegistry = new DefaultTicketRegistry();
-        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
-
-        WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService("serviceid1"));
-        val authentication = CoreAuthenticationTestUtils.getAuthentication(Map.of());
-
-        val tgt = new MockTicketGrantingTicket(authentication);
-        ticketRegistry.addTicket(tgt);
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        assertTrue(strategy.supports(context));
-        assertFalse(strategy.isParticipating(context));
-    }
-
-
     private static SingleSignOnParticipationStrategy getSingleSignOnStrategy(
         final RegisteredService svc,
         final TicketRegistry ticketRegistry) {
@@ -152,6 +64,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         val servicesManager = new DefaultServicesManager(context);
         servicesManager.load();
@@ -159,10 +72,110 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
         val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
         authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
-        val strategy = new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
+        return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultTicketRegistrySupport(ticketRegistry));
-        return strategy;
     }
 
+    @Test
+    public void verifyNoServiceOrPolicy() {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = CoreAuthenticationTestUtils.getRegisteredService("serviceid1");
+        val policy = new DefaultRegisteredServiceAccessStrategy();
+        when(svc.getAccessStrategy()).thenReturn(policy);
+        val ticketRegistry = new DefaultTicketRegistry();
+
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+
+        assertFalse(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
+
+        WebUtils.putRegisteredService(context, svc);
+        assertEquals(0, strategy.getOrder());
+        assertTrue(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
+
+        policy.setDelegatedAuthenticationPolicy(null);
+        assertFalse(strategy.supports(ssoRequest));
+        assertTrue(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    public void verifySsoWithMismatchedClient() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
+        val policy = new DefaultRegisteredServiceAccessStrategy();
+        policy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy().setAllowedProviders(List.of("Client2")));
+        svc.setAccessStrategy(policy);
+
+        val ticketRegistry = new DefaultTicketRegistry();
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(
+            Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of("CAS")));
+
+        val tgt = new MockTicketGrantingTicket(authentication);
+        ticketRegistry.addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
+    }
+
+    @Test
+    public void verifySsoWithMissingClientAndExclusive() {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1", Map.of());
+        val policy = new DefaultRegisteredServiceAccessStrategy();
+        policy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setExclusive(true)
+                .setAllowedProviders(List.of("CAS")));
+        svc.setAccessStrategy(policy);
+
+        val ticketRegistry = new DefaultTicketRegistry();
+        val strategy = getSingleSignOnStrategy(svc, ticketRegistry);
+
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService("serviceid1"));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(Map.of());
+
+        val tgt = new MockTicketGrantingTicket(authentication);
+        ticketRegistry.addTicket(tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(request)
+            .requestContext(context)
+            .build();
+        assertTrue(strategy.supports(ssoRequest));
+        assertFalse(strategy.isParticipating(ssoRequest));
+    }
 }

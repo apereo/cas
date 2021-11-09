@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -40,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Getter
-@Tag("WebflowActions")
+@Tag("WebflowMfaActions")
 public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired
@@ -49,6 +51,9 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
     private MockRequestContext context;
 
     private MockHttpServletRequest request;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
     public void beforeEach() {
@@ -69,6 +74,8 @@ public class MultifactorAuthenticationSetTrustActionTests extends AbstractMultif
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser-setdevice");
         WebUtils.putAuthentication(authn, context);
+
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
     @Test

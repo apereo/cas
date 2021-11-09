@@ -21,6 +21,7 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +29,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,6 +38,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 
 import java.util.Properties;
@@ -50,74 +50,25 @@ import java.util.Properties;
  * @since 5.0.0
  * @deprecated 6.2
  */
-@Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Deprecated(since = "6.2.0")
+@Configuration(value = "openidConfiguration", proxyBeanMethods = false)
 public class OpenIdConfiguration {
-    @Autowired
-    @Qualifier("serviceValidationViewFactory")
-    private ObjectProvider<ServiceValidationViewFactory> serviceValidationViewFactory;
-
-    @Autowired
-    @Qualifier("casOpenIdServiceSuccessView")
-    private ObjectProvider<View> casOpenIdServiceSuccessView;
-
-    @Autowired
-    @Qualifier("casOpenIdServiceFailureView")
-    private ObjectProvider<View> casOpenIdServiceFailureView;
-
-    @Autowired
-    @Qualifier("casOpenIdAssociationSuccessView")
-    private ObjectProvider<View> casOpenIdAssociationSuccessView;
-
-    @Autowired
-    @Qualifier("proxy20Handler")
-    private ObjectProvider<ProxyHandler> proxy20Handler;
-
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ObjectProvider<ArgumentExtractor> argumentExtractor;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("requestedContextValidator")
-    private ObjectProvider<RequestedAuthenticationContextValidator> requestedContextValidator;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private ObjectProvider<CasProtocolValidationSpecification> cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier("serviceValidationAuthorizers")
-    private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
 
     @Bean
-    public SmartOpenIdController smartOpenIdAssociationController() {
-        return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView.getObject());
+    public SmartOpenIdController smartOpenIdAssociationController(
+        @Qualifier("serverManager")
+        final ServerManager serverManager,
+        @Qualifier("casOpenIdAssociationSuccessView")
+        final View casOpenIdAssociationSuccessView) {
+        return new SmartOpenIdController(serverManager, casOpenIdAssociationSuccessView);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "serverManager")
-    public ServerManager serverManager() {
+    public ServerManager serverManager(final CasConfigurationProperties casProperties) {
         val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
@@ -128,50 +79,80 @@ public class OpenIdConfiguration {
 
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
-    public ResponseBuilder openIdServiceResponseBuilder() {
+    public ResponseBuilder openIdServiceResponseBuilder(final CasConfigurationProperties casProperties,
+                                                        @Qualifier("serverManager")
+                                                        final ServerManager serverManager,
+                                                        @Qualifier("urlValidator")
+                                                        final UrlValidator urlValidator,
+                                                        @Qualifier(CentralAuthenticationService.BEAN_NAME)
+                                                        final CentralAuthenticationService centralAuthenticationService,
+                                                        @Qualifier(ServicesManager.BEAN_NAME)
+                                                        final ServicesManager servicesManager) {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject());
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager,
+            centralAuthenticationService, servicesManager, urlValidator);
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yadisController")
     public YadisController yadisController() {
         return new YadisController();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OpenIdProviderController openIdProviderController() {
         return new OpenIdProviderController();
     }
 
     @Bean
-    public OpenIdValidateController openIdValidateController() {
+    public OpenIdValidateController openIdValidateController(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("serverManager")
+        final ServerManager serverManager,
+        @Qualifier("serviceValidationViewFactory")
+        final ServiceValidationViewFactory serviceValidationViewFactory,
+        @Qualifier("proxy20Handler")
+        final ProxyHandler proxy20Handler,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
+        @Qualifier(CentralAuthenticationService.BEAN_NAME)
+        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier("requestedContextValidator")
+        final RequestedAuthenticationContextValidator requestedContextValidator,
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
+        final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("serviceValidationAuthorizers")
+        final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         val context = ServiceValidateConfigurationContext.builder()
-            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification.getObject()))
-            .authenticationSystemSupport(authenticationSystemSupport.getObject())
-            .servicesManager(servicesManager.getObject())
-            .centralAuthenticationService(centralAuthenticationService.getObject())
-            .argumentExtractor(argumentExtractor.getObject())
-            .proxyHandler(proxy20Handler.getObject())
-            .requestedContextValidator(requestedContextValidator.getObject())
+            .validationSpecifications(CollectionUtils.wrapSet(cas20WithoutProxyProtocolValidationSpecification))
+            .authenticationSystemSupport(authenticationSystemSupport)
+            .servicesManager(servicesManager)
+            .centralAuthenticationService(centralAuthenticationService)
+            .argumentExtractor(argumentExtractor)
+            .proxyHandler(proxy20Handler)
+            .requestedContextValidator(requestedContextValidator)
             .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
-            .validationAuthorizers(validationAuthorizers.getObject())
+            .validationAuthorizers(validationAuthorizers)
             .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-            .validationViewFactory(serviceValidationViewFactory.getObject())
+            .validationViewFactory(serviceValidationViewFactory)
             .build();
-
-        return new OpenIdValidateController(context, serverManager());
+        return new OpenIdValidateController(context, serverManager);
     }
 
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping() {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(
+        @Qualifier("smartOpenIdAssociationController")
+        final SmartOpenIdController smartOpenIdAssociationController,
+        @Qualifier("openIdValidateController")
+        final OpenIdValidateController openIdValidateController) {
         val controller = new DelegatingController();
-        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), openIdValidateController()));
-
+        controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController, openIdValidateController));
         val m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
         val mappings = new Properties();
@@ -181,46 +162,53 @@ public class OpenIdConfiguration {
     }
 
     @Bean
-    public ServiceValidationViewFactoryConfigurer openIdServiceValidationViewFactoryConfigurer() {
-        return factory ->
-            factory.registerView(OpenIdValidateController.class,
-                Pair.of(casOpenIdServiceSuccessView.getObject(), casOpenIdServiceFailureView.getObject()));
+    public ServiceValidationViewFactoryConfigurer openIdServiceValidationViewFactoryConfigurer(
+        @Qualifier("casOpenIdServiceSuccessView")
+        final View casOpenIdServiceSuccessView,
+        @Qualifier("casOpenIdServiceFailureView")
+        final View casOpenIdServiceFailureView) {
+        return factory -> factory.registerView(OpenIdValidateController.class, Pair.of(casOpenIdServiceSuccessView, casOpenIdServiceFailureView));
     }
-
 
     /**
      * The openid protocol views.
      */
-    @Configuration("OpenIdProtocolViews")
-    public class OpenIdProtocolViews {
-
-        @Autowired
-        @Qualifier("casProtocolViewFactory")
-        private ObjectProvider<CasProtocolViewFactory> casProtocolViewFactory;
+    @Configuration(value = "OpenIdProtocolViews", proxyBeanMethods = false)
+    public static class OpenIdProtocolViews {
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdServiceFailureView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceFailureView");
+        public View casOpenIdServiceFailureView(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdServiceFailureView");
         }
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdServiceSuccessView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdServiceSuccessView");
+        public View casOpenIdServiceSuccessView(final ConfigurableApplicationContext applicationContext,
+                                                @Qualifier("casProtocolViewFactory")
+                                                final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdServiceSuccessView");
         }
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View casOpenIdAssociationSuccessView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/casOpenIdAssociationSuccessView");
+        public View casOpenIdAssociationSuccessView(
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory,
+            final ConfigurableApplicationContext applicationContext) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/casOpenIdAssociationSuccessView");
         }
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-        public View openIdProviderView() {
-            return casProtocolViewFactory.getObject().create(applicationContext, "protocol/openid/user");
+        public View openIdProviderView(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("casProtocolViewFactory")
+            final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/openid/user");
         }
-
     }
 }

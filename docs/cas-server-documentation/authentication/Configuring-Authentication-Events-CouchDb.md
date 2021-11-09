@@ -9,7 +9,7 @@ category: Authentication
 
 Stores authentication events inside a CouchDb instance.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-events-couchdb" %}
 
-{% include casproperties.html properties="cas.events.couch-db" %}
+{% include_cached casproperties.html properties="cas.events.couch-db" %}
 

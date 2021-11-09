@@ -3,7 +3,6 @@ package org.apereo.cas.support.x509.rest;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.crypto.CertUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,7 @@ public class X509RestTlsClientCertCredentialFactoryTests {
     private final X509RestTlsClientCertCredentialFactory factory = new X509RestTlsClientCertCredentialFactory();
 
     @Test
-    @SneakyThrows
-    public void createX509Credential() {
+    public void createX509Credential() throws Exception {
         val request = new MockHttpServletRequest();
 
         try (val inStream = new FileInputStream(new ClassPathResource("ldap-crl.crt").getFile())) {

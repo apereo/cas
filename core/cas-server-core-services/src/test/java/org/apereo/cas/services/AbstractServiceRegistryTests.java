@@ -28,7 +28,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junitpioneer.jupiter.RetryingTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -56,7 +55,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
 
@@ -72,6 +70,40 @@ public abstract class AbstractServiceRegistryTests {
             OidcRegisteredService.class,
             WSFederationRegisteredService.class
         );
+    }
+
+    /**
+     * Method to mock RegisteredService objects for testing.
+     *
+     * @param randomId addition to service name for uniqueness.
+     * @return new registered service object
+     */
+    protected static AbstractRegisteredService buildRegisteredServiceInstance(final long randomId,
+                                                                              final Class<? extends RegisteredService> registeredServiceClass) {
+        val id = String.format("^http://www.serviceid%s.org", randomId);
+        val rs = RegisteredServiceTestUtils.getRegisteredService(id, registeredServiceClass);
+        initializeServiceInstance(rs);
+        return rs;
+    }
+
+    /**
+     * Method to prepare registered service for testing.
+     * Implementing classes may override this if more is necessary.
+     */
+    protected static AbstractRegisteredService initializeServiceInstance(final AbstractRegisteredService rs) {
+        val propertyMap = new HashMap<String, RegisteredServiceProperty>();
+        val property = new DefaultRegisteredServiceProperty();
+        val values = new HashSet<String>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        propertyMap.put("field1", property);
+        rs.setProperties(propertyMap);
+        return rs;
+    }
+
+    protected static int getLoadSize() {
+        return LOAD_SIZE;
     }
 
     @BeforeEach
@@ -99,7 +131,9 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifySave(final Class<? extends RegisteredService> registeredServiceClass) {
         val svc = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        assertEquals(serviceRegistry.save(svc).getServiceId(), svc.getServiceId(), registeredServiceClass::getName);
+        serviceRegistry.save(() -> svc,
+            result -> assertEquals(result.getServiceId(), svc.getServiceId(), registeredServiceClass::getName),
+            1);
     }
 
     @ParameterizedTest
@@ -208,6 +242,26 @@ public abstract class AbstractServiceRegistryTests {
         this.serviceRegistry.load();
         val svc = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc);
+    }
+
+    @ParameterizedTest
+    @MethodSource(GET_PARAMETERS)
+    public void verifyServiceLookupByServiceId(final Class<? extends RegisteredService> registeredServiceClass) {
+        val r1 = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        r1.setServiceId(".*serviceid.*");
+        r1.setEvaluationOrder(100);
+        serviceRegistry.save(r1);
+
+        val r2 = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
+        r2.setServiceId(".*serviceid.*");
+        r2.setEvaluationOrder(1);
+        serviceRegistry.save(r2);
+
+        val svc = this.serviceRegistry.findServiceBy("serviceid");
+        assertNotNull(svc);
+        assertEquals(r2, svc);
+
+        assertNull(this.serviceRegistry.findServiceBy("this-service-id-does-not-exist"));
     }
 
     @ParameterizedTest
@@ -562,40 +616,6 @@ public abstract class AbstractServiceRegistryTests {
         val prop = r.getProperties().get("field1");
         assertEquals(2, prop.getValues().size());
         this.serviceRegistry.delete(r);
-    }
-
-    /**
-     * Method to mock RegisteredService objects for testing.
-     *
-     * @param randomId addition to service name for uniqueness.
-     * @return new registered service object
-     */
-    protected static AbstractRegisteredService buildRegisteredServiceInstance(final long randomId,
-                                                                              final Class<? extends RegisteredService> registeredServiceClass) {
-        val id = String.format("^http://www.serviceid%s.org", randomId);
-        val rs = RegisteredServiceTestUtils.getRegisteredService(id, registeredServiceClass);
-        initializeServiceInstance(rs);
-        return rs;
-    }
-
-    /**
-     * Method to prepare registered service for testing.
-     * Implementing classes may override this if more is necessary.
-     */
-    protected static AbstractRegisteredService initializeServiceInstance(final AbstractRegisteredService rs) {
-        val propertyMap = new HashMap<String, RegisteredServiceProperty>();
-        val property = new DefaultRegisteredServiceProperty();
-        val values = new HashSet<String>();
-        values.add("value1");
-        values.add("value2");
-        property.setValues(values);
-        propertyMap.put("field1", property);
-        rs.setProperties(propertyMap);
-        return rs;
-    }
-
-    protected static int getLoadSize() {
-        return LOAD_SIZE;
     }
 
     /**

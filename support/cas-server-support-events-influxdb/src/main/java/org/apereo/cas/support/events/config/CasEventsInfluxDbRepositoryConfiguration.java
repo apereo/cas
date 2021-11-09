@@ -6,7 +6,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.InfluxDbCasEventRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,21 +18,23 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("casEventsInfluxDbRepositoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "casEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
 public class CasEventsInfluxDbRepositoryConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Bean
-    public InfluxDbConnectionFactory influxDbEventsConnectionFactory() {
+    @ConditionalOnMissingBean(name = "influxDbEventsConnectionFactory")
+    public InfluxDbConnectionFactory influxDbEventsConnectionFactory(final CasConfigurationProperties casProperties) {
         return new InfluxDbConnectionFactory(casProperties.getEvents().getInfluxDb());
     }
 
     @Bean
-    public CasEventRepository casEventRepository() {
-        return new InfluxDbCasEventRepository(influxDbEventRepositoryFilter(), influxDbEventsConnectionFactory());
+    public CasEventRepository casEventRepository(
+        @Qualifier("influxDbEventRepositoryFilter")
+        final CasEventRepositoryFilter influxDbEventRepositoryFilter,
+        @Qualifier("influxDbEventsConnectionFactory")
+        final InfluxDbConnectionFactory influxDbEventsConnectionFactory) {
+        return new InfluxDbCasEventRepository(influxDbEventRepositoryFilter, influxDbEventsConnectionFactory);
     }
 
     @ConditionalOnMissingBean(name = "influxDbEventRepositoryFilter")

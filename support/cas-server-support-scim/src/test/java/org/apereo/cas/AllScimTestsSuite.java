@@ -7,9 +7,8 @@ import org.apereo.cas.web.flow.PrincipalScimV1ProvisionerActionTests;
 import org.apereo.cas.web.flow.PrincipalScimV2ProvisionerActionTests;
 import org.apereo.cas.web.flow.ScimWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllScimTestsSuite}.
@@ -25,6 +24,6 @@ import org.junit.runner.RunWith;
     PrincipalScimV1ProvisionerActionTests.class,
     PrincipalScimV2ProvisionerActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllScimTestsSuite {
 }

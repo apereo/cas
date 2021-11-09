@@ -1,0 +1,29 @@
+{
+  "dependencies": "duo,interrupt-webflow",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.accept.users=duobypass::Mellon",
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+    
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoAdmin",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ]
+}

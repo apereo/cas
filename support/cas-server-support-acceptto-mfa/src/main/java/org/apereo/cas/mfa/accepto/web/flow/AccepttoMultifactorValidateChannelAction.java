@@ -39,7 +39,7 @@ public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
             val webContext = new JEEContext(request, response);
 
             val channel = AccepttoWebflowUtils.getChannel(webContext, sessionStore);
-            if (channel == null) {
+            if (channel.isEmpty()) {
                 LOGGER.debug("Unable to determine channel from session store; not a validation attempt");
                 return null;
             }

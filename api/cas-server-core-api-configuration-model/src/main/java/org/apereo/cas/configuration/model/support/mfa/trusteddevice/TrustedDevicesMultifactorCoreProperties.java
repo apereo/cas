@@ -40,6 +40,12 @@ public class TrustedDevicesMultifactorCoreProperties implements Serializable {
     private boolean deviceRegistrationEnabled = true;
 
     /**
+     * When device registration is enabled, indicate whether
+     * a device name should be automatically selected and assigned by CAS.
+     */
+    private boolean autoAssignDeviceName;
+
+    /**
      * Indicates how record keys for trusted devices would be generated
      * so they can be signed/verified on fetch operations.
      */

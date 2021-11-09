@@ -21,9 +21,9 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-ws-idp-api")
-    implementation project(":support:cas-server-support-gauth-core-mfa")
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-consent-api")
     

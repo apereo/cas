@@ -5,6 +5,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -51,6 +52,31 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
             original, service, context, accessToken);
         assertEquals(original, principal);
     }
+
+    @Test
+    public void verifyScopeFreeWithOpenIdScope() {
+        val service = getOidcRegisteredService();
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
+        when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(OidcConstants.StandardScopes.OPENID.getScope()));
+        service.getScopes().clear();
+        service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
+        service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        
+        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
+        val original = CoreAuthenticationTestUtils.getPrincipal(
+            CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
+                "phone", "123445677", "name", "CAS", "gender", "male"));
+        val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
+            original, service, context, accessToken);
+        
+        assertTrue(principal.getAttributes().containsKey("name"));
+        assertTrue(principal.getAttributes().containsKey("address"));
+        assertTrue(principal.getAttributes().containsKey("gender"));
+        assertTrue(principal.getAttributes().containsKey("email"));
+        assertTrue(principal.getAttributes().containsKey("phone"));
+    }
+
 
     @Test
     public void verifyOperationFilterWithOpenId() {

@@ -14,17 +14,12 @@ import lombok.NonNull;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -36,10 +31,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Entity
-@Table(name = "TICKETGRANTINGTICKET")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(TicketGrantingTicket.PREFIX)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
@@ -54,43 +45,32 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The authenticated object for which this ticket was generated for.
      */
-    @Lob
-    @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
 
     /**
      * Service that produced a proxy-granting ticket.
      */
-    @Lob
-    @Column(name = "PROXIED_BY", length = Integer.MAX_VALUE)
     private Service proxiedBy;
 
     /**
      * The services associated to this ticket.
      */
-    @Lob
-    @Column(name = "SERVICES_GRANTED_ACCESS_TO", nullable = false, length = Integer.MAX_VALUE)
-    private HashMap<String, Service> services = new HashMap<>(0);
+    private Map<String, Service> services = new HashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
-    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * The PGTs associated to this ticket.
      */
-    @Lob
-    @Column(name = "PROXY_GRANTING_TICKETS", nullable = false, length = Integer.MAX_VALUE)
-    private HashMap<String, Service> proxyGrantingTickets = new HashMap<>(0);
+    private Map<String, Service> proxyGrantingTickets = new HashMap<>(0);
 
     /**
      * The ticket ids which are tied to this ticket.
      */
-    @Lob
-    @Column(name = "DESCENDANT_TICKETS", nullable = false, length = Integer.MAX_VALUE)
-    private HashSet<String> descendantTickets = new HashSet<>(0);
+    private Set<String> descendantTickets = new HashSet<>(0);
 
     /**
      * Constructs a new TicketGrantingTicket.
@@ -153,18 +133,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
-        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        trackService(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 
-    /**
-     * Update service and track session.
-     *
-     * @param id                         the id
-     * @param service                    the service
-     * @param onlyTrackMostRecentSession the only track most recent session
-     */
-    protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
+    @Override
+    public void trackService(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
         service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {

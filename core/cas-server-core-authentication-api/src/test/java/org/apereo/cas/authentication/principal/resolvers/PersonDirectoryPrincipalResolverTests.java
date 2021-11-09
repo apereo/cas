@@ -105,6 +105,46 @@ public class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
+    public void verifyNoPrincipalAttrWithoutNull() {
+        val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
+            .attributeRepository(new StubPersonAttributeDao(new HashMap<>(0)))
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(false)
+            .principalNameTransformer(String::trim)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .principalAttributeNames("cn")
+            .build();
+        val resolver = new PersonDirectoryPrincipalResolver(context);
+        val p = resolver.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNotNull(p);
+    }
+
+    @Test
+    public void verifyUnknownPrincipalAttrWithNull() {
+        val context = PrincipalResolutionContext.builder()
+            .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))
+            .attributeRepository(CoreAuthenticationTestUtils.getAttributeRepository())
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .returnNullIfNoAttributes(true)
+            .principalNameTransformer(String::trim)
+            .useCurrentPrincipalId(false)
+            .resolveAttributes(true)
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .principalAttributeNames("unknown")
+            .build();
+        val resolver = new PersonDirectoryPrincipalResolver(context);
+        val p = resolver.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        assertNull(p);
+    }
+
+    @Test
     public void verifyNullAttributes() {
         val context = PrincipalResolutionContext.builder()
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()))

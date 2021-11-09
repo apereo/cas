@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -54,6 +55,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends Base
     public void verifyOperationForPostBinding() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "CasRelayState");
         val registeredService = getSamlRegisteredServiceFor(false, false,
             false, "https://mockypost.io");
         WebUtils.putRegisteredService(request, registeredService);
@@ -80,5 +82,7 @@ public class SamlIdPSingleLogoutRedirectionStrategyPostBindingTests extends Base
 
         samlIdPSingleLogoutRedirectionStrategy.handle(context);
         assertNull(WebUtils.getLogoutRedirectUrl(request, String.class));
+        assertNotNull(WebUtils.getLogoutPostUrl(context));
+        assertNotNull(WebUtils.getLogoutPostData(context));
     }
 }

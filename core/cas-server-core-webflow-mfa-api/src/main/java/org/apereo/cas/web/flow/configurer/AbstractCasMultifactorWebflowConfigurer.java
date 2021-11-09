@@ -7,6 +7,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The {@link AbstractCasMultifactorWebflowConfigurer} is responsible for
@@ -51,12 +54,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private final List<CasMultifactorWebflowCustomizer> multifactorAuthenticationFlowCustomizers = new ArrayList<>();
 
-    protected AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                   final ConfigurableApplicationContext applicationContext,
-                                                   final CasConfigurationProperties casProperties,
-                                                   final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
-                                                   final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    protected AbstractCasMultifactorWebflowConfigurer(
+        final FlowBuilderServices flowBuilderServices,
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         this(flowBuilderServices,
             loginFlowDefinitionRegistry,
             applicationContext,
@@ -65,16 +69,91 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             mfaFlowCustomizers);
     }
 
-    private AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                    final ConfigurableApplicationContext applicationContext,
-                                                    final CasConfigurationProperties casProperties,
-                                                    final List<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
-                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    private AbstractCasMultifactorWebflowConfigurer(
+        final FlowBuilderServices flowBuilderServices,
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final List<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
         multifactorAuthenticationFlowDefinitionRegistries.addAll(mfaFlowDefinitionRegistry);
         multifactorAuthenticationFlowCustomizers.addAll(mfaFlowCustomizers);
+    }
+
+    @Override
+    public void registerMultifactorProviderAuthenticationWebflow(final Flow flow,
+                                                                 final String subflowId,
+                                                                 final String providerId) {
+        multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
+            if (!registry.containsFlowDefinition(subflowId)) {
+                LOGGER.error("Could not locate flow id [{}]", subflowId);
+                return;
+            }
+
+            if (flow == null) {
+                LOGGER.error("Unable to locate parent flow definition to register provider [{}]", providerId);
+                return;
+            }
+
+            val mfaFlow = (Flow) registry.getFlowDefinition(subflowId);
+            mfaFlow.getStartActionList().add(requestContext -> {
+                WebUtils.createCredential(requestContext);
+                return null;
+            });
+            mfaFlow.getStartActionList()
+                .add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
+
+            val initStartState = (TransitionableState) mfaFlow.getStartState();
+            val transition = (Transition) initStartState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val targetStateId = transition.getTargetStateId();
+            transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));
+
+            registerMultifactorProviderBypassAction(mfaFlow);
+            registerMultifactorProviderAvailableAction(mfaFlow, targetStateId);
+            registerMultifactorProviderFailureAction(flow, mfaFlow);
+
+            val subflowState = createSubflowState(flow, subflowId, subflowId);
+            val subflowMappings = Stream.of(
+                    CasWebflowConstants.ATTRIBUTE_SERVICE,
+                    CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
+                .collect(Collectors.toList());
+            subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
+                createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+            multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
+            val inputMapper = createMapperToSubflowState(subflowMappings);
+            val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
+            subflowState.setAttributeMapper(subflowMapper);
+
+            val flowMappings = Stream.of(
+                    CasWebflowConstants.ATTRIBUTE_SERVICE,
+                    CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)
+                .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
+                .collect(Collectors.toList());
+            flowMappings.add(new DefaultMapping(createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)),
+                createExpression("flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+            multifactorAuthenticationFlowCustomizers.forEach(c -> c.getMultifactorWebflowAttributeMappings()
+                .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
+            val flowInputMapper = createMapperToSubflowState(flowMappings);
+            mfaFlow.setInputMapper(flowInputMapper);
+
+            val states = getCandidateStatesForMultifactorAuthentication();
+            registerMultifactorAuthenticationSubflowWithStates(flow, subflowState, states);
+
+            registerMultifactorFlowDefinitionIntoLoginFlowRegistry();
+            augmentMultifactorProviderFlowRegistry();
+
+            LOGGER.trace("Registering the [{}] flow into the flow [{}]", subflowId, flow.getId());
+            val startState = flow.getTransitionableState(flow.getStartState().getId());
+            createTransitionForState(startState, subflowId, subflowId, true);
+
+            val initState = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+            createTransitionForState(initState, subflowId, subflowId, true);
+        });
+
     }
 
     private Collection<String> getCandidateStatesForMultifactorAuthentication() {
@@ -142,60 +221,6 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         });
     }
 
-    @Override
-    public void registerMultifactorProviderAuthenticationWebflow(final Flow flow,
-                                                                 final String subflowId,
-                                                                 final String providerId) {
-        multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            if (!registry.containsFlowDefinition(subflowId)) {
-                LOGGER.error("Could not locate flow id [{}]", subflowId);
-                return;
-            }
-
-            if (flow == null) {
-                LOGGER.error("Unable to locate parent flow definition to register provider [{}]", providerId);
-                return;
-            }
-
-            val mfaFlow = (Flow) registry.getFlowDefinition(subflowId);
-            mfaFlow.getStartActionList().add(requestContext -> {
-                WebUtils.createCredential(requestContext);
-                return null;
-            });
-            mfaFlow.getStartActionList()
-                .add(createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID), StringUtils.quote(providerId)));
-
-            val initStartState = (TransitionableState) mfaFlow.getStartState();
-            val transition = (Transition) initStartState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-            val targetStateId = transition.getTargetStateId();
-            transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));
-
-            registerMultifactorProviderBypassAction(mfaFlow);
-            registerMultifactorProviderAvailableAction(mfaFlow, targetStateId);
-            registerMultifactorProviderFailureAction(flow, mfaFlow);
-
-            val subflowState = createSubflowState(flow, subflowId, subflowId);
-
-            val inputMapper = createMapperToSubflowState(new ArrayList<>(0));
-            val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
-            subflowState.setAttributeMapper(subflowMapper);
-
-            val states = getCandidateStatesForMultifactorAuthentication();
-            registerMultifactorAuthenticationSubflowWithStates(flow, subflowState, states);
-
-            registerMultifactorFlowDefinitionIntoLoginFlowRegistry();
-            augmentMultifactorProviderFlowRegistry();
-
-            LOGGER.trace("Registering the [{}] flow into the flow [{}]", subflowId, flow.getId());
-            val startState = flow.getTransitionableState(flow.getStartState().getId());
-            createTransitionForState(startState, subflowId, subflowId, true);
-
-            val initState = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
-            createTransitionForState(initState, subflowId, subflowId, true);
-        });
-
-    }
-
     private void registerMultifactorAuthenticationSubflowWithStates(final Flow flow,
                                                                     final SubflowState subflowState,
                                                                     final Collection<String> states) {
@@ -252,13 +277,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
             createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
-            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
-            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
+            LOGGER.trace("Adding end state [{}] with transition to flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, flow.getId());
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, "mfa/casMfaUnavailableView");
 
-            LOGGER.trace("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
-                CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED, flow.getId());
-            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, CasWebflowConstants.VIEW_ID_MFA_DENIED);
+            LOGGER.trace("Adding end state [{}] with transition flow [{}] for MFA",
+                CasWebflowConstants.STATE_ID_MFA_DENIED, flow.getId());
+            createEndState(flow, CasWebflowConstants.STATE_ID_MFA_DENIED, "mfa/casMfaDeniedView");
         }
     }
 

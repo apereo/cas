@@ -14,12 +14,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SwivelAuthenticationMultifactorProviderBypassConfiguration}.
@@ -27,59 +28,70 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("swivelAuthenticationMultifactorProviderBypassConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "swivelAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @ConditionalOnMissingBean(name = "swivelBypassEvaluator")
     @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelBypassEvaluator() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelBypassEvaluator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("swivelPrincipalMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelPrincipalMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelRegisteredServiceMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServiceMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
+        @Qualifier("swivelAuthenticationMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelAuthenticationMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelCredentialMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelCredentialMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelHttpRequestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelHttpRequestMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelGroovyMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelGroovyMultifactorAuthenticationProviderBypass,
+        @Qualifier("swivelRestMultifactorAuthenticationProviderBypass")
+        final MultifactorAuthenticationProviderBypassEvaluator swivelRestMultifactorAuthenticationProviderBypass) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         val props = casProperties.getAuthn().getMfa().getSwivel().getBypass();
-
         if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelPrincipalMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelPrincipalMultifactorAuthenticationProviderBypass);
         }
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelRegisteredServiceMultifactorAuthenticationProviderBypass());
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(
-            swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator());
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName())
-            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelRegisteredServiceMultifactorAuthenticationProviderBypass);
+        bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
+        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
             || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelAuthenticationMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelAuthenticationMultifactorAuthenticationProviderBypass);
         }
-
         if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelCredentialMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelCredentialMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelHttpRequestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelHttpRequestMultifactorAuthenticationProviderBypass);
         }
         if (props.getGroovy().getLocation() != null) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelGroovyMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelGroovyMultifactorAuthenticationProviderBypass);
         }
         if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelRestMultifactorAuthenticationProviderBypass());
+            bypass.addMultifactorAuthenticationProviderBypassEvaluator(swivelRestMultifactorAuthenticationProviderBypass);
         }
         return bypass;
     }
 
     @ConditionalOnMissingBean(name = "swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
+        final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(swivel.getId());
     }
 
     @ConditionalOnMissingBean(name = "swivelRestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelRestMultifactorAuthenticationProviderBypass() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelRestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new RestMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
@@ -87,8 +99,8 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelGroovyMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelGroovyMultifactorAuthenticationProviderBypass() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelGroovyMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
@@ -96,46 +108,45 @@ public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelHttpRequestMultifactorAuthenticationProviderBypass() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelHttpRequestMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelCredentialMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypassEvaluator swivelCredentialMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator swivelCredentialMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelRegisteredServiceMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServiceMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator swivelRegisteredServiceMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         return new RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator(swivel.getId());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "swivelPrincipalMultifactorAuthenticationProviderBypass")
-    @RefreshScope
-    public MultifactorAuthenticationProviderBypassEvaluator swivelPrincipalMultifactorAuthenticationProviderBypass() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator swivelPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypassEvaluator swivelAuthenticationMultifactorAuthenticationProviderBypass() {
+    public MultifactorAuthenticationProviderBypassEvaluator swivelAuthenticationMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val swivel = casProperties.getAuthn().getMfa().getSwivel();
         val props = swivel.getBypass();
         return new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, swivel.getId());
     }
-
 }

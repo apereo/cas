@@ -1,33 +1,23 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/actuator/sso");
 
-    var header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
-    assert(header === "Login")
+    await cas.assertInnerText(page, "#content h2", "Login")
+    await cas.assertVisibility(page, '#content form[name=fm1]')
 
-    let form = await page.$('#content form[name=fm1]');
-    assert(await form.boundingBox() != null);
-
-    let subtitle = await page.$eval('#content form[name=fm1] h3', el => el.innerText);
-    console.log(subtitle);
-    assert(subtitle === "Enter Username & Password");
+    await cas.assertInnerText(page, "#content form[name=fm1] h3", "Enter Username & Password")
+    await cas.assertVisibility(page, '#username')
 
     let uid = await page.$('#username');
-    assert(await uid.boundingBox() != null);
-    
     assert("none" === await uid.evaluate(el => el.getAttribute("autocapitalize")))
     assert("false" === await uid.evaluate(el => el.getAttribute("spellcheck")))
     assert("username" === await uid.evaluate(el => el.getAttribute("autocomplete")))
-
-    let pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
+    await cas.assertVisibility(page, '#password')
 
     await browser.close();
 })();

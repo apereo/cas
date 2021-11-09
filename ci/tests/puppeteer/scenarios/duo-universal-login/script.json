@@ -1,12 +1,22 @@
 {
   "dependencies": "duo",
   "properties": [
-    "--cas.authn.mfa.duo[0].duo-secret-key=Q2IU1i8BFNd3VYfl0T8Evl6lF3oPlj3PM15BmRU7",
-    "--cas.authn.mfa.duo[0].duo-integration-key=DIOXVRQD2UMZ8XXMNFQ7",
-    "--cas.authn.mfa.duo[0].duo-api-host=api-d2e616a0.duosecurity.com"
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.accept.users=duobypass::Mellon",
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoAdmin",
+    "--management.endpoints.enabled-by-default=true"
   ]
 }
-
-
-
-

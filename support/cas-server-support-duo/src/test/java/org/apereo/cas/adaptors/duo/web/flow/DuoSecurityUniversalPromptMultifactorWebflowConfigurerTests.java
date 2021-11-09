@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;
 
 import lombok.val;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -41,19 +42,19 @@ public class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends
     @Test
     public void verifyUniversalPromptFlow() {
         val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
-        assertNotNull(loginFlow.getState(DuoSecurityMultifactorWebflowConfigurer.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN));
-        assertEquals(DuoSecurityMultifactorWebflowConfigurer.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, loginFlow.getStartState().getId());
-        
+        assertNotNull(loginFlow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN));
+        assertEquals(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, loginFlow.getStartState().getId());
+
         val registry = getMultifactorFlowDefinitionRegistry();
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
-        val viewState = (ViewState) flow.getState(DuoSecurityMultifactorWebflowConfigurer.STATE_ID_VIEW_LOGIN_FORM_DUO);
+        val viewState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
         assertTrue(viewState.getEntryActionList().get(0).toString()
-            .contains(DuoSecurityMultifactorWebflowConfigurer.ACTION_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN));
+            .contains(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN));
     }
 
     @Override
     protected FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry() {
-        return this.applicationContext.getBean(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
+        return applicationContext.getBean(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, FlowDefinitionRegistry.class);
     }
 
     @Override

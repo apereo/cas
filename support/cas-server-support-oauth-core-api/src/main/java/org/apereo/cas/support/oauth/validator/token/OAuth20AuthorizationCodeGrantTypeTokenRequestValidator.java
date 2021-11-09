@@ -6,13 +6,13 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
-import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
@@ -34,28 +34,33 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     }
 
     @Override
-    protected boolean validateInternal(final JEEContext context, final String grantType,
+    protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
-        val request = context.getNativeRequest();
         val clientId = uProfile.getId();
-        val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        
+        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI);
+        val code = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE);
+
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        
+
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
-        val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
-            && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
-            && OAuth20Utils.checkCallbackValid(registeredService, redirectUri);
+        val valid = redirectUri.isPresent() && code.isPresent() && OAuth20Utils.checkCallbackValid(registeredService, redirectUri.get());
 
         if (valid) {
-            val code = context.getRequestParameter(OAuth20Constants.CODE)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
-            val token = getConfigurationContext().getTicketRegistry().getTicket(code, OAuth20Code.class);
+            val token = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
             if (token == null || token.isExpired()) {
-                LOGGER.warn("Request OAuth code [{}] is not found or has expired", code);
+                LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
+                val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
+                    ticket instanceof OAuth20AccessToken
+                        && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
+                accessTokensByCode.forEach(ticket -> {
+                    LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
+                    getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
+                });
+
+                LOGGER.warn("Request OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }
 
@@ -67,7 +72,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 .service(token.getService())
                 .authentication(token.getAuthentication())
                 .registeredService(codeRegisteredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();

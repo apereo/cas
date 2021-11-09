@@ -79,12 +79,10 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val selectedService = (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        if (registeredService != null
+        return registeredService != null
             && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE) {
-            return supportsInternal(singleLogoutService, registeredService, context);
-        }
-        return false;
+            && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
+            && supportsInternal(singleLogoutService, registeredService, context);
     }
 
     @Override
@@ -175,7 +173,8 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                 LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", selectedService);
             }
         } else {
-            LOGGER.trace("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, logoutRequest.getLogoutType());
+            LOGGER.trace("Logout operation is not yet attempted for [{}] given logout type is set to [{}]",
+                selectedService, logoutRequest.getLogoutType());
             logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
         }
         return logoutRequest;

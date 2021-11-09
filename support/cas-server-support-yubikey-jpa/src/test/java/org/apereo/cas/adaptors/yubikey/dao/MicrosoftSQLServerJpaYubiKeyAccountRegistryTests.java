@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 1433)
 @Tag("MsSqlServer")
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.mfa.yubikey.jpa.user=sa",
     "cas.authn.mfa.yubikey.jpa.password=p@ssw0rd",
     "cas.authn.mfa.yubikey.jpa.driver-class=com.microsoft.sqlserver.jdbc.SQLServerDriver",

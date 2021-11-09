@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{cas.mfa.swivel.pagetitle}">Swivel Login View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card card mdc-card-content w-lg-50 p-4 m-auto">
+        <h3 th:text="#{cas.mfa.swivel.label.header}">Swivel Authentication</h3>
+        <form method="post" id="fm1" th:object="${credential}" th:action="@{/login}">
+            <div id="msg" class="banner banner-danger alert alert-danger my-2" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Error message</span>
+            </div>
+            <p class="text-center">
+                <img th:src="@{/swivel/turingImage(principal=${principal})}"
+                    src="http://via.placeholder.com/150x50"/>
+            </p>
+            <section class="cas-field form-group my-3 mdc-input-group">
+                <div class="d-flex">
+                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                        <label for="token" class="mdc-text-field caps-check mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{cas.mfa.swivel.label.token}">Token</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <input class="mdc-text-field__input form-control pwd"
+                                type="password"
+                                name="token"
+                                id="token"
+                                th:accesskey="#{screen.welcome.label.password.accesskey}"
+                                th:field="*{token}"
+                                size="25"
+                                autocomplete="off"
+                                required />
+                        </label>
+                    </div>
+                    <button class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                        tabindex="-1"
+                        type="button">
+                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon"></i>
+                        <span class="visually-hidden">Toggle Password</span>
+                    </button>
+                </div>
+                <div class="mdc-text-field-helper-line caps-warn">
+                    <p
+                        class="mdc-text-field-helper-text form-text text-small mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                        <span th:utext="#{screen.capslock.on}" />
+                    </p>
+                </div>
+            </section>
+            <button class="mdc-button mdc-button--raised" accesskey="s">
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+            </button>
+            <input type="hidden" name="_eventId_submit" value="Login"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        </form>
+    </div>
+</main>
+</body>
+</html>

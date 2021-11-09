@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Travis Schmidt
@@ -23,13 +22,30 @@ import static org.mockito.Mockito.*;
 @NoArgsConstructor
 @Tag("RegisteredService")
 public class DefaultDomainAwareServicesManagerTests extends AbstractServicesManagerTests<DefaultDomainAwareServicesManager> {
-    private DefaultDomainAwareServicesManager domainAwareServicesManager;
+    private DefaultDomainAwareServicesManager domainServicesManager;
 
     @Test
-    public void verifyOperation() {
-        val input = mock(DomainAwareServicesManager.class);
-        when(input.getDomains()).thenCallRealMethod();
-        assertNotNull(input.getDomains());
+    public void verifyChangingDomain() {
+        servicesManager.deleteAll();
+
+        var r = new RegexRegisteredService();
+        r.setId(1);
+        r.setName("domainService1");
+        r.setServiceId("https://company.com.*");
+        servicesManager.save(r);
+        assertFalse(domainServicesManager.getServicesForDomain("company.com").isEmpty());
+        assertTrue(domainServicesManager.getServicesForDomain("default").isEmpty());
+
+        r.setServiceId("https://company.com/.*");
+        servicesManager.save(r);
+        assertFalse(domainServicesManager.getServicesForDomain("company.com").isEmpty());
+        assertTrue(domainServicesManager.getServicesForDomain("default").isEmpty());
+        assertEquals(1, domainServicesManager.getDomains().count());
+
+        r.setServiceId("default-.+.com");
+        servicesManager.save(r);
+        assertTrue(domainServicesManager.getServicesForDomain("company.com").isEmpty());
+        assertFalse(domainServicesManager.getServicesForDomain("default").isEmpty());
     }
 
     @Test
@@ -42,8 +58,8 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         r.setServiceId("https://www.example.com/one");
         servicesManager.save(r);
 
-        assertTrue(domainAwareServicesManager.getServicesForDomain("nothing.com").isEmpty());
-        assertFalse(domainAwareServicesManager.getServicesForDomain("www.example.com").isEmpty());
+        assertTrue(domainServicesManager.getServicesForDomain("nothing.com").isEmpty());
+        assertFalse(domainServicesManager.getServicesForDomain("www.example.com").isEmpty());
 
         r = new RegexRegisteredService();
         r.setId(20);
@@ -51,11 +67,11 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
         r.setServiceId("https://www.example.com/two");
         servicesManager.save(r);
 
-        assertNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
-        assertNotNull(domainAwareServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
+        assertNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://whatever.com")));
+        assertNotNull(domainServicesManager.findServiceBy(serviceFactory.createService("https://www.example.com/one")));
         
         servicesManager.deleteAll();
-        assertEquals(domainAwareServicesManager.getDomains().count(), 0);
+        assertEquals(domainServicesManager.getDomains().count(), 0);
     }
 
     @Override
@@ -70,7 +86,7 @@ public class DefaultDomainAwareServicesManagerTests extends AbstractServicesMana
             .servicesCache(Caffeine.newBuilder().build())
             .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
-        domainAwareServicesManager = new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
-        return domainAwareServicesManager;
+        domainServicesManager = new DefaultDomainAwareServicesManager(context, new DefaultRegisteredServiceDomainExtractor());
+        return domainServicesManager;
     }
 }

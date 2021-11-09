@@ -48,23 +48,23 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
 
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
-            
+
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction("prepareGoogleAuthenticatorLoginAction"),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             setStartState(flow, initLoginFormState);
 
-            val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
+            val acctRegCheckState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
                 createEvaluateAction("googleAccountCheckRegistrationAction"));
-            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
+            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_CONFIRM, "viewConfirmRegistration");
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
-            val acctRegSaveState = createActionState(flow, "saveRegistration",
+            val acctRegSaveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
                 createEvaluateAction("googleSaveAccountRegistrationAction"));
-            createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
-            createStateDefaultTransition(acctRegSaveState, "accountRegistrationCheck");
+            createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
+            createStateDefaultTransition(acctRegSaveState, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction("validateSelectedRegistrationAction"),
@@ -77,27 +77,33 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             val propertiesToBind = CollectionUtils.wrapList("token", "accountId");
             val binder = createStateBinderConfiguration(propertiesToBind);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casGoogleAuthenticatorLoginView", binder);
+                "gauth/casGoogleAuthenticatorLoginView", binder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, GoogleAuthenticatorTokenCredential.class);
             viewLoginFormState.getEntryActionList().add(setPrincipalAction);
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
-            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration",
+            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SELECT, "viewConfirmRegistration",
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
-            val regViewState = createViewState(flow, "viewRegistration", "casGoogleAuthenticatorRegistrationView");
+            val regViewState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "gauth/casGoogleAuthenticatorRegistrationView");
             regViewState.getEntryActionList().addAll(setPrincipalAction, createEvaluateAction("googleAccountCreateRegistrationAction"));
-            createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
+            createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 
-            val confirmRegViewState = createViewState(flow, "viewConfirmRegistration", "casGoogleAuthenticatorConfirmRegistrationView");
+            val confirmRegViewState = createViewState(flow, "viewConfirmRegistration", "gauth/casGoogleAuthenticatorConfirmRegistrationView");
             confirmRegViewState.getEntryActionList().add(setPrincipalAction);
-            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
+
+            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
+            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_DELETE, "googleAccountDeleteDevice");
             createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_SELECT,
                 CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
                 createEvaluateAction("googleAccountConfirmSelectionAction"));
+
+            val deleteDeviceState = createActionState(flow, "googleAccountDeleteDevice", "googleAccountDeleteDeviceAction");
+            createTransitionForState(deleteDeviceState, CasWebflowConstants.STATE_ID_SUCCESS, acctRegCheckState.getId());
+
         });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_GAUTH_EVENT_ID,

@@ -1,7 +1,8 @@
 description = "Apereo CAS DuoSecurity Support"
 dependencies {
     implementation libraries.duojava
-    
+
+    api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-util")
@@ -21,6 +22,7 @@ dependencies {
     implementation project(":support:cas-server-support-duo-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
+    compileOnlyApi project(":core:cas-server-core-rest-api")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
@@ -34,6 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-cookie")

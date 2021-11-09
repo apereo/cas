@@ -1,8 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasMemoryEventsTestsSuite}.
@@ -14,6 +13,6 @@ import org.junit.runner.RunWith;
     GroovyCasEventRepositoryFilterTests.class,
     InMemoryCasEventRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasMemoryEventsTestsSuite {
 }

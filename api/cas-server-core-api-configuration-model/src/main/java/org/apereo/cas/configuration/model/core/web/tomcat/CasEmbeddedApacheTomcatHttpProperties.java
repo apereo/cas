@@ -37,6 +37,14 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     private int port = 8080;
 
     /**
+     * If this Connector is supporting non-SSL requests,
+     * this will automatically redirect
+     * the request to the port number specified here.
+     * Matching security constraints that require SSL transport will be auto-defined.
+     */
+    private int redirectPort;
+
+    /**
      * HTTP protocol to use.
      */
     private String protocol = "org.apache.coyote.http11.Http11NioProtocol";

@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Authentication Policy
 
 CAS presents a number of strategies for handling authentication 
@@ -25,12 +24,27 @@ Typical use cases of authentication policies may include:
 2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
 3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
 
-{% include {{ version }}/authentication-policy-configuration.md %}
-
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `authenticationPolicies`  | A `GET` request presents the collection of registered authentication policies. An individual authentication policy can be queried via `GET` by its name using a selector path (i.e. `authenticationPolicies/{name}`).
+
+{% include_cached actuators.html endpoints="authenticationPolicies" casModule="cas-server-support-reports" %}
+
+## Policies
+
+Authentication policies can be managed via the following strategies.
+
+| Storage          | Description                                         
+|-----------------------------------------------------------
+| All              | [See this guide](Configuring-Authentication-Policy-All.html).
+| Any              | [See this guide](Configuring-Authentication-Policy-Any.html).
+| Global           | [See this guide](Configuring-Authentication-Policy-Global.html).
+| Groovy           | [See this guide](Configuring-Authentication-Policy-Groovy.html).
+| Not Prevented    | [See this guide](Configuring-Authentication-Policy-NotPrevented.html).
+| Required         | [See this guide](Configuring-Authentication-Policy-Required.html).
+| REST             | [See this guide](Configuring-Authentication-Policy-REST.html).
+| Source Selection | [See this guide](Configuring-Authentication-Policy-SourceSelection.html).
+| Unique Principal | [See this guide](Configuring-Authentication-Policy-UniquePrincipal.html).
+
+Authentication policies may also be defined on a per application 
+basis. See [this guide](../services/Configuring-Service-AuthN-Policy.html) for more info.

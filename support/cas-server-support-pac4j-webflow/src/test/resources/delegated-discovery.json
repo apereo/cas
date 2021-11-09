@@ -1,0 +1,8 @@
+{
+  "@class" : "java.util.HashMap",
+  ".+@example.org" : {
+    "@class" : "org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProvider",
+    "clientName" : "CasClient",
+    "order": 0
+  }
+}

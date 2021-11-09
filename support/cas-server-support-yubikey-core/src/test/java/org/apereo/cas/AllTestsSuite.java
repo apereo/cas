@@ -9,9 +9,8 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAc
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationPrepareLoginActionTests;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -29,6 +28,6 @@ import org.junit.runner.RunWith;
     AcceptAllYubiKeyAccountValidatorTests.class,
     DenyAllYubiKeyAccountValidatorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -26,9 +27,8 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
-    private static final int MAP_SIZE = 8;
-
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>(0);
 
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>(0);
@@ -41,7 +41,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
 
-    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>(MAP_SIZE);
+    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
     public void registerAuthenticationHandler(final AuthenticationHandler handler) {
@@ -208,7 +208,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         if (resolvedPolicies.isEmpty()) {
-            LOGGER.debug("Authentication policy resolvers produced no candidate authentication handler. Using default policies");
+            LOGGER.debug("Authentication policy resolvers produced no candidate authentication policy. Using default policies");
             return list;
         }
         LOGGER.debug("Resolved authentication policies are [{}]", resolvedPolicies);

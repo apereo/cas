@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "webAuthnComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnWebAuthnEnabled
 public class WebAuthnComponentSerializationConfiguration implements ComponentSerializationPlanConfigurer {
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
@@ -9,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class VerifySecurityQuestionsAction extends AbstractAction {
+public class VerifySecurityQuestionsAction extends BasePasswordManagementAction {
     private final PasswordManagementService passwordManagementService;
 
     @Override
@@ -33,7 +31,7 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val questions = passwordManagementService.getSecurityQuestions(query);
-        val canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
+        val canonicalQuestions = canonicalizeSecurityQuestions(questions);
         LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
 
         val index = new AtomicInteger(0);

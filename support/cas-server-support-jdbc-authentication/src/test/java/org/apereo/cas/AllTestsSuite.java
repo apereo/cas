@@ -8,9 +8,8 @@ import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerPostgresTe
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -28,6 +27,6 @@ import org.junit.runner.RunWith;
     BindModeSearchDatabaseAuthenticationHandlerTests.class,
     SearchModeSearchDatabaseAuthenticationHandlerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

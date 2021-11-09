@@ -1,9 +1,10 @@
 package org.apereo.cas.validation;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * Functional interface to provide a method to validate an authentication against a requested context.
@@ -11,15 +12,28 @@ import java.util.Optional;
  * @author Travis Schmidt
  * @since 6.0
  */
-@FunctionalInterface
-public interface RequestedAuthenticationContextValidator<T> {
+public interface RequestedAuthenticationContextValidator {
 
     /**
      * Inspect the current authentication to validate the current requested context.
      *
      * @param assertion - the assertion
-     * @param request - the request
+     * @param request   - the request
      * @return - status
      */
-    Pair<Boolean, Optional<T>> validateAuthenticationContext(Assertion assertion, HttpServletRequest request);
+    AuthenticationContextValidationResult validateAuthenticationContext(Assertion assertion, HttpServletRequest request);
+
+    /**
+     * Validate authentication context.
+     *
+     * @param request           the request
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param service           the service
+     * @return the authentication context validation result
+     */
+    AuthenticationContextValidationResult validateAuthenticationContext(HttpServletRequest request,
+                                                                        RegisteredService registeredService,
+                                                                        Authentication authentication,
+                                                                        Service service);
 }

@@ -22,7 +22,7 @@ or defined inside a service definition, an attribute definition store allows one
 with special decorations to be considered during attribute resolution and release. The specification of the attribute definition store is entirely 
 optional and the store may not contain any attribute definitions.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.attribute-definition-store" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.attribute-definition-store" %}
 
 ## JSON Attribute Definitions
 
@@ -59,6 +59,7 @@ The following settings can be specified by an attribute definition:
 | `attribute`             | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.
 | `patternFormat`         | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.
 | `script`                | (Optional) Groovy script, external or embedded to process and produce attributes values.
+| `canonicalizationMode`  | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -67,6 +68,7 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `scoped` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `patternFormat` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
+- Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
 
 ## Examples
 
@@ -171,13 +173,13 @@ Same use case as above, except the attribute value be additional processed by an
       "name" : "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
       "friendlyName" : "eduPersonPrincipalName",
       "scoped" : true,
-      "script": " groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['hello', 'world'] } "
+      "script": "groovy { logger.info(\" name: ${attributeName}, values: ${attributeValues} \"); return ['Hi', attributes['firstname']] }"
     }
 }
 ```  
 
 If the CAS server has a scope of `example.org`, 
-the final values of `eduPersonPrincipalName` would be [`hello@example.org`, `world@example.org`]
+the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 
 ### External Script
@@ -205,11 +207,14 @@ def run(Object[] args) {
     def attributeName = args[0]
     def attributeValues = args[1]
     def logger = args[2]
-    logger.info("name: ${attributeName}, values: ${attributeValues}")
-    return ["casuser", "groovy"]
+    def registeredService = args[3]
+    def attributes = args[4]
+    
+    logger.info("name: ${attributeName}, values: ${attributeValues}, attributes: ${attributes}")
+    return ["Hello " + attributes['givenName']]
 }
 ```
 
 If the CAS server has a scope of `example.org`, 
-the final values of `eduPersonPrincipalName` would be [`casuser@example.org`, `groovy@example.org`]
+the final values of `eduPersonPrincipalName` would be [`Hello casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.

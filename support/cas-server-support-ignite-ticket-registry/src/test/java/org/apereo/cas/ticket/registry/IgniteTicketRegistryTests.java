@@ -54,7 +54,7 @@ import static org.mockito.Mockito.*;
 @Getter
 public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired
@@ -79,8 +79,8 @@ public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
         val catalog = mock(TicketCatalog.class);
         val registry = new IgniteTicketRegistry(catalog, igniteConfiguration,
             casProperties.getTicket().getRegistry().getIgnite());
-        assertTrue(registry.deleteSingleTicket("unknownticket"));
         registry.initialize();
+        assertTrue(registry.deleteSingleTicket("unknownticket"));
         registry.destroy();
     }
 }

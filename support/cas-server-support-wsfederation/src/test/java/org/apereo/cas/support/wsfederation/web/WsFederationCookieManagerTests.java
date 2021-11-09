@@ -42,7 +42,7 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         request.setAttribute("locale", "en");
         request.setAttribute("theme", "custom");
 
-        val config = wsFederationConfigurations.iterator().next();
+        val config = wsFederationConfigurations.toList().get(0);
         val wctx = config.getId();
         val original = RegisteredServiceTestUtils.getService();
         wsFederationCookieManager.store(request, response, wctx, original, config);
@@ -69,7 +69,7 @@ public class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val config = wsFederationConfigurations.iterator().next();
+        val config = wsFederationConfigurations.toList().get(0);
         val wctx = config.getId();
         request.addParameter(WsFederationCookieManager.WCTX, wctx);
         assertThrows(IllegalArgumentException.class, () -> wsFederationCookieManager.retrieve(context));

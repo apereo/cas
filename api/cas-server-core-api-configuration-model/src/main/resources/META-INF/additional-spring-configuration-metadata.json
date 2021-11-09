@@ -1,6 +1,168 @@
 {
   "properties": [
     {
+      "name": "cas.authn.oidc.jwks.jwks-cache-in-minutes",
+      "type": "java.lang.Integer",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.jwks-cache-expiration",
+        "reason": "This setting should be defined as duration value, i.e. PT60M",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oauth.user-profile-view-type",
+      "type": "org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties.UserProfileViewTypes",
+      "deprecation": {
+        "replacement": "cas.authn.oauth.core.user-profile-view-type",
+        "reason": "Setting is moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pm.core.policy-pattern",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pm.core.password-policy-pattern",
+        "reason": "Setting is renamed to indicate it's the 'password' policy pattern",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.enabled",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.reminder-time-unit",
+      "type": "java.time.temporal.ChronoUnit",
+      "deprecation": {
+        "replacement": "cas.consent.core.reminder-time-unit",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.active",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.active",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto.signing.key",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto.signing.key",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto.encryption.key",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto.encryption.key",
+        "reason": "Setting is now moved into a core sub namespace",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.throttle.username-parameter",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.username-parameter",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.throttle.app-code",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.app-code",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.code-digits",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.code-digits",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.time-step-size",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.time-step-size",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.issuer",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.issuer",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.label",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.label",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.trusted-device-enabled",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.trusted-device-enabled",
+        "reason": "Setting is now moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.interrupt.attribute-name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.interrupt.regex.attribute-name",
+        "reason": "Setting is now moved into the regex namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.core.replicate-sessions",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.session-storage-type",
+        "reason": "Session replication settings for SAML2 are moved to cas.authn.saml-idp.core.session-storage-type",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.interrupt.attribute-value",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.interrupt.regex.attribute-value",
+        "reason": "Setting is now moved into the regex namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.rest.attribute-name",
       "type": "java.lang.String",
       "deprecation": {

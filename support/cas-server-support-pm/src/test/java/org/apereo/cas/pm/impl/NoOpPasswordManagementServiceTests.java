@@ -37,7 +37,6 @@ public class NoOpPasswordManagementServiceTests {
         assertFalse(service.changeInternal(
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"),
             new PasswordChangeRequest()));
-
     }
 
 

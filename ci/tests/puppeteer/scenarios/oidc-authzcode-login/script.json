@@ -4,14 +4,18 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc/",
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone,MyCustomScope",
     "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name",
     "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=cn,given:name",
     "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/oidc-authzcode-login/services"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ]
 }
 

@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -67,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
@@ -82,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class
 },
     properties = "cas.authn.rest.uri=http://localhost:8081/authn")
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 public class RestAuthenticationHandlerTests {
     @Autowired
     @Qualifier("restAuthenticationHandler")

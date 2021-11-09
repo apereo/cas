@@ -9,8 +9,8 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ public class RegisteredServiceHazelcastDistributedCacheManagerTests {
         properties.getCluster().getCore().setInstanceName(getClass().getSimpleName());
         val config = HazelcastConfigurationFactory.build(properties,
             HazelcastConfigurationFactory.buildMapConfig(properties, "cache", 10));
-        this.hz = Hazelcast.newHazelcastInstance(config);
+        this.hz = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         mgr = new RegisteredServiceHazelcastDistributedCacheManager(this.hz, hz.getMap("cache"));
     }
 

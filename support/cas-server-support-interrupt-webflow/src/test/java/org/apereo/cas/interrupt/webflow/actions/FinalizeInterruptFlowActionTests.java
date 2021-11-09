@@ -6,6 +6,7 @@ import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,6 +23,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link FinalizeInterruptFlowActionTests}.
@@ -45,7 +47,7 @@ public class FinalizeInterruptFlowActionTests {
         InterruptUtils.putInterruptIn(context, interrupt);
         WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
 
-        val action = new FinalizeInterruptFlowAction();
+        val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
         assertThrows(UnauthorizedServiceException.class, () -> action.doExecute(context));
     }
 
@@ -64,7 +66,7 @@ public class FinalizeInterruptFlowActionTests {
         registeredService.setAccessStrategy(strategy);
         WebUtils.putRegisteredService(context, registeredService);
 
-        val action = new FinalizeInterruptFlowAction();
+        val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_STOP);
         assertTrue(context.getMockExternalContext().isResponseComplete());
@@ -84,7 +86,7 @@ public class FinalizeInterruptFlowActionTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
 
-        val action = new FinalizeInterruptFlowAction();
+        val action = new FinalizeInterruptFlowAction(mock(CasCookieBuilder.class));
         val event = action.doExecute(context);
         assertEquals(event.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS);
         val authn = WebUtils.getAuthentication(context);

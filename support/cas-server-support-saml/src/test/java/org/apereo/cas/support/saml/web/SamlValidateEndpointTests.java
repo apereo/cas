@@ -9,6 +9,7 @@ import org.apereo.cas.config.authentication.support.SamlAuthenticationEventExecu
 import org.apereo.cas.config.authentication.support.SamlServiceFactoryConfiguration;
 import org.apereo.cas.config.authentication.support.SamlUniqueTicketIdGeneratorConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
@@ -49,6 +50,15 @@ public class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Qualifier("samlValidateEndpoint")
     private SamlValidateEndpoint samlValidateEndpoint;
 
+    @Autowired
+    @Qualifier("samlProtocolEndpointConfigurer")
+    private ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
+
+    @Test
+    public void verifyEndpoints() {
+        assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
+    }
+    
     @Test
     public void verifyOperation() {
         val service = CoreAuthenticationTestUtils.getService();

@@ -17,7 +17,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,9 +25,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link GitServiceRegistryConfiguration}.
@@ -36,62 +37,50 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration("gitServiceRegistryConfiguration")
 @ConditionalOnProperty(prefix = "cas.service-registry.git", name = "repository-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "gitServiceRegistryConfiguration", proxyBeanMethods = false)
 public class GitServiceRegistryConfiguration {
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("registeredServiceResourceNamingStrategy")
-    private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistryRepositoryInstance")
-    public GitRepository gitServiceRegistryRepositoryInstance() {
+    public GitRepository gitServiceRegistryRepositoryInstance(final CasConfigurationProperties casProperties) {
         val registry = casProperties.getServiceRegistry().getGit();
         return GitRepositoryBuilder.newInstance(registry).build();
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
-    public ServiceRegistry gitServiceRegistry() {
+    public ServiceRegistry gitServiceRegistry(
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("gitServiceRegistryRepositoryInstance")
+        final GitRepository gitServiceRegistryRepositoryInstance,
+        @Qualifier("registeredServiceResourceNamingStrategy")
+        final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         val properties = casProperties.getServiceRegistry().getGit();
-        val gitRepository = gitServiceRegistryRepositoryInstance();
-
         val locators = new ArrayList<GitRepositoryRegisteredServiceLocator>();
         if (properties.isGroupByType()) {
-            locators.add(new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-                gitRepository.getRepositoryDirectory(), properties));
+            locators.add(new TypeAwareGitRepositoryRegisteredServiceLocator(resourceNamingStrategy,
+                gitServiceRegistryRepositoryInstance.getRepositoryDirectory(), properties));
         }
-        locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy.getObject(),
-            gitRepository.getRepositoryDirectory(), properties));
-
-        return new GitServiceRegistry(applicationContext,
-            gitRepository,
-            CollectionUtils.wrapList(
-                new RegisteredServiceJsonSerializer(),
-                new RegisteredServiceYamlSerializer()),
-            properties.isPushChanges(),
-            serviceRegistryListeners.getObject(),
-            locators
-        );
+        locators.add(new DefaultGitRepositoryRegisteredServiceLocator(resourceNamingStrategy,
+            gitServiceRegistryRepositoryInstance.getRepositoryDirectory(), properties));
+        return new GitServiceRegistry(applicationContext, gitServiceRegistryRepositoryInstance,
+            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(), new RegisteredServiceYamlSerializer()),
+            properties.isPushChanges(), properties.getRootDirectory(),
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), locators);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "gitServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
-    public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer() {
-        return plan -> plan.registerServiceRegistry(gitServiceRegistry());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ServiceRegistryExecutionPlanConfigurer gitServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("gitServiceRegistry")
+        final ServiceRegistry gitServiceRegistry) {
+        return plan -> plan.registerServiceRegistry(gitServiceRegistry);
     }
 }

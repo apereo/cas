@@ -12,9 +12,8 @@ import org.apereo.cas.qr.web.flow.QRAuthenticationGenerateCodeActionTests;
 import org.apereo.cas.qr.web.flow.QRAuthenticationValidateTokenActionTests;
 import org.apereo.cas.qr.web.flow.QRAuthenticationWebflowConfigurerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     QRAuthenticationTokenValidationResultTests.class,
     JsonResourceQRAuthenticationDeviceRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

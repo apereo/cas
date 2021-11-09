@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -19,9 +20,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -33,7 +31,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class BasePasswordManagementService implements PasswordManagementService {
+public abstract class BasePasswordManagementService implements PasswordManagementService {
 
     /**
      * Password management settings.
@@ -45,18 +43,6 @@ public class BasePasswordManagementService implements PasswordManagementService 
     private final String issuer;
 
     private final PasswordHistoryService passwordHistoryService;
-
-    /**
-     * Orders security questions consistently.
-     *
-     * @param questionMap A map of question/answer key/value pairs
-     * @return A list of questions in a consistent order
-     */
-    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        val keys = new ArrayList<>(questionMap.keySet());
-        keys.sort(String.CASE_INSENSITIVE_ORDER);
-        return keys;
-    }
 
     @Override
     public String parseToken(final String token) {
@@ -109,7 +95,9 @@ public class BasePasswordManagementService implements PasswordManagementService 
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
-            claims.setExpirationTimeMinutesInTheFuture((float) resetProperties.getExpirationMinutes());
+
+            val minutes = Beans.newDuration(resetProperties.getExpiration()).toMinutes();
+            claims.setExpirationTimeMinutesInTheFuture((float) minutes);
             claims.setIssuedAtToNow();
 
             val holder = ClientInfoHolder.getClientInfo();
@@ -155,12 +143,10 @@ public class BasePasswordManagementService implements PasswordManagementService 
     /**
      * Change password internally, by the impl.
      *
-     * @param c    the credential
+     * @param credential the credential
      * @param bean the bean
      * @return true/false
      * @throws InvalidPasswordException if new password fails downstream validation
      */
-    public boolean changeInternal(final Credential c, final PasswordChangeRequest bean) throws InvalidPasswordException {
-        return false;
-    }
+    public abstract boolean changeInternal(Credential credential, PasswordChangeRequest bean) throws InvalidPasswordException;
 }

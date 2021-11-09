@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.aws;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -29,12 +30,14 @@ public abstract class BaseAmazonWebServicesProperties implements Serializable {
      * Use access-key provided by AWS to authenticate.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String credentialAccessKey;
 
     /**
      * Use secret key provided by AWS to authenticate.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String credentialSecretKey;
 
     /**

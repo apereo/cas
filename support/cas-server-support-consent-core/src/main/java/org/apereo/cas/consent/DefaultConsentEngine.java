@@ -5,7 +5,9 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
@@ -33,12 +35,14 @@ import java.util.Map;
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
-    private static final int MAP_SIZE = 8;
-
     private final ConsentRepository consentRepository;
 
     private final ConsentDecisionBuilder consentDecisionBuilder;
 
+    private final CasConfigurationProperties casProperties;
+
+    private final List<ConsentableAttributeBuilder> consentableAttributeBuilders;
+    
     @Audit(action = AuditableActions.SAVE_CONSENT,
         actionResolverName = AuditActionResolvers.SAVE_CONSENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAVE_CONSENT_RESOURCE_RESOLVER)
@@ -50,8 +54,21 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final ChronoUnit reminderTimeUnit,
                                                 final ConsentReminderOptions options) {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
-        val principalId = authentication.getPrincipal().getId();
+        attributes.replaceAll((key, value) -> {
+            var attr = CasConsentableAttribute.builder()
+                .name(key)
+                .values(value)
+                .build();
 
+            for (val builder : this.consentableAttributeBuilders) {
+                LOGGER.trace("Preparing to build consentable attribute [{}] via [{}]", attr, builder.getName());
+                attr = builder.build(attr);
+                LOGGER.trace("Finalized consentable attribute [{}]", attr);
+            }
+            return attr.getValues();
+        });
+
+        val principalId = authentication.getPrincipal().getId();
         val decisionFound = findConsentDecision(service, registeredService, authentication);
         val supplier = FunctionUtils.doIfNull(decisionFound,
             () -> consentDecisionBuilder.build(service, registeredService, principalId, attributes),
@@ -78,9 +95,19 @@ public class DefaultConsentEngine implements ConsentEngine {
         LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
         val policy = registeredService.getAttributeReleasePolicy();
         if (policy != null) {
-            return policy.getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(authentication.getPrincipal())
+                .build();
+            val consentableAttributes = policy.getConsentableAttributes(context);
+            consentableAttributes.entrySet().removeIf(entry -> {
+                val excludedAttributes = casProperties.getConsent().getCore().getExcludedAttributes();
+                return excludedAttributes.contains(entry.getKey());
+            });
+            return consentableAttributes;
         }
-        return new LinkedHashMap<>(MAP_SIZE);
+        return new LinkedHashMap<>();
     }
 
     @Override

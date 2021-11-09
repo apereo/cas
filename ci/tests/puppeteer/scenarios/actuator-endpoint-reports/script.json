@@ -1,0 +1,16 @@
+{
+  "dependencies": "reports,configuration-metadata-repository,events",
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

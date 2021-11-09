@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -18,8 +19,10 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public abstract class BaseInterruptInquirer implements InterruptInquirer {
     @Override
-    public final InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
-                                           final Service service, final Credential credential,
+    public final InterruptResponse inquire(final Authentication authentication,
+                                           final RegisteredService registeredService,
+                                           final Service service,
+                                           final Credential credential,
                                            final RequestContext requestContext) {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
@@ -35,14 +38,22 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
      */
     protected boolean shouldSkipInterruptForRegisteredService(final RegisteredService registeredService) {
         if (registeredService != null) {
-            LOGGER.debug("Checking interrupt rules for service [{}]", registeredService.getName());
+            LOGGER.trace("Checking interrupt rules for service [{}]", registeredService.getName());
             if (RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.isAssignedTo(registeredService)) {
                 LOGGER.debug("Service [{}] is set to skip interrupt notifications", registeredService.getName());
+                LOGGER.warn("Assigning [{}] property to the registered service [{}] to skip interrupt notification is deprecated "
+                        + "and scheduled to be removed in future CAS releases. Consider using an interrupt webflow policy instead.",
+                    RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.getPropertyName(), registeredService.getName());
                 return true;
             }
-            LOGGER.debug("Service [{}] is set to not skip interrupt notifications", registeredService.getName());
+            val policy = registeredService.getWebflowInterruptPolicy();
+            if (policy != null && !policy.isEnabled()) {
+                LOGGER.debug("Service [{}] is assigned an interrupt policy that disables interrupt notifications", registeredService.getName());
+                return true;
+            }
+            LOGGER.debug("Service [{}] is set to allow interrupt notifications", registeredService.getName());
         } else {
-            LOGGER.debug("No service was found in the request context. Proceeding as usual...");
+            LOGGER.trace("No service was found in the request context to trigger interrupt. Proceeding as usual...");
         }
         return false;
     }

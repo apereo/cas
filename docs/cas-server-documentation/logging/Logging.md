@@ -23,6 +23,12 @@ For debugging and diagnostic purposes you may want to set these levels to `DEBUG
 <code>WARN</code>. In production warnings and errors are things you care about. Everything else is just diagnostics. Only
 turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a particular issue.</p></div>
 
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include_cached actuators.html endpoints="loggingConfig,loggers,logfile" %}
+
 ## CAS Custom Log4j2 plugins
 
 The log4j2.xml file use by CAS includes custom Log4j2 plugins:
@@ -30,8 +36,10 @@ The log4j2.xml file use by CAS includes custom Log4j2 plugins:
 - `CasAppender`: The CasAppender wraps another regular appender and removes sensitive values from the log entries
 such as Ticket Granting Tickets or Proxy Granting Tickets.
   
-- `ExceptionOnlyFilter`: In order to allow CAS to freely log unexpected errors at WARN and ERROR without obscuring everything with stacktraces, exceptions in the logs are disabled by default but there are log4j2.xml properties that can turn them back on. By default, all exceptions are written to a dedicated stacktrace rolling log file 
-and this is done using a custom ExceptionOnlyFilter nested in the CasAppender. 
+- `ExceptionOnlyFilter`: In order to allow CAS to freely log unexpected errors at WARN and ERROR without obscuring everything 
+  with stacktraces, exceptions in the logs are disabled by default but there are log4j2.xml properties that can
+  turn them back on. By default, all exceptions are written to a dedicated stacktrace rolling log file
+  and this is done using a custom ExceptionOnlyFilter nested in the CasAppender. 
 
 ## Log4j2 Properties
 
@@ -56,7 +64,7 @@ It is often helpful to externalize the `log4j2.xml` file to a system path to pre
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. 
 
-{% include casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
+{% include_cached casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
 
@@ -65,7 +73,7 @@ To disable log sanitization, start the container with the system property `CAS_T
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
 using the usual CAS properties. 
 
-{% include casproperties.html thirdPartyExactMatch="logging.level" %}
+{% include_cached casproperties.html thirdPartyExactMatch="logging.level" %}
 
 ### Refresh Interval
 
@@ -125,7 +133,7 @@ pattern-based layouts to format log messages. The following alternative layouts 
 | `HTMLLayout`                  | Generates an HTML page and adds each LogEvent to a row in a table
 | `JSONLayout`                  | Creates log events in well-formed or fragmented JSON.
 | `PatternLayout`               | Formats the log even based on a conversion pattern.
-| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](http://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
+| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](https://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
 | `SerializedLayout`            | Log events are transformed into byte arrays useful in JMS or socket connections.
 | `SyslogLayout`                | Formats log events as BSD Syslog records.
 | `XMLLayout`                   | Creates log events in well-formed or fragmented XML.
@@ -135,9 +143,11 @@ To learn more about nuances and configuration settings for each, please refer to
 
 ## Log File Rotation
 
-The default configuration specifies triggering policies for rolling over logs, at startup, size or at specific times. These policies apply to `RollingFile` appenders.
+The default configuration specifies triggering policies for rolling over logs, at startup, size or at 
+specific times. These policies apply to `RollingFile` appenders.
 
-For example, the following XML fragment defines policies that rollover the log when the JVM starts, when the log size reaches `10` megabytes, and when the current date no longer matches the log’s start date.
+For example, the following XML fragment defines policies that rollover the log when the 
+JVM starts, when the log size reaches `10` megabytes, and when the current date no longer matches the log’s start date.
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
@@ -152,15 +162,20 @@ For example, the following XML fragment defines policies that rollover the log w
 </RollingFile>
 ```
 
-The triggering policies determines **if** a rollover should be performed and rollover strategy can also be design to indicate **how** that should be done. If no strategy is configured, the default will be used.
+The triggering policies determines **if** a rollover should be performed and rollover strategy 
+can also be design to indicate **how** that should be done. If no strategy is configured, the default will be used.
 
 To find more a comprehensive documentation, please [review the guides here](http://logging.apache.org).
 
 ### Rollover Strategy
 
-Customized rollover strategies provide a delete action that gives users more control over what files are deleted at rollover time than what was possible with the DefaultRolloverStrategy max attribute. The delete action lets users configure one or more conditions that select the files to delete relative to a base directory.
+Customized rollover strategies provide a delete action that gives users more control over what files 
+are deleted at rollover time than what was possible with the DefaultRolloverStrategy max 
+attribute. The delete action lets users configure one or more conditions that select 
+the files to delete relative to a base directory.
 
-For example, the following appender at rollover time deletes all files under the base directory that match the `*/*.log` glob and are `7` days old or older.
+For example, the following appender at rollover time deletes all files under the base 
+directory that match the `*/*.log` glob and are `7` days old or older.
 
 ```xml
 <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"

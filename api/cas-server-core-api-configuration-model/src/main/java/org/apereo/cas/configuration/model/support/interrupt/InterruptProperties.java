@@ -25,18 +25,6 @@ public class InterruptProperties implements Serializable {
     private static final long serialVersionUID = -4945287309473842615L;
 
     /**
-     * A regex pattern on the attribute name that if matches will successfully
-     * complete the first condition for the interrupt notifications trigger.
-     */
-    private String attributeName;
-
-    /**
-     * A regex pattern on the attribute value that if matches will successfully
-     * complete the first condition for the interrupt notifications trigger.
-     */
-    private String attributeValue;
-
-    /**
      * Inquire for interrupt using a JSON resource.
      */
     @NestedConfigurationProperty
@@ -53,4 +41,22 @@ public class InterruptProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RestfulInterruptProperties rest = new RestfulInterruptProperties();
+
+    /**
+     * Inquire for interrupt using a regex pattern operating on attributes.
+     */
+    @NestedConfigurationProperty
+    private RegexInterruptProperties regex = new RegexInterruptProperties();
+
+    /**
+     * Core settings for interrupt notifications.
+     */
+    @NestedConfigurationProperty
+    private InterruptCoreProperties core = new InterruptCoreProperties();
+
+    /**
+     * Cookie settings.
+     */
+    @NestedConfigurationProperty
+    private InterruptCookieProperties cookie = new InterruptCookieProperties();
 }

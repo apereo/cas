@@ -49,11 +49,11 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
         encoder.setDefaultIdPNameQualifierLookupStrategy(baseContexts -> service.getNameIdQualifier());
         encoder.setDefaultSPNameQualifierLookupStrategy(baseContexts -> service.getServiceProviderNameIdQualifier());
 
-        authnRequest.ifPresent(request -> SamlIdPUtils.getNameIDPolicy(request).ifPresent(policy -> {
+        authnRequest.flatMap(SamlIdPUtils::getNameIDPolicy).ifPresent(policy -> {
             val qualifier = policy.getSPNameQualifier();
             LOGGER.debug("NameID SP qualifier is set to [{}]", qualifier);
             encoder.setSPNameQualifier(qualifier);
-        }));
+        });
         encoder.setIdPNameQualifier(service.getNameIdQualifier());
         encoder.setOmitQualifiers(service.isSkipGeneratingNameIdQualifiers());
         encoder.initialize();

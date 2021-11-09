@@ -25,7 +25,6 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
 
     private static final long serialVersionUID = -5198990160347131821L;
 
-
     /**
      * The type of search entry handler to choose.
      */
@@ -51,10 +50,10 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     private MergeAttributesSearchEntryHandlersProperties mergeAttribute = new MergeAttributesSearchEntryHandlersProperties();
 
     /**
-     * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
-     * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
+     * Constructs the primary group SID and then searches for that group and puts it's DN in the {@code memberOf} attribute of the
+     * original search entry. This handler requires that entries contain both the {@code objectSid/primaryGroupID}
      * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
-     * with the {@code ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See
+     * with the {@code ObjectSidHandler} to ensure the {@code objectSid} attribute is in the proper form. See
      * http://support2.microsoft.com/kb/297951
      */
     @NestedConfigurationProperty
@@ -69,8 +68,12 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
     /**
      * The enum Search entry handler types.
      */
-    public enum SearchEntryHandlerTypes {
-
+    public enum SearchEntryHandlerTypes implements Serializable {
+        /**
+         * Process the entry results fetched from active directory and
+         * check for account status controls for disabled/expired accounts, etc.
+         */
+        ACTIVE_DIRECTORY,
         /**
          * Object guid search entry handler.
          * Handles the {@code objectGUID} attribute fetching and conversion.
@@ -100,7 +103,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
         /**
          * Primary group search handler.
          * Constructs the primary group SID and then searches for
-         * that group and puts it's DN in the 'memberOf' attribute of the original search entry.
+         * that group and puts it's DN in the {@code memberOf} attribute of the original search entry.
          */
         PRIMARY_GROUP,
         /**
@@ -114,6 +117,12 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
          * This recursively searches based on a supplied
          * attribute and merges those results into the original entry.
          */
-        RECURSIVE_ENTRY
+        RECURSIVE_ENTRY,
+        /**
+         * Merge entries handler.
+         * Merges the values of one or more attributes in all entries into a single attribute. The merged attribute may or may not already
+         * exist on the entry. If it does exist it's existing values will remain intact.
+         */
+        MERGE_ENTRIES
     }
 }

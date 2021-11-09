@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
 public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired

@@ -5,7 +5,8 @@ import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointPropertie
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.web.ProtocolEndpointConfigurer;
+import org.apereo.cas.web.CasWebSecurityConstants;
+import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,21 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.web.FilterInvocation;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +42,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Order(1000)
+@Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter implements DisposableBean {
     /**
@@ -51,9 +54,11 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private final SecurityProperties securityProperties;
 
-    private final CasWebSecurityExpressionHandler casWebSecurityExpressionHandler;
+    private final SecurityExpressionHandler<FilterInvocation> casWebSecurityExpressionHandler;
 
-    private final PathMappedEndpoints pathMappedEndpoints;
+    private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
+
+    private final List<ProtocolEndpointWebSecurityConfigurer> protocolEndpointWebSecurityConfigurers;
 
     private EndpointLdapAuthenticationProvider endpointLdapAuthenticationProvider;
 
@@ -64,94 +69,31 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }
     }
 
-
-    private void configureEndpointAccessPermitAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
-        requests.requestMatchers(endpoint).permitAll();
-    }
-
-    @SneakyThrows
-    private void configureEndpointAccessToDenyAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
-        requests.requestMatchers(endpoint).denyAll();
-    }
-
-    private void configureEndpointAccessAnonymously(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
-
-        requests.requestMatchers(endpoint).anonymous();
-    }
-
-    private void configureEndpointAccessByIpAddress(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                    final ActuatorEndpointProperties properties,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
-        val addresses = properties.getRequiredIpAddresses()
-            .stream()
-            .map(address -> "hasIpAddress('" + address + "')")
-            .collect(Collectors.joining(" or "));
-
-        requests
-            .requestMatchers(endpoint)
-            .access(addresses);
-    }
-
-    private void configureEndpointAccessAuthenticated(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                      final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        val result = requests.requestMatchers(endpoint)
-            .authenticated()
-            .and()
-            .httpBasic()
-            .and();
-        configureEndpointAccessByFormLogin(result);
-    }
-
-    private void configureEndpointAccessByRole(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                               final ActuatorEndpointProperties properties,
-                                               final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        val result = requests.requestMatchers(endpoint)
-            .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
-            .and()
-            .httpBasic()
-            .and();
-        configureEndpointAccessByFormLogin(result);
-    }
-
-    private void configureEndpointAccessByAuthority(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                    final ActuatorEndpointProperties properties,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        val result = requests.requestMatchers(endpoint)
-            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
-            .and()
-            .httpBasic()
-            .and();
-        configureEndpointAccessByFormLogin(result);
-    }
-
-    private boolean isLdapAuthorizationActive() {
-        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
-        return StringUtils.isNotBlank(ldap.getBaseDn())
-            && StringUtils.isNotBlank(ldap.getLdapUrl())
-            && StringUtils.isNotBlank(ldap.getSearchFilter())
-            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
-            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
-    }
-
     /**
      * Disable Spring Security configuration for protocol endpoints
      * allowing CAS' own security configuration to handle protection
      * of endpoints where necessary.
+     *
      * @param web web security
      */
     @Override
     public void configure(final WebSecurity web) {
-        val beans = getApplicationContext().getBeansOfType(ProtocolEndpointConfigurer.class, false, true).values();
-        val patterns = beans.stream()
-            .map(ProtocolEndpointConfigurer::getBaseEndpoints)
-            .flatMap(List::stream)
+        val patterns = protocolEndpointWebSecurityConfigurers.stream()
+            .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
+            .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))
-            .toArray(String[]::new);
-        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", Arrays.toString(patterns));
-        web.debug(LOGGER.isDebugEnabled()).ignoring().antMatchers(patterns);
+            .collect(Collectors.toList());
+
+        patterns.add("/webjars/**");
+        patterns.add("/js/**");
+        patterns.add("/css/**");
+        patterns.add("/images/**");
+        patterns.add("/static/**");
+        patterns.add("/error");
+        patterns.add("/favicon.ico");
+
+        LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from web security", patterns);
+        web.debug(LOGGER.isDebugEnabled()).ignoring().antMatchers(patterns.toArray(String[]::new));
     }
 
     @Override
@@ -196,6 +138,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         }));
         configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
+        protocolEndpointWebSecurityConfigurers.forEach(cfg -> cfg.configure(http));
     }
 
     /**
@@ -208,7 +151,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                           final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        pathMappedEndpoints.forEach(endpoint -> {
+        pathMappedEndpoints.getObject().forEach(endpoint -> {
             val rootPath = endpoint.getRootPath();
             if (endpoints.contains(rootPath)) {
                 LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
@@ -229,7 +172,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param ldap the ldap
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth,
-        final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
+                                                       final LdapSecurityActuatorEndpointsMonitorProperties ldap) {
         if (isLdapAuthorizationActive()) {
             val connectionFactory = LdapUtils.newLdaptiveConnectionFactory(ldap);
             val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
@@ -326,5 +269,76 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                 configureEndpointAccessToDenyAll(requests, endpoint);
                 break;
         }
+    }
+
+    private void configureEndpointAccessPermitAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+        requests.requestMatchers(endpoint).permitAll();
+    }
+
+    @SneakyThrows
+    private void configureEndpointAccessToDenyAll(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                  final EndpointRequest.EndpointRequestMatcher endpoint) {
+        requests.requestMatchers(endpoint).denyAll();
+    }
+
+    private void configureEndpointAccessAnonymously(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+
+        requests.requestMatchers(endpoint).anonymous();
+    }
+
+    private void configureEndpointAccessByIpAddress(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                    final ActuatorEndpointProperties properties,
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+        val addresses = properties.getRequiredIpAddresses()
+            .stream()
+            .map(address -> "hasIpAddress('" + address + "')")
+            .collect(Collectors.joining(" or "));
+
+        requests
+            .requestMatchers(endpoint)
+            .access(addresses);
+    }
+
+    private void configureEndpointAccessAuthenticated(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        val result = requests.requestMatchers(endpoint)
+            .authenticated()
+            .and()
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
+    }
+
+    private void configureEndpointAccessByRole(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                               final ActuatorEndpointProperties properties,
+                                               final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        val result = requests.requestMatchers(endpoint)
+            .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
+            .and()
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
+    }
+
+    private void configureEndpointAccessByAuthority(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
+                                                    final ActuatorEndpointProperties properties,
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
+        val result = requests.requestMatchers(endpoint)
+            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
+            .and()
+            .httpBasic()
+            .and();
+        configureEndpointAccessByFormLogin(result);
+    }
+
+    private boolean isLdapAuthorizationActive() {
+        val ldap = casProperties.getMonitor().getEndpoints().getLdap();
+        return StringUtils.isNotBlank(ldap.getBaseDn())
+            && StringUtils.isNotBlank(ldap.getLdapUrl())
+            && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
+            || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
     }
 }

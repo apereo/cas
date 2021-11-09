@@ -13,7 +13,7 @@ The collection of handlers can be narrowed down using a selection criteria that 
 for the handler based on the current authentication transaction, provided credentials, service definition policy
 and many other controls.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 properties="cas.authn.core.groovy-authentication-resolution,cas.authn.core.service-authentication-resolution" %}
 
 

@@ -1,0 +1,6 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://google.com",
+  "id": 2,
+  "name": "Sample"
+}

@@ -18,9 +18,9 @@ To learn more about UMA, please [read the specification](https://docs.kantaraini
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma" %}
 
-{% include casproperties.html properties="cas.authn.oauth.uma.core"%}
+{% include_cached casproperties.html properties="cas.authn.oauth.uma.core" %}
 
 ## Permission Tickets
 
@@ -30,7 +30,7 @@ single resource owner, protected by a single authorization server. As the respon
 the resource server receives a permission ticket which represents the 
 same permissions that the resource server requested.
 
-{% include casproperties.html properties="cas.authn.oauth.uma.permission-ticket"%}
+{% include_cached casproperties.html properties="cas.authn.oauth.uma.permission-ticket" %}
 
 ## Requesting Party Tokens
 
@@ -43,7 +43,7 @@ A `RPT` is an OAuth access token associated with the UMA grant. An `RPT` is
 unique to a requesting party, client, authorization server, resource server, 
 and resource owner. This token represents some number of granted permissions.
 
-{% include casproperties.html properties="cas.authn.oauth.uma.requesting-party-token"%}
+{% include_cached casproperties.html properties="cas.authn.oauth.uma.requesting-party-token" %}
 
 ## Resources Storage
 
@@ -54,9 +54,9 @@ of choice to track and manage such definitions. The repository choice is activat
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma-jpa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oauth-uma-jpa" %}
 
-{% include casproperties.html properties="cas.authn.oauth.uma.resource-set.jpa" %}
+{% include_cached casproperties.html properties="cas.authn.oauth.uma.resource-set.jpa" %}
 
 ## Endpoints
 

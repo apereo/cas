@@ -61,7 +61,7 @@ Client secrets for OAuth relying parties may be defined as encrypted values pref
 Client secrets may be encrypted using CAS-provided cipher operations 
 either manually or via the [CAS Command-line shell](../installation/Configuring-Commandline-Shell.html).
 
-{% include casproperties.html properties="cas.authn.oauth,cas.client." %}
+{% include_cached casproperties.html properties="cas.authn.oauth" %}
 
 ## Attribute Release
 

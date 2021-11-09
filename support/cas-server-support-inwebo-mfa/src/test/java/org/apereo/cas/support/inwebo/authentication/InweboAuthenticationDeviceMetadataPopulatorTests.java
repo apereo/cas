@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class InweboAuthenticationDeviceMetadataPopulatorTests {
     private final InweboAuthenticationDeviceMetadataPopulator populator =
         new InweboAuthenticationDeviceMetadataPopulator();

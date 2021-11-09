@@ -53,6 +53,15 @@ public class SmsProperties implements Serializable {
     private String attributeName = "phone";
 
     /**
+     * Is text/from defined.
+     *
+     * @return true/false
+     */
+    public boolean isDefined() {
+        return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getFrom());
+    }
+
+    /**
      * Format body.
      *
      * @param arguments the arguments

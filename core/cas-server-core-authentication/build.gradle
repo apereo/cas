@@ -4,6 +4,8 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-events")
+
+    compileOnlyApi project(":core:cas-server-core-services")
     
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")

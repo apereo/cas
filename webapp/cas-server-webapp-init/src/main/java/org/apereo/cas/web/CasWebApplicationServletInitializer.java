@@ -1,9 +1,12 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 
+import lombok.val;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+import java.util.List;
 
 /**
  * This is {@link CasWebApplicationServletInitializer}.
@@ -11,13 +14,19 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasWebApplicationServletInitializer extends SpringBootServletInitializer {
+public class CasWebApplicationServletInitializer extends AbstractCasSpringBootServletInitializer {
+
+    public CasWebApplicationServletInitializer() {
+        super(List.of(CasWebApplication.class),
+            CasEmbeddedContainerUtils.getCasBannerInstance(),
+            CasEmbeddedContainerUtils.getApplicationStartup());
+    }
 
     @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder
-            .sources(CasWebApplication.class)
-            .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
-            .banner(CasEmbeddedContainerUtils.getCasBannerInstance());
+    protected SpringApplicationBuilder configure(final SpringApplicationBuilder givenBuilder) {
+        val builder = super.configure(givenBuilder);
+        builder.contextFactory(webApplicationType -> new CasWebApplicationContext());
+        return builder;
     }
 }
+

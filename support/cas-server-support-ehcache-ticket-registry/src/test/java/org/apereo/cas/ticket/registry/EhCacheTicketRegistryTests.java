@@ -5,7 +5,6 @@ import org.apereo.cas.config.EhcacheTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
 import org.junit.jupiter.api.RepeatedTest;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.*;
 public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(1)
@@ -51,8 +50,7 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
     @Lazy(false)
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
-        @SneakyThrows
-        public CacheReplicator ticketRMISynchronousCacheReplicator() {
+        public CacheReplicator ticketRMISynchronousCacheReplicator() throws Exception {
             val replicator = mock(CacheReplicator.class);
             when(replicator.isReplicateUpdatesViaCopy()).thenReturn(false);
             when(replicator.notAlive()).thenReturn(false);

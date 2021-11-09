@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,16 +21,18 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public DynamoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
-                                                            final CasTicketCatalogConfigurationValuesProvider configProvider) {
-        super(casProperties, configProvider);
+    public DynamoDbTicketRegistryTicketCatalogConfiguration(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dynamoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
+        super(casProperties, configProvider, applicationContext);
     }
-
-    @Configuration("dynamoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class Config {
-
-        @ConditionalOnMissingBean
+    
+    @Configuration(value = "DynamoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DynamoDbTicketRegistryTicketCatalogProviderConfiguration {
+        @ConditionalOnMissingBean(name = "dynamoDbTicketCatalogConfigurationValuesProvider")
         @Bean
         public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
             return new CasTicketCatalogConfigurationValuesProvider() {
@@ -60,4 +63,5 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends BaseTicket
             };
         }
     }
+
 }

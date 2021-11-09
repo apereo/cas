@@ -9,8 +9,8 @@ category: Protocols
 # WS Federation Protocol
 
 CAS can act as a standalone identity provider, presenting support for 
-the [WS-Federation Passive Requestor Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). The core functionality
-is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
+the [WS-Federation Passive Requestor Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). 
+The core functionality is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
 whose architecture is described [here](http://cxf.apache.org/fediz-architecture.html).
 
 <div class="alert alert-info"><strong>Remember</strong><p>The functionality described 
@@ -37,7 +37,7 @@ attaches the returned security token to the outgoing SOAP message to the service
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ws-sts" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ws-sts" %}
 
 <div class="alert alert-info"><strong>YAGNI</strong><p>You do not need to explicitly include this component
 in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 
@@ -71,7 +71,7 @@ STS to the sign-in response for the browser. Further the browser user must authe
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ws-idp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ws-idp" %}
 
 ### Endpoints
 
@@ -123,9 +123,7 @@ Token type may be configured on a per-service basis:
 
 ## Configuration
 
-{% include casproperties.html 
-module="cas-server-support-ws-idp,cas-server-support-ws-sts"
-properties="cas.client." %}
+{% include_cached casproperties.html module="cas-server-support-ws-idp,cas-server-support-ws-sts" %}
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
@@ -135,6 +133,10 @@ repositories {
     maven { 
         mavenContent { releasesOnly() }
         url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+    }
+    maven {
+        mavenContent { releasesOnly() }
+        url "https://jitpack.io"
     }
 }
 ```

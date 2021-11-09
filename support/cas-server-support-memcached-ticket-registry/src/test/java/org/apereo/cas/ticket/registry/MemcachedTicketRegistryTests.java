@@ -14,6 +14,8 @@ import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -69,19 +71,19 @@ import static org.mockito.Mockito.*;
 @Getter
 public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
@@ -97,7 +99,8 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
             new MockTicketGrantingTicket("casuser"),
             CollectionUtils.wrapList("openid"),
             "code-challenge", "plain", "clientId123456",
-            new HashMap<>());
+            new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.newTicketRegistry.addTicket(code);
         val ticket = this.newTicketRegistry.getTicket(code.getId(), OAuth20Code.class);
         assertNotNull(ticket);

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -7,8 +8,10 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuth
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.duosecurity.Client;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,17 +40,35 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final CasConfigurationProperties casProperties,
-        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties), multifactorAuthenticationPrincipalResolver);
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties),
+            multifactorAuthenticationPrincipalResolver, userAccountCache);
     }
 
     UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
         final Client duoClient,
-        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver);
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
+    }
+
+    @Override
+    public Optional<Object> getDuoClient() {
+        return Optional.of(this.duoClient);
+    }
+    
+    @SneakyThrows
+    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
+                                       final CasConfigurationProperties casProperties) {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        return new Client.Builder(resolver.resolve(duoProperties.getDuoIntegrationKey()),
+            resolver.resolve(duoProperties.getDuoSecretKey()),
+            resolver.resolve(duoProperties.getDuoApiHost()),
+            casProperties.getServer().getLoginUrl()).build();
     }
 
     @Override
@@ -135,19 +156,5 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public Optional<Object> getDuoClient() {
-        return Optional.of(this.duoClient);
-    }
-
-    @SneakyThrows
-    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final CasConfigurationProperties casProperties) {
-        return new Client(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApiHost(),
-            casProperties.getServer().getLoginUrl());
     }
 }

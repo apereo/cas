@@ -16,8 +16,6 @@ import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +24,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,110 +40,155 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casJdbcAuditConfiguration")
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@Configuration(value = "casJdbcAuditConfiguration", proxyBeanMethods = false)
+@EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class CasSupportJdbcAuditConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+    @Configuration(value = "CasSupportJdbcAuditEntityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditEntityConfiguration {
 
-    @Bean
-    @RefreshScope
-    public AuditTrailManager jdbcAuditTrailManager() {
-        val jdbc = casProperties.getAudit().getJdbc();
-        val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
-        t.setCleanupCriteria(auditCleanupCriteria());
-        t.setDataSource(inspektrAuditTrailDataSource());
-        t.setAsynchronous(jdbc.isAsynchronous());
-        t.setColumnLength(jdbc.getColumnLength());
-        t.setTableName(getAuditTableNameFrom(jdbc));
-        if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
-            t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+        @Bean
+        public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
+            @Qualifier("inspektrAuditTrailDataSource")
+            final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            val ctx = JpaConfigurationContext.builder()
+                .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
+                .persistenceUnitName("jpaInspektrAuditContext")
+                .dataSource(inspektrAuditTrailDataSource)
+                .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
+                .build();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
         }
-        if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
-            t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+
+        @ConditionalOnMissingBean(name = "auditCleanupCriteria")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WhereClauseMatchCriteria auditCleanupCriteria(final CasConfigurationProperties casProperties) {
+            return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
         }
-        return t;
     }
 
-    @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
-    @Bean
-    @RefreshScope
-    public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer() {
-        return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager());
+    @Configuration(value = "CasSupportJdbcAuditTransactionTemplateConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditTransactionTemplateConfiguration {
+
+        @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
+        @Bean
+        public TransactionTemplate inspektrAuditTransactionTemplate(
+            @Qualifier("inspektrAuditTransactionManager")
+            final PlatformTransactionManager inspektrAuditTransactionManager, final CasConfigurationProperties casProperties) {
+            val t = new TransactionTemplate(inspektrAuditTransactionManager);
+            val jdbc = casProperties.getAudit().getJdbc();
+            t.setIsolationLevelName(jdbc.getIsolationLevelName());
+            t.setPropagationBehaviorName(jdbc.getPropagationBehaviorName());
+            return t;
+        }
     }
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
-        val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(factory.newJpaVendorAdapter(casProperties.getJdbc()))
-            .persistenceUnitName("jpaInspektrAuditContext")
-            .dataSource(inspektrAuditTrailDataSource())
-            .packagesToScan(CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()))
-            .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
-    }
-
-    @ConditionalOnMissingBean(name = "auditCleanupCriteria")
-    @Bean
-    @RefreshScope
-    public WhereClauseMatchCriteria auditCleanupCriteria() {
-        return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
-    public PlatformTransactionManager inspektrAuditTransactionManager() {
-        return new DataSourceTransactionManager(inspektrAuditTrailDataSource());
-    }
-
-    @ConditionalOnMissingBean(name = "inspektrAuditTrailDataSource")
-    @Bean
-    @RefreshScope
-    public DataSource inspektrAuditTrailDataSource() {
-        return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());
-    }
-
-    @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
-    @Bean
-    public TransactionTemplate inspektrAuditTransactionTemplate() {
-        val t = new TransactionTemplate(inspektrAuditTransactionManager());
-        val jdbc = casProperties.getAudit().getJdbc();
-        t.setIsolationLevelName(jdbc.getIsolationLevelName());
-        t.setPropagationBehaviorName(jdbc.getPropagationBehaviorName());
-        return t;
-    }
-
-    @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
-    @ConditionalOnProperty(prefix = "cas.audit.jdbc.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
-    @Bean
-    public Cleanable inspektrAuditTrailCleaner() {
-        return new Cleanable() {
-            @Scheduled(
-                initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
-                fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}"
-            )
-            @Override
-            public void clean() {
-                jdbcAuditTrailManager().clean();
+    @Configuration(value = "CasSupportJdbcAuditManagerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditManagerConfiguration {
+        private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+            var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+            if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
+                tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
             }
-        };
+            if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
+                tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
+            }
+            return tableName;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditTrailManager jdbcAuditTrailManager(
+            @Qualifier("auditCleanupCriteria")
+            final WhereClauseMatchCriteria auditCleanupCriteria,
+            @Qualifier("inspektrAuditTransactionTemplate")
+            final TransactionTemplate inspektrAuditTransactionTemplate,
+            @Qualifier("inspektrAuditTrailDataSource")
+            final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties) {
+            val jdbc = casProperties.getAudit().getJdbc();
+            val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate);
+            t.setCleanupCriteria(auditCleanupCriteria);
+            t.setDataSource(inspektrAuditTrailDataSource);
+            t.setAsynchronous(jdbc.isAsynchronous());
+            t.setColumnLength(jdbc.getColumnLength());
+            t.setTableName(getAuditTableNameFrom(jdbc));
+            if (StringUtils.isNotBlank(jdbc.getSelectSqlQueryTemplate())) {
+                t.setSelectByDateSqlTemplate(jdbc.getSelectSqlQueryTemplate());
+            }
+            if (StringUtils.isNotBlank(jdbc.getDateFormatterPattern())) {
+                t.setDateFormatterPattern(jdbc.getDateFormatterPattern());
+            }
+            return t;
+        }
     }
 
-    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
-        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
-        if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
-            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
+    @Configuration(value = "CasSupportJdbcAuditExecutionPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditExecutionPlanConfiguration {
+        @ConditionalOnMissingBean(name = "jdbcAuditTrailExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer(
+            @Qualifier("jdbcAuditTrailManager")
+            final AuditTrailManager jdbcAuditTrailManager) {
+            return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager);
         }
-        if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
-            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
+
+    }
+
+    @Configuration(value = "CasSupportJdbcAuditScheduleConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditScheduleConfiguration {
+
+        @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
+        @ConditionalOnProperty(prefix = "cas.audit.jdbc.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+        @Bean
+        public Cleanable inspektrAuditTrailCleaner(
+            @Qualifier("jdbcAuditTrailManager")
+            final AuditTrailManager jdbcAuditTrailManager) {
+            return new Cleanable() {
+                @Scheduled(initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
+                    fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
+                @Override
+                public void clean() {
+                    jdbcAuditTrailManager.clean();
+                }
+            };
         }
-        return tableName;
+
+    }
+
+    @Configuration(value = "CasSupportJdbcAuditTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditTransactionConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
+        public PlatformTransactionManager inspektrAuditTransactionManager(
+            @Qualifier("inspektrAuditTrailDataSource")
+            final DataSource inspektrAuditTrailDataSource) {
+            return new DataSourceTransactionManager(inspektrAuditTrailDataSource);
+        }
+    }
+
+    @Configuration(value = "CasSupportJdbcAuditDataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasSupportJdbcAuditDataConfiguration {
+
+        @ConditionalOnMissingBean(name = "inspektrAuditTrailDataSource")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DataSource inspektrAuditTrailDataSource(final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());
+        }
+
     }
 }

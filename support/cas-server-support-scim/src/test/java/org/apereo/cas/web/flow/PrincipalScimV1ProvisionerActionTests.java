@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 6.4.0
  */
 @TestPropertySource(properties = {
     "cas.scim.target=http://localhost:8215",
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowActions")
 @SuppressWarnings("JavaUtilDate")
+@Deprecated(since = "6.4.0")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
     @Test
     public void verifyAction() throws Exception {
@@ -68,7 +70,7 @@ public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerAc
         val resources = new Resources(CollectionUtils.wrapList(user));
         val stream = new ByteArrayOutputStream();
         resources.marshal(new JsonMarshaller(), stream);
-        val data = stream.toString();
+        val data = stream.toString(StandardCharsets.UTF_8);
         try (val webServer = new MockWebServer(8215,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

@@ -18,13 +18,13 @@ and the event is not considered a catastrophic failure.
 
 Allow the user to synchronize account password to a variety of destinations in-place.
 
-{% include {{ version }}/ldap-configuration.md configKey="cas.authn.password-sync.ldap[0]" %}
+{% include_cached {{ version }}/ldap-configuration.md configKey="cas.authn.password-sync.ldap[0]" %}
 
 ## LDAP
 
 Synchronize account passwords with one or more LDAP servers. Support is enabled by including the 
 following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
 
-{% include casproperties.html properties="cas.authn.password-sync.ldap" %}
+{% include_cached casproperties.html properties="cas.authn.password-sync.ldap" %}

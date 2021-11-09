@@ -2,6 +2,7 @@ package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -48,7 +49,12 @@ public class WSFederationClaimsReleasePolicyTests {
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
-        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
         assertTrue(results.isEmpty());
     }
 
@@ -58,7 +64,12 @@ public class WSFederationClaimsReleasePolicyTests {
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "groovy { return attributes['cn'][0] + '@example.org' }"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
-        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
         assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
@@ -74,7 +85,13 @@ public class WSFederationClaimsReleasePolicyTests {
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.EMAIL_ADDRESS_2005.name(), "file:" + file.getCanonicalPath()));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("cn", "casuser"));
-        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
         assertEquals(results.get(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()), List.of("casuser@example.org"));
@@ -84,19 +101,32 @@ public class WSFederationClaimsReleasePolicyTests {
     public void verifyAttributeRelease() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
-            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
+            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn",
+                WSFederationClaims.EMAIL_ADDRESS.name(), "email",
+                WSFederationClaims.GROUP.name(), "unkown",
+                WSFederationClaims.EMAIL_ADDRESS_2005.name(), "unknown"));
+        assertFalse(policy.getAllowedAttributes().isEmpty());
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
-        val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
-        assertSame(2, results.size());
+            CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org",
+                WSFederationClaims.EMAIL_ADDRESS_2005.getUri(), "cas2005@example.org"));
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(service)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
+        assertSame(3, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));
+        assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS_2005.getUri()));
+        
         val commonNameValue = results.get(WSFederationClaims.COMMON_NAME.getUri());
         assertEquals(CollectionUtils.wrapArrayList("casuser"), commonNameValue);
         val emailAddressValue = results.get(WSFederationClaims.EMAIL_ADDRESS.getUri());
         assertEquals(CollectionUtils.wrapArrayList("cas@example.org"), emailAddressValue);
     }
-
+    
     @Test
     public void verifySerializePolicyToJson() throws IOException {
         val policyWritten = new WSFederationClaimsReleasePolicy(

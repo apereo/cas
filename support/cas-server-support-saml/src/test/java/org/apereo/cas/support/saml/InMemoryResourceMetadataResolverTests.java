@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
 
     @Test

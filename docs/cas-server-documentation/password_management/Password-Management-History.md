@@ -12,7 +12,7 @@ CAS allows for strategies to track and storage recycled password. Recycled
 passwords are kept in storage for the user account and are 
 examined upon password updates for validity. 
 
-{% include casproperties.html properties="cas.authn.pm.history.core" %}
+{% include_cached casproperties.html properties="cas.authn.pm.history.core" %}
 
 Once password history functionality is enabled, passwords can be tracked 
 in history via a Groovy or an in-memory backend. Specific storage 
@@ -58,4 +58,19 @@ def removeAll(Object[] args) {
 
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
 
-{% include casproperties.html properties="cas.authn.pm.history.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.pm.history.groovy" %}
+  
+## Custom
+
+If you wish to create your own password hisory service, you will need to
+design a component and register it with CAS as such:
+
+```java
+@Bean
+public PasswordHistoryService passwordHistoryService() {
+    return new CustomPasswordHistoryService();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
+how to register configurations into the CAS runtime.

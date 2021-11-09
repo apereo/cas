@@ -21,6 +21,10 @@ public class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
     @Test
     public void verifyOperation() {
 
+        val result0 = shell.evaluate(
+            () -> "validate-endpoint --url http://http.badssl.com/");
+        assertTrue((Boolean) result0);
+
         val result = shell.evaluate(
             () -> "validate-endpoint --url https://github.com");
         assertTrue((Boolean) result);

@@ -11,7 +11,7 @@ category: Multifactor Authentication
 MFA can be triggered based on the results of a groovy script of your own design. The 
 outcome of the script should determine the MFA provider id that CAS should attempt to activate.
 
-The outline of the groovy script is shown below as a sample:
+The outline of the Groovy script is shown below as a sample:
 
 ```groovy
 import java.util.*
@@ -70,4 +70,4 @@ class MyExampleScript {
 }
 ```
 
-{% include casproperties.html properties="cas.authn.mfa.groovy-script" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.groovy-script" %}

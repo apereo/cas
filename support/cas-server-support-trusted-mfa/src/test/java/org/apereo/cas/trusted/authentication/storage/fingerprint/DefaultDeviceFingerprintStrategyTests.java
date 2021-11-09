@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
-@Tag("Simple")
+@Tag("MFATrustedDevices")
 public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
@@ -41,16 +41,18 @@ public class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAu
 
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        val f1 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
-        val f2 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
-        assertNotEquals(f1, f2);
+        val f1 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
+        request.setCookies(response.getCookies());
+        val f2 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
+        request.setCookies(response.getCookies());
+        assertEquals(f1, f2);
 
-        val f3 = deviceFingerprintStrategy.determineFingerprint("casuser", context, true);
+        val f3 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
         assertNotNull(response.getCookies());
         assertEquals(response.getCookies().length, 1);
         request.setCookies(response.getCookies());
 
-        val f4 = deviceFingerprintStrategy.determineFingerprint("casuser", context, false);
+        val f4 = deviceFingerprintStrategy.determineFingerprintComponent("casuser", request, response);
         assertEquals(f3, f4);
     }
 }

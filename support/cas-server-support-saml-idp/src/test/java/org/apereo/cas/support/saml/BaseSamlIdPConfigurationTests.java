@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -39,12 +40,15 @@ import org.apereo.cas.config.SamlIdpComponentSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataCustomizer;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
@@ -64,9 +68,6 @@ import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -93,6 +94,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -107,6 +110,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
     properties = {
+        "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
+        "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
     })
@@ -133,7 +138,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected VelocityEngine velocityEngine;
 
     @Autowired
-    @Qualifier("samlObjectSigner")
+    @Qualifier(SamlIdPObjectSigner.DEFAULT_BEAN_NAME)
     protected SamlIdPObjectSigner samlIdPObjectSigner;
 
     @Autowired
@@ -149,7 +154,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected UrlValidator urlValidator;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
@@ -165,7 +170,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
     @Autowired
-    @Qualifier("samlIdPDistributedSessionStore")
+    @Qualifier(DistributedJEESessionStore.DEFAULT_BEAN_NAME)
     protected SessionStore samlIdPDistributedSessionStore;
 
     @Autowired
@@ -188,18 +193,26 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("samlArtifactMap")
     protected SAMLArtifactMap samlArtifactMap;
 
-    protected static Assertion getAssertion() {
+    @Autowired
+    @Qualifier("samlIdPServicesManagerRegisteredServiceLocator")
+    protected ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator;
+
+    protected static AuthenticatedAssertionContext getAssertion() {
         return getAssertion(Map.of());
     }
 
-    protected static Assertion getAssertion(final Map<String, Object> attrs) {
+    protected static AuthenticatedAssertionContext getAssertion(final Map<String, Object> attrs) {
+        return getAssertion("casuser", attrs);
+    }
+
+    protected static AuthenticatedAssertionContext getAssertion(final String user, final Map<String, Object> attrs) {
         val attributes = new LinkedHashMap<String, Object>(CoreAuthenticationTestUtils.getAttributes());
         attributes.putAll(attrs);
 
@@ -207,8 +220,13 @@ public abstract class BaseSamlIdPConfigurationTests {
         permissions.add(new PermissionSamlAttributeValue("admin", "cas-admins", "super-cas"));
         permissions.add(new PermissionSamlAttributeValue("designer", "cas-designers", "cas-ux"));
         attributes.put("permissions", permissions);
-        val casuser = new AttributePrincipalImpl("casuser", attributes);
-        return new AssertionImpl(casuser, attributes);
+        return AuthenticatedAssertionContext.builder()
+            .name(user)
+            .authenticationDate(ZonedDateTime.now(Clock.systemUTC()))
+            .validUntilDate(ZonedDateTime.now(Clock.systemUTC()).plusDays(1))
+            .validFromDate(ZonedDateTime.now(Clock.systemUTC()))
+            .attributes(attributes)
+            .build();
     }
 
     protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
@@ -341,6 +359,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         SamlIdPMetadataConfiguration.class,
         SamlIdPTicketSerializationConfiguration.class,
         CasCoreTicketsConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreLogoutConfiguration.class,
         CasCookieConfiguration.class,

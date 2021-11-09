@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -11,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -29,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("WebflowEvents")
+@Import(RequestParameterMultifactorAuthenticationPolicyEventResolverTests.RequestParameterMultifactorTestConfiguration.class)
 public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
@@ -56,11 +61,18 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests e
         val transition = new Transition(new DefaultTransitionCriteria(new LiteralExpression(TestMultifactorAuthenticationProvider.ID)), targetResolver);
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
-        TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
         results = requestParameterAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
+    }
+
+    @TestConfiguration("RequestParameterMultifactorTestConfiguration")
+    public static class RequestParameterMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+           return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

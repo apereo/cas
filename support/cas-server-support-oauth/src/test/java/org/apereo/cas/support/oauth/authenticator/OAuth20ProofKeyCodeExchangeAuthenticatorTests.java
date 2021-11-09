@@ -1,9 +1,12 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -39,7 +42,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     @BeforeEach
     public void init() {
         authenticator = new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager, serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), ticketRegistry,
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
             new OAuth20RegisteredServiceCipherExecutor(),
             defaultPrincipalResolver);
     }
@@ -66,7 +69,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), "ABCD123",
-            "plain", "clientid12345", new HashMap<>()));
+            "plain", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
@@ -85,7 +89,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
                 new HardTimeoutExpirationPolicy(10),
                 new MockTicketGrantingTicket("casuser"),
                 new ArrayList<>(), "ABCD123",
-                "plain", "clientid12345", new HashMap<>()));
+                "plain", "clientid12345", new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CLIENT_SECRET, "secret");
@@ -105,7 +110,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
                 new HardTimeoutExpirationPolicy(10),
                 new MockTicketGrantingTicket("casuser"),
                 new ArrayList<>(), "ABCD123",
-                "plain", "clientid12345", new HashMap<>()));
+                "plain", "clientid12345", new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE));
         request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
         request.addParameter(OAuth20Constants.CODE, "CODE-1234567890");
@@ -124,7 +130,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
+            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
@@ -144,7 +151,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), hash, "unknown", "clientid12345", new HashMap<>());
+            new ArrayList<>(), hash, "unknown", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CLIENT_ID, "clientWithoutSecret");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
@@ -163,7 +171,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
+            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");
@@ -184,7 +193,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getAuthentication(),
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
-            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>());
+            new ArrayList<>(), hash, "s256", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
         request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
         request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("client:secret"));
@@ -205,7 +215,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
             new HardTimeoutExpirationPolicy(10),
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(),
-            "something-else", "s256", "clientid12345", new HashMap<>());
+            "something-else", "s256", "clientid12345", new HashMap<>(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(ticket);
         request.addParameter(OAuth20Constants.CLIENT_ID, "client");
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "ABCD123");

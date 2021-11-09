@@ -12,18 +12,17 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -33,7 +32,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * This is {@link GoogleAuthenticatorJpaConfiguration}.
@@ -41,79 +39,99 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("googleAuthentiacatorJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnableScheduling
+@Configuration(value = "googleAuthentiacatorJpaConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorJpaConfiguration {
 
-    @Autowired
-    @Qualifier("jpaBeanFactory")
-    private ObjectProvider<JpaBeanFactory> jpaBeanFactory;
+    @Configuration(value = "GoogleAuthenticatorJpaTransactionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorJpaTransactionConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
+        public PlatformTransactionManager transactionManagerGoogleAuthenticator(
+            @Qualifier("googleAuthenticatorEntityManagerFactory")
+            final EntityManagerFactory emf) {
+            val mgmr = new JpaTransactionManager();
+            mgmr.setEntityManagerFactory(emf);
+            return mgmr;
+        }
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @RefreshScope
-    @Bean
-    public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter() {
-        return jpaBeanFactory.getObject().newJpaVendorAdapter(casProperties.getJdbc());
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "dataSourceGoogleAuthenticator")
-    @RefreshScope
-    public DataSource dataSourceGoogleAuthenticator() {
-        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa());
+    @Configuration(value = "GoogleAuthenticatorJpaRepositoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorJpaRepositoryConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
+        public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+            @Qualifier("googleAuthenticatorInstance")
+            final IGoogleAuthenticator googleAuthenticatorInstance,
+            @Qualifier("googleAuthenticatorAccountCipherExecutor")
+            final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
+            return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
+        }
+
+        @Bean
+        public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties) {
+            return new GoogleAuthenticatorJpaTokenRepository(casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
+        }
+
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
-    public List<String> jpaPackagesToScanGoogleAuthenticator() {
-        return CollectionUtils.wrapList(
-            GoogleAuthenticatorAccount.class.getPackage().getName(),
-            JpaGoogleAuthenticatorToken.class.getPackage().getName());
+    @Configuration(value = "GoogleAuthenticatorJpaDataConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorJpaDataConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "dataSourceGoogleAuthenticator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DataSource dataSourceGoogleAuthenticator(final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa());
+        }
+
     }
 
-    @Lazy
-    @Bean
-    public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
-        val factory = jpaBeanFactory.getObject();
+    @Configuration(value = "GoogleAuthenticatorJpaEntityConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class GoogleAuthenticatorJpaEntityConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
+        public BeanContainer<String> jpaPackagesToScanGoogleAuthenticator() {
+            return BeanContainer.of(CollectionUtils.wrapSet(GoogleAuthenticatorAccount.class.getPackage().getName(),
+                JpaGoogleAuthenticatorToken.class.getPackage().getName()));
+        }
 
-        val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter())
-            .persistenceUnitName("jpaGoogleAuthenticatorContext")
-            .dataSource(dataSourceGoogleAuthenticator())
-            .packagesToScan(jpaPackagesToScanGoogleAuthenticator())
-            .build();
-        return factory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+        }
+
+
+        @Bean
+        public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
+            final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
+            @Qualifier("dataSourceGoogleAuthenticator")
+            final DataSource dataSourceGoogleAuthenticator,
+            @Qualifier("jpaPackagesToScanGoogleAuthenticator")
+            final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
+            @Qualifier("jpaBeanFactory")
+            final JpaBeanFactory jpaBeanFactory) {
+            val ctx = JpaConfigurationContext.builder()
+                .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)
+                .persistenceUnitName("jpaGoogleAuthenticatorContext")
+                .dataSource(dataSourceGoogleAuthenticator)
+                .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
+                .build();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
+        }
+
     }
-
-    @Autowired
-    @Bean
-    @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
-    public PlatformTransactionManager transactionManagerGoogleAuthenticator(
-        @Qualifier("googleAuthenticatorEntityManagerFactory") final EntityManagerFactory emf) {
-        val mgmr = new JpaTransactionManager();
-        mgmr.setEntityManagerFactory(emf);
-        return mgmr;
-    }
-
-    @Autowired
-    @Bean
-    @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
-                                                                                   final IGoogleAuthenticator googleAuthenticatorInstance,
-                                                                               @Qualifier("googleAuthenticatorAccountCipherExecutor")
-                                                                               final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
-        return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);
-    }
-
-    @Bean
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
-        return new GoogleAuthenticatorJpaTokenRepository(
-            casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()
-        );
-    }
-
 }

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlRegisteredServiceMetadataExpirationPolicyTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyPolicyByEntityCache() throws Exception {

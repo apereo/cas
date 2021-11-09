@@ -31,26 +31,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
     private static final List<String> IGNORED_ATTRIBUTES_PARAMS = List.of(
+        CasProtocolConstants.PARAMETER_PASSWORD,
         CasProtocolConstants.PARAMETER_SERVICE,
         CasProtocolConstants.PARAMETER_TARGET_SERVICE,
         CasProtocolConstants.PARAMETER_TICKET,
         CasProtocolConstants.PARAMETER_FORMAT);
-
-    @Override
-    public WebApplicationService createService(final HttpServletRequest request) {
-        val serviceToUse = getRequestedService(request);
-        if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.trace("No service is specified in the request. Skipping service creation");
-            return null;
-        }
-        return newWebApplicationService(request, serviceToUse);
-    }
-
-    @Override
-    public WebApplicationService createService(final String id) {
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        return newWebApplicationService(request, id);
-    }
 
     /**
      * Build new web application service simple web application service.
@@ -74,6 +59,65 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             populateAttributes(newService, request);
         }
         return newService;
+    }
+
+    @SneakyThrows
+    private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
+        val attributes = request.getParameterMap()
+            .entrySet()
+            .stream()
+            .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        LOGGER.trace("Collected request parameters [{}] as service attributes", attributes);
+        val validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        if (validator.isValid(service.getOriginalUrl())) {
+            new URIBuilder(service.getOriginalUrl()).getQueryParams()
+                .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
+        }
+
+        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
+        service.setAttributes(new HashMap(attributes));
+    }
+
+    /**
+     * Determine web application format boolean.
+     *
+     * @param request               the request
+     * @param webApplicationService the web application service
+     * @return the service itself.
+     */
+    private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
+                                                                               final AbstractWebApplicationService webApplicationService) {
+        val format = Optional.ofNullable(request)
+            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
+            .orElse(StringUtils.EMPTY);
+        try {
+            if (StringUtils.isNotBlank(format)) {
+                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase());
+                webApplicationService.setFormat(formatType);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Format specified in the request [{}] is not recognized", format);
+        }
+        return webApplicationService;
+    }
+
+    @Override
+    public WebApplicationService createService(final HttpServletRequest request) {
+        val serviceToUse = getRequestedService(request);
+        if (StringUtils.isBlank(serviceToUse)) {
+            LOGGER.trace("No service is specified in the request. Skipping service creation");
+            return null;
+        }
+        return newWebApplicationService(request, serviceToUse);
+    }
+
+    @Override
+    public WebApplicationService createService(final String id) {
+        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        return newWebApplicationService(request, id);
     }
 
     /**
@@ -100,46 +144,5 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return serviceAttribute.toString();
         }
         return null;
-    }
-
-    @SneakyThrows
-    private static void populateAttributes(final AbstractWebApplicationService service, final HttpServletRequest request) {
-        val attributes = request.getParameterMap()
-            .entrySet()
-            .stream()
-            .filter(entry -> !IGNORED_ATTRIBUTES_PARAMS.contains(entry.getKey()))
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        if (UrlValidator.getInstance().isValid(service.getOriginalUrl())) {
-            new URIBuilder(service.getOriginalUrl()).getQueryParams()
-                .forEach(pair -> attributes.put(pair.getName(), CollectionUtils.wrapArrayList(pair.getValue())));
-        }
-
-        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
-        service.setAttributes(new HashMap(attributes));
-    }
-
-    /**
-     * Determine web application format boolean.
-     *
-     * @param request               the request
-     * @param webApplicationService the web application service
-     * @return the service itself.
-     */
-    private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
-        final AbstractWebApplicationService webApplicationService) {
-        val format = Optional.ofNullable(request)
-            .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
-            .orElse(StringUtils.EMPTY);
-        try {
-            if (StringUtils.isNotBlank(format)) {
-                val formatType = ValidationResponseType.valueOf(Objects.requireNonNull(format).toUpperCase());
-                webApplicationService.setFormat(formatType);
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Format specified in the request [{}] is not recognized", format);
-        }
-        return webApplicationService;
     }
 }

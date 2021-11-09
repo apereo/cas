@@ -12,7 +12,7 @@ By default the task of remembering the user's choice is kept in memory by defaul
 container restarts and/or in clustered deployments. This option is only useful during development, testing
 and demos and is not at all suitable for production.
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.in-memory" %}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.in-memory" %}
 
 The scope of the default storage mechanism can be adjusted from the default of GLOBAL (described above) to
 AUTHENTICATION which will result in the user having to agree to the policy during each authentication event.

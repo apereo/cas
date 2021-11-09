@@ -11,8 +11,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
-
 /**
  * This is {@link GenericCasWebflowExceptionHandler}.
  *
@@ -26,10 +24,7 @@ import java.util.Set;
 public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHandler<Exception> {
     private int order = Integer.MAX_VALUE;
 
-    /**
-     * Ordered list of error classes that this class knows how to handle.
-     */
-    private final Set<Class<? extends Throwable>> errors;
+    private final CasWebflowExceptionCatalog errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
@@ -39,7 +34,8 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
     @Override
     public Event handle(final Exception exception, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
-        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", exception, CasWebflowExceptionHandler.UNKNOWN);
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]",
+            exception, CasWebflowExceptionHandler.UNKNOWN);
         val message = buildErrorMessageResolver(exception, requestContext);
         messageContext.addMessage(message);
         return new EventFactorySupport().event(this, CasWebflowExceptionHandler.UNKNOWN);

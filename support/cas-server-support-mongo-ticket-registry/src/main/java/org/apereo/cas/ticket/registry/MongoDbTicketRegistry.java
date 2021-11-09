@@ -51,8 +51,26 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private final TicketSerializationManager ticketSerializationManager;
 
+    /**
+     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
+     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
+     */
+    private static Date getExpireAt(final Ticket ticket) {
+        val expirationPolicy = ticket.getExpirationPolicy();
+        val ttl = ticket instanceof TicketState
+            ? expirationPolicy.getTimeToLive((TicketState) ticket)
+            : expirationPolicy.getTimeToLive();
+
+        if (ttl < 1 || ttl == Long.MAX_VALUE) {
+            LOGGER.trace("Expiration date is undefined for ttl value [{}]", ttl);
+            return null;
+        }
+        val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
+        return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
+    }
+
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
             val holder = buildTicketAsDocument(ticket);
@@ -154,7 +172,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<Ticket> getTicketsStream() {
+    public Stream<Ticket> stream() {
         return ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> mongoTemplate.stream(new Query(), TicketHolder.class, map))
@@ -217,6 +235,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         if (StringUtils.isNotBlank(json)) {
             LOGGER.trace("Serialized ticket into a JSON document as \n [{}]", JsonValue.readJSON(json).toString(Stringify.FORMATTED));
             val expireAt = getExpireAt(ticket);
+            LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);
             return new TicketHolder(json, encTicket.getId(), encTicket.getClass().getName(), expireAt);
         }
         throw new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON");
@@ -249,23 +268,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
         return ticketSerializationManager.deserializeTicket(holder.getJson(), holder.getType());
-    }
-
-    /**
-     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
-     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
-     */
-    private static Date getExpireAt(final Ticket ticket) {
-        val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = ticket instanceof TicketState
-            ? expirationPolicy.getTimeToLive((TicketState) ticket)
-            : expirationPolicy.getTimeToLive();
-
-        if (ttl < 1) {
-            return null;
-        }
-        val exp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl);
-        return DateTimeUtils.dateOf(Instant.ofEpochMilli(exp));
     }
 }
 

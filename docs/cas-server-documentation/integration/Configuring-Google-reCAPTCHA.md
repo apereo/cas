@@ -13,9 +13,9 @@ It uses advanced risk analysis techniques to tell humans and bots apart. CAS sup
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-captcha" %}
 
-{% include casproperties.html properties="cas.google-recaptcha" %}
+{% include_cached casproperties.html properties="cas.google-recaptcha" %}
 
 ## Internet Explorer
 

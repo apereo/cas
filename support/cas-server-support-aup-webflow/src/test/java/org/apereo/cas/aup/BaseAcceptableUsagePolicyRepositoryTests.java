@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
@@ -42,6 +43,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -53,6 +55,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.List;
@@ -70,7 +73,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class)
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired
@@ -92,9 +95,9 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         final boolean expectPolicyFound) {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        val credential = getCredential("casuser");
         val context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getConversationScope()).thenReturn(new LocalAttributeMap<>());
         val flowDefn = mock(FlowDefinition.class);
@@ -107,7 +110,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
         WebUtils.putRegisteredService(context, service);
         WebUtils.putAuthentication(authentication, context);
-        assertEquals(expectPolicyFound, getAcceptableUsagePolicyRepository().fetchPolicy(context, credential).isPresent());
+        assertEquals(expectPolicyFound, getAcceptableUsagePolicyRepository().fetchPolicy(context).isPresent());
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
@@ -115,10 +118,10 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
-        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
-        assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
+        assertTrue(getAcceptableUsagePolicyRepository().submit(context));
         if (hasLiveUpdates()) {
-            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).isAccepted());
+            assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
         }
     }
     
@@ -142,6 +145,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -151,6 +155,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreTicketCatalogConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCookieConfiguration.class,
+        CasCoreAuditConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreMultifactorAuthenticationConfiguration.class,

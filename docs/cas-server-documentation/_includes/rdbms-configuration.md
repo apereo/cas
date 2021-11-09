@@ -1,1 +1,3 @@
-{% include {{ version }}/hibernate-configuration.md %}
+<!-- fragment:keep -->
+
+{% include_cached {{ version }}/hibernate-configuration.md %}

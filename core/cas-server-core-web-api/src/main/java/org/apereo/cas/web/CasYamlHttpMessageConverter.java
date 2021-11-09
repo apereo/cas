@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * This is {@link CasYamlHttpMessageConverter}.
  *
@@ -18,5 +20,6 @@ public class CasYamlHttpMessageConverter extends AbstractJackson2HttpMessageConv
             .jsonFactory(new YAMLFactory()).build().toObjectMapper(),
             new MediaType("application", "vnd.cas.services+yaml"));
         setPrettyPrint(true);
+        setDefaultCharset(StandardCharsets.UTF_8);
     }
 }

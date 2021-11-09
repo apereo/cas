@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 
@@ -22,6 +23,7 @@ import org.opensaml.soap.soap11.Header;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * The {@link SamlProfileSamlSoap11ResponseBuilder} is responsible for
@@ -42,7 +44,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
 
     @Override
     protected Envelope buildResponse(final Assertion assertion,
-                                     final Object casAssertion,
+                                     final AuthenticatedAssertionContext casAssertion,
                                      final RequestAbstractType authnRequest,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -80,7 +82,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
      * @param messageContext the message context
      * @return the org . opensaml . saml . saml 2 . core . response
      */
-    protected Response buildSaml2Response(final Object casAssertion,
+    protected Response buildSaml2Response(final AuthenticatedAssertionContext casAssertion,
                                           final RequestAbstractType authnRequest,
                                           final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -89,7 +91,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                           final String binding,
                                           final MessageContext messageContext) {
         return (Response)
-            getSamlResponseBuilderConfigurationContext().getSamlSoapResponseBuilder()
+            getConfigurationContext().getSamlSoapResponseBuilder()
                 .build(authnRequest, request, response, casAssertion, service, adaptor, binding, messageContext);
     }
 
@@ -103,13 +105,13 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final String relayState,
                               final String binding,
                               final RequestAbstractType authnRequest,
-                              final Object assertion) throws SamlException {
-        val result = new MessageContext();
-        val ctx = result.getSubcontext(SOAP11Context.class, true);
-        ctx.setEnvelope(envelope);
+                              final AuthenticatedAssertionContext assertion,
+                              final MessageContext messageContext) throws SamlException {
+        val ctx = messageContext.getSubcontext(SOAP11Context.class, true);
+        Objects.requireNonNull(ctx).setEnvelope(envelope);
         val encoder = new HTTPSOAP11Encoder();
         encoder.setHttpServletResponse(httpResponse);
-        encoder.setMessageContext(result);
+        encoder.setMessageContext(messageContext);
         encoder.initialize();
         encoder.encode();
         return envelope;

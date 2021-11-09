@@ -20,19 +20,17 @@ To configure YubiKey accounts and obtain API keys, [refer to the documentation](
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication 
 components are enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+             
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `yubikeyAccountRepository`    | Manage and control [Google Authenticator account records](YubiKey-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+{% include_cached actuators.html endpoints="yubikeyAccountRepository" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.mfa.yubikey" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey" %}
 
 By default, all YubiKey accounts for users are allowed to authenticate. Devices that 
 need to be authorized for authentication need to have followed an out-of-band 
@@ -41,43 +39,17 @@ storage backends. Upon authentication, CAS will begin to search the configured
 registration database for matching record for the authenticated user and device 
 in order to allow for a successful authentication event.
 
-### JSON
-
-Please [see this guide](YubiKey-Authentication-Registration-JSON.html) for more info.
-
-
-### REST
-
-Please [see this guide](YubiKey-Authentication-Registration-Rest.html) for more info.
-
-### Permissive
-
-Please [see this guide](YubiKey-Authentication-Registration-Permissive.html) for more info.
-
-### JPA
-
-Please [see this guide](YubiKey-Authentication-Registration-JPA.html) for more info.
-
-### CouchDb
-
-Please [see this guide](YubiKey-Authentication-Registration-CouchDb.html) for more info.
-
-### Redis
-
-Please [see this guide](YubiKey-Authentication-Registration-Redis.html) for more info.
-
-### DynamoDb
-
-Please [see this guide](YubiKey-Authentication-Registration-DynamoDb.html) for more info.
-
-### MongoDb
-
-Please [see this guide](YubiKey-Authentication-Registration-MongoDb.html) for more info.
-
-
-### Custom
-
-Please [see this guide](YubiKey-Authentication-Registration-Custom.html) for more info.
+| Storage          | Description                                         
+|------------------------------------------------------------------------------------
+| JSON              | [See this guide](YubiKey-Authentication-Registration-JSON.html).
+| REST              | [See this guide](YubiKey-Authentication-Registration-Rest.html).
+| Permissive        | [See this guide](YubiKey-Authentication-Registration-Permissive.html).
+| JPA               | [See this guide](YubiKey-Authentication-Registration-JPA.html).
+| CouchDb           | [See this guide](YubiKey-Authentication-Registration-CouchDb.html).
+| Redis             | [See this guide](YubiKey-Authentication-Registration-Redis.html).
+| DynamoDb          | [See this guide](YubiKey-Authentication-Registration-DynamoDb.html).
+| MongoDb           | [See this guide](YubiKey-Authentication-Registration-MongoDb.html).
+| Custom            | [See this guide](YubiKey-Authentication-Registration-Custom.html).
 
 ## Device/Account Validation
 

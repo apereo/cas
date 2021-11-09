@@ -16,6 +16,11 @@ import java.util.Set;
  */
 public interface DelegatedClientIdentityProviderConfigurationProducer {
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "delegatedClientIdentityProviderConfigurationProducer";
+
+    /**
      * Produce.
      *
      * @param context the context

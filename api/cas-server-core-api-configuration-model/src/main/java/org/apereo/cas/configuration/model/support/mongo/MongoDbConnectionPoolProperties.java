@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -26,19 +27,22 @@ public class MongoDbConnectionPoolProperties implements Serializable {
      * to the life time.  A pooled connection that
      * has exceeded its life time will be closed and replaced when necessary by a new connection.
      */
-    private int lifeTime = 60_000;
+    @DurationCapable
+    private String lifeTime = "PT60S";
 
     /**
      * The maximum idle time of a pooled connection.  A zero value indicates no limit
      * to the idle time.  A pooled connection that has
      * exceeded its idle time will be closed and replaced when necessary by a new connection.
      */
-    private int idleTime = 30_000;
+    @DurationCapable
+    private String idleTime = "PT30S";
 
     /**
      * The maximum time that a thread may wait for a connection to become available.
      */
-    private int maxWaitTime = 60_000;
+    @DurationCapable
+    private String maxWaitTime = "PT60S";
 
     /**
      * Maximum number of connections to keep around.

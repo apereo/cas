@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@Tag("Simple")
+@Tag("Events")
 public class LoggingCasEventListenerTests {
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
 

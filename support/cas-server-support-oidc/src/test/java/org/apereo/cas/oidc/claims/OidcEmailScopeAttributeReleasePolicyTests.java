@@ -3,6 +3,9 @@ package org.apereo.cas.oidc.claims;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -33,11 +36,14 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
         assertNotNull(policy.getAllowedAttributes());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("email", List.of("cas@example.org"),
             "email_verified", List.of("cas@example.org")));
-        val attrs = policy.getAttributes(principal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
         assertTrue(policy.getAllowedAttributes().stream().allMatch(attrs::containsKey));
-        assertTrue(policy.determineRequestedAttributeDefinitions().containsAll(policy.getAllowedAttributes()));
+        assertTrue(policy.determineRequestedAttributeDefinitions(releasePolicyContext).containsAll(policy.getAllowedAttributes()));
     }
 
     @Test
@@ -48,19 +54,38 @@ public class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org"),
             "mail_confirmed", List.of("cas@example.org"), "phone", List.of("0000000000")));
-        val attrs = policy.getAttributes(principal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
         assertEquals(List.of("cas@example.org"), attrs.get("email"));
         assertEquals(List.of("cas@example.org"), attrs.get("email_verified"));
         assertFalse(attrs.containsKey("phone"));
 
         val serviceTicketPrincipal = CoreAuthenticationTestUtils.getPrincipal(attrs);
-        val releaseAttrs = policy.getAttributes(serviceTicketPrincipal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext2 = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(serviceTicketPrincipal)
+            .build();
+        val releaseAttrs = policy.getAttributes(releasePolicyContext2);
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email"));
         assertEquals(List.of("cas@example.org"), releaseAttrs.get("email_verified"));
         assertFalse(releaseAttrs.containsKey("phone"));
+    }
+
+    @Test
+    public void verifySerialization() {
+        val policy = new OidcEmailScopeAttributeReleasePolicy();
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicy(policy);
+        val service = getOidcRegisteredService();
+        service.setAttributeReleasePolicy(chain);
+        val serializer = new RegisteredServiceJsonSerializer();
+        val json = serializer.toString(service);
+        assertNotNull(json);
+        assertNotNull(serializer.from(json));
     }
 }

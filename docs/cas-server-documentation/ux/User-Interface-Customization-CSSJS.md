@@ -8,7 +8,9 @@ category: User Interface
 
 # CSS
 
-The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.
+The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This 
+location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library 
+and design specification as a base for its user experience.
 
 If you would like to create your own `css/custom.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
 
@@ -33,7 +35,8 @@ You can also create your own `custom.js` file, for example, and call it from wit
 <script type="text/javascript" src="/js/custom.js"></script>
 ```
 
-If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
+If you are developing themes per service, each theme also has the ability 
+to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
 Most importantly, the following Javascript libraries are utilized by CAS automatically:
 
@@ -43,7 +46,9 @@ Most importantly, the following Javascript libraries are utilized by CAS automat
 
 ## Script Loading
 
-CAS provides a callback function that allows adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related functions that depend on JQuery inside the actual page.
+CAS provides a callback function that allows adopters to be notified when script 
+loading has completed and this would be a safe time to execute/load other Javascript-related 
+functions that depend on JQuery inside the actual page.
 
 ```javascript
 function jqueryReady() {
@@ -53,7 +58,8 @@ function jqueryReady() {
 
 ## Checking CAPSLOCK
 
-CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check is enforced by the `cas.js` file.
+CAS will display a brief warning when the CAPSLOCK key is turned on during the typing 
+of the credential password. This check is enforced by the `cas.js` file.
 
 ## Browser Cookie Support
 
@@ -62,11 +68,16 @@ user if the browser has turned off its support for cookies. This behavior is con
 
 ## Preserving Anchor Fragments
 
-Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking. CAS is configured by default to preserve anchor fragments where and when specified. There is nothing further for you to do.
+Anchors/fragments may be lost across redirects as the server-side handler of the form post 
+ignores the client-side anchor, unless appended to the form POST url. This is needed if you 
+want a CAS-authenticated application to be able to use anchors/fragments when bookmarking. CAS 
+is configured by default to preserve anchor fragments where and when specified. There is 
+nothing further for you to do.
 
 ### WebJARs for Javascript/CSS Libraries
 
-The CAS application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on 
+The CAS application packages third party static resources inside the CAS webapp rather 
+than referencing CDN links so that CAS may be deployed on 
 networks with limited internet access.
 
 The 3rd party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
@@ -79,7 +90,10 @@ For developers modifying CAS, if adding or modifying a 3rd party library, the st
 - Add entry to `core/cas-server-core-web/src/main/resources/cas_common_messages.properties` for each resource (e.g. js or css). 
 - Reference the version from `gradle.properties` in the URL and it will be filtered in at build time).
 
-<div class="alert alert-info"><strong>Resource Caching</strong><p>The build attempts to rebuild all relevant modules again when version numbers change and resources upgraded. If you do need to forcefully remove cached artifacts and repackage the application anew, run the build's <code>clean</code> task inside the <code>core/cas-server-core-web</code> module.</p></div>
+<div class="alert alert-info"><strong>Resource Caching</strong><p>The build attempts to 
+rebuild all relevant modules again when version numbers change and resources upgraded. If
+you do need to forcefully remove cached artifacts and repackage the application anew, run 
+the build's <code>clean</code> task inside the <code>core/cas-server-core-web</code> module.</p></div>
 
 For example:
 
@@ -95,4 +109,11 @@ Then Reference the entry from `cas_common_messages.properties` in the relevant v
 
 #### Building WebJARs
 
-You can search for webjars at http://webjars.org. There are three flavors of WebJARs that you can read about but the NPM and Bower types can be created automatically for any version (if they don't already exist) as long as there exists an NPM or Bower package for the web resources you want to use. Click the "Add a webjar" button and follow the instructions. If customizing the UI in an overlay, the deployer can add webjars as dependencies to their overlay project and reference the URLs of the resource either directly in an html file or via adding an entry to a `common_messages.properties` file in the overlay project's `src\main\resources` folder.
+You can search for webjars at http://webjars.org. There are three flavors of WebJARs that you 
+can read about but the NPM and Bower types can be created automatically for any version 
+(if they don't already exist) as long as there exists an NPM or Bower package for the 
+web resources you want to use. Click the "Add a webjar" button and follow 
+the instructions. If customizing the UI in an overlay, the deployer can add webjars as 
+dependencies to their overlay project and reference the URLs of the resource either directly 
+in an html file or via adding an entry to a `common_messages.properties` file 
+in the overlay project's `src\main\resources` folder.

@@ -50,7 +50,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
             val redisKey = getTicketRedisKey(encodeTicketId(ticket.getId()));
@@ -86,13 +86,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        try (val ticketsStream = getTicketsStream()) {
+        try (val ticketsStream = stream()) {
             return ticketsStream.collect(Collectors.toSet());
         }
     }
 
     @Override
-    public Stream<? extends Ticket> getTicketsStream() {
+    public Stream<? extends Ticket> stream() {
         return getKeysStream()
             .map(redisKey -> {
                 val ticket = this.client.boundValueOps(redisKey).get();
@@ -156,8 +156,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      */
     private Stream<String> getKeysStream() {
         val cursor = Objects.requireNonNull(client.getConnectionFactory()).getConnection()
-            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey())
-                .build());
+            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey()).build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .map(key -> (String) client.getKeySerializer().deserialize(key))

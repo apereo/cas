@@ -6,7 +6,6 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -34,20 +33,19 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext, WebUtils.getCredential(requestContext));
+        return verify(requestContext);
     }
 
     /**
      * Verify whether the policy is accepted.
      *
-     * @param context    the context
-     * @param credential the credential
+     * @param context the context
      * @return {@link CasWebflowConstants#TRANSITION_ID_AUP_ACCEPTED} if policy is
      * accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
-    private Event verify(final RequestContext context, final Credential credential) {
+    private Event verify(final RequestContext context) {
 
-        val res = repository.verify(context, credential);
+        val res = repository.verify(context);
         WebUtils.putPrincipal(context, res.getPrincipal());
         WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
 
@@ -61,7 +59,6 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();

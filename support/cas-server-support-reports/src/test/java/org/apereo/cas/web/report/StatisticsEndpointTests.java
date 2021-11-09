@@ -27,7 +27,7 @@ public class StatisticsEndpointTests extends AbstractCasEndpointTests {
     private StatisticsEndpoint statisticsEndpoint;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @BeforeEach

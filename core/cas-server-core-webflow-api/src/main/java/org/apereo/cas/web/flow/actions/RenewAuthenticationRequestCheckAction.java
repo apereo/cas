@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,15 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class RenewAuthenticationRequestCheckAction extends AbstractAction {
-    private final SingleSignOnParticipationStrategy renewalStrategy;
+    private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val ssoParticipation = this.renewalStrategy.supports(requestContext) && this.renewalStrategy.isParticipating(requestContext);
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .requestContext(requestContext)
+            .build();
+        val ssoParticipation = this.singleSignOnParticipationStrategy.supports(ssoRequest)
+            && this.singleSignOnParticipationStrategy.isParticipating(ssoRequest);
         if (ssoParticipation) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
         }

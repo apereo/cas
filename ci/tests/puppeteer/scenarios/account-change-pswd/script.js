@@ -1,26 +1,12 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
-
-    await page.type('#username', "mustchangepswd");
-    await page.type('#password', "mustchangepswd");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-
-    const header = await page.$eval('#pwdmain h3', el => el.innerText)
-    console.log(header)
-    assert(header === "You must change your password.")
-
-    let pwddesc = await page.$eval('#pwddesc', el => el.innerText)
-    console.log(pwddesc)
-    assert(pwddesc === "Please change your password.")
-    
+    await cas.loginWith(page, "mustchangepswd", "mustchangepswd");
+    await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepswd. You must change your password.")
+    await cas.assertInnerText(page, "#pwddesc", "Please change your password.")
     await browser.close();
 })();

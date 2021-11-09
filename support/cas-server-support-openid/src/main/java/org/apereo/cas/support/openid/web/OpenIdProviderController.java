@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
  * OpenId Identity Provider.
  *
  * @author Scott Battaglia
- * @deprecated 6.2
  * @since 3.1
+ * @deprecated 6.2
  */
 @Controller("openIdProviderController")
 @Deprecated(since = "6.2.0")
@@ -35,7 +35,7 @@ public class OpenIdProviderController {
      */
     @GetMapping("/openid/*")
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) {
+                                              final HttpServletResponse response) {
         return new ModelAndView("openIdProviderView",
             CollectionUtils.wrap("openid_server", casProperties.getServer().getPrefix()));
     }

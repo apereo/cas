@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.web.flow.BaseU2FWebflowActionTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -15,10 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.u2f.json.location=file:src/test/resources/u2f-accounts.json"
     }
 )
-@DirtiesContext
-@Tag("MFA")
+@Tag("MFAProvider")
 public class U2FAuthenticationHandlerTests {
     @Autowired
     @Qualifier("u2fAuthenticationHandler")
@@ -65,6 +66,7 @@ public class U2FAuthenticationHandlerTests {
 
         val credential = new U2FTokenCredential(token);
         assertTrue(u2fAuthenticationHandler.supports(credential));
+        assertTrue(u2fAuthenticationHandler.supports(credential.getClass()));
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -75,5 +77,34 @@ public class U2FAuthenticationHandlerTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
         val result = u2fAuthenticationHandler.authenticate(credential);
         assertNotNull(result);
+
+        val secondUser = UUID.randomUUID().toString();
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(secondUser), context);
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", secondUser, authnData);
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+    }
+
+    @Test
+    public void verifyNoAuthn() throws Exception {
+        val credential = new U2FTokenCredential("token");
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        assertThrows(IllegalArgumentException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+    }
+
+    @Test
+    public void verifyBadJson() throws Exception {
+        val credential = new U2FTokenCredential("token");
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser"), context);
+        assertThrows(PreventedException.class, () -> u2fAuthenticationHandler.authenticate(credential));
     }
 }

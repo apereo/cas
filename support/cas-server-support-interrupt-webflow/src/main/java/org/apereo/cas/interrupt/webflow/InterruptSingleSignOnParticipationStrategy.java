@@ -1,10 +1,13 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
-import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 
-import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
+import java.util.Objects;
 
 /**
  * This is {@link InterruptSingleSignOnParticipationStrategy}.
@@ -12,22 +15,32 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class InterruptSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
+public class InterruptSingleSignOnParticipationStrategy extends BaseSingleSignOnParticipationStrategy {
 
-    @Override
-    public boolean supports(final RequestContext context) {
-        val response = InterruptUtils.getInterruptFrom(context);
-        return response != null;
+    public InterruptSingleSignOnParticipationStrategy(final ServicesManager servicesManager,
+                                                      final TicketRegistrySupport ticketRegistrySupport,
+                                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
     }
 
     @Override
-    public boolean isParticipating(final RequestContext ctx) {
-        val response = InterruptUtils.getInterruptFrom(ctx);
-        return response != null && response.isSsoEnabled();
+    public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .stream()
+            .map(InterruptUtils::getInterruptFrom)
+            .anyMatch(Objects::nonNull);
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) {
+        return ssoRequest.getRequestContext()
+            .stream()
+            .map(InterruptUtils::getInterruptFrom)
+            .allMatch(response -> response != null && response.isSsoEnabled());
+    }
+
+    @Override
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
         return TriStateBoolean.FALSE;
     }
 }

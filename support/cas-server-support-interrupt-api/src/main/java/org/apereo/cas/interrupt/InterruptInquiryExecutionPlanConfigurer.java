@@ -14,6 +14,7 @@ public interface InterruptInquiryExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureInterruptInquiryExecutionPlan(InterruptInquiryExecutionPlan plan);
+
     /**
      * Gets name.
      *

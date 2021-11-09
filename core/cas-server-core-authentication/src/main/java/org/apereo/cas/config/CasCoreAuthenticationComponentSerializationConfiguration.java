@@ -31,6 +31,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -46,7 +47,7 @@ import javax.security.auth.login.AccountLockedException;
 public class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casCoreAuthenticationComponentSerializationPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer casCoreAuthenticationComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(SimpleWebApplicationServiceImpl.class);

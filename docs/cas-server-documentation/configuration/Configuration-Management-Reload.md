@@ -42,11 +42,11 @@ that house CAS settings and upon changes will auto-refresh itself.
 The CAS application context and runtime environment that contains all Spring components and bean definitions
 can be reloaded using the following administrative endpoint:
 
-The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|----------------------------------------------------------------------------
-| `reloadContext`          | Reloads the CAS application context and all bean definitions where necessary.
+## Actuator Endpoints
+
+The following endpoints are provided by Spring Cloud:
+
+{% include_cached actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
 
 ### Configuration
 
@@ -62,7 +62,7 @@ via the CAS admin endpoints.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-events-configuration" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-events-configuration" %}
 
 #### Spring Cloud
 

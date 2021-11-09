@@ -10,6 +10,6 @@ category: Notifications
 
 To learn more, [visit this site](http://www.clickatell.com/).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-clickatell" %}
 
-{% include casproperties.html properties="cas.sms-provider.clickatell" %}
+{% include_cached casproperties.html properties="cas.sms-provider.clickatell" %}

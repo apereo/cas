@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -31,11 +32,14 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -43,19 +47,24 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import lombok.val;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.jupiter.api.BeforeEach;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -66,21 +75,20 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = BaseOAuth20AuthenticatorTests.SharedTestConfiguration.class)
-@DirtiesContext
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableRetry
 public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    protected ServiceFactory serviceFactory;
+    protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
     @Qualifier("accessTokenJwtBuilder")
@@ -90,6 +98,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Qualifier("defaultPrincipalResolver")
     protected PrincipalResolver defaultPrincipalResolver;
 
+    @Autowired
+    @Qualifier("oAuthClientAuthenticator")
+    protected Authenticator oAuthClientAuthenticator;
+
     protected OAuthRegisteredService service;
 
     protected OAuthRegisteredService serviceJwtAccessToken;
@@ -98,8 +110,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
     protected OAuthRegisteredService serviceWithoutSecret2;
 
+    protected OAuthRegisteredService serviceWithAttributesMapping;
+
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
     @Autowired
@@ -134,12 +148,24 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceJwtAccessToken.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         serviceJwtAccessToken.setJwtAccessToken(true);
 
-        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken);
+        serviceWithAttributesMapping = new OAuthRegisteredService();
+        serviceWithAttributesMapping.setName("OAuth5");
+        serviceWithAttributesMapping.setId(5);
+        serviceWithAttributesMapping.setServiceId("https://www.example5.org");
+        serviceWithAttributesMapping.setClientSecret("secret");
+        serviceWithAttributesMapping.setClientId("serviceWithAttributesMapping");
+        serviceWithAttributesMapping.setUsernameAttributeProvider(
+            new DefaultRegisteredServiceUsernameProvider(CaseCanonicalizationMode.LOWER.name()));
+        serviceWithAttributesMapping.setAttributeReleasePolicy(
+            new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{"eduPersonAffiliation"})));
+
+        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -187,6 +213,18 @@ public abstract class BaseOAuth20AuthenticatorTests {
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
         return accessToken;
+    }
+
+    protected static OAuth20Code getCode() {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        val service = RegisteredServiceTestUtils.getService();
+        val oauthCode = mock(OAuth20Code.class);
+        when(oauthCode.getId()).thenReturn(UUID.randomUUID().toString());
+        when(oauthCode.getTicketGrantingTicket()).thenReturn(tgt);
+        when(oauthCode.getAuthentication()).thenReturn(tgt.getAuthentication());
+        when(oauthCode.getService()).thenReturn(service);
+        when(oauthCode.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        return oauthCode;
     }
 
     protected static OAuth20RefreshToken getRefreshToken(final OAuthRegisteredService service) {

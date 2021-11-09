@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.acceptto.organization-secret=thisisasecret",
         "cas.authn.mfa.acceptto.registration-api-public-key.location=classpath:publickey.pem"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class AccepttoQRCodeAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {

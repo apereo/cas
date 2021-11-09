@@ -1,11 +1,11 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +37,11 @@ public class CouchbaseAcceptableUsagePolicyRepository extends BaseAcceptableUsag
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) {
         try {
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val content = MAPPER.writeValueAsString(Map.of(
-                "username", credential.getId(),
+                "username", principal.getId(),
                 aupProperties.getCore().getAupAttributeName(), Boolean.TRUE));
             couchbase.bucketUpsertDefaultCollection(content);
             return true;

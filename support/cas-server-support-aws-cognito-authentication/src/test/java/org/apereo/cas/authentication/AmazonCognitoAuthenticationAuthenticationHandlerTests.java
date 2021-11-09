@@ -4,10 +4,14 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.AmazonCognitoAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -53,8 +57,12 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
     AmazonCognitoAuthenticationConfiguration.class
 }, properties = {
     "cas.authn.cognito.user-pool-id=us-west-2_igeBNHRsb",
@@ -62,7 +70,8 @@ import static org.mockito.Mockito.*;
     "cas.authn.cognito.client-execution-timeout=30000",
     "cas.authn.cognito.credential-access-key=test",
     "cas.authn.cognito.credential-secret-key=test",
-    "cas.authn.cognito.client-id=4o5qr8egumc72iv6qibm8foeh6"
+    "cas.authn.cognito.client-id=4o5qr8egumc72iv6qibm8foeh6",
+    "cas.authn.cognito.mapped-attributes.[custom\\:netid]=netid"
 })
 @Tag("AmazonWebServices")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -159,6 +168,34 @@ public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
         val result = handler.authenticate(creds);
         assertNotNull(result);
+    }
+
+    @Test
+    @SuppressWarnings("JdkObsolete")
+    public void verifyOKWithMappedAttributes() throws Exception {
+        val jwtProcessor = getConfigurableJWTProcessor("casuser");
+        val provider = mock(CognitoIdentityProviderClient.class);
+
+        val authResult = AuthenticationResultType.builder().idToken("some-id-token").build();
+        val result2 = AdminInitiateAuthResponse.builder().authenticationResult(authResult).build();
+        when(provider.adminInitiateAuth(any(AdminInitiateAuthRequest.class))).thenReturn(result2);
+
+        val userResult1 = AdminGetUserResponse.builder()
+                .username("casuser")
+                .userStatus("OK")
+                .userCreateDate(Instant.now(Clock.systemUTC()))
+                .userLastModifiedDate(Instant.now(Clock.systemUTC()))
+                .userAttributes(List.of(AttributeType.builder().name("custom:netid").value("cas789").build()))
+                .build();
+
+        when(provider.adminGetUser(any(AdminGetUserRequest.class))).thenReturn(userResult1);
+        val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-ok", "Hell063!!");
+
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(getClass().getSimpleName(), mock(ServicesManager.class),
+                PrincipalFactoryUtils.newPrincipalFactory(), provider,
+                casProperties.getAuthn().getCognito(), jwtProcessor);
+        val result = handler.authenticate(creds);
+        assertEquals("cas789", result.getPrincipal().getAttributes().get("netid").get(0));
     }
 
     private static ConfigurableJWTProcessor getConfigurableJWTProcessor(final String sub) throws Exception {

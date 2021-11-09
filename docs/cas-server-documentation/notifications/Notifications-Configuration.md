@@ -16,6 +16,6 @@ and platforms supported by CAS are listed below. Note that an active/professiona
 
 Support is enabled via the relevant modules using the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-notifications-fcm" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-notifications-fcm" %}
 
-{% include casproperties.html properties="cas.google-firebase-messaging" %}
+{% include_cached casproperties.html properties="cas.google-firebase-messaging" %}

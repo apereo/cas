@@ -3,7 +3,9 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.Getter;
@@ -11,9 +13,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.parallel.Execution;
@@ -21,14 +21,17 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CouchbaseServiceRegistryConfiguration.class
 },
@@ -58,21 +63,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @ResourceLock("Couchbase")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestExecutionListeners(value = {
+    SpringBootDependencyInjectionTestExecutionListener.class,
+    CouchbaseServiceRegistryTests.DisposingTestExecutionListener.class
+})
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry newServiceRegistry;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Test
-    @Order(Integer.MAX_VALUE)
-    public void verifyDestroyOperation() {
-        assertNotNull(newServiceRegistry);
-        applicationContext.getBeanFactory().destroyBean(newServiceRegistry);
-    }
 
     @ParameterizedTest
     @MethodSource(GET_PARAMETERS)
@@ -82,8 +81,15 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
         assertEquals(newServiceRegistry.save(svc).getServiceId(), svc.getServiceId(), registeredServiceClass::getName);
     }
 
+    public static class DisposingTestExecutionListener implements TestExecutionListener {
+        @Override
+        public void afterTestClass(final TestContext testContext) throws Exception {
+            var registry = testContext.getApplicationContext().getBean("couchbaseServiceRegistry", ServiceRegistry.class);
+            DisposableBean.class.cast(registry).destroy();
+        }
+    }
+
     @TestConfiguration("CouchbaseServiceRegistryTestConfiguration")
-    @Lazy(false)
     public static class CouchbaseServiceRegistryTestConfiguration {
 
         @SneakyThrows

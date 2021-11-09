@@ -1,16 +1,15 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.Authentication;
-
 import java.time.ZonedDateTime;
 
 /**
  * The interface to describe the status and status of the ticket,
  * with metadata such as number of times used, last time used, etc.
+ *
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public interface TicketState {
+public interface TicketState extends AuthenticationAwareTicket {
 
     /**
      * Returns the number of times a ticket was used.
@@ -39,13 +38,6 @@ public interface TicketState {
      * @return the creation time of the ticket.
      */
     ZonedDateTime getCreationTime();
-
-    /**
-     * Authentication information from the ticket. This may be null.
-     *
-     * @return the authentication information.
-     */
-    Authentication getAuthentication();
 
     /**
      * Method to retrieve the TicketGrantingTicket that granted this ticket.

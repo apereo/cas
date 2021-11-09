@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("Simple")
+@Tag("Impersonation")
 public class SurrogatePrincipalElectionStrategyTests {
     private static Principal buildSurrogatePrincipal(final String surrogateId,
                                                      final Authentication primaryAuth,

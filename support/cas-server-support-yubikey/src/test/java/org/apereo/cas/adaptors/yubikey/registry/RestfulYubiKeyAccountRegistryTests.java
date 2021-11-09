@@ -39,7 +39,7 @@ import static org.springframework.http.HttpStatus.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,

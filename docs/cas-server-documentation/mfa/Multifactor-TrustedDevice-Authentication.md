@@ -31,19 +31,17 @@ This can be optionally disabled and applied only to a selected set of providers.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `multifactorTrustedDevices`   | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine. A `GET` operation produces a list of all trusted devices. Specifying a username in the URL as the placeholder/selector will fetch devices registered for that user (i.e. `multifactorTrustedDevices/{username}`). A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactorTrustedDevices/{id}`).
+
+{% include_cached actuators.html endpoints="multifactorTrustedDevices" %}
 
 ## Settings
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
 
 ## Authentication Context
 
@@ -70,7 +68,7 @@ the cleaner running on one designated CAS
 node only and turn it off on all others via CAS settings. Keeping the cleaner running on all 
 nodes may likely lead to severe performance and locking issues.</p></div>
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
 
 ### Default
 

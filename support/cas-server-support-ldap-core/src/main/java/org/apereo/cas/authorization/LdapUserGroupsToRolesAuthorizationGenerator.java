@@ -3,6 +3,7 @@ package org.apereo.cas.authorization;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapEntry;
@@ -36,15 +37,6 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
 
     private final SearchOperation groupSearchOperation;
 
-    /**
-     * Instantiates a new Ldap user groups to roles authorization generator.
-     *
-     * @param userSearchOperation  the user search executor
-     * @param allowMultipleResults the allow multiple results
-     * @param groupAttributeName   the group attribute name
-     * @param groupPrefix          the group prefix
-     * @param groupSearchOperation the group search executor
-     */
     public LdapUserGroupsToRolesAuthorizationGenerator(final SearchOperation userSearchOperation,
                                                        final boolean allowMultipleResults,
                                                        final String groupAttributeName,
@@ -57,24 +49,20 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     }
 
     @Override
+    @SneakyThrows
     protected Optional<UserProfile> generateAuthorizationForLdapEntry(final UserProfile profile, final LdapEntry userEntry) {
-        try {
-            LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
-            val response = this.groupSearchOperation.execute(
-                LdapUtils.newLdaptiveSearchFilter(this.groupSearchOperation.getTemplate().getFilter(),
-                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
-            LOGGER.debug("LDAP role search response: [{}]", response);
-
-            for (val entry : response.getEntries()) {
-                val groupAttribute = entry.getAttribute(this.groupAttributeName);
-                if (groupAttribute == null) {
-                    LOGGER.warn("Role attribute not found on entry [{}]", entry);
-                    continue;
-                }
-                addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
+        LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
+        val response = this.groupSearchOperation.execute(
+            LdapUtils.newLdaptiveSearchFilter(this.groupSearchOperation.getTemplate().getFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
+        LOGGER.debug("LDAP role search response: [{}]", response);
+        for (val entry : response.getEntries()) {
+            val groupAttribute = entry.getAttribute(this.groupAttributeName);
+            if (groupAttribute == null) {
+                LOGGER.warn("Role attribute not found on entry [{}]", entry);
+                continue;
             }
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("LDAP error fetching roles for user.", e);
+            addProfileRolesFromAttributes(profile, groupAttribute, this.groupPrefix);
         }
         return Optional.ofNullable(profile);
     }

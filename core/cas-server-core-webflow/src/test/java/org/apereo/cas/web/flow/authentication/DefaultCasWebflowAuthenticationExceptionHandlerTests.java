@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 import java.net.URI;
 import java.util.LinkedHashSet;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
@@ -45,16 +46,19 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(UnauthorizedServiceForPrincipalException.class);
         errors.add(UnauthorizedAuthenticationException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         this.context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
-        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(errors,
+        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(catalog,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 

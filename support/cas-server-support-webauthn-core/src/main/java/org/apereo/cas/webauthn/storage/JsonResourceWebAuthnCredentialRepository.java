@@ -69,7 +69,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         return readFromJsonRepository().values().stream().flatMap(Collection::stream);
     }
 

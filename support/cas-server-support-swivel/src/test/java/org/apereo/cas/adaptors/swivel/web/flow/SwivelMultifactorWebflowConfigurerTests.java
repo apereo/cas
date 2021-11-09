@@ -24,7 +24,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.swivel.trusted-device-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @Getter
 public class SwivelMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired

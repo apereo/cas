@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategyTests;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategyTests;
 import org.apereo.cas.authentication.GroovyMultifactorAuthenticationProviderBypassEvaluatorTests;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBeanTests;
 import org.apereo.cas.authentication.RestMultifactorAuthenticationProviderBypassEvaluatorTests;
@@ -24,9 +24,8 @@ import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests;
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTriggerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link MultifactorAuthenticationTestsSuite}.
@@ -39,7 +38,7 @@ import org.junit.runner.RunWith;
     DefaultRequestedAuthenticationContextValidatorTests.class,
     MultifactorAuthenticationProviderBypassTests.class,
     GroovyMultifactorAuthenticationProviderBypassEvaluatorTests.class,
-    DefaultMultifactorTriggerSelectionStrategyTests.class,
+    DefaultMultifactorAuthenticationTriggerSelectionStrategyTests.class,
     RestMultifactorAuthenticationProviderBypassEvaluatorTests.class,
     AdaptiveMultifactorAuthenticationTriggerTests.class,
     GlobalMultifactorAuthenticationTriggerTests.class,
@@ -59,6 +58,6 @@ import org.junit.runner.RunWith;
     DefaultChainingMultifactorAuthenticationBypassProviderTests.class,
     DefaultChainingMultifactorAuthenticationProviderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class MultifactorAuthenticationTestsSuite {
 }

@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 
@@ -63,7 +63,7 @@ public class TokenAuthenticationActionTests extends AbstractCentralAuthenticatio
     private ObjectProvider<Action> action;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ObjectProvider<ServicesManager> servicesManager;
 
     @BeforeEach

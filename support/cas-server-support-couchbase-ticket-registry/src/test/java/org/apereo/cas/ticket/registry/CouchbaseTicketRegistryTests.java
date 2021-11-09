@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -9,15 +10,18 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,20 +45,14 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestExecutionListeners(value = {
+    SpringBootDependencyInjectionTestExecutionListener.class,
+    CouchbaseTicketRegistryTests.DisposingTestExecutionListener.class
+})
 public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @RepeatedTest(1)
-    @Order(Integer.MAX_VALUE)
-    public void verifyDestroyOperation() {
-        assertNotNull(newTicketRegistry);
-        applicationContext.getBeanFactory().destroyBean(newTicketRegistry);
-    }
 
     @RepeatedTest(2)
     public void verifyAddAndLoadExpired() {
@@ -70,8 +68,16 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                newTicketRegistry.addTicket(null);
+                newTicketRegistry.addTicket((Ticket) null);
             }
         });
+    }
+
+    public static class DisposingTestExecutionListener implements TestExecutionListener {
+        @Override
+        public void afterTestClass(final TestContext testContext) throws Exception {
+            var registry = testContext.getApplicationContext().getBean(TicketRegistry.BEAN_NAME, TicketRegistry.class);
+            DisposableBean.class.cast(registry).destroy();
+        }
     }
 }

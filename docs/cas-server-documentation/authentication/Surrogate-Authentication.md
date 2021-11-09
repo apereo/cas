@@ -23,9 +23,9 @@ Example use cases for impersonation include:
 
 Surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
 
-{% include casproperties.html properties="cas.authn.surrogate.separator,cas.authn.surrogate.tgt" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate.separator,cas.authn.surrogate.tgt" %}
 
 ## Account Storage
 
@@ -35,31 +35,18 @@ The following account stores may be configured and used to locate surrogates aut
 
 Surrogate accounts may be defined statically in the CAS configuration. 
 
-{% include casproperties.html properties="cas.authn.surrogate.simple.surrogates" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate.simple.surrogates" %}
 
-### JSON
-   
-Please [see this guide](Surrogate-Authentication-Storage-JSON.html).
+### Others
 
-### LDAP
-
-Please [see this guide](Surrogate-Authentication-Storage-LDAP.html).
-
-### CouchDb
-
-Please [see this guide](Surrogate-Authentication-Storage-CouchDb.html).
-
-### JDBC
-
-Please [see this guide](Surrogate-Authentication-Storage-JDBC.html).
-
-### REST
-
-Please [see this guide](Surrogate-Authentication-Storage-REST.html).
-
-### Custom
-
-Please [see this guide](Surrogate-Authentication-Storage-Custom.html).
+| Storage          | Description                                         
+|------------------------------------------------------------------------------------
+| JSON             | [See this guide](Surrogate-Authentication-Storage-JSON.html).
+| LDAP             | [See this guide](Surrogate-Authentication-Storage-LDAP.html).
+| CouchDb          | [See this guide](Surrogate-Authentication-Storage-CouchDb.html).
+| JDBC             | [See this guide](Surrogate-Authentication-Storage-JDBC.html).
+| REST             | [See this guide](Surrogate-Authentication-Storage-REST.html).
+| Custom           | [See this guide](Surrogate-Authentication-Storage-Custom.html).
 
 ## Account Selection
 
@@ -110,14 +97,14 @@ SERVER IP ADDRESS: 127.0.0.1
 
 Additionally, failure and success events may also communicated via SMS and/or email messages to relevant parties. 
      
-{% include casproperties.html properties="cas.authn.surrogate.mail,cas.authn.surrogate.sms" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate.mail,cas.authn.surrogate.sms" %}
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html).
  
 ## Surrogate Principal Resolution
 
-{% include casproperties.html properties="cas.authn.surrogate.principal" %}
+{% include_cached casproperties.html properties="cas.authn.surrogate.principal" %}
 
 ## REST Protocol
 

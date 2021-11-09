@@ -13,7 +13,7 @@ The following configuration describes how to fetch and retrieve attributes from 
 If you wish to directly and separately retrieve attributes from a static JSON source,
 the following settings are then relevant:
 
-{% include casproperties.html properties="cas.authn.attribute-repository.json" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.json" %}
 
 The format of the file may be:
 

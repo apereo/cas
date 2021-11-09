@@ -69,11 +69,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
     properties = {
-        "spring.aop.proxy-target-class=true",
         "cas.authn.throttle.failure.rangeSeconds=1",
         "cas.authn.throttle.failure.threshold=2"
     })
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
@@ -82,6 +81,13 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
+
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @BeforeEach
     public void initialize() {
@@ -149,15 +155,10 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
+        } finally {
+            getThrottle().afterCompletion(request, response, null, null);
         }
         throw new AssertionError("Expected AbstractAuthenticationException");
-    }
-
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
     }
 
     @ImportAutoConfiguration({

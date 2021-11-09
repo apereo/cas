@@ -1,6 +1,7 @@
 {
   "dependencies": "pm-webflow",
   "properties": [
-    "--cas.authn.pm.core.enabled=true"
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.audit.engine.enabled=false"
   ]
 }

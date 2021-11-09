@@ -1,9 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -34,14 +32,12 @@ import java.util.TreeMap;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final int MAP_SIZE = 8;
-
     private static final long serialVersionUID = -2814928645221579489L;
 
-    private Map<String, String> allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, String> allowedAttributes = new LinkedHashMap<>();
 
     public WSFederationClaimsReleasePolicy() {
-        setAllowedAttributes(new LinkedHashMap<>(MAP_SIZE));
+        setAllowedAttributes(new LinkedHashMap<>());
     }
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
@@ -49,8 +45,8 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     }
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attrs) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(resolvedAttributes.size());
@@ -63,8 +59,13 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
                 val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
-                LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
-                mapSingleAttributeDefinition(claim.getUri(), entry.getValue(), attributeValue, resolvedAttributes, attributesToRelease);
+                if (resolvedAttributes.containsKey(claim.getUri())) {
+                    attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
+                } else {
+                    LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
+                    mapSingleAttributeDefinition(claim.getUri(), entry.getValue(),
+                        attributeValue, resolvedAttributes, attributesToRelease);
+                }
             });
         return attributesToRelease;
     }
@@ -151,7 +152,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

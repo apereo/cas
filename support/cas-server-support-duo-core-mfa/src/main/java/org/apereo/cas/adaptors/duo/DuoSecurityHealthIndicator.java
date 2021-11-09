@@ -31,7 +31,7 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
             .forEach(p -> {
                 val duoService = p.getDuoAuthenticationService();
                 val result = duoService.ping();
-                val b = builder.withDetail("duoApiHost", duoService.getApiHost());
+                val b = builder.withDetail("duoApiHost", duoService.getProperties().getDuoApiHost());
                 if (result) {
                     b.up();
                 } else {

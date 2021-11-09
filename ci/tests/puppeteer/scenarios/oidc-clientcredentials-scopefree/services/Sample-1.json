@@ -1,0 +1,22 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:8082/cas/.*",
+  "name": "Sample",
+  "id": 1,
+  "evaluationOrder" : 10,
+  "generateRefreshToken": "true",
+  "jwtAccessToken": "true",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ],
+  "scopes" : [ "java.util.HashSet", ["openid"]],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "name" : "groovy { return ['casuser'] }",
+      "cn" : "groovy { return 'CAS' }",
+      "given-name" : "groovy { return 'CAS User' }"
+    }
+  }
+}

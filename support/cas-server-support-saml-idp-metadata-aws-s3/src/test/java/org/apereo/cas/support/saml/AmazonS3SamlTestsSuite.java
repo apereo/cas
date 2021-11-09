@@ -3,9 +3,8 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataGeneratorTests;
 import org.apereo.cas.support.saml.metadata.resolver.AmazonS3SamlRegisteredServiceMetadataResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AmazonS3SamlTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     AmazonS3SamlRegisteredServiceMetadataResolverTests.class,
     AmazonS3SamlIdPMetadataGeneratorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AmazonS3SamlTestsSuite {
 }

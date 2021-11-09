@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CassandraAuthenticationTestsSuite}.
@@ -13,6 +12,6 @@ import org.junit.runner.RunWith;
 @SelectClasses(
     CassandraAuthenticationHandlerTests.class
 )
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CassandraAuthenticationTestsSuite {
 }

@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("WebflowEvents")
 @TestPropertySource(properties = {
+    "cas.authn.adaptive.risk.ip.enabled=true",
     "cas.authn.adaptive.risk.response.sms.text=Message",
     "cas.authn.adaptive.risk.response.sms.from=3487244312"
 })

@@ -1,0 +1,22 @@
+{
+  "dependencies": "x509-webflow",
+  "properties": [
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
+    "--server.ssl.trust-store-password=changeit",
+    "--server.ssl.key-store-type=PKCS12",
+    "--server.ssl.client-auth=want",
+
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
+    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
+
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login/key.pem"
+}

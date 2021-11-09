@@ -1,0 +1,9 @@
+--- !<org.apereo.cas.services.RegexRegisteredService>
+serviceId: "https://.+github.io.*"
+name: "Sample"
+id: 1
+description: "description"
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy> {}
+accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy>
+  enabled: true
+  ssoEnabled: true

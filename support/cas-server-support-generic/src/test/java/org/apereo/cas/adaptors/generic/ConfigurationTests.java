@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
@@ -79,7 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.json.location=classpath:sample-users.json",
     "cas.authn.reject.users=one,two,three"
 })
-@Tag("Simple")
+@Tag("CasConfiguration")
 public class ConfigurationTests {
     @Autowired
     @Qualifier("fileAuthenticationHandler")

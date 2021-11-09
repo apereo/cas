@@ -8,12 +8,15 @@ import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +45,9 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsSerializationConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasCoreNotificationsConfiguration.class,
-    CasCoreUtilConfiguration.class
+    CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @Tag("Tickets")
 public class DefaultTicketStringSerializationManagerTests {
@@ -63,6 +68,8 @@ public class DefaultTicketStringSerializationManagerTests {
         assertNotNull(result);
         val deserializedTicket = ticketSerializationManager.deserializeTicket(result, TicketGrantingTicket.class);
         assertNotNull(deserializedTicket);
+
+        assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(result, ProxyTicket.class));
     }
 
     @Test

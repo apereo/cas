@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class DuoSecurityHealthIndicatorTests {
 
     @Test
@@ -29,9 +29,11 @@ public class DuoSecurityHealthIndicatorTests {
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
+        val props = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("https://api.duosecurity.com");
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.ping()).thenReturn(true);
-        when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
+        when(duoService.getProperties()).thenReturn(props);
 
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);

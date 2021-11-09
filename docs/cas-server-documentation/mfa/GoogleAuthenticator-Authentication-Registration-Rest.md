@@ -17,8 +17,9 @@ The behavior is only activated when an endpoint url is provided.
 | `GET`     | `id`                | `200`. Account record in the body for the user. | Fetch record for the given identifier.
 | `GET`     | `id`, `username`    | `200`. Account record in the body for the user. | Fetch user record for the given identifier.
 | `GET`     | N/A                 | `200`. Account records currently registered. | Fetch all records
-| `DELETE`  | N/A                 | `200`. | Delete all records.
+| `DELETE`  | N/A                 | `200` | Delete all records.
 | `DELETE`  | `username`          | `200`. Count deleted records. | Delete all records assigned to user
+| `DELETE`  | `id`                | `200` | Delete all records assigned to the given identifier.
 | `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes`, `name` | `200`. `true/false` in the body. | Save user record
 
 A sample payload that lists device registration records for the user might be:
@@ -45,4 +46,4 @@ The following endpoints need also be available:
 | `GET`     | `count`    | N/A             | `200`. Numeric count | Count all records
 | `GET`     | `count`    | `username`             | `200`. Numeric count | Count all records for the user
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.rest" %}

@@ -28,9 +28,9 @@ import java.security.GeneralSecurityException;
 /**
  * Abstract pac4j authentication handler which uses a pac4j authenticator and profile creator.
  *
+ * @author Jerome Leleu
  * @param <I> the type parameter
  * @param <C> the type parameter
- * @author Jerome Leleu
  * @since 4.2.0
  */
 @Slf4j

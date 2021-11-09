@@ -1,0 +1,16 @@
+{
+  "@class": "java.util.TreeMap",
+  "displayName": {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "displayName",
+    "name": "displayName",
+    "attribute": "cn"
+  },
+  "calculated-displayName": {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "calculated-displayName",
+    "name": "calculated-displayName",
+    "script": "groovy { return ['Hi-' + attributes['displayName'][0]] }"
+  }
+}
+

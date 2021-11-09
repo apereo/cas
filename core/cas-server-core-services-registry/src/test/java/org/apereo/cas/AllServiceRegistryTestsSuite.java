@@ -1,17 +1,16 @@
 package org.apereo.cas;
 
 import org.apereo.cas.services.DefaultChainingServiceRegistryTests;
-import org.apereo.cas.services.ServiceRegistryInitializerEventListenerTests;
-import org.apereo.cas.services.ServiceRegistryInitializerTests;
+import org.apereo.cas.services.DefaultServiceRegistryInitializerEventListenerTests;
+import org.apereo.cas.services.DefaultServiceRegistryInitializerTests;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategyTests;
 import org.apereo.cas.services.resource.CreateResourceBasedRegisteredServiceWatcherTests;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategyTests;
 import org.apereo.cas.services.resource.DeleteResourceBasedRegisteredServiceWatcherTests;
 import org.apereo.cas.services.resource.ModifyResourceBasedRegisteredServiceWatcherTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllServiceRegistryTestsSuite}.
@@ -20,15 +19,15 @@ import org.junit.runner.RunWith;
  * @since 6.0.0
  */
 @SelectClasses({
-    ServiceRegistryInitializerTests.class,
+    DefaultServiceRegistryInitializerTests.class,
     DefaultChainingServiceRegistryTests.class,
     DefaultRegisteredServiceReplicationStrategyTests.class,
-    ServiceRegistryInitializerEventListenerTests.class,
+    DefaultServiceRegistryInitializerEventListenerTests.class,
     DefaultRegisteredServiceResourceNamingStrategyTests.class,
     DeleteResourceBasedRegisteredServiceWatcherTests.class,
     CreateResourceBasedRegisteredServiceWatcherTests.class,
     ModifyResourceBasedRegisteredServiceWatcherTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllServiceRegistryTestsSuite {
 }

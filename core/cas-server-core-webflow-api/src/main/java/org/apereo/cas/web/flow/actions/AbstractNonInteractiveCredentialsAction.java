@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -43,12 +42,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        val resolver = new MessageBuilder()
-            .error()
-            .code(AUTHN_FAILURE_MESSAGE_CODE)
-            .defaultText(AUTHN_FAILURE_MESSAGE_CODE)
-            .build();
-        requestContext.getMessageContext().addMessage(resolver);
+        WebUtils.addErrorMessageToContext(requestContext, AUTHN_FAILURE_MESSAGE_CODE);
     }
 
     /**

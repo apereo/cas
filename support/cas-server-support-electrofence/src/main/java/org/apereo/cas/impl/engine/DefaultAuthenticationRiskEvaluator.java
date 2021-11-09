@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link DefaultAuthenticationRiskEvaluator}.
@@ -29,7 +29,7 @@ import java.util.Set;
 @Getter
 @RequiredArgsConstructor
 public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEvaluator {
-    private final Set<AuthenticationRequestRiskCalculator> calculators;
+    private final List<AuthenticationRequestRiskCalculator> calculators;
 
     @Audit(action = AuditableActions.EVALUATE_RISKY_AUTHENTICATION,
         actionResolverName = AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,

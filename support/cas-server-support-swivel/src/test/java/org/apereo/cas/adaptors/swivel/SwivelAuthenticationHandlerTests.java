@@ -38,7 +38,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.*;
         "cas.authn.mfa.swivel.shared-secret=$ecret",
         "cas.authn.mfa.swivel.ignore-ssl-errors=true"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class SwivelAuthenticationHandlerTests {
     @Autowired
     @Qualifier("swivelAuthenticationHandler")

@@ -17,8 +17,8 @@ dependencies {
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi  project(":core:cas-server-core-rest")
-    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
+    compileOnlyApi project(":core:cas-server-core-rest-api")
+    compileOnlyApi project(":support:cas-server-support-trusted-mfa")
 
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver
@@ -37,6 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

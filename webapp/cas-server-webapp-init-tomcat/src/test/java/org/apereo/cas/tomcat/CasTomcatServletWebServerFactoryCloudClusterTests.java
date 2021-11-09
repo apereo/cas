@@ -12,10 +12,7 @@ import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.tribes.group.GroupChannel;
-import org.apache.catalina.tribes.membership.cloud.CloudMembershipService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -25,7 +22,6 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,9 +39,7 @@ import static org.mockito.Mockito.*;
 },
     properties = {
         "server.port=8183",
-        "server.ssl.enabled=false",
-        "cas.server.tomcat.clustering.enabled=true",
-        "cas.server.tomcat.clustering.clustering-type=CLOUD"
+        "server.ssl.enabled=false"
     },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
@@ -65,21 +59,40 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
-
     @Test
     public void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
-        try {
-            server.start();
-            val tomcatServer = (TomcatWebServer) server;
-            val cluster = (SimpleTcpCluster) tomcatServer.getTomcat().getEngine().getCluster();
-            val channel = (GroupChannel) cluster.getChannel();
-            val membership = channel.getMembershipService();
-            assertTrue(membership instanceof CloudMembershipService);
-        } finally {
-            server.stop();
-        }
+        assertNotNull(server);
+    }
+
+
+    @Test
+    public void verifyDynamicCloud() {
+        val props = new CasConfigurationProperties();
+        props.getServer().getTomcat().getClustering()
+            .setEnabled(true).setClusteringType("CLOUD");
+
+        val factory = new CasTomcatServletWebServerFactory(props, serverProperties);
+        val tomcat = mock(Tomcat.class);
+        when(tomcat.getEngine()).thenReturn(mock(Engine.class));
+        val service = mock(Service.class);
+        when(service.findConnectors()).thenReturn(new Connector[]{});
+
+        val host = mock(Host.class);
+        val context = mock(Context.class);
+        when(context.getBaseName()).thenReturn("cas");
+        when(context.getState()).thenReturn(LifecycleState.STARTED);
+        when(host.findChildren()).thenReturn(new Container[]{context});
+
+        when(tomcat.getHost()).thenReturn(host);
+        when(tomcat.getService()).thenReturn(service);
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                factory.getTomcatWebServer(tomcat);
+            }
+        });
     }
 
     @Test
@@ -94,14 +107,14 @@ public class CasTomcatServletWebServerFactoryCloudClusterTests {
         val tc = mock(Tomcat.class);
         when(tc.getEngine()).thenReturn(mock(Engine.class));
         val service = mock(Service.class);
-        when(service.findConnectors()).thenReturn(new Connector[] {});
+        when(service.findConnectors()).thenReturn(new Connector[]{});
 
         val host = mock(Host.class);
         val context = mock(Context.class);
         when(context.getBaseName()).thenReturn("cas");
         when(context.getState()).thenReturn(LifecycleState.STARTED);
-        when(host.findChildren()).thenReturn(new Container[] {context});
-        
+        when(host.findChildren()).thenReturn(new Container[]{context});
+
         when(tc.getHost()).thenReturn(host);
         when(tc.getService()).thenReturn(service);
         assertDoesNotThrow(new Executable() {

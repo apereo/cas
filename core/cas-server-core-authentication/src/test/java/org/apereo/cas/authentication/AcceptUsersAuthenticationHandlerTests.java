@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class AcceptUsersAuthenticationHandlerTests {
     private static final String SCOTT = "scott";
 
@@ -60,7 +59,6 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifyAuthenticatesUserInMap() {
         val c = new UsernamePasswordCredential();
 

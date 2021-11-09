@@ -3,12 +3,12 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,8 +59,7 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
     private DataSource dataSource;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             c.setAutoCommit(true);
             try (val pstmt = c.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {
@@ -73,8 +72,7 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -83,15 +81,12 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
         }
     }
 
-
     @Test
-    @SneakyThrows
-    public void verifySuccess() {
+    public void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("location"));
-        val q = new QueryDatabaseAuthenticationHandler("DbHandler", null,
-            PrincipalFactoryUtils.newPrincipalFactory(), 0,
-            this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, CollectionUtils.wrap(map));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, CollectionUtils.wrap(map));
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(c);
         assertNotNull(result);
@@ -108,7 +103,6 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
             return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryDatabaseAuthenticationHandlerMariaDbTests.UsersTable.class.getName()));
         }
     }
-
     
     @SuppressWarnings("unused")
     @Entity(name = "casmariadbusers")

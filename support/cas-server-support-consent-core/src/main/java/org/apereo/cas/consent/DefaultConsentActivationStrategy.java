@@ -8,7 +8,8 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DefaultConsentActivationStrategy}.
@@ -25,7 +26,8 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
 
     @Override
     public boolean isConsentRequired(final Service service, final RegisteredService registeredService,
-                                     final Authentication authentication, final RequestContext requestContext) {
+                                     final Authentication authentication,
+                                     final HttpServletRequest requestContext) {
         val consentPolicy = registeredService.getAttributeReleasePolicy().getConsentPolicy();
         if (consentPolicy != null) {
             switch (consentPolicy.getStatus()) {
@@ -34,19 +36,19 @@ public class DefaultConsentActivationStrategy implements ConsentActivationStrate
                     return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
                 case FALSE:
                     LOGGER.trace("Attribute consent will be skipped as the attribute consent policy for service [{}] "
-                        + "is disabled for this request", registeredService.getName());
+                                 + "is disabled for this request", registeredService.getName());
                     return false;
                 case UNDEFINED:
                 default:
                     LOGGER.trace("Attribute consent policy for service [{}] is undefined", registeredService.getName());
             }
         }
-        if (casProperties.getConsent().isActive()) {
+        if (casProperties.getConsent().getCore().isActive()) {
             LOGGER.trace("Attribute consent is enabled globally for all requests");
             return consentEngine.isConsentRequiredFor(service, registeredService, authentication).isRequired();
         }
         LOGGER.trace("Attribute consent will be skipped as neither the attribute consent policy for service [{}] "
-            + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
+                     + "nor the global CAS consent policy are enabled for this request", registeredService.getName());
         return false;
     }
 }

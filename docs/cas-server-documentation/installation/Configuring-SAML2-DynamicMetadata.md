@@ -20,18 +20,17 @@ Note that the endpoint can accept a `service` parameter either by entity id or n
 is matched against the CAS service registry allowing the endpoint to calculate and combine any identity provider
 metadata overrides that may have been specified.
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
 
 You may use [this service](https://www.samltool.com/idp_metadata.php) to experiment with the metadata generation process
 and produce an example metadata for review and study.
 
-## Administrative Endpoints
-
+## Actuator Endpoints
+        
 The following endpoints are provided by CAS:
- 
-| Endpoint                                 | Description
-|------------------------------------------|--------------------------------------------------------------------------------------
-| `samlIdPRegisteredServiceMetadataCache`  | Manage and control the cache that holds metadata instances for SAML service providers. Note the cache is specific to the JVM memory of the CAS server node and it's **NOT** distributed or replicated. A `GET` operation produces the cached copy of the metadata for a given service provider, using the `serviceId` and `entityId` parameters. The `serviceId` parameter may be the numeric identifier for the registered service or its name. In case the service definition represents a metadata aggregate such as InCommon, the `entityId` parameter may be used to pinpoint and filter the exact entity within the aggregate. A `DELETE` operation will delete invalidate the metadata cache. If no parameters are provided, the metadata cache will be entirely invalidated. A `serviceId` parameter will force CAS to only invalidate the cached metadata instance for that service provider. The `serviceId` parameter may be the numeric identifier for the registered service or its name.
+
+{% include_cached actuators.html endpoints="samlIdPRegisteredServiceMetadataCache,caches" %}
+
 
 ## Metadata Aggregates
 
@@ -71,7 +70,7 @@ Service provider or identity provider metadata can also be managed using the fol
 
 SAML2 identity provider metadata by default is generated on disk. 
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
 
 #### Per Service
 

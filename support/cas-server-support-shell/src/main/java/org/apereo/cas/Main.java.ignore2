@@ -1,0 +1,301 @@
+package org.apereo.cas;
+
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.NormalAnnotationExpr;
+import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * This is {@link Main}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.5.0
+ */
+@SuppressWarnings("ALL")
+public class Main {
+    private static String readFile(final Path file) {
+        try {
+            return Files.readString(file);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        final var total = new AtomicInteger();
+
+        Files.walk(Paths.get("/Users/Misagh/Workspace/GitWorkspace/cas-server"))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Configuration.java")
+                && file.toFile().getPath().contains("/main/java"))
+            .forEach(Unchecked.consumer(file -> {
+                var text = readFile(file);
+                if (text.contains("@Configuration")) {
+                    System.out.println("Processing " + file.toFile());
+
+                    val cu = StaticJavaParser.parse(file.toFile());
+                    for (int i = 0; i < cu.getTypes().size(); i++) {
+                        var type = cu.getType(i);
+                        for (int j = 0; j < type.getMethods().size(); j++) {
+                            var method = type.getMethods().get(j);
+                            method.getAnnotationByClass(RefreshScope.class).ifPresent(ann -> {
+                                System.out.println(ann);
+                                if (ann.isMarkerAnnotationExpr()) {
+                                    var anp = new NormalAnnotationExpr();
+                                    anp.setName("RefreshScope");
+
+                                    var values = new NodeList<MemberValuePair>();
+                                    var mode = new FieldAccessExpr();
+                                    mode.setScope(new NameExpr("ScopedProxyMode"));
+                                    mode.setName("DEFAULT");
+                                    var pair = new MemberValuePair("proxyMode", mode);
+                                    values.add(pair);
+                                    anp.setPairs(values);
+                                    cu.addImport(ScopedProxyMode.class);
+
+                                    method.addAnnotation(anp);
+                                    ann.remove();
+                                }
+                            });
+                        }
+                    }
+
+                    var config = new DefaultPrinterConfiguration();
+                    var results = cu.toString(config);
+//                    System.out.println(results);
+
+                    new File("/etc/cas/config/Delete.java").delete();
+                    Files.write(new File("/etc/cas/config/Delete.java").toPath(),
+                        results.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+
+//                    var w = new FileWriter(file.toFile());
+//                    w.write(results);
+//                    w.flush();
+//                    w.close();
+
+                    total.incrementAndGet();
+                    if (total.intValue() >= 1) {
+                        System.exit(1);
+                    }
+                }
+            }));
+
+    }
+
+    private static void doObjectProviders(final CompilationUnit cu, final TypeDeclaration<?> type) {
+        var removals = new ArrayList<BodyDeclaration>();
+        for (int j = 0; j < type.getMembers().size(); j++) {
+            var member = type.getMember(j);
+            if (member.isFieldDeclaration()) {
+                var vari = (VariableDeclarator) member.asFieldDeclaration().getVariable(0);
+                if (vari.getTypeAsString().matches("ObjectProvider<\\w+>")) {
+                    var t1 = vari.getChildNodes().get(0).getChildNodes().get(1).toString();
+                    var name = vari.getNameAsString();
+                    removals.add(member);
+
+                    for (int z = 0; z < type.getMembers().size(); z++) {
+                        var objMem = type.getMember(z);
+                        if (objMem.isMethodDeclaration()) {
+                            var objMethod = objMem.asMethodDeclaration();
+                            if (!objMethod.getAnnotationByClass(Bean.class).isPresent()) {
+                                continue;
+                            }
+                            objMethod.getBody().ifPresent(body -> {
+                                for (int k = 0; k < body.getStatements().size(); k++) {
+                                    var stm = body.getStatement(k);
+                                    var results = new ArrayList<MethodCallExpr>();
+                                    objectproviderrefs(cu, type, stm.getChildNodes(), name, results);
+                                    if (!results.isEmpty()) {
+                                        for (int q = 0; q < results.size(); q++) {
+                                            var param = new Parameter();
+                                            param.setFinal(true);
+                                            param.setName(name);
+                                            param.setType(t1);
+                                            var qualifier = new SingleMemberAnnotationExpr();
+                                            qualifier.setName("Qualifier");
+                                            qualifier.setMemberValue(new StringLiteralExpr(name));
+                                            param.addAnnotation(qualifier);
+
+                                            if (objMethod.getParameterByName(name).isEmpty()) {
+                                                objMethod.addParameter(param);
+                                            }
+                                            cu.addImport(Qualifier.class);
+
+                                            var repl = new NameExpr(name);
+                                            var call = results.get(q);
+                                            call.replace(repl);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        removals.forEach(m -> m.remove());
+    }
+
+    private static void doBeanProxies(final CompilationUnit cu, final TypeDeclaration<?> type) {
+        for (int j = 0; j < type.getMembers().size(); j++) {
+            var member = type.getMember(j);
+            if (member.isMethodDeclaration()) {
+                var method = member.asMethodDeclaration();
+                if (!method.getAnnotationByClass(Bean.class).isPresent()) {
+                    continue;
+                }
+                method.getBody().ifPresent(body -> {
+                    for (int k = 0; k < body.getStatements().size(); k++) {
+                        var stm = body.getStatement(k);
+                        var results = new ArrayList<Pair<MethodCallExpr, MethodDeclaration>>();
+                        methods(cu, type, stm.getChildNodes(), results);
+                        if (!results.isEmpty()) {
+                            for (int q = 0; q < results.size(); q++) {
+
+                                var param = new Parameter();
+                                param.setFinal(true);
+                                var decl = results.get(q).getValue();
+                                param.setName(decl.getNameAsString());
+                                param.setType(decl.getType());
+                                var qualifier = new SingleMemberAnnotationExpr();
+                                qualifier.setName("Qualifier");
+                                qualifier.setMemberValue(new StringLiteralExpr(decl.getNameAsString()));
+                                param.addAnnotation(qualifier);
+                                if (method.getParameterByName(decl.getNameAsString()).isEmpty()) {
+                                    method.addParameter(param);
+                                    cu.addImport(Qualifier.class);
+                                }
+                                var repl = new NameExpr(decl.getNameAsString());
+                                var call = results.get(q).getLeft();
+                                call.replace(repl);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private static void doPropsAndAppContext(final CompilationUnit cu, final TypeDeclaration<?> type) {
+        for (int j = 0; j < type.getMembers().size(); j++) {
+            var member = type.getMember(j);
+            if (member.isFieldDeclaration()) {
+                var name = member.asFieldDeclaration().getVariable(0).getNameAsString();
+                if (name.equals("casProperties")) {
+                    member.remove();
+                }
+                if (name.equals("applicationContext")) {
+                    member.remove();
+                }
+            }
+        }
+
+        for (int j = 0; j < type.getMembers().size(); j++) {
+            var member = type.getMember(j);
+            if (member.isMethodDeclaration()) {
+                var method = member.asMethodDeclaration();
+                var body = method.getBody().get().toString();
+                autowireParam(cu, method, body, "casProperties", CasConfigurationProperties.class);
+                autowireParam(cu, method, body, "applicationContext", ConfigurableApplicationContext.class);
+            }
+        }
+    }
+
+    public static void objectproviderrefs(final CompilationUnit cu,
+                                          final TypeDeclaration type,
+                                          final List<Node> nodes,
+                                          final String fieldname,
+                                          final List<MethodCallExpr> results) {
+        for (int c = 0; c < nodes.size(); c++) {
+            var node = nodes.get(c);
+            if (!node.getChildNodes().isEmpty()) {
+                objectproviderrefs(cu, type, node.getChildNodes(), fieldname, results);
+            }
+            if (node instanceof MethodCallExpr) {
+                var call = (MethodCallExpr) node;
+                call.getScope().ifPresent(sc -> {
+                    if (sc.toString().equals(fieldname)) {
+                        results.add(call);
+                    }
+                });
+
+            }
+
+        }
+    }
+
+    public static void methods(final CompilationUnit cu, final TypeDeclaration type,
+                               final List<Node> nodes, final List<Pair<MethodCallExpr, MethodDeclaration>> results) {
+        for (int c = 0; c < nodes.size(); c++) {
+            var node = nodes.get(c);
+            if (!node.getChildNodes().isEmpty()) {
+                methods(cu, type, node.getChildNodes(), results);
+            }
+            if (node instanceof MethodCallExpr) {
+                var call = (MethodCallExpr) node;
+                var methods = type.getMethodsByName(call.getNameAsString());
+                if (!methods.isEmpty()) {
+                    var meth = (MethodDeclaration) methods.get(0);
+                    if (meth.getAnnotationByClass(Bean.class).isPresent()) {
+                        results.add(Pair.of(call, meth));
+                    }
+                }
+            }
+
+        }
+    }
+
+    private static void autowireParam(final CompilationUnit cu, final MethodDeclaration method,
+                                      final String body, final String paramName, final Class paramCls) {
+        if (body.contains(paramName) && method.getParameterByName(paramName).isEmpty()) {
+            var parameter = new Parameter();
+            parameter.setName(paramName);
+            parameter.setType(paramCls);
+            parameter.setFinal(true);
+            method.addParameter(parameter);
+            if (method.getAnnotationByClass(Autowired.class).isEmpty()) {
+                var ann = new MarkerAnnotationExpr("Autowired");
+                method.addAnnotation(ann);
+                cu.addImport(Autowired.class);
+                cu.addImport(ConfigurableApplicationContext.class);
+                cu.addImport(CasConfigurationProperties.class);
+            }
+        }
+    }
+}

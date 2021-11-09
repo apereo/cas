@@ -28,6 +28,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
+/**
+ * This is {@link BaseDynamoDbTicketRegistryFacilitatorTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 6.4.0
+ */
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,

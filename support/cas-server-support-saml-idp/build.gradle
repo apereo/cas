@@ -20,6 +20,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -35,8 +36,9 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-actions")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
-    compileOnlyApi  project(":support:cas-server-support-consent-api")
+    compileOnlyApi project(":support:cas-server-support-jpa-util")
+    compileOnlyApi project(":support:cas-server-support-consent-api")
+    compileOnlyApi project(":support:cas-server-support-pac4j-webflow")
 
     implementation libraries.casclient
     implementation libraries.pac4jcore
@@ -44,6 +46,7 @@ dependencies {
 
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -61,6 +64,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-consent-api")
     testImplementation project(":support:cas-server-support-saml")
+    testImplementation project(":support:cas-server-support-pac4j-webflow")
+    testImplementation project(":support:cas-server-support-consent-core")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

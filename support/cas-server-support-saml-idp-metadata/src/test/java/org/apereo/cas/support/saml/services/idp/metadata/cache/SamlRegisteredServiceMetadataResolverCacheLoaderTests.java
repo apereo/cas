@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.ClasspathResourceMetadataResolver;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPServicesTests {
     @Test
     public void verifyClasspathByExpression() throws Exception {
@@ -69,5 +70,19 @@ public class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseS
         service.setMetadataLocation("${#systemProperties['SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
         assertNotNull(loader.load(key));
+    }
+
+    @Test
+    public void verifyEmptyResolvers() {
+        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+        val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
+
+        val service = new SamlRegisteredService();
+        service.setName("Example");
+        service.setId(1000);
+        service.setServiceId("https://example.org/saml");
+        service.setMetadataLocation("${#systemProperties['SP_REF']}");
+        val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
+        assertThrows(SamlException.class, () -> loader.load(key));
     }
 }

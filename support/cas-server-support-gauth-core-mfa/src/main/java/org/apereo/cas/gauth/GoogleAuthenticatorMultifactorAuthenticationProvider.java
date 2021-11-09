@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), GoogleAuthenticatorMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), GoogleAuthenticatorMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

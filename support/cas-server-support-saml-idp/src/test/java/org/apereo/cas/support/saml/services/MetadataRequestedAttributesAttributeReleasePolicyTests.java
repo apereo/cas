@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -41,11 +42,19 @@ public class MetadataRequestedAttributesAttributeReleasePolicyTests extends Base
         filter.setUseFriendlyName(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user"));
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
+        val defns = filter.determineRequestedAttributeDefinitions(context);
+        assertEquals(3, defns.size());
+        assertTrue(defns.contains("eduPersonPrincipalName"));
     }
 
     @Test

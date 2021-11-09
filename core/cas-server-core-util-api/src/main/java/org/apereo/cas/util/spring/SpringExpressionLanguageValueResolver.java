@@ -5,6 +5,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
@@ -52,7 +53,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         evaluationContext.setVariable("environmentVariables", environment);
         evaluationContext.setVariable("envVars", environment);
         evaluationContext.setVariable("env", environment);
-
+        
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
     }
@@ -108,11 +109,14 @@ public class SpringExpressionLanguageValueResolver implements Function {
      * @return the string
      */
     public String resolve(final String value) {
-        LOGGER.trace("Parsing expression as [{}]", value);
-        val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
-        val result = expression.getValue(evaluationContext, String.class);
-        LOGGER.trace("Parsed expression result is [{}]", result);
-        return result;
+        if (StringUtils.isNotBlank(value)) {
+            LOGGER.trace("Parsing expression as [{}]", value);
+            val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
+            val result = expression.getValue(evaluationContext, String.class);
+            LOGGER.trace("Parsed expression result is [{}]", result);
+            return result;
+        }
+        return value;
     }
 
     @Override

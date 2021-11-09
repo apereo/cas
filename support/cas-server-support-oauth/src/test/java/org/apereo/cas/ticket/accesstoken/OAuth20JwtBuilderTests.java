@@ -30,6 +30,7 @@ public class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
             .jwtId(service.getId())
             .serviceAudience("clientid-jwt")
             .subject("casuser")
+            .issuer(casProperties.getServer().getPrefix())
             .build();
         val jwt = accessTokenJwtBuilder.build(request);
         assertNotNull(jwt);

@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.fortress;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class FortressAuthenticationHandlerTests {
     @Mock
     private AccessMgr accessManager;
@@ -57,8 +56,7 @@ public class FortressAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyAuthenticateSuccessfully() {
+    public void verifyAuthenticateSuccessfully() throws Exception {
         val sessionId = UUID.randomUUID();
         val session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(true);
@@ -76,8 +74,7 @@ public class FortressAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyUnauthSession() {
+    public void verifyUnauthSession() throws Exception {
         val sessionId = UUID.randomUUID();
         val session = new Session(new User(CoreAuthenticationTestUtils.CONST_USERNAME), sessionId.toString());
         session.setAuthenticated(false);
@@ -87,8 +84,7 @@ public class FortressAuthenticationHandlerTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyFailToMarshalSession() {
+    public void verifyFailToMarshalSession() throws Exception {
         when(accessManager.createSession(ArgumentMatchers.any(User.class), ArgumentMatchers.anyBoolean()))
             .thenAnswer(invocationOnMock -> {
                 throw new JAXBException("error");

@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -43,13 +44,12 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -62,8 +62,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataConfiguration}.
@@ -71,190 +75,251 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Configuration(value = "samlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPMetadataConfiguration {
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
+    @Configuration(value = "SamlIdPMetadataEndpointConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataEndpointConfiguration {
 
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private ObjectProvider<HttpClient> httpClient;
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public SamlIdPMetadataController samlIdPMetadataController(
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier("samlIdPMetadataGenerator")
+            final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
+            @Qualifier("samlIdPMetadataLocator")
+            final SamlIdPMetadataLocator samlIdPMetadataLocator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) throws Exception {
+            return new SamlIdPMetadataController(samlIdPMetadataGenerator,
+                samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
+        }
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+        @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataHealthIndicator")
+        @Bean
+        @ConditionalOnEnabledHealthIndicator("samlRegisteredServiceMetadataHealthIndicator")
+        public HealthIndicator samlRegisteredServiceMetadataHealthIndicator(
+            @Qualifier("samlRegisteredServiceMetadataResolvers")
+            final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers, servicesManager);
+        }
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties,
+                defaultSamlRegisteredServiceCachingMetadataResolver, servicesManager, registeredServiceAccessStrategyEnforcer,
+                openSamlConfigBean);
+        }
 
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier("samlProfileSamlResponseBuilder")
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
+            @Qualifier("samlIdPServiceFactory")
+            final ServiceFactory samlIdPServiceFactory) {
+            return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties, servicesManager,
+                authenticationSystemSupport, samlIdPServiceFactory, PrincipalFactoryUtils.newPrincipalFactory(),
+                samlProfileSamlResponseBuilder,
+                defaultSamlRegisteredServiceCachingMetadataResolver,
+                new NonInflatingSaml20ObjectBuilder(openSamlConfigBean));
+        }
 
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("samlIdPServiceFactory")
-    private ObjectProvider<ServiceFactory> samlIdPServiceFactory;
-
-    @Autowired
-    @Qualifier("samlProfileSamlResponseBuilder")
-    private ObjectProvider<SamlProfileObjectBuilder<Response>> samlProfileSamlResponseBuilder;
-
-    @Lazy
-    @Bean(initMethod = "initialize", destroyMethod = "destroy")
-    @DependsOn("samlIdPMetadataGenerator")
-    @SneakyThrows
-    public MetadataResolver casSamlIdPMetadataResolver() {
-        val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator(),
-            samlIdPMetadataGenerator(), openSamlConfigBean.getObject());
-        resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
-        resolver.setRequireValidMetadata(idp.getMetadata().getCore().isRequireValidMetadata());
-        resolver.setId(idp.getCore().getEntityId());
-        return resolver;
     }
 
-    @Lazy
-    @Bean
-    @RefreshScope
-    public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(),
-            samlIdPMetadataLocator(), servicesManager.getObject(),
-            webApplicationServiceFactory.getObject());
+    @Configuration(value = "SamlIdPMetadataResolutionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataResolutionConfiguration {
+        @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
+        @Bean
+        public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers(
+            final ObjectProvider<List<SamlRegisteredServiceMetadataResolutionPlanConfigurer>> configurersList,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
+            val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
+            val samlIdp = casProperties.getAuthn().getSamlIdp();
+            plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new JsonResourceMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
+            plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
+
+            val configurers = Optional.ofNullable(configurersList.getIfAvailable()).orElse(new ArrayList<>());
+            configurers.forEach(c -> {
+                LOGGER.trace("Configuring saml metadata resolution plan [{}]", c.getName());
+                c.configureMetadataResolutionPlan(plan);
+            });
+            return plan;
+        }
+
+        @Lazy
+        @Bean(initMethod = "initialize", destroyMethod = "destroy")
+        @DependsOn("samlIdPMetadataGenerator")
+        public MetadataResolver casSamlIdPMetadataResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPMetadataLocator")
+            final SamlIdPMetadataLocator samlIdPMetadataLocator,
+            @Qualifier("samlIdPMetadataGenerator")
+            final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) throws Exception {
+            val idp = casProperties.getAuthn().getSamlIdp();
+            val resolver = new SamlIdPMetadataResolver(samlIdPMetadataLocator, samlIdPMetadataGenerator, openSamlConfigBean, casProperties);
+            resolver.setFailFastInitialization(idp.getMetadata().getCore().isFailFast());
+            resolver.setRequireValidMetadata(idp.getMetadata().getCore().isRequireValidMetadata());
+            resolver.setId(idp.getCore().getEntityId());
+            return resolver;
+        }
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-    @Bean
-    @SneakyThrows
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
-        val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
-            .samlIdPMetadataLocator(samlIdPMetadataLocator())
-            .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter())
-            .applicationContext(applicationContext)
-            .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
-            .casProperties(casProperties)
-            .openSamlConfigBean(openSamlConfigBean.getObject())
-            .build();
-        return new FileSystemSamlIdPMetadataGenerator(context);
+    @Configuration(value = "SamlIdPMetadataGenerationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataGenerationConfiguration {
+        @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
+        @Bean
+        public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+            @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+            final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) throws Exception {
+            return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext);
+        }
+
+        @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
+        @Bean
+        public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter(
+            final CasConfigurationProperties casProperties) throws Exception {
+            val url = new URL(casProperties.getServer().getPrefix());
+            val generator = new DefaultSamlIdPCertificateAndKeyWriter();
+            generator.setHostname(url.getHost());
+            generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+            return generator;
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorCipherExecutor")
+        public CipherExecutor samlIdPMetadataGeneratorCipherExecutor() {
+            return CipherExecutor.noOpOfStringToString();
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
-    @Bean
-    @SneakyThrows
-    public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter() {
-        val url = new URL(casProperties.getServer().getPrefix());
-        val generator = new DefaultSamlIdPCertificateAndKeyWriter();
-        generator.setHostname(url.getHost());
-        generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
-        return generator;
+    @Configuration(value = "SamlIdPMetadataLocatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataLocatorConfiguration {
+        @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
+        @Bean
+        public SamlIdPMetadataLocator samlIdPMetadataLocator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("samlIdPMetadataCache")
+            final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache) throws Exception {
+            val idp = casProperties.getAuthn().getSamlIdp();
+            val location = SpringExpressionLanguageValueResolver.getInstance().resolve(idp.getMetadata().getFileSystem().getLocation());
+            val metadataLocation = ResourceUtils.getRawResourceFrom(location);
+            return new FileSystemSamlIdPMetadataLocator(metadataLocation, samlIdPMetadataCache);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
-    @Bean
-    @SneakyThrows
-    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        val idp = casProperties.getAuthn().getSamlIdp();
-        val location = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(idp.getMetadata().getFileSystem().getLocation());
-        val metadataLocation = ResourceUtils.getRawResourceFrom(location);
-        return new FileSystemSamlIdPMetadataLocator(metadataLocation, samlIdPMetadataCache());
+    @Configuration(value = "SamlIdPMetadataCacheConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataCacheConfiguration {
+
+        @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache(
+            final CasConfigurationProperties casProperties) {
+            val idp = casProperties.getAuthn().getSamlIdp();
+            return Caffeine.newBuilder().initialCapacity(10)
+                .maximumSize(100).expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration())).build();
+        }
+
+        @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader(
+            @Qualifier("samlRegisteredServiceMetadataResolvers")
+            final SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers,
+            @Qualifier("httpClient")
+            final HttpClient httpClient,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
+            return new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean,
+                httpClient, samlRegisteredServiceMetadataResolvers);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "samlIdPMetadataCache")
-    @Bean
-    @RefreshScope
-    public Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache() {
-        val idp = casProperties.getAuthn().getSamlIdp();
-        return Caffeine.newBuilder()
-            .initialCapacity(10)
-            .maximumSize(100)
-            .expireAfterAccess(Beans.newDuration(idp.getMetadata().getCore().getCacheExpiration()))
-            .build();
+    @Configuration(value = "SamlIdPMetadataResolverConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataResolverConfiguration {
+
+        @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("chainingMetadataResolverCacheLoader")
+            final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean) {
+            return new SamlRegisteredServiceDefaultCachingMetadataResolver(
+                Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
+                chainingMetadataResolverCacheLoader, openSamlConfigBean);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
-    @Bean
-    @RefreshScope
-    public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
-        return new SamlRegisteredServiceMetadataResolverCacheLoader(
-            openSamlConfigBean.getObject(),
-            httpClient.getObject(),
-            samlRegisteredServiceMetadataResolvers());
-    }
-
-    @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
-    @Bean
-    public SamlRegisteredServiceMetadataResolutionPlan samlRegisteredServiceMetadataResolvers() {
-        val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
-
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val cfgBean = openSamlConfigBean.getObject();
-        plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, cfgBean));
-        plan.registerMetadataResolver(new JsonResourceMetadataResolver(samlIdp, cfgBean));
-        plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, cfgBean));
-        plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, cfgBean));
-        plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, cfgBean));
-        plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, cfgBean));
-
-        val configurers = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurer.class, false, true);
-
-        configurers.values().forEach(c -> {
-            LOGGER.trace("Configuring saml metadata resolution plan [{}]", c.getName());
-            c.configureMetadataResolutionPlan(plan);
-        });
-        return plan;
-    }
-
-    @ConditionalOnMissingBean(name = SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME)
-    @Bean
-    @RefreshScope
-    public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-            Beans.newDuration(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getCacheExpiration()),
-            chainingMetadataResolverCacheLoader(),
-            openSamlConfigBean.getObject()
-        );
-    }
-
-    @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataHealthIndicator")
-    @Bean
-    @ConditionalOnEnabledHealthIndicator("samlRegisteredServiceMetadataHealthIndicator")
-    public HealthIndicator samlRegisteredServiceMetadataHealthIndicator() {
-        return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers(),
-            servicesManager.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint() {
-        return new SamlRegisteredServiceCachedMetadataEndpoint(casProperties, defaultSamlRegisteredServiceCachingMetadataResolver(),
-            servicesManager.getObject(), registeredServiceAccessStrategyEnforcer.getObject(),
-            openSamlConfigBean.getObject());
-    }
-
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint() {
-        return new SSOSamlIdPPostProfileHandlerEndpoint(casProperties,
-            servicesManager.getObject(),
-            authenticationSystemSupport.getObject(),
-            samlIdPServiceFactory.getObject(),
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            samlProfileSamlResponseBuilder.getObject(),
-            defaultSamlRegisteredServiceCachingMetadataResolver(),
-            new NonInflatingSaml20ObjectBuilder(openSamlConfigBean.getObject()));
+    @Configuration(value = "SamlIdPMetadataContextConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataContextConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPMetadataGeneratorConfigurationContext")
+        public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("samlIdPMetadataLocator")
+            final SamlIdPMetadataLocator samlIdPMetadataLocator,
+            @Qualifier("samlSelfSignedCertificateWriter")
+            final SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter,
+            @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
+            final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
+            @Qualifier("velocityEngineFactoryBean")
+            final VelocityEngine velocityEngineFactoryBean) throws Exception {
+            return SamlIdPMetadataGeneratorConfigurationContext.builder()
+                .samlIdPMetadataLocator(samlIdPMetadataLocator)
+                .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter)
+                .applicationContext(applicationContext)
+                .metadataCipherExecutor(samlIdPMetadataGeneratorCipherExecutor)
+                .casProperties(casProperties)
+                .openSamlConfigBean(openSamlConfigBean)
+                .velocityEngine(velocityEngineFactoryBean)
+                .build();
+        }
     }
 }

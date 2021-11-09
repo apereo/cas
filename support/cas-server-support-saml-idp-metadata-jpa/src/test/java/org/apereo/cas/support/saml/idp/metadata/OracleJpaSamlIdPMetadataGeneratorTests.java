@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.saml-idp.metadata.jpa.user=system",
     "cas.authn.saml-idp.metadata.jpa.password=Oradoc_db1",
     "cas.authn.saml-idp.metadata.jpa.driver-class=oracle.jdbc.driver.OracleDriver",

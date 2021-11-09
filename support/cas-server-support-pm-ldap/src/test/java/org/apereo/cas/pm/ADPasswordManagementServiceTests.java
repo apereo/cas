@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].min-pool-size=0",
     "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
 })
-@DirtiesContext
 @EnabledIfPortOpen(port = 10636)
 public class ADPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {
 

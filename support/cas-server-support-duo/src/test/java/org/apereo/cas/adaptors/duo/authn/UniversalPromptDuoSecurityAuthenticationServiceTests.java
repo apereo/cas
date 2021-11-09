@@ -16,6 +16,7 @@ import com.duosecurity.model.HealthCheckResponse;
 import com.duosecurity.model.Location;
 import com.duosecurity.model.Token;
 import com.duosecurity.model.User;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
@@ -44,7 +45,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
-            List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
         assertTrue(service.getDuoClient().isPresent());
         assertFalse(service.ping());
     }
@@ -55,7 +56,7 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
         when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
-            List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
         assertTrue(service.getDuoClient().isPresent());
         assertTrue(service.ping());
     }
@@ -92,7 +93,8 @@ public class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
-            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
         val result = service.authenticate(credential);
         assertNotNull(result);
         assertTrue(result.isSuccess());

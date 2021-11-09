@@ -32,7 +32,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.webflow.execution.RequestContextHolder.setRequestContext;
+import static org.springframework.webflow.execution.RequestContextHolder.*;
 
 /**
  * Test cases for {@link YubiKeyAuthenticationHandler}.
@@ -40,7 +40,7 @@ import static org.springframework.webflow.execution.RequestContextHolder.setRequ
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
@@ -123,6 +123,7 @@ public class YubiKeyAuthenticationHandlerTests {
     @Test
     public void checkEncryptedAccount() {
         val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(), (uid, token) -> true);
+        assertNotNull(registry.save(YubiKeyAccount.builder().username(UUID.randomUUID().toString()).build()));
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));

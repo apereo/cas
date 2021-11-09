@@ -21,6 +21,11 @@ import java.util.Collection;
 public interface AuthenticationSystemSupport {
 
     /**
+     * Default impl bean name.
+     */
+    String BEAN_NAME = "defaultAuthenticationSystemSupport";
+
+    /**
      * Gets authentication transaction manager.
      *
      * @return the authentication transaction manager
@@ -110,7 +115,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
+    AuthenticationResult finalizeAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -121,8 +126,19 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.3.0
      */
-    default AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service,
-                                                                                  final Collection<Credential> credentials) throws AuthenticationException {
-        return handleAndFinalizeSingleAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
+    default AuthenticationResult finalizeAuthenticationTransaction(final Service service,
+                                                                   final Collection<Credential> credentials) throws AuthenticationException {
+        return finalizeAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
+    }
+
+    /**
+     * Finalize authentication transaction.
+     *
+     * @param credentials the credentials
+     * @return the authentication result
+     * @throws AuthenticationException the authentication exception
+     */
+    default AuthenticationResult finalizeAuthenticationTransaction(final Credential... credentials) throws AuthenticationException {
+        return finalizeAuthenticationTransaction(null, credentials);
     }
 }

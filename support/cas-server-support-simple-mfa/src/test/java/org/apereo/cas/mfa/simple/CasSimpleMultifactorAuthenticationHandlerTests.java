@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -41,18 +42,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("MFAProvider")
 public class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
     private AuthenticationHandler casSimpleMultifactorAuthenticationHandler;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -60,7 +61,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     private TicketFactory defaultTicketFactory;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test
@@ -96,6 +97,8 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
         ticketRegistry.addTicket(ticket);
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         assertThrows(FailedLoginException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential));
+        assertFalse(casSimpleMultifactorAuthenticationHandler.supports(new UsernamePasswordCredential()));
+        assertFalse(casSimpleMultifactorAuthenticationHandler.supports(UsernamePasswordCredential.class));
     }
 
     @Test

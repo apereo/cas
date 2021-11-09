@@ -26,6 +26,14 @@ authenticated user may be allowed to access the given service.
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
+Remember that REST is stateless. Since the caller is the recipient of the
+ticket-granting ticket that represents a single sign-on session, that means the caller is also responsible for managing and creating
+single sign-on sessions, removing that responsibility from CAS. In other words, the REST protocol allows one to use CAS 
+as an authentication engine, and not a single sign-on provider. There have been many workarounds, modifications and *hacks* 
+over the years to bypass this barrier and have REST calls to also, *somehow*, create the necessary cookies, flows and interactions 
+and whatever else necessary to allow applications to leverage a single sign-on session established via REST. Needless to say, 
+all such endeavors over time have resulted in maintenance headaches, premature aging and loss of DNA.
+
 ## Unsuccessful Response
 
 If incorrect credentials are sent, CAS will respond with a `401 Unauthorized`. A `400 Bad Request` error 
@@ -37,7 +45,7 @@ understand, it will send the `415 Unsupported Media Type`.
 Ticket-granting tickets created by the REST protocol may be issued as 
 JWTs instead. Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
 To request a ticket-granting ticket as JWT next, ensure the `POST` request matches the following:
 
@@ -51,7 +59,7 @@ The `token` parameter may either be passed as a request parameter or a request
 header. The body of the response will include the ticket-granting ticket as 
 a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. 
 
-{% include casproperties.html properties="cas.authn.token" %}
+{% include_cached casproperties.html properties="cas.authn.token" %}
 
 ## X509 Authentication
 
@@ -76,23 +84,13 @@ during TLS handshake, and have CAS server retrieve the certificate from the cont
 
 Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-x509" %}
 
-{% include casproperties.html properties="cas.rest.x509" %}
+{% include_cached casproperties.html properties="cas.rest.x509" %}
 
-### TLS Client Authentication using a body parameter
+### Body Parameter
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
-
-### TLS Client Authentication using a http header
-
-The cas server should be configured for X509 authentication on the login page for
-this to function properly.
-
-### TLS Client Authentication from the servlet container)
-
-The cas server should be configured for X509 authentication on the login page for
-this to function properly.

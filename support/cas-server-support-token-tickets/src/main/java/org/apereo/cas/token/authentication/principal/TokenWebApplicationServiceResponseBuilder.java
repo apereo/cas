@@ -9,6 +9,8 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenTicketBuilder;
+import org.apereo.cas.web.UrlValidator;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,8 +30,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
     private final transient TokenTicketBuilder tokenTicketBuilder;
 
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
-                                                     final TokenTicketBuilder tokenTicketBuilder) {
-        super(servicesManager);
+                                                     final TokenTicketBuilder tokenTicketBuilder,
+                                                     final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.tokenTicketBuilder = tokenTicketBuilder;
     }
 

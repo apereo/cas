@@ -35,8 +35,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final int MAP_SIZE = 8;
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -131,7 +129,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @SneakyThrows
     private void readTrustedRecordsFromResource() {
-        this.storage = new LinkedHashMap<>(MAP_SIZE);
+        this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
             try (val reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
                 val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {

@@ -4,8 +4,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.slo.ChainingSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.web.SimpleUrlValidator;
@@ -43,6 +46,7 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
             .applicationContext(appCtx)
             .environments(new HashSet<>(0))
             .servicesCache(Caffeine.newBuilder().build())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .build();
         this.servicesManager = new DefaultServicesManager(context);
     }
@@ -53,16 +57,18 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
             List.of(new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance())));
 
         val service = CoreAuthenticationTestUtils.getWebApplicationService();
-        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+        val registeredService = mock(RegexRegisteredService.class);
         when(registeredService.matches(any(Service.class))).thenReturn(Boolean.TRUE);
+        when(registeredService.getFriendlyName()).thenCallRealMethod();
+        when(registeredService.getServiceId()).thenReturn(CoreAuthenticationTestUtils.CONST_TEST_URL);
         when(registeredService.matches(anyString())).thenReturn(Boolean.TRUE);
+        when(registeredService.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy());
         when(registeredService.getLogoutUrl()).thenReturn("https://somewhere.org");
         servicesManager.save(registeredService);
 
         assertTrue(builder.supports(registeredService, service, Optional.empty()));
         assertTrue(builder.isServiceAuthorized(service, Optional.empty()));
         assertFalse(builder.determineLogoutUrl(registeredService, service, Optional.empty()).isEmpty());
-
     }
 
 }

@@ -13,6 +13,6 @@ or email address via configurable attributes.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-ldap" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-ldap" %}
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.ldap" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.ldap" %}

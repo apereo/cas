@@ -37,5 +37,4 @@ class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy 
     boolean isBypassTrustedDeviceEnabled() {
         true
     }
-    
 }

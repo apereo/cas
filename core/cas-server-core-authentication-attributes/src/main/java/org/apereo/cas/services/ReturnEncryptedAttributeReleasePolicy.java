@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -51,31 +49,27 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
     private List<String> allowedAttributes = new ArrayList<>(0);
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
-        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attrs) {
+        return authorizeReleaseOfAllowedAttributes(context, attrs);
     }
 
 
     /**
      * Authorize release of allowed attributes map.
      *
-     * @param principal         the principal
-     * @param attrs             the attributes
-     * @param registeredService the registered service
-     * @param selectedService   the selected service
+     * @param context the context
+     * @param attrs   the attributes
      * @return the map
      */
-    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                            final Map<String, List<Object>> attrs,
-                                                                            final RegisteredService registeredService,
-                                                                            final Service selectedService) {
-        val publicKey = registeredService.getPublicKey();
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                                            final Map<String, List<Object>> attrs) {
+        val publicKey = context.getRegisteredService().getPublicKey();
         if (publicKey == null) {
-            LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
+            LOGGER.error("No public key is defined for service [{}]. No attributes will be released", context.getRegisteredService());
             return new HashMap<>(0);
         }
-        LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", registeredService.getServiceId(), publicKey);
+        LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", context.getRegisteredService().getServiceId(), publicKey);
         val cipher = publicKey.toCipher();
         if (cipher == null) {
             LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
@@ -104,7 +98,7 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return getAllowedAttributes();
     }
 }

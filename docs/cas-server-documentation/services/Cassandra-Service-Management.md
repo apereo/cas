@@ -14,11 +14,11 @@ consistency of `LOCAL_QUORUM` and read consistency of `ONE`.
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-service-registry" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.cassandra" %}
+{% include_cached casproperties.html properties="cas.service-registry.cassandra" %}
 
 ## Troubleshooting
 

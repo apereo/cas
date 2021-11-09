@@ -7,41 +7,43 @@ import org.apereo.cas.support.events.ticket.CasServiceTicketGrantedEvent;
 import org.apereo.cas.support.events.ticket.CasServiceTicketValidatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
+import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import static org.apereo.cas.util.serialization.TicketIdSanitizationUtils.sanitize;
+import static org.apereo.cas.util.serialization.MessageSanitizationUtils.*;
 
 /**
- * Listener implementation for core CAS events which adds contextual debug logging for each event to instrument CAS logs
+ * Listener implementation for core CAS events which adds contextual
+ * debug logging for each event to instrument CAS logs
  * with more information on internal CAS processing to aid troubleshooting, etc.
  *
  * @author Dmitriy Kopylenko
  * @since 6.1.0
  */
 @Slf4j
-public class LoggingCasEventListener {
+public class LoggingCasEventListener implements CasEventListener {
 
     private static final String GRANTED_TGT_MSG = "Established SSO session at [{}]\nTGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-        + "For principal: [{}]";
+                                                  + "For principal: [{}]";
 
     private static final String AUTHN_TX_FAIL_MSG = "Authentication transaction failed for credential: [{}]\nFailure(s): [{}]";
 
     private static final String PRINCIPAL_RESOLVED_MSG = "Principal [{}] resolved\nWith attributes: [{}]";
 
     private static final String DESTROYED_TGT_MSG = "SSO session ended\nTGT creation time: [{}] TGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-        + "For principal: [{}]\nInitiator source: [{}]";
+                                                    + "For principal: [{}]\nInitiator source: [{}]";
 
     private static final String GRANTED_PT_MSG = "Proxy ticket granted at: [{}]\nPT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
-        + "By PGT: [{}], For service: [{}]\nProxied by: [{}]\nFor principal: [{}]";
+                                                 + "By PGT: [{}], For service: [{}]\nProxied by: [{}]\nFor principal: [{}]";
 
     private static final String CREATED_ST_MSG = "Service ticket created at [{}]\nST: [{}]\nFor service: [{}]\nFor principal: [{}]";
 
     private static final String VALIDATED_ST_MSG = "Service ticket validated at [{}]\nST: [{}]\nFor service: [{}]\n"
-        + "For principal: [{}]\nWith released attributes: [{}]";
+                                                   + "For principal: [{}]\nWith released attributes: [{}]";
 
     /**
      * Log {@link CasTicketGrantingTicketCreatedEvent} at debug level.

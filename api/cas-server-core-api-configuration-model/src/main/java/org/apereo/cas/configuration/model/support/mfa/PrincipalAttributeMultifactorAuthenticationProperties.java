@@ -55,4 +55,11 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * if the account is qualified for multifactor authentication.
      */
     private String globalPrincipalAttributeValueRegex;
+
+    /**
+     * Force CAS to deny and block the authentication attempt
+     * altogether if attribute name/value configuration cannot produce a successful
+     * match to trigger multifactor authentication.
+     */
+    private boolean denyIfUnmatched;
 }

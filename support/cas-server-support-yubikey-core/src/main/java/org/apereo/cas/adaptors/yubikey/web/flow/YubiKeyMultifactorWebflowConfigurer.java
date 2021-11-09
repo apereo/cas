@@ -52,15 +52,15 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction("prepareYubiKeyAuthenticationLoginAction"),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             setStartState(flow, initLoginFormState);
 
-            val acctRegCheckState = createActionState(flow, "accountRegistrationCheck",
+            val acctRegCheckState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
                 createEvaluateAction("yubiKeyAccountRegistrationAction"));
-            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration");
+            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
-            val saveState = createActionState(flow, "saveRegistration",
+            val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
                 createEvaluateAction("yubiKeySaveAccountRegistrationAction"));
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -72,18 +72,18 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
 
-            val viewRegState = createViewState(flow, "viewRegistration", "casYubiKeyRegistrationView");
+            val viewRegState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "yubikey/casYubiKeyRegistrationView");
             viewRegState.getEntryActionList().addAll(setPrincipalAction);
-            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
+            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
-            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "casYubiKeyLoginView", loginBinder);
+            val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "yubikey/casYubiKeyLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, YubiKeyCredential.class);
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
 
             if (yubiProps.isMultipleDeviceRegistrationEnabled()) {
-                createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistration",
+                createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
                     Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
             }
             

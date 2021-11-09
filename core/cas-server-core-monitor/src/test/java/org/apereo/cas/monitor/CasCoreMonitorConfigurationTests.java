@@ -7,6 +7,8 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.config.CasCoreMonitorConfiguration;
 
@@ -32,6 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
+    MetricsAutoConfiguration.class,
+    SimpleMetricsExportAutoConfiguration.class,
+    MetricsEndpointAutoConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -40,16 +48,18 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreNotificationsConfiguration.class,
-    MetricsAutoConfiguration.class,
-    SimpleMetricsExportAutoConfiguration.class,
-    MetricsEndpointAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 }, properties = {
+    "management.metrics.export.simple.enabled=true",
+
     "management.endpoint.metrics.enabled=true",
     "management.endpoints.web.exposure.include=*",
-    "management.metrics.export.simple.enabled=true",
-    "management.endpoint.health.enabled=true"
+    "management.endpoint.health.enabled=true",
+
+    "management.health.systemHealthIndicator.enabled=true",
+    "management.health.memoryHealthIndicator.enabled=true",
+    "management.health.sessionHealthIndicator.enabled=true"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")

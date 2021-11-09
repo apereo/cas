@@ -11,7 +11,7 @@ Tap into the CAS authentication engine to invoke pre/post processors.
 
 ## Authentication Pre-Processing
 
-{% include casproperties.html properties="cas.authn.core.engine.groovy-pre-processor" %}
+{% include_cached casproperties.html properties="cas.authn.core.engine.groovy-pre-processor" %}
 
 The script itself may be designed as:
 
@@ -32,7 +32,7 @@ def supports(Object[] args) {
                                    
 ## Authentication Post-Processing
 
-{% include casproperties.html properties="cas.authn.core.engine.groovy-post-processor" %}
+{% include_cached casproperties.html properties="cas.authn.core.engine.groovy-post-processor" %}
 
 The script itself may be designed as:
 

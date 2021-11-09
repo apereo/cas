@@ -10,8 +10,7 @@ dependencies {
     implementation libraries.springbootconfigmetadata
 
     api project(":api:cas-server-core-api-util")
-    api project(":api:cas-server-core-api-authentication")
-    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-protocol")
     
     testImplementation libraries.springbootconfigmetadata
     
@@ -30,11 +29,12 @@ if (!skipConfigurationMetadata) {
                     "metadata for nested and indexed properties. The process starts with the build directory " +
                     "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
         }
-        main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+        mainClass.set("org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator")
         classpath = sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
         args buildDir, projectDir.canonicalPath
     }
 
-    compileJava.inputs.files(processResources)
+    compileJava.inputs.files(processResources).withPropertyName("processResources")
+        .withPathSensitivity(PathSensitivity.RELATIVE).ignoreEmptyDirectories()
     jar.dependsOn(generateConfigurationMetadata)
 }

@@ -21,15 +21,14 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -42,10 +41,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public class JwtBuilder {
-    private static final int MAP_SIZE = 8;
-
-    private final String issuer;
-
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
     private final ServicesManager servicesManager;
@@ -80,7 +75,7 @@ public class JwtBuilder {
      * @return the jwt
      */
     public static String buildPlain(final JWTClaimsSet claimsSet,
-        final Optional<RegisteredService> registeredService) {
+                                    final Optional<RegisteredService> registeredService) {
         val header = new PlainHeader.Builder().type(JOSEObjectType.JWT);
         registeredService.ifPresent(svc ->
             header.customParam(RegisteredServiceCipherExecutor.CUSTOM_HEADER_REGISTERED_SERVICE_ID, svc.getId()));
@@ -126,32 +121,32 @@ public class JwtBuilder {
      */
     public String build(final JwtRequest payload) {
         val serviceAudience = payload.getServiceAudience();
+        Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
         val claims = new JWTClaimsSet.Builder()
             .audience(serviceAudience)
-            .issuer(StringUtils.defaultString(payload.getIssuer(), this.issuer))
+            .issuer(payload.issuer)
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
             .subject(payload.getSubject());
 
         payload.getAttributes().forEach((k, v) -> {
-            if (v.size() == 1) {
-                claims.claim(k, CollectionUtils.firstElement(v).get());
-            } else {
-                claims.claim(k, v);
+            var claimValue = v.size() == 1 ? CollectionUtils.firstElement(v).get() : v;
+            if (claimValue instanceof ZonedDateTime) {
+                claimValue = claimValue.toString();
             }
+            claims.claim(k, claimValue);
         });
         claims.expirationTime(payload.getValidUntilDate());
 
         val claimsSet = claims.build();
         val jwtJson = claimsSet.toString();
+        LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Generated JWT [{}]", JsonValue.readJSON(jwtJson).toString(Stringify.FORMATTED));
-        }
         LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
         val registeredService = payload.getRegisteredService().isEmpty()
             ? locateRegisteredService(serviceAudience)
             : payload.getRegisteredService().get();
+
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", serviceAudience);
@@ -199,7 +194,7 @@ public class JwtBuilder {
         private final String issuer;
 
         @Builder.Default
-        private final Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+        private final Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
         @Builder.Default
         private Optional<RegisteredService> registeredService = Optional.empty();

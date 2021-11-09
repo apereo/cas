@@ -9,6 +9,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecurityAuthenticationServiceTests}.
@@ -43,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
     "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
 })
-@Tag("MFA")
+@Tag("MFAProvider")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityAuthenticationServiceTests {
 
@@ -64,20 +66,26 @@ public class DuoSecurityAuthenticationServiceTests {
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
             webServer.start();
+            val duoProperties = casProperties.getAuthn().getMfa().getDuo().get(0);
+            duoProperties.setDuoApiHost("http://localhost:6556");
             val service = new BasicDuoSecurityAuthenticationService(
-                casProperties.getAuthn().getMfa().getDuo().get(0),
-                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+                duoProperties,
+                httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+                Caffeine.newBuilder().build());
             assertTrue(service.ping());
-            assertNotNull(service.getApiHost());
+            assertNotNull(service.getProperties().getDuoApiHost());
         }
     }
 
     @Test
     public void verifyPingFails() throws Exception {
+        val duoProperties = casProperties.getAuthn().getMfa().getDuo().get(0);
+        duoProperties.setDuoApiHost("http://localhost:6556");
         val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
         val service = new BasicDuoSecurityAuthenticationService(
-            casProperties.getAuthn().getMfa().getDuo().get(0),
-            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            duoProperties,
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
@@ -93,12 +101,22 @@ public class DuoSecurityAuthenticationServiceTests {
         val props = casProperties.getAuthn().getMfa().getDuo().get(0);
         props.setDuoApiHost(null);
         val service = new BasicDuoSecurityAuthenticationService(props,
-            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+            httpClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
         try (val webServer = new MockWebServer(6556,
             new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
             HttpStatus.OK)) {
             webServer.start();
             assertFalse(service.ping());
         }
+    }
+
+    @Test
+    public void verifyOperation() {
+        val service = mock(DuoSecurityAuthenticationService.class);
+        when(service.getDuoClient()).thenCallRealMethod();
+        when(service.signRequestToken(anyString())).thenCallRealMethod();
+        assertTrue(service.getDuoClient().isEmpty());
+        assertTrue(service.signRequestToken("anything").isEmpty());
     }
 }

@@ -22,7 +22,7 @@ by exposing a way to REST-fully obtain a Ticket Granting Ticket and then use tha
 
 Support is enabled by including the following to the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest" %}
 
 ## Multiple Credentials
 
@@ -69,7 +69,6 @@ Please see [this guide](REST-Protocol-TicketStatus.html).
 ## Add Service
 
 Please see [this guide](REST-Protocol-Create-Service.html).
-
 
 ## CAS REST Clients
 

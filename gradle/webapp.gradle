@@ -4,75 +4,14 @@ ext {
 }
 description = "Apereo CAS Web Application"
 
+
 sourceSets {
     main {
         resources {
             srcDirs "${project.buildDir}/generated-src/main/resources"
         }
     }
-    /**
-     * Make resources become reloadable.
-     * Application’s static resources are loaded from their source location.
-     */
-    bootRun {
-        resources {
-            srcDirs new File("//etc/cas/templates/"),
-                    new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                    new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
-                    new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
-        }
-    }
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
-
-dependencies {
-    implementation project(":core:cas-server-core")
-    implementation project(":core:cas-server-core-audit")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-cookie")
-    implementation project(":core:cas-server-core-logout")
-    implementation project(":core:cas-server-core-logging")
-    implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-tickets")
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-validation")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-notifications")
-
-    compileOnlyApi project(":support:cas-server-support-jpa-util")
-
-    implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-person-directory")
-    implementation project(":support:cas-server-support-themes")
-    implementation project(":support:cas-server-support-validation")
-    implementation project(":support:cas-server-support-thymeleaf")
-    implementation project(":support:cas-server-support-pm-webflow")
-
-    implementation project(":webapp:cas-server-webapp-config")
-    implementation project(":webapp:cas-server-webapp-init")
-    implementation project(":webapp:cas-server-webapp-resources")
-    
-    // Add modules in format compatible with overlay casModules property
-    if (project.hasProperty("casModules")) {
-        def dependencies = project.getProperty("casModules").split(",")
-        dependencies.each {
-            def projectsToAdd = rootProject.subprojects.findAll {project ->
-                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
-                logger.debug("Matching ${pattern} against CAS module ${project.name}")
-                project.name.matches(pattern)
-            }
-            projectsToAdd.each {
-                println "Adding CAS module ${it.path}"
-                implementation it
-            }
-        }
-    }
-
-    implementation libraries.springcloudconfigclient
-    if (!rootProject.publishReleases && !rootProject.publishSnapshots) {
-        runtimeOnly libraries.springbootdevtools
-    }
-
-}
+apply from: rootProject.file("gradle/webapp-dependencies.gradle")

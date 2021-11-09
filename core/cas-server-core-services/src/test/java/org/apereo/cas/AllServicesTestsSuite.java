@@ -7,9 +7,10 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImplTests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactoryTests;
 import org.apereo.cas.config.CasServiceRegistryInitializationConfigurationTests;
+import org.apereo.cas.config.DomainServicesManagerConfigurationTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicyTests;
-import org.apereo.cas.services.ChainingServicesManagerTests;
+import org.apereo.cas.services.DefaultChainingServicesManagerTests;
 import org.apereo.cas.services.DefaultDomainAwareServicesManagerTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicyTests;
@@ -57,9 +58,8 @@ import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilterT
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializerTests;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllServicesTestsSuite}.
@@ -125,9 +125,10 @@ import org.junit.runner.RunWith;
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,
     GroovyRegisteredServiceAccessStrategyTests.class,
-    ChainingServicesManagerTests.class,
+    DefaultChainingServicesManagerTests.class,
+    DomainServicesManagerConfigurationTests.class,
     RegisteredServiceJsonSerializerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllServicesTestsSuite {
 }

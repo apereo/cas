@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -29,7 +29,10 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SpringBootApplication(exclude = GroovyTemplateAutoConfiguration.class, proxyBeanMethods = false)
+@SpringBootApplication(exclude = {
+    GroovyTemplateAutoConfiguration.class,
+    DataSourceAutoConfiguration.class
+}, proxyBeanMethods = false)
 @EnableConfigServer
 @NoArgsConstructor
 @Slf4j
@@ -66,7 +69,6 @@ public class CasConfigurationServerWebApplication {
      * @param serverProperties the server properties
      * @return the web security configurer adapter
      */
-    @Autowired
     @Bean
     public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
         return new WebSecurityConfigurerAdapter() {

@@ -51,6 +51,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -91,18 +92,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebflowContextConfiguration.class,
     CasThemesConfiguration.class,
     CasThymeleafConfiguration.class,
     CasFiltersConfiguration.class,
     CasPropertiesConfiguration.class,
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
-    CasWebflowContextConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreWebflowConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -126,23 +127,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class
+    CasCoreMultifactorAuthenticationConfiguration.class,
+    WebMvcAutoConfiguration.class,
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAspectJAutoProxy
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
-    @Test
-    public void verifyExecutorsAreBeans() {
-        assertNotNull(getFlowExecutor());
-    }
-
-    @Test
-    public void verifyFlowExecutorByClient() {
-        val ctx = getMockRequestContext();
-        val map = new LocalAttributeMap<>();
-        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
-    }
-
     @SneakyThrows(IOException.class)
     protected static void assertResponseWrittenEquals(final String response, final MockRequestContext context) {
         val nativeResponse = (MockHttpServletResponse) context.getExternalContext().getNativeResponse();
@@ -160,6 +150,18 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         return ctx;
     }
 
+    @Test
+    public void verifyExecutorsAreBeans() {
+        assertNotNull(getFlowExecutor());
+    }
+
+    @Test
+    public void verifyFlowExecutorByClient() {
+        val ctx = getMockRequestContext();
+        val map = new LocalAttributeMap<>();
+        getFlowExecutor().launchExecution("login", map, ctx.getExternalContext());
+    }
+
     public abstract FlowExecutor getFlowExecutor();
 
     /**
@@ -173,7 +175,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         @Autowired
         @Qualifier("principalElectionStrategy")
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
-  
+
         @Bean
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF

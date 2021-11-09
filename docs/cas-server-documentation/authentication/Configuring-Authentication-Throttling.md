@@ -18,9 +18,9 @@ second that would continually increase in the capacity bucket.
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-bucket4j" %}
 
-{% include casproperties.html properties="cas.authn.throttle.bucket4j" %}
+{% include_cached casproperties.html properties="cas.authn.throttle.bucket4j" %}
 
 ## Failure Throttling
 
@@ -37,53 +37,44 @@ rate in failures per second. The following properties are provided to define the
 * `failureThreshold` - Number of failed login attempts permitted in the above period.
 
 A failure rate of more than 1 per 3 seconds is indicative of an automated authentication attempt, which is a
-reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
+reasonable basis for throttling policy. Regardless of policy care should be 
+taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
+
+<div class="alert alert-info mt-3"><strong>Threshold Rate</strong><p>
+The failure threshold rate is calculated as: <code>failureThreshold / failureRangeInSeconds</code>. For instance,
+the failure rate for the above scenario would be <code>0.333333</code>. An authentication attempt may be considered throttled
+if the request submission rate (calculated as the difference between the current date and the last submission date) exceeds
+the failure threshold rate.
+</p></div>
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
-
-### Administrative Endpoints
-
-The following endpoints are provided by CAS:
- 
-| Endpoint                     | Description
-|------------------------------|---------------------------------------------
-| `throttles`                  | `GET` request to fetch throttled records.
-
-### IP Address
-
-Uses a memory map to prevent successive failed login attempts from the same IP address.
-
-### IP Address and Username
-
-Uses a memory map to prevent successive failed login attempts for
-a particular username from the same IP address.
-
-### JDBC
-
-Please [see this guide](Configuring-Authentication-Throttling-JDBC.html) for more info.
-
-### MongoDb
-
-Please [see this guide](Configuring-Authentication-Throttling-MongoDb.html) for more info.
-
-### Redis
-
-Please [see this guide](Configuring-Authentication-Throttling-Redis.html) for more info.
-
-### Hazelcast
-
-Please [see this guide](Configuring-Authentication-Throttling-Hazelcast.html) for more info.
-
-### CouchDb
-
-Please [see this guide](Configuring-Authentication-Throttling-CouchDb.html) for more info.
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.throttle" %}
+{% include_cached casproperties.html properties="cas.authn.throttle.core,cas.authn.throttle.schedule,cas.authn.throttle.failure" %}
+
+### Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="throttles" %}
+
+### Throttling Strategies
+      
+The following throttling strategies are offered by CAS.
+
+| Storage          | Description                                         
+|--------------------------------------------------------------------------------------------------------------------------
+| IP Address       | Uses a memory map to prevent successive failed login attempts from the same IP address.
+| IP Address and Username | Uses a memory map to prevent successive failed login attempts for a username from the same IP address.
+| JDBC             | [See this guide](Configuring-Authentication-Throttling-JDBC.html).
+| MongoDb          | [See this guide](Configuring-Authentication-Throttling-MongoDb.html).
+| Redis            | [See this guide](Configuring-Authentication-Throttling-Redis.html).
+| Hazelcast        | [See this guide](Configuring-Authentication-Throttling-Hazelcast.html).
+| CouchDb          | [See this guide](Configuring-Authentication-Throttling-CouchDb.html).
 
 ## High Availability
 

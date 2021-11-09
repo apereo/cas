@@ -18,6 +18,7 @@ import lombok.ToString;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.pac4j.core.context.session.SessionStore;
 
@@ -60,4 +61,6 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
     private final transient SessionStore sessionStore;
 
     private final transient CentralAuthenticationService centralAuthenticationService;
+
+    private final MetadataResolver samlIdPMetadataResolver;
 }

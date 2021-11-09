@@ -50,7 +50,7 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-{% include casproperties.html properties="cas.authn.mfa.triggers.principal" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.triggers.principal" %}
 
 As an example, the following predicate example will begin to test each multifactor 
 authentication provider and if the given provider is `mfa-duo` it will accept it 

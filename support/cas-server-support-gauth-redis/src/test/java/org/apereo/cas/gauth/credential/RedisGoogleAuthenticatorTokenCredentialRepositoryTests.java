@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.mfa.gauth.redis.host=localhost",
     "cas.authn.mfa.gauth.redis.port=6379"
 })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Tag("Redis")
 @Getter

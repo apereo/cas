@@ -1,24 +1,17 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
 const https = require('https');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     const service = "https://example.com";
 
-    await page.goto("https://localhost:8443/cas/login?TARGET=" + service);
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    await page.goto(`https://localhost:8443/cas/login?TARGET=${service}`);
+    await cas.loginWith(page, "casuser", "Mellon");
 
-    let result = new URL(page.url());
-    let ticket = result.searchParams.get("SAMLart");
-    console.log(ticket);
-    assert(ticket != null);
+    let ticket = await cas.assertParameter(page, "SAMLart");
 
     let request = `<?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -36,12 +29,12 @@ const https = require('https');
         protocol: 'https:',
         hostname: 'localhost',
         port: 8443,
-        path: '/cas/samlValidate?TARGET=' + service + "&SAMLart=" + ticket,
+        path: `/cas/samlValidate?TARGET=${service}&SAMLart=${ticket}`,
         method: 'POST',
         rejectUnauthorized: false,
         headers: {
-            'Content-Length': request.length,
-        },
+            'Content-Length': request.length
+        }
     };
 
     const post = options => {

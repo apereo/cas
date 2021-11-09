@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "axios": "^0.21.1",
+    "colors": "^1.4.0",
+    "imgur": "^2.0.0-next.6",
+    "jsonpath-plus": "^6.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "perf_hooks": "^0.0.1",
+    "puppeteer": "^5.5.0",
+    "puppeteer-loadtest": "^2.2.0",
+    "puppeteer-screen-recorder": "^1.1.11",
+    "request": "^2.88.2",
+    "wait-on": "^6.0.0",
+    "yaml": "^1.10.2"
+  }
+}

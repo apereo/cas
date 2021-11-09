@@ -6,9 +6,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ScriptResourceCacheManager}.
@@ -31,7 +29,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @return the key
      */
     static String computeKey(final String... keys) {
-        val rawKey = Arrays.stream(keys).collect(Collectors.joining(":"));
+        val rawKey = String.join(":", keys);
         return DigestUtils.sha256(rawKey);
     }
 

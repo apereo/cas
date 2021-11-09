@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.retry.annotation.EnableRetry;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -40,21 +39,20 @@ import static org.mockito.Mockito.*;
     })
 @Tag("CouchDb")
 @EnabledIfPortOpen(port = 5984)
-@EnableRetry
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistryCouchDbRepository")
     private TicketRepository ticketRepository;
-    
+
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("ticketRegistryCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
-    
+
     @AfterEach
     public void afterEachTest() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());

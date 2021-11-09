@@ -13,12 +13,12 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.pm.jdbc.user=postgres",
     "cas.authn.pm.jdbc.password=password",
     "cas.authn.pm.jdbc.driver-class=org.postgresql.Driver",
     "cas.authn.pm.jdbc.url=jdbc:postgresql://localhost:5432/pm",
-    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect",
+    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
     "cas.authn.pm.history.core.enabled=true"
 })
 @EnabledIfPortOpen(port = 5432)

@@ -1,0 +1,46 @@
+{
+  "dependencies": "ldap,pm-ldap,pm-webflow",
+  "properties": [
+    "--cas.authn.ldap[0].type=AUTHENTICATED",
+    "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
+    "--cas.authn.ldap[0].bind-credential=M3110nM3110n#1",
+    "--cas.authn.ldap[0].ldap-url=ldap://localhost:10390",
+    "--cas.authn.ldap[0].use-start-tls=false",
+    "--cas.authn.ldap[0].subtree-search=true",
+    "--cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "--cas.authn.ldap[0].follow-referrals=false",
+    "--cas.authn.ldap[0].principal-attribute-list=sAMAccountName",
+    "--cas.authn.ldap[0].enhance-with-entry-resolver=true",
+    "--cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
+    "--cas.authn.ldap[0].min-pool-size=0",
+    "--cas.authn.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.ldap[0].trust-store-type=JKS",
+    "--cas.authn.ldap[0].trust-store-password=changeit",
+    "--cas.authn.ldap[0].hostname-verifier=ANY",
+    "--cas.authn.ldap[0].password-policy.type=AD",
+    "--cas.authn.ldap[0].password-policy.enabled=true",
+
+    "--cas.authn.pm.ldap[0].type=AD",
+    "--cas.authn.pm.ldap[0].ldap-url=ldap://localhost:10390",
+    "--cas.authn.pm.ldap[0].usernameAttribute=sAMAccountName",
+    "--cas.authn.pm.ldap[0].bind-dn=Administrator@cas.example.org",
+    "--cas.authn.pm.ldap[0].bind-credential=M3110nM3110n#1",
+    "--cas.authn.pm.ldap[0].use-start-tls=false",
+    "--cas.authn.pm.ldap[0].subtree-search=true",
+    "--cas.authn.pm.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "--cas.authn.pm.ldap[0].follow-referrals=false",
+    "--cas.authn.pm.ldap[0].search-filter=(sAMAccountName={user})",
+    "--cas.authn.pm.ldap[0].min-pool-size=0",
+    "--cas.authn.pm.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.pm.ldap[0].trust-store-type=JKS",
+    "--cas.authn.pm.ldap[0].trust-store-password=changeit",
+    "--cas.authn.pm.ldap[0].hostname-verifier=ANY",
+
+    "--cas.authn.pm.core.enabled=true",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net"
+  ],
+  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
+}

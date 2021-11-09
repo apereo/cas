@@ -41,6 +41,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
             val metadataRoot = document.getDocumentElement();
             val metadataProvider = new DOMMetadataResolver(metadataRoot);
+            metadataProvider.setResolveViaPredicatesOnly(true);
             configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {

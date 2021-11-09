@@ -43,7 +43,10 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        val last = this.ipMap.get(constructKey(request));
+        val key = constructKey(request);
+        LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
+        val last = this.ipMap.get(key);
+        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
         return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
     }
 
@@ -71,6 +74,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
      */
     private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
-        return SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
+        val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
+        LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
+        return rate;
     }
 }

@@ -8,11 +8,11 @@ category: Services
 
 # RESTful Service Registry
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-service-registry" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.rest" %}
+{% include_cached casproperties.html properties="cas.service-registry.rest" %}
 
 | Operation         | Method          | Body                       | Response
 |-------------------|-----------------|----------------------------------------------------------------------

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.logout.confirm.header}">Confirm Logout View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto">
+        <h2 th:if="${authentication}"
+            th:utext="#{screen.logout.confirm.header(${authentication.principal.id})}">Do you want to log out completely?</h2>
+        <h2 th:unless="${authentication}">Do you want to log out completely?</h2>
+        <p th:remove="tag" th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
+            Authentication Service to completely log you out and destroy your single sign-on session. \
+            If you choose to log out, you will be asked again to provide your credentials and \
+            login again once you attempt to access an application.
+        </p>
+
+        <span th:if="${ticketGrantingTicket != null and #maps.size(ticketGrantingTicket.services) > 0}">
+            <span>The following applications are tied to your single sign-on session:</span>
+            <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divServices"
+                 role="tabpanel" aria-labelledby="attributes-tab">
+                <table id="servicesTable" class="table table-striped" style="white-space: unset">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Session Id</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    <tr th:each="entry : ${ticketGrantingTicket.services}" class="mdc-data-table__row">
+                        <td class="mdc-data-table__cell"><code><kbd th:utext="${entry.key}"/></code></td>
+                        <td class="mdc-data-table__cell">
+                            <code><kbd th:utext="${#strings.abbreviate(entry.value.id, 80)}"/></code>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </span>
+
+        <span th:text="#{screen.logout.confirm.proceed}">Do you want to proceed?</span>
+        <br/>
+        <form method="post" id="fm1">
+            <input type="hidden" name="LogoutRequestConfirmed" value="true"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="success"/>
+            <button id="logoutButton" class="mdc-button mdc-button--raised btn btn-primary" name="success" accesskey="l">
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.logout}">Logout</span>
+            </button>
+        </form>
+        <script type="text/javascript" th:inline="javascript">
+            let div = document.querySelector('#divServices');
+            new mdc.dataTable.MDCDataTable(div);
+        </script>
+    </div>
+</main>
+</body>
+</html>

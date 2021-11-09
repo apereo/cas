@@ -37,9 +37,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * @param event the event
      */
     public void publishEvent(final ApplicationEvent event) {
-        if (this.applicationContext != null) {
+        if (applicationContext != null) {
             LOGGER.trace("Publishing event [{}]", event);
-            this.applicationContext.publishEvent(event);
+            applicationContext.publishEvent(event);
         }
     }
 

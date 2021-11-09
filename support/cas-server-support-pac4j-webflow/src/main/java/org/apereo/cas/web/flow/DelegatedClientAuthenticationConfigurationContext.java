@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
@@ -18,8 +19,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link DelegatedClientAuthenticationConfigurationContext}.
@@ -30,8 +35,13 @@ import org.pac4j.core.context.session.SessionStore;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class DelegatedClientAuthenticationConfigurationContext {
+    /**
+     * Default implementation bean id.
+     */
+    public static final String DEFAULT_BEAN_NAME = "delegatedClientAuthenticationConfigurationContext";
+
     private final Clients clients;
 
     private final ServicesManager servicesManager;
@@ -39,8 +49,6 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-    private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -60,6 +68,8 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProvidersProducer;
 
+    private final DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor;
+
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
@@ -71,4 +81,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
     private final CasCookieBuilder delegatedClientCookieGenerator;
 
     private final TicketFactory ticketFactory;
+
+    @Builder.Default
+    private List<DelegatedClientAuthenticationRequestCustomizer> delegatedClientAuthenticationRequestCustomizers = new ArrayList<>();
 }

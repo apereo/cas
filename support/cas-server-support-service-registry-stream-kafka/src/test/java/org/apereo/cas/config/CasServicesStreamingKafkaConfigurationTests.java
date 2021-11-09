@@ -88,7 +88,7 @@ public class CasServicesStreamingKafkaConfigurationTests {
             new CasRegisteredServiceDeletedEvent(this, registeredService), publisherId);
 
         Thread.sleep(2500);
-
+        registeredServiceDistributedCacheManager.clear();
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }
 
@@ -112,12 +112,14 @@ public class CasServicesStreamingKafkaConfigurationTests {
         obj = registeredServiceDistributedCacheManager.get(registeredService);
         assertNotNull(obj);
 
-        val c = registeredServiceDistributedCacheManager.findAll(obj1 -> obj1.getValue().equals(registeredService));
+        var c = registeredServiceDistributedCacheManager.findAll(obj1 -> obj1.getValue().equals(registeredService));
         assertFalse(c.isEmpty());
 
         registeredServiceDistributedCacheManager.remove(registeredService, cache, true);
-        Thread.sleep(2000);
-        
+        Thread.sleep(5000);
+        c = registeredServiceDistributedCacheManager.findAll(obj1 -> obj1.getValue().equals(registeredService));
+        assertTrue(c.isEmpty());
+        registeredServiceDistributedCacheManager.clear();
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
     }
 

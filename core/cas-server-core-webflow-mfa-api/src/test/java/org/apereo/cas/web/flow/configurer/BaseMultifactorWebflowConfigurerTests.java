@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
@@ -27,16 +28,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public abstract class BaseMultifactorWebflowConfigurerTests {
     @Autowired
-    @Qualifier("casWebflowExecutionPlan")
+    @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier("loginFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    protected abstract FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry();
-
-    protected abstract String getMultifactorEventId();
 
     /**
      * Ensures that, for every transition within this MFA flow, the target
@@ -51,10 +48,10 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         states.forEach(stateId -> {
             val state = (State) flow.getState(stateId);
             if (state instanceof TransitionableState) {
-                TransitionableState.class.cast(state).getTransitionSet().forEach(t -> {
+                ((TransitionableState) state).getTransitionSet().forEach(t -> {
                     assertTrue(flow.containsState(t.getTargetStateId()),
-                            String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
-                                stateId, t.getId(), t.getTargetStateId()));
+                        String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
+                            stateId, t.getId(), t.getTargetStateId()));
                 });
             }
         });
@@ -81,5 +78,14 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_REGISTER_DEVICE_VIEW));
+
+        val prepare = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_PREPARE_REGISTER_TRUSTED_DEVICE);
+        assertNotNull(prepare.getTransition(CasWebflowConstants.TRANSITION_ID_SKIP));
+        assertNotNull(prepare.getTransition(CasWebflowConstants.TRANSITION_ID_REGISTER));
+        assertNotNull(prepare.getTransition(CasWebflowConstants.TRANSITION_ID_STORE));
     }
+
+    protected abstract FlowDefinitionRegistry getMultifactorFlowDefinitionRegistry();
+
+    protected abstract String getMultifactorEventId();
 }

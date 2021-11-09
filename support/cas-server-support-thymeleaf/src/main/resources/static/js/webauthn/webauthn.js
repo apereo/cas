@@ -291,6 +291,7 @@ function showServerResponse(data) {
 function hideDeviceInfo() {
     $("#device-info").hide();
     $("#registerButton").show();
+    $("#registerDiscoverableCredentialButton").show();
 }
 
 function showDeviceInfo(params) {
@@ -299,6 +300,9 @@ function showDeviceInfo(params) {
     $("#device-icon").attr("src", params.imageUrl);
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
+
+    $("#registerDiscoverableCredentialButton").hide();
+    $("#residentKeysPanel").hide();
 }
 
 function resetDisplays() {
@@ -320,7 +324,11 @@ function getWebAuthnUrls() {
     });
 }
 
-function getRegisterRequest(urls, username, displayName, credentialNickname, requireResidentKey = false) {
+function getRegisterRequest(urls,
+                            username,
+                            displayName,
+                            credentialNickname,
+                            requireResidentKey = false) {
     return fetch(urls.register, {
         body: new URLSearchParams({
             username,
@@ -329,6 +337,9 @@ function getRegisterRequest(urls, username, displayName, credentialNickname, req
             requireResidentKey,
             sessionToken: session.sessionToken || null,
         }),
+        headers: {
+           "X-CSRF-TOKEN": csrfToken
+        },
         method: 'POST',
     })
         .then(response => response.json())
@@ -417,8 +428,10 @@ function finishCeremony(response) {
         });
 }
 
-function register(username, displayName, credentialNickname, requireResidentKey = false, getRequest = getRegisterRequest) {
-    var request;
+function register(username, displayName, credentialNickname, csrfToken,
+                  requireResidentKey = false,
+                  getRequest = getRegisterRequest) {
+    let request;
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),

@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -38,7 +38,7 @@ import static org.springframework.http.HttpStatus.*;
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
     properties = "cas.authn.mfa.gauth.rest.url=http://example.com")
 @Getter
-@Tag("MFA")
+@Tag("MFAProvider")
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private static final ObjectMapper MAPPER = builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -49,7 +49,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyFailOps() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -68,7 +68,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyLoad() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8551");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -83,7 +83,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyDelete() {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8550");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -94,6 +94,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
                 @Override
                 public void execute() {
                     repo.delete("casuser");
+                    repo.delete(12345);
                     repo.deleteAll();
                 }
             });
@@ -102,7 +103,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGet() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -117,7 +118,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGetById() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -132,7 +133,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGetByIdAndUser() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -147,7 +148,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCount() {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8552");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -160,7 +161,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCountByUser() {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8596");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -173,7 +174,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifySave() throws Exception {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8553");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());
@@ -200,7 +201,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifySaveFail() {
-        val props = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+        val props = new GoogleAuthenticatorMultifactorProperties();
         props.getRest().setUrl("http://localhost:8554");
         val repo = new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             props, CipherExecutor.noOpOfStringToString());

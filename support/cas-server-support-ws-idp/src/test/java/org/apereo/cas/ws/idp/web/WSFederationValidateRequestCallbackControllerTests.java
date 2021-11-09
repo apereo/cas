@@ -34,6 +34,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,7 +56,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
@@ -63,7 +64,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test
@@ -95,7 +96,9 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         tgt.getDescendantTickets().add(sts.getId());
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("customService");
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
+
         val st = new MockServiceTicket("123456", service, tgt);
         ticketRegistry.addTicket(st);
 
@@ -122,7 +125,8 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("customService");
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
         val st = new MockServiceTicket("123456", service, tgt);
         ticketRegistry.addTicket(st);
 

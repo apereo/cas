@@ -65,7 +65,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void addTicket(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) {
         val encodedTicket = encodeTicket(ticketToAdd);
         LOGGER.trace("Adding ticket [{}]", encodedTicket.getId());
         couchDb.add(new TicketDocument(encodedTicket));

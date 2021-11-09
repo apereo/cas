@@ -8,9 +8,11 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+
+import java.util.Objects;
 
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidator}.
@@ -30,7 +32,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     }
 
     @Override
-    protected boolean validateInternal(final JEEContext context, final String grantType,
+    protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
 
         val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore());
@@ -41,6 +43,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+        Objects.requireNonNull(registeredService, "Registered service cannot be found for client " + clientId);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
         val audit = AuditableContext.builder()
             .service(service)
@@ -50,7 +53,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         accessResult.throwExceptionIfNeeded();
 
         if (!isGrantTypeSupportedBy(registeredService, grantType)) {
-            LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), registeredService.getServiceId());
+            LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]",
+                getGrantType(), registeredService.getServiceId());
             return false;
         }
         return true;

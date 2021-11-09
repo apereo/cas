@@ -8,11 +8,11 @@ import lombok.val;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.GeneralSecurityException;
-import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static org.apereo.cas.util.junit.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Base class for {@link RevocationChecker} unit tests.
@@ -21,12 +21,16 @@ import static org.apereo.cas.util.junit.Assertions.*;
  * @since 3.4.6
  */
 public abstract class BaseCRLRevocationCheckerTests {
-    /**
-     * Test method for {@link AbstractCRLRevocationChecker#check(X509Certificate)}.
-     */
-    protected static void checkCertificate(final AbstractCRLRevocationChecker checker, final String[] certFiles, final GeneralSecurityException expected) {
-        val certificates = Arrays.stream(certFiles).map(file -> CertUtils.readCertificate(new ClassPathResource(file))).collect(Collectors.toList());
 
+    protected static void checkCertificate(final AbstractCRLRevocationChecker checker, final String[] certFiles,
+                                           final GeneralSecurityException expected) {
+        val certificates = Arrays.stream(certFiles)
+            .map(file -> CertUtils.readCertificate(new ClassPathResource(file)))
+            .collect(Collectors.toList());
+
+        if (expected != null) {
+            assertNotNull(expected.getMessage());
+        }
         assertThrowsOrNot(expected, () -> {
             for (val cert : certificates) {
                 checker.check(cert);

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -30,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.web.util.UriUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
@@ -103,15 +103,15 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val token = passwordManagementService.createToken(query);
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(token)) {
+        if (StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
-            val expirationSeconds = TimeUnit.MINUTES.toSeconds(pm.getReset().getExpirationMinutes());
+            val seconds = Beans.newDuration(pm.getReset().getExpiration()).toSeconds();
             val properties = CollectionUtils.<String, Serializable>wrap(
                 PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN, token,
-                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(expirationSeconds).build());
+                ExpirationPolicy.class.getName(), HardTimeoutExpirationPolicy.builder().timeToKillInSeconds(seconds).build());
             val ticket = transientFactory.create(service, properties);
-            this.ticketRegistry.addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
 
             val resetUrl = new StringBuilder(casProperties.getServer().getPrefix())
                 .append('/').append(CasWebflowConfigurer.FLOW_ID_LOGIN).append('?')
@@ -157,9 +157,9 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         val url = buildPasswordResetUrl(query.getUsername(), passwordManagementService, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             val pm = casProperties.getAuthn().getPm();
-            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
-                url, pm.getReset().getExpirationMinutes());
-            val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url);
+            val duration = Beans.newDuration(pm.getReset().getExpiration());
+            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
+            val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {
                 return success(url);
@@ -208,12 +208,14 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /**
      * Send password reset email to account.
      *
-     * @param username the username
-     * @param to       the to
-     * @param url      the url
+     * @param username       the username
+     * @param to             the to
+     * @param url            the url
+     * @param requestContext the request context
      * @return true /false
      */
-    protected boolean sendPasswordResetEmailToAccount(final String username, final String to, final String url) {
+    protected boolean sendPasswordResetEmailToAccount(final String username, final String to, final String url,
+                                                      final RequestContext requestContext) {
         if (StringUtils.isNotBlank(to)) {
             val reset = casProperties.getAuthn().getPm().getReset().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
@@ -222,9 +224,11 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
 
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
                 .parameters(parameters)
+                .locale(Optional.ofNullable(request.getLocale()))
                 .build()
                 .produce();
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
@@ -243,12 +247,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      */
     protected Event getErrorEvent(final String code, final String defaultMessage,
                                   final RequestContext requestContext) {
-        val messages = requestContext.getMessageContext();
-        messages.addMessage(new MessageBuilder()
-            .error()
-            .code("screen.pm.reset." + code)
-            .defaultText(defaultMessage)
-            .build());
+        WebUtils.addErrorMessageToContext(requestContext, "screen.pm.reset." + code, defaultMessage);
         LOGGER.error(defaultMessage);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }

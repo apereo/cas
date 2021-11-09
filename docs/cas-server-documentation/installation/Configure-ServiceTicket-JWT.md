@@ -46,21 +46,19 @@ are only left in charge of validating the JWT itself. Do not confuse this with O
 cannot be refreshed and must be obtained again once you deem it expired. If you need more, consider using the OpenID Connect protocol instead. 
 Note that the responsibility of validating the JWT is pushed onto <b>the client</b> and NOT the CAS server itself.</p></div>
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `jwtTicketSigningPublicKey`  | Exposes the signing public key, accepting an optional `service` parameter.
+
+{% include_cached actuators.html endpoints="jwtTicketSigningPublicKey" %}
 
 ## Configuration
 
 JWT support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-token-tickets" %}
 
-{% include casproperties.html properties="cas.authn.token" includeRsaKeys="true" %}
+{% include_cached casproperties.html properties="cas.authn.token" includeRsaKeys="true" %}
 
 ### Register Clients
 
@@ -125,6 +123,8 @@ The following cipher strategy types are available:
 | `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
 | `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
 
+
+{% include_cached registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
 
 ## JWT Validation - AES
 

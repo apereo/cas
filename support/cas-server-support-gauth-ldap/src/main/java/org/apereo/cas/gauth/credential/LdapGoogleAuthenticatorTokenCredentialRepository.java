@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public class LdapGoogleAuthenticatorTokenCredentialRepository
     extends BaseGoogleAuthenticatorTokenCredentialRepository
     implements DisposableBean {
-    
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -50,12 +50,30 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     private final LdapGoogleAuthenticatorMultifactorProperties ldapProperties;
 
     public LdapGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
-        final IGoogleAuthenticator googleAuthenticator,
-        final ConnectionFactory connectionFactory,
-        final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
+                                                            final IGoogleAuthenticator googleAuthenticator,
+                                                            final ConnectionFactory connectionFactory,
+                                                            final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.connectionFactory = connectionFactory;
         this.ldapProperties = ldapProperties;
+    }
+
+    @SneakyThrows
+    private static String mapToJson(final Collection<OneTimeTokenAccount> acct) {
+        val json = MAPPER.writeValueAsString(acct);
+        LOGGER.trace("Transformed object [{}] as JSON value [{}]", acct, json);
+        return json;
+    }
+
+    @SneakyThrows
+    private static List<OneTimeTokenAccount> mapFromJson(final String payload) {
+        LOGGER.trace("Mapping JSON value [{}]", payload);
+        val json = payload.trim();
+        if (StringUtils.isNotBlank(json)) {
+            return MAPPER.readValue(json, new TypeReference<>() {
+            });
+        }
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -92,19 +110,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     public Collection<? extends OneTimeTokenAccount> load() {
         val entries = locateLdapEntriesForAll();
         if (!entries.isEmpty()) {
-            return entries
-                .stream()
-                .map(e -> e.getAttribute(ldapProperties.getAccountAttributeName()))
-                .filter(Objects::nonNull)
-                .map(attr -> attr.getStringValues()
-                    .stream()
-                    .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
-                    .map(this::decode)
-                    .collect(Collectors.toSet()))
-                .flatMap(Set::stream)
-                .collect(Collectors.toList());
+            return mapAccountsFromLdapEntries(entries);
         }
         LOGGER.debug("No decision could be found");
         return new HashSet<>(0);
@@ -128,10 +134,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
 
         if (ldapAttribute == null || ldapAttribute.getStringValues().isEmpty()) {
             LOGGER.debug("Adding new account for LDAP entry [{}]", entry);
-            val json = mapToJson(CollectionUtils.wrapArrayList(encode(account)));
-            val accounts = new LinkedHashSet<String>();
-            accounts.add(json);
-            executeModifyOperation(accounts, entry);
+            updateAccount(account, entry);
         } else {
             val existingAccounts = ldapAttribute.getStringValues()
                 .stream()
@@ -175,6 +178,16 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     @Override
+    public void delete(final long id) {
+        val entry = searchLdapAccountsBy(id);
+        if (entry != null) {
+            val accounts = mapAccountsFromLdapEntries(List.of(entry));
+            accounts.removeIf(device -> device.getId() == id);
+            updateAccounts(accounts, entry);
+        }
+    }
+
+    @Override
     public long count() {
         return locateLdapEntriesForAll().size();
     }
@@ -187,6 +200,34 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     @Override
     public void destroy() {
         connectionFactory.close();
+    }
+
+    private void updateAccount(final OneTimeTokenAccount account, final LdapEntry entry) {
+        updateAccounts(List.of(account), entry);
+    }
+
+    private void updateAccounts(final Collection<OneTimeTokenAccount> accounts, final LdapEntry entry) {
+        val results = accounts.stream().map(this::encode).collect(Collectors.toList());
+        val json = mapToJson(results);
+        val entries = new LinkedHashSet<String>();
+        entries.add(json);
+        executeModifyOperation(entries, entry);
+    }
+
+    private List<OneTimeTokenAccount> mapAccountsFromLdapEntries(final Collection<LdapEntry> entries) {
+        return entries
+            .stream()
+            .map(e -> e.getAttribute(ldapProperties.getAccountAttributeName()))
+            .filter(Objects::nonNull)
+            .map(attr -> attr.getStringValues()
+                .stream()
+                .map(LdapGoogleAuthenticatorTokenCredentialRepository::mapFromJson)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .map(this::decode)
+                .collect(Collectors.toSet()))
+            .flatMap(Set::stream)
+            .collect(Collectors.toList());
     }
 
     private boolean executeModifyOperation(final Set<String> accounts, final LdapEntry entry) {
@@ -229,20 +270,18 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
     }
 
     @SneakyThrows
-    private static String mapToJson(final Collection<OneTimeTokenAccount> acct) {
-        val json = MAPPER.writeValueAsString(acct);
-        LOGGER.trace("Transformed object [{}] as JSON value [{}]", acct, json);
-        return json;
-    }
-
-    @SneakyThrows
-    private static List<OneTimeTokenAccount> mapFromJson(final String payload) {
-        LOGGER.trace("Mapping JSON value [{}]", payload);
-        val json = payload.trim();
-        if (StringUtils.isNotBlank(json)) {
-            return MAPPER.readValue(json, new TypeReference<>() {
-            });
+    private LdapEntry searchLdapAccountsBy(final long id) {
+        val searchFilter = String.format("(%s=*\"id\":%s*)", ldapProperties.getAccountAttributeName(), id);
+        val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter);
+        LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
+            ldapProperties.getAccountAttributeName());
+        val response = LdapUtils.executeSearchOperation(this.connectionFactory, ldapProperties.getBaseDn(),
+            filter, ldapProperties.getPageSize(), ldapProperties.getAccountAttributeName());
+        if (LdapUtils.containsResultEntry(response)) {
+            val entry = response.getEntry();
+            LOGGER.debug("Located LDAP entry [{}]", entry);
+            return entry;
         }
-        return new ArrayList<>(0);
+        return null;
     }
 }

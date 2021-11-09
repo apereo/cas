@@ -37,7 +37,8 @@ public class RadiusUtilsTests {
     public void verifyActionFailsWithFailOver() throws Exception {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
-        val result = RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), true, false, Optional.empty());
+        val result = RadiusUtils.authenticate("casuser", "Mellon",
+            CollectionUtils.wrapList(server), true, false, Optional.empty());
         assertFalse(result.getKey());
     }
 
@@ -46,7 +47,8 @@ public class RadiusUtilsTests {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
         assertThrows(FailedLoginException.class,
-            () -> RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), false, false, Optional.empty()));
+            () -> RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty()));
     }
 
     @Test
@@ -54,6 +56,7 @@ public class RadiusUtilsTests {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(FailedLoginException.class);
         assertThrows(FailedLoginException.class,
-            () -> RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), false, false, Optional.empty()));
+            () -> RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty()));
     }
 }

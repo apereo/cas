@@ -8,15 +8,14 @@ import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -25,41 +24,59 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("dynamoDbTicketRegistryConfiguration")
+@Configuration(value = "dynamoDbTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @RefreshScope
-    @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val db = casProperties.getTicket().getRegistry().getDynamoDb();
-        val crypto = db.getCrypto();
-        return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db"),
-            dynamoDbTicketRegistryFacilitator(ticketCatalog));
-    }
 
-    @Autowired
-    @RefreshScope
-    @Bean
-    public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        val db = casProperties.getTicket().getRegistry().getDynamoDb();
-        val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient());
-        if (!db.isPreventTableCreationOnStartup()) {
-            f.createTicketTables(db.isDropTablesOnStartup());
+    @Configuration(value = "DynamoDbTicketRegistryBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DynamoDbTicketRegistryBaseConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public TicketRegistry ticketRegistry(
+            @Qualifier("dynamoDbTicketRegistryFacilitator")
+            final DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator,
+            final CasConfigurationProperties casProperties) {
+            val db = casProperties.getTicket().getRegistry().getDynamoDb();
+            val crypto = db.getCrypto();
+            return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto,
+                "dynamo-db"), dynamoDbTicketRegistryFacilitator);
         }
-        return f;
     }
 
-    @RefreshScope
-    @Bean
-    @SneakyThrows
-    @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
-    public DynamoDbClient amazonDynamoDbTicketRegistryClient() {
-        val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
-        val factory = new AmazonDynamoDbClientFactory();
-        return factory.createAmazonDynamoDb(dynamoDbProperties);
+    @Configuration(value = "DynamoDbTicketRegistryHelperConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DynamoDbTicketRegistryHelperConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(
+            @Qualifier("amazonDynamoDbTicketRegistryClient")
+            final DynamoDbClient amazonDynamoDbTicketRegistryClient,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("ticketCatalog")
+            final TicketCatalog ticketCatalog) {
+            val db = casProperties.getTicket().getRegistry().getDynamoDb();
+            val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);
+            if (!db.isPreventTableCreationOnStartup()) {
+                f.createTicketTables(db.isDropTablesOnStartup());
+            }
+            return f;
+        }
+
     }
+
+    @Configuration(value = "DynamoDbTicketRegistryClientConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class DynamoDbTicketRegistryClientConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "amazonDynamoDbTicketRegistryClient")
+        public DynamoDbClient amazonDynamoDbTicketRegistryClient(final CasConfigurationProperties casProperties) {
+            val dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
+            val factory = new AmazonDynamoDbClientFactory();
+            return factory.createAmazonDynamoDb(dynamoDbProperties);
+        }
+    }
+
 }

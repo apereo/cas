@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 @SuppressWarnings("JavaUtilDate")
 public class DefaultYubiKeyAccountValidatorTests {
     @Test

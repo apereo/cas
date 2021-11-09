@@ -17,13 +17,16 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
-        return getConfigurationContext().getServicesCache()
-            .asMap()
-            .values()
-            .stream()
+    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+        return getCacheableServicesStream().get()
             .sorted(Comparator.naturalOrder())
             .collect(Collectors.toList());
     }
 
+    @Override
+    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return getCacheableServicesStream().get()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
+    }
 }

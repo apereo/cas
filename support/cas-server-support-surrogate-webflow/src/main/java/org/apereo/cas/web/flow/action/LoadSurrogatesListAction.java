@@ -4,12 +4,14 @@ import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -59,24 +61,36 @@ public class LoadSurrogatesListAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        if (WebUtils.hasRequestSurrogateAuthenticationRequest(requestContext)) {
-            WebUtils.removeRequestSurrogateAuthenticationRequest(requestContext);
-            LOGGER.trace("Attempting to load surrogates...");
-            if (loadSurrogates(requestContext)) {
-                return new Event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW);
+        try {
+            if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
+                WebUtils.removeSurrogateAuthenticationRequest(requestContext);
+                LOGGER.trace("Attempting to load surrogates...");
+                if (loadSurrogates(requestContext)) {
+                    return new Event(this, CasWebflowConstants.TRANSITION_ID_SURROGATE_VIEW);
+                }
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP_SURROGATE);
             }
-            return new EventFactorySupport().event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE);
-        }
 
-        val currentCredential = WebUtils.getCredential(requestContext);
-        if (currentCredential instanceof SurrogateUsernamePasswordCredential) {
-            val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
-            val credential = (SurrogateUsernamePasswordCredential) currentCredential;
-            val registeredService = WebUtils.getRegisteredService(requestContext);
-            val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, currentCredential,
-                credential.getSurrogateUsername(), registeredService);
-            result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
+            val currentCredential = WebUtils.getCredential(requestContext);
+            if (currentCredential instanceof SurrogateUsernamePasswordCredential) {
+                val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+                val credential = (SurrogateUsernamePasswordCredential) currentCredential;
+                val registeredService = WebUtils.getRegisteredService(requestContext);
+                val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
+                    authenticationResultBuilder, currentCredential,
+                    credential.getSurrogateUsername(), registeredService);
+                result.ifPresent(builder -> WebUtils.putAuthenticationResultBuilder(builder, requestContext));
+            }
+            return success();
+        } catch (final Exception e) {
+            requestContext.getMessageContext().addMessage(new MessageBuilder()
+                .error()
+                .source("surrogate")
+                .code("screen.surrogates.account.selection.error")
+                .defaultText("Unable to accept or authorize selection")
+                .build());
+            LoggingUtils.error(LOGGER, e);
+            return error(e);
         }
-        return success();
     }
 }

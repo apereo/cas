@@ -45,8 +45,7 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     }
 
     @Test
-    @SneakyThrows
-    public void verifyRegistry() {
+    public void verifyRegistry() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val registry = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -59,8 +58,7 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     }
 
     @Test
-    @SneakyThrows
-    public void verifyRequiredHandlersServiceDefinition() {
+    public void verifyRequiredHandlersServiceDefinition() throws Exception {
         val resource = new ClassPathResource("RequiredHandlers-10000004.json");
         val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
@@ -68,8 +66,7 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     }
 
     @Test
-    @SneakyThrows
-    public void verifyExistingDefinitionForCompatibility2() {
+    public void verifyExistingDefinitionForCompatibility2() throws Exception {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest2.json");
         val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());
@@ -81,8 +78,7 @@ public class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTe
     }
 
     @Test
-    @SneakyThrows
-    public void verifyExistingDefinitionForCompatibility1() {
+    public void verifyExistingDefinitionForCompatibility1() throws Exception {
         val resource = new ClassPathResource("returnMappedAttributeReleasePolicyTest1.json");
         val serializer = new RegisteredServiceJsonSerializer();
         val service = serializer.from(resource.getInputStream());

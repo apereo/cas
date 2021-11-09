@@ -14,10 +14,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -37,7 +33,6 @@ import java.util.Optional;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -51,53 +46,43 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     /**
      * The {@link ExpirationPolicy} this ticket is associated with.
      **/
-    @Lob
-    @Column(name = "EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable = false)
     @Getter
     private ExpirationPolicy expirationPolicy;
 
     /**
      * The unique identifier for this ticket.
      */
-    @Id
-    @Column(name = "ID", nullable = false, length = 512)
     @Getter
     private String id;
 
     /**
      * The last time this ticket was used.
      */
-    @Column(name = "LAST_TIME_USED", length = Integer.MAX_VALUE)
     @Getter
     private ZonedDateTime lastTimeUsed;
 
     /**
      * The previous last time this ticket was used.
      */
-    @Column(name = "PREVIOUS_LAST_TIME_USED", length = Integer.MAX_VALUE)
     @Getter
     private ZonedDateTime previousTimeUsed;
 
     /**
      * The time the ticket was created.
      */
-    @Column(name = "CREATION_TIME", length = Integer.MAX_VALUE)
     @Getter
     private ZonedDateTime creationTime;
 
     /**
      * The number of times this was used.
      */
-    @Column(name = "NUMBER_OF_TIMES_USED")
     @Getter
     private int countOfUses;
 
     /**
      * Flag to enforce manual expiration.
      */
-    @Column(name = "EXPIRED", nullable = false)
     private Boolean expired = Boolean.FALSE;
-
 
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
@@ -110,6 +95,39 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public void update() {
         updateTicketState();
         updateTicketGrantingTicketState();
+    }
+
+    @Override
+    public boolean isExpired() {
+        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
+    }
+
+    @Override
+    public int compareTo(final Ticket o) {
+        return getId().compareTo(o.getId());
+    }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
+
+    @Override
+    public Authentication getAuthentication() {
+        val ticketGrantingTicket = getTicketGrantingTicket();
+        return Optional.ofNullable(ticketGrantingTicket)
+            .map(TicketGrantingTicket::getAuthentication)
+            .orElse(null);
+    }
+
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket() {
+        return null;
+    }
+
+    @Override
+    public void markTicketExpired() {
+        this.expired = Boolean.TRUE;
     }
 
     /**
@@ -139,41 +157,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
             getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
     }
 
-    @Override
-    public boolean isExpired() {
-        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
-    }
-
     @JsonIgnore
     protected boolean isExpiredInternal() {
         return this.expired;
-    }
-
-    @Override
-    public int compareTo(final Ticket o) {
-        return getId().compareTo(o.getId());
-    }
-
-    @Override
-    public String toString() {
-        return getId();
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        val ticketGrantingTicket = getTicketGrantingTicket();
-        return Optional.ofNullable(ticketGrantingTicket)
-            .map(TicketGrantingTicket::getAuthentication)
-            .orElse(null);
-    }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return null;
-    }
-
-    @Override
-    public void markTicketExpired() {
-        this.expired = Boolean.TRUE;
     }
 }

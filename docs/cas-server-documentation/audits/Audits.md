@@ -18,66 +18,28 @@ Note that the audit record management functionality of CAS supports handling mul
 record destinations at the same time. In other words, you may choose to route audit records 
 to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-{% include casproperties.html properties="cas.audit.engine." %}
+{% include_cached casproperties.html properties="cas.audit.engine." %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `auditLog`               | Provides a JSON representation of all the audit log.
 
-You can specify an interval of log entries to return by adding a `Duration` Syntax 
-to the navigated path. This interval will be subtracted from the current 
-date and time when the query is executed. For instance `/actuator/auditLog/PT1H` will 
-return only entries for the past hour.
+{% include_cached actuators.html endpoints="auditLog,auditevents" casModule="cas-server-support-reports" %}
+     
+## Storage
 
-The actuator endpoint can also accept a JSON object through a POST method containing criteria to filter log entries by.
+Audits can be managed via the following strategies.
 
-The following filters that can be applied:
-
-| Key                       | Value
-|---------------------------|-----------------------------------------------
-| `interval`                | `PT1H`, `PT10M`, `P1D`
-| `actionPerformed`         | `TICKET_GRANTING_TICKET_CREATED`, `SERVICE_TICK.*`
-| `clientIpAddress`         | `111.111.111.111`, `111.111.*` 
-| `username`                | `casuser`, `cas.*`
-| `resourceOperatedOn`      | `ST-1.*`, `TGT-1-.*`
-
-Each filter other than `interval` can accept a regular expression to match against.
-
-## File-based Audits
-
-Please [see this guide](Audits-File.html) for more info.
-
-## Database Audits
-
-Please [see this guide](Audits-Database.html) for more info.
-
-## MongoDb Audits
-
-Please [see this guide](Audits-MongoDb.html) for more info.
-
-## Redis Audits
-
-Please [see this guide](Audits-Redis.html) for more info.
-
-## CouchDb Audits
-
-Please [see this guide](Audits-CouchDb.html) for more info.
-
-## Couchbase Audits
-
-Please [see this guide](Audits-Couchbase.html) for more info.
-
-## DynamoDb Audits
-
-Please [see this guide](Audits-DynamoDb.html) for more info.
-
-## REST Audits
-
-Please [see this guide](Audits-REST.html) for more info.
+| Storage          | Description                                         
+|-----------------------------------------------------------
+| File System      | [See this guide](Audits-File.html).
+| JPA              | [See this guide](Audits-Database.html).
+| MongoDb          | [See this guide](Audits-MongoDb.html).
+| Redis            | [See this guide](Audits-Redis.html).
+| CouchDb          | [See this guide](Audits-CouchDb.html).
+| Couchbase        | [See this guide](Audits-Couchbase.html).
+| DynamoDb         | [See this guide](Audits-DynamoDb.html).
+| REST             | [See this guide](Audits-REST.html).
 
 ## Audit Events
 
@@ -93,13 +55,10 @@ The following events are tracked and recorded in the audit log:
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
 | `AUP_VERIFY`                          | `TRIGGERED`
 | `AUP_SUBMIT`                          | `TRIGGERED`
-| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
-| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
-| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
-| `REQUEST_CHANGE_PASSWORD`             | N/A
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
+| `PROTOCOL_SPECIFICATION_VALIDATE`     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
 | `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
 | `SAML2_REQUEST`                       | `CREATED`, `FAILED`
@@ -113,3 +72,8 @@ The following events are tracked and recorded in the audit log:
 | `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`
 | `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`             | `TRIGGERED`
+| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
+| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
+| `REQUEST_CHANGE_PASSWORD`             | N/A
+| `ACCOUNT_REGISTRATION`                | `TOKEN_VALIDATED`, `TOKEN_CREATED`, `PROVISIONING_SUCCESS`

@@ -1,9 +1,13 @@
 package org.apereo.cas.web.flow.logout;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,9 +20,16 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 public class LogoutViewSetupAction extends AbstractLogoutAction {
-    private final CasConfigurationProperties casProperties;
+
+    public LogoutViewSetupAction(final CentralAuthenticationService centralAuthenticationService,
+                                 final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                                 final ArgumentExtractor argumentExtractor, final ServicesManager servicesManager,
+                                 final LogoutExecutionPlan logoutExecutionPlan,
+                                 final CasConfigurationProperties casProperties) {
+        super(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
+            argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+    }
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,

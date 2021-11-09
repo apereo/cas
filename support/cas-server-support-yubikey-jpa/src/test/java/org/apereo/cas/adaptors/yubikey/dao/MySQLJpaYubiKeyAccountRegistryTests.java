@@ -14,13 +14,13 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop",
     "cas.authn.mfa.yubikey.jpa.user=root",
     "cas.authn.mfa.yubikey.jpa.password=password",
     "cas.authn.mfa.yubikey.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.mfa.yubikey.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
 public class MySQLJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
 }

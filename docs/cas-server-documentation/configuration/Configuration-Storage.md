@@ -19,7 +19,7 @@ This section outlines strategies that can be used to store CAS configuration and
 This is the default configuration mode which indicates that CAS does NOT require connections
 to an external configuration server and will run in an embedded standalone mode.
   
-{% include casproperties.html properties="cas.standalone." excludes="configuration-security" %}
+{% include_cached casproperties.html properties="cas.standalone." excludes="configuration-security" %}
 
 ### By Directory
 
@@ -68,7 +68,7 @@ The configuration server backed by Spring Cloud supports the following profiles.
 
 Load settings from external properties/yaml configuration files.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.config.server.native"
 thirdPartyExactMatch="spring.profiles.active"
 %}
@@ -79,7 +79,7 @@ thirdPartyExactMatch="spring.profiles.active"
 Allow the CAS Spring Cloud configuration server to load settings from an internal/external Git repository.
 This then allows CAS to become a client of the configuration server, consuming settings over HTTP where needed.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.config.server.git"
 thirdPartyExactMatch="spring.profiles.active"
 %}
@@ -90,7 +90,7 @@ The above configuration also applies to online git-based repositories such as Gi
 
 Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp's Consul](../installation/Service-Discovery-Guide-Consul.html).
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.consul.config"
 %}
 
@@ -99,7 +99,7 @@ thirdPartyStartsWith="spring.cloud.consul.config"
 Allow the CAS Spring Cloud configuration server 
 to load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.vault"
 %}
 
@@ -108,7 +108,7 @@ thirdPartyStartsWith="spring.cloud.vault"
 Tokens are the core method for authentication within Vault. Token 
 authentication requires a static token to be provided.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.vault.token"
 thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
@@ -135,7 +135,7 @@ Using MAC address:
 export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
 ```
 
-{% include casproperties.html
+{% include_cached casproperties.html
 thirdPartyStartsWith="spring.cloud.vault.app-id"
 thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
@@ -147,68 +147,64 @@ Kubernetes authentication mechanism allows to authenticate with Vault
 using a Kubernetes Service Account Token. The authentication is role 
 based and the role is bound to a service account name and a namespace.
 
-{% include casproperties.html 
+{% include_cached casproperties.html 
 thirdPartyStartsWith="spring.cloud.vault.kubernetes"
 thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
 
 #### Generic Backend v1
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.vault.generic" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.vault.generic" %}
 
 #### KV Backend v2
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.vault.kv" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.vault.kv" %}
 
 ### MongoDb
 
 Allow the CAS Spring Cloud configuration server to load settings from a MongoDb instance.
 
-{% include casproperties.html properties="cas.spring.cloud.mongo" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.mongo" %}
 
 ### Azure KeyVault Secrets
 
 Allow the CAS Spring Cloud configuration server to load settings from Microsoft Azure's KeyVault instance.
 
-{% include casproperties.html thirdPartyStartsWith="azure.keyvault" %}
+{% include_cached casproperties.html thirdPartyStartsWith="azure.keyvault" %}
 
 ### ZooKeeper
 
 Allow the CAS Spring Cloud configuration server to load settings from an Apache ZooKeeper instance.
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.zookeeper" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.zookeeper" %}
 
 ### Amazon Secrets Manager
 
-{% include casproperties.html properties="cas.spring.cloud.aws.secrets-manager" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.aws.secrets-manager" %}
 
 ### Amazon Parameter Store
 
-{% include casproperties.html properties="cas.spring.cloud.aws.ssm" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.aws.ssm" %}
 
 ### Amazon S3
 
-{% include casproperties.html properties="cas.spring.cloud.aws.s3" %}
-
-```properties
-# ${configuration-key}.bucket-name=cas-properties
-```
+{% include_cached casproperties.html properties="cas.spring.cloud.aws.s3" %}
 
 ### DynamoDb
 
-{% include casproperties.html properties="cas.spring.cloud.dynamo-db" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.dynamo-db" %}
 
 ### JDBC
 
 Allow the CAS Spring Cloud configuration server to load settings from a RDBMS instance.
 
-{% include casproperties.html properties="cas.spring.cloud.jdbc" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.jdbc" %}
 
 ### REST
 
 Allow the CAS Spring Cloud configuration server to load settings from a REST API.
 
-{% include casproperties.html properties="cas.spring.cloud.rest" %}
+{% include_cached casproperties.html properties="cas.spring.cloud.rest" %}
 
 ## Configuration Security
 

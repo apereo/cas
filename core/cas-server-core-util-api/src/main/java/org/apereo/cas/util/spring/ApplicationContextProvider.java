@@ -23,6 +23,7 @@ import java.util.Optional;
 /**
  * An implementation of {@link ApplicationContextAware} that statically
  * holds the application context.
+ *
  * @author Misagh Moayyed
  * @since 3.0.0.
  */
@@ -31,6 +32,11 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext context) {
+        CONTEXT = context;
     }
 
     /**
@@ -42,11 +48,6 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         val resolvers = new ArrayList<>(CONTEXT.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
         AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers;
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext context) {
-        CONTEXT = context;
     }
 
     /**
@@ -163,7 +164,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     public static Optional<RegisteredServicePrincipalAttributesRepository> getPrincipalAttributesRepository() {
         if (CONTEXT != null && CONTEXT.containsBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)) {
             return Optional.of(CONTEXT.getBean(PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY,
-                    RegisteredServicePrincipalAttributesRepository.class));
+                RegisteredServicePrincipalAttributesRepository.class));
         }
         return Optional.empty();
     }

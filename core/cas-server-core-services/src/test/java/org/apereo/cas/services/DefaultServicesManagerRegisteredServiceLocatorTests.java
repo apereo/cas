@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.val;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
+    CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreServicesConfiguration.class
@@ -59,22 +61,39 @@ public class DefaultServicesManagerRegisteredServiceLocatorTests {
         assertEquals(Ordered.LOWEST_PRECEDENCE, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("https://example.org/test"),
-            r -> r.matches("https://example.org/test"));
+            webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
     }
 
     @Test
-    public void verifyExtensions() {
-        val service = new TestRegisteredService();
-        service.setServiceId("https://example.com.+");
+    public void verifyExtendedServices() {
+        val service = new ExtendedRegisteredService();
+        service.setServiceId("https://\\w+.org.+");
+        service.setId(100);
         val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
-            webApplicationServiceFactory.createService("https://example.com/test"),
-            r -> r.matches("https://example.com/test"));
+            webApplicationServiceFactory.createService("https://example.org/test"));
         assertNotNull(result);
     }
 
-    private static class TestRegisteredService extends RegexRegisteredService {
-        private static final long serialVersionUID = -1680743568361887633L;
+    @Test
+    public void verifyUnmatchedExtendedServices() {
+        val service = new ExtendedRegisteredService() {
+            private static final long serialVersionUID = 3435937253967470900L;
+
+            @Override
+            public String getFriendlyName() {
+                return "OtherService";
+            }
+        };
+        service.setServiceId("https://\\w+.org.+");
+        service.setId(100);
+        val result = defaultServicesManagerRegisteredServiceLocator.locate(List.of(service),
+            webApplicationServiceFactory.createService("https://example.org/test"));
+        assertNull(result);
+    }
+
+
+    private static class ExtendedRegisteredService extends RegexRegisteredService {
+        private static final long serialVersionUID = 1820837947166559349L;
     }
 }

@@ -13,8 +13,8 @@ import java.io.Serializable;
  * inject all sorts of components into builders to accommodate for various use cases
  * and not have to worry about whether a given field in a builder is serialization friendly.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 5.1.0
  */
 @FunctionalInterface

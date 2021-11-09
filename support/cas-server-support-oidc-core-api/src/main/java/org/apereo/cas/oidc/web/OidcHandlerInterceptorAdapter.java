@@ -5,15 +5,17 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link OidcHandlerInterceptorAdapter}.
@@ -34,12 +36,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
                                          final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
                                          final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
                                          final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
-                                         final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
+                                         final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
                                          final ServicesManager servicesManager,
                                          final SessionStore sessionStore,
-                                         final Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators) {
+                                         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
-              accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
+            accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
         this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
@@ -69,22 +71,13 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     }
 
     /**
-     * Is dynamic client registration request protected boolean.
-     *
-     * @return true/false
-     */
-    private boolean isDynamicClientRegistrationRequestProtected() {
-        return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
-    }
-
-    /**
      * Is dynamic client registration request.
      *
      * @param requestPath the request path
      * @return true/false
      */
     protected boolean isDynamicClientRegistrationRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, OidcConstants.REGISTRATION_URL);
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.REGISTRATION_URL));
     }
 
     /**
@@ -94,6 +87,37 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      * @return true/false
      */
     protected boolean isClientConfigurationRequest(final String requestPath) {
-        return doesUriMatchPattern(requestPath, OidcConstants.CLIENT_CONFIGURATION_URL);
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.CLIENT_CONFIGURATION_URL));
+    }
+
+    @Override
+    protected List<String> getRevocationUrls() {
+        val urls = super.getRevocationUrls();
+        urls.add(OidcConstants.REVOCATION_URL);
+        return urls;
+    }
+
+    @Override
+    protected List<String> getAccessTokenUrls() {
+        val accessTokenUrls = super.getAccessTokenUrls();
+        accessTokenUrls.add(OidcConstants.ACCESS_TOKEN_URL);
+        accessTokenUrls.add(OidcConstants.TOKEN_URL);
+        return accessTokenUrls;
+    }
+
+    @Override
+    protected List<String> getAuthorizeUrls() {
+        val urls = super.getAuthorizeUrls();
+        urls.add(OidcConstants.AUTHORIZE_URL);
+        return urls;
+    }
+
+    /**
+     * Is dynamic client registration request protected boolean.
+     *
+     * @return true/false
+     */
+    private boolean isDynamicClientRegistrationRequestProtected() {
+        return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -20,6 +21,8 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
     @Autowired
     @Qualifier("samlIdPMetadataUIParserAction")
     private Action samlIdPMetadataUIParserAction;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Test
@@ -49,13 +52,14 @@ public class SamlIdPMetadataUIActionTests extends BaseSamlIdPWebflowTests {
 
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(registeredService.getServiceId()));
+        
         WebUtils.putServiceIntoFlowScope(context, service);
         servicesManager.save(registeredService);
 
         val result = samlIdPMetadataUIParserAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(context, SamlMetadataUIInfo.class));
-
     }
 
     @Test

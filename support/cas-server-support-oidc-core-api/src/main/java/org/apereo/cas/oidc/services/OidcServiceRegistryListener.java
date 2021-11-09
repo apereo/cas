@@ -2,15 +2,12 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This is {@link OidcServiceRegistryListener}.
@@ -31,7 +27,7 @@ import java.util.Collection;
 public class OidcServiceRegistryListener implements ServiceRegistryListener {
     private static final long serialVersionUID = -2492163812728091841L;
 
-    private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
+    private final OidcAttributeReleasePolicyFactory attributeReleasePolicyFactory;
 
     private static void addAttributeReleasePolicy(final ChainingAttributeReleasePolicy chain,
                                                   final BaseOidcScopeAttributeReleasePolicy policyToAdd,
@@ -68,6 +64,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             return oidcService;
         }
 
+        val userScopes = attributeReleasePolicyFactory.getUserDefinedScopes();
         val policyChain = new ChainingAttributeReleasePolicy();
         definedServiceScopes.forEach(givenScope -> {
             LOGGER.trace("Reviewing scope [{}] for [{}]", givenScope, oidcService.getServiceId());
@@ -86,16 +83,16 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
                 switch (scope) {
                     case EMAIL:
-                        addAttributeReleasePolicy(policyChain, new OidcEmailScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, attributeReleasePolicyFactory.get(scope), givenScope, oidcService);
                         break;
                     case ADDRESS:
-                        addAttributeReleasePolicy(policyChain, new OidcAddressScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, attributeReleasePolicyFactory.get(scope), givenScope, oidcService);
                         break;
                     case PROFILE:
-                        addAttributeReleasePolicy(policyChain, new OidcProfileScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, attributeReleasePolicyFactory.get(scope), givenScope, oidcService);
                         break;
                     case PHONE:
-                        addAttributeReleasePolicy(policyChain, new OidcPhoneScopeAttributeReleasePolicy(), givenScope, oidcService);
+                        addAttributeReleasePolicy(policyChain, attributeReleasePolicyFactory.get(scope), givenScope, oidcService);
                         break;
                     case OFFLINE_ACCESS:
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", givenScope, oidcService.getId());
@@ -107,13 +104,29 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 }
             }
         });
+        val scopeFree = definedServiceScopes.isEmpty() || (definedServiceScopes.size() == 1
+            && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        if (scopeFree) {
+            LOGGER.trace("Service definition [{}] will use the assigned attribute release policy without scopes", oidcService.getName());
+
+            if (oidcService.getAttributeReleasePolicy() instanceof ChainingAttributeReleasePolicy) {
+                val chain = (ChainingAttributeReleasePolicy) oidcService.getAttributeReleasePolicy();
+                policyChain.addPolicies(chain.getPolicies().toArray(new RegisteredServiceAttributeReleasePolicy[0]));
+            } else {
+                policyChain.addPolicy(oidcService.getAttributeReleasePolicy());
+            }
+        }
 
         if (policyChain.getPolicies().isEmpty()) {
             LOGGER.debug("No attribute release policy could be determined based on given scopes. "
                 + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
-            oidcService.setAttributeReleasePolicy(policyChain);
+            if (policyChain.size() == 1) {
+                oidcService.setAttributeReleasePolicy(policyChain.getPolicies().get(0));
+            } else {
+                oidcService.setAttributeReleasePolicy(policyChain);
+            }
         }
 
         LOGGER.trace("Scope/claim reconciliation for service [{}] resulted in the following attribute release policy [{}]",

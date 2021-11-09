@@ -3,17 +3,16 @@ package org.apereo.cas.gauth.token;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
-import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 public abstract class BaseOneTimeTokenRepositoryTests {
-    public static final String CASUSER = "casuser";
+    protected String userId;
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
@@ -35,12 +34,17 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @Qualifier("googleAuthenticatorTokenRepositoryCleaner")
     protected OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner;
 
+    @BeforeEach
+    public void initialize() {
+        this.userId = RandomUtils.randomAlphabetic(6);
+    }
+
     @Test
     public void verifyTokenSave() {
-        var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, CASUSER);
+        var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(CASUSER, 1234));
-        token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1234);
+        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId, 1234));
+        token = oneTimeTokenAuthenticatorTokenRepository.get(userId, 1234);
         assertTrue(token.getId() > 0);
         oneTimeTokenAuthenticatorTokenRepository.clean();
         googleAuthenticatorTokenRepositoryCleaner.clean();
@@ -48,23 +52,23 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     public void verifyCaseInsensitiveUser() {
-        var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, CASUSER.toUpperCase());
+        var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, userId.toUpperCase());
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(CASUSER.toLowerCase(), 1234));
-        token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER.toLowerCase(), 1234);
+        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), 1234));
+        token = oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), 1234);
         assertTrue(token.getId() > 0);
     }
-    
+
     @Test
     public void verifyTokensWithUniqueIdsSave() {
-        val token = new GoogleAuthenticatorToken(1111, CASUSER);
+        val token = new GoogleAuthenticatorToken(1111, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
 
-        val token2 = new GoogleAuthenticatorToken(5678, CASUSER);
+        val token2 = new GoogleAuthenticatorToken(5678, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token2);
 
-        val t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
-        val t2 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token2.getToken());
+        val t1 = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
+        val t2 = oneTimeTokenAuthenticatorTokenRepository.get(userId, token2.getToken());
 
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);
@@ -74,25 +78,25 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     public void verifyRemoveByUserAndCode() {
-        val token = new GoogleAuthenticatorToken(1984, CASUSER);
+        val token = new GoogleAuthenticatorToken(1984, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
         assertNotNull(newToken);
         assertTrue(newToken.getId() > 0);
-        oneTimeTokenAuthenticatorTokenRepository.remove(CASUSER, 1984);
-        newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1984);
+        oneTimeTokenAuthenticatorTokenRepository.remove(userId, 1984);
+        newToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, 1984);
         assertNull(newToken);
     }
 
     @Test
     public void verifyRemoveByUser() {
-        val token = new GoogleAuthenticatorToken(61984, CASUSER);
+        val token = new GoogleAuthenticatorToken(61984, userId);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        var newToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
         assertNotNull(newToken);
         assertTrue(newToken.getId() > 0);
-        oneTimeTokenAuthenticatorTokenRepository.remove(CASUSER);
-        newToken = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, token.getToken());
+        oneTimeTokenAuthenticatorTokenRepository.remove(userId);
+        newToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, token.getToken());
         assertNull(newToken);
     }
 
@@ -110,24 +114,13 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Test
     public void verifySize() {
+        val uid = UUID.randomUUID().toString();
         assertEquals(oneTimeTokenAuthenticatorTokenRepository.count(), 0);
-        val token = new GoogleAuthenticatorToken(916984, "sample");
+        val token = new GoogleAuthenticatorToken(916984, uid);
         oneTimeTokenAuthenticatorTokenRepository.store(token);
         assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count());
-        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count("sample"));
+        assertEquals(1, oneTimeTokenAuthenticatorTokenRepository.count(uid));
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
         assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count(), "Repository is not empty");
-    }
-
-    @TestConfiguration("BaseOneTimeTokenRepositoryTestConfiguration")
-    @Lazy(false)
-    public static class BaseOneTimeTokenRepositoryTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
     }
 }

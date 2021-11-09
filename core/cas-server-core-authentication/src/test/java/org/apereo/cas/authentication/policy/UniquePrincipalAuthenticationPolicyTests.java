@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -53,18 +52,16 @@ import static org.mockito.Mockito.*;
     CasCoreTicketCatalogConfiguration.class,
     CasCoreServicesConfiguration.class
 })
-@DirtiesContext
-@Tag("Authentication")
+@Tag("AuthenticationPolicy")
 public class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    @SneakyThrows
     public void verifyPolicyIsGoodUserNotFound() {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
@@ -73,8 +70,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyPolicyWithAssertion() {
+    public void verifyPolicyWithAssertion() throws Exception {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
         assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"),

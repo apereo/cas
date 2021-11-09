@@ -27,7 +27,7 @@ endpoints or view the CAS login screen. This is required because today, generati
 access to the HTTP request/response. In the event that metadata cannot 
 be resolved, a status code of `406 - Not Acceptable` is returned.
 
-{% include casproperties.html properties="cas.authn.pac4j.saml" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml" %}
  
 ## Per Service Customizations
 
@@ -35,25 +35,8 @@ Th configuration for the external SAML2 identity provider is typically done at b
 via CAS configuration settings and applies to all applications and relying parties. You may override
 certain aspects this configuration on a per application basis by assigning 
 dedicated [properties to the service definition](../services/Configuring-Service-Custom-Properties.html).
-                                                  
-The following properties are available as overrides:
 
-| Property                              | Value(s)                
-|---------------------------------------|---------------------------------
-| `AuthnRequestBindingType`             | `String`                  
-| `AssertionConsumerServiceIndex`       | `Integer`         
-| `AttributeConsumingServiceIndex`      | `Integer`
-| `MaximumAuthenticationLifetime`       | `Integer`
-| `NameIdPolicyFormat`                  | `String`
-| `NameIdPolicyAllowCreate`             | `true` or `false`
-| `ComparisonType`                      | `String`. One of `exact`, `better`, `minimum`, `maximum`.
-| `ProviderName`                        | `String`
-| `IssuerFormat`                        | `String`
-| `UseNameQualifier`                    | `true` or `false`
-| `AuthnContextClassRefs`               | `Set<String>`
-| `NameIdAttribute`                     | `String`
-| `WantsAssertionsSigned`               | `true` or `false`
-| `WantsResponsesSigned`                | `true` or `false`
+{% include_cached registeredserviceproperties.html groups="DELEGATED_AUTHN,DELEGATED_AUTHN_SAML2" %}
 
 A sample JSON file follows:
 
@@ -82,14 +65,14 @@ See [registered service properties](../services/Configuring-Service-Custom-Prope
 ## Identity Provider Discovery Service
 
 <div class="alert alert-info"><strong>Note</strong><p>Using identity provider discovery requires 
-delegated authentication to be available as the feature cannot be used on its own
+delegated authentication to be available. This feature cannot be used on its own
 as a standalone discovery service.</p></div>
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-discovery" %}
 
 Identity provider discovery allows CAS 
 to [embed and present a discovery service](https://wiki.shibboleth.net/confluence/display/EDS10/Embedded+Discovery+Service) 
-as part of delegated authentication. Configured SAML2identity providers in the CAS configuration
+as part of delegated authentication. Configured SAML2 identity providers in the CAS configuration
 used for delegated authentication are presented as options for discovery. 
 
 CAS is also able to directly consume multiple JSON feeds

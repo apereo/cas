@@ -3,9 +3,11 @@ package org.apereo.cas.support.oauth.authenticator;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -29,6 +31,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Authenticator for client credentials authentication.
@@ -55,36 +58,43 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final PrincipalResolver principalResolver;
 
     @Override
-    public void validate(final Credentials credentials, final WebContext context, final SessionStore sessionStore) throws CredentialsException {
+    public void validate(final Credentials credentials, final WebContext webContext,
+                         final SessionStore sessionStore) throws CredentialsException {
         LOGGER.debug("Authenticating credential [{}]", credentials);
-
         val upc = (UsernamePasswordCredentials) credentials;
         val id = upc.getUsername();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
-        if (registeredService == null) {
-            LOGGER.debug("Unable to locate registered service for [{}]", id);
-            return;
-        }
-        if (canAuthenticate(context)) {
-            val service = this.webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            val audit = AuditableContext.builder()
-                .service(service)
-                .registeredService(registeredService)
-                .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            accessResult.throwExceptionIfNeeded();
+        val audit = AuditableContext.builder()
+            .registeredService(registeredService)
+            .build();
+        val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
 
-            validateCredentials(upc, registeredService, context, sessionStore);
+        if (!accessResult.isExecutionFailure() && canAuthenticate(webContext)) {
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+            validateCredentials(upc, registeredService, webContext, sessionStore);
 
             val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
 
-            val profile = new CommonProfile();
-            profile.setId(id);
-            principal.getAttributes().forEach(profile::addAttribute);
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .build();
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(context);
 
-            credentials.setUserProfile(profile);
+            val profile = new CommonProfile();
+            if (principal instanceof NullPrincipal) {
+                LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);
+                profile.setId(id);
+            } else {
+                val username = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
+                profile.setId(username);
+            }
+            LOGGER.debug("Created profile id [{}]", profile.getId());
+            profile.addAttributes((Map) attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
+            credentials.setUserProfile(profile);
         }
     }
 
@@ -132,7 +142,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         if (grantType.isPresent()
             && OAuth20Utils.isGrantType(grantType.get(), OAuth20GrantTypes.REFRESH_TOKEN)
             && context.getRequestParameter(OAuth20Constants.CLIENT_ID).isPresent()
-            && !context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).isPresent()) {
+            && context.getRequestParameter(OAuth20Constants.CLIENT_SECRET).isEmpty()) {
             LOGGER.debug("Skipping client credential authentication to use refresh token authentication");
             return false;
         }

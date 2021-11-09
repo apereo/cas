@@ -32,7 +32,7 @@ public class SLOSamlIdPRedirectProfileHandlerController extends AbstractSamlSLOP
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_REDIRECT)
     protected void handleSaml2ProfileSLORedirectRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Exception {
-        val decoder = getSamlProfileHandlerConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
+        val decoder = getConfigurationContext().getSamlMessageDecoders().getInstance(HttpMethod.GET);
         handleSloProfileRequest(response, request, decoder);
     }
 }

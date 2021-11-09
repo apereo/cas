@@ -1,0 +1,28 @@
+{
+  "dependencies": "aws,duo",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    
+    "--cas.authn.attribute-repository.stub.attributes.first-name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.amazon-sts.endpoint=http://127.0.0.1:4566",
+    "--cas.amazon-sts.credential-access-key=test",
+    "--cas.amazon-sts.credential-secret-key=test",
+
+    "--server.servlet.encoding.charset=UTF-8",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=0K4VewoOPTar37vFwdUfg9SvAm8GF6yyyaBWCk70",
+    "--cas.authn.mfa.duo[0].duo-application-key=u1IHBaREMB7Cb9S4QMISAgHycpj8lPBkDGfWt55I",
+    "--cas.authn.mfa.duo[0].duo-integration-key=DICLHRWL1KQK5EUAQP45",
+    "--cas.authn.mfa.duo[0].duo-api-host=api-d2e616a0.duosecurity.com",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=awsSts",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
+}

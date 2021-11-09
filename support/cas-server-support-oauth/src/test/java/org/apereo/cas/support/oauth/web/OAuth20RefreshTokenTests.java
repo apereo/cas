@@ -24,6 +24,7 @@ public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
     @BeforeEach
     public void initialize() {
         clearAllServices();
+        ticketRegistry.deleteAll();
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Deprecated(since = "6.2.0")
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
     private static final String TGT_ID = "test";
@@ -38,7 +37,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test
@@ -48,8 +47,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     @Test
-    @SneakyThrows
-    public void verifyTGTWithSameId() {
+    public void verifyTGTWithSameId() throws Exception {
         val c = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);

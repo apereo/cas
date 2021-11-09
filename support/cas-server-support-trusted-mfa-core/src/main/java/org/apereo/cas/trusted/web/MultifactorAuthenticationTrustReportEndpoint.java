@@ -5,6 +5,8 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -35,13 +37,10 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @return the set
      */
     @ReadOperation
+    @Operation(summary = "Get collection of trusted devices")
     public Set<? extends MultifactorAuthenticationTrustRecord> devices() {
         expireRecords();
         return this.mfaTrustEngine.getAll();
-    }
-
-    private void expireRecords() {
-        this.mfaTrustEngine.remove();
     }
 
     /**
@@ -51,6 +50,7 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @return the set
      */
     @ReadOperation
+    @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username", required = true))
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
         expireRecords();
         return this.mfaTrustEngine.get(username);
@@ -62,9 +62,14 @@ public class MultifactorAuthenticationTrustReportEndpoint extends BaseCasActuato
      * @param key the key
      * @return the integer
      */
+    @Operation(summary = "Remove trusted device using its key", parameters = {@Parameter(name = "key", required = true)})
     @DeleteOperation
     public Integer revoke(@Selector final String key) {
         this.mfaTrustEngine.remove(key);
         return HttpStatus.OK.value();
+    }
+
+    private void expireRecords() {
+        this.mfaTrustEngine.remove();
     }
 }

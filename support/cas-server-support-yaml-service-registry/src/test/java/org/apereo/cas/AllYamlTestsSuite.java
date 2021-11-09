@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.services.YamlServiceRegistryConfigurationTests;
 import org.apereo.cas.services.YamlServiceRegistryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite to run all LDAP tests.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     YamlServiceRegistryConfigurationTests.class,
     YamlServiceRegistryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllYamlTestsSuite {
 }

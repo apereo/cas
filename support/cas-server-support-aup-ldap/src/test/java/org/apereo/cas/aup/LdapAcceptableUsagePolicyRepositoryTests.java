@@ -26,6 +26,8 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
-    
+
     private static final int LDAP_PORT = 10389;
 
     @Autowired
@@ -72,6 +74,14 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     @Override
     public boolean hasLiveUpdates() {
         return true;
+    }
+
+    @Test
+    public void verifyMissingUser() {
+        val actualPrincipalId = UUID.randomUUID().toString();
+        val c = getCredential(actualPrincipalId);
+        val context = getRequestContext(actualPrincipalId, Map.of(), c);
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
     }
 
     @Test

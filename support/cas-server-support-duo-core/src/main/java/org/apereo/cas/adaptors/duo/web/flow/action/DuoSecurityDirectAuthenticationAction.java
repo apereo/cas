@@ -19,7 +19,8 @@ public class DuoSecurityDirectAuthenticationAction extends AbstractMultifactorAu
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val c = new DuoSecurityDirectCredential(WebUtils.getAuthentication(requestContext), provider.createUniqueId());
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val c = new DuoSecurityDirectCredential(resolvePrincipal(authentication.getPrincipal()), provider.getId());
         WebUtils.putCredential(requestContext, c);
         return success();
     }

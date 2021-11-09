@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -43,25 +41,10 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private Map<String, Object> allowedAttributes = new TreeMap<>();
 
     @JsonCreator
-    public ReturnMappedAttributeReleasePolicy(@JsonProperty("allowedAttributes") final Map<String, Object> attributes) {
+    public ReturnMappedAttributeReleasePolicy(
+        @JsonProperty("allowedAttributes")
+        final Map<String, Object> attributes) {
         this.allowedAttributes = attributes;
-    }
-
-    /**
-     * Gets the allowed attributes.
-     *
-     * @return the allowed attributes
-     */
-    public Map<String, Object> getAllowedAttributes() {
-        return new TreeMap<>(this.allowedAttributes);
-    }
-
-    @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal,
-                                                           final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService,
-                                                           final Service selectedService) {
-        return authorizeReleaseOfAllowedAttributes(principal, attrs, registeredService, selectedService);
     }
 
     private static void mapSingleAttributeDefinition(final String attributeName,
@@ -131,8 +114,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             attributesToRelease.put(mappedAttributeName, mappedValue);
         } else {
             LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
-                    + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
-                    + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
+                        + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                        + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
                 attributeName, mappedAttributeName);
         }
     }
@@ -153,23 +136,43 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     /**
+     * Gets the allowed attributes.
+     *
+     * @return the allowed attributes
+     */
+    public Map<String, Object> getAllowedAttributes() {
+        return new TreeMap<>(this.allowedAttributes);
+    }
+
+    @Override
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attrs) {
+        return authorizeReleaseOfAllowedAttributes(context, attrs);
+    }
+
+    @Override
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
+        return new ArrayList<>(getAllowedAttributes().keySet());
+    }
+
+    /**
      * Authorize release of allowed attributes map.
      * Map each entry in the allowed list into an array first
      * by the original key, value and the original entry itself.
      * Then process the array to populate the map for allowed attributes.
      *
-     * @param principal         the principal
-     * @param attrs             the attributes
-     * @param registeredService the registered service
-     * @param selectedService   the selected service
+     * @param context    the context
+     * @param attributes the attributes
      * @return the map
      */
-    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(final Principal principal,
-                                                                            final Map<String, List<Object>> attrs,
-                                                                            final RegisteredService registeredService,
-                                                                            final Service selectedService) {
+    protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
+        final RegisteredServiceAttributeReleasePolicyContext context,
+        final Map<String, List<Object>> attributes) {
+        
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attrs);
+        resolvedAttributes.putAll(attributes);
+        resolvedAttributes.putAll(context.getReleasingAttributes());
+        
         val attributesToRelease = new HashMap<String, List<Object>>();
         getAllowedAttributes().forEach((attributeName, value) -> {
             val mappedAttributes = CollectionUtils.wrap(value);
@@ -184,10 +187,5 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             });
         });
         return attributesToRelease;
-    }
-
-    @Override
-    public List<String> determineRequestedAttributeDefinitions() {
-        return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

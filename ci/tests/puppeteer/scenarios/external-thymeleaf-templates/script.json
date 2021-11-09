@@ -1,9 +1,0 @@
-{
-  "dependencies": "core",
-  "properties": [
-    "--cas.view.template-prefixes=file:${PWD}/ci/tests/puppeteer/scenarios/external-thymeleaf-templates/templates"
-  ]
-}
-
-
-

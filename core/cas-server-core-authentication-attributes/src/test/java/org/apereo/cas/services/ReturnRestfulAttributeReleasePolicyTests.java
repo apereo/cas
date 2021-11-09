@@ -47,11 +47,13 @@ public class ReturnRestfulAttributeReleasePolicyTests {
         try (val webServer = new MockWebServer(9299,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
             val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9299");
-            val attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-                CoreAuthenticationTestUtils.getService(),
-                CoreAuthenticationTestUtils.getRegisteredService());
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .service(CoreAuthenticationTestUtils.getService())
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .build();
+            val attributes = policyWritten.getAttributes(releasePolicyContext);
             assertFalse(attributes.isEmpty());
         }
     }
@@ -63,10 +65,13 @@ public class ReturnRestfulAttributeReleasePolicyTests {
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            val policyWritten = new ReturnRestfulAttributeReleasePolicy("http://localhost:9298");
-            val attributes = policyWritten.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-                CoreAuthenticationTestUtils.getService(),
-                CoreAuthenticationTestUtils.getRegisteredService());
+            val policy = new ReturnRestfulAttributeReleasePolicy("http://localhost:9298");
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+                .service(CoreAuthenticationTestUtils.getService())
+                .principal(CoreAuthenticationTestUtils.getPrincipal())
+                .build();
+            val attributes = policy.getAttributes(releasePolicyContext);
             assertTrue(attributes.isEmpty());
         }
     }

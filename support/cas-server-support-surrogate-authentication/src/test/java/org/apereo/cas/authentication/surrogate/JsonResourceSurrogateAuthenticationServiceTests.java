@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.surrogate;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * This is {@link JsonResourceSurrogateAuthenticationServiceTests}.
@@ -15,14 +17,11 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Getter
 @Tag("FileSystem")
+@SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.json.location=classpath:/surrogates.json")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
-
+    @Autowired
+    @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService service;
-
-    @BeforeEach
-    @SneakyThrows
-    public void initTests() {
-        val resource = new ClassPathResource("surrogates.json");
-        service = new JsonResourceSurrogateAuthenticationService(resource, servicesManager);
-    }
 }

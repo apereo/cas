@@ -10,6 +10,6 @@ category: Notifications
 
 To learn more, [visit this site](https://dashboard.nexmo.com/).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-nexmo" %}
 
-{% include casproperties.html properties="cas.sms-provider.nexmo" %}
+{% include_cached casproperties.html properties="cas.sms-provider.nexmo" %}

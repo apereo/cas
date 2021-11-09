@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,17 +29,21 @@ import java.util.List;
  * @since 4.2
  */
 @Slf4j
-public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private final DuoSecurityMultifactorAuthenticationProvider provider;
+public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
+    implements MultifactorAuthenticationHandler {
+    @Getter
+    private final DuoSecurityMultifactorAuthenticationProvider multifactorAuthenticationProvider;
+
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    public DuoSecurityAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public DuoSecurityAuthenticationHandler(final String name,
+                                            final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory,
-                                            final DuoSecurityMultifactorAuthenticationProvider provider,
+                                            final DuoSecurityMultifactorAuthenticationProvider multifactorAuthenticationProvider,
                                             final Integer order,
                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         super(name, servicesManager, principalFactory, order);
-        this.provider = provider;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
         this.multifactorAuthenticationPrincipalResolver = multifactorAuthenticationPrincipalResolver;
     }
 
@@ -45,7 +51,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean supports(final Credential credential) {
         if (credential instanceof MultifactorAuthenticationCredential) {
             val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
-            return provider.validateId(id);
+            return multifactorAuthenticationProvider.matches(id);
         }
         return false;
     }
@@ -62,6 +68,10 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+        if (credential instanceof DuoSecurityPasscodeCredential) {
+            LOGGER.debug("Attempting to authenticate credential via duo passcode");
+            return authenticateDuoPasscodeCredential(credential);
+        }
         if (credential instanceof DuoSecurityUniversalPromptCredential) {
             LOGGER.debug("Attempting to authenticate credential via duo universal prompt");
             return authenticateDuoUniversalPromptCredential(credential);
@@ -73,10 +83,40 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
         return authenticateDuoCredential(credential);
     }
 
+    /**
+     * Resolve principal.
+     *
+     * @param principal the principal
+     * @return the principal
+     */
+    protected Principal resolvePrincipal(final Principal principal) {
+        return multifactorAuthenticationPrincipalResolver
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    @SneakyThrows
+    private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(final Credential credential) {
+        try {
+            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
+            val creds = DuoSecurityPasscodeCredential.class.cast(credential);
+            if (duoAuthenticationService.authenticate(creds).isSuccess()) {
+                val principal = principalFactory.createPrincipal(creds.getId());
+                return createHandlerResult(credential, principal, new ArrayList<>(0));
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        throw new FailedLoginException("Duo passcode authentication has failed");
+    }
+
     @SneakyThrows
     private AuthenticationHandlerExecutionResult authenticateDuoUniversalPromptCredential(final Credential c) {
         try {
-            val duoAuthenticationService = provider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
             val credential = (DuoSecurityUniversalPromptCredential) c;
             val result = duoAuthenticationService.authenticate(credential);
             if (result.isSuccess()) {
@@ -92,10 +132,10 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            val duoAuthenticationService = provider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
             val creds = DuoSecurityDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(creds).isSuccess()) {
-                val principal = resolvePrincipal(creds.getAuthentication().getPrincipal());
+                val principal = resolvePrincipal(creds.getPrincipal());
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>(0));
             }
@@ -113,7 +153,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
                     + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            val duoAuthenticationService = provider.getDuoAuthenticationService();
+            val duoAuthenticationService = multifactorAuthenticationProvider.getDuoAuthenticationService();
             val userId = duoAuthenticationService.authenticate(duoCredential).getUsername();
             LOGGER.debug("Verified Duo authentication for user [{}]", userId);
             val primaryCredentialsUsername = duoCredential.getUsername();
@@ -132,20 +172,5 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
         }
-    }
-
-    /**
-     * Resolve principal.
-     *
-     * @param principal the principal
-     * @return the principal
-     */
-    protected Principal resolvePrincipal(final Principal principal) {
-        return multifactorAuthenticationPrincipalResolver
-            .stream()
-            .filter(resolver -> resolver.supports(principal))
-            .findFirst()
-            .map(r -> r.resolve(principal))
-            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
 }

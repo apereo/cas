@@ -8,7 +8,7 @@ category: Webflow Management
 
 # JSON Authentication Interrupt
 
-{% include casproperties.html properties="cas.interrupt.json" %}
+{% include_cached casproperties.html properties="cas.interrupt.json" %}
 
 This strategy reaches out to a static JSON resource that contains a map of 
 usernames linked to various interrupt policies. This option is most 

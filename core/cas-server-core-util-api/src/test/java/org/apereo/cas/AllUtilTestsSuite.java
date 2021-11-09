@@ -20,20 +20,22 @@ import org.apereo.cas.util.io.TemporaryFileSystemResourceTests;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManagerTests;
 import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
+import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
+import org.apereo.cas.util.spring.BeanContainerTests;
 import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
+import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostnameTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
 import org.apereo.cas.util.ssl.CompositeX509TrustManagerTests;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformerTests;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllUtilTestsSuite}.
@@ -58,10 +60,13 @@ import org.junit.runner.RunWith;
     HttpUtilsTests.class,
     ConvertersTests.class,
     BeanDefinitionStoreFailureAnalyzerTests.class,
+    ConditionalOnMatchingHostnameTests.class,
     SimpleHttpClientFactoryBeanTests.class,
     GroovyScriptResourceCacheManagerTests.class,
     LoggingUtilsTests.class,
     SocketUtilsTests.class,
+    BeanContainerTests.class,
+    MessageSanitizationUtilsTests.class,
     InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
@@ -73,6 +78,6 @@ import org.junit.runner.RunWith;
     RegexPrincipalNameTransformerTests.class,
     GroovyPrincipalNameTransformerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllUtilTestsSuite {
 }

@@ -48,12 +48,12 @@ The current schema is as such:
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-soap-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-soap-authentication" %}
 
 ## Configuration
 
 
-{% include casproperties.html properties="cas.authn.soap" %}
+{% include_cached casproperties.html properties="cas.authn.soap" %}
 
 The `status` returned in the SOAP response as interpreted as one of the following values:
 

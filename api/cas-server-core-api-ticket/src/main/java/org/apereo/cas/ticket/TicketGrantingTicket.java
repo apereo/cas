@@ -19,7 +19,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface TicketGrantingTicket extends Ticket {
+public interface TicketGrantingTicket extends AuthenticationAwareTicket {
 
     /**
      * The prefix to use when generating an id for a Ticket Granting Ticket.
@@ -27,11 +27,13 @@ public interface TicketGrantingTicket extends Ticket {
     String PREFIX = "TGT";
 
     /**
-     * Method to retrieve the authentication.
+     * Update service and track session.
      *
-     * @return the authentication
+     * @param id                         the id
+     * @param service                    the service
+     * @param onlyTrackMostRecentSession the only track most recent session
      */
-    Authentication getAuthentication();
+    void trackService(String id, Service service, boolean onlyTrackMostRecentSession);
 
     /**
      * Grant a ServiceTicket for a specific service.
@@ -43,7 +45,8 @@ public interface TicketGrantingTicket extends Ticket {
      * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
      * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
-    ServiceTicket grantServiceTicket(String id, Service service,
+    ServiceTicket grantServiceTicket(String id,
+                                     Service service,
                                      ExpirationPolicy expirationPolicy,
                                      boolean credentialProvided,
                                      boolean onlyTrackMostRecentSession);
@@ -83,7 +86,7 @@ public interface TicketGrantingTicket extends Ticket {
     TicketGrantingTicket getRoot();
 
     /**
-     * Gets all authentications ({@link #getAuthentication()} from this
+     * Gets all authentications ({@link AuthenticationAwareTicket#getAuthentication()} from this
      * instance and all dependent tickets that reference this one.
      *
      * @return Non -null list of authentication associated with this ticket in leaf-first order.

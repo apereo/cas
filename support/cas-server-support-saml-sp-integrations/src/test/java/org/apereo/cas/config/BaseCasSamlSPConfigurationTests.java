@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +45,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
@@ -58,6 +61,8 @@ public abstract class BaseCasSamlSPConfigurationTests {
     public void verifyOperation() {
         LOGGER.debug("Looking for service id [{}]", getServiceProviderId());
         val service = webApplicationServiceFactory.createService(getServiceProviderId());
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(getServiceProviderId()));
+        
         assertNotNull(servicesManager.findServiceBy(service, SamlRegisteredService.class));
     }
 

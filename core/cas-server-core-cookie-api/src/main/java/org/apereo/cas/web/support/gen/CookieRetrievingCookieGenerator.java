@@ -1,7 +1,9 @@
 package org.apereo.cas.web.support.gen;
 
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -21,9 +23,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-
+import java.util.stream.Stream;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -74,26 +77,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             LOGGER.debug("This request is from a remember-me authentication event");
             return Boolean.TRUE;
         }
-        if (isRememberMeRecordedInAuthentication(requestContext)) {
+        val authn = WebUtils.getAuthentication(requestContext);
+        if (CoreAuthenticationUtils.isRememberMeAuthentication(authn)) {
             LOGGER.debug("The recorded authentication is from a remember-me request");
             return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
-
-    private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
-        LOGGER.debug("Request does not indicate a remember-me authentication. Locating authentication from the request context...");
-        val auth = WebUtils.getAuthentication(requestContext);
-        if (auth == null) {
-            return Boolean.FALSE;
-        }
-        val attributes = auth.getAttributes();
-        LOGGER.trace("Located authentication attributes [{}]", attributes);
-
-        if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
-            val rememberMeValue = attributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-            LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
-            return rememberMeValue.contains(Boolean.TRUE);
         }
         return Boolean.FALSE;
     }
@@ -105,16 +92,16 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
-    @Override
-    public void setCookieDomain(final String cookieDomain) {
-        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    private String cleanCookiePath(final String givenPath) {
+        return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()), () -> {
+            val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+            return StringUtils.defaultIfBlank(path, "/");
+        }, () -> givenPath).get();
     }
 
     @Override
-    protected Cookie createCookie(@NonNull final String cookieValue) {
-        val c = super.createCookie(cookieValue);
-        c.setComment(cookieGenerationContext.getComment());
-        return c;
+    public void setCookieDomain(final String cookieDomain) {
+        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
     }
 
     @Override
@@ -174,7 +161,32 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return null;
     }
 
-    private Cookie addCookieHeaderToResponse(final Cookie cookie, final HttpServletResponse response) {
+    @Override
+    public void removeAll(final HttpServletRequest request, final HttpServletResponse response) {
+        Optional.ofNullable(request.getCookies()).ifPresent(cookies -> Arrays.stream(cookies)
+            .filter(c -> StringUtils.equalsIgnoreCase(c.getName(), getCookieName()))
+            .forEach(c -> Stream.of("/", getCookiePath(), StringUtils.appendIfMissing(getCookiePath(), "/"))
+                .forEach(path -> {
+                    c.setMaxAge(0);
+                    c.setPath(path);
+                    c.setSecure(isCookieSecure());
+                    c.setHttpOnly(isCookieHttpOnly());
+                    c.setComment(cookieGenerationContext.getComment());
+                    LOGGER.debug("Removing cookie [{}] with path [{}]", c.getName(), c.getPath());
+                    response.addCookie(c);
+                })));
+    }
+
+    @Override
+    protected Cookie createCookie(@NonNull final String cookieValue) {
+        val c = super.createCookie(cookieValue);
+        c.setComment(cookieGenerationContext.getComment());
+        c.setPath(cleanCookiePath(c.getPath()));
+        return c;
+    }
+
+    private Cookie addCookieHeaderToResponse(final Cookie cookie,
+                                             final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
 
@@ -184,7 +196,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (StringUtils.isNotBlank(cookie.getDomain())) {
             builder.append(String.format(" Domain=%s;", cookie.getDomain()));
         }
-        builder.append(String.format(" Path=%s;", StringUtils.defaultIfBlank(cookie.getPath(), DEFAULT_COOKIE_PATH)));
+        val path = cleanCookiePath(cookie.getPath());
+        builder.append(String.format(" Path=%s;", path));
 
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
         switch (sameSitePolicy) {
@@ -209,7 +222,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
-        response.addHeader("Set-Cookie", value);
+        val setCookieHeaders = response.getHeaders("Set-Cookie");
+        response.setHeader("Set-Cookie", value);
+        setCookieHeaders.stream()
+            .filter(header -> !header.startsWith(cookie.getName() + '='))
+            .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
     }
 }

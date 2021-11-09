@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^https://github.com/apereo.*",
+  "name": "Sample",
+  "id": 2,
+  "description": "Sample Service",
+  "evaluationOrder": 10000
+}

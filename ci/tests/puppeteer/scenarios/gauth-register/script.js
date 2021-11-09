@@ -1,44 +1,23 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?authn_method=mfa-gauth");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    
-    let element = await page.$('#login h4');
-    const header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
-    assert(header.startsWith("Your account is not registered"))
+    await cas.loginWith(page, "casuser", "Mellon");
 
-    let image = await page.$('#login table img');
-    assert(await image.boundingBox() != null);
-
-    let seckey = await page.$('#seckeypanel pre');
-    assert(await seckey.boundingBox() != null);
-
-    let scratchcodePanel = await page.$('#scratchcodes');
-    assert(await scratchcodePanel.boundingBox() != null);
-    assert(5 == (await page.$$('#scratchcodes div.mdc-chip')).length)
+    await cas.assertInnerTextStartsWith(page, "#login h4", "Your account is not registered");
+    await cas.assertVisibility(page, '#login table img')
+    await cas.assertVisibility(page, '#seckeypanel pre')
+    await cas.assertVisibility(page, '#scratchcodes')
+    assert(5 === (await page.$$('#scratchcodes div.mdc-chip')).length)
 
     let confirm = await page.$("#confirm");
     await confirm.click();
-    let title = await page.$('#confirm-reg-dialog #notif-dialog-title');
-    let titleText = await page.evaluate(title => title.textContent, title);
-    console.log(titleText)
-    assert(await title.boundingBox() != null);
-
-    let token = await page.$('#token');
-    assert(await token.boundingBox() != null);
-
-    let accountName = await page.$('#accountName');
-    assert(await accountName.boundingBox() != null);
-
+    await cas.assertVisibility(page, '#confirm-reg-dialog #notif-dialog-title')
+    await cas.assertVisibility(page, '#token')
+    await cas.assertVisibility(page, '#accountName')
     await browser.close();
 })();

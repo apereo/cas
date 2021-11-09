@@ -30,11 +30,11 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 @Getter
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class,
-    properties = "cas.consent.active=false")
+    properties = "cas.consent.core.active=false")
 public class DefaultConsentActivationStrategyDisabledTests {
 
     @Autowired
-    @Qualifier("consentActivationStrategy")
+    @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
     
     @Test
@@ -52,7 +52,7 @@ public class DefaultConsentActivationStrategyDisabledTests {
             CoreAuthenticationTestUtils.getService(),
             registeredService,
             CoreAuthenticationTestUtils.getAuthentication(),
-            context));
+            new MockHttpServletRequest()));
 
     }
 

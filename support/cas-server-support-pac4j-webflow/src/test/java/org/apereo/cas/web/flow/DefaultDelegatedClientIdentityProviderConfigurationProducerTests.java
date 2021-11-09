@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -30,43 +32,76 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.cookie.enabled=true")
-@Tag("Webflow")
+@Tag("Delegation")
 public class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
-    @Autowired
-    @Qualifier("delegatedClientIdentityProviderConfigurationProducer")
-    private DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer;
 
-    @Autowired
-    @Qualifier("delegatedAuthenticationCookieGenerator")
-    private CasCookieBuilder delegatedAuthenticationCookieGenerator;
+    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+        properties = "cas.authn.pac4j.cookie.enabled=true")
+    @SuppressWarnings("ClassCanBeStatic")
+    public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+        @Autowired
+        @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
+        protected DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer;
 
-    private JEEContext context;
+        @Autowired
+        @Qualifier("delegatedAuthenticationCookieGenerator")
+        protected CasCookieBuilder delegatedAuthenticationCookieGenerator;
 
-    private MockRequestContext requestContext;
+        protected JEEContext context;
 
-    private MockHttpServletRequest httpServletRequest;
+        protected MockRequestContext requestContext;
 
-    @BeforeEach
-    public void setup() {
-        val service = RegisteredServiceTestUtils.getService();
-        httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        context = new JEEContext(httpServletRequest, new MockHttpServletResponse());
+        protected MockHttpServletRequest httpServletRequest;
 
-        requestContext = new MockRequestContext();
-        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
-            context.getNativeRequest(), context.getNativeResponse()));
-        RequestContextHolder.setRequestContext(requestContext);
-        ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
+        protected MockHttpServletResponse httpServletResponse;
+
+        @BeforeEach
+        public void setup() {
+            val service = RegisteredServiceTestUtils.getService();
+            httpServletResponse = new MockHttpServletResponse();
+            httpServletRequest = new MockHttpServletRequest();
+            httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            context = new JEEContext(httpServletRequest, httpServletResponse);
+
+            requestContext = new MockRequestContext();
+            requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                context.getNativeRequest(), context.getNativeResponse()));
+            RequestContextHolder.setRequestContext(requestContext);
+            ExternalContextHolder.setExternalContext(requestContext.getExternalContext());
+        }
+
+        @Test
+        public void verifyOperation() {
+            delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
+                context.getNativeResponse(), "SAML2Client");
+            val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
+            assertFalse(results.isEmpty());
+            assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
+        }
+
+        @Test
+        public void verifyProduceFailingClient() {
+            delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
+                context.getNativeResponse(), "FailingClient");
+            val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
+            assertFalse(results.isEmpty());
+        }
     }
 
-    @Test
-    public void verifyOperation() {
-        delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(), context.getNativeResponse(), "SAML2Client");
-        val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
-        assertFalse(results.isEmpty());
-        assertNotNull(WebUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    public class MenuSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
+    public class DynamicSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+        @Test
+        public void verifySelectionOperation() {
+            val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
+            assertFalse(results.isEmpty());
+            assertTrue(WebUtils.isDelegatedAuthenticationDynamicProviderSelection(requestContext));
+        }
     }
 }

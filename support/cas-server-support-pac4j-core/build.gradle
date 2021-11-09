@@ -7,8 +7,10 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-services-authentication")
+
     implementation project(":support:cas-server-support-pac4j-api")
 
     implementation libraries.pac4joidcoauth

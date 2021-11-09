@@ -20,24 +20,24 @@ the likes of [LastPass Authenticator](https://lastpass.com/auth), etc.
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-gauth" %}
 
-{% include casproperties.html properties="cas.authn.mfa.gauth" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.core" %}
+
+## Repository Cleaner
 
 A background *cleaner* process is also automatically scheduled to scan the
 repository periodically and remove expired device registration records
 based on configured parameters. In the default setting, devices
 expire after a fixed period since a user registered their device.
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.cleaner" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `gauthCredentialRepository`   | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html). A `GET` operation produces a list of all account records. A `DELETE` operation will delete all account records. A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user. A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+{% include_cached actuators.html endpoints="gauthCredentialRepository" %}
 
 ## Token Repository
 
@@ -64,35 +64,20 @@ authentication if multiple device registration records
 are found. The ability to handle multiple device registration 
 records can be controlled via CAS settings.
 
-### JPA
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-JPA.html) for more info.
-
-### CouchDb
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html) for more info.
-
-### MongoDb
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html) for more info.
-
-### Redis
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-Redis.html) for more info.
-
-### LDAP
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html) for more info.
-
-### REST
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-Rest.html) for more info.
-
-### JSON
-
-Please [see this guide](GoogleAuthenticator-Authentication-Registration-JSON.html) for more info.
+| Storage          | Description                                         
+|------------------------------------------------------------------------------------
+| JPA              | [See this guide](GoogleAuthenticator-Authentication-Registration-JPA.html).
+| CouchDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-CouchDb.html).
+| MongoDb          | [See this guide](GoogleAuthenticator-Authentication-Registration-MongoDb.html).
+| DynamoDb         | [See this guide](GoogleAuthenticator-Authentication-Registration-DynamoDb.html).
+| Redis            | [See this guide](GoogleAuthenticator-Authentication-Registration-Redis.html).
+| LDAP             | [See this guide](GoogleAuthenticator-Authentication-Registration-LDAP.html).
+| REST             | [See this guide](GoogleAuthenticator-Authentication-Registration-Rest.html).
+| JSON             | [See this guide](GoogleAuthenticator-Authentication-Registration-JSON.html).
 
 ## REST Protocol Credential Extraction 
 
-In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize credentials and authenticate them as part of the REST request. 
-The expected parameter name in the request body is `gauthotp`. The account identifier may also be passed using the `gauthacct` parameter in the request body.
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor 
+is injected into the REST authentication engine in order to recognize credentials and authenticate them as part of the REST request. 
+The expected parameter name in the request body is `gauthotp`. The account identifier may also 
+be passed using the `gauthacct` parameter in the request body.

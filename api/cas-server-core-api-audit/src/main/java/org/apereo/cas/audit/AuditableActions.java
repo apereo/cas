@@ -43,6 +43,10 @@ public interface AuditableActions {
      * Auditable action {@code SERVICE_TICKET_VALIDATE}.
      */
     String SERVICE_TICKET_VALIDATE = "SERVICE_TICKET_VALIDATE";
+    /**
+     * Auditable action {@code PROTOCOL_SPECIFICATION_VALIDATE}.
+     */
+    String PROTOCOL_SPECIFICATION_VALIDATE = "PROTOCOL_SPECIFICATION_VALIDATE";
 
     /**
      * Auditable action {@code REST_API_SERVICE_TICKET}.
@@ -145,4 +149,9 @@ public interface AuditableActions {
      * Auditable action {@code REQUEST_FORGOT_USERNAME}.
      */
     String REQUEST_FORGOT_USERNAME = "REQUEST_FORGOT_USERNAME";
+
+    /**
+     * Auditable action {@code ACCOUNT_REGISTRATION}.
+     */
+    String ACCOUNT_REGISTRATION = "ACCOUNT_REGISTRATION";
 }

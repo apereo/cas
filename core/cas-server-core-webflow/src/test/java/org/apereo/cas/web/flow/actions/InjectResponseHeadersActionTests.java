@@ -10,7 +10,10 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.config.CasCoreNotificationsConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -42,13 +45,19 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreNotificationsConfiguration.class,
     CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 @Tag("WebflowActions")
 public class InjectResponseHeadersActionTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
 
     @Test
     public void verifyAction() throws Exception {
@@ -62,7 +71,7 @@ public class InjectResponseHeadersActionTests {
 
         val locator = mock(ResponseBuilderLocator.class);
         when(locator.locate(any(WebApplicationService.class)))
-            .thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager));
+            .thenReturn(new WebApplicationServiceResponseBuilder(this.servicesManager, this.urlValidator));
 
         val redirectToServiceAction = new InjectResponseHeadersAction(locator);
         val event = redirectToServiceAction.execute(context);

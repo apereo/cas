@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://spring.io/security/saml-sp",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "http://localhost:8076/sp/saml/metadata",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
+
+

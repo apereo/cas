@@ -7,20 +7,22 @@ import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.OpenIdCasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.OpenIdWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -32,65 +34,60 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  * @deprecated 6.2
  */
-@Configuration("openIdWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
+@Configuration(value = "openIdWebflowConfiguration", proxyBeanMethods = false)
 public class OpenIdWebflowConfiguration {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-    
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Bean
     public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
         return new DefaultOpenIdUserNameExtractor();
     }
-    
+
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer openidWebflowConfigurer() {
-        return new OpenIdWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    public CasWebflowConfigurer openidWebflowConfigurer(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
+        return new OpenIdWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
-    public Action openIdSingleSignOnAction() {
-        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            defaultOpenIdUserNameExtractor(),
-            ticketRegistrySupport.getObject());
+    public Action openIdSingleSignOnAction(
+        @Qualifier("defaultOpenIdUserNameExtractor")
+        final OpenIdUserNameExtractor defaultOpenIdUserNameExtractor,
+        @Qualifier("adaptiveAuthenticationPolicy")
+        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        @Qualifier(TicketRegistrySupport.BEAN_NAME)
+        final TicketRegistrySupport ticketRegistrySupport) {
+        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+            defaultOpenIdUserNameExtractor, ticketRegistrySupport);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(openidWebflowConfigurer());
+    public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer(
+        @Qualifier("openidWebflowConfigurer")
+        final CasWebflowConfigurer openidWebflowConfigurer,
+        @Qualifier("openidCasWebflowLoginContextProvider")
+        final CasWebflowLoginContextProvider openidCasWebflowLoginContextProvider) {
+        return plan -> {
+            plan.registerWebflowConfigurer(openidWebflowConfigurer);
+            plan.registerWebflowLoginContextProvider(openidCasWebflowLoginContextProvider);
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "openidCasWebflowLoginContextProvider")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasWebflowLoginContextProvider openidCasWebflowLoginContextProvider() {
+        return new OpenIdCasWebflowLoginContextProvider();
     }
 }

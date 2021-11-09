@@ -6,9 +6,8 @@ import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringAuditResourceResolve
 import org.apereo.cas.audit.spi.ThreadLocalAuditPrincipalResolverTests;
 import org.apereo.cas.audit.spi.TicketValidationResourceResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -22,6 +21,6 @@ import org.junit.runner.RunWith;
     ServiceAccessEnforcementAuditResourceResolverTests.class,
     TicketValidationResourceResolverTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

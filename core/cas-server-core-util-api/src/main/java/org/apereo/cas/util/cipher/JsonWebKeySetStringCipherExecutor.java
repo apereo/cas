@@ -113,51 +113,45 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         setSigningKey(key.getPublicKey());
     }
 
+    @SneakyThrows
     private void configureEncryptionParametersForDecoding() {
         if (httpsJkws.isEmpty()) {
             LOGGER.debug("No JWKS endpoint is defined. Configuration of encryption parameters and keys are skipped");
         } else {
-            try {
-                val keys = this.httpsJkws.get().getJsonWebKeys();
-                val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
+            val keys = this.httpsJkws.get().getJsonWebKeys();
+            val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
 
-                if (encKeyResult.isEmpty()) {
-                    throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
-                }
-                val encKey = encKeyResult.get();
-                if (encKey.getPrivateKey() == null) {
-                    throw new IllegalArgumentException("Private key located from endpoint for key id " + encKey.getKeyId() + " is undefined");
-                }
-                setSecretKeyEncryptionKey(encKey.getPrivateKey());
-                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+            if (encKeyResult.isEmpty()) {
+                throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
             }
+            val encKey = encKeyResult.get();
+            if (encKey.getPrivateKey() == null) {
+                throw new IllegalArgumentException("Private key located from endpoint for key id " + encKey.getKeyId() + " is undefined");
+            }
+            setEncryptionKey(encKey.getPrivateKey());
+            setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+            setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         }
     }
 
+    @SneakyThrows
     private void configureEncryptionParametersForEncoding() {
         if (httpsJkws.isEmpty()) {
             LOGGER.debug("No JWKS endpoint is defined. Configuration of encryption parameters and keys are skipped");
         } else {
-            try {
-                val keys = this.httpsJkws.get().getJsonWebKeys();
-                val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
+            val keys = this.httpsJkws.get().getJsonWebKeys();
+            val encKeyResult = findRsaJsonWebKey(keys, jsonWebKey -> true);
 
-                if (encKeyResult.isEmpty()) {
-                    throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
-                }
-                val encKey = encKeyResult.get();
-                if (encKey.getPublicKey() == null) {
-                    throw new IllegalArgumentException("Public key located from endpoint for key id " + encKey.getKeyId() + " is undefined");
-                }
-                setSecretKeyEncryptionKey(encKey.getPublicKey());
-                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+            if (encKeyResult.isEmpty()) {
+                throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
             }
+            val encKey = encKeyResult.get();
+            if (encKey.getPublicKey() == null) {
+                throw new IllegalArgumentException("Public key from endpoint for key id " + encKey.getKeyId() + " is undefined");
+            }
+            setEncryptionKey(encKey.getPublicKey());
+            setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+            setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         }
     }
 

@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": ".+nointerrupt",
+  "id": 1,
+  "name": "Sample",
+  "webflowInterruptPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+    "enabled": false
+  }
+}

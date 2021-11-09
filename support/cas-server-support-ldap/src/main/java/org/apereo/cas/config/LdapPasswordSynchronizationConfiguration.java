@@ -5,11 +5,9 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,23 +26,19 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = true)
+@Configuration(value = "ldapPasswordSynchronizationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.password-sync", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LdapPasswordSynchronizationConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
 
     @Bean
-    @SneakyThrows
     public ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean() {
         val bean = new ListFactoryBean() {
             @Override
             protected void destroyInstance(final List list) {
                 Objects.requireNonNull(list).forEach(Unchecked.consumer(postProcessor ->
-                        ((DisposableBean) postProcessor).destroy()
-                                                                       ));
+                    ((DisposableBean) postProcessor).destroy()
+                ));
             }
         };
         bean.setSourceList(new ArrayList<>());
@@ -53,11 +47,10 @@ public class LdapPasswordSynchronizationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
-    @SneakyThrows
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")
-        final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) {
+        final ListFactoryBean ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean) throws Exception {
         val postProcessorList = Objects.requireNonNull(ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean.getObject());
 
         return plan -> {

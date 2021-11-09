@@ -2,15 +2,16 @@ package org.apereo.cas.support.saml.web.idp.profile.query;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 
 import lombok.val;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -24,6 +25,7 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,8 +68,130 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
         servicesManager.save(samlRegisteredService);
     }
 
+
     @Test
-    @Order(1)
+    public void verifyUnknownService() {
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setContentType(MediaType.TEXT_XML_VALUE);
+
+        var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+        var envelope = (Envelope) builder.buildObject();
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Header.DEFAULT_ELEMENT_NAME);
+        val header = (Header) builder.buildObject();
+        envelope.setHeader(header);
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Body.DEFAULT_ELEMENT_NAME);
+        val body = (Body) builder.buildObject();
+        val query = getAttributeQuery(NameID.TRANSIENT, "casuser-aq");
+        query.getIssuer().setValue(UUID.randomUUID().toString());
+        body.getUnknownXMLObjects().add(query);
+        envelope.setBody(body);
+
+        val ticketGrantingTicket = new MockTicketGrantingTicket("casuser",
+            Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),
+            Map.of("event-type", List.of("saml1-attr-query")));
+        val ticket = samlAttributeQueryTicketFactory.create(
+            "casuser-aq", query, "https://cassp.example.org", ticketGrantingTicket);
+        ticketRegistry.addTicket(ticket);
+
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
+        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
+
+        ticket.markTicketExpired();
+        controller.handlePostRequest(response, request);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
+    }
+
+
+    @Test
+    public void verifyTicketExpired() {
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setContentType(MediaType.TEXT_XML_VALUE);
+
+        var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+        var envelope = (Envelope) builder.buildObject();
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Header.DEFAULT_ELEMENT_NAME);
+        val header = (Header) builder.buildObject();
+        envelope.setHeader(header);
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Body.DEFAULT_ELEMENT_NAME);
+        val body = (Body) builder.buildObject();
+        val query = getAttributeQuery(NameID.TRANSIENT, "casuser-aq");
+        body.getUnknownXMLObjects().add(query);
+        envelope.setBody(body);
+
+        val ticketGrantingTicket = new MockTicketGrantingTicket("casuser",
+            Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),
+            Map.of("event-type", List.of("saml1-attr-query")));
+        val ticket = samlAttributeQueryTicketFactory.create(
+            "casuser-aq", query, "https://cassp.example.org", ticketGrantingTicket);
+        ticketRegistry.addTicket(ticket);
+
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
+        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
+
+        ticket.markTicketExpired();
+        controller.handlePostRequest(response, request);
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+    }
+
+    @Test
+    public void verifyEncryptedNameIDFails() {
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setContentType(MediaType.TEXT_XML_VALUE);
+
+        var builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+        var envelope = (Envelope) builder.buildObject();
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Header.DEFAULT_ELEMENT_NAME);
+        val header = (Header) builder.buildObject();
+        envelope.setHeader(header);
+
+        builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
+            .getBuilder(Body.DEFAULT_ELEMENT_NAME);
+        val body = (Body) builder.buildObject();
+        val query = getAttributeQuery(NameID.ENCRYPTED, "casuser-aq");
+        body.getUnknownXMLObjects().add(query);
+        envelope.setBody(body);
+
+        val ticket = samlAttributeQueryTicketFactory.create(
+            "casuser-aq",
+            query, "https://cassp.example.org",
+            new MockTicketGrantingTicket("casuser",
+                Map.of("cn", List.of("CAS"), "lastName", List.of("Apereo")),
+                Map.of("event-type", List.of("saml1-attr-query"))));
+        ticketRegistry.addTicket(ticket);
+
+        val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
+        request.setContent(xml.getBytes(StandardCharsets.UTF_8));
+
+        controller.handlePostRequest(response, request);
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+    }
+
+    @Test
     public void verifyOK() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -86,7 +210,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
         builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Body.DEFAULT_ELEMENT_NAME);
         val body = (Body) builder.buildObject();
-        val query = getAttributeQuery();
+        val query = getAttributeQuery(NameID.TRANSIENT, UUID.randomUUID().toString());
         body.getUnknownXMLObjects().add(query);
         envelope.setBody(body);
 
@@ -105,7 +229,6 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
     }
 
     @Test
-    @Order(2)
     public void verifyFault() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -124,7 +247,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
         builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Body.DEFAULT_ELEMENT_NAME);
         val body = (Body) builder.buildObject();
-        val query = getAttributeQuery();
+        val query = getAttributeQuery(NameID.TRANSIENT, UUID.randomUUID().toString());
         body.getUnknownXMLObjects().add(query);
         envelope.setBody(body);
 
@@ -132,10 +255,12 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
         controller.handlePostRequest(response, request);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertNotNull(request.getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
-    private AttributeQuery getAttributeQuery() {
+    private AttributeQuery getAttributeQuery(final String nameIdFormat, final String nameIdValue) {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AttributeQuery.DEFAULT_ELEMENT_NAME);
         val query = (AttributeQuery) builder.buildObject();
@@ -147,14 +272,22 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
 
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(NameID.DEFAULT_ELEMENT_NAME);
-        val nameid = (NameID) builder.buildObject();
-        nameid.setValue(UUID.randomUUID().toString());
-        nameid.setFormat(NameID.TRANSIENT);
+        val nameId = (NameID) builder.buildObject();
+        nameId.setValue(nameIdValue);
+        nameId.setFormat(nameIdFormat);
 
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Subject.DEFAULT_ELEMENT_NAME);
         val subject = (Subject) builder.buildObject();
-        subject.setNameID(nameid);
+
+        if (nameIdFormat.equals(NameID.ENCRYPTED)) {
+            val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(defaultSamlRegisteredServiceCachingMetadataResolver,
+                samlRegisteredService, samlRegisteredService.getServiceId()).get();
+            val encryptedId = samlIdPObjectEncrypter.encode(nameId, samlRegisteredService, facade);
+            subject.setEncryptedID(encryptedId);
+        } else {
+            subject.setNameID(nameId);
+        }
         query.setSubject(subject);
 
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()

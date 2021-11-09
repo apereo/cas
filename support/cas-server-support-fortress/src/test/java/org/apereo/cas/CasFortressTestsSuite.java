@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.fortress.FortressAuthenticationHandlerTests;
 import org.apereo.cas.config.FortressAuthenticationConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link CasFortressTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     FortressAuthenticationHandlerTests.class,
     FortressAuthenticationConfigurationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class CasFortressTestsSuite {
 }

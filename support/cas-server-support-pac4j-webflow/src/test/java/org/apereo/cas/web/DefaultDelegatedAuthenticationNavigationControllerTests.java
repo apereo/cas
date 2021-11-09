@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("Simple")
-@DirtiesContext
+@Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DefaultDelegatedAuthenticationNavigationControllerTests {
 
@@ -43,9 +41,8 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     private DefaultDelegatedAuthenticationNavigationController controller;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-
 
     @BeforeEach
     public void beforeEach() {

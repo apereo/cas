@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,9 +16,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  * @since 6.0.0
  */
 @Configuration(value = "casSpringBootAdminServerSecurityConfiguration", proxyBeanMethods = false)
+@RequiredArgsConstructor
 public class CasSpringBootAdminServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private AdminServerProperties adminServerProperties;
+    private final AdminServerProperties adminServerProperties;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandlerTests;
 import org.apereo.cas.authentication.BasicCredentialMetaDataTests;
 import org.apereo.cas.authentication.CacheCredentialsMetaDataPopulatorTests;
+import org.apereo.cas.authentication.ClientInfoAuthenticationMetaDataPopulatorTests;
 import org.apereo.cas.authentication.CoreAuthenticationUtilsTests;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlanTests;
 import org.apereo.cas.authentication.DefaultAuthenticationManagerTests;
@@ -36,9 +37,8 @@ import org.apereo.cas.authentication.principal.SimplePrincipalTests;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtilsTests;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -71,6 +71,7 @@ import org.junit.runner.RunWith;
     AllAuthenticationHandlersSucceededAuthenticationPolicyTests.class,
     BasicCredentialMetaDataTests.class,
     DefaultAuthenticationManagerTests.class,
+    ClientInfoAuthenticationMetaDataPopulatorTests.class,
     CasCoreAuthenticationSupportConfigurationTests.class,
     ChainingPrincipalElectionStrategyTests.class,
     UsernamePasswordCredentialTests.class,
@@ -84,6 +85,6 @@ import org.junit.runner.RunWith;
     RestfulAuthenticationPolicyTests.class,
     FileTrustStoreSslSocketFactoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

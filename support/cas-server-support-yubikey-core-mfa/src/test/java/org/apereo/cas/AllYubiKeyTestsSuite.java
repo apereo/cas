@@ -4,9 +4,8 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountCipherExecutorTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProviderTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRestHttpRequestCredentialFactoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllYubiKeyTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     YubiKeyMultifactorAuthenticationProviderTests.class,
     YubiKeyRestHttpRequestCredentialFactoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllYubiKeyTestsSuite {
 }

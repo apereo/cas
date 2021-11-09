@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class BasicCredentialMetaDataTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "basicCredentialMetaData.json");

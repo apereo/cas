@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
 import lombok.val;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@Tag("Simple")
+@Tag("Cookie")
 public class DefaultCasCookieValueManagerTests {
     private static final String CLIENT_IP = "127.0.0.1";
 
@@ -32,7 +33,7 @@ public class DefaultCasCookieValueManagerTests {
 
     private static final String VALUE = "cookieValue";
 
-    private DefaultCasCookieValueManager cookieValueManager;
+    private CookieValueManager cookieValueManager;
     
     @Mock
     private Cookie cookie;
@@ -47,7 +48,8 @@ public class DefaultCasCookieValueManagerTests {
         request.addHeader("User-Agent", USER_AGENT);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(), new TicketGrantingCookieProperties());
+        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+            new TicketGrantingCookieProperties());
     }
 
     @AfterEach
@@ -68,6 +70,26 @@ public class DefaultCasCookieValueManagerTests {
             () -> new DefaultCasCookieValueManager(CipherExecutor.noOp(), props).buildCookieValue(VALUE, request));
         props.setPinToSession(false);
         assertNotNull(new DefaultCasCookieValueManager(CipherExecutor.noOp(), props).buildCookieValue(VALUE, request));
+    }
+
+    @Test
+    public void verifySessionPinningAuthorizedOnFailure() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr(CLIENT_IP);
+        request.setLocalAddr(CLIENT_IP);
+        request.addHeader("User-Agent", USER_AGENT);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        val props = new TicketGrantingCookieProperties();
+        props.setAllowedIpAddressesPattern("^19.*.3.1\\d\\d");
+        val mgr = new DefaultCasCookieValueManager(CipherExecutor.noOp(), props);
+        var value = mgr.buildCookieValue(VALUE, request);
+        assertNotNull(value);
+
+        request.setRemoteAddr("198.127.3.155");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        value = mgr.obtainCookieValue(value, request);
+        assertNotNull(value);
     }
 
     @Test

@@ -1,15 +1,10 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
-
-    var element = await page.$('#x509Login');
-    assert(await element.boundingBox() != null);
-
+    await cas.assertVisibility(page, "#x509Login")
     await browser.close();
 })();

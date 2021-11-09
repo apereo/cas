@@ -41,18 +41,16 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final int MAP_SIZE = 8;
-    
     private static final BigInteger RSA_PUBLIC_KEY_EXPONENT = BigInteger.valueOf(65537);
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    
+
     private Key signingKey;
 
-    private Map<String, Object> customHeaders = new LinkedHashMap<>(MAP_SIZE);
-    
+    private Map<String, Object> customHeaders = new LinkedHashMap<>();
+
     /**
      * Extract private key from resource private key.
      *
@@ -85,6 +83,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         return factory.getObject();
     }
 
+    @Override
+    public boolean isEnabled() {
+        return this.signingKey != null;
+    }
+
     /**
      * Sign the array by first turning it into a base64 encoded string.
      *
@@ -95,11 +98,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         if (this.signingKey == null) {
             return value;
         }
-        return signWith(
-                value,
-                "RSA".equalsIgnoreCase(this.signingKey.getAlgorithm())
-                ? AlgorithmIdentifiers.RSA_USING_SHA512
-                : AlgorithmIdentifiers.HMAC_SHA512);
+        return signWith(value, getSigningAlgorithmFor(this.signingKey));
     }
 
     /**
@@ -168,8 +167,15 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         }
     }
 
-    @Override
-    public boolean isEnabled() {
-        return this.signingKey != null;
+    /**
+     * Gets signing algorithm for.
+     *
+     * @param signingKey the signing key
+     * @return the signing algorithm for
+     */
+    protected String getSigningAlgorithmFor(final Key signingKey) {
+        return "RSA".equalsIgnoreCase(signingKey.getAlgorithm())
+            ? AlgorithmIdentifiers.RSA_USING_SHA512
+            : AlgorithmIdentifiers.HMAC_SHA512;
     }
 }

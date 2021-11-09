@@ -50,7 +50,6 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      * and how you manage capacity.
      */
     private BillingMode billingMode = BillingMode.PROVISIONED;
-    
 
     /**
      * Indicates that the database instance is local to the deployment
@@ -62,30 +61,35 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
 
     public enum BillingMode {
         /**
-         * Provisioned mode means that you specify the number of reads and writes per second that you expect your
+         * Provisioned mode means that you specify the number of reads
+         * and writes per second that you expect your
          * application to use.
-         * <br/><br/>
          * Provisioned mode is a good option if any of the following are true:
          *
-         *     <ul><li>You have predictable application traffic.</li>
-         *
-         *     <li>You run applications whose traffic is consistent or ramps gradually.</li>
-         *
-         *     <li>You can forecast capacity requirements to control costs.</li></ul>
+         * <ul>
+         *  <li>You have predictable application traffic.</li>
+         *  <li>You run applications whose traffic is consistent or ramps gradually.</li>
+         *  <li>You can forecast capacity requirements to control costs.</li>
+         * </ul>
+         * You can use auto scaling to automatically adjust
+         * capacity based on the specified utilization rate
+         * to ensure application performance while reducing costs.
          */
         PROVISIONED,
 
         /**
          * Pay-per-request or on-demand billing means that you're charged for only the read/write
          * requests that you use.
-         * <br/><br/>
          * On-demand mode is a good option if any of the following are true:
-         *
-         *     <ul><li>You create new tables with unknown workloads.</li>
-         *
+         * <ul>
+         *     <li>You create new tables with unknown workloads.</li>
          *     <li>You have unpredictable application traffic.</li>
-         *
-         *     <li>You prefer the ease of paying for only what you use.</li></ul>
+         *     <li>You prefer the ease of paying for only what you use.</li>
+         * </ul>
+         * Tables using on-demand mode support all DynamoDB
+         * features (such as encryption at rest, point-in-time recovery, global
+         * tables, and so on) with the exception of auto scaling,
+         * which is not applicable with this mode.
          */
         PAY_PER_REQUEST
     }

@@ -20,22 +20,18 @@ for authentication attempts, allowing the end user to *scan and proceed*.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-qrlogin" %}
 
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                                | Description
-|-----------------------------------------|----------------------------------------------------------------------------
-| `qrDevices/{username}`                  | `GET` request to fetch device for the user.
-| `qrDevices/{username}/{device}`         | `POST` request to register a device with CAS.
-| `qrDevices/{username}/{device}`         | `DELETE` request to delete a device for the user.
+
+{% include_cached actuators.html endpoints="qrDevices"  %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.qr" %}
+{% include_cached casproperties.html properties="cas.authn.qr" %}
 
 ## Web Socket Communication
 
@@ -121,7 +117,7 @@ implementations can be supplied using one of the strategies outlined below.
 Authorized devices can be managed and tracked inside a 
 single JSON resource, whose path is taught to CAS via settings. 
 
-{% include casproperties.html properties="cas.authn.qr.json" %}
+{% include_cached casproperties.html properties="cas.authn.qr.json" %}
 
 ### Custom
 

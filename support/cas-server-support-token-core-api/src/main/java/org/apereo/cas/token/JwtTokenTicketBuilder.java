@@ -3,6 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -41,6 +42,8 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
 
     private final ServicesManager servicesManager;
 
+    private final CasConfigurationProperties casProperties;
+
     @Override
     @SneakyThrows
     public String build(final String serviceTicketId, final WebApplicationService webApplicationService) {
@@ -71,6 +74,7 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
             .subject(assertion.getPrincipal().getName())
             .validUntilDate(validUntilDate)
             .attributes(finalAttributes)
+            .issuer(casProperties.getServer().getPrefix())
             .build();
         LOGGER.debug("Building JWT using [{}]", request);
         return jwtBuilder.build(request);
@@ -89,13 +93,15 @@ public class JwtTokenTicketBuilder implements TokenTicketBuilder {
         val validUntilDate = DateTimeUtils.dateOf(dt);
 
         val builder = JwtBuilder.JwtRequest.builder();
-        val request = builder.serviceAudience(jwtBuilder.getIssuer())
+        val request = builder
+            .serviceAudience(casProperties.getServer().getPrefix())
             .registeredService(Optional.empty())
             .issueDate(DateTimeUtils.dateOf(ticketGrantingTicket.getCreationTime()))
             .jwtId(ticketGrantingTicket.getId())
             .subject(authentication.getPrincipal().getId())
             .validUntilDate(validUntilDate)
             .attributes(attributes)
+            .issuer(casProperties.getServer().getPrefix())
             .build();
         return jwtBuilder.build(request);
     }

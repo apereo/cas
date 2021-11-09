@@ -18,10 +18,10 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @TestPropertySource(
     properties = {
-        "cas.authn.mfa.webauthn.dynamo-db.endpoint=http://localhost:8000",
-        "cas.authn.mfa.webauthn.dynamo-db.drop-tables-on-startup=true",
-        "cas.authn.mfa.webauthn.dynamo-db.local-instance=true",
-        "cas.authn.mfa.webauthn.dynamo-db.region=us-east-1"
+        "cas.authn.mfa.web-authn.dynamo-db.endpoint=http://localhost:8000",
+        "cas.authn.mfa.web-authn.dynamo-db.drop-tables-on-startup=true",
+        "cas.authn.mfa.web-authn.dynamo-db.local-instance=true",
+        "cas.authn.mfa.web-authn.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
 @Getter

@@ -8,9 +8,11 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAbstractTicketExceptionHandler;
 import org.apereo.cas.web.flow.authentication.DefaultCasWebflowAuthenticationExceptionHandler;
+import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.GenericCasWebflowExceptionHandler;
 
 import lombok.val;
@@ -27,10 +29,8 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,13 +39,30 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("WebflowActions")
+@Tag("WebflowAuthenticationActions")
 public class AuthenticationExceptionHandlerActionTests {
+
+    private static RequestContext getMockRequestContext() {
+        val ctx = mock(RequestContext.class);
+        when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
+        return ctx;
+    }
+
+    private static List<CasWebflowExceptionHandler> getExceptionHandlers(final CasWebflowExceptionCatalog errors) {
+        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
+            new DefaultCasWebflowAbstractTicketExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
+            new GenericCasWebflowExceptionHandler(errors,
+                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+    }
 
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(
-            CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)));
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class));
+
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(catalog));
         val req = getMockRequestContext();
 
         val map = new HashMap<String, Throwable>();
@@ -56,7 +73,7 @@ public class AuthenticationExceptionHandlerActionTests {
 
     @Test
     public void handleUnknownExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
         val req = getMockRequestContext();
         val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
@@ -66,7 +83,7 @@ public class AuthenticationExceptionHandlerActionTests {
 
     @Test
     public void handleExceptions() throws Exception {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
         val req = getMockRequestContext();
         val event = new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR,
             new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, new GeneralSecurityException()));
@@ -76,8 +93,18 @@ public class AuthenticationExceptionHandlerActionTests {
     }
 
     @Test
+    public void handleDefaultError() throws Exception {
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
+        val req = getMockRequestContext();
+        val event = new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+        when(req.getCurrentEvent()).thenReturn(event);
+        val id = handler.execute(req);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, id.getId());
+    }
+
+    @Test
     public void handleUnknownTicketExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new LinkedHashSet<>()));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
         val req = getMockRequestContext();
         val id = handler.handle(new InvalidTicketException("TGT"), req);
         assertEquals(CasWebflowExceptionHandler.UNKNOWN, id);
@@ -85,8 +112,9 @@ public class AuthenticationExceptionHandlerActionTests {
 
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
-        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(
-            CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class, AccountNotFoundException.class)));
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class, AccountNotFoundException.class));
+        val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(catalog));
         val req = getMockRequestContext();
 
         val policy = new TestContextualAuthenticationPolicy();
@@ -95,18 +123,6 @@ public class AuthenticationExceptionHandlerActionTests {
         val message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(req.getMessageContext(), times(1)).addMessage(message.capture());
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());
-    }
-
-    private static RequestContext getMockRequestContext() {
-        val ctx = mock(RequestContext.class);
-        when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
-        return ctx;
-    }
-
-    private static List<CasWebflowExceptionHandler> getExceptionHandlers(final Set errors) {
-        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new DefaultCasWebflowAbstractTicketExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new GenericCasWebflowExceptionHandler(errors, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
     }
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {

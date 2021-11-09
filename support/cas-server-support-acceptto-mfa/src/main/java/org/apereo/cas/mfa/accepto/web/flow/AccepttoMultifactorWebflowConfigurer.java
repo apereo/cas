@@ -91,7 +91,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 createExternalRedirectViewFactory("requestScope.accepttoRedirectUrl"));
             createStateDefaultTransition(redirectState, CasWebflowConstants.STATE_ID_SUCCESS);
 
-            val registerState = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casAccepttoRegistrationView");
+            val registerState = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "acceptto/casAccepttoRegistrationView");
             createTransitionForState(registerState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "validateUser");
         });
 

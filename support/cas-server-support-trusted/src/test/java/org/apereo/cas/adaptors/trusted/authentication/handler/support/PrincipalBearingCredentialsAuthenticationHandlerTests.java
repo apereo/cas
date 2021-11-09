@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler =

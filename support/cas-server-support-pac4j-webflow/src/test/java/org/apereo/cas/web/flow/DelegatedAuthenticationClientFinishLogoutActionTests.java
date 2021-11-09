@@ -6,11 +6,8 @@ import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.saml.client.SAML2Client;
@@ -21,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -36,9 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
-@Tag("WebflowActions")
-@DirtiesContext
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Tag("WebflowAuthenticationActions")
 public class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
@@ -49,7 +43,6 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     private Clients builtClients;
 
     @Test
-    @Order(1)
     public void verifyOperationWithRedirect() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -62,11 +55,9 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
         val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
         assertEquals("https://google.com", samlClient.getLogoutValidator().getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
-
     }
 
     @Test
-    @Order(99)
     public void verifyOperationWithRelay() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
@@ -83,7 +74,6 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
-    @Order(100)
     public void verifyOperationFailsWithError() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

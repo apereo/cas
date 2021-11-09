@@ -95,7 +95,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
-            getWebflowEventResolutionConfigurationContext().getApplicationContext());
+            getConfigurationContext().getApplicationContext());
 
         if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");

@@ -32,13 +32,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
+ * This is {@link EncodingUtils} that encapsulates common base64,
+ * signing and encryption calls and operations in one spot.
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 @Slf4j
 @UtilityClass
 public class EncodingUtils {
@@ -253,9 +253,8 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static String urlDecode(final String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        return StringUtils.isBlank(value) ? value : URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
-
 
     /**
      * Validates Base64 encoding.

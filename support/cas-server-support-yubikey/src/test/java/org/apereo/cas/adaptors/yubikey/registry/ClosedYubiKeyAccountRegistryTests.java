@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class ClosedYubiKeyAccountRegistryTests {
 
     @Test
@@ -41,6 +41,7 @@ public class ClosedYubiKeyAccountRegistryTests {
         assertFalse(registry.isYubiKeyRegisteredFor("casuser", "publicId"));
         assertFalse(registry.registerAccountFor(YubiKeyDeviceRegistrationRequest.builder().build()));
         assertFalse(registry.update(YubiKeyAccount.builder().build()));
+        assertNull(registry.save(YubiKeyAccount.builder().build()));
     }
 
 }

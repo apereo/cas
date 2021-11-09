@@ -18,16 +18,18 @@ the complexity is likely not worth the trouble.</p></div>
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-ticket-registry" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.jpa" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.jpa" %}
+
+## JPA Ticket Cleaner
 
 A background *cleaner* process is also automatically scheduled to scan the chosen 
 database periodically and remove expired records based on configured threshold parameters.
 
-{% include casproperties.html properties="cas.ticket.registry.cleaner" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.cleaner" %}
 
 <div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
 

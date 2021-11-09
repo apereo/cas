@@ -4,9 +4,8 @@ import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolve
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProviderTests;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     SamlResponseAuditPrincipalIdProviderTests.class,
     SamlResponseAuditResourceResolverTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

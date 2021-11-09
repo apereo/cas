@@ -12,9 +12,10 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -37,6 +38,14 @@ import java.util.Optional;
 public class GenerateSamlIdPMetadataCommand {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    private VelocityEngine velocityEngineFactoryBean;
+
+    @Autowired
+    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+    private OpenSamlConfigBean openSamlConfigBean;
 
     /**
      * Generate saml2 idp metadata at the specified location.
@@ -89,16 +98,15 @@ public class GenerateSamlIdPMetadataCommand {
             props.getAuthn().getSamlIdp().getCore().setEntityId(entityId);
             props.getServer().setScope(scope);
             props.getServer().setPrefix(serverPrefix);
-
-            val parserPool = new BasicParserPool();
-            parserPool.initialize();
+            
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(locator)
                 .samlIdPCertificateAndKeyWriter(writer)
                 .applicationContext(applicationContext)
                 .casProperties(props)
                 .metadataCipherExecutor(CipherExecutor.noOpOfStringToString())
-                .openSamlConfigBean(new OpenSamlConfigBean(parserPool))
+                .openSamlConfigBean(openSamlConfigBean)
+                .velocityEngine(velocityEngineFactoryBean)
                 .build();
 
             val generator = new FileSystemSamlIdPMetadataGenerator(context);

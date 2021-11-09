@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
@@ -63,8 +63,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithValidCredentials() {
+    public void verifyWithValidCredentials() throws Exception {
         assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 

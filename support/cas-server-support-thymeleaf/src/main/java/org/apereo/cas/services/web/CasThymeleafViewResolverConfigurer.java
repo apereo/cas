@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.springframework.core.Ordered;
+import org.thymeleaf.spring5.view.AbstractThymeleafView;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 /**
@@ -10,7 +11,6 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
  * @author sbearcsiro
  * @since 5.3.0
  */
-@FunctionalInterface
 public interface CasThymeleafViewResolverConfigurer extends Ordered {
     @Override
     default int getOrder() {
@@ -23,4 +23,11 @@ public interface CasThymeleafViewResolverConfigurer extends Ordered {
      * @param thymeleafViewResolver The thymeleafViewResolver to configure
      */
     void configureThymeleafViewResolver(ThymeleafViewResolver thymeleafViewResolver);
+
+    /**
+     * Configure thymeleaf view.
+     *
+     * @param thymeleafView the thymeleaf view
+     */
+    void configureThymeleafView(AbstractThymeleafView thymeleafView);
 }

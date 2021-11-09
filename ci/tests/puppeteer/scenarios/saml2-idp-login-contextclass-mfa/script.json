@@ -1,0 +1,32 @@
+{
+  "dependencies": "saml-idp,gauth",
+  "properties": [
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp/%{random}",
+    "--cas.authn.saml-idp.core.authentication-context-class-mappings=https://refeds.org/profile/mfa->mfa-gauth",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+    
+    "--cas.audit.engine.enabled=false",
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+
+
+
+

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
 @Slf4j
 @ToString
@@ -73,11 +73,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
             val ds = JpaBeans.newDataSource(samlIdPProperties.getMetadata().getJpa());
-            try (val con = ds.getConnection()) {
-                return con.isValid(DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+            return JpaBeans.isValidDataSourceConnection(ds, DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
         }
         return false;
     }

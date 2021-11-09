@@ -43,7 +43,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     private JwtBuilder jwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -68,6 +68,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject("casuser")
             .jwtId("unknown-id")
             .serviceAudience("https://example.com/normal/")
+            .issuer(casProperties.getServer().getPrefix())
             .build();
         val jwt = jwtBuilder.build(payload);
         val request = QRAuthenticationTokenValidationRequest.builder()
@@ -88,6 +89,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject("casuser")
             .jwtId(tgt.getId())
             .serviceAudience("https://example.com/normal/")
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).minusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -109,6 +111,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject("unknown")
             .jwtId(tgt.getId())
             .serviceAudience("https://example.com/normal/")
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -131,6 +134,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .jwtId(tgt.getId())
             .issuer("unknown")
             .serviceAudience("https://example.com/normal/")
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);

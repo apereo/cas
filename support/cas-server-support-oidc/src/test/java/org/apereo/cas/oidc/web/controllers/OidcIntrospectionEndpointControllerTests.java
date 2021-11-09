@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
 
     @Test
     public void verifyOperationWithValidTicket() {
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 
         val auth = "clientid:secret";
@@ -42,6 +43,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
 
         val accessToken = getAccessToken();
+        servicesManager.save(getOidcRegisteredService());
         this.ticketRegistry.addTicket(accessToken);
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
@@ -52,8 +54,17 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
     }
 
     @Test
+    public void verifyBadEndpointRequest() {
+        val request = getHttpRequestForEndpoint("unknown/issuer");
+        request.setRequestURI("unknown/issuer");
+        val response = new MockHttpServletResponse();
+        val mv = oidcIntrospectionEndpointController.handleRequest(request, response);
+        assertEquals(HttpStatus.NOT_FOUND, mv.getStatusCode());
+    }
+
+    @Test
     public void verifyOperationWithInvalidTicket() {
-        val request = new MockHttpServletRequest();
+        val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 
         val auth = "clientid:secret";
@@ -61,8 +72,10 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
         request.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
 
         val accessToken = getAccessToken();
+        servicesManager.save(getOidcRegisteredService());
         request.addParameter(OAuth20Constants.TOKEN, accessToken.getId());
         val result = oidcIntrospectionEndpointController.handleRequest(request, response);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
         assertFalse(result.getBody().isActive());
     }

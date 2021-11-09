@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:utext="#{screen.saml.idp.discovery}">SAML2 Identity Provider Discovery</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+    <link rel="stylesheet"
+        type="text/css"
+        href="../static/css/samlidp/idpselect.css"
+        th:href="@{/css/samlidp/idpselect.css}" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{screen.saml.idp.discovery}">SAML Identity Provider Discovery</h2>
+        <div id="errorDiv" class="banner banner-danger alert alert-danger" role="alert" style="display:none;"></div>
+        <div id="idpSelect"></div>
+        <script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+            function IdPSelectUIParametersForCAS(obj) {
+                obj.myEntityID = /*[[${entityIds}]]*/;
+
+                var defaultReturn = location.href;
+                if (!defaultReturn.endsWith("/")) {
+                    defaultReturn += "/";
+                }
+                defaultReturn += "redirect";
+                obj.defaultReturn = defaultReturn;
+
+                var dataSource = /*[[${casServerPrefix}]]*/ ;
+                if (!dataSource.endsWith("/")) {
+                    dataSource += "/";
+                }
+                dataSource += "idp/discovery/feed";
+                obj.dataSource = dataSource;
+
+                obj.returnWhiteList = '^' + /*[[${entityId}]]*/ + '.*$';
+                obj.defaultLogo = /*[[@{/images/shield.png}]]*/  ;
+            }
+        /*]]>*/
+        </script>
+        <script th:src="@{/js/samlidp/idpselect_config.js}"></script>
+        <script th:src="@{/js/samlidp/idpselect.js}"></script>
+    </div>
+</main>
+</body>
+</html>

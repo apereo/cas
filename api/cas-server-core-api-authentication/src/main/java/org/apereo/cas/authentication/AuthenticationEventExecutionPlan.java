@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 public interface AuthenticationEventExecutionPlan {
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "authenticationEventExecutionPlan";
+
+    /**
      * Register authentication handler.
      *
      * @param handler the handler

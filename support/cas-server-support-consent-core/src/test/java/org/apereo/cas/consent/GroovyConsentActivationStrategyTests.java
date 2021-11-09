@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @TestPropertySource(properties = {
-    "cas.consent.crypto.enabled=false",
+    "cas.consent.core.crypto.enabled=false",
     "cas.consent.activation-strategy-groovy-script.location=classpath:/ConsentActivationStrategy.groovy"
 })
 public class GroovyConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
     @Autowired
-    @Qualifier("consentActivationStrategy")
+    @Qualifier(ConsentActivationStrategy.BEAN_NAME)
     private ConsentActivationStrategy consentActivationStrategy;
 
     @Autowired

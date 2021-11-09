@@ -1,10 +1,14 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.val;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class CollectionUtilsTests {
+    @Test
+    public void verifyCollectionAsInputMap() {
+        val value = new HashMap<String, List<Object>>();
+        value.put("Hello", CollectionUtils.wrapList("People", "World"));
+        val result = CollectionUtils.toCollection(value, ArrayList.class);
+        assertEquals(1, result.size());
+        assertEquals(ImmutablePair.class, result.get(0).getClass());
+    }
     @Test
     public void verifyToCol() {
         assertThrows(IllegalArgumentException.class, () ->

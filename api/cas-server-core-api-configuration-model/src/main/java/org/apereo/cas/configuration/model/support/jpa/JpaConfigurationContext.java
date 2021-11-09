@@ -8,10 +8,10 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across
@@ -36,5 +36,5 @@ public class JpaConfigurationContext {
     private final Map<String, Object> jpaProperties = new LinkedHashMap<>(0);
 
     @Builder.Default
-    private final List<String> packagesToScan = new ArrayList<>(0);
+    private final Set<String> packagesToScan = new LinkedHashSet<>(0);
 }

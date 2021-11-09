@@ -32,13 +32,12 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerWebAuthn", propagation = Propagation.REQUIRED)
 public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository {
+    private static final String UPDATE_QUERY = String.format("UPDATE %s r ", JpaWebAuthnCredentialRegistration.ENTITY_NAME);
 
-    private static final String UPDATE_QUERY = "UPDATE JpaWebAuthnCredentialRegistration r ";
-
-    private static final String SELECT_QUERY = "SELECT r from JpaWebAuthnCredentialRegistration r ";
+    private static final String SELECT_QUERY = String.format("SELECT r from %s r ", JpaWebAuthnCredentialRegistration.ENTITY_NAME);
 
     private final PlatformTransactionManager transactionManager;
 
@@ -69,7 +68,7 @@ public class JpaWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepos
     }
 
     @Override
-    public Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val records = entityManager.createQuery(SELECT_QUERY, JpaWebAuthnCredentialRegistration.class).getResultList();
         return records.stream()
             .map(record -> getCipherExecutor().decode(record.getRecords()))

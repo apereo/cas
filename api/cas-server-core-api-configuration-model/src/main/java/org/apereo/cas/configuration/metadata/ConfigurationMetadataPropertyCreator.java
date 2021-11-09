@@ -96,7 +96,7 @@ public class ConfigurationMetadataPropertyCreator {
         }
         prop.setName(indexedName);
         prop.setId(indexedName);
-
+        
         var elementType = fieldDecl.getElementType();
         val elementTypeStr = elementType.asString();
         if (PRIMITIVES.containsKey(elementTypeStr)) {
@@ -113,6 +113,7 @@ public class ConfigurationMetadataPropertyCreator {
         } else {
             prop.setType(elementTypeStr);
             var parent = fieldDecl.getParentNode().get();
+            
             var enumDecl = parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(elementTypeStr));
             if (enumDecl.isPresent()) {
                 val em = enumDecl.get();

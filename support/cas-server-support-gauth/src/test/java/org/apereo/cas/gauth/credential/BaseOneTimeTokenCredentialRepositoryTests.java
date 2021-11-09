@@ -45,12 +45,14 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -114,10 +116,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(0, repo.count(toSave.getUsername()));
     }
 
-    protected String getUsernameUnderTest() {
-        return UUID.randomUUID().toString();
-    }
-
     @Test
     public void verifySaveAndUpdate() {
         val casuser = getUsernameUnderTest();
@@ -143,6 +141,9 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         s = accts.iterator().next();
         assertEquals(999666, s.getValidationCode());
         assertEquals("newSecret", s.getSecretKey());
+
+        repo.delete(s.getId());
+        assertNull(repo.get(s.getId()));
     }
 
     @Test
@@ -165,7 +166,9 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
-        assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
+        assertEquals(acct2.getScratchCodes().stream().sorted().collect(Collectors.toList()),
+            acct3.getScratchCodes().stream().sorted().collect(Collectors.toList()));
+        repo.delete(acct3.getId());
     }
 
     @Test
@@ -193,7 +196,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(0, repo.count());
         assertEquals(0, repo.count(toSave.getUsername().toUpperCase()));
     }
-    
+
     @Test
     public void verifyGetWithDecodedSecret() {
         val casuser = getUsernameUnderTest();
@@ -221,9 +224,14 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     public abstract OneTimeTokenCredentialRepository getRegistry();
 
+    protected String getUsernameUnderTest() {
+        return UUID.randomUUID().toString();
+    }
+
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

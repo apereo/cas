@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "InCommonRSAttributeReleasePolicyTests.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -39,15 +41,41 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         val filter = new InCommonRSAttributeReleasePolicy();
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user", 
-                "mail", "cas@example.org",
-                "sn", "surname")),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
+                    "mail", "cas@example.org",
+                    "sn", "surname")))
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
         assertTrue(attributes.containsKey("eduPersonPrincipalName"));
         assertTrue(attributes.containsKey("mail"));
         assertTrue(attributes.containsKey("sn"));
+    }
+
+    @Test
+    public void verifyOids() {
+        val filter = new InCommonRSAttributeReleasePolicy();
+        filter.setUseUniformResourceName(true);
+
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        registeredService.setAttributeReleasePolicy(filter);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
+                    "mail", "cas@example.org",
+                    "sn", "surname")))
+            .build();
+        val attributes = filter.getAttributes(context);
+        assertFalse(attributes.isEmpty());
+        assertTrue(attributes.containsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.6"));
+        assertTrue(attributes.containsKey("urn:oid:0.9.2342.19200300.100.1.3"));
+        assertTrue(attributes.containsKey("urn:oid:2.5.4.4"));
     }
 
     @Test
@@ -56,6 +84,25 @@ public class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurat
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, InCommonRSAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);
+    }
+
+    @Test
+    public void verifyAttributeDefinitions() {
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val policy = new InCommonRSAttributeReleasePolicy();
+        policy.setUseUniformResourceName(true);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        var definitions = policy.determineRequestedAttributeDefinitions(context);
+        assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.values()));
+
+        policy.setUseUniformResourceName(false);
+        definitions = policy.determineRequestedAttributeDefinitions(context);
+        assertTrue(definitions.containsAll(InCommonRSAttributeReleasePolicy.ALLOWED_ATTRIBUTES.keySet()));
     }
 }
 

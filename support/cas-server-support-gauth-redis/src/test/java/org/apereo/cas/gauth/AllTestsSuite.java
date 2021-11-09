@@ -3,9 +3,8 @@ package org.apereo.cas.gauth;
 import org.apereo.cas.gauth.credential.RedisGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorRedisTokenRepositoryTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link org.apereo.cas.gauth.AllTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     GoogleAuthenticatorRedisTokenRepositoryTests.class,
     RedisGoogleAuthenticatorTokenCredentialRepositoryTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -30,6 +31,7 @@ import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -54,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -74,12 +77,12 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.authn.pm.json.location=classpath:jsonResourcePassword.json",
         "cas.authn.pm.core.enabled=true",
-        "cas.authn.pm.core.policy-pattern=^Test1.+"
+        "cas.authn.pm.core.password-policy-pattern=^Test1.+"
     })
 @Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
 
     @Autowired
@@ -155,5 +158,19 @@ public class JsonResourcePasswordManagementServiceTests {
         bean.setPassword("Test1@1234");
         val isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
+    }
+
+    @Test
+    public void verifySecurityQuestions() {
+        val query = PasswordManagementQuery.builder().username("casuser").build();
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                query.securityQuestion("Q1", "A1");
+                query.securityQuestion("Q2", "A2");
+                passwordChangeService.updateSecurityQuestions(query);
+            }
+        });
+        assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
     }
 }

@@ -25,7 +25,7 @@ public class MultifactorAuthenticationWebflowUtils {
      */
     public static List<CasMultifactorWebflowCustomizer> getMultifactorAuthenticationWebflowCustomizers(
         final ConfigurableApplicationContext applicationContext) {
-        return applicationContext.getBeansOfType(CasMultifactorWebflowCustomizer.class, false, true)
+        return applicationContext.getBeansOfType(CasMultifactorWebflowCustomizer.class)
             .values()
             .stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE)

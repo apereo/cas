@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class GoogleAuthenticatorAuthenticationHandlerTests {
     private IGoogleAuthenticator googleAuthenticator;
 

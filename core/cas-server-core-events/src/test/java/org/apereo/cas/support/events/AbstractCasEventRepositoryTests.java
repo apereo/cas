@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,16 +31,17 @@ public abstract class AbstractCasEventRepositoryTests {
         eventRepository.save(dto1);
 
         val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
-        assertFalse(eventRepository.load(dt).isEmpty());
+        val loaded = eventRepository.load(dt);
+        assertTrue(loaded.findAny().isPresent());
 
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).isEmpty());
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).findAny().isEmpty());
 
-        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).isEmpty());
-        assertFalse(eventRepository.getEventsOfType(dto1.getType()).isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsOfType(dto1.getType()).findAny().isEmpty());
 
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).isEmpty());
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).findAny().isEmpty());
+        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).findAny().isEmpty());
     }
 
     @Test
@@ -49,13 +52,16 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto2 = getCasEvent("casuser");
         getEventRepository().save(dto2);
 
-        val col = getEventRepository().load();
+        val col = getEventRepository().load().collect(Collectors.toList());
         assertEquals(2, col.size());
 
         assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created Event IDs are equal");
 
-        assertEquals(2, col.stream().map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
-        col.forEach(event -> {
+        val load2 = getEventRepository().load();
+        assertEquals(2, load2.map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
+
+        val load3 = getEventRepository().load();
+        load3.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {
                 assertEquals(dto1.getType(), event.getType());
@@ -79,6 +85,8 @@ public abstract class AbstractCasEventRepositoryTests {
         });
     }
 
+    public abstract CasEventRepository getEventRepository();
+
     private CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket);
@@ -86,14 +94,15 @@ public abstract class AbstractCasEventRepositoryTests {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         dto.putEventId(event.getTicketGrantingTicket().getId());
         dto.putClientIpAddress("1.2.3.4");
         dto.putServerIpAddress("1.2.3.4");
-        dto.putGeoLocation(new GeoLocationRequest(1234, 1234));
+        val location = new GeoLocationRequest(1234, 1234);
+        location.setAccuracy("80");
+        location.setTimestamp(String.valueOf(event.getTimestamp()));
+        dto.putGeoLocation(location);
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         return dto;
     }
-
-    public abstract CasEventRepository getEventRepository();
 }

@@ -13,22 +13,26 @@ templates folder. Add any views that require customization to the `src/main/reso
 Any files found in that module can be overridden by putting them in the same location under
 `src/main/resources` in the CAS overlay project. The Gradle build script for the overlay has tasks that help get resources 
 from the CAS web application to the correct location in the CAS overlay. 
-  
+
+## Templates
+
+{% include_cached userinterface-templates.html  %}
+
 ## Configuration
 
-{% include casproperties.html properties="cas.view.template-" %}
+{% include_cached casproperties.html properties="cas.view.template-" %}
 
 ### CAS v1
 
-{% include casproperties.html properties="cas.view.cas1" %}
+{% include_cached casproperties.html properties="cas.view.cas1" %}
 
 ### CAS v2
 
-{% include casproperties.html properties="cas.view.cas2" %}
+{% include_cached casproperties.html properties="cas.view.cas2" %}
 
 ### CAS v3
 
-{% include casproperties.html properties="cas.view.cas3" %}
+{% include_cached casproperties.html properties="cas.view.cas3" %}
 
 ## Externalized Views
 
@@ -49,7 +53,7 @@ the response. This URL endpoint will receive the available request headers as we
 
 Upon a successful `200` status result, the response body is expected to contain the view that will be rendered by CAS.
 
-{% include casproperties.html properties="cas.view.rest" %}
+{% include_cached casproperties.html properties="cas.view.rest" %}
 
 ## Thymeleaf
 
@@ -60,7 +64,7 @@ folder, and referenced by the templates in `src/main/resources/templates`.
 
 Refer to the [Thymeleaf documentation](https://www.thymeleaf.org/) for more information on its use and syntax.
 
-{% include casproperties.html properties="spring.thymeleaf" %}
+{% include_cached casproperties.html properties="spring.thymeleaf" %}
 
 ## Warning Before Accessing Application
 
@@ -86,4 +90,4 @@ CAS allows on the ability to dynamically extend the login form by including addi
 Such fields are taught to CAS using settings and are then bound to the authentication flow and made available to all
 authentication handlers that wish to impose additional processes and rules using said fields.
 
-{% include casproperties.html properties="cas.view.custom-login-form-fields" %}
+{% include_cached casproperties.html properties="cas.view.custom-login-form-fields" %}

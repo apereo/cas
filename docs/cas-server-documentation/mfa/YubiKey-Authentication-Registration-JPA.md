@@ -10,9 +10,9 @@ category: Multifactor Authentication
 
 Support is enabled by including the following dependencies in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-jpa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey-jpa" %}
 
-{% include casproperties.html properties="cas.authn.mfa.yubikey.jpa" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey.jpa" %}
 
 The expected database schema that is automatically created and configured by CAS contains a single table as `YubiKeyAccount` with the following fields:
 

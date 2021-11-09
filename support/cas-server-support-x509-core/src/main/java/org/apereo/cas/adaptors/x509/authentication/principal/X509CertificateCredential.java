@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.security.cert.X509Certificate;
@@ -22,6 +23,7 @@ import java.util.Arrays;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@ToString(onlyExplicitlyIncluded = true)
 @JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)

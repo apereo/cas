@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
 
     @Test

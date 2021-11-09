@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.saml-idp.metadata.couch-db.password=password"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @EnabledIfPortOpen(port = 5984)
 public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Autowired
@@ -68,28 +67,25 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @Qualifier("samlMetadataDocumentCouchDbRepository")
     private SamlMetadataDocumentCouchDbRepository couchDbRepository;
 
-
     @BeforeEach
     public void setUp() {
-        couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        couchDbFactory.getCouchDbInstance()
+            .createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
     @AfterEach
     public void tearDown() {
-        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
+        couchDbFactory.getCouchDbInstance()
+            .deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
     @Test
-    public void verifyResolver() {
+    public void verifyResolver() throws Exception {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
-        try {
-            md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        } catch (final IOException e) {
-            throw new AssertionError(e);
-        }
+        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         resolver.saveOrUpdate(md);
 
         val service = new SamlRegisteredService();
@@ -98,6 +94,7 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
         service.setDescription("Testing");
         service.setMetadataLocation("couchdb://");
         assertTrue(resolver.supports(service));
+        assertFalse(resolver.supports(null));
         assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertSame(1, resolvers.size());

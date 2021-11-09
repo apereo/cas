@@ -58,10 +58,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     @Override
     public boolean isServiceAccessAllowed() {
-        if (!doesStartingTimeAllowServiceAccess()) {
-            return false;
-        }
-        return doesEndingTimeAllowServiceAccess() && super.isServiceAccessAllowed();
+        return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess() && super.isServiceAccessAllowed();
     }
 
     /**

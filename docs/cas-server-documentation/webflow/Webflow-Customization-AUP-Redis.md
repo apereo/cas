@@ -13,6 +13,6 @@ are mapped to a combination of CAS username and the designated AUP attribute nam
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-redis" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-redis" %}
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.redis" %}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.redis" %}

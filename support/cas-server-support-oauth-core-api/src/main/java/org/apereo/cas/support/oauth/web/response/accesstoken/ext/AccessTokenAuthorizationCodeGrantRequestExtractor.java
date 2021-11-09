@@ -17,7 +17,6 @@ import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,8 +28,17 @@ import java.util.TreeSet;
  */
 @Slf4j
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
-        super(oAuthConfigurationContext);
+    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext config) {
+        super(config);
+    }
+
+    /**
+     * Is allowed to generate refresh token ?
+     *
+     * @return true/false
+     */
+    protected static boolean isAllowedToGenerateRefreshToken() {
+        return true;
     }
 
     @Override
@@ -39,14 +47,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
-
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = getOAuthRegisteredServiceBy(context);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
 
-        val requestedScopes = OAuth20Utils.parseRequestScopes(request);
+        val requestedScopes = OAuth20Utils.parseRequestScopes(context);
         val token = getOAuthTokenFromRequest(request);
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
@@ -67,6 +74,28 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Supports the grant type?
+     *
+     * @param context the context
+     * @return true/false
+     */
+    @Override
+    public boolean supports(final HttpServletRequest context) {
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    @Override
+    public OAuth20ResponseTypes getResponseType() {
+        return OAuth20ResponseTypes.NONE;
     }
 
     /**
@@ -109,15 +138,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .orElse(StringUtils.EMPTY);
     }
 
-    /**
-     * Is allowed to generate refresh token ?
-     *
-     * @return true/false
-     */
-    protected static boolean isAllowedToGenerateRefreshToken() {
-        return true;
-    }
-
     protected String getOAuthParameterName() {
         return OAuth20Constants.CODE;
     }
@@ -142,34 +162,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val token = getOAuthConfigurationContext().getTicketRegistry().getTicket(getOAuthParameter(request), OAuth20Token.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
-            if (token != null) {
-                getOAuthConfigurationContext().getTicketRegistry().deleteTicket(token.getId());
-            }
             return null;
         }
         return token;
-    }
-
-    /**
-     * Supports the grant type?
-     *
-     * @param context the context
-     * @return true/false
-     */
-    @Override
-    public boolean supports(final HttpServletRequest context) {
-        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, getGrantType());
-    }
-
-    @Override
-    public OAuth20GrantTypes getGrantType() {
-        return OAuth20GrantTypes.AUTHORIZATION_CODE;
-    }
-
-    @Override
-    public OAuth20ResponseTypes getResponseType() {
-        return OAuth20ResponseTypes.NONE;
     }
 
     /**
@@ -181,15 +176,16 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final JEEContext context) {
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
-        var registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(
-            getOAuthConfigurationContext().getServicesManager(), redirectUri);
+        val registeredService = StringUtils.isNotBlank(clientId)
+                ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId)
+                : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getOAuthConfigurationContext().getServicesManager(), redirectUri);
         if (registeredService == null) {
-            val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
-            registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getOAuthConfigurationContext().getServicesManager(), clientId);
+            LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri);
+        } else {
+            LOGGER.debug("Located registered service [{}]", registeredService);
         }
-        LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }
 }

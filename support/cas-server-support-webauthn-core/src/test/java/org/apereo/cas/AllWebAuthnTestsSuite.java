@@ -4,9 +4,8 @@ import org.apereo.cas.webauthn.WebAuthnControllerTests;
 import org.apereo.cas.webauthn.WebAuthnCredentialTests;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProviderTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllWebAuthnTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     WebAuthnControllerTests.class,
     WebAuthnMultifactorAuthenticationProviderTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllWebAuthnTestsSuite {
 }

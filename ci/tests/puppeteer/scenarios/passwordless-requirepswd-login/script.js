@@ -1,41 +1,35 @@
 const puppeteer = require('puppeteer');
 const assert = require('assert');
-const url = require('url');
+
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     
     await page.goto("https://localhost:8443/cas/login");
 
     // await page.waitForTimeout(2000)
 
-    var pswd = await page.$('#password');
+    let pswd = await page.$('#password');
     assert(pswd == null);
 
-    await page.type('#username', "casuser");
+    await cas.type(page,'#username', "casuser");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
     // await page.waitForTimeout(8000)
 
-    var username = await page.$('#username');
-    assert(await username.boundingBox() == null);
+    await cas.assertInvisibility(page, '#username')
+    await cas.assertVisibility(page, '#password');
 
-    pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
-
-    await page.type('#password', "Mellon");
+    await cas.type(page,'#password', "Mellon");
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 
     // await page.waitForTimeout(10000)
 
-    const tgc = (await page.cookies()).filter(value => value.name === "TGC")
-    assert(tgc.length !== 0);
+    await cas.assertTicketGrantingCookie(page);
     
     await browser.close();
 })();

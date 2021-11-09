@@ -25,14 +25,11 @@ where you make a change in one place and it's broadcasted to all nodes. This mod
 synchronizing changes across disks and CAS nodes.CAS uses the Spring Cloud Bus to manage configuration 
 in a distributed deployment. Spring Cloud Bus links nodes of a distributed system with a lightweight message broker.
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.bus" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.bus" %}
 
-The following endpoints are secured and exposed by the Spring Cloud Config Bus:
+The following endpoints are provided by Spring Cloud:
 
-| Parameter                         | Description
-|-----------------------------------|------------------------------------------
-| `/actuator/bus-refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
-| `/actuator/bus-env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+{% include_cached actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
 
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 
@@ -56,9 +53,9 @@ the Advanced Message Queuing Protocol (AMQP).
 
 Support is enabled by including the following dependency in the final overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-amqp" %}
 
-{% include casproperties.html thirdPartyStartsWith="spring.rabbitmq." %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.rabbitmq." %}
 
 ## Kafka
 
@@ -69,9 +66,9 @@ making it highly valuable for enterprise infrastructures to process streaming da
 
 Support is enabled by including the following dependency in the final overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-kafka" %}
 
 Broadcast CAS configuration updates to other nodes in the cluster
 via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
   
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.stream.kafka,spring.cloud.stream.bindings.output" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.stream.kafka,spring.cloud.stream.bindings.output" %}

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=Q2IU2i8BFNd6VYflZT8Evl6lF7oPlj3PM15BmRU7",

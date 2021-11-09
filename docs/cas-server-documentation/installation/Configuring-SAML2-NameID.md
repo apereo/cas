@@ -17,7 +17,8 @@ that value will then be used to construct the Name ID along with the right forma
 
 ## Examples
 
-The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` as the final Name ID format, and use the `mail` attribute value as the final Name ID value.
+The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` 
+as the final Name ID format, and use the `mail` attribute value as the final Name ID value.
 
 ```json
 {

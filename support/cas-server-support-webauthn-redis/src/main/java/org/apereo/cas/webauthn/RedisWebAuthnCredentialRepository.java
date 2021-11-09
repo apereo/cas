@@ -52,7 +52,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
         if (keys != null) {
             return toCredentialRegistrationsAsStream(keys);

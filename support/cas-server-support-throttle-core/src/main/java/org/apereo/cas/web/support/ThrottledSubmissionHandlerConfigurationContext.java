@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link ThrottledSubmissionHandlerConfigurationContext}.
@@ -35,4 +36,6 @@ public class ThrottledSubmissionHandlerConfigurationContext {
     private final ThrottledRequestResponseHandler throttledRequestResponseHandler;
 
     private final ThrottledRequestExecutor throttledRequestExecutor;
+
+    private final ConfigurableApplicationContext applicationContext;
 }

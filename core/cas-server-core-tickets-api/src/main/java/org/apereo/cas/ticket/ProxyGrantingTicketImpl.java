@@ -11,9 +11,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.val;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
  * used by a service to obtain proxy tickets for obtaining access to a back-end
@@ -28,8 +25,6 @@ import javax.persistence.Entity;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Entity
-@DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
@@ -67,7 +62,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean onlyTrackMostRecentSession) {
         val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
-        trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        trackService(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
 

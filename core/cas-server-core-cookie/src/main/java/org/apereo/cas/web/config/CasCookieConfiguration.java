@@ -15,12 +15,13 @@ import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCookieConfiguration}.
@@ -28,57 +29,72 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCookieConfiguration")
+@Configuration(value = "casCookieConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCookieConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Bean
-    @RefreshScope
-    public CasCookieBuilder warnCookieGenerator() {
-        val props = casProperties.getWarningCookie();
-        return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
-    }
-
-    @ConditionalOnMissingBean(name = "cookieValueManager")
-    @Bean
-    public CookieValueManager cookieValueManager() {
-        if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
-        }
-        return NoOpCookieValueManager.INSTANCE;
-    }
-
-    @ConditionalOnMissingBean(name = "cookieCipherExecutor")
-    @RefreshScope
-    @Bean
-    public CipherExecutor cookieCipherExecutor() {
-        val crypto = casProperties.getTgc().getCrypto();
-        var enabled = crypto.isEnabled();
-        if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
-            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
-                + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
-            enabled = true;
+    @Configuration(value = "CasCookieCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCookieCoreConfiguration {
+        @ConditionalOnMissingBean(name = "cookieValueManager")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CookieValueManager cookieValueManager(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor) {
+            if (casProperties.getTgc().getCrypto().isEnabled()) {
+                return new DefaultCasCookieValueManager(cookieCipherExecutor, casProperties.getTgc());
+            }
+            return NoOpCookieValueManager.INSTANCE;
         }
 
-        if (enabled) {
-            return CipherExecutorUtils.newStringCipherExecutor(crypto, TicketGrantingCookieCipherExecutor.class);
+        @ConditionalOnMissingBean(name = "cookieCipherExecutor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public CipherExecutor cookieCipherExecutor(final CasConfigurationProperties casProperties) {
+            val crypto = casProperties.getTgc().getCrypto();
+            var enabled = crypto.isEnabled();
+            if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
+                && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+                LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                            + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
+                enabled = true;
+            }
+
+            if (enabled) {
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, TicketGrantingCookieCipherExecutor.class);
+            }
+
+            LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
+                        + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                        + "signing and verification of ticket-granting cookies.");
+            return CipherExecutor.noOp();
+        }
+    }
+
+    @Configuration(value = "CasCookieGeneratorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCookieGeneratorConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "warnCookieGenerator")
+        public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
+            val props = casProperties.getWarningCookie();
+            return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
         }
 
-        LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
-            + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
-            + "signing and verification of ticket-granting cookies.");
-        return CipherExecutor.noOp();
+        @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasCookieBuilder ticketGrantingTicketCookieGenerator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("cookieValueManager")
+            final CookieValueManager cookieValueManager) {
+            val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
+            return new TicketGrantingCookieRetrievingCookieGenerator(context, cookieValueManager);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
-    @Bean
-    @RefreshScope
-    public CasCookieBuilder ticketGrantingTicketCookieGenerator() {
-        val tgc = casProperties.getTgc();
-        return new TicketGrantingCookieRetrievingCookieGenerator(
-            CookieUtils.buildCookieGenerationContext(tgc), cookieValueManager());
-    }
 }

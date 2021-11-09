@@ -1,11 +1,12 @@
 {
   "dependencies": "yubikey,gauth",
   "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
-    "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.core.provider-selection-enabled=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/mfa-provider-selection/services"
+    "--cas.audit.engine.enabled=false"
   ]
 }
 

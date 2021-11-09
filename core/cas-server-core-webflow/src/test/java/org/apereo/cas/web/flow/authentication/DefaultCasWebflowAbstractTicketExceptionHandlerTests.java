@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockParameterMap;
 
 import java.util.LinkedHashSet;
 
@@ -42,16 +43,19 @@ public class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
         errors.add(InvalidTicketException.class);
         errors.add(InvalidProxyGrantingTicketForServiceTicketException.class);
         errors.add(UnauthorizedServiceTicketValidationException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         this.context = mock(RequestContext.class);
         when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
         when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
+        when(context.getRequestParameters()).thenReturn(new MockParameterMap());
         when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
         when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
 
-        this.handler = new DefaultCasWebflowAbstractTicketExceptionHandler(errors,
+        this.handler = new DefaultCasWebflowAbstractTicketExceptionHandler(catalog,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 

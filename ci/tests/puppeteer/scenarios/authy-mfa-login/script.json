@@ -1,8 +1,10 @@
 {
   "dependencies": "authy",
   "properties": [
-    "--cas.authn.mfa.authy.api-key=YKUARAG17wqNlkEKAih8Q7Zs3770h11o",
-
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    "--cas.authn.mfa.authy.api-key=Xvi61p0TLJmqTsU0KxCuFL7uC2sc6yL2",
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
   ]

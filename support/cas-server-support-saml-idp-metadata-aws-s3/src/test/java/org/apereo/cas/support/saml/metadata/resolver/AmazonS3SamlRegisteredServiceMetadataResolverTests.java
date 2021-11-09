@@ -1,26 +1,27 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
+import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPAmazonS3RegisteredServiceMetadataConfiguration;
+import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.http.AbortableInputStream;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.S3Object;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AmazonS3SamlRegisteredServiceMetadataResolverTests}.
@@ -28,49 +29,58 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTest(classes = {
+    AmazonS3SamlMetadataConfiguration.class,
+    AmazonS3SamlIdPMetadataConfiguration.class,
+    SamlIdPAmazonS3RegisteredServiceMetadataConfiguration.class,
+    BaseSamlIdPMetadataTests.SharedTestConfiguration.class
+}, properties = {
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml",
+    
+    "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=cassamlmetadata",
+    "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false"
+})
+@EnabledIfPortOpen(port = 4566)
 @Tag("AmazonWebServices")
 public class AmazonS3SamlRegisteredServiceMetadataResolverTests {
+    @Autowired
+    @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")
+    private SamlRegisteredServiceMetadataResolver amazonS3SamlRegisteredServiceMetadataResolver;
+
     @Test
     public void verifyAction() throws Exception {
-        val client = mock(S3Client.class);
-
-        val object = S3Object.builder().key("SAML-Document.xml").size(1000L).build();
-        val result = ListObjectsV2Response.builder().keyCount(1)
-            .contents(object).build();
-        when(client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(result);
-
-        val response = GetObjectResponse.builder().metadata(CollectionUtils.wrap("signature",
-            "MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE"
-                + "CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv"
-                + "Y2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQsw"
-                + "CQYDVQQIDAJDQTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzENMAsGA1UECgwEV1NPMjESMBAGA1UE"
-                + "AwwJbG9jYWxob3N0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUp/oV1vWc8/TkQSiAvTou"
-                + "sMzOM4asB2iltr2QKozni5aVFu818MpOLZIr8LMnTzWllJvvaA5RAAdpbECb+48FjbBe0hseUdN5"
-                + "HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQID"
-                + "AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i"
-                + "QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR"
-                + "O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo="))
-            .build();
-        val is = new ResponseInputStream<>(response, AbortableInputStream.create(new ClassPathResource("sp-metadata.xml").getInputStream()));
-        when(client.getObject(any(GetObjectRequest.class))).thenReturn(is);
-
-        val properties = new SamlIdPProperties();
-        properties.getMetadata().getAmazonS3().setBucketName("CAS");
-
-        val parserPool = new BasicParserPool();
-        parserPool.initialize();
-        val configBean = new OpenSamlConfigBean(parserPool);
-        assertNotNull(configBean.getUnmarshallerFactory());
-        assertNotNull(configBean.getBuilderFactory());
-        assertNotNull(configBean.getMarshallerFactory());
-        assertNotNull(configBean.getParserPool());
-
-        val r = new AmazonS3SamlRegisteredServiceMetadataResolver(
-            properties, configBean, client);
-
         val service = new SamlRegisteredService();
         service.setName("SAML");
         service.setId(100);
-        assertFalse(r.resolve(service).isEmpty());
+        service.setMetadataLocation("awss3://");
+        assertTrue(amazonS3SamlRegisteredServiceMetadataResolver.resolve(service).isEmpty());
+        assertFalse(amazonS3SamlRegisteredServiceMetadataResolver.supports(null));
+        assertTrue(amazonS3SamlRegisteredServiceMetadataResolver.supports(service));
+        assertTrue(amazonS3SamlRegisteredServiceMetadataResolver.isAvailable(service));
+
+        val signature =
+            "MIICNTCCAZ6gAwIBAgIES343gjANBgkqhkiG9w0BAQUFADBVMQswCQYDVQQGEwJVUzELMAkGA1UE"
+            + "CAwCQ0ExFjAUBgNVBAcMDU1vdW50YWluIFZpZXcxDTALBgNVBAoMBFdTTzIxEjAQBgNVBAMMCWxv"
+            + "Y2FsaG9zdDAeFw0xMDAyMTkwNzAyMjZaFw0zNTAyMTMwNzAyMjZaMFUxCzAJBgNVBAYTAlVTMQsw"
+            + "CQYDVQQIDAJDQTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzENMAsGA1UECgwEV1NPMjESMBAGA1UE"
+            + "AwwJbG9jYWxob3N0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUp/oV1vWc8/TkQSiAvTou"
+            + "sMzOM4asB2iltr2QKozni5aVFu818MpOLZIr8LMnTzWllJvvaA5RAAdpbECb+48FjbBe0hseUdN5"
+            + "HpwvnH/DW8ZccGvk53I6Orq7hLCv1ZHtuOCokghz/ATrhyPq+QktMfXnRS4HrKGJTzxaCcU7OQID"
+            + "AQABoxIwEDAOBgNVHQ8BAf8EBAMCBPAwDQYJKoZIhvcNAQEFBQADgYEAW5wPR7cr1LAdq+IrR44i"
+            + "QlRG5ITCZXY9hI0PygLP2rHANh+PYfTmxbuOnykNGyhM6FjFLbW2uZHQTY1jMrPprjOrmyK5sjJR"
+            + "O4d1DeGHT/YnIjs9JogRKv4XHECwLtIVdAbIdWHEtVZJyMSktcyysFcvuhPQK8Qc/E/Wq8uHSCo=";
+
+        val doc = SamlMetadataDocument.builder()
+            .id(RandomUtils.nextInt())
+            .name("SAMLDocument")
+            .signature(signature)
+            .value(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8))
+            .build();
+
+        amazonS3SamlRegisteredServiceMetadataResolver.saveOrUpdate(doc);
+        assertFalse(amazonS3SamlRegisteredServiceMetadataResolver.resolve(service).isEmpty());
     }
 }

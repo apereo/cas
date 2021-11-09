@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactoryTests;
 import org.apereo.cas.authentication.AuthenticationCredentialTypeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationDateAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.AuthenticationTransactionTests;
+import org.apereo.cas.authentication.CasSSLContextTests;
 import org.apereo.cas.authentication.CredentialCustomFieldsAttributeMetaDataPopulatorTests;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilderTests;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResultTests;
@@ -28,6 +29,7 @@ import org.apereo.cas.authentication.credential.CredentialTests;
 import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredExceptionTests;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolverTests;
+import org.apereo.cas.authentication.handler.support.DefaultAuthenticationHandlerResolverTests;
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulatorTests;
 import org.apereo.cas.authentication.policy.ExcludedAuthenticationHandlerAuthenticationPolicyTests;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
@@ -42,9 +44,8 @@ import org.apereo.cas.authentication.support.password.GroovyPasswordEncoderTests
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptorTests;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategyTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllAuthenticationTestsSuite}.
@@ -80,6 +81,8 @@ import org.junit.runner.RunWith;
     EchoingPrincipalResolverTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
     OneTimeTokenTests.class,
+    CasSSLContextTests.class,
+    DefaultAuthenticationHandlerResolverTests.class,
     SuccessfulHandlerMetaDataPopulatorTests.class,
     UniquePrincipalRequiredExceptionTests.class,
     DefaultAuthenticationServiceSelectionPlanTests.class,
@@ -95,6 +98,6 @@ import org.junit.runner.RunWith;
     DefaultAuthenticationResultBuilderTests.class,
     GroovyAuthenticationPostProcessorTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllAuthenticationTestsSuite {
 }

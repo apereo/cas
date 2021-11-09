@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
@@ -32,11 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-saml-metadata.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata"
 })
 @Tag("FileSystem")
 @Slf4j
-@DirtiesContext
 public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     @BeforeAll
     public static void setup() {

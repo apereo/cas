@@ -10,16 +10,18 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link AmazonS3ServiceRegistryConfiguration}.
@@ -29,20 +31,11 @@ import java.util.Collection;
  */
 @Configuration(value = "AmazonS3ServiceRegistryConfiguration", proxyBeanMethods = false)
 public class AmazonS3ServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryClient")
-    public S3Client amazonS3ServiceRegistryClient() {
+    public S3Client amazonS3ServiceRegistryClient(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getServiceRegistry().getAmazonS3();
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
@@ -52,22 +45,22 @@ public class AmazonS3ServiceRegistryConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
-    @Autowired
-    public ServiceRegistry amazonS3ServiceRegistry(@Qualifier("amazonS3ServiceRegistryClient") final S3Client amazonS3ServiceRegistryClient) {
+    public ServiceRegistry amazonS3ServiceRegistry(
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        @Qualifier("amazonS3ServiceRegistryClient")
+        final S3Client amazonS3ServiceRegistryClient, final ConfigurableApplicationContext applicationContext) {
         return new AmazonS3ServiceRegistry(applicationContext,
-            serviceRegistryListeners.getObject(),
-            amazonS3ServiceRegistryClient);
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), amazonS3ServiceRegistryClient);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistryExecutionPlanConfigurer")
-    @RefreshScope
-    @Autowired
-    public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer(@Qualifier("amazonS3ServiceRegistry")
-                                                                                                 final ServiceRegistry amazonS3ServiceRegistry) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ServiceRegistryExecutionPlanConfigurer amazonS3ServiceRegistryExecutionPlanConfigurer(
+        @Qualifier("amazonS3ServiceRegistry")
+        final ServiceRegistry amazonS3ServiceRegistry) {
         return plan -> plan.registerServiceRegistry(amazonS3ServiceRegistry);
     }
-
 }

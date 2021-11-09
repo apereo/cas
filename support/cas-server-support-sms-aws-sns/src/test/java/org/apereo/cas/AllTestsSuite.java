@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.config.AmazonSimpleNotificationServiceSmsConfigurationTests;
 import org.apereo.cas.support.sms.AmazonSimpleNotificationServiceSmsSenderTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     AmazonSimpleNotificationServiceSmsSenderTests.class,
     AmazonSimpleNotificationServiceSmsConfigurationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

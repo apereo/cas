@@ -14,6 +14,6 @@ the [CAS auditing functionality](../audits/Audits-MongoDb.html) via MongoDb.
 
 Enable the following module in your configuration overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-throttle-mongo" %}
 
-{% include casproperties.html properties="cas.audit.mongo" %}
+{% include_cached casproperties.html properties="cas.audit.mongo" %}

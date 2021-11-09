@@ -1,22 +1,22 @@
 package org.apereo.cas.uma.ticket.rpt;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -27,23 +27,21 @@ import java.util.UUID;
  * @since 6.0.0
  */
 @Slf4j
-public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
-    public UmaIdTokenGeneratorService(final OAuth20ConfigurationContext configurationContext) {
+public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaConfigurationContext> {
+    public UmaIdTokenGeneratorService(final ObjectProvider<UmaConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
     @Override
-    public String generate(final HttpServletRequest request,
-                           final HttpServletResponse response,
+    public String generate(final WebContext context,
                            final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
+                           final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) {
-
-        val context = new JEEContext(request, response);
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
-        val authenticatedProfile = getAuthenticatedProfile(request, response);
-        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
+        val authenticatedProfile = getAuthenticatedProfile(context);
+        val claims = buildJwtClaims(accessToken, timeoutInSeconds,
             registeredService, authenticatedProfile, context, responseType);
 
         return encodeAndFinalizeToken(claims, registeredService, accessToken);
@@ -52,7 +50,6 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
     /**
      * Build jwt claims jwt claims.
      *
-     * @param request          the request
      * @param accessToken      the access token
      * @param timeoutInSeconds the timeout in seconds
      * @param service          the service
@@ -61,16 +58,13 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @param responseType     the response type
      * @return the jwt claims
      */
-    protected JwtClaims buildJwtClaims(final HttpServletRequest request,
-                                       final OAuth20AccessToken accessToken,
+    protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OAuthRegisteredService service,
                                        final UserProfile profile,
-                                       final JEEContext context,
+                                       final WebContext context,
                                        final OAuth20ResponseTypes responseType) {
-
-        val permissionTicket = (UmaPermissionTicket) request.getAttribute(UmaPermissionTicket.class.getName());
-
+        val permissionTicket = (UmaPermissionTicket) context.getRequestAttribute(UmaPermissionTicket.class.getName()).orElse(null);
         val claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getOauth().getUma().getCore().getIssuer());

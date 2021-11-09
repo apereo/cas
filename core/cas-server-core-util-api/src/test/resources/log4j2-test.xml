@@ -8,6 +8,7 @@
     <Loggers>
         <Logger name="org.apereo.cas" level="warn" />
         <Logger name="org.apereo.cas.util.LoggingUtilsTests" level="debug" />
+        <Logger name="org.apereo.cas.util.EncodingUtils" level="trace" />
         <Logger name="org.apereo.cas.util.spring.boot" level="debug" />
         <Root level="off">
             <AppenderRef ref="console"/>

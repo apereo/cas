@@ -1,10 +1,13 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +32,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("gatewayServicesManagementCheck")
+    @Qualifier(CasWebflowConstants.ACTION_ID_GATEWAY_CHECK)
     private Action action;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
+    @BeforeEach
+    public void beforeEach() {
+        servicesManager.deleteAll();
+    }
 
     @Test
     public void verifyNoServiceFound() {
@@ -40,7 +54,14 @@ public class GatewayServicesManagementCheckActionTests extends AbstractWebflowAc
     }
 
     @Test
-    public void verifyDisabledServiceFound() {
+    public void verifyDisabledServiceFound() throws Exception {
+        val svc22 = RegisteredServiceTestUtils.getRegisteredService("cas-access-disabled");
+        val strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setEnabled(false);
+        strategy.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
+        svc22.setAccessStrategy(strategy);
+        servicesManager.save(svc22);
+
         val request = new MockHttpServletRequest();
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

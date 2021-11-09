@@ -7,7 +7,10 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.accesstoken.OAuth20DefaultAccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshTokenFactory;
 import org.apereo.cas.token.JwtBuilder;
@@ -57,19 +60,16 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
-    
+
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
     @RepeatedTest(2)
     public void verifyOAuthCodeCanBeAdded() {
-        val code = new OAuth20DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
-            .create(RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-            CollectionUtils.wrapSet("1", "2"), "code-challenge", "code-challenge-method", "clientId1234567", new HashMap<>());
+        val code = createOAuthCode();
         newTicketRegistry.addTicket(code);
         assertSame(1, newTicketRegistry.deleteTicket(code.getId()), "Wrong ticket count");
         assertNull(newTicketRegistry.getTicket(code.getId()));
@@ -77,12 +77,14 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyAccessTokenCanBeAdded() {
-        val jwtBuilder = new JwtBuilder("cas-prefix", CipherExecutor.noOpOfSerializableToString(),
+        val code = createOAuthCode();
+        val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
         val token = new OAuth20DefaultAccessTokenFactory(neverExpiresExpirationPolicyBuilder(), jwtBuilder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), "clientId1234567", new HashMap<>());
+                CollectionUtils.wrapSet("1", "2"), code.getId(), "clientId1234567", new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         newTicketRegistry.addTicket(token);
         assertSame(1, newTicketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(newTicketRegistry.getTicket(token.getId()));
@@ -93,9 +95,20 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
-                CollectionUtils.wrapSet("1", "2"), "clientId1234567", StringUtils.EMPTY, new HashMap<>());
+                CollectionUtils.wrapSet("1", "2"),
+                "clientId1234567", StringUtils.EMPTY, new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         newTicketRegistry.addTicket(token);
         assertSame(1, newTicketRegistry.deleteTicket(token.getId()), "Wrong ticket count");
         assertNull(newTicketRegistry.getTicket(token.getId()));
+    }
+
+    private OAuth20Code createOAuthCode() {
+        return new OAuth20DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
+            .create(RegisteredServiceTestUtils.getService(),
+                RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
+                CollectionUtils.wrapSet("1", "2"), "code-challenge",
+                "code-challenge-method", "clientId1234567", new HashMap<>(),
+                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
     }
 }

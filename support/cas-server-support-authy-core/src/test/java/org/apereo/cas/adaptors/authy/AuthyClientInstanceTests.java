@@ -1,8 +1,10 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
+import com.authy.AuthyApiClient;
 import com.authy.api.Error;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,12 +21,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class AuthyClientInstanceTests {
     @Test
     public void verifyAction() {
-        val client = new AuthyClientInstance("apikey", "https://api.authy.com",
-            "mail", "phone", "1");
+        val authy = new AuthyMultifactorAuthenticationProperties()
+            .setCountryCode("1")
+            .setApiKey("nfg734dbdv10fn$#")
+            .setApiUrl(AuthyApiClient.DEFAULT_API_URI)
+            .setMailAttribute("mail")
+            .setPhoneAttribute("phone");
+        val client = new AuthyClientInstance(authy);
         val user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("mail", List.of("casuser@example.org"), "phone", List.of("123-456-6789"))));
         assertNotNull(user);

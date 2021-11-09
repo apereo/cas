@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
 
@@ -58,26 +58,44 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
     }
 
     @Override
-    public Map<String, List<Object>> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
-
-        val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
-        val attributes = new HashMap<String, List<Object>>();
-        policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
-            LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]", policy.getName(), p.getId());
-            val policyAttributes = policy.getAttributes(p, selectedService, service);
-            merger.mergeAttributes(attributes, policyAttributes);
-            LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
-        });
-        return attributes;
+    public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
+        val repositories = policies
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .collect(Collectors.toList());
+        return new ChainingPrincipalAttributesRepository(repositories);
     }
 
     @Override
-    public Map<String, List<Object>> getConsentableAttributes(final Principal principal, final Service selectedService, final RegisteredService service) {
+    public synchronized Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
+        try {
+            context.getReleasingAttributes().clear();
+            val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
+            val attributes = new HashMap<String, List<Object>>();
+            policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
+                LOGGER.trace("Fetching attributes from policy [{}] for principal [{}]",
+                    policy.getName(), context.getPrincipal().getId());
+                val policyAttributes = policy.getAttributes(context);
+                merger.mergeAttributes(attributes, policyAttributes);
+                LOGGER.trace("Attributes that remain, after the merge with attribute policy results, are [{}]", attributes);
+                context.getReleasingAttributes().putAll(attributes);
+            });
+            return attributes;
+        } finally {
+            context.getReleasingAttributes().clear();
+        }
+    }
+
+    @Override
+    public Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val merger = CoreAuthenticationUtils.getAttributeMerger(mergingPolicy);
         val attributes = new HashMap<String, List<Object>>();
         policies.stream().sorted(AnnotationAwareOrderComparator.INSTANCE).forEach(policy -> {
-            LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]", policy.getName(), principal.getId());
-            val policyAttributes = policy.getConsentableAttributes(principal, selectedService, service);
+            LOGGER.trace("Fetching consentable attributes from policy [{}] for principal [{}]",
+                policy.getName(), context.getPrincipal().getId());
+            val policyAttributes = policy.getConsentableAttributes(context);
             merger.mergeAttributes(attributes, policyAttributes);
             LOGGER.trace("Attributes that remain, after the merge with consentable attribute policy results, are [{}]", attributes);
         });

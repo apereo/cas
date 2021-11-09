@@ -24,19 +24,22 @@ of views cannot be modified via this method.
 
 ### Configuration
 
-{% include casproperties.html properties="cas.theme." %}
+{% include_cached casproperties.html properties="cas.theme." %}
+                       
+To create a theme, please follow the below instructions:
 
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file may contain the following settings:
 
-| Setting                  | Description               | Value
-|--------------------------|---------------------------|-----------------------------------------------------------
-| `cas.standard.css.file`  | Path to theme CSS file    | `/themes/[theme_name]/css/cas.css`
-| `cas.standard.js.file`   | Path to theme Javascript file     | `/themes/[theme_name]/js/js/css`
-| `cas.logo.file`          | Path to theme logo to display via the common layout | `/images/logo.png`
+| Setting                    | Description               | Value
+|----------------------------|---------------------------|-----------------------------------------------------------
+| `cas.standard.css.file`    | Path to theme CSS file; Multiple files may be comma-separated.    | `/themes/[theme_name]/css/cas.css`
+| `cas.standard.js.file`     | Path to theme Javascript file; Multiple files may be comma-separated.   | `/themes/[theme_name]/js/js/css`
+| `cas.logo.file`            | Path to theme logo to display via the common layout | `/images/logo.png`
 | `cas.drawer-menu.enabled`  |  Decide whether drawer menu should be displayed   | `true`
 | `cas.theme.name`           | Theme name used in various titles/captions   | `Example Theme`
 | `cas.pm-links.enabled`     | Whether password management/reset links should be displayed.    | `true`
+| `cas.login-form.enabled`   | When the CAS login form should be displayed.  | `true`
 | `cas.notifications-menu.enabled`  | Enable and display the notifications menu. | `true`
 | `cas.favicon.file`                | Path to theme favicon file.  | `/themes/example/images/favicon.ico`
 
@@ -59,7 +62,7 @@ Values can use the [Spring Expression Language](../configuration/Configuration-S
 ## Themed Views
 
 CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate 
-the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted 
+the standard views (`login/casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted 
 for a different type of audience are entirely different structurally that using a simple theme is not practical 
 to augment the default views. In such cases, new view pages may be required.
 
@@ -69,7 +72,7 @@ views are expected to be found at the specified path via CAS properties under a
 directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for 
 theme `sample` may be located `/etc/cas/templates/sample/`.
 
-{% include casproperties.html properties="cas.view.template-" %}
+{% include_cached casproperties.html properties="cas.view.template-" %}
 
 ### Configuration
 
@@ -91,7 +94,7 @@ and samples, and attempt to automate much of the configuration.
 
 Support is enabled by including the following module in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-theme-collections" %}
       
 
 The following themes are provided by this module and can be assigned to service definitions:
@@ -99,6 +102,7 @@ The following themes are provided by this module and can be assigned to service 
 | Theme              | Description    
 |--------------------|----------------------------------------------------------------------------
 | `example`          | A reference example theme that combines customized CSS, Javascript and views
+| `twbs`             | A basic theme utilizing [Bootstrap](http://getbootstrap.com "Bootstrap") for CSS and Javascript
 
 The collection of themes above can also serve as reference examples of how to define a theme with
 custom CSS, Javascript and associated views and fragments.

@@ -10,6 +10,21 @@ category: Protocols
 OpenID connect claims are treated as normal CAS attributes that need to
 be [resolved, mapped and released](../integration/Attribute-Release-Policies.html).
 
+<div class="alert alert-warning">
+<strong>ID Token Claims</strong><p>
+Per OpenID Connect specification, individual claims requested by OpenID scopes,
+such as <code>profile</code>, <code>email</code>, etc. are only put into the OpenID 
+Connect ID token when the response type is set to <code>id_token</code>. To assist with 
+backward compatibility and non-complying application integrations, CAS provides options to force-include
+claims in the ID token, though please note that this should be a last workaround as doing so most likely
+is in violation of the OpenID Connect specification. Claims should be requested from 
+the userinfo/profile endpoints in exchange for an access token as indicated by the appropriate response type.
+</p></div>
+
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.oidc.core" %}
+
 ## Scope-based Claims
 
 You may chain various attribute release policies that authorize claim release based on specific scopes:
@@ -23,7 +38,7 @@ You may chain various attribute release policies that authorize claim release ba
   "name": "OIDC Test",
   "id": 10,
   "scopes" : [ "java.util.HashSet", 
-    [ "profile", "email", "address", "phone", "offline_access", "displayName", "eduPerson" ]
+    [ "openid", "profile", "email", "address", "phone", "offline_access", "displayName", "eduPerson" ]
   ]
 }
 ```
@@ -32,11 +47,12 @@ Standard scopes that internally catalog pre-defined claims all belong to
 the namespace `org.apereo.cas.oidc.claims` and are described below:
 
 | Policy                                              | Description
-|-----------------------------------------------------|-----------------------------------------------------------------------------------------
+|-----------------------------------------------------|--------------------------------------------------------------------
 | `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `profile` scope.
 | `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `email` scope.
 | `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `address` scope.
 | `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `phone` scope.
+| `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`  | Release claims mapped to the CAS-defined `custom` scope.
  
 ## Mapping Claims
 
@@ -65,14 +81,13 @@ Note that in addition to standard system scopes, you may define your own custom 
 }
 ```
  
-These such as `displayName` above, get bundled into a `custom` scope which can be used and requested by services and clients.
+These such as `displayName` above, get bundled into a `custom` scope which 
+can be used and requested by services and clients.
 
 If you however wish to define your custom scopes as an extension of what OpenID Connect defines
 such that you may bundle attributes together, then you need to first register your `scope`,
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
 Such user-defined scopes are also able to override the definition of system scopes.
-
-{% include casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Releasing Claims
 
@@ -95,7 +110,7 @@ the relevant attribute release policies:
   "name": "OIDC",
   "id": 1,
   "scopes" : [ "java.util.HashSet",
-    [ "profile", "email" ]
+    [ "openid", "profile", "email" ]
   ]
 }
 ```
@@ -162,4 +177,5 @@ and internally defined for the standard `email` scope.
 }
 ```
 
-To learn more about attribute release policies and the chain of command, please [see this guide](../integration/Attribute-Release-Policies.html).
+To learn more about attribute release policies and the chain of 
+command, please [see this guide](../integration/Attribute-Release-Policies.html).

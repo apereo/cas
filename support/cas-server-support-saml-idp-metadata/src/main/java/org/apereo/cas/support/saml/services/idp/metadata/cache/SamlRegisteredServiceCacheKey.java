@@ -27,8 +27,13 @@ import java.util.Objects;
 @EqualsAndHashCode(of = "id")
 @Getter
 public class SamlRegisteredServiceCacheKey implements Serializable {
-    private static final long serialVersionUID = -7238573226470492601L;
+    /**
+     * Cache key field separator.
+     */
+    static final String KEY_SEPARATOR = "|";
 
+    private static final long serialVersionUID = -7238573226470492601L;
+    
     private final String id;
 
     private final SamlRegisteredService registeredService;
@@ -53,11 +58,13 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
         return hashedKey;
     }
 
-    private static String getCacheKeyForRegisteredService(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+    private static String getCacheKeyForRegisteredService(final SamlRegisteredService service,
+                                                          final CriteriaSet criteriaSet) {
+        val entityId = criteriaSet.contains(EntityIdCriterion.class)
+            ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
+            : service.getServiceId();
         if (SamlUtils.isDynamicMetadataQueryConfigured(service.getMetadataLocation())) {
-            return criteriaSet.contains(EntityIdCriterion.class)
-                ? Objects.requireNonNull(criteriaSet.get(EntityIdCriterion.class)).getEntityId()
-                : service.getServiceId();
+            return entityId;
         }
         return service.getMetadataLocation();
     }

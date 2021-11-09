@@ -5,7 +5,6 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.NexmoSmsSender;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +18,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "nexmoSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class NexmoSmsConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Bean
-    public SmsSender smsSender() {
+    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val nexmo = casProperties.getSmsProvider().getNexmo();
         return new NexmoSmsSender(nexmo);
     }

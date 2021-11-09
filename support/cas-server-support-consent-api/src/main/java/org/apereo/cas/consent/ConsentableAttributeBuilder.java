@@ -11,6 +11,15 @@ import org.springframework.core.Ordered;
 @FunctionalInterface
 public interface ConsentableAttributeBuilder extends Ordered {
     /**
+     * No op consentable attribute builder.
+     *
+     * @return the consentable attribute builder
+     */
+    static ConsentableAttributeBuilder noOp() {
+        return attribute -> attribute;
+    }
+
+    /**
      * Build.
      *
      * @param attribute the attribute

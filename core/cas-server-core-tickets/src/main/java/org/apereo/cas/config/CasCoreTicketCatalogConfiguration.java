@@ -26,12 +26,13 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
     @Override
-    public final void configureTicketCatalog(final TicketCatalog plan) {
+    public final void configureTicketCatalog(final TicketCatalog plan,
+                                             final CasConfigurationProperties casProperties) {
         LOGGER.trace("Registering core CAS protocol ticket definitions...");
 
         buildAndRegisterProxyTicketDefinition(plan,

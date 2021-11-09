@@ -1,9 +1,11 @@
 package org.apereo.cas.logging;
 
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -126,9 +128,8 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             val builder = CloudWatchLogsClient.builder();
             if (StringUtils.isNotBlank(endpoint)) {
                 builder.endpointOverride(new URI(endpoint));
-            } else {
-                builder.region(Region.of(awsLogRegionName));
             }
+            builder.region(StringUtils.isBlank(awsLogRegionName) ? Region.AWS_GLOBAL : Region.of(awsLogRegionName));
             builder.credentialsProvider(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
 
             this.awsLogsClient = builder.build();
@@ -226,9 +227,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                                                     @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
                                                     @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
                                                     @PluginElement("Layout") final Layout<Serializable> layout,
-                                                    @PluginAttribute(value = "createIfNeeded", defaultBoolean = true) final Boolean createIfNeeded,
-                                                    @PluginAttribute(value = "createLogGroupIfNeeded") final Boolean createLogGroupIfNeeded,
-                                                    @PluginAttribute(value = "createLogStreamIfNeeded") final Boolean createLogStreamIfNeeded) {
+                                                    @PluginAttribute(value = "createIfNeeded") final String createIfNeeded,
+                                                    @PluginAttribute(value = "createLogGroupIfNeeded") final String createLogGroupIfNeeded,
+                                                    @PluginAttribute(value = "createLogStreamIfNeeded") final String createLogStreamIfNeeded) {
         return new CloudWatchAppender(
             name,
             endpoint,
@@ -239,9 +240,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
             StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
             layout,
-            createIfNeeded,
-            createLogGroupIfNeeded,
-            createLogStreamIfNeeded);
+            StringUtils.isBlank(createIfNeeded) ? null : BooleanUtils.toBoolean(createIfNeeded),
+            StringUtils.isBlank(createLogGroupIfNeeded) ? null : BooleanUtils.toBoolean(createLogGroupIfNeeded),
+            StringUtils.isBlank(createLogStreamIfNeeded) ? null : BooleanUtils.toBoolean(createLogStreamIfNeeded));
     }
 
     @Override
@@ -289,6 +290,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                 flush();
             }
         }, "CloudWatchAppenderDeliveryThread");
+        if (StringUtils.isBlank(this.sequenceTokenCache)) {
+            this.sequenceTokenCache = createLogGroupAndLogStreamIfNeeded();
+        }
         deliveryThread.start();
     }
 
@@ -353,18 +357,27 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
     }
 
     private String createLogGroupAndLogStreamIfNeeded() {
-
         if (this.createLogGroupIfNeeded) {
             LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
-            val describeLogGroupsResult = awsLogsClient.describeLogGroups(DescribeLogGroupsRequest.builder().logGroupNamePrefix(logGroupName).build());
+            val describeLogGroupsResult = FunctionUtils.doAndHandle(
+                () -> awsLogsClient.describeLogGroups(DescribeLogGroupsRequest.builder().logGroupNamePrefix(logGroupName).build()),
+                throwable -> {
+                    LOGGER.error(throwable.getMessage(), throwable);
+                    return null;
+                }).get();
+
             var createLogGroup = true;
             if (describeLogGroupsResult != null && describeLogGroupsResult.hasLogGroups()) {
                 createLogGroup = describeLogGroupsResult.logGroups().stream().noneMatch(g -> g.logGroupName().equals(logGroupName));
             }
             if (createLogGroup) {
-                LOGGER.debug("Creating log group [{}]", logGroupName);
-                val createLogGroupRequest = CreateLogGroupRequest.builder().logGroupName(logStreamName).build();
-                awsLogsClient.createLogGroup(createLogGroupRequest);
+                try {
+                    LOGGER.debug("Creating log group [{}]", logGroupName);
+                    val createLogGroupRequest = CreateLogGroupRequest.builder().logGroupName(logStreamName).build();
+                    awsLogsClient.createLogGroup(createLogGroupRequest);
+                } catch (final Throwable throwable) {
+                    LOGGER.error(throwable.getMessage(), throwable);
+                }
             }
         }
 
@@ -372,7 +385,12 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
         var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
         val describeLogStreamsRequest = DescribeLogStreamsRequest.builder().logGroupName(logGroupName).logStreamNamePrefix(logStreamName).build();
-        val describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
+        val describeLogStreamsResult = FunctionUtils.doAndHandle(
+            () -> awsLogsClient.describeLogStreams(describeLogStreamsRequest),
+            throwable -> {
+                LOGGER.error(throwable.getMessage(), throwable);
+                return null;
+            }).get();
         if (describeLogStreamsResult != null && describeLogStreamsResult.hasLogStreams()) {
             for (val ls : describeLogStreamsResult.logStreams()) {
                 if (logStreamName.equals(ls.logStreamName())) {
@@ -388,9 +406,17 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             if (!this.createLogStreamIfNeeded) {
                 throw new RuntimeException("Log stream does not exist, yet `createIfNeeded` is false. This will not work");
             }
-            LOGGER.debug("Creating log stream [{}] for group [{}]", logStreamName, logGroupName);
-            val createLogStreamRequest = CreateLogStreamRequest.builder().logGroupName(logGroupName).logStreamName(logStreamName).build();
-            awsLogsClient.createLogStream(createLogStreamRequest);
+            try {
+                LOGGER.debug("Creating log stream [{}] for group [{}]", logStreamName, logGroupName);
+                val createLogStreamRequest = CreateLogStreamRequest.builder().logGroupName(logGroupName).logStreamName(logStreamName).build();
+                awsLogsClient.createLogStream(createLogStreamRequest);
+            } catch (final Throwable throwable) {
+                LOGGER.error(throwable.getMessage(), throwable);
+            }
+        }
+        if (StringUtils.isBlank(logSequenceToken)) {
+            LOGGER.warn("Unable to determine CloudWatch log sequence token. Log stream [{}] "
+                + "likely does not exist for log group [{}], or cannot be determined.", logStreamName, logGroupName);
         }
         return logSequenceToken;
     }

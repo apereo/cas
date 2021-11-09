@@ -1,16 +1,18 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
-import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -38,7 +40,6 @@ import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.HiOrgServerClient;
 import org.pac4j.oauth.client.LinkedIn2Client;
-import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.client.WindowsLiveClient;
@@ -57,16 +58,19 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.metadata.XMLSecSAML2MetadataSigner;
+import org.pac4j.saml.store.EmptyStoreFactory;
+import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationContext;
 
 import java.security.interfaces.ECPrivateKey;
+import java.time.Period;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDelegatedClientFactory}.
@@ -78,13 +82,55 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class DefaultDelegatedClientFactory implements DelegatedClientFactory<IndirectClient>, DisposableBean {
-    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile("/login$");
+    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     private final CasConfigurationProperties casProperties;
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
     private final Set<IndirectClient> clients = new LinkedHashSet<>();
+
+    private final CasSSLContext casSSLContext;
+
+    private final ApplicationContext applicationContext;
+
+    @SneakyThrows
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
+                                                                                 final Class<T> clazz) {
+        val cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setDisablePkce(oidc.isDisablePkce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
+        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(Long.valueOf(Beans.newDuration(oidc.getMaxClockSkew()).toSeconds()).intValue());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        cfg.setLogoutUrl(oidc.getLogoutUrl());
+
+        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
+        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
+            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
+        }
+
+        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
+            cfg.setResponseMode(oidc.getResponseMode());
+        }
+        if (StringUtils.isNotBlank(oidc.getResponseType())) {
+            cfg.setResponseType(oidc.getResponseType());
+        }
+        if (!oidc.getMappedClaims().isEmpty()) {
+            cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));
+        }
+        return cfg;
+    }
 
     @Override
     public Collection<IndirectClient> build() {
@@ -106,7 +152,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         configurePayPalClient(clients);
         configureWordPressClient(clients);
         configureBitBucketClient(clients);
-        configureOrcidClient(clients);
         configureHiOrgServerClient(clients);
 
         return clients;
@@ -151,23 +196,6 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (db.isEnabled() && StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             val client = new DropBoxClient(db.getId(), db.getSecret());
             configureClient(client, db);
-            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
-            properties.add(client);
-        }
-    }
-
-    /**
-     * Configure orcid client.
-     *
-     * @param properties the properties
-     */
-    protected void configureOrcidClient(final Collection<IndirectClient> properties) {
-        val pac4jProperties = casProperties.getAuthn().getPac4j();
-        val db = pac4jProperties.getOrcid();
-        if (db.isEnabled() && StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
-            val client = new OrcidClient(db.getId(), db.getSecret());
-            configureClient(client, db);
-
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -389,6 +417,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
                 cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+
                 val client = new CasClient(cfg);
 
                 if (StringUtils.isBlank(cas.getClientName())) {
@@ -422,6 +453,10 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 val cfg = new SAML2Configuration(saml.getKeystorePath(), saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
                 cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
+                if (saml.getCertificateExpirationDays() > 0) {
+                    cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()));
+                }
+                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
                 cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
@@ -434,6 +469,8 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
                 cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
                 cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
+                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
+                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
 
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
@@ -444,12 +481,21 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 cfg.setUseNameQualifier(saml.isUseNameQualifier());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
-                try {
-                    val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
-                    cfg.setSamlMessageStoreFactory(SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance()));
-                } catch (final Exception e) {
-                    LOGGER.error("Unable to instantiate message store factory class [{}]", saml.getMessageStoreFactory());
-                    LoggingUtils.error(LOGGER, e);
+                if (applicationContext.containsBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)) {
+                    val factory = applicationContext.getBean(DelegatedClientFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY, SAMLMessageStoreFactory.class);
+                    cfg.setSamlMessageStoreFactory(factory);
+                } else {
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("EMPTY"),
+                        ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
+                    FunctionUtils.doIf(saml.getMessageStoreFactory().equalsIgnoreCase("SESSION"),
+                        ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
+                    if (saml.getMessageStoreFactory().contains(".")) {
+                        Unchecked.consumer(ig -> {
+                            val clazz = ClassUtils.getClass(DefaultDelegatedClientFactory.class.getClassLoader(), saml.getMessageStoreFactory());
+                            val factory = SAMLMessageStoreFactory.class.cast(clazz.getDeclaredConstructor().newInstance());
+                            cfg.setSamlMessageStoreFactory(factory);
+                        }).accept(saml);
+                    }
                 }
 
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
@@ -490,11 +536,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
-                    val results = mappedAttributes
-                        .stream()
-                        .collect(Collectors.toMap(Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getName,
-                            Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getMappedTo));
-                    cfg.setMappedAttributes(results);
+                    cfg.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
                 }
 
                 val client = new SAML2Client(cfg);
@@ -592,6 +634,9 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         if (StringUtils.isNotBlank(props.getCssClass())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, props.getCssClass());
         }
+        if (StringUtils.isNotBlank(props.getDisplayName())) {
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, props.getDisplayName());
+        }
         val callbackUrl = StringUtils.defaultString(props.getCallbackUrl(), casProperties.getServer().getLoginUrl());
         client.setCallbackUrl(callbackUrl);
 
@@ -666,40 +711,5 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
             return oc;
         }
         return null;
-    }
-
-    @SneakyThrows
-    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
-                                                                                 final Class<T> clazz) {
-        val cfg = clazz.getDeclaredConstructor().newInstance();
-        if (StringUtils.isNotBlank(oidc.getScope())) {
-            cfg.setScope(oidc.getScope());
-        }
-        cfg.setUseNonce(oidc.isUseNonce());
-        cfg.setDisablePkce(oidc.isDisablePkce());
-        cfg.setSecret(oidc.getSecret());
-        cfg.setClientId(oidc.getId());
-        cfg.setReadTimeout((int) Beans.newDuration(oidc.getReadTimeout()).toMillis());
-        cfg.setConnectTimeout((int) Beans.newDuration(oidc.getConnectTimeout()).toMillis());
-        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-        }
-        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-        cfg.setCustomParams(oidc.getCustomParams());
-        cfg.setLogoutUrl(oidc.getLogoutUrl());
-
-        cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
-        if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {
-            cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
-        }
-
-        if (StringUtils.isNotBlank(oidc.getResponseMode())) {
-            cfg.setResponseMode(oidc.getResponseMode());
-        }
-        if (StringUtils.isNotBlank(oidc.getResponseType())) {
-            cfg.setResponseType(oidc.getResponseType());
-        }
-        return cfg;
     }
 }

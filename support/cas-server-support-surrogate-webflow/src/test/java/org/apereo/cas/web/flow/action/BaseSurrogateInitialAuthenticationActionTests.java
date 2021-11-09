@@ -33,6 +33,7 @@ import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfigu
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -76,8 +77,9 @@ import org.springframework.context.annotation.Lazy;
     CasCookieConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
-}, properties = 
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    WebMvcAutoConfiguration.class
+}, properties =
     "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"
 )
 public class BaseSurrogateInitialAuthenticationActionTests {

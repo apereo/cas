@@ -1,0 +1,23 @@
+{
+  "dependencies": "session-jdbc,reports",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--spring.datasource.url=jdbc:hsqldb:mem:cas-hsql-database",
+    "--spring.datasource.username=sa",
+    "--spring.datasource.password=",
+    "--spring.datasource.driver-class-name=org.hsqldb.jdbcDriver",
+    "--spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.HSQLDialect",
+
+    "--spring.session.store-type=JDBC",
+    "--spring.session.jdbc.schema=classpath:org/springframework/session/jdbc/schema-@@platform@@.sql",
+    "--spring.session.jdbc.initialize-schema=always",
+
+    "--cas.webflow.session.storage=true"
+  ]
+}

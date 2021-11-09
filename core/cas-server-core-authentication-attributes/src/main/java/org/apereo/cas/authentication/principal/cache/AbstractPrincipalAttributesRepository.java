@@ -71,13 +71,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @Setter
     private boolean ignoreResolvedAttributes;
 
-    @Override
-    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
-
-    @Override
-    public void close() {
-    }
-
     /**
      * Gets attribute repository.
      *
@@ -97,6 +90,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     protected static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Map<String, ?> attributes) {
         val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val principalAttributes = new LinkedHashMap<>(attributes);
+        LOGGER.trace("Principal attributes to convert to person attributes are [{}]", principalAttributes);
         principalAttributes.forEach((key, values) -> {
             if (values instanceof Collection) {
                 val uniqueValues = new LinkedHashSet<Object>(Collection.class.cast(values));
@@ -106,6 +100,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
                 convertedAttributes.put(key, CollectionUtils.wrap(values));
             }
         });
+        LOGGER.trace("Converted principal attributes, now as person attributes are [{}]", convertedAttributes);
         return convertedAttributes;
     }
 
@@ -121,6 +116,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    @Override
+    public void close() {
+    }
+
     /**
      * Convert attributes to principal attributes and cache.
      *
@@ -134,9 +133,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
                                                                                        final RegisteredService registeredService) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         update(principal.getId(), finalAttributes, registeredService);
+        LOGGER.trace("Final principal attributes after caching, if any, are [{}]", finalAttributes);
         return finalAttributes;
     }
-    
+
     /**
      * Calculate merging strategy attribute merging strategy.
      *

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,8 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-@DirtiesContext
+@Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
@@ -57,5 +55,20 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
             applicationContext);
         val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
+    }
+
+    @Test
+    @Order(3)
+    public void verifyNoMatch() {
+
+        val props = new CasConfigurationProperties();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
+        mfa.setGlobalAuthenticationAttributeNameTriggers("whatever");
+        mfa.setGlobalAuthenticationAttributeValueRegex("whatever");
+        val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
+            applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        assertTrue(result.isEmpty());
     }
 }

@@ -22,8 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlRegisteredServiceCacheKeyTests {
     @Test
     public void verifyCacheKeyByMetadataLocation() {
+        val entityId = "https://carmenwiki.osu.edu/shibboleth";
+
         val criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIdCriterion("https://carmenwiki.osu.edu/shibboleth"));
+        criteriaSet.add(new EntityIdCriterion(entityId));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
 
         val service = new SamlRegisteredService();
@@ -36,7 +38,7 @@ public class SamlRegisteredServiceCacheKeyTests {
         assertNotNull(results.getId());
         assertNotNull(results.getRegisteredService());
         assertNotNull(results.getCriteriaSet());
-        assertEquals(service.getMetadataLocation(), results.getCacheKey());
+        assertEquals(results.getCacheKey(), service.getMetadataLocation());
     }
 
     @Test

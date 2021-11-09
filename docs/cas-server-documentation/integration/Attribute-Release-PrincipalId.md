@@ -80,12 +80,12 @@ The application can then proceed to decrypt the username using its own private k
 The following sample code demonstrates how that might be done in Java:
 
 ```java
-final String casUsername = ...
-final PrivateKey privateKey = ...
-final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64(encodedPsw);
+var casUsername = ...
+var privateKey = ...
+var cipher = Cipher.getInstance(privateKey.getAlgorithm());
+var cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
-final byte[] cipherData = cipher.doFinal(casUsername);
+var cipherData = cipher.doFinal(casUsername);
 return new String(cipherData);
 ```
 

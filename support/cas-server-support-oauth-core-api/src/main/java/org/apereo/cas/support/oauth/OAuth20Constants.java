@@ -59,6 +59,11 @@ public interface OAuth20Constants {
     String CLAIMS = "claims";
 
     /**
+     * {@code userinfo} claims found as claims request parameter.
+     */
+    String CLAIMS_USERINFO = "userinfo";
+
+    /**
      * The request passed as a jwt.
      */
     String REQUEST = "request";

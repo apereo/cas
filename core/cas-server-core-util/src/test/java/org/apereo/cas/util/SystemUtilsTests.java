@@ -17,7 +17,6 @@ public class SystemUtilsTests {
 
     @Test
     public void verifyOperation() {
-        System.setProperty("CAS_UPDATE_CHECK_ENABLED", "true");
         val info = SystemUtils.getSystemInfo();
         assertNotNull(info);
         assertFalse(info.isEmpty());

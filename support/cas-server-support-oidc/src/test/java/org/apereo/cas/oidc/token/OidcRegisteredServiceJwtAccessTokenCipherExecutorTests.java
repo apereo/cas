@@ -5,6 +5,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.EncodingUtils;
 
+import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.junit.jupiter.api.Tag;
@@ -24,13 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val service = getOidcRegisteredService("whatever");
-        assertTrue(oauthRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
+        assertTrue(oidcRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
         val at = getAccessToken();
-        val encoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
         assertNotNull(encoded);
-        val decoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
+        val header = SignedJWT.parse(encoded).getHeader();
+        assertNotNull(header.getAlgorithm());
+        val decoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
         assertNotNull(decoded);
         assertEquals(at.getId(), decoded);
     }
@@ -45,7 +48,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_KEY.getPropertyName(),
             new DefaultRegisteredServiceProperty(key));
         val at = getAccessToken();
-        val encoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
         assertNotNull(encoded);
     }
 
@@ -59,7 +62,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY.getPropertyName(),
             new DefaultRegisteredServiceProperty(key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)));
         val at = getAccessToken();
-        val encoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
         assertNotNull(encoded);
     }
 
@@ -69,7 +72,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
         val at = getAccessToken();
-        val encoded = oauthRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
         assertNotNull(encoded);
     }
 }

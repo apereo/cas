@@ -20,14 +20,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @NoArgsConstructor
 public class DefaultTicketCatalog implements TicketCatalog {
-
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>(0);
 
     @Override
     public TicketDefinition find(final String ticketId) {
         val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
         val prefix = index != -1 ? ticketId.substring(0, index) : ticketId;
-        
+
         val definition = ticketMetadataMap.values()
             .stream()
             .filter(md -> prefix.equalsIgnoreCase(md.getPrefix()))

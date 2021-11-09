@@ -10,6 +10,11 @@ import org.apereo.cas.authentication.principal.Service;
  */
 public interface AuthenticationServiceSelectionPlan {
     /**
+     * Bean name.
+     */
+    String BEAN_NAME = "authenticationServiceSelectionPlan";
+
+    /**
      * Register strategy handler.
      *
      * @param strategy the strategy

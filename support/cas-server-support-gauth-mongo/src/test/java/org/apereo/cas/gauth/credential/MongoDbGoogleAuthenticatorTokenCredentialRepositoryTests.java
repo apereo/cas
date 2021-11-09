@@ -34,8 +34,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "cas.authn.mfa.gauth.mongo.database-name=gauth-token-credential",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @EnableScheduling
 @Tag("MongoDb")
 @Getter

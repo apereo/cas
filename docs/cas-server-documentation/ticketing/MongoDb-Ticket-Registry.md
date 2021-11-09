@@ -10,7 +10,7 @@ category: Ticketing
 
 MongoDb ticket registry integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-ticket-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-ticket-registry" %}
 
 This registry stores tickets in one or more [MongoDb](https://www.mongodb.com/) instances.
 Tickets are auto-converted and wrapped into document objects as JSON. Special indices are
@@ -18,7 +18,7 @@ created to let MongoDb handle the expiration of each document and cleanup tasks.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.mongo" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.mongo" %}
 
 
 ## Troubleshooting

@@ -14,14 +14,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
  * access to a particular service. It will only work for a particular service.
@@ -31,10 +23,6 @@ import javax.persistence.Table;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Entity
-@Table(name = "SERVICETICKET")
-@DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(ServiceTicket.PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Setter
@@ -47,24 +35,19 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
-    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
     @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * The service this ticket is valid for.
      */
-    @Lob
-    @Column(name = "SERVICE", nullable = false, length = Integer.MAX_VALUE)
     private Service service;
 
     /**
      * Is this service ticket the result of a new login?
      */
-    @Column(name = "FROM_NEW_LOGIN", nullable = false)
     private boolean fromNewLogin;
 
-    @Column(name = "TICKET_ALREADY_GRANTED", nullable = false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
     /**

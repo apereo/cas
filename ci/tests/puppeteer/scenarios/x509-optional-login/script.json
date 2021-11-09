@@ -2,7 +2,7 @@
   "dependencies": "x509-webflow",
   "properties": [
     "--cas.authn.x509.webflow.port=8446",
-    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/x509-optional-login/truststore.jks",
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
     "--server.ssl.trust-store-password=changeit",
     "--server.ssl.client-auth=none"
   ]

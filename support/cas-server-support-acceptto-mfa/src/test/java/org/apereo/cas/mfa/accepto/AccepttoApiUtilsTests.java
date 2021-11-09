@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +24,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
-
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.util.List;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 public class AccepttoApiUtilsTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -51,6 +51,14 @@ public class AccepttoApiUtilsTests {
         val properties = new AccepttoMultifactorAuthenticationProperties();
         properties.setEmailAttribute("email");
         assertNotNull(AccepttoApiUtils.getUserEmail(authentication, properties));
+    }
+
+    @Test
+    public void verifyInvalidUser() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(Map.of()));
+        val properties = new AccepttoMultifactorAuthenticationProperties();
+        properties.setEmailAttribute("email");
+        assertTrue(AccepttoApiUtils.isUserValid(authentication, properties).isEmpty());
     }
 
     @Test
@@ -83,6 +91,28 @@ public class AccepttoApiUtilsTests {
             val user = AccepttoApiUtils.isUserValid(authentication, properties);
             assertFalse(user.isEmpty());
 
+        }
+    }
+
+    @Test
+    public void verifyUserInvalidData() throws Exception {
+        val properties = new AccepttoMultifactorAuthenticationProperties();
+        properties.setGroupAttribute("group");
+        properties.setEmailAttribute("email");
+        properties.setApplicationId("appid");
+        properties.setSecret("p@$$w0rd");
+        properties.setApiUrl("http://localhost:9289");
+        val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of(
+            "email", List.of("cas@example.org"),
+            "group", List.of("staff")));
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+
+        val data = MAPPER.writeValueAsString("__.. ..___$$$@@@");
+        try (val webServer = new MockWebServer(9289,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val user = AccepttoApiUtils.isUserValid(authentication, properties);
+            assertTrue(user.isEmpty());
         }
     }
 
@@ -158,14 +188,20 @@ public class AccepttoApiUtilsTests {
         val payload = MAPPER.writeValueAsString(Map.of("uid", "casuser"));
         val jwt = EncodingUtils.signJwsRSASha512(priv, payload.getBytes(StandardCharsets.UTF_8), Map.of());
 
-        val data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
+        var data = MAPPER.writeValueAsString(Map.of("content", new String(jwt, StandardCharsets.UTF_8)));
         try (val webServer = new MockWebServer(9285,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-
             val results = AccepttoApiUtils.authenticate(authentication, properties, context, pub);
             assertNotNull(results);
+        }
 
+        try (val webServer = new MockWebServer(9285,
+            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+
+            val results = AccepttoApiUtils.authenticate(authentication, properties, context, pub);
+            assertTrue(results.isEmpty());
         }
     }
 }

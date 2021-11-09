@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.core.cache-expiration=0",
@@ -39,13 +39,17 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
+        val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
+        assertNotNull(metadata);
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
+
+        FileUtils.delete(metadata.getFile());
+        assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
     }
 
     @Test

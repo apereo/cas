@@ -52,9 +52,9 @@ CAS nodes in the cluster to pick up the changes and keep definitions in sync.
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-hazelcast" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-hazelcast" %}
 
-{% include casproperties.html properties="cas.service-registry.stream.hazelcast" %}
+{% include_cached casproperties.html properties="cas.service-registry.stream.hazelcast" %}
 
 ## Apache Kafka
 
@@ -66,9 +66,9 @@ CAS nodes in the cluster to pick up the changes and keep definitions in sync.
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-service-registry-stream-kafka" %}
 
-{% include casproperties.html properties="cas.service-registry.stream.kafka" %}
+{% include_cached casproperties.html properties="cas.service-registry.stream.kafka" %}
 
 ## Replication Modes
 

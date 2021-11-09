@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     RedisTicketRegistryConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
 @Getter
 public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
@@ -30,6 +30,6 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     protected RedisTemplate<String, Ticket> ticketRedisTemplate;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.pac4j.discovery.title}">Delegated Authentication Dynamic Discovery</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-66">
+        <div class="col-xs-6 col-xs-offset-2 col-sm-offset-3">
+            <h2 th:utext="#{screen.pac4j.discovery.title}">Delegated Authentication Dynamic Discovery</h2>
+            <p class="intro" th:utext="#{screen.pac4j.discovery.intro}">Please provide your user ID:</p>
+            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="${message.text}">Message Text</p>
+            </div>
+
+            <form method="post" id="discoverySelectionForm">
+                <section class="p-4">
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="execute"/>
+
+                    <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                        <input class="mdc-text-field__input"
+                               id="username"
+                               name="username"
+                               tabindex="0"
+                               size="25"
+                               type="text"
+                               th:accesskey="#{screen.welcome.label.netid.accesskey}"
+                               autocapitalize="none"
+                               spellcheck="false"
+                               autocomplete="username"
+                               th:value="${username}" required/>
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{screen.welcome.label.netid}">Username</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+
+                    <p>
+                        <button class="mdc-button mdc-button--raised" accesskey="s" type="submit">
+                            <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
+                        </button>
+                        <button class="mdc-button mdc-button--outlined"
+                                name="cancel"
+                                th:value="cancel"
+                                accesskey="c"
+                                id="aupCancel"
+                                type="button"
+                                onclick="location.href = location.href;">
+                            <span class="mdc-button__label">Cancel</span>
+                        </button>
+                </section>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

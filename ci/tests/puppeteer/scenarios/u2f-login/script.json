@@ -1,8 +1,14 @@
 {
   "dependencies": "u2f",
   "properties": [
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.service-registry.core.init-from-json=true",
+
     "--cas.authn.mfa.u2f.crypto.enabled=false",
-    "--cas.authn.mfa.u2f.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/u2f-login/accounts.json"
+    "--cas.authn.mfa.u2f.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ]
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.CasEmbeddedValueResolverTests;
 import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
@@ -19,6 +18,7 @@ import org.apereo.cas.util.cipher.RsaKeyPairCipherExecutorTests;
 import org.apereo.cas.util.cipher.StringCipherExecutorTests;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutorTests;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutorTests;
+import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoaderTests;
 import org.apereo.cas.util.gen.ChainingPrincipalNameTransformerTests;
 import org.apereo.cas.util.gen.DefaultLongNumericGeneratorTests;
 import org.apereo.cas.util.gen.DefaultRandomStringGeneratorTests;
@@ -27,9 +27,8 @@ import org.apereo.cas.util.gen.RandomStringGeneratorTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllUtilityTestsSuite}.
@@ -45,7 +44,6 @@ import org.junit.runner.RunWith;
     RsaKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
-    CasEmbeddedValueResolverTests.class,
     RandomStringGeneratorTests.class,
     ChainingPrincipalNameTransformerTests.class,
     CollectionUtilsTests.class,
@@ -55,6 +53,7 @@ import org.junit.runner.RunWith;
     DefaultRandomStringGeneratorTests.class,
     DefaultTicketCipherExecutorTests.class,
     EncodingUtilsTests.class,
+    DefaultCasRuntimeModuleLoaderTests.class,
     HexRandomStringGeneratorTests.class,
     RegexUtilsTests.class,
     StringCipherExecutorTests.class,
@@ -65,6 +64,6 @@ import org.junit.runner.RunWith;
     SystemUtilsTests.class,
     JsonUtilsTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllUtilityTestsSuite {
 }

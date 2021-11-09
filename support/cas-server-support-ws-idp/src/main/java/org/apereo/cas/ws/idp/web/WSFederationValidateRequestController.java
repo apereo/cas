@@ -2,7 +2,8 @@ package org.apereo.cas.ws.idp.web;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
@@ -11,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,8 +54,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 handleLogoutRequest(fedRequest, request, response);
                 break;
             case WSFederationConstants.WSIGNIN10:
-                val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
-                handleInitialAuthenticationRequest(fedRequest, targetService, response, request);
+                handleInitialAuthenticationRequest(fedRequest, response, request);
                 break;
             default:
                 throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
@@ -65,7 +66,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
         val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
             () -> {
-                val service = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
+                val service = createService(fedRequest);
                 val registeredService = getWsFederationRegisteredService(service);
                 LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
                     fedRequest, fedRequest.getWreply(), registeredService);
@@ -80,21 +81,39 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         authenticationRedirectStrategy.redirect(request, response, logoutUrl);
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest, final Service targetService,
-                                                    final HttpServletResponse response, final HttpServletRequest request) {
-        val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
+    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
+                                                    final HttpServletResponse response,
+                                                    final HttpServletRequest request) {
+
+        val targetService = createService(fedRequest);
+        val registeredService = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Redirecting to identity provider for initial authentication [{}]", fedRequest);
-        redirectToIdentityProvider(fedRequest, response, request, service);
+        redirectToIdentityProvider(fedRequest, response, request, targetService, registeredService);
+    }
+
+    private WebApplicationService createService(final WSFederationRequest fedRequest) {
+        val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.getWreply());
+        targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.getWreply()));
+        targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.getWtrealm()));
+        targetService.getAttributes().put(WSFederationConstants.WCTX, CollectionUtils.wrapList(fedRequest.getWctx()));
+        return targetService;
     }
 
     @SneakyThrows
-    private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
-                                            final HttpServletRequest request, final WSFederationRegisteredService service) {
+    private void redirectToIdentityProvider(final WSFederationRequest fedRequest,
+                                            final HttpServletResponse response,
+                                            final HttpServletRequest request,
+                                            final WebApplicationService service,
+                                            final WSFederationRegisteredService registeredService) {
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
-        LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
+        LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, registeredService);
         val renew = shouldRenewAuthentication(fedRequest, request);
-        val initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
+        var initialUrl = CommonUtils.constructRedirectUrl(getConfigContext().getCasProperties().getServer().getLoginUrl(),
             CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
+        val builder = new URIBuilder(initialUrl);
+        service.getAttributes().forEach((key, value)
+            -> CollectionUtils.firstElement(value).map(Object::toString).ifPresent(v -> builder.addParameter(key, v)));
+        initialUrl = builder.toString();
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
         val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, initialUrl);

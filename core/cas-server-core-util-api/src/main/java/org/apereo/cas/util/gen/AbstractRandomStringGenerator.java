@@ -30,7 +30,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
     /**
      * Default string length before encoding.
      */
-    protected final int defaultLength;
+    protected final long defaultLength;
 
     /**
      * Instantiates a new default random string generator
@@ -63,7 +63,7 @@ public abstract class AbstractRandomStringGenerator implements RandomStringGener
 
     @Override
     public String getNewString() {
-        return getNewString(getDefaultLength());
+        return getNewString(Long.valueOf(getDefaultLength()).intValue());
     }
 
     @Override

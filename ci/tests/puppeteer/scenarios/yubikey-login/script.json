@@ -1,0 +1,19 @@
+{
+  "dependencies": "yubikey,trusted-mfa",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.yubikey.trusted-device-enabled=true",
+    "--cas.authn.mfa.yubikey.crypto.enabled=false",
+    "--cas.authn.mfa.yubikey.client-id=18421",
+    "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
+    "--cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=yubikeyAccountRepository",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

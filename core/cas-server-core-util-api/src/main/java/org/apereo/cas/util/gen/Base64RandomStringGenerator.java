@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Base64RandomStringGenerator extends AbstractRandomStringGenerator {
 
-    public Base64RandomStringGenerator(final int defaultLength) {
+    public Base64RandomStringGenerator(final long defaultLength) {
         super(defaultLength);
     }
 

@@ -28,9 +28,9 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     public void verifyOperation() {
         val input = mock(RegisteredServiceSingleSignOnParticipationPolicy.class);
         when(input.getOrder()).thenCallRealMethod();
-        when(input.isCreateCookieOnRenewedAuthentication()).thenCallRealMethod();
+        when(input.getCreateCookieOnRenewedAuthentication()).thenCallRealMethod();
         assertEquals(0, input.getOrder());
-        assertEquals(TriStateBoolean.UNDEFINED, input.isCreateCookieOnRenewedAuthentication());
+        assertEquals(TriStateBoolean.UNDEFINED, input.getCreateCookieOnRenewedAuthentication());
     }
 
     
@@ -85,6 +85,6 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicies(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
         assertFalse(chain.getPolicies().isEmpty());
-        assertEquals(TriStateBoolean.UNDEFINED, chain.isCreateCookieOnRenewedAuthentication());
+        assertEquals(TriStateBoolean.TRUE, chain.getCreateCookieOnRenewedAuthentication());
     }
 }

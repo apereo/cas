@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationComponentSerializationConfiguration}.
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class GoogleAuthenticatorAuthenticationComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "gauthComponentSerializationPlanConfigurer")
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer gauthComponentSerializationPlanConfigurer() {
         return plan -> plan.registerSerializableClass(GoogleAuthenticatorTokenCredential.class);
     }

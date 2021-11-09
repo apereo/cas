@@ -1,0 +1,11 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.authn.accept.name=STATIC",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

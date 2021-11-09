@@ -77,7 +77,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
      * @param flow the flow
      */
     protected void createAcceptableUsagePolicyView(final Flow flow) {
-        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "casAcceptableUsagePolicyView");
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW, "aup/casAcceptableUsagePolicyView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
             CasWebflowConstants.STATE_ID_AUP_ACCEPTED);
         viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_AUP_RENDER));

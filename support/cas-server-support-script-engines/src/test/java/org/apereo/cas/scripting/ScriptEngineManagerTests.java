@@ -1,6 +1,7 @@
 package org.apereo.cas.scripting;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
@@ -29,9 +30,13 @@ public class ScriptEngineManagerTests {
     private static void runAttributeFilterInternallyFor(final String s) {
         val filter = new ScriptedRegisteredServiceAttributeReleasePolicy(s);
         val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Collections.singletonMap("attribute", List.of("value")));
-        val attrs = filter.getAttributes(principal,
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val attrs = filter.getAttributes(releasePolicyContext);
         assertEquals(attrs.size(), principal.getAttributes().size());
     }
 

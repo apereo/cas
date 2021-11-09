@@ -7,7 +7,10 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AuthenticationDateAttributeMetaDataPopulatorTests}.
@@ -15,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationMetadata")
 public class AuthenticationDateAttributeMetaDataPopulatorTests {
     private final AuthenticationDateAttributeMetaDataPopulator populator =
         new AuthenticationDateAttributeMetaDataPopulator();
@@ -24,8 +27,22 @@ public class AuthenticationDateAttributeMetaDataPopulatorTests {
     public void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE));
+        assertFalse(populator.supports(null));
+        assertFalse(populator.supports(mock(MultifactorAuthenticationCredential.class)));
+    }
+
+    @Test
+    public void verifyPopulatorMultipleTimes() {
+        val credentials = new UsernamePasswordCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        IntStream.range(1, 5)
+            .forEach(i -> populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials)));
+        val auth = builder.build();
+        val result = auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE);
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 }

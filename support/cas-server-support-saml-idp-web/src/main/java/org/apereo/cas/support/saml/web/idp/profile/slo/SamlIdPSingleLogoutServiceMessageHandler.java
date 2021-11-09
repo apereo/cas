@@ -108,7 +108,6 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         }
         
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
-
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
             return super.sendMessageToEndpoint(msg, request, logoutMessage);
         }

@@ -15,7 +15,13 @@ tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`), proxy t
 artifacts in CAS that take the base form of a ticket abstraction. Each protocol or feature may 
 introduce a new ticket type that carries its own expiration policy and you will need to 
 consult the documentation for that feature or behavior to realize how expiration 
-policies for its own ticket types may be tuned and controlled.</p></div>
+policies for a specific ticket type may be tuned and controlled.</p></div>
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="ticketExpirationPolicies" casModule="cas-server-support-reports" %}
 
 ## Ticket-Granting Ticket Policies
 
@@ -27,7 +33,7 @@ to obtain a new (valid) `TGT`.
 
 This is the default option, which provides a hard-time out as well as a sliding window.
 
-{% include casproperties.html properties="cas.ticket.tgt.core,cas.ticket.tgt.primary" %}
+{% include_cached casproperties.html properties="cas.ticket.tgt.core,cas.ticket.tgt.primary" %}
 
 Ticket expiration policies are activated in the following conditions:
 
@@ -80,7 +86,7 @@ The expiration policy applied to TGTs provides for most-recently-used expiration
 For example, a 2-hour time span with this policy in effect would require a `TGT` to be used every 2 hours or less, otherwise
 it would be marked as expired.
 
-{% include casproperties.html properties="cas.ticket.tgt.timeout" %}
+{% include_cached casproperties.html properties="cas.ticket.tgt.timeout" %}
 
 ### Hard Timeout
 
@@ -88,7 +94,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired
 and the user will be forced to re-authenticate.
 
-{% include casproperties.html properties="cas.ticket.tgt.hard-timeout" %}
+{% include_cached casproperties.html properties="cas.ticket.tgt.hard-timeout" %}
 
 ### Throttled
 
@@ -96,7 +102,7 @@ The throttled timeout policy extends the TimeoutExpirationPolicy with the concep
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-{% include casproperties.html properties="cas.ticket.tgt.throttled-timeout" %}
+{% include_cached casproperties.html properties="cas.ticket.tgt.throttled-timeout" %}
 
 ### Never
 
@@ -117,7 +123,7 @@ ST expiration policy governs the time span during which an authenticated user ma
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses.
 
-{% include casproperties.html properties="cas.ticket.st" %}
+{% include_cached casproperties.html properties="cas.ticket.st" %}
 
 ### Per Service
 
@@ -147,7 +153,7 @@ whose service ticket expiration policy is to deviate from the default configurat
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum
 period of inactivity elapses. 
 
-{% include casproperties.html properties="cas.ticket.pt" %}
+{% include_cached casproperties.html properties="cas.ticket.pt" %}
 
 ### Per Service
 
@@ -195,12 +201,12 @@ whose proxy granting ticket expiration policy is to deviate from the default con
 }
 ```
 
-{% include casproperties.html properties="cas.ticket.pgt" %}
+{% include_cached casproperties.html properties="cas.ticket.pgt" %}
 
 
 ## Transient Session Ticket Policies
 
 TST expiration policy governs the time span during which CAS can track a specific activity tied to a session.
 
-{% include casproperties.html properties="cas.ticket.tst" %}
+{% include_cached casproperties.html properties="cas.ticket.tst" %}
 

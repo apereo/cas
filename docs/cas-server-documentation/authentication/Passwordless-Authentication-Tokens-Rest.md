@@ -13,7 +13,7 @@ CAS continues to generate tokens and the endpoint is only acting as a
 facade to the real token store, receiving tokens from CAS
 in an encrypted fashion. 
 
-{% include casproperties.html properties="cas.authn.passwordless.tokens.rest" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.rest" %}
 
 The following operations need to be supported by the endpoint:
 

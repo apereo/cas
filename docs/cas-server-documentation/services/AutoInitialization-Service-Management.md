@@ -30,4 +30,4 @@ Again, this behavior is only useful as a starting point, an example and for smal
 specialized deployments. It is recommended that you take explicit control 
 over the registry and register services and applications which you have fully authorized.
 
-{% include casproperties.html properties="cas.service-registry.core" %}
+{% include_cached casproperties.html properties="cas.service-registry.core" %}

@@ -28,13 +28,21 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
+@Tag("ActuatorEndpoint")
 public class DuoSecurityUserAccountStatusEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Test
+    public void verifyStatusOperation() {
+        assertEquals(DuoSecurityUserAccountStatus.AUTH, DuoSecurityUserAccountStatus.from("active"));
+        assertEquals(DuoSecurityUserAccountStatus.ALLOW, DuoSecurityUserAccountStatus.from("bypass"));
+        assertEquals(DuoSecurityUserAccountStatus.DENY, DuoSecurityUserAccountStatus.from("disabled"));
+        assertEquals(DuoSecurityUserAccountStatus.DENY, DuoSecurityUserAccountStatus.from("locked"));
+    }
 
     @Test
     public void verifyOperation() {
@@ -46,7 +54,9 @@ public class DuoSecurityUserAccountStatusEndpointTests {
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.ping()).thenReturn(true);
-        when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
+        val props = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("https://api.duosecurity.com");
+        when(duoService.getProperties()).thenReturn(props);
         when(duoService.getUserAccount(eq("casuser"))).thenReturn(account);
 
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);

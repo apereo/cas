@@ -91,6 +91,14 @@ public interface AuthenticationBuilder extends Serializable {
     AuthenticationBuilder addAttribute(String key, Object value);
 
     /**
+     * Add attributes.
+     *
+     * @param attributes the attributes
+     * @return the authentication builder
+     */
+    AuthenticationBuilder addAttributes(Map<String, Object> attributes);
+
+    /**
      * Gets the authentication success map.
      *
      * @return Non -null map of handler names to successful handler authentication results.

@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.mfa.gauth.jpa.ddl-auto=create",
     "cas.authn.mfa.gauth.jpa.user=root",
     "cas.authn.mfa.gauth.jpa.password=mypass",
     "cas.authn.mfa.gauth.jpa.driver-class=org.mariadb.jdbc.Driver",

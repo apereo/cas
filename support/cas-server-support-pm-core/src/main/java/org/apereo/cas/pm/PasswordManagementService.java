@@ -16,6 +16,11 @@ import java.util.Map;
 public interface PasswordManagementService {
 
     /**
+     * Default bean name for implementation.
+     */
+    String DEFAULT_BEAN_NAME = "passwordChangeService";
+
+    /**
      * Execute op to change password.
      *
      * @param c    the credentials
@@ -90,6 +95,13 @@ public interface PasswordManagementService {
         return new LinkedHashMap<>(0);
     }
 
+    /**
+     * Update security questions.
+     *
+     * @param query the query
+     */
+    default void updateSecurityQuestions(final PasswordManagementQuery query) {}
+    
     /**
      * Checks a security questions answer.
      *

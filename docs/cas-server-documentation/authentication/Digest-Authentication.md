@@ -16,14 +16,14 @@ hashing with usage of nonce values to prevent replay attacks. It uses the HTTP p
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-digest-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-digest-authentication" %}
 
 For additional information on how digest authentication works,
 please [review this guide](https://en.wikipedia.org/wiki/Digest_access_authentication).
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.digest" %}
+{% include_cached casproperties.html properties="cas.authn.digest" %}
 
 ## Credential Management
 
@@ -40,34 +40,34 @@ The following snippets demonstrate how a given Java client may use CAS digest au
 via Apache's HttpClient library:
 
 ```java
-final HttpHost target = new HttpHost("localhost", 8080, "http");
+var target = new HttpHost("localhost", 8080, "http");
 
-final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+var credsProvider = new BasicCredentialsProvider();
 credsProvider.setCredentials(
-        new AuthScope(target.getHostName(), target.getPort()),
-        new UsernamePasswordCredentials("casuser", "Mellon"));
+    new AuthScope(target.getHostName(), target.getPort()),
+    new UsernamePasswordCredentials("casuser", "Mellon"));
 
-final CloseableHttpClient httpclient = HttpClients.custom()
+var httpclient = HttpClients.custom()
         .setDefaultCredentialsProvider(credsProvider)
         .build();
 
 try {
-    HttpGet httpget = new HttpGet("http://localhost:8080/cas/login");
+    var httpget = new HttpGet("http://localhost:8080/cas/login");
 
     // Create AuthCache instance
-    final AuthCache authCache = new BasicAuthCache();
+    var authCache = new BasicAuthCache();
 
     // Generate DIGEST scheme object, initialize it and add it to the local auth cache
-    final DigestScheme digestAuth = new DigestScheme();
+    var digestAuth = new DigestScheme();
     digestAuth.overrideParamter("realm", "CAS");
     authCache.put(target, digestAuth);
 
     // Add AuthCache to the execution context
-    final HttpClientContext localContext = HttpClientContext.create();
+    var localContext = HttpClientContext.create();
     localContext.setAuthCache(authCache);
 
-    System.out.println("Executing request " + httpget.getRequestLine() + " to target " + target);
-    try (CloseableHttpResponse response = httpclient.execute(target, httpget, localContext)) {
+    System.out.println("Executing request " + httpget.getRequestLine() + " to " + target);
+    try (var response = httpclient.execute(target, httpget, localContext)) {
         System.out.println(response.getStatusLine());
         System.out.println(EntityUtils.toString(response.getEntity()));
     }

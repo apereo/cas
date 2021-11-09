@@ -21,4 +21,9 @@ public class JasyptListAlgorithmsCommandTests extends BaseCasShellCommandTests {
     public void verifyOperation() {
         assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-algorithms --includeBC"));
     }
+
+    @Test
+    public void verifyNoBouncyCastleOperation() {
+        assertDoesNotThrow(() -> shell.evaluate(() -> "jasypt-list-algorithms"));
+    }
 }

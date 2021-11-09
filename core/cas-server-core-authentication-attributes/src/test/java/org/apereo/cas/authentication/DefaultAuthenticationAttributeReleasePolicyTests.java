@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.validation.Assertion;
@@ -37,6 +38,7 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
     @Test
     public void verifyNoReleaseCredential() {
         val policy = new DefaultAuthenticationAttributeReleasePolicy("authnContext");
+        policy.getOnlyReleaseAttributes().add(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
         attrPolicy.setAuthorizedToReleaseCredentialPassword(false);
@@ -49,7 +51,8 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
 
     @Test
     public void verifyOnlyRelease() {
-        val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of("cn"), Set.of(), "authnContext");
+        val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of("cn", "authnContext"),
+            Set.of(), "authnContext");
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
         when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
@@ -57,8 +60,29 @@ public class DefaultAuthenticationAttributeReleasePolicyTests {
             CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(),
                 Map.of("cn", List.of("common-name"), "givenName", List.of("given-name"))),
             mock(Assertion.class), Map.of("authnContext", List.of("mfa-something")), service);
-        assertEquals(5, results.size());
+        assertEquals(2, results.size());
         assertTrue(results.containsKey("cn"));
+        assertTrue(results.containsKey("authnContext"));
+    }
+
+    @Test
+    public void verifyReleaseAll() {
+        val policy = new DefaultAuthenticationAttributeReleasePolicy(Set.of(),
+            Set.of(), "authnContext");
+        
+        val service = CoreAuthenticationTestUtils.getRegisteredService();
+        val attrPolicy = new ReturnAllowedAttributeReleasePolicy();
+        when(service.getAttributeReleasePolicy()).thenReturn(attrPolicy);
+        val results = policy.getAuthenticationAttributesForRelease(
+            CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal(),
+                Map.of("cn", List.of("common-name"), "givenName", List.of("given-name"))),
+            mock(Assertion.class), Map.of("authnContext", List.of("mfa-something")), service);
+        assertEquals(6, results.size());
+        assertTrue(results.containsKey("cn"));
+        assertTrue(results.containsKey("givenName"));
+        assertTrue(results.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
+        assertTrue(results.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
+        assertTrue(results.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
         assertTrue(results.containsKey("authnContext"));
     }
 

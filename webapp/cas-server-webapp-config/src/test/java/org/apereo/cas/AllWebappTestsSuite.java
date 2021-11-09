@@ -8,12 +8,12 @@ import org.apereo.cas.web.security.CasWebSecurityExpressionRootTests;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProviderDefaultRolesTests;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProviderGroupsBasedTests;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProviderRolesBasedTests;
+import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextActionTests;
 import org.apereo.cas.webflow.CasWebflowClientSessionContextConfigurationTests;
 import org.apereo.cas.webflow.CasWebflowServerSessionContextConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllWebappTestsSuite}.
@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 @SelectClasses({
     EndpointLdapAuthenticationProviderDefaultRolesTests.class,
     WiringConfigurationTests.class,
+    PopulateSpringSecurityContextActionTests.class,
     CasWebSecurityConfigurerAdapterDenyTests.class,
     CasWebSecurityExpressionRootTests.class,
     CasWebSecurityExpressionHandlerTests.class,
@@ -33,6 +34,6 @@ import org.junit.runner.RunWith;
     EndpointLdapAuthenticationProviderRolesBasedTests.class,
     EndpointLdapAuthenticationProviderGroupsBasedTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllWebappTestsSuite {
 }

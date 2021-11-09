@@ -1,0 +1,17 @@
+{
+  "dependencies": "spnego-webflow",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas.web.flow=debug",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.spnego.system.kerberos-conf=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/kerberos.conf",
+    "--cas.authn.spnego.mixed-mode-authentication=true",
+    "--cas.authn.spnego.ips-to-check-pattern=.*",
+    "--cas.authn.spnego.host-name-pattern-string=.*"
+  ]
+}

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.enabled=true")
-@Tag("MFA")
+@Tag("MFATrustedDevices")
 @ImportAutoConfiguration(MultifactorAuthnTrustConfiguration.class)
 public class MultifactorAuthenticationTrustReportEndpointTests extends AbstractCasEndpointTests {
 

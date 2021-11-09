@@ -62,7 +62,7 @@ If two configuration files with same base name and different extensions exist, t
 of `properties`, `yml` and then `yaml` and then `groovy` (last one processed wins where duplicate properties exist). These 
 external configuration files will override files located in the classpath (e.g. files from `src/main/resources` in 
 your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per 
-the [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules 
+the [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/html/) rules 
 which differ from the CAS standalone configuration rules described here (e.g. `<profile>.properties` 
 would not be loaded from classpath but `application-<profile>.properties` would).
 
@@ -76,8 +76,7 @@ override via <code>application.yml</code>, <code>application-standalone.properti
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
-{% include casproperties.html 
-thirdPartyStartsWith="spring.cloud.config.override-system-properties,spring.cloud.config.allow-override,spring.cloud.config.override-none" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config" %}
 
 ### Spring Cloud
 
@@ -98,7 +97,7 @@ A full comprehensive guide is provided by the [Spring Cloud project](https://clo
 
 The configuration server itself, similar to CAS, can be deployed using the [CAS Initializr](../installation/WAR-Overlay-Initializr.html).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-webapp-config-server" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-config-server" %}
 
 In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server 
 may load CAS settings and properties via the following order and mechanics:
@@ -189,7 +188,7 @@ This location is constantly monitored by the server to detect external changes. 
 exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this
 directory needs to match the `spring.application.name` (i.e. `cas.properties`).
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.config.server.native" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config.server.native" %}
 
 If you want to use additional configuration files, they need to have the
 form `application-<profile>.(properties|yml)`.
@@ -219,7 +218,7 @@ Such repositories can either be local to the deployment, or they could be on the
 cloud-based repositories can either be in form of a username/password, or via SSH so as long the appropriate keys are configured in the
 CAS deployment environment which is really no different than how one would normally access a git repository via SSH.
 
-{% include casproperties.html thirdPartyStartsWith="spring.cloud.config.server.git,spring.cloud.config.server.svn" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config.server.git,spring.cloud.config.server.svn" %}
 
 Needless to say, the repositories could use both YAML and properties syntax to host configuration files.
 The default profile is activated using `spring.profiles.active=default`.
@@ -236,7 +235,7 @@ The server is also able to locate properties entirely from a MongoDb instance.
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-mongo" %}
 
 Note that to access and review the collection of CAS properties,
 you will need to use your own native tooling for MongoDB to configure and inject settings.
@@ -263,13 +262,17 @@ locate properties and settings. [Please review this guide](Configuration-Propert
 CAS is also able to use [Consul](https://www.consul.io/) to
 locate properties and settings. [Please review this guide](../installation/Service-Discovery-Guide-Consul.html).
 
+The following endpoints are provided by Spring Cloud:
+
+{% include_cached actuators.html endpoints="consul" %}
+
 ##### Apache ZooKeeper
 
 CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-zookeeper" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-zookeeper" %}
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Storage.html#zookeeper).
 
@@ -305,7 +308,7 @@ CAS is also able to use [Amazon S3](https://aws.amazon.com/s3/) to locate proper
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-s3" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-s3" %}
 
 See [this guide](Configuration-Storage.html#amazon-s3) for relevant settings.
 
@@ -315,7 +318,7 @@ CAS is also able to use [Amazon Secret Manager](https://aws.amazon.com/secrets-m
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-secretsmanager" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-secretsmanager" %}
 
 See [this guide](Configuration-Storage.html#amazon-secrets-manager) for relevant settings.
 
@@ -326,7 +329,7 @@ to locate properties and settings.
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-ssm" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-aws-ssm" %}
 
 See [this guide](Configuration-Storage.html#amazon-parameter-store) for relevant settings.
 
@@ -336,7 +339,7 @@ CAS is also able to use [DynamoDb](https://aws.amazon.com/dynamodb/) to locate p
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-dynamodb" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-dynamodb" %}
 
 The `DynamoDbCasProperties` table is automatically created by CAS with the following structure:
 
@@ -355,7 +358,7 @@ See [this guide](Configuration-Storage.html#dynamodb) for relevant settings.
 CAS is also able to use Microsoft Azure's KeyVault Secrets to locate 
 properties and settings. Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-azure-keyvault" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-azure-keyvault" %}
 
 To see the relevant list of CAS properties for 
 this feature, please [review this guide](Configuration-Storage.html#azure-keyvault-secrets).
@@ -373,7 +376,7 @@ CAS is also able to use a relational database to locate properties and settings.
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-jdbc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-jdbc" %}
 
 By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Storage.html#jdbc).
@@ -384,7 +387,7 @@ CAS is also able to locate properties and settings using a REST API.
 
 Support is provided via the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-rest" %}
 
 The REST endpoint is expected to produce a `Map` in the payload with keys as the setting names
 and values as the setting value. To see the relevant list of CAS properties for this 

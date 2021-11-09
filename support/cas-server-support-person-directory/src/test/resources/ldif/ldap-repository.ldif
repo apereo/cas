@@ -1,4 +1,4 @@
-dn: cn=ldapuser,ou=people,dc=example,dc=org
+dn: cn=${cn},ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person

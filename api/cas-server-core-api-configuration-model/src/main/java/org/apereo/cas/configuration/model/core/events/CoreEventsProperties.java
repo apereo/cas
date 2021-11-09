@@ -31,7 +31,7 @@ public class CoreEventsProperties implements Serializable {
 
     /**
      * Whether geolocation should be tracked as part of collected authentication events.
-     * This of course require's consent from the user's browser to collect stats on location.
+     * This of course requires consent from the user's browser to collect stats on location.
      */
     private boolean trackGeolocation;
 

@@ -5,6 +5,7 @@ import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 /**
  * Reports overall CAS health based on the observations of the configured {@link HealthEndpoint} instance.
@@ -31,7 +31,8 @@ import java.util.Map;
 public class StatusEndpoint extends BaseCasActuatorEndpoint {
     private final HealthEndpoint healthEndpoint;
 
-    public StatusEndpoint(final CasConfigurationProperties casProperties, final HealthEndpoint healthEndpoint) {
+    public StatusEndpoint(final CasConfigurationProperties casProperties,
+                          final HealthEndpoint healthEndpoint) {
         super(casProperties);
         this.healthEndpoint = healthEndpoint;
     }
@@ -42,6 +43,7 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
      * @return the map
      */
     @ReadOperation
+    @Operation(summary = "Provides CAS server's health status", deprecated = true)
     public Map<String, Object> handle() {
         val model = new LinkedHashMap<String, Object>();
         if (healthEndpoint == null) {

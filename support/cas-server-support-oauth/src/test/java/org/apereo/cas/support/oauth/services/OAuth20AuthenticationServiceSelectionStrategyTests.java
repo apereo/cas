@@ -8,6 +8,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,5 +53,35 @@ public class OAuth20AuthenticationServiceSelectionStrategyTests extends Abstract
         assertTrue(service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
         assertTrue(service.getAttributes().containsKey(OAuth20Constants.GRANT_TYPE));
         assertEquals(Ordered.HIGHEST_PRECEDENCE, strategy.getOrder());
+    }
+
+    @Test
+    public void verifyJwtRequest() {
+        val claims = new JWTClaimsSet.Builder().subject("cas")
+            .claim("scope", new String[]{"profile"})
+            .claim("redirect_uri", REDIRECT_URI)
+            .claim("grant_type", OAuth20GrantTypes.CLIENT_CREDENTIALS.getType())
+            .claim("client_id", CLIENT_ID)
+            .build();
+        val jwt = new PlainJWT(claims);
+        val jwtRequest = jwt.serialize();
+
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REQUEST, jwtRequest);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org?"
+            + OAuth20Constants.REQUEST + '=' + jwtRequest));
+
+        assertNotNull(service);
+        assertTrue(service.getAttributes().containsKey(OAuth20Constants.CLIENT_ID));
+    }
+
+    @Test
+    public void verifyBadRequest() {
+        val request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
+        val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));
+        assertNotNull(service);
+        assertTrue(service.getAttributes().isEmpty());
     }
 }

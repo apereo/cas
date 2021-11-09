@@ -8,22 +8,24 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -66,8 +68,8 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseS
         val authnRequest = signAuthnRequest(request, response, getAuthnRequest());
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, authnRequest).toString();
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, EncodingUtils.encodeBase64(xml));
-        controller.handleSaml2ProfileSsoPostRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
     }
 
     @Test
@@ -85,11 +87,23 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseS
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
 
-        controller.handleSaml2ProfileSsoRedirectRequest(response, request);
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
+        val mv = controller.handleSaml2ProfileSsoRedirectRequest(response, request);
+        assertEquals(HttpStatus.FOUND, mv.getStatus());
+    }
+
+    @Test
+    @Order(2)
+    public void verifyBadRequest() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "Text");
+        val response = new MockHttpServletResponse();
+        val mv = controller.handleSaml2ProfileSsoPostRequest(response, request);
+        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
     }
 
 
+    @SneakyThrows
     private AuthnRequest signAuthnRequest(final HttpServletRequest request,
                                           final HttpServletResponse response,
                                           final AuthnRequest authnRequest) {
@@ -97,13 +111,14 @@ public class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseS
             .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
-            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+            adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
     }
 
     private AuthnRequest getAuthnRequest() {
         var builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-        var authnRequest = (AuthnRequest) builder.buildObject();
+        val authnRequest = (AuthnRequest) builder.buildObject();
+        authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
         builder = (SAMLObjectBuilder) openSamlConfigBean.getBuilderFactory()
             .getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         val issuer = (Issuer) builder.buildObject();

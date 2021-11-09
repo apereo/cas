@@ -1,49 +1,25 @@
 const puppeteer = require('puppeteer');
-const assert = require('assert');
+const cas = require('../../cas.js');
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login");
+    await page.waitForTimeout(5000);
 
-    // await page.waitForTimeout(1000)
-    
-    var loginProviders = await page.$('#loginProviders');
-    assert(await loginProviders.boundingBox() != null);
-
-    var twitter = await page.$('li #TwitterClient');
-    assert(await twitter.boundingBox() != null);
-
-    var cas = await page.$('li #CasClient');
-    assert(await cas.boundingBox() != null);
-
-    var github = await page.$('li #GitHubClient');
-    assert(await github.boundingBox() != null);
+    await cas.assertVisibility(page, '#loginProviders')
+    await cas.assertVisibility(page, 'li #TwitterClient')
+    await cas.assertVisibility(page, 'li #CasClient')
+    await cas.assertVisibility(page, 'li #GitHubClient')
 
     await page.goto("https://localhost:8443/cas/login?error=Fail&error_description=Error&error_code=400&error_reason=Reason");
     await page.waitForTimeout(1000);
+    await cas.assertInnerText(page, '#content div h2', "Unauthorized Access");
+    await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");
 
-    let element = await page.$('#content div h2');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "Unauthorized Access")
-
-    element = await page.$('#content div p');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header.startsWith("Either the authentication request was rejected/cancelled"));
-
-    var errorTable = await page.$('#errorTable');
-    assert(await errorTable.boundingBox() != null);
-
-    var loginLink = await page.$('#loginLink');
-    assert(await loginLink.boundingBox() != null);
-
-    var appLink = await page.$('#appLink');
-    assert(await appLink.boundingBox() != null);
+    await cas.assertVisibility(page, '#errorTable')
+    await cas.assertVisibility(page, '#loginLink')
+    await cas.assertVisibility(page, '#appLink')
 
     await browser.close();
 })();

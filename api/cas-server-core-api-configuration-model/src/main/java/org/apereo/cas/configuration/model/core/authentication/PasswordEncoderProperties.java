@@ -27,7 +27,7 @@ public class PasswordEncoderProperties implements Serializable {
 
     /**
      * Define the password encoder type to use.
-     * Type may be specified as blank or 'NONE' to disable password encoding.
+     * Type may be specified as blank or {@code NONE} to disable password encoding.
      * It may also refer to a fully-qualified class name that implements
      * the Spring Security's {@code PasswordEncoder} interface
      * if you wish you define your own encoder.
@@ -53,28 +53,28 @@ public class PasswordEncoderProperties implements Serializable {
     private String type = "NONE";
 
     /**
-     * The encoding algorithm to use such as 'MD5'.
-     * Relevant when the type used is 'DEFAULT' or 'GLIBC_CRYPT'.
+     * The encoding algorithm to use such as {@code MD5}.
+     * Relevant when the type used is {@code DEFAULT} or {@code GLIBC_CRYPT}.
      */
     @RequiredProperty
     private String encodingAlgorithm;
 
     /**
      * The encoding algorithm to use such as 'UTF-8'.
-     * Relevant when the type used is 'DEFAULT'.
+     * Relevant when the type used is {@code DEFAULT}.
      */
     private String characterEncoding = "UTF-8";
 
     /**
-     * Secret to use with STANDARD, PBKDF2, BCRYPT, GLIBC_CRYPT password encoders.
+     * Secret to use with {@code STANDARD}, {@code PBKDF2}, {@code BCRYPT}, {@code GLIBC_CRYPT} password encoders.
      * Secret usually is an optional setting.
      */
     private String secret;
 
     /**
      * Strength or number of iterations to use for password hashing.
-     * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.
-     * Used by GLIBC_CRYPT encoders as well.
+     * Usually relevant when dealing with {@code PBKDF2} or {@code BCRYPT} encoders.
+     * Used by {@code GLIBC_CRYPT} encoders as well.
      */
     private int strength = 16;
 

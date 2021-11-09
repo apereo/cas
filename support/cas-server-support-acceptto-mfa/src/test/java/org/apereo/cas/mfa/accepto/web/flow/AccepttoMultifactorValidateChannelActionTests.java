@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("RestfulApi")
+@Tag("WebflowMfaActions")
 @SpringBootTest(classes = BaseAccepttoMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.acceptto.api-url=http://localhost:5001",
@@ -54,7 +54,7 @@ public class AccepttoMultifactorValidateChannelActionTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
@@ -87,5 +87,29 @@ public class AccepttoMultifactorValidateChannelActionTests {
             val result = action.doExecute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINALIZE, result.getId());
         }
+    }
+
+    @Test
+    public void verifyNoChannel() throws Exception {
+        val action = new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore, authenticationSystemSupport);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        RequestContextHolder.setRequestContext(context);
+        assertNull(action.doExecute(context));
+    }
+
+    @Test
+    public void verifyNoAuthentication() throws Exception {
+        val action = new AccepttoMultifactorValidateChannelAction(mfaAccepttoDistributedSessionStore, authenticationSystemSupport);
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val webContext = new JEEContext(request, response);
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        AccepttoWebflowUtils.storeChannelInSessionStore("test-channel", webContext, mfaAccepttoDistributedSessionStore);
+        RequestContextHolder.setRequestContext(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.doExecute(context).getId());
     }
 }

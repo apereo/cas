@@ -38,10 +38,10 @@ public class ForgotUsernameWebflowConfigurer extends AbstractCasWebflowConfigure
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_FORGOT_USERNAME,
-                CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
+                CasWebflowConstants.STATE_ID_FORGOT_USERNAME_ACCT_INFO);
 
-            val usernameInfo = createViewState(flow, CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO,
-                CasWebflowConstants.VIEW_ID_FORGOT_USERNAME_ACCT_INFO);
+            val usernameInfo = createViewState(flow, CasWebflowConstants.STATE_ID_FORGOT_USERNAME_ACCT_INFO,
+                "forgot-username/casForgotUsernameSendInfoView");
             createTransitionForState(usernameInfo, "findUsername",
                 CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);
 
@@ -49,10 +49,10 @@ public class ForgotUsernameWebflowConfigurer extends AbstractCasWebflowConfigure
                 CasWebflowConstants.ACTION_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS_ACTION);
 
             createTransitionForState(sendUsernameInst, CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO);
+                CasWebflowConstants.STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO);
             createTransitionForState(sendUsernameInst, CasWebflowConstants.TRANSITION_ID_ERROR, usernameInfo.getId());
-            createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO,
-                CasWebflowConstants.VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO);
+            createViewState(flow, CasWebflowConstants.STATE_ID_SENT_FORGOT_USERNAME_ACCT_INFO,
+                "forgot-username/casForgotUsernameSentInfoView");
         }
     }
 }

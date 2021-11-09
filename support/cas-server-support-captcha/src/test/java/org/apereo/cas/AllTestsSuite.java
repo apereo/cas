@@ -4,9 +4,8 @@ import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurerTests;
 import org.apereo.cas.web.flow.InitializeCaptchaActionTests;
 import org.apereo.cas.web.flow.ValidateCaptchaActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -19,6 +18,6 @@ import org.junit.runner.RunWith;
     InitializeCaptchaActionTests.class,
     ValidateCaptchaActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

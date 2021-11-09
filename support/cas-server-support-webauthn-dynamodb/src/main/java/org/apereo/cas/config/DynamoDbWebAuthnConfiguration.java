@@ -7,16 +7,14 @@ import org.apereo.cas.webauthn.DynamoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.DynamoDbWebAuthnFacilitator;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
-import lombok.SneakyThrows;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
@@ -25,43 +23,40 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration("DynamoDbWebAuthnConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Configuration(value = "DynamoDbWebAuthnConfiguration", proxyBeanMethods = false)
 public class DynamoDbWebAuthnConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
-    @Autowired
-    @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-    private ObjectProvider<CipherExecutor> webAuthnCredentialRegistrationCipherExecutor;
-
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @SneakyThrows
     @ConditionalOnMissingBean(name = "amazonDynamoDbWebAuthnClient")
-    public DynamoDbClient amazonDynamoDbWebAuthnClient() {
+    public DynamoDbClient amazonDynamoDbWebAuthnClient(final CasConfigurationProperties casProperties) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
         val factory = new AmazonDynamoDbClientFactory();
         return factory.createAmazonDynamoDb(db);
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbWebAuthnFacilitator")
-    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator() {
+    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator(final CasConfigurationProperties casProperties,
+                                                                   @Qualifier("amazonDynamoDbWebAuthnClient")
+                                                                   final DynamoDbClient amazonDynamoDbWebAuthnClient) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
-        val f = new DynamoDbWebAuthnFacilitator(db, amazonDynamoDbWebAuthnClient());
+        val f = new DynamoDbWebAuthnFacilitator(db, amazonDynamoDbWebAuthnClient);
         if (!db.isPreventTableCreationOnStartup()) {
             f.createTable(db.isDropTablesOnStartup());
         }
         return f;
     }
 
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository() {
-        return new DynamoDbWebAuthnCredentialRepository(casProperties,
-            webAuthnCredentialRegistrationCipherExecutor.getObject(),
-            dynamoDbWebAuthnFacilitator());
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
+                                                                     @Qualifier("dynamoDbWebAuthnFacilitator")
+                                                                     final DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator,
+                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+        return new DynamoDbWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor, dynamoDbWebAuthnFacilitator);
     }
 }

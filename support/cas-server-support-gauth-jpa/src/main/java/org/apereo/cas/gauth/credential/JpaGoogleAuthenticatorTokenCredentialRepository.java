@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 @Slf4j
 @ToString
@@ -107,6 +107,17 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
         val acct = fetchAccounts(username);
         acct.forEach(entityManager::remove);
         LOGGER.debug("Deleted account record for [{}]", username);
+    }
+
+    @Override
+    public void delete(final long id) {
+        entityManager.createNativeQuery("DELETE FROM " + OneTimeTokenAccount.TABLE_NAME_SCRATCH_CODES + " WHERE id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
+
+        entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
     }
 
     @Override

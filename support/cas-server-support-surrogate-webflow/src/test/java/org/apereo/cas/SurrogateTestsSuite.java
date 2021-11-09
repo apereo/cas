@@ -6,9 +6,8 @@ import org.apereo.cas.web.flow.action.SurrogateAuthorizationActionTests;
 import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationActionTests;
 import org.apereo.cas.web.flow.action.SurrogateSelectionActionTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link SurrogateTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     SurrogateAuthorizationActionTests.class,
     LoadSurrogatesListActionTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class SurrogateTestsSuite {
 }

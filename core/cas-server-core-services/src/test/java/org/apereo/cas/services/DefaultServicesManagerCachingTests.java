@@ -39,18 +39,18 @@ public class DefaultServicesManagerCachingTests {
         val context = ServicesManagerConfigurationContext.builder()
             .applicationContext(applicationContext)
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext, List.of(service1), List.of()))
-            .registeredServiceLocators(List.of())
+            .registeredServiceLocators(List.of(new DefaultServicesManagerRegisteredServiceLocator()))
             .servicesCache((Cache) cache)
             .build();
 
         val mgr = new DefaultServicesManager(context);
-        assertTrue(mgr.getAllServices().isEmpty());
+        assertFalse(mgr.getAllServices().isEmpty());
 
         assertEquals(1, mgr.load().size());
         assertEquals(1, mgr.getAllServices().size());
 
         Thread.sleep(1500);
-        assertTrue(mgr.getAllServices().isEmpty());
+        assertFalse(mgr.getAllServices().isEmpty());
 
         assertEquals(1, mgr.load().size());
         assertEquals(1, mgr.getAllServices().size());

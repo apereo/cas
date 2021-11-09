@@ -3,9 +3,8 @@ package org.apereo.cas;
 import org.apereo.cas.redis.RedisAuthenticationHandlerTests;
 import org.apereo.cas.redis.RedisPersonAttributeDaoTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllRedisAuthenticationTestsSuite}.
@@ -17,6 +16,6 @@ import org.junit.runner.RunWith;
     RedisAuthenticationHandlerTests.class,
     RedisPersonAttributeDaoTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllRedisAuthenticationTestsSuite {
 }

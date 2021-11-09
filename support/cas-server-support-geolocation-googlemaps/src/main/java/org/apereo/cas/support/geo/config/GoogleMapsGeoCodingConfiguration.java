@@ -9,12 +9,12 @@ import com.google.maps.GaeRequestHandler;
 import com.google.maps.GeoApiContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,27 +28,19 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleMapsGeoCodingConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @ConditionalOnMissingBean(name = "geoLocationService")
     @Bean
-    @RefreshScope
-    public GeoLocationService geoLocationService() {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) {
         val builder = new GeoApiContext.Builder();
         val properties = casProperties.getGoogleMaps();
         if (properties.isGoogleAppsEngine()) {
             builder.requestHandlerBuilder(new GaeRequestHandler.Builder());
         }
-
         if (StringUtils.isNotBlank(properties.getClientId()) && StringUtils.isNotBlank(properties.getClientSecret())) {
             builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
-        builder.apiKey(properties.getApiKey())
-            .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
-
-        val svc = new GoogleMapsGeoLocationService(builder.build());
-        svc.setIpStackAccessKey(properties.getIpStackApiAccessKey());
-        return svc;
+        builder.apiKey(properties.getApiKey()).connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
+        return new GoogleMapsGeoLocationService(builder.build());
     }
 }

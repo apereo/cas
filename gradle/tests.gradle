@@ -4,22 +4,31 @@ enum TestCategories {
     Attributes,
     Audits,
     Authentication,
+    AuthenticationHandler,
+    AuthenticationPolicy,
+    AuthenticationMetadata,
+    AuthenticationThrottling,
     CAS,
     CasConfiguration,
     Cassandra,
+    Cookie,
     CosmosDb,
     Couchbase,
     CouchDb,
+    Delegation,
     DynamoDb,
     Ehcache,
     ExpirationPolicy,
+    Events,
     FileSystem,
     Groovy,
     Hazelcast,
     Ignite,
+    Impersonation,
     Infinispan,
     InfluxDb,
     JDBC,
+    JDBCAuthentication,
     JMS,
     JMX,
     Kafka,
@@ -30,6 +39,9 @@ enum TestCategories {
     Memcached,
     Metrics,
     MFA,
+    MFAProvider,
+    MFATrigger,
+    MFATrustedDevices,
     MongoDb,
     MsSqlServer,
     MySQL,
@@ -42,7 +54,10 @@ enum TestCategories {
     Redis,
     RegisteredService,
     RestfulApi,
+    RestfulApiAuthentication,
     SAML,
+    SAMLMetadata,
+    SAMLServiceProvider,
     SHELL,
     Simple,
     SMS,
@@ -54,7 +69,9 @@ enum TestCategories {
     WebApp,
     Webflow,
     WebflowActions,
+    WebflowAuthenticationActions,
     WebflowConfig,
+    WebflowMfaConfig,
     WebflowEvents,
     WebflowMfaActions,
     WSFederation,
@@ -65,7 +82,9 @@ enum TestCategories {
 if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
         doLast {
+            def categoryMatchPattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
             def result = TestCategories.values()
+                    .findAll { it.name().matches(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
@@ -78,8 +97,9 @@ if (rootProject.tasks.findByName("testCategories") == null) {
 if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
     rootProject.tasks.create(name: "puppeteerScenarios", description: "Display all available puppeteer scenarios") {
         doLast {
-            def scenarios = new TreeSet<String>();
-            rootProject.file("ci/tests/puppeteer/scenarios").eachDir {
+            def scenarios = new TreeSet<String>()
+            def scenarioMatchPattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
                 scenarios += it.getName()
             }
             println(groovy.json.JsonOutput.toJson(scenarios))
@@ -112,20 +132,22 @@ test {
 
 tasks.withType(Test) {
     scanForTestClasses = false
-    ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    forkEvery = 1000
+    ignoreFailures = providers.systemProperty("ignoreTestFailures").forUseAtConfigurationTime().present
+    forkEvery = 2000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }
     }
-    if (System.getenv().containsKey("CI")) {
+
+    def ci = System.getenv().containsKey("CI")
+    if (ci) {
         outputs.upToDateWhen { false }
     }
     systemProperty("spring.main.banner-mode", "off")
 //    systemProperty("spring.main.lazy-initialization", "true")
-    systemProperty("CI", System.getProperty("CI"))
+    systemProperty("CI", ci)
 
     failFast = true
 
@@ -144,37 +166,47 @@ tasks.withType(Test) {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.security.action=jdk.crypto.ec")
     list.add("-Xms512m")
     list.add("-Xmx4g")
     jvmArgs = list
 
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
-        events = ["FAILED", "STANDARD_OUT"]
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
-        showStandardStreams = Boolean.getBoolean("showStandardStreams")
-        showExceptions = true
-        showCauses = true
-        beforeSuite { desc ->
-            if (!desc.parent) {
-                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+
+        def verbose = providers.systemProperty("verbose").forUseAtConfigurationTime().present
+
+        showStandardStreams = verbose
+        showExceptions = verbose
+        showCauses = verbose
+
+        if (verbose) {
+            beforeSuite { desc ->
+                if (!desc.parent) {
+                    ansi.cyan "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
+                }
             }
-        }
-        beforeTest { desc ->
-            println "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
-        }
-        afterTest { desc, result ->
-            println """
+
+            beforeTest { desc ->
+                ansi.cyan "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
+            }
+            
+            afterTest { desc, result ->
+                ansi.green """
 Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
-        }
-        afterSuite { desc, result ->
-            if (!desc.parent) {
-                println """
+            }
+            afterSuite { desc, result ->
+                if (!desc.parent) {
+                    ansi.green """
 Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
 (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
 """
+                }
             }
         }
     }
@@ -190,6 +222,10 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
         dumpOnExit = true
         excludes = rootProject.excludedFilesFromTestCoverage
     }
+    filter {
+        setFailOnNoMatchingTests(false)
+        excludeTestsMatching "*TestsSuite"
+    }
 }
 
 def shouldTest(Project project, String category) {
@@ -197,7 +233,7 @@ def shouldTest(Project project, String category) {
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }
-    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
+    return !providers.systemProperty("skipTests").forUseAtConfigurationTime().present && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

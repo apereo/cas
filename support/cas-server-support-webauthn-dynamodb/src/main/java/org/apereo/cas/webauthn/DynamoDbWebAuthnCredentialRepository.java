@@ -47,7 +47,7 @@ public class DynamoDbWebAuthnCredentialRepository extends BaseWebAuthnCredential
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         return facilitator.load()
             .map(DynamoDbWebAuthnCredentialRegistration::getRecords)
             .flatMap(List::stream)

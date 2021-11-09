@@ -6,9 +6,8 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventR
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurerTests;
 import org.apereo.cas.config.support.authentication.RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllRadiusMultifactorTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests.class,
     RadiusMultifactorWebflowConfigurerTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllRadiusMultifactorTestsSuite {
 }

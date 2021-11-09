@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -26,7 +26,8 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
      * @param applicationContext the application context
      * @return the multifactor authentication provider
      */
-    public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
+    public static TestUnavailableMultifactorAuthenticationProvider registerProviderIntoApplicationContext(
+        final ConfigurableApplicationContext applicationContext) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             TestUnavailableMultifactorAuthenticationProvider.class, "unavailable-provider" + System.currentTimeMillis());
     }
@@ -37,7 +38,7 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
     }
 
     @Override
-    public String getId(){
+    public String getId() {
         return ID;
     }
 

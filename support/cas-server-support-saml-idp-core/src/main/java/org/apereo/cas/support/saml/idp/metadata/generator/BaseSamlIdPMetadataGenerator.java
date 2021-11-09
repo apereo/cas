@@ -9,13 +9,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.velocity.VelocityContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -52,7 +54,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 LOGGER.info("Creating self-signed certificate for encryption...");
                 val encryption = buildSelfSignedEncryptionCert(registeredService);
 
-                LOGGER.info("Creating metadata...");
+                LOGGER.info("Creating SAML2 metadata for identity provider...");
                 val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
 
                 val doc = newSamlIdPMetadataDocument();
@@ -132,6 +134,35 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         }
     }
 
+    @SuperBuilder
+    @Getter
+    public static class IdPMetadataTemplateContext implements Serializable {
+        private static final long serialVersionUID = -8084689071916142718L;
+
+        private final String entityId;
+
+        private final String scope;
+
+        private final String endpointUrl;
+
+        private final String encryptionCertificate;
+
+        private final String signingCertificate;
+
+        private final boolean ssoServicePostBindingEnabled;
+
+        private final boolean ssoServicePostSimpleSignBindingEnabled;
+
+        private final boolean ssoServiceRedirectBindingEnabled;
+
+        private final boolean ssoServiceSoapBindingEnabled;
+
+        private final boolean sloServicePostBindingEnabled;
+
+        private final boolean sloServiceRedirectBindingEnabled;
+
+    }
+
     private String getIdPEndpointUrl() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         return resolver.resolve(configurationContext.getCasProperties().getServer().getPrefix().concat("/idp"));
@@ -146,39 +177,55 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @param registeredService registered service
      * @return the metadata
      */
-    @SneakyThrows
     private String buildMetadataGeneratorParameters(final Pair<String, String> signing,
                                                     final Pair<String, String> encryption,
-                                                    final Optional<SamlRegisteredService> registeredService) {
+                                                    final Optional<SamlRegisteredService> registeredService) throws Exception {
 
-        val template = configurationContext.getApplicationContext().getResource("classpath:/template-idp-metadata.xml");
         val signingCert = SamlIdPMetadataGenerator.cleanCertificate(signing.getKey());
         val encryptionCert = SamlIdPMetadataGenerator.cleanCertificate(encryption.getKey());
 
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         try (val writer = new StringWriter()) {
-            IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val entityId = resolver.resolve(idp.getCore().getEntityId());
             val scope = resolver.resolve(configurationContext.getCasProperties().getServer().getScope());
-            var metadata = writer.toString()
-                .replace("${entityId}", entityId)
-                .replace("${scope}", scope)
-                .replace("${idpEndpointUrl}", getIdPEndpointUrl())
-                .replace("${encryptionKey}", encryptionCert)
-                .replace("${signingKey}", signingCert);
+
+            val metadataCore = idp.getMetadata().getCore();
+            val context = IdPMetadataTemplateContext.builder()
+                .encryptionCertificate(encryptionCert)
+                .signingCertificate(signingCert)
+                .entityId(entityId)
+                .scope(scope)
+                .endpointUrl(getIdPEndpointUrl())
+                .ssoServicePostBindingEnabled(metadataCore.isSsoServicePostBindingEnabled())
+                .ssoServicePostSimpleSignBindingEnabled(metadataCore.isSsoServicePostSimpleSignBindingEnabled())
+                .ssoServiceRedirectBindingEnabled(metadataCore.isSsoServiceRedirectBindingEnabled())
+                .ssoServiceSoapBindingEnabled(metadataCore.isSsoServiceSoapBindingEnabled())
+                .sloServicePostBindingEnabled(metadataCore.isSloServicePostBindingEnabled())
+                .sloServiceRedirectBindingEnabled(metadataCore.isSloServiceRedirectBindingEnabled())
+                .build();
+
+            val template = configurationContext.getVelocityEngine()
+                .getTemplate("/template-idp-metadata.vm", StandardCharsets.UTF_8.name());
+
+            val velocityContext = new VelocityContext();
+            velocityContext.put("context", context);
+            template.merge(velocityContext, writer);
+            var metadata = writer.toString();
 
             val customizers = configurationContext.getApplicationContext()
-                .getBeansOfType(SamlIdPMetadataCustomizer.class, false, true).values();
+                .getBeansOfType(SamlIdPMetadataCustomizer.class).values();
             if (!customizers.isEmpty()) {
-                val entityDescriptor = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), metadata, EntityDescriptor.class);
+                val openSamlConfigBean = configurationContext.getOpenSamlConfigBean();
+                val entityDescriptor = SamlUtils.transformSamlObject(openSamlConfigBean, metadata, EntityDescriptor.class);
                 customizers.stream()
                     .sorted(AnnotationAwareOrderComparator.INSTANCE)
                     .forEach(customizer -> customizer.customize(entityDescriptor, registeredService));
-                metadata = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), entityDescriptor).toString();
+                metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entityDescriptor).toString();
             }
             writeMetadata(metadata, registeredService);
             return metadata;
         }
     }
+
 }

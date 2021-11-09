@@ -8,7 +8,6 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,7 +60,6 @@ public class DatabaseAuthenticationTestConfiguration {
     @Qualifier("persistenceProviderContext")
     private JpaPersistenceProviderContext persistenceProviderContext;
 
-    @SneakyThrows
     @Bean
     public DataSource dataSource() {
         return JpaBeans.newDataSource(databaseDriverClassName, databaseUser, databasePassword, this.databaseUrl + databaseName);
@@ -79,7 +77,7 @@ public class DatabaseAuthenticationTestConfiguration {
             .persistenceUnitName("databaseAuthnContext")
             .dataSource(dataSource())
             .persistenceProvider(new CasHibernatePersistenceProvider(persistenceProviderContext))
-            .packagesToScan(CollectionUtils.wrap("org.apereo.cas.adaptors.jdbc"))
+            .packagesToScan(CollectionUtils.wrapSet("org.apereo.cas.adaptors.jdbc"))
             .build();
         val jpaProperties = ctx.getJpaProperties();
         jpaProperties.put("hibernate.dialect", databaseDialect);

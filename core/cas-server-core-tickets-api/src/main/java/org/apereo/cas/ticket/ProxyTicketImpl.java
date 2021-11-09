@@ -8,17 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 /**
  * The {@link ProxyTicketImpl} is a concrete implementation of the {@link ProxyTicket}.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Entity
-@DiscriminatorValue(ProxyTicket.PROXY_TICKET_PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {

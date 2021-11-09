@@ -29,7 +29,6 @@ import org.apereo.cas.config.CasSamlSPFamisConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGartnerConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGitlabConfigurationTests;
 import org.apereo.cas.config.CasSamlSPGiveCampusConfigurationTests;
-import org.apereo.cas.config.CasSamlSPHipchatConfigurationTests;
 import org.apereo.cas.config.CasSamlSPInCommonConfigurationTests;
 import org.apereo.cas.config.CasSamlSPInfiniteCampusConfigurationTests;
 import org.apereo.cas.config.CasSamlSPJiraConfigurationTests;
@@ -62,9 +61,8 @@ import org.apereo.cas.config.CasSamlSPZimbraConfigurationTests;
 import org.apereo.cas.config.CasSamlSPZoomConfigurationTests;
 import org.apereo.cas.util.SamlSPUtilsTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllSamlSPTestsSuite}.
@@ -108,7 +106,6 @@ import org.junit.runner.RunWith;
     CasSamlSPCherWellConfigurationTests.class,
     CasSamlSPAcademicWorksConfigurationTests.class,
     CasSamlSPConfluenceConfigurationTests.class,
-    CasSamlSPHipchatConfigurationTests.class,
     CasSamlSPBlackBaudConfigurationTests.class,
     CasSamlSPBenefitFocusConfigurationTests.class,
     CasSamlSPBynderConfigurationTests.class,
@@ -135,6 +132,6 @@ import org.junit.runner.RunWith;
     CasSamlSPCaliforniaCommunityCollegesConfigurationTests.class,
     SamlSPUtilsTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllSamlSPTestsSuite {
 }

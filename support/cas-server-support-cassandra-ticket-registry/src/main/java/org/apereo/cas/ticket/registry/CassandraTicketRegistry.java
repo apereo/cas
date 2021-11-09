@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.Statement;
@@ -44,6 +44,15 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
     private final TicketSerializationManager ticketSerializationManager;
 
+    private static int getTimeToLive(final Ticket ticket) {
+        val timeToLive = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
+        if (ttl >= CassandraSessionFactory.MAX_TTL) {
+            return CassandraSessionFactory.MAX_TTL;
+        }
+        return ttl.intValue();
+    }
+
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         LOGGER.trace("Locating ticket [{}]", ticketId);
@@ -67,22 +76,16 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
 
         val object = deserialize(holder.iterator().next());
         val result = decodeTicket(object);
-        if (result != null && predicate.test(result)) {
-            return result;
-        }
-        LOGGER.trace("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", encodedTicketId,
-            predicate.getClass().getSimpleName());
-        return null;
+        return FunctionUtils.doAndReturn(result != null && predicate.test(result), () -> result, () -> {
+            LOGGER.trace("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", encodedTicketId,
+                predicate.getClass().getSimpleName());
+            return null;
+        });
     }
 
-
     @Override
-    public void addTicket(final Ticket ticket) {
-        try {
-            addTicketToCassandra(ticket, true);
-        } catch (final Exception e) {
-            LOGGER.error(String.format("Failed adding %s", ticket), e);
-        }
+    public void addTicketInternal(final Ticket ticket) {
+        addTicketToCassandra(ticket, true);
     }
 
     @Override
@@ -114,26 +117,16 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
         val ticketId = encodeTicketId(ticketIdToDelete);
         LOGGER.debug("Deleting ticket [{}]", ticketId);
-        try {
-            val definition = this.ticketCatalog.find(ticketIdToDelete);
-            if (definition == null) {
-                LOGGER.debug("Ticket definition [{}] could not be found in the ticket catalog", ticketId);
-                return false;
-            }
-            val delete = QueryBuilder
-                .deleteFrom(this.properties.getKeyspace(), definition.getProperties().getStorageName())
-                .whereColumn("id").isEqualTo(QueryBuilder.literal(ticketId))
-                .build()
-                .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
-                .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
-                .setTimeout(Beans.newDuration(properties.getTimeout()));
-            cassandraSessionFactory.getCqlTemplate().execute(delete);
-            return true;
-        } catch (final Exception e) {
-            LOGGER.error("Failed deleting [{}]", ticketId);
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+        val definition = this.ticketCatalog.find(ticketIdToDelete);
+        val delete = QueryBuilder
+            .deleteFrom(this.properties.getKeyspace(), definition.getProperties().getStorageName())
+            .whereColumn("id").isEqualTo(QueryBuilder.literal(ticketId))
+            .build()
+            .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+            .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+            .setTimeout(Beans.newDuration(properties.getTimeout()));
+        cassandraSessionFactory.getCqlTemplate().execute(delete);
+        return true;
     }
 
     @Override
@@ -163,20 +156,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     private Ticket deserialize(final CassandraTicketHolder holder) {
-        if (holder == null) {
-            LOGGER.trace("Unable to locate Cassandra ticket");
-            return null;
-        }
         return ticketSerializationManager.deserializeTicket(holder.getData(), holder.getType());
-    }
-
-    private static int getTimeToLive(final Ticket ticket) {
-        val timeToLive = ticket.getExpirationPolicy().getTimeToLive();
-        val ttl = Long.MAX_VALUE == timeToLive ? Long.valueOf(Integer.MAX_VALUE) : timeToLive;
-        if (ttl >= CassandraSessionFactory.MAX_TTL) {
-            return CassandraSessionFactory.MAX_TTL;
-        }
-        return ttl.intValue();
     }
 
     private Collection<CassandraTicketHolder> findCassandraTicketBy(final TicketDefinition definition) {
@@ -244,10 +224,6 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     private void addTicketToCassandra(final Ticket ticket, final boolean inserting) {
         LOGGER.debug("Adding ticket [{}]", ticket.getId());
         val metadata = this.ticketCatalog.find(ticket);
-        if (metadata == null) {
-            LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
-            return;
-        }
         LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
         val encTicket = encodeTicket(ticket);
         val data = ticketSerializationManager.serializeTicket(encTicket);

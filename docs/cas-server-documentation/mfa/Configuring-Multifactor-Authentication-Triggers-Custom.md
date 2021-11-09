@@ -23,7 +23,7 @@ Note that:
 
 You will need to have compile-time access to the following modules in the Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
 
@@ -73,7 +73,7 @@ public class SomethingConfiguration {
     }
     
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver() {
         val r = new DefaultMultifactorAuthenticationProviderEventResolver(
             authenticationSystemSupport.getObject(),

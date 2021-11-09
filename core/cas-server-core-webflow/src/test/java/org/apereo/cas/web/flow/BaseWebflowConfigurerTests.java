@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,21 +59,23 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 })
 public class BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("casWebflowExecutionPlan")
+    @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier("loginFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("logoutFlowRegistry")
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        MailSenderValidatorAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

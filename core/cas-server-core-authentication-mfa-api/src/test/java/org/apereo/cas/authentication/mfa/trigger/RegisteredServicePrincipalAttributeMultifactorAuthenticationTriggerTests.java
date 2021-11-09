@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
+@Tag("MFATrigger")
 public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     public void verifyOperationByProvider() {
@@ -67,6 +68,22 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val result = trigger.isActivated(authentication, registeredService, httpRequest, mock(Service.class));
         assertTrue(result.isPresent());
         assertEquals(provider2.getId(), result.get().getId());
+    }
+
+    @Test
+    public void verifyMismatchAttributesMustDeny() {
+        val policy = mock(RegisteredServiceMultifactorPolicy.class);
+        when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
+        when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");
+        when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
+        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getMfa().getTriggers().getPrincipal().setDenyIfUnmatched(true);
+        val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
+            mock(MultifactorAuthenticationProviderSelector.class));
+        assertThrows(AuthenticationException.class, () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
     }
 
     @Test

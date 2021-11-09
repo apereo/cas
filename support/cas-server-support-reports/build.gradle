@@ -1,6 +1,7 @@
 description = "Apereo CAS Web Application Reports"
 dependencies {
     api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-logout")
     
     implementation project(":support:cas-server-support-reports-core")
     
@@ -40,6 +41,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-metrics")
     testImplementation project(":support:cas-server-support-discovery-profile")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

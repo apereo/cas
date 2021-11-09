@@ -33,3 +33,8 @@ A sample JSON file follows:
 ```
 
 Registered service property values can use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+## Supported Properties
+
+{% include_cached registeredserviceproperties.html %}
+

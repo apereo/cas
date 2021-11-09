@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Autowired
-    @Qualifier("initializeLoginAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
     private Action action;
 
     @Test
@@ -33,7 +33,8 @@ public class InitializeLoginActionTests extends AbstractWebflowActionsTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+            request, new MockHttpServletResponse()));
         assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
     }
 }

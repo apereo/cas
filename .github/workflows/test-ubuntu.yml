@@ -9,7 +9,8 @@ env:
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  JDK_CURRENT: 11.0.10
+  JDK_CURRENT: 11.0.13
+  CATEGORY_REGEX: ".*" # Use this to limit which tests run
 
 ##########################################################################
 
@@ -28,11 +29,10 @@ jobs:
     timeout-minutes: 1
     if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
     steps:
-      - uses: styfle/cancel-workflow-action@0.7.0
+      - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
-
-
+          
 ##########################################################################
 
   initialize:
@@ -41,9 +41,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -55,9 +56,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -79,9 +81,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
@@ -97,12 +100,14 @@ jobs:
         os: [ubuntu-latest]
         category: ${{fromJSON(needs.testcategories.outputs.categories)}}
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.category }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
         shell: bash
@@ -117,11 +122,12 @@ jobs:
       - name: Run Tests
         run: ./testcas.sh --no-retry --no-watch --with-coverage --category ${{ matrix.category }}
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v1"
+        uses: "codecov/codecov-action@v2"
         with:
-          file: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+          files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
           flags: ${{ matrix.category }}
           name: ${{ matrix.category }}
+          verbose: false
       - name: "Upload Coverage Report"
         uses: "actions/upload-artifact@v2"
         with:
@@ -136,9 +142,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
+          distribution: 'temurin'
       - name: "Download coverage files"
         uses: "actions/download-artifact@v2"
         with:
@@ -153,7 +160,7 @@ jobs:
           echo "SONAR_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to SonarCloud
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.SONARCLOUD_TOKEN != null }}
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel sonarqube -x javadoc -Dsonar.login="${SONARCLOUD_TOKEN}" -DskipNestedConfigMetadataGen=true -Dverbose=true -Dsonar.coverage.jacoco.xmlReportPaths="${SONAR_COVERAGE_REPORTS}"
       - name: "Collect Files for Codacy"
         run: |
           find $PWD -type f -name 'jacocoRootReport.xml'
@@ -164,7 +171,7 @@ jobs:
           echo "CODACY_COVERAGE_REPORTS=${files}" >> $GITHUB_ENV
       - name: Upload Coverage to Codacy
         if: ${{ !contains(github.head_ref, 'renovate') && github.event_name == 'push' && env.CODACY_PROJECT_TOKEN != null }}
-        uses: codacy/codacy-coverage-reporter-action@master
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.CODACY_COVERAGE_REPORTS }}

@@ -1,0 +1,30 @@
+{
+  "dependencies": "yubikey,gauth",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.springframework.webflow=info",
+
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.mfa.yubikey.client-id=18420",
+    "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth,mfa-yubikey",
+    "--cas.authn.mfa.core.provider-selection-enabled=true"
+  ]
+}
+
+
+

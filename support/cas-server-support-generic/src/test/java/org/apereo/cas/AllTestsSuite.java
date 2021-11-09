@@ -6,9 +6,8 @@ import org.apereo.cas.adaptors.generic.GroovyAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandlerTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -23,6 +22,6 @@ import org.junit.runner.RunWith;
     JsonResourceAuthenticationHandlerTests.class,
     ConfigurationTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

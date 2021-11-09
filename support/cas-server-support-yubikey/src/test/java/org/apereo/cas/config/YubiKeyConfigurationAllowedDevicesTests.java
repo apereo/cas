@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.allowed-devices.casuseryubikey=device-identifier"
     })
-@Tag("MFA")
+@Tag("MFAProvider")
 public class YubiKeyConfigurationAllowedDevicesTests extends BaseYubiKeyTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")

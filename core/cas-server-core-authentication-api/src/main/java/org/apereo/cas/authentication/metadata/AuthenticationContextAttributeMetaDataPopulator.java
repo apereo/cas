@@ -19,7 +19,9 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
+
     private final AuthenticationHandler authenticationHandler;
+
     private final String authenticationContextAttributeValue;
 
     @Override

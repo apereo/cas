@@ -1,15 +1,31 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
+import org.apereo.cas.authentication.support.DefaultLdapAccountStateHandler;
+import org.apereo.cas.authentication.support.OptionalWarningLdapAccountStateHandler;
+import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
+import com.google.common.collect.Multimap;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -17,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.services.persondir.support.ldap.ActiveDirectoryLdapEntryHandler;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.AddOperation;
@@ -58,6 +75,8 @@ import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.AuthenticationHandlerResponse;
+import org.ldaptive.auth.AuthenticationResponse;
+import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.CompareAuthenticationHandler;
 import org.ldaptive.auth.DnResolver;
@@ -67,6 +86,11 @@ import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.User;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
@@ -75,6 +99,7 @@ import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.pool.BindConnectionPassivator;
@@ -91,11 +116,15 @@ import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.config.SetFactoryBean;
+import org.springframework.context.ApplicationContext;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -208,10 +237,10 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize,
-        final String... returnAttributes) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String... returnAttributes) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn,
             filter, pageSize, null, returnAttributes);
     }
@@ -229,11 +258,11 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize,
-        final String[] binaryAttributes,
-        final String[] returnAttributes) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize,
+                                                        final String[] binaryAttributes,
+                                                        final String[] returnAttributes) throws LdapException {
         val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);
         if (pageSize <= 0) {
             val searchOperation = new SearchOperation(connectionFactory);
@@ -255,9 +284,9 @@ public class LdapUtils {
      * @throws LdapException the ldap exception
      */
     public static SearchResponse executeSearchOperation(final ConnectionFactory connectionFactory,
-        final String baseDn,
-        final FilterTemplate filter,
-        final int pageSize) throws LdapException {
+                                                        final String baseDn,
+                                                        final FilterTemplate filter,
+                                                        final int pageSize) throws LdapException {
         return executeSearchOperation(connectionFactory, baseDn, filter, pageSize,
             ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
@@ -269,10 +298,7 @@ public class LdapUtils {
      * @return true, if successful
      */
     public static boolean containsResultEntry(final SearchResponse response) {
-        if (response != null) {
-            return response.getEntry() != null;
-        }
-        return false;
+        return response != null && response.getEntry() != null;
     }
 
     /**
@@ -292,14 +318,14 @@ public class LdapUtils {
      * letting user change their own (e.g. expiring) password.
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
-        final ConnectionFactory connectionFactory,
-        final String oldPassword,
-        final String newPassword,
-        final AbstractLdapProperties.LdapType type) {
+                                                         final ConnectionFactory connectionFactory,
+                                                         final String oldPassword,
+                                                         final String newPassword,
+                                                         final AbstractLdapProperties.LdapType type) {
         try {
             val connConfig = connectionFactory.getConnectionConfig();
-            if (connConfig.getUseStartTLS()
-                || (connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+            val secureLdap = connConfig.getLdapUrl() != null && !connConfig.getLdapUrl().toLowerCase().contains("ldaps://");
+            if (connConfig.getUseStartTLS() || secureLdap) {
                 LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
                         + "To modify password attributes, the connection to the LDAP server {} be secured and/or encrypted.",
                     type == AbstractLdapProperties.LdapType.AD ? "MUST" : "SHOULD");
@@ -343,7 +369,7 @@ public class LdapUtils {
      * @return true/false
      */
     public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
-        final Map<String, Set<String>> attributes) {
+                                                 final Map<String, Set<String>> attributes) {
         try {
             val operation = new ModifyOperation(connectionFactory);
             val mods = attributes.entrySet()
@@ -459,9 +485,9 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-        final FilterTemplate filter,
-        final String[] binaryAttributes,
-        final String[] returnAttributes) {
+                                                         final FilterTemplate filter,
+                                                         final String[] binaryAttributes,
+                                                         final String[] returnAttributes) {
         val sr = new SearchRequest(baseDn, filter);
         sr.setBinaryAttributes(binaryAttributes);
         sr.setReturnAttributes(returnAttributes);
@@ -479,8 +505,8 @@ public class LdapUtils {
      * @return the search executor
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn, final String filterQuery,
-        final List<String> params,
-        final String[] returnAttributes) {
+                                                         final List<String> params,
+                                                         final String[] returnAttributes) {
         val request = new SearchRequest();
         request.setBaseDn(baseDn);
         request.setFilter(newLdaptiveSearchFilter(filterQuery, params));
@@ -498,7 +524,7 @@ public class LdapUtils {
      * @return the search request
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
-        final FilterTemplate filter) {
+                                                         final FilterTemplate filter) {
         return newLdaptiveSearchRequest(baseDn, filter, ReturnAttributes.ALL_USER.value(), ReturnAttributes.ALL_USER.value());
     }
 
@@ -548,35 +574,34 @@ public class LdapUtils {
                                                          final List<String> values) {
         val filter = new FilterTemplate();
         if (ResourceUtils.doesResourceExist(filterQuery)) {
-            ApplicationContextProvider.getScriptResourceCacheManager()
-                .ifPresentOrElse(cacheMgr -> {
-                    val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
-                    var script = (ExecutableCompiledGroovyScript) null;
-                    if (cacheMgr.containsKey(cacheKey)) {
-                        script = cacheMgr.get(cacheKey);
-                        LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
-                    } else {
-                        val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
-                        LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                        script = new WatchableGroovyScriptResource(resource);
-                        cacheMgr.put(cacheKey, script);
-                        LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
-                    }
-                    if (script != null) {
-                        val parameters = new LinkedHashMap<String, String>();
-                        IntStream.range(0, values.size())
-                            .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
-                        val args = CollectionUtils.<String, Object>wrap("filter", filter,
-                            "parameters", parameters,
-                            "applicationContext", ApplicationContextProvider.getApplicationContext(),
-                            "logger", LOGGER);
-                        script.setBinding(args);
-                        script.execute(args.values().toArray(), FilterTemplate.class);
-                    }
-                },
-                    () -> {
-                        throw new RuntimeException("Script cache manager unavailable to handle LDAP filter");
-                    });
+            ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(cacheMgr -> {
+                val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
+                var script = (ExecutableCompiledGroovyScript) null;
+                if (cacheMgr.containsKey(cacheKey)) {
+                    script = cacheMgr.get(cacheKey);
+                    LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
+                } else {
+                    val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
+                    LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
+                    script = new WatchableGroovyScriptResource(resource);
+                    cacheMgr.put(cacheKey, script);
+                    LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
+                }
+                if (script != null) {
+                    val parameters = new LinkedHashMap<String, String>();
+                    IntStream.range(0, values.size())
+                        .forEachOrdered(i -> parameters.put(paramName.get(i), values.get(i)));
+                    val args = CollectionUtils.<String, Object>wrap("filter", filter,
+                        "parameters", parameters,
+                        "applicationContext", ApplicationContextProvider.getApplicationContext(),
+                        "logger", LOGGER);
+                    script.setBinding(args);
+                    script.execute(args.values().toArray(), FilterTemplate.class);
+                }
+            },
+                () -> {
+                    throw new RuntimeException("Script cache manager unavailable to handle LDAP filter");
+                });
         } else {
             filter.setFilter(filterQuery);
             if (values != null) {
@@ -592,7 +617,7 @@ public class LdapUtils {
                 });
             }
         }
-       
+
         LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;
     }
@@ -619,8 +644,8 @@ public class LdapUtils {
      * @return the search executor
      */
     public static SearchOperation newLdaptiveSearchOperation(final String baseDn, final String filterQuery,
-        final List<String> params,
-        final List<String> returnAttributes) {
+                                                             final List<String> params,
+                                                             final List<String> returnAttributes) {
         val operation = new SearchOperation();
         val request = newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         operation.setRequest(request);
@@ -749,29 +774,29 @@ public class LdapUtils {
     /**
      * New connection config connection config.
      *
-     * @param l the ldap properties
+     * @param properties the ldap properties
      * @return the connection config
      */
-    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties l) {
-        if (StringUtils.isBlank(l.getLdapUrl())) {
+    public static ConnectionConfig newLdaptiveConnectionConfig(final AbstractLdapProperties properties) {
+        if (StringUtils.isBlank(properties.getLdapUrl())) {
             throw new IllegalArgumentException("LDAP url cannot be empty/blank");
         }
 
-        LOGGER.debug("Creating LDAP connection configuration for [{}]", l.getLdapUrl());
+        LOGGER.debug("Creating LDAP connection configuration for [{}]", properties.getLdapUrl());
         val cc = new ConnectionConfig();
 
-        val urls = l.getLdapUrl().contains(" ")
-            ? l.getLdapUrl()
-            : String.join(" ", l.getLdapUrl().split(","));
-        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
+        val urls = properties.getLdapUrl().contains(" ")
+            ? properties.getLdapUrl()
+            : String.join(" ", properties.getLdapUrl().split(","));
+        LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", properties.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
-        cc.setUseStartTLS(l.isUseStartTls());
-        cc.setConnectTimeout(Beans.newDuration(l.getConnectTimeout()));
-        cc.setResponseTimeout(Beans.newDuration(l.getResponseTimeout()));
+        cc.setUseStartTLS(properties.isUseStartTls());
+        cc.setConnectTimeout(Beans.newDuration(properties.getConnectTimeout()));
+        cc.setResponseTimeout(Beans.newDuration(properties.getResponseTimeout()));
 
-        if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+        if (StringUtils.isNotBlank(properties.getConnectionStrategy())) {
+            val strategy = AbstractLdapProperties.LdapConnectionStrategy.valueOf(properties.getConnectionStrategy());
             switch (strategy) {
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
@@ -789,24 +814,24 @@ public class LdapUtils {
             }
         }
 
-        if (l.getTrustCertificates() != null) {
-            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", l.getTrustCertificates());
+        if (properties.getTrustCertificates() != null) {
+            LOGGER.debug("Creating LDAP SSL configuration via trust certificates [{}]", properties.getTrustCertificates());
             val cfg = new X509CredentialConfig();
-            cfg.setTrustCertificates(l.getTrustCertificates());
+            cfg.setTrustCertificates(properties.getTrustCertificates());
             cc.setSslConfig(new SslConfig(cfg));
-        } else if (l.getTrustStore() != null || l.getKeystore() != null) {
+        } else if (properties.getTrustStore() != null || properties.getKeystore() != null) {
             val cfg = new KeyStoreCredentialConfig();
-            if (l.getTrustStore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", l.getTrustStore());
-                cfg.setTrustStore(l.getTrustStore());
-                cfg.setTrustStoreType(l.getTrustStoreType());
-                cfg.setTrustStorePassword(l.getTrustStorePassword());
+            if (properties.getTrustStore() != null) {
+                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", properties.getTrustStore());
+                cfg.setTrustStore(properties.getTrustStore());
+                cfg.setTrustStoreType(properties.getTrustStoreType());
+                cfg.setTrustStorePassword(properties.getTrustStorePassword());
             }
-            if (l.getKeystore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", l.getKeystore());
-                cfg.setKeyStore(l.getKeystore());
-                cfg.setKeyStoreType(l.getKeystoreType());
-                cfg.setKeyStorePassword(l.getKeystorePassword());
+            if (properties.getKeystore() != null) {
+                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", properties.getKeystore());
+                cfg.setKeyStore(properties.getKeystore());
+                cfg.setKeyStoreType(properties.getKeystoreType());
+                cfg.setKeyStorePassword(properties.getKeystorePassword());
             }
             cc.setSslConfig(new SslConfig(cfg));
         } else {
@@ -816,7 +841,7 @@ public class LdapUtils {
 
         val sslConfig = cc.getSslConfig();
         if (sslConfig != null) {
-            switch (l.getHostnameVerifier()) {
+            switch (properties.getHostnameVerifier()) {
                 case ANY:
                     sslConfig.setHostnameVerifier(new AllowAnyHostnameVerifier());
                     break;
@@ -825,8 +850,8 @@ public class LdapUtils {
                     sslConfig.setHostnameVerifier(new DefaultHostnameVerifier());
             }
 
-            if (StringUtils.isNotBlank(l.getTrustManager())) {
-                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(l.getTrustManager().trim().toUpperCase())) {
+            if (StringUtils.isNotBlank(properties.getTrustManager())) {
+                switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(properties.getTrustManager().trim().toUpperCase())) {
                     case ANY:
                         sslConfig.setTrustManagers(new AllowAnyTrustManager());
                         break;
@@ -838,30 +863,30 @@ public class LdapUtils {
             }
         }
 
-        if (StringUtils.isNotBlank(l.getSaslMechanism())) {
-            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", l.getSaslMechanism());
+        if (StringUtils.isNotBlank(properties.getSaslMechanism())) {
+            LOGGER.debug("Creating LDAP SASL mechanism via [{}]", properties.getSaslMechanism());
 
             val bc = new BindConnectionInitializer();
-            val sc = getSaslConfigFrom(l);
+            val sc = getSaslConfigFrom(properties);
 
-            if (StringUtils.isNotBlank(l.getSaslAuthorizationId())) {
-                sc.setAuthorizationId(l.getSaslAuthorizationId());
+            if (StringUtils.isNotBlank(properties.getSaslAuthorizationId())) {
+                sc.setAuthorizationId(properties.getSaslAuthorizationId());
             }
-            sc.setMutualAuthentication(l.getSaslMutualAuth());
-            if (StringUtils.isNotBlank(l.getSaslQualityOfProtection())) {
-                sc.setQualityOfProtection(QualityOfProtection.valueOf(l.getSaslQualityOfProtection()));
+            sc.setMutualAuthentication(properties.getSaslMutualAuth());
+            if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
+                sc.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
             }
-            if (StringUtils.isNotBlank(l.getSaslSecurityStrength())) {
-                sc.setSecurityStrength(SecurityStrength.valueOf(l.getSaslSecurityStrength()));
+            if (StringUtils.isNotBlank(properties.getSaslSecurityStrength())) {
+                sc.setSecurityStrength(SecurityStrength.valueOf(properties.getSaslSecurityStrength()));
             }
             bc.setBindSaslConfig(sc);
             cc.setConnectionInitializers(bc);
-        } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+        } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
             cc.setConnectionInitializers(new FastBindConnectionInitializer());
-        } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", l.getBindDn());
-            cc.setConnectionInitializers(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
+        } else if (StringUtils.isNotBlank(properties.getBindDn()) && StringUtils.isNotBlank(properties.getBindCredential())) {
+            LOGGER.debug("Creating LDAP bind connection initializer via [{}]", properties.getBindDn());
+            cc.setConnectionInitializers(new BindConnectionInitializer(properties.getBindDn(), new Credential(properties.getBindCredential())));
         }
         return cc;
     }
@@ -885,7 +910,7 @@ public class LdapUtils {
      * @return the entry resolver
      */
     public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory factory) {
+                                                               final ConnectionFactory factory) {
 
         var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
@@ -896,7 +921,7 @@ public class LdapUtils {
                 entryResolver.setConnectionFactory(factory);
                 entryResolver.setAllowMultipleEntries(l.isAllowMultipleEntries());
                 entryResolver.setBinaryAttributes(l.getBinaryAttributes().toArray(new String[0]));
-
+                
                 if (StringUtils.isNotBlank(l.getDerefAliases())) {
                     entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
                 }
@@ -930,6 +955,9 @@ public class LdapUtils {
         val entryHandlers = new ArrayList<LdapEntryHandler>();
         properties.forEach(h -> {
             switch (h.getType()) {
+                case ACTIVE_DIRECTORY:
+                    entryHandlers.add(new ActiveDirectoryLdapEntryHandler());
+                    break;
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
                     val caseChange = h.getCaseChange();
@@ -992,7 +1020,9 @@ public class LdapUtils {
                         new RecursiveResultHandler(recursive.getSearchAttribute(),
                             recursive.getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
+                case MERGE_ENTRIES:
                 default:
+                    searchResultHandlers.add(new MergeResultHandler());
                     break;
             }
         });
@@ -1012,7 +1042,7 @@ public class LdapUtils {
         val auth = StringUtils.isBlank(l.getPrincipalAttributePassword())
             ? new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(l)))
             : new Authenticator(resolver, getCompareAuthenticationHandler(l, newLdaptiveConnectionFactory(l)));
-        
+
         if (l.isEnhanceWithEntryResolver()) {
             auth.setEntryResolver(newLdaptiveSearchEntryResolver(l, newLdaptiveConnectionFactory(l)));
         }
@@ -1050,7 +1080,7 @@ public class LdapUtils {
     }
 
     private static CompareAuthenticationHandler getCompareAuthenticationHandler(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory factory) {
+                                                                                final ConnectionFactory factory) {
         val handler = new CompareAuthenticationHandler(factory);
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
@@ -1093,7 +1123,7 @@ public class LdapUtils {
     }
 
     private static DnResolver buildAggregateDnResolver(final AbstractLdapAuthenticationProperties l,
-        final ConnectionFactory connectionFactory) {
+                                                       final ConnectionFactory connectionFactory) {
         var resolvers = Arrays.stream(StringUtils.split(l.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
                 val resolver = new SearchDnResolver();
@@ -1102,6 +1132,7 @@ public class LdapUtils {
                 resolver.setAllowMultipleDns(l.isAllowMultipleDns());
                 resolver.setConnectionFactory(connectionFactory);
                 resolver.setUserFilter(l.getSearchFilter());
+                resolver.setResolveFromAttribute(l.getResolveFromAttribute());
                 if (l.isFollowReferrals()) {
                     resolver.setSearchResultHandlers(new FollowSearchReferralHandler());
                 }
@@ -1112,6 +1143,183 @@ public class LdapUtils {
             })
             .collect(Collectors.toList());
         return new ChainingLdapDnResolver(resolvers);
+    }
+
+    /**
+     * Create ldap authentication factory bean set factory bean.
+     *
+     * @return the set factory bean
+     */
+    public static SetFactoryBean createLdapAuthenticationFactoryBean() {
+        val bean = new SetFactoryBean() {
+            @Override
+            protected void destroyInstance(final Set set) {
+                set.forEach(Unchecked.consumer(handler ->
+                    ((DisposableBean) handler).destroy()
+                ));
+            }
+        };
+        bean.setSourceSet(new HashSet<>());
+        return bean;
+    }
+
+    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyContext>
+        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l, final ApplicationContext applicationContext) {
+        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
+            LOGGER.debug("Created LDAP password policy handling strategy based on blocked authentication result codes");
+            return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
+        }
+
+        val location = l.getPasswordPolicy().getGroovy().getLocation();
+        if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.GROOVY && location != null) {
+            LOGGER.debug("Created LDAP password policy handling strategy based on Groovy script [{}]", location);
+            return new GroovyPasswordPolicyHandlingStrategy(location, applicationContext);
+        }
+
+        LOGGER.debug("Created default LDAP password policy handling strategy");
+        return new DefaultPasswordPolicyHandlingStrategy();
+    }
+
+
+    private static PasswordPolicyContext createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
+                                                                               final Authenticator authenticator,
+                                                                               final Multimap<String, Object> attributes) {
+        val cfg = new PasswordPolicyContext(passwordPolicy);
+        val handlers = new HashSet<>();
+
+        val customPolicyClass = passwordPolicy.getCustomPolicyClass();
+        if (StringUtils.isNotBlank(customPolicyClass)) {
+            try {
+                LOGGER.debug("Configuration indicates use of a custom password policy handler [{}]", customPolicyClass);
+                val clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
+                handlers.add(clazz.getDeclaredConstructor().newInstance());
+            } catch (final Exception e) {
+                LoggingUtils.warn(LOGGER, "Unable to construct an instance of the password policy handler", e);
+            }
+        }
+        LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
+        switch (passwordPolicy.getType()) {
+            case AD:
+                handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                break;
+            case FreeIPA:
+                Arrays.stream(FreeIPAAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new FreeIPAAuthenticationResponseHandler(
+                    Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
+                break;
+            case EDirectory:
+                Arrays.stream(EDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
+                    LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
+                    attributes.put(a, a);
+                });
+                handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                break;
+            default:
+                handlers.add(new PasswordPolicyAuthenticationResponseHandler());
+                handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+                break;
+        }
+        authenticator.setResponseHandlers(handlers.toArray(AuthenticationResponseHandler[]::new));
+
+        LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
+
+        if (!passwordPolicy.isAccountStateHandlingEnabled()) {
+            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+            LOGGER.trace("Handling LDAP account states is disabled via CAS configuration");
+        } else if (StringUtils.isNotBlank(passwordPolicy.getWarningAttributeName()) && StringUtils.isNotBlank(passwordPolicy.getWarningAttributeValue())) {
+            val accountHandler = new OptionalWarningLdapAccountStateHandler();
+            accountHandler.setDisplayWarningOnMatch(passwordPolicy.isDisplayWarningOnMatch());
+            accountHandler.setWarnAttributeName(passwordPolicy.getWarningAttributeName());
+            accountHandler.setWarningAttributeValue(passwordPolicy.getWarningAttributeValue());
+            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
+            cfg.setAccountStateHandler(accountHandler);
+            LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
+                passwordPolicy.getWarningAttributeName(), passwordPolicy.getWarningAttributeValue());
+        } else {
+            val accountHandler = new DefaultLdapAccountStateHandler();
+            accountHandler.setAttributesToErrorMap(passwordPolicy.getPolicyAttributes());
+            cfg.setAccountStateHandler(accountHandler);
+            LOGGER.debug("Configuring the default account state handler for LDAP authentication");
+        }
+        return cfg;
+    }
+
+    /**
+     * Create ldap authentication handler.
+     *
+     * @param props              the ldap authentication properties
+     * @param applicationContext the application context
+     * @param servicesManager    the services manager
+     * @param principalFactory   the principal factory
+     * @return the ldap authentication handler
+     */
+    public static LdapAuthenticationHandler createLdapAuthenticationHandler(final LdapAuthenticationProperties props,
+                                                                            final ApplicationContext applicationContext,
+                                                                            final ServicesManager servicesManager,
+                                                                            final PrincipalFactory principalFactory) {
+        val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(props.getPrincipalAttributeList());
+        LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, props.getLdapUrl());
+
+        LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", props.getLdapUrl(), props.getBaseDn());
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(props);
+        LOGGER.debug("Ldap authenticator configured with return attributes [{}] for [{}] and baseDn [{}]",
+            multiMapAttributes.keySet(), props.getLdapUrl(), props.getBaseDn());
+
+        LOGGER.debug("Creating LDAP password policy handling strategy for [{}]", props.getLdapUrl());
+        val strategy = createLdapPasswordPolicyHandlingStrategy(props, applicationContext);
+
+        LOGGER.debug("Creating LDAP authentication handler for [{}]", props.getLdapUrl());
+        val handler = new LdapAuthenticationHandler(props.getName(),
+            servicesManager, principalFactory,
+            props.getOrder(), authenticator, strategy);
+        handler.setCollectDnAttribute(props.isCollectDnAttribute());
+
+        if (!props.getAdditionalAttributes().isEmpty()) {
+            val additional = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(props.getAdditionalAttributes());
+            multiMapAttributes.putAll(additional);
+        }
+        if (StringUtils.isNotBlank(props.getPrincipalDnAttributeName())) {
+            handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName());
+        }
+        handler.setAllowMultiplePrincipalAttributeValues(props.isAllowMultiplePrincipalAttributeValues());
+        handler.setAllowMissingPrincipalAttributeValue(props.isAllowMissingPrincipalAttributeValue());
+        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
+        handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
+
+        if (StringUtils.isNotBlank(props.getCredentialCriteria())) {
+            LOGGER.trace("Ldap authentication for [{}] is filtering credentials by [{}]",
+                props.getLdapUrl(), props.getCredentialCriteria());
+            handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
+        }
+
+        if (StringUtils.isBlank(props.getPrincipalAttributeId())) {
+            LOGGER.trace("No principal id attribute is found for LDAP authentication via [{}]", props.getLdapUrl());
+        } else {
+            handler.setPrincipalIdAttribute(props.getPrincipalAttributeId());
+            LOGGER.trace("Using principal id attribute [{}] for LDAP authentication via [{}]",
+                props.getPrincipalAttributeId(), props.getLdapUrl());
+        }
+
+        val passwordPolicy = props.getPasswordPolicy();
+        if (passwordPolicy.isEnabled()) {
+            LOGGER.trace("Password policy is enabled for [{}]. Constructing password policy configuration", props.getLdapUrl());
+            val cfg = createLdapPasswordPolicyConfiguration(passwordPolicy, authenticator, multiMapAttributes);
+            handler.setPasswordPolicyConfiguration(cfg);
+        }
+
+        val attributes = CollectionUtils.wrap(multiMapAttributes);
+        handler.setPrincipalAttributeMap(attributes);
+
+        LOGGER.debug("Initializing LDAP authentication handler for [{}]", props.getLdapUrl());
+        handler.initialize();
+        return handler;
     }
 
     @RequiredArgsConstructor

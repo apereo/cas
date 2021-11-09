@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGen
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
                                             final S3Client s3Client, final String bucketName) {
         super(context);
         this.s3Client = s3Client;
-        this.bucketName = bucketName;
+        this.bucketName = SpringExpressionLanguageValueResolver.getInstance().resolve(bucketName);
     }
 
     @Override
@@ -45,7 +46,6 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
     }
 
     @Override
-    @SneakyThrows
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
         return generateCertificateAndKey();
     }

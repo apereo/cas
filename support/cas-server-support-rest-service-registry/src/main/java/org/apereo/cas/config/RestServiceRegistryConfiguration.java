@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,8 +18,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RestServiceRegistryConfiguration}.
@@ -28,41 +30,37 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.service-registry.rest.url")
 @Slf4j
+@Configuration(value = "restServiceRegistryConfiguration", proxyBeanMethods = false)
 public class RestServiceRegistryConfiguration {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    @Qualifier("serviceRegistryListeners")
-    private ObjectProvider<Collection<ServiceRegistryListener>> serviceRegistryListeners;
 
     @Bean
-    @RefreshScope
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restfulServiceRegistry")
-    public ServiceRegistry restfulServiceRegistry() {
+    public ServiceRegistry restfulServiceRegistry(
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ConfigurableApplicationContext applicationContext) {
         val registry = casProperties.getServiceRegistry().getRest();
         LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());
         return new RestfulServiceRegistry(applicationContext,
-            serviceRegistryListeners.getObject(), registry);
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), registry);
     }
-    
-    @RefreshScope
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "restfulServiceRegistryExecutionPlanConfigurer")
-    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer() {
+    public ServiceRegistryExecutionPlanConfigurer restfulServiceRegistryExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("restfulServiceRegistry")
+        final ServiceRegistry restfulServiceRegistry) {
         return plan -> {
             val registry = casProperties.getServiceRegistry().getRest();
             if (StringUtils.isNotBlank(registry.getUrl())) {
-                plan.registerServiceRegistry(restfulServiceRegistry());
+                plan.registerServiceRegistry(restfulServiceRegistry);
             }
         };
     }
-
 }

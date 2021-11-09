@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
@@ -42,13 +43,13 @@ public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     public void verifyOperation() {
-        val login = springWebflowEndpoint.getReport("login");
+        val login = springWebflowEndpoint.getReport("login", null);
         assertNotNull(login);
 
-        val logout = springWebflowEndpoint.getReport("logout");
+        val logout = springWebflowEndpoint.getReport("logout", null);
         assertNotNull(logout);
 
-        val all = springWebflowEndpoint.getReport(StringUtils.EMPTY);
+        val all = springWebflowEndpoint.getReport(StringUtils.EMPTY, null);
         assertNotNull(all);
     }
 
@@ -59,7 +60,7 @@ public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
         private CasConfigurationProperties casProperties;
 
         @Autowired
-        @Qualifier("loginFlowRegistry")
+        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
         @Autowired

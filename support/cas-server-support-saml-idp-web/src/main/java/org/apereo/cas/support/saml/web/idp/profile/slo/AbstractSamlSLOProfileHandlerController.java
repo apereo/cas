@@ -3,11 +3,13 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -42,12 +44,12 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     private void handleLogoutResponse(final Pair<? extends SignableSAMLObject, MessageContext> pair) {
         val logoutResponse = (LogoutResponse) pair.getKey();
         LOGGER.debug("Received logout response from [{}]", SamlIdPUtils.getIssuerFromSamlObject(logoutResponse.getIssuer()));
-        SamlUtils.logSamlObject(getSamlProfileHandlerConfigurationContext().getOpenSamlConfigBean(), logoutResponse);
+        SamlUtils.logSamlObject(getConfigurationContext().getOpenSamlConfigBean(), logoutResponse);
     }
 
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
                                      final Pair<? extends SignableSAMLObject, MessageContext> pair) throws Exception {
-        val configContext = getSamlProfileHandlerConfigurationContext();
+        val configContext = getConfigurationContext();
         val logout = configContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
@@ -60,8 +62,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
 
         val service = configContext.getWebApplicationServiceFactory().createService(entityId);
-        val registeredService = configContext
-            .getServicesManager().findServiceBy(service, SamlRegisteredService.class);
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(entityId));
+        val registeredService = configContext.getServicesManager().findServiceBy(service, SamlRegisteredService.class);
         LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
         val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             configContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).get();
@@ -79,7 +81,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         }
 
         WebUtils.putRegisteredService(request, registeredService);
-        try (val writer = SamlUtils.transformSamlObject(samlProfileHandlerConfigurationContext.getOpenSamlConfigBean(), logoutRequest)) {
+        try (val writer = SamlUtils.transformSamlObject(configurationContext.getOpenSamlConfigBean(), logoutRequest)) {
             val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             WebUtils.putSingleLogoutRequest(request, encodedRequest);
         }
@@ -98,13 +100,13 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        val logout = getSamlProfileHandlerConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
+        val logout = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML2 IdP SLO requests is disabled");
             return;
         }
 
-        val extractor = getSamlProfileHandlerConfigurationContext().getSamlHttpRequestExtractor();
+        val extractor = getConfigurationContext().getSamlHttpRequestExtractor();
         val result = extractor.extract(request, decoder, SignableSAMLObject.class);
         if (result.isPresent()) {
             val pair = result.get();

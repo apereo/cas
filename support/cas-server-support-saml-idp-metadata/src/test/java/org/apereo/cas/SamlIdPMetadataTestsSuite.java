@@ -12,9 +12,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.Metadata
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataExpirationPolicyTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link SamlIdPMetadataTestsSuite}.
@@ -35,6 +34,6 @@ import org.junit.runner.RunWith;
     FileSystemResourceMetadataResolverTests.class,
     JsonResourceMetadataResolverTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class SamlIdPMetadataTestsSuite {
 }

@@ -18,11 +18,11 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.config.HazelcastTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.SchedulingUtils;
 
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +30,10 @@ import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -49,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @SpringBootTest(classes = {
-    DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -73,10 +67,13 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class
-}, properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance")
+},
+    properties = {
+        "cas.ticket.registry.hazelcast.cluster.core.instance-name=samplelocalhostinstance",
+        "cas.ticket.registry.hazelcast.cluster.network.port=5702"
+    })
 @Slf4j
 @Tag("Hazelcast")
-@DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     @Autowired
     @Qualifier("casTicketRegistryHazelcastInstance")
@@ -90,8 +87,14 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(List.of("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertTrue(config.getManagementCenterConfig().isScriptingEnabled());
-        assertEquals(5701, config.getNetworkConfig().getPort());
-        assertEquals(5, config.getMapConfigs().size());
+        assertEquals(5702, config.getNetworkConfig().getPort());
+        val mapConfigs = config.getMapConfigs();
+        mapConfigs.forEach((key, value) -> LOGGER.info("Hazelcast map key [{}]", key));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_PROXY_TICKET));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_PROXY_GRANTING_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_SERVICE_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_TICKET_GRANTING_TICKETS));
+        assertTrue(mapConfigs.containsKey(CasTicketCatalogConfigurationValuesProvider.STORAGE_NAME_TRANSIENT_SESSION_TICKETS));
     }
 
     @AfterEach
@@ -100,18 +103,6 @@ public class DefaultHazelcastInstanceConfigurationTests {
         this.hzInstance.shutdown();
         while (this.hzInstance.getLifecycleService().isRunning()) {
             LOGGER.info("Waiting for instances to shut down");
-        }
-    }
-
-    @TestConfiguration("HazelcastTestConfiguration")
-    @Lazy(false)
-    public static class HazelcastTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
 }

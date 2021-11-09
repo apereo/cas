@@ -9,8 +9,8 @@ import org.apereo.cas.shell.commands.jasypt.JasyptListAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptListProvidersCommandTests;
 import org.apereo.cas.shell.commands.jasypt.JasyptTestAlgorithmsCommandTests;
 import org.apereo.cas.shell.commands.properties.AddPropertiesToConfigurationCommandTests;
+import org.apereo.cas.shell.commands.properties.ExportPropertiesCommandTests;
 import org.apereo.cas.shell.commands.properties.FindPropertiesCommandTests;
-import org.apereo.cas.shell.commands.properties.ListUndocumentedPropertiesCommandTests;
 import org.apereo.cas.shell.commands.saml.GenerateSamlIdPMetadataCommandTests;
 import org.apereo.cas.shell.commands.services.AnonymousUsernameAttributeProviderCommandTests;
 import org.apereo.cas.shell.commands.services.GenerateYamlRegisteredServiceCommandTests;
@@ -19,9 +19,8 @@ import org.apereo.cas.shell.commands.util.GenerateJwtCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateEndpointCommandTests;
 import org.apereo.cas.shell.commands.util.ValidateLdapConnectionCommandTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllShellTestsSuite}.
@@ -34,6 +33,7 @@ import org.junit.runner.RunWith;
     GenerateDdlCommandTests.class,
     GenerateJwtCommandTests.class,
     ExitCommandTests.class,
+    ExportPropertiesCommandTests.class,
     AnonymousUsernameAttributeProviderCommandTests.class,
     GenerateSamlIdPMetadataCommandTests.class,
     ValidateRegisteredServiceCommandTests.class,
@@ -48,9 +48,8 @@ import org.junit.runner.RunWith;
     JasyptDecryptPropertyCommandTests.class,
     JasyptEncryptPropertyCommandTests.class,
     GenerateYamlRegisteredServiceCommandTests.class,
-    ListUndocumentedPropertiesCommandTests.class,
     AddPropertiesToConfigurationCommandTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllShellTestsSuite {
 }

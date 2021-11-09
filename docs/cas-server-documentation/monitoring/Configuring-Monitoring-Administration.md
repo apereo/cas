@@ -31,13 +31,13 @@ the CAS server how to locate and connect to the admin server.
 
 Support is added by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-bootadmin-client" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-bootadmin-client" %}
 
 Note that CAS server's actuator endpoints are by default secured. In order to allow secure 
 communication between the CAS server and the Spring Boot Admin server, [please see guide][bootadmindocs].
 
 ## Configuration
 
-{% include casproperties.html thirdParty="spring.boot.admin.client" %}
+{% include_cached casproperties.html thirdParty="spring.boot.admin.client" %}
 
 [bootadmindocs]: https://codecentric.github.io/spring-boot-admin/current/

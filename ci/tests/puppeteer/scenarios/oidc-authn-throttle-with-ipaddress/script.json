@@ -1,0 +1,26 @@
+{
+  "dependencies": "oidc,throttle",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=3",
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.authn.throttle.schedule.start-delay=PT60S",
+
+    "--logging.level.org.apereo.cas=debug",
+    "--logging.level.org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter=trace"
+  ]
+}
+
+
+
+
+

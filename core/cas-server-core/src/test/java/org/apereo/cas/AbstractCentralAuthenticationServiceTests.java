@@ -7,19 +7,14 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -28,7 +23,6 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(properties = {
     "cas.authn.policy.any.try-all=true",
-    "spring.aop.proxy-target-class=true",
     "cas.ticket.st.time-to-kill-in-seconds=30"
 })
 @Setter
@@ -39,7 +33,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
@@ -47,7 +41,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -55,7 +49,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
@@ -63,7 +57,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
@@ -71,20 +65,6 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
+    @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @TestConfiguration("CasTestConfiguration")
-    @Lazy(false)
-    public static class CasTestConfiguration implements InitializingBean {
-
-
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
 }

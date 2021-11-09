@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreWebConfiguration,\
-  org.apereo.cas.config.CasCoreHttpConfiguration,\
-  org.apereo.cas.config.CasCoreViewsConfiguration
+  org.apereo.cas.config.CasCoreHttpConfiguration

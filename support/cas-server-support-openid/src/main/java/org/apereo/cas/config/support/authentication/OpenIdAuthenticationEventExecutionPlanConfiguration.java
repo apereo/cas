@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -14,8 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,45 +24,36 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
- * @deprecated 6.2
  * @since 5.1.0
+ * @deprecated 6.2
  */
-@Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
+@Configuration(value = "openIdAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
-    @Autowired
-    @Qualifier("servicesManager")
-    private ObjectProvider<ServicesManager> servicesManager;
-
-    @Autowired
-    @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    private ObjectProvider<IPersonAttributeDao> attributeRepository;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Bean
-    public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
+    public AuthenticationHandler openIdCredentialsAuthenticationHandler(final CasConfigurationProperties casProperties,
+                                                                        @Qualifier("openidPrincipalFactory")
+                                                                        final PrincipalFactory openidPrincipalFactory,
+                                                                        @Qualifier(ServicesManager.BEAN_NAME)
+                                                                        final ServicesManager servicesManager,
+                                                                        @Qualifier(TicketRegistry.BEAN_NAME)
+                                                                        final TicketRegistry ticketRegistry) {
         val openid = casProperties.getAuthn().getOpenid();
-        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager.getObject(),
-            openidPrincipalFactory(), ticketRegistry.getObject(),
-            openid.getOrder());
+        return new OpenIdCredentialsAuthenticationHandler(openid.getName(), servicesManager, openidPrincipalFactory, ticketRegistry, openid.getOrder());
     }
 
     @Bean
-    public OpenIdPrincipalResolver openIdPrincipalResolver() {
+    public OpenIdPrincipalResolver openIdPrincipalResolver(final CasConfigurationProperties casProperties,
+                                                           @Qualifier("openidPrincipalFactory")
+                                                           final PrincipalFactory openidPrincipalFactory,
+                                                           @Qualifier("attributeRepository")
+                                                           final IPersonAttributeDao attributeRepository) {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();
-        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(openidPrincipalFactory(),
-            attributeRepository.getObject(),
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            OpenIdPrincipalResolver.class,
-            principal, personDirectory);
+        return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(openidPrincipalFactory, attributeRepository,
+            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()), OpenIdPrincipalResolver.class, principal, personDirectory);
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")
@@ -76,7 +64,11 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "openIdAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer openIdAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
+    public AuthenticationEventExecutionPlanConfigurer openIdAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("openIdCredentialsAuthenticationHandler")
+        final AuthenticationHandler openIdCredentialsAuthenticationHandler,
+        @Qualifier("openIdPrincipalResolver")
+        final OpenIdPrincipalResolver openIdPrincipalResolver) {
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
     }
 }

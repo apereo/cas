@@ -1,20 +1,34 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
+if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProject.skipBootifulArtifact)) {
     //logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
 
     apply plugin: "org.springframework.boot"
 
     sourceSets {
+        /**
+         * Make resources become reloadable.
+         * Application’s static resources are loaded from their source location.
+         */
         bootRun {
             resources {
+                srcDirs new File("//etc/cas/templates/"),
+                        new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
+                        new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
             }
         }
     }
 
     springBoot {
         mainClassName = project.ext.mainClassName
-        buildInfo()
+        buildInfo {
+            properties {
+                if (!rootProject.generateTimestamps) {
+                    time = null
+                }
+            }
+        }
     }
 
     if (plugins.hasPlugin("war")) {
@@ -30,8 +44,12 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
                         "Automatic-Module-Name": project.name,
                         "Implementation-Title": project.name,
                         "Implementation-Vendor": project.group,
-                        "Created-By": project.group,
-                        "Implementation-Date": java.time.ZonedDateTime.now(),
+                        "Created-By": project.group)
+                if (rootProject.generateTimestamps) {
+                    attributes("Implementation-Date": java.time.ZonedDateTime.now())
+                }
+                
+                attributes(
                         "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
                         "Implementation-Version": project.version)
             }
@@ -72,6 +90,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
     }
 
     bootRun {
+        mainClass.set(project.ext.mainClassName)
+        
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             dependsOn pathingJar
             doFirst {
@@ -84,13 +104,14 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
-        list.add("-Xverify:none")
         list.add("--add-modules")
         list.add("java.se")
         list.add("--add-exports")
         list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/sun.security.action=jdk.crypto.ec")
         list.add("--add-opens")
         list.add("java.base/java.nio=ALL-UNNAMED")
         list.add("--add-opens")
@@ -100,14 +121,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
         list.add("--add-opens")
         list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
 
-        list.add("-XX:+UnlockExperimentalVMOptions")
-        list.add("-XX:+EnableJVMCI")
-        list.add("-XX:+UseJVMCICompiler")
-
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
-                println "Listening on port ${port} for remote debugging requests"
+                ansi.green "Listening on port ${port} for remote debugging requests with suspend=${rootProject.remoteDebuggingSuspend}"
                 list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
             }
         }

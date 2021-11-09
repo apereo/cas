@@ -11,5 +11,5 @@ category: Authentication
 Primarily useful for demo and testing purposes, this option allows CAS to load a global and static image resource
 as the user identifier onto the login flow.
 
-{% include casproperties.html properties="cas.authn.gua.simple" %}
+{% include_cached casproperties.html properties="cas.authn.gua.simple" %}
 

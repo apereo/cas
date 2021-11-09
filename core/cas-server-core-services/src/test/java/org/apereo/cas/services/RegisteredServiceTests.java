@@ -3,13 +3,17 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Setter;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,6 +79,15 @@ public class RegisteredServiceTests {
         }
     };
 
+    @BeforeEach
+    public void beforeEach() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+    }
+    
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
         val regexRegisteredService = new RegexRegisteredService();
@@ -121,8 +134,13 @@ public class RegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
-            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(p)
+            .build();
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
         assertEquals(attr.size(), map.size());
     }
 
@@ -139,8 +157,13 @@ public class RegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
-            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(p)
+            .build();
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
@@ -161,8 +184,13 @@ public class RegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        val attr = baseService.getAttributeReleasePolicy().getAttributes(p,
-            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID))
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(p)
+            .build();
+        val attr = baseService.getAttributeReleasePolicy().getAttributes(context);
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("newAttr1"));
     }

@@ -19,9 +19,9 @@ the [Pac4j library](https://github.com/pac4j/pac4j) and delegate the authenticat
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-webflow" %}
 
-{% include casproperties.html properties="cas.authn.pac4j.core" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
 
 <div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request 
 can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the 
@@ -43,7 +43,7 @@ to be defined in the CAS configuration as well.
 
 ### Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,Orcid,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,SAML,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
@@ -66,7 +66,7 @@ Identity providers for delegated authentication can be registered with CAS using
 Identity providers for delegated authentication can be provided to CAS 
 using an external REST endpoint. 
 
-{% include casproperties.html properties="cas.authn.pac4j.rest" %}
+{% include_cached casproperties.html properties="cas.authn.pac4j.rest" %}
 
 This allows the CAS server to reach to 
 a remote REST endpoint whose responsibility is to produce the following payload in the response body:
@@ -85,10 +85,8 @@ a remote REST endpoint whose responsibility is to produce the following payload 
 ```
 
 The syntax and collection of available `properties` in the above 
-payload is controlled by [Pac4j]((https://pac4j.org/docs/index.html). 
-The response that is returned must be accompanied by a 200 status code.
-
-{% include casproperties.html properties="cas.authn.pac4j.rest" %}
+payload is controlled by the [pac4j library](https://github.com/pac4j/pac4j). 
+The response that is returned must be accompanied by a `200` status code.
 
 ## Profile Attributes
 
@@ -114,59 +112,37 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 }
 ```
 
-## Access Strategy
+## Discovery Selection
 
-Service definitions may be conditionally authorized to use an external identity provider by defining their own access strategy and policy:
+Please [see this guide](Delegate-Authentication-DiscoverySelection.html).
 
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "sample",
-  "name" : "sample",
-  "id" : 100,
-  "accessStrategy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "delegatedAuthenticationPolicy" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
-      "allowedProviders" : [ "java.util.ArrayList", [ "Facebook", "Twitter" ] ],
-      "permitUndefined": true,
-      "exclusive": true
-    }
-  }
-}
-```
+## Authentication Policy
 
-Note that:
-
-- The list of allowed providers should contain the external identity provider names (i.e. client names).
-- The `permitUndefined` flag decides whether access should be granted in the event that no allowed providers are defined explicitly.
-- The `exclusive` flag decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc.
+Please [see this guide](Delegate-Authentication-AuthenticationPolicy.html).
 
 ## Provisioning
 
 Please [see this guide](Delegate-Authentication-Provisioning.html).
 
-## SAML2 Identity Providers
+## Post Processing
 
-To learn more about delegating authentication to SAML2 identity providers, 
-please [review this guide](Delegate-Authentication-SAML.html).
- 
+Please [see this guide](Delegate-Authentication-PostProcessing.html).
+
 ## Session Replication
                 
 For the current active session, the selected identity provider, the relying party
 and all other relevant details for the given authentication request are tracked as 
 *session attributes* inside a dedicated session store capable of replication, which is specially
-more relevant for clustred deployments.
+more relevant for clustered deployments.
 
-{% include casproperties.html properties="cas.session-replication" %}
- 
-## Identity Provider Selection
+{% include_cached casproperties.html properties="cas.session-replication" %}
 
-The selected identity provider can be optionally tracked and stored using a dedicated cookie,
-which will then be used on subsequent attempts to auto-redirect to 
-the identity provider, skipping the selection menu.
+## Webflow
 
-{% include casproperties.html properties="cas.authn.pac4j.cookie" %}
+Certain aspects of the webflow configuration for delegated authentication can be controlled
+via the following settings:
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.webflow" %}
 
 ## Troubleshooting
 

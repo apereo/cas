@@ -37,7 +37,8 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     public void initialize() {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
-        val samlResponseBuilder = new SamlResponseBuilder(builder, null, null, 0, 30,
+        val samlResponseBuilder = new SamlResponseBuilder(builder, null,
+            null, 0, "PT30S",
             new NoOpProtocolAttributeEncoder(), null);
         view = new Saml10FailureResponseView(new NoOpProtocolAttributeEncoder(), null,
             new DefaultArgumentExtractor(new SamlServiceFactory()),

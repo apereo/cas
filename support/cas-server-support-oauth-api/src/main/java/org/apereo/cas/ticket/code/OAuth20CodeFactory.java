@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.code;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
@@ -26,7 +28,9 @@ public interface OAuth20CodeFactory extends TicketFactory {
      * @param codeChallenge        the code challenge
      * @param codeChallengeMethod  the code challenge method
      * @param clientId             the client id
-     * @param requestClaims               the claims
+     * @param requestClaims        the claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
      * @return the OAuth code
      */
     OAuth20Code create(Service service,
@@ -36,5 +40,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
                        String codeChallenge,
                        String codeChallengeMethod,
                        String clientId,
-                       Map<String, Map<String, Object>> requestClaims);
+                       Map<String, Map<String, Object>> requestClaims,
+                       OAuth20ResponseTypes responseType,
+                       OAuth20GrantTypes grantType);
 }

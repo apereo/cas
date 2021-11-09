@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,8 +29,8 @@ import java.util.Map;
  * Builds responses to Openid authN requests.
  *
  * @author Misagh Moayyed
- * @deprecated 6.2
  * @since 4.2
+ * @deprecated 6.2
  */
 @Slf4j
 @Deprecated(since = "6.2.0")
@@ -45,8 +46,8 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     public OpenIdServiceResponseBuilder(final String openIdPrefixUrl, final ServerManager serverManager,
                                         final CentralAuthenticationService centralAuthenticationService,
-                                        final ServicesManager servicesManager) {
-        super(servicesManager);
+                                        final ServicesManager servicesManager, final UrlValidator urlValidator) {
+        super(servicesManager, urlValidator);
         this.serverManager = serverManager;
         this.openIdPrefixUrl = openIdPrefixUrl;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -99,6 +100,11 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         }
         val id = determineIdentity(service, assertion);
         return buildAuthenticationResponse(service, parameters, successFullAuthentication, id, parameterList);
+    }
+
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service instanceof OpenIdService;
     }
 
     /**
@@ -162,11 +168,6 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    @Override
-    public boolean supports(final WebApplicationService service) {
-        return service instanceof OpenIdService;
     }
 
     /**

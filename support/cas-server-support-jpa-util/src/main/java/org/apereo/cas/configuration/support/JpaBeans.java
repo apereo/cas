@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -71,21 +72,17 @@ public class JpaBeans {
      * @return the data source
      */
     @SneakyThrows
-    public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
+    public static CloseableDataSource newDataSource(final AbstractJpaProperties jpaProperties) {
         val dataSourceName = jpaProperties.getDataSourceName();
 
         if (StringUtils.isNotBlank(dataSourceName)) {
-            val proxyDataSource = jpaProperties.isDataSourceProxy();
             try {
                 val dsLookup = new JndiDataSourceLookup();
                 dsLookup.setResourceRef(false);
                 val containerDataSource = dsLookup.getDataSource(dataSourceName);
-                if (!proxyDataSource) {
-                    return containerDataSource;
-                }
-                return new DataSourceProxy(containerDataSource);
+                return new DefaultCloseableDataSource(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
-                LOGGER.warn("Lookup of datasource [{}] failed due to [{}] falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+                LOGGER.warn("Lookup of datasource [{}] failed due to [{}]. Back to JPA properties.", dataSourceName, e.getMessage());
             }
         }
 
@@ -108,7 +105,9 @@ public class JpaBeans {
         bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
         bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
-        return bean;
+        bean.setReadOnly(jpaProperties.isReadOnly());
+        bean.setPoolName(jpaProperties.getPool().getName());
+        return new DefaultCloseableDataSource(bean);
     }
 
     /**
@@ -135,5 +134,21 @@ public class JpaBeans {
         }
         bean.getJpaPropertyMap().putAll(config.getJpaProperties());
         return bean;
+    }
+
+    /**
+     * Is valid data source connection.
+     *
+     * @param ds      the ds
+     * @param timeout the timeout
+     * @return the boolean
+     */
+    public static boolean isValidDataSourceConnection(final CloseableDataSource ds, final int timeout) {
+        try (val con = ds.getConnection()) {
+            return con.isValid(timeout);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
     }
 }

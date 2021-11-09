@@ -4,6 +4,7 @@ import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.git.PathRegexPatternTreeFilter;
 import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -24,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -42,12 +45,15 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators;
 
+    private final String rootDirectory;
+
     private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
                               final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers,
                               final boolean pushChanges,
+                              final String rootDirectory,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
                               final List<GitRepositoryRegisteredServiceLocator> registeredServiceLocators) {
         super(applicationContext, serviceRegistryListeners);
@@ -55,6 +61,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
         this.registeredServiceSerializers = registeredServiceSerializers;
         this.pushChanges = pushChanges;
         this.registeredServiceLocators = registeredServiceLocators;
+        this.rootDirectory = rootDirectory;
     }
 
     @Override
@@ -114,8 +121,12 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             } else {
                 LOGGER.info("Unable to pull changes from the remote repository. Service definition files may be stale.");
             }
+            val objectPatternStr = StringUtils.isBlank(rootDirectory)
+                ? GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES
+                : rootDirectory + "/" + GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES;
+            val objectPattern = RegexUtils.createPattern(objectPatternStr, Pattern.CASE_INSENSITIVE);
             val objects = gitRepository.getObjectsInRepository(
-                new PathRegexPatternTreeFilter(GitRepositoryRegisteredServiceLocator.PATTERN_ACCEPTED_REPOSITORY_FILES));
+                new PathRegexPatternTreeFilter(objectPattern));
             registeredServices = objects
                 .stream()
                 .filter(Objects::nonNull)
@@ -127,7 +138,10 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             return registeredServices;
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
-            val files = FileUtils.listFiles(gitRepository.getRepositoryDirectory(),
+            val parentDir = StringUtils.isBlank(rootDirectory)
+                ? gitRepository.getRepositoryDirectory()
+                : new File(gitRepository.getRepositoryDirectory(), rootDirectory);
+            val files = FileUtils.listFiles(parentDir,
                 GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.toArray(ArrayUtils.EMPTY_STRING_ARRAY), true);
             LOGGER.debug("Located [{}] files(s)", files.size());
 

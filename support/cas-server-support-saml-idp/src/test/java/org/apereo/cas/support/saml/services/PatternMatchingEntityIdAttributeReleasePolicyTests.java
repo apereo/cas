@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,13 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-    
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
-        defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
-    
+
     @Test
     @Order(1)
     public void verifyPatternDoesNotMatch() {
@@ -38,8 +45,12 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertTrue(attributes.isEmpty());
     }
 
@@ -52,8 +63,12 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         filter.setReverseMatch(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 
@@ -65,8 +80,12 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 }

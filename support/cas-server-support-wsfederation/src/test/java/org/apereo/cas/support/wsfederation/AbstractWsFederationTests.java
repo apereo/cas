@@ -8,6 +8,7 @@ import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComp
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Import;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +56,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
-    protected Collection<WsFederationConfiguration> wsFederationConfigurations;
+    protected BeanContainer<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
     @Qualifier("wsFederationCookieManager")
@@ -67,7 +67,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     protected WsFederationHelper wsFederationHelper;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     public static WsFederationCredential getCredential() {

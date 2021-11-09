@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -37,6 +38,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
      * The default keystore for OIDC tokens.
      */
     protected final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache;
+
     /**
      * The service keystore for OIDC tokens.
      */
@@ -45,7 +47,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * OIDC issuer.
      */
-    protected final String issuer;
+    protected final OidcIssuerService oidcIssuerService;
 
     @Override
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
@@ -56,9 +58,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         if (result.isPresent()) {
             return result;
         }
-        val jwks = defaultJsonWebKeystoreCache.get(this.issuer);
+        val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+        val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
+        LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
+        val jwks = defaultJsonWebKeystoreCache.get(issuer);
         if (jwks.isEmpty()) {
-            LOGGER.warn("No signing key could be found for issuer " + this.issuer);
+            LOGGER.warn("No signing key could be found for issuer " + issuer);
             return Optional.empty();
         }
         return Optional.of(jwks.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
@@ -95,6 +100,51 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         return result;
     }
 
+    @Override
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
+                                                                   final RegisteredService registeredService,
+                                                                   final CipherOperationsStrategyType type) {
+        val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
+            StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0) {
+            @Override
+            public String decode(final Serializable value, final Object[] parameters) {
+                if (parameters.length > 0) {
+                    val registeredService = (RegisteredService) parameters[0];
+                    setEncryptionKey(getEncryptionKeyForDecryption(registeredService));
+                }
+                return super.decode(value, parameters);
+            }
+
+            @Override
+            protected byte[] sign(final byte[] value) {
+                if (EncodingUtils.isJsonWebKey(signingKey)) {
+                    val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
+                    val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
+                    LOGGER.trace("Using issuer [{}] to determine signing key from default keystore cache", issuer);
+
+                    val jwks = defaultJsonWebKeystoreCache.get(issuer);
+                    if (Objects.requireNonNull(jwks).isPresent()) {
+                        val jws = jwks.get();
+                        val kid = jws.getKeyId();
+                        if (StringUtils.isNotBlank(kid)) {
+                            getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
+                        }
+                        val alg = StringUtils.defaultIfBlank(jws.getAlgorithm(), getSigningAlgorithmFor(jws.getPrivateKey()));
+                        getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                        return signWith(value, alg);
+                    }
+                }
+                return super.sign(value);
+            }
+        };
+        if (EncodingUtils.isJsonWebKey(encryptionKey) || EncodingUtils.isJsonWebKey(signingKey)) {
+            cipher.setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+        }
+        cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
+        cipher.setStrategyType(type);
+        return cipher;
+    }
+
     private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
         val svc = (OAuthRegisteredService) registeredService;
         if (svc instanceof OidcRegisteredService) {
@@ -114,44 +164,5 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             return jsonWebKey.getPrivateKey();
         }
         return null;
-    }
-
-    @Override
-    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
-                                                                   final RegisteredService registeredService,
-                                                                   final CipherOperationsStrategyType type) {
-        val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
-            StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0) {
-            @Override
-            public String decode(final Serializable value, final Object[] parameters) {
-                if (parameters.length > 0) {
-                    val registeredService = (RegisteredService) parameters[0];
-                    setSecretKeyEncryptionKey(getEncryptionKeyForDecryption(registeredService));
-                }
-                return super.decode(value, parameters);
-            }
-
-            @Override
-            protected byte[] sign(final byte[] value) {
-                if (EncodingUtils.isJsonWebKey(signingKey)) {
-                    val jwks = defaultJsonWebKeystoreCache.get(
-                            OidcRegisteredServiceJwtAccessTokenCipherExecutor.this.issuer);
-                    if (Objects.requireNonNull(jwks).isPresent()) {
-                        val kid = jwks.get().getKeyId();
-                        if (StringUtils.isNotBlank(kid)) {
-                            getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
-                        }
-                        return signWith(value, jwks.get().getAlgorithm());
-                    }
-                }
-                return super.sign(value);
-            }
-        };
-        if (EncodingUtils.isJsonWebKey(encryptionKey) || EncodingUtils.isJsonWebKey(signingKey)) {
-            cipher.setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-        }
-        cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
-        cipher.setStrategyType(type);
-        return cipher;
     }
 }

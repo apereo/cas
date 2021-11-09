@@ -41,8 +41,11 @@ import static org.mockito.Mockito.*;
 public class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
     private Action verifyRequiredServiceAction;
+
     private MockRequestContext requestContext;
+
     private MockHttpServletRequest httpRequest;
+
     private TicketRegistrySupport ticketRegistrySupport;
 
     @BeforeEach

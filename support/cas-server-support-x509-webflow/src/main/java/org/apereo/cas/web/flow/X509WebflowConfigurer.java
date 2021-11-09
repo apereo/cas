@@ -35,9 +35,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
+                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getX509().getWebflow().getOrder());
     }
@@ -56,7 +56,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.TRANSITION_ID_WARN));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStateIdOnX509Failure(flow)));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+                CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS,
                 CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS));
 

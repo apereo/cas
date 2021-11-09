@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.JdbcSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.web.CasWebSecurityConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order(98)
+@Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER - 1)
 public class CasWebSecurityJdbcConfigurerAdapter extends WebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 

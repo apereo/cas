@@ -29,15 +29,15 @@ public class ServiceRegistryCacheProperties implements Serializable {
      * entry to be automatically removed from the cache after its creation or update.
      */
     @DurationCapable
-    private String duration = "PT5M";
+    private String duration = "PT15M";
 
     /**
      * Services cache size specifies the maximum number of entries the cache may contain.
      */
-    private long cacheSize = 1000L;
+    private long cacheSize = 5_000L;
 
     /**
      * Services cache capacity sets the minimum total size for the internal data structures.
      */
-    private int cacheCapacity = 1000;
+    private int initialCapacity = 2_000;
 }

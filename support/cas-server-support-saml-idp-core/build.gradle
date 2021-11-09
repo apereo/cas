@@ -6,6 +6,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-saml-idp-ticket")
     
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-attributes")

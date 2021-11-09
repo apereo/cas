@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://google.com",
+  "name": "Sample",
+  "id": 2,
+  "description": "Google",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "allowedProviders" : [ "java.util.ArrayList", [ "CASServerOne", "CASServerTwo" ] ],
+      "exclusive": true
+    }
+  }
+}

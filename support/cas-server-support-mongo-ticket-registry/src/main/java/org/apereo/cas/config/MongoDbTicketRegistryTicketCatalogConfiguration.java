@@ -5,8 +5,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.function.Function;
 
@@ -20,19 +23,23 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 
-    public MongoDbTicketRegistryTicketCatalogConfiguration(final CasConfigurationProperties casProperties,
-                                                           @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
-                                                           final CasTicketCatalogConfigurationValuesProvider configProvider) {
-        super(casProperties, configProvider);
+    public MongoDbTicketRegistryTicketCatalogConfiguration(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbTicketCatalogConfigurationValuesProvider")
+        final CasTicketCatalogConfigurationValuesProvider configProvider) {
+        super(casProperties, configProvider, applicationContext);
     }
 
-    @Configuration("mongoDbTicketCatalogConfigValuesProviderConfiguration")
-    static class MongoDbTicketCatalogConfigValuesProviderConfiguration {
-
-        @ConditionalOnMissingBean
+    @Configuration(value = "MongoDbTicketRegistryTicketCatalogProviderConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class MongoDbTicketRegistryTicketCatalogProviderConfiguration {
+        @ConditionalOnMissingBean(name = "mongoDbTicketCatalogConfigurationValuesProvider")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasTicketCatalogConfigurationValuesProvider mongoDbTicketCatalogConfigurationValuesProvider() {
             return new CasTicketCatalogConfigurationValuesProvider() {
+
                 @Override
                 public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
                     return p -> "serviceTicketsCollection";

@@ -1,10 +1,29 @@
 {
-  "dependencies": "duo",
+  "dependencies": "duo,themes-collection",
   "properties": [
-    "--cas.authn.mfa.duo[0].duo-secret-key=0K4VewoCASar64vFwdUfg8SvAm8GF6MnMaBWCk21",
-    "--cas.authn.mfa.duo[0].duo-application-key=u4IHBaDUDE8Cb0S5QMISAgHycpj9lPBkDGfWt66I",
-    "--cas.authn.mfa.duo[0].duo-integration-key=DIBLHRWL2KQK8EUAQZ55",
-    "--cas.authn.mfa.duo[0].duo-api-host=api.duosecurity.com"
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--spring.thymeleaf.cache=false",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.users=duobypass::Mellon",
+    
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+    
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_WEBSDK_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_WEBSDK_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-application-key=${#environmentVars['DUO_SECURITY_WEBSDK_AKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+    
+    "--cas.audit.engine.enabled=false",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoPing,duoAccountStatus,duoAdmin",
+    "--management.endpoints.enabled-by-default=true"
   ]
 }
 

@@ -14,13 +14,13 @@ import org.springframework.test.context.TestPropertySource;
 @EnabledIfPortOpen(port = 3306)
 @Tag("MySQL")
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.events.jpa.ddl-auto=create-drop",
     "cas.events.jpa.user=root",
     "cas.events.jpa.password=password",
     "cas.events.jpa.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.events.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.events.jpa.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+    "cas.events.jpa.dialect=org.hibernate.dialect.MySQL8Dialect"
 })
 public class MySQLJpaCasEventRepositoryTests extends JpaCasEventRepositoryTests {
 }

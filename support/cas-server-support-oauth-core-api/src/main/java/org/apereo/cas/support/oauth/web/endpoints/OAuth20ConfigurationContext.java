@@ -40,11 +40,11 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  * This is {@link OAuth20ConfigurationContext}.
@@ -81,7 +81,7 @@ public class OAuth20ConfigurationContext {
 
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
-    private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
+    private final ObjectProvider<List<OAuth20TokenRequestValidator>> accessTokenGrantRequestValidators;
 
     private final ExpirationPolicyBuilder<OAuth20DeviceToken> deviceTokenExpirationPolicy;
 
@@ -91,11 +91,11 @@ public class OAuth20ConfigurationContext {
 
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
-    private final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders;
+    private final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders;
 
     private final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationResponseBuilder;
 
-    private final Set<OAuth20AuthorizationRequestValidator> oauthRequestValidators;
+    private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
@@ -125,7 +125,7 @@ public class OAuth20ConfigurationContext {
 
     private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
 
-    private OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
+    private final OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
     private final CasCookieBuilder oauthDistributedSessionCookieGenerator;
 }

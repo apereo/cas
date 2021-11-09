@@ -45,7 +45,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -89,17 +88,18 @@ import static org.mockito.Mockito.*;
     "cas.ticket.registry.mongo.host=localhost",
     "cas.ticket.registry.mongo.port=27017",
     "cas.ticket.registry.mongo.drop-collection=true",
+    "cas.ticket.registry.mongo.update-indexes=true",
+    "cas.ticket.registry.mongo.drop-indexes=true",
     "cas.ticket.registry.mongo.user-id=root",
     "cas.ticket.registry.mongo.password=secret"
 })
 @EnableScheduling
-@DirtiesContext
 @EnabledIfPortOpen(port = 27017)
 @Getter
 public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;
 
     @Autowired

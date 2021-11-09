@@ -16,6 +16,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,13 +45,27 @@ public class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfig
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyGetOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         request.addParameter("password", "casuser");
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, samlRegisteredService.getServiceId());
+        request.addParameter("encrypt", "false");
         val response = new MockHttpServletResponse();
-        val entity = endpoint.produce(request, response);
+        val entity = endpoint.produceGet(request, response);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+    }
+
+    @Test
+    public void verifyPostOperation() {
+        val request = new MockHttpServletRequest();
+        val map = new HashMap<String, String>();
+        map.put("username", "casuser");
+        map.put("password", "casuser");
+        map.put(SamlProtocolConstants.PARAMETER_ENTITY_ID, samlRegisteredService.getServiceId());
+        map.put("encrypt", "false");
+        val response = new MockHttpServletResponse();
+        val entity = endpoint.producePost(request, response, map);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
     }
 
@@ -59,8 +75,9 @@ public class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfig
         request.addParameter("username", "xyz");
         request.addParameter("password", "123");
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, samlRegisteredService.getServiceId());
+        request.addParameter("encrypt", "false");
         val response = new MockHttpServletResponse();
-        val entity = endpoint.produce(request, response);
+        val entity = endpoint.produceGet(request, response);
         assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
     }
 
@@ -69,8 +86,9 @@ public class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfig
         val request = new MockHttpServletRequest();
         request.addParameter("username", "xyz");
         request.addParameter("password", "123");
+        request.addParameter("encrypt", "false");
         val response = new MockHttpServletResponse();
-        val entity = endpoint.produce(request, response);
+        val entity = endpoint.produceGet(request, response);
         assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());
     }
 }

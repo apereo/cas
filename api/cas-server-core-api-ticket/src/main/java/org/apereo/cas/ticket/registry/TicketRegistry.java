@@ -19,11 +19,25 @@ import java.util.stream.Stream;
 public interface TicketRegistry {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "ticketRegistry";
+
+    /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
      *
      * @param ticket The ticket we wish to add to the cache.
      */
     void addTicket(Ticket ticket);
+
+    /**
+     * Save.
+     *
+     * @param toSave the to save
+     */
+    default void addTicket(final Stream<? extends Ticket> toSave) {
+        toSave.forEach(this::addTicket);
+    }
 
     /**
      * Retrieve a ticket from the registry. If the ticket retrieved does not
@@ -95,7 +109,7 @@ public interface TicketRegistry {
      * @return the tickets
      */
     default Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate) {
-        return getTicketsStream().filter(predicate);
+        return stream().filter(predicate);
     }
 
     /**
@@ -128,7 +142,7 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
-    default Stream<? extends Ticket> getTicketsStream() {
+    default Stream<? extends Ticket> stream() {
         return getTickets().stream();
     }
 

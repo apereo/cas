@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowActions")
 public class ValidateCaptchaActionTests {
     @Autowired
-    @Qualifier("validateCaptchaAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)
     private Action validateCaptchaAction;
 
     @Test

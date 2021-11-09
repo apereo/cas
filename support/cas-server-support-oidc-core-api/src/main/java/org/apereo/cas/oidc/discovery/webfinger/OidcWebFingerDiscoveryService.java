@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -66,7 +67,7 @@ public class OidcWebFingerDiscoveryService {
      * @param rel      the rel
      * @return the response entity
      */
-    public ResponseEntity handleWebFingerDiscoveryRequest(final String resource, final String rel) {
+    public ResponseEntity<Map> handleWebFingerDiscoveryRequest(final String resource, final String rel) {
         if (StringUtils.isNotBlank(rel) && !OidcConstants.WEBFINGER_REL.equalsIgnoreCase(rel)) {
             LOGGER.warn("Handling discovery request for a non-standard OIDC relation [{}]", rel);
         }

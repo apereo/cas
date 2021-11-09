@@ -8,7 +8,8 @@ category: Attributes
 
 # Attribute Release Policies
 
-The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
+The attribute release policy decides how attributes are selected and provided to a given application in the final 
+CAS response. Additionally, each policy has the ability to apply an optional filter to weed out their attributes based on their values.
 
 The following settings are shared by all attribute release policies:
 
@@ -20,37 +21,19 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseAuthenticationAttributes`   | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date.
 | `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
-may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
+the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
+may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that 
+you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 CAS makes a distinction between attributes that convey metadata about the authentication event versus
 those that contain personally identifiable data for the authenticated principal.
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `releaseAttributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
 
-Supported parameters are the following:
-
-| Query Parameter           | Description
-|---------------------------|--------------------------------------------
-| `username`                | The username to use for authentication.
-| `password`                | The password to use for authentication.
-| `service`                 | Service to which attributes should be released.
-
-The parameters above can either be added as query string parameters or as a JSON object submitted with a POST:
-
-```json
-{ 
-  "username": "USERNAME",
-  "password": "PASSWORD",
-  "service": "SERVICE_URL"
-}
-```
+{% include_cached actuators.html endpoints="releaseAttributes" casModule="cas-server-support-reports" %}
 
 ## Authentication Attributes
 
@@ -63,7 +46,7 @@ authentication handlers, date/time of the authentication, etc.
 Releasing authentication attributes to service providers and applications can be
 controlled to some extent.
 
-{% include casproperties.html properties="cas.authn.authentication-attribute-release" %}
+{% include_cached casproperties.html properties="cas.authn.authentication-attribute-release" %}
 
 Protocol/authentication attributes may also be released conditionally on a per-service basis.
 
@@ -85,11 +68,12 @@ release policy of the service, such that for instance, you can devise rules to a
 and `cn` to every application, and additionally allow other specific principal attributes for 
 only some applications per their attribute release policy.
 
-{% include casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.core.default-attributes-to-release" %}
 
 ### Return All
 
-Return all resolved principal attributes to the service.
+Return all resolved principal attributes to the service,
+and optionally exclude attributes from the final collection.
 
 ```json
 {
@@ -98,7 +82,8 @@ Return all resolved principal attributes to the service.
   "name" : "sample",
   "id" : 100,
   "attributeReleasePolicy" : {
-    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "excludedAttributes": ["java.util.LinkedHashSet", ["cn"]]
   }
 }
 ```
@@ -383,7 +368,7 @@ takes advantage of scripting functionality built into the Java platform via addi
 natively supported by CAS, the following module is required in the overlay to include support for additional languages
 such as Python, etc.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-script-engines" %}
 
 The service definition then may be designed as:
 
@@ -454,69 +439,8 @@ to fetch, resolve, cache and release attributes. To learn more about this topic,
 
 ### Chaining Policies
 
-Attribute release policies can be chained together to process multiple rules.
-The order of policy invocation is the same as the definition order defined for the service itself.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "sample",
-  "name" : "sample",
-  "id" : 300,
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "mergingPolicy": "replace",
-    "policies": [ "java.util.ArrayList",
-      [
-          {"@class": "..."},
-          {"@class": "..."}
-      ]
-    ]
-  }
-}
-```
-
-The following merging policies are supported:
-
-| Policy          | Description   
-|-----------------|------------------------------------------------------------------
-| `replace`       | Attributes are merged such that attributes from the source always replace principal attributes.
-| `add`           | Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
-| `multivalued`   | Attributes with the same name are merged into multi-valued attributes.
-
-#### Ordering Policies
-
-Note that each policy in the chain can be assigned a numeric `order` that would determine its position in the chain before execution. This
-order may be important if you have attribute release policies that should calculate a value dynamically first before passing it onto
-the next policy in the chain. 
-
-For example, the policy chain below allows CAS to generate an attribute first using the `GeneratesFancyAttributeReleasePolicy` policy
-where the attribute is next passed onto the next policy in the chain, that is `ReleaseFancyAttributeReleasePolicy`, to decide
-whether or not the attribute should be released. Note the configuration of policy `order` determines the execution sequence.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "sample",
-  "name" : "sample",
-  "id" : 300,
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "policies": [ "java.util.ArrayList",
-      [
-          {
-            "@class": "org.apereo.cas.ReleaseFancyAttributeReleasePolicy",
-            "order": 1
-          },
-          {
-            "@class": "org.apereo.cas.GeneratesFancyAttributeReleasePolicy", 
-            "order": 0
-          }
-      ]
-    ]
-  }
-}
-```
+Attribute release policies can be chained together to 
+process multiple rules. [See this guide](Attribute-Release-Policies-Chain.html) to learn more.
 
 ## Attribute Value Filters
 

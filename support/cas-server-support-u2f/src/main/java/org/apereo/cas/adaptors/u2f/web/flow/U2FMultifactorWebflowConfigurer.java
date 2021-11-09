@@ -51,15 +51,15 @@ public class U2FMultifactorWebflowConfigurer extends AbstractCasMultifactorWebfl
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "accountRegistrationCheck");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             setStartState(flow, initLoginFormState);
 
-            val checkState = createActionState(flow, "accountRegistrationCheck",
+            val checkState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
                 createEvaluateAction("u2fCheckAccountRegistrationAction"));
             createTransitionForState(checkState, CasWebflowConstants.TRANSITION_ID_REGISTER, "viewRegistrationU2f");
             createTransitionForState(checkState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
-            val saveState = createActionState(flow, "saveRegistration",
+            val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
                 createEvaluateAction("u2fSaveAccountRegistrationAction"));
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
 
@@ -70,15 +70,15 @@ public class U2FMultifactorWebflowConfigurer extends AbstractCasMultifactorWebfl
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
 
-            val viewRegState = createViewState(flow, "viewRegistrationU2f", "casU2fRegistrationView");
+            val viewRegState = createViewState(flow, "viewRegistrationU2f", "u2f/casU2fRegistrationView");
             viewRegState.getEntryActionList()
                 .addAll(createEvaluateAction("u2fStartRegistrationAction"), setPrincipalAction);
-            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "saveRegistration");
+            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casU2fLoginView", loginBinder);
+                "u2f/casU2fLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, U2FTokenCredential.class);
             viewLoginFormState.getEntryActionList()
                 .addAll(createEvaluateAction("u2fStartAuthenticationAction"), setPrincipalAction);

@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +31,6 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @SuppressWarnings("JDBCExecuteWithNonConstantString")
-@Tag("JDBC")
+@Tag("JDBCAuthentication")
 @Import(QueryDatabaseAuthenticationHandlerTests.DatabaseTestConfiguration.class)
 public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM casusers where username=?";
@@ -62,8 +61,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
     }
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -79,8 +77,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
     }
 
     @AfterEach
-    @SneakyThrows
-    public void afterEachTest() {
+    public void afterEachTest() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
@@ -94,44 +91,46 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
 
     @Test
     public void verifyAuthenticationFailsToFindUser() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD, null,
-            null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(AccountNotFoundException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1")));
     }
 
     @Test
     public void verifyPasswordInvalid() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11")));
     }
 
     @Test
     public void verifyMultipleRecords() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
     }
 
     @Test
     public void verifyBadQuery() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL.replace("*", "error"),
-            PASSWORD_FIELD, null, null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL.replace("*", "error")).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(PreventedException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0")));
     }
 
     @Test
-    @SneakyThrows
-    public void verifySuccess() {
+    public void verifySuccess() throws Exception {
         val map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(List.of("phone:phoneNumber"));
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null,
-            this.dataSource, SQL, PASSWORD_FIELD,
-            null, null,
-            CollectionUtils.wrap(map));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, CollectionUtils.wrap(map));
         val result = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
         assertNotNull(result);
@@ -141,16 +140,18 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
 
     @Test
     public void verifyFindUserAndExpired() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            "expired", null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldExpired("expired");
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(AccountPasswordMustChangeException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20")));
     }
 
     @Test
     public void verifyFindUserAndDisabled() {
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, SQL, PASSWORD_FIELD,
-            null, "disabled", new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         assertThrows(AccountDisabledException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21")));
     }
@@ -163,8 +164,9 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
     public void verifyBCryptFail() {
         val encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc1") + "' password");
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, sql, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
         q.setPasswordEncoder(encoder);
         assertThrows(FailedLoginException.class,
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1")));
@@ -175,12 +177,12 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
      * using raw password test can authenticate
      */
     @Test
-    @SneakyThrows
-    public void verifyBCryptSuccess() {
+    public void verifyBCryptSuccess() throws Exception {
         val encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         val sql = SQL.replace("*", '\'' + encoder.encode("pswbc2") + "' password");
-        val q = new QueryDatabaseAuthenticationHandler(StringUtils.EMPTY, null, null, null, this.dataSource, sql, PASSWORD_FIELD,
-            null, null, new HashMap<>(0));
+        val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword(PASSWORD_FIELD);
+        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(),
+            this.dataSource, new HashMap<>(0));
 
         q.setPasswordEncoder(encoder);
         assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));

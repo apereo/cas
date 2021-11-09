@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 public class AllAuthenticationHandlersSucceededAuthenticationPolicyTests {
     @Test
     public void verifyOperationPrevented() {

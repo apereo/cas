@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title th:text="#{screen.mustchangepass.heading}">You must change your password View</title>
+    <script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
+    <script type="text/javascript" th:src="@{/js/passwordMeter.js}"></script>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card card p-4 w-lg-66 m-auto">
+        <div th:replace="fragments/pwdupdateform :: pwdupdateform">
+            <a href="fragments/pwdupdateform.html">pwdupdateform</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

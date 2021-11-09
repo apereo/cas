@@ -13,13 +13,14 @@ import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticat
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelectorTests;
 import org.apereo.cas.web.flow.resolver.impl.CompositeProviderSelectionMultifactorWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventResolverTests;
+import org.apereo.cas.web.flow.resolver.impl.DefaultMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolverTests;
+import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolverTests;
 
-import org.junit.platform.runner.JUnitPlatform;
 import org.junit.platform.suite.api.SelectClasses;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -37,6 +38,8 @@ import org.junit.runner.RunWith;
     AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
     MultifactorAuthenticationTests.class,
+    RankedMultifactorAuthenticationProviderWebflowEventResolverWithCompositeTests.class,
+    DefaultMultifactorAuthenticationProviderWebflowEventResolverTests.class,
     MultifactorProviderSelectedActionTests.class,
     DefaultCasDelegatingWebflowEventResolverTests.class,
     ServiceTicketRequestWebflowEventResolverTests.class,
@@ -52,6 +55,6 @@ import org.junit.runner.RunWith;
     RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     TimedMultifactorAuthenticationPolicyEventResolverTests.class
 })
-@RunWith(JUnitPlatform.class)
+@Suite
 public class AllTestsSuite {
 }

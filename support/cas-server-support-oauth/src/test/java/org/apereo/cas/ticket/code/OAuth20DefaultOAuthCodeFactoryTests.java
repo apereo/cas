@@ -3,6 +3,8 @@ package org.apereo.cas.ticket.code;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 
@@ -34,7 +36,8 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             Set.of("Scope1", "Scope2"), "code-challenge", "plain",
-            "clientid-code", Map.of());
+            "clientid-code", Map.of(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertTrue(token.isFromNewLogin());
         assertThrows(UnsupportedOperationException.class,
@@ -51,7 +54,7 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             RegisteredServiceTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),
             Set.of("Scope1", "Scope2"), "code-challenge", "plain",
-            "clientid-code-noexp", Map.of());
+            "clientid-code-noexp", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertNotNull(defaultAccessTokenFactory.get(OAuth20Code.class));
     }
