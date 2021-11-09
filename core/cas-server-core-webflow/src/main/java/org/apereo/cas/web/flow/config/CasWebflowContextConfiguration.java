@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.config;
 
-import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -29,7 +28,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.ExpressionParser;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -76,7 +74,6 @@ import java.util.List;
  */
 @Configuration(value = "casWebflowContextConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasWebflowContextConfiguration {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
@@ -368,7 +365,6 @@ public class CasWebflowContextConfiguration {
     }
 
     @Configuration(value = "CasWebflowDefinitionsConfiguration", proxyBeanMethods = false)
-    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
     public static class CasWebflowDefinitionsConfiguration {
 
         @Bean
@@ -398,7 +394,6 @@ public class CasWebflowContextConfiguration {
 
     }
 
-    @AutoConfigureAfter(CasCoreServicesConfiguration.class)
     @Configuration(value = "CasWebflowExecutionConfiguration", proxyBeanMethods = false)
     public static class CasWebflowExecutionConfiguration {
 

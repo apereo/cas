@@ -23,9 +23,7 @@ import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -35,7 +33,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
@@ -72,7 +69,6 @@ import java.util.Set;
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
 @Slf4j
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasThymeleafConfiguration {
 
     private static final int THYMELEAF_VIEW_RESOLVER_ORDER = Ordered.LOWEST_PRECEDENCE - 5;
@@ -173,8 +169,6 @@ public class CasThymeleafConfiguration {
     }
 
     @Configuration(value = "ThymeleafWebflowConfiguration", proxyBeanMethods = false)
-    @ConditionalOnBean(name = CasWebflowExecutionPlan.BEAN_NAME)
-    @DependsOn(CasWebflowExecutionPlan.BEAN_NAME)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafWebflowConfiguration {
 

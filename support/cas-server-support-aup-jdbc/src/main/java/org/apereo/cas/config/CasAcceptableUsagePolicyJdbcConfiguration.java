@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,6 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "casAcceptableUsagePolicyJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasCoreTicketsConfiguration.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
