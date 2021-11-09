@@ -128,7 +128,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    WebMvcAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
