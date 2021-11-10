@@ -77,7 +77,7 @@ def isArtifactSigningRequired = {
     return publishReleases && !skipArtifactSigning
 }
 
-if ("${releaseRepositoryUrl}".contains("oss.sonatype.org") {
+if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
     apply plugin: "io.github.gradle-nexus.publish-plugin"
     nexusPublishing {
         packageGroup = "org.apereo"
