@@ -56,6 +56,9 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -77,6 +80,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -271,6 +275,57 @@ public class OidcEndpointsConfiguration {
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
             return new OidcDefaultJsonWebKeystoreRotationService(oidc, applicationContext);
+        }
+
+
+        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
+        @Bean
+        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.rotation.schedule",
+            name = "enabled", havingValue = "true", matchIfMissing = true)
+        public Runnable oidcJsonWebKeystoreRotationScheduler(
+            @Qualifier("oidcJsonWebKeystoreRotationService")
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            return new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService);
+        }
+
+        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
+        @Bean
+        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.revocation.schedule",
+            name = "enabled", havingValue = "true", matchIfMissing = true)
+        public Runnable oidcJsonWebKeystoreRevocationScheduler(
+            @Qualifier("oidcJsonWebKeystoreRotationService")
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            return new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService);
+        }
+        
+        @RequiredArgsConstructor
+        @Slf4j
+        public static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
+            private final OidcJsonWebKeystoreRotationService rotationService;
+
+            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
+                fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
+            @Override
+            @SneakyThrows
+            public void run() {
+                LOGGER.info("Starting to rotate keys in the OIDC keystore...");
+                rotationService.rotate();
+            }
+        }
+
+        @RequiredArgsConstructor
+        @Slf4j
+        public static class OidcJsonWebKeystoreRevocationScheduler implements Runnable {
+            private final OidcJsonWebKeystoreRotationService rotationService;
+
+            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
+                fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
+            @Override
+            @SneakyThrows
+            public void run() {
+                LOGGER.info("Starting to revoke keys in the OIDC keystore...");
+                rotationService.revoke();
+            }
         }
     }
 

@@ -50,6 +50,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -155,6 +156,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcIssuerService")
     protected OidcIssuerService oidcIssuerService;
 
+    @Autowired
+    @Qualifier("oidcJsonWebKeystoreRotationService")
+    protected OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService;
+    
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;

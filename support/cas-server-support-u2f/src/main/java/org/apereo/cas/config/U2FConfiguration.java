@@ -129,7 +129,8 @@ public class U2FConfiguration {
     public static class U2FCleanerConfiguration {
         @ConditionalOnMissingBean(name = "u2fDeviceRepositoryCleanerScheduler")
         @Bean
-        @ConditionalOnProperty(prefix = "authn.mfa.u2f.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f.cleaner.schedule",
+            name = "enabled", havingValue = "true", matchIfMissing = true)
         public Runnable u2fDeviceRepositoryCleanerScheduler(
             @Qualifier("u2fDeviceRepository")
             final U2FDeviceRepository storage) {

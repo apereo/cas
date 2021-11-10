@@ -71,14 +71,20 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
-        val jwk = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
-        OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(jwk,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT);
-        val jsonWebKeySet = new JsonWebKeySet(jwk);
+        val currentKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT);
+        val futureKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE);
+        val jsonWebKeySet = new JsonWebKeySet(currentKey, futureKey);
+        
         val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         val location = file.getFile();
         FileUtils.write(location, data, StandardCharsets.UTF_8);
         LOGGER.debug("Generated JSON web keystore at [{}]", location);
         return file;
+    }
+
+    private JsonWebKey generateKeyWithState(final OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates state) {
+        val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
+        OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(key, state);
+        return key;
     }
 }

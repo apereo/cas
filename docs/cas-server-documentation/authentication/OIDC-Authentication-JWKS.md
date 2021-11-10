@@ -10,7 +10,7 @@ category: Protocols
 The JWKS (JSON Web Key Set) endpoint and functionality returns a JWKS containing public keys that enable 
 clients to validate a JSON Web Token (JWT) issued by CAS as an OpenID Connect Provider.
 
-{% include_cached casproperties.html properties="cas.authn.oidc.jwks" excludes=".rest,.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks" excludes=".rest,.groovy,.revocation,.rotation" %}
 
 ## Keystores
        
@@ -123,3 +123,5 @@ CAS always signs with only one signing key at a time, typically the *very first 
 The dynamic discovery endpoint will always include both the current key and the next key, and it may also 
 include the previous key if the previous key has not yet been revoked. To provide a seamless experience in 
 case of an emergency, client applications should be able to use any of the keys specified in the discovery document. 
+
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks.revocation,cas.authn.oidc.jwks.rotation" %}
