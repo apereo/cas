@@ -49,7 +49,12 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
         "cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
         "cas.ticket.registry.dynamo-db.local-instance=true",
-        "cas.ticket.registry.dynamo-db.region=us-east-1"
+        "cas.ticket.registry.dynamo-db.region=us-east-1",
+        "cas.authn.oauth.access-token.storage-name=test-oauthAccessTokensCache",
+        "cas.authn.oauth.refresh-token.storage-name=test-oauthRefreshTokensCache",
+        "cas.authn.oauth.code.storage-name=test-oauthCodesCache",
+        "cas.authn.oauth.device-token.storage-name=test-oauthDeviceTokensCache",
+        "cas.authn.oauth.device-user-code.storage-name=test-oauthDeviceUserCodesCache"
     })
 @EnabledIfPortOpen(port = 8000)
 @Getter
