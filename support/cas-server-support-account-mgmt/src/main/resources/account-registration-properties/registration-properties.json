@@ -43,5 +43,14 @@
     "pattern": "^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$",
     "type": "tel",
     "order": 4
+  },
+  "country" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "country",
+    "label" : "cas.screen.acct.label.country",
+    "title" : "cas.screen.acct.title.country",
+    "values" : [ "java.util.ArrayList", [ "USA", "Canada" ] ],
+    "type": "select",
+    "order": 5
   }
 }

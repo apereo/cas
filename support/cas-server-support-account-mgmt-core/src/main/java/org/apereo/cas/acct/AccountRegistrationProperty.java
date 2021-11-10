@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link AccountRegistrationProperty}.
@@ -44,4 +46,7 @@ public class AccountRegistrationProperty implements Serializable {
 
     @Builder.Default
     private String validationMessage = "cas.screen.acct.error.invalid-value";
+
+    @Builder.Default
+    private List<String> values = new ArrayList<>();
 }
