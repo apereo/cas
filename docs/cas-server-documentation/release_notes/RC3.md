@@ -49,8 +49,7 @@ cas.version=6.5.0-RC3
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
@@ -88,6 +87,8 @@ inactive keys that should be removed from the keystore.
        
 - All Redis integrations are now able to support TLS options for encrypted connections and transports.
 - All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
+- DynamoDb tables names that affect OAuth and OpenID Connect functionality are now customizable via CAS settings.
+- Cache invalidation rules for static resources such as JSS/JS files using `ResourceUrlProviderExposingInterceptor` is now restored.
 
 ## Library Upgrades
 
