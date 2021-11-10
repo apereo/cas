@@ -28,7 +28,8 @@
 
             <section th:each="entry : ${registrationProperties}" class="cas-field my-3">
                 <div>
-                    <label class="mdc-text-field mdc-text-field--outlined">
+                    <label class="mdc-text-field mdc-text-field--outlined"
+                           th:if="${entry.type != 'select'}">
                         <input class="mdc-text-field__input"
                                th:id="${entry.name}"
                                th:name="${entry.name}"
@@ -48,6 +49,15 @@
                             <span class="mdc-notched-outline__trailing"></span>
                        </span>
                     </label>
+
+                    <select th:if="${entry.type == 'select'}"
+                            th:id="${entry.name}"
+                            th:title="#{${entry.title}}"
+                            th:name="${entry.name}"
+                            th:classappend="${'custom-select ' + entry.cssClass}">
+                            <option th:each="option,status : ${entry.values}" th:value="${status.index}" th:text="${option}" />
+                    </select>
+                    
                     <div class="mdc-text-field-helper-line" th:if="${entry.validationMessage != null}">
                         <div th:id="${'helpertext-' + entry.name}"
                              class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
