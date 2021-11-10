@@ -95,6 +95,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Release to GH Package Repository
-        run: ./gradlew -DdisableNexus=true -DpublishReleases=true -DskipArtifactSigning=true -DpublishMinimalArtifacts=true --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  build publish -x test -x javadoc -x check -PrepositoryUsername=${GITHUB_ACTOR} -PrepositoryPassword=${GITHUB_TOKEN} -PreleaseRepositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} -Pversion=${GITHUB_REF/refs\/tags\//}
+        run: ./gradlew -DpublishReleases=true -DskipArtifactSigning=true -DpublishMinimalArtifacts=true --build-cache --configure-on-demand --no-daemon -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  build publish -x test -x javadoc -x check -PrepositoryUsername=${GITHUB_ACTOR} -PrepositoryPassword=${GITHUB_TOKEN} -PreleaseRepositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} -Pversion=${GITHUB_REF/refs\/tags\//}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
