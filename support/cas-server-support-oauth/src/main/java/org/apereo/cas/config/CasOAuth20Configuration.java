@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.DistributedJEESessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -104,6 +105,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -120,6 +122,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -627,6 +630,32 @@ public class CasOAuth20Configuration {
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             return JEESessionStore.INSTANCE;
+        }
+
+    }
+
+    @Configuration(value = "CasOAuth20LogoutConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuth20LogoutConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthLogoutExecutionPlanConfigurer")
+        public LogoutExecutionPlanConfigurer oauthLogoutExecutionPlanConfigurer(
+                final CasConfigurationProperties casProperties,
+                @Qualifier("oauthDistributedSessionStore")
+                final SessionStore oauthDistributedSessionStore) {
+            return plan -> {
+                val replicate = casProperties.getAuthn().getOauth().isReplicateSessions();
+                if (replicate) {
+                    plan.registerLogoutPostProcessor(ticketGrantingTicket -> {
+                        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+                        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+                        if (request != null && response != null) {
+                            oauthDistributedSessionStore.destroySession(new JEEContext(request, response));
+                        }
+                    });
+                }
+            };
         }
 
     }
