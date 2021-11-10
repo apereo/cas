@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Closeable;
@@ -22,11 +23,13 @@ import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * Control watch operations on paths and files as a service.
+ *
  * @author David Rodriguez
  * @since 5.2.0
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
+    private static final int DELAY_MILLI_SECONDS = 500;
 
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
@@ -47,10 +50,10 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             file -> {
             });
     }
-    
+
     @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
-        final Consumer<File> onModify, final Consumer<File> onDelete) {
+                              final Consumer<File> onModify, final Consumer<File> onDelete) {
         LOGGER.info("Watching directory path at [{}]", watchablePath);
         this.onCreate = onCreate;
         this.onModify = onModify;
@@ -109,7 +112,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
      * @param key the key
      */
     private void handleEvent(final WatchKey key) {
-        key.pollEvents().forEach(event -> {
+        key.pollEvents().forEach(Unchecked.consumer(event -> {
             val eventName = event.kind().name();
 
             val ev = (WatchEvent<Path>) event;
@@ -119,6 +122,7 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             val fullPath = parent.resolve(filename);
             val file = fullPath.toFile();
 
+            Thread.sleep(DELAY_MILLI_SECONDS);
             LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
             if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
                 onCreate.accept(file);
@@ -127,6 +131,6 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             } else if (eventName.equals(ENTRY_MODIFY.name()) && file.exists()) {
                 onModify.accept(file);
             }
-        });
+        }));
     }
 }
