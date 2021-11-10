@@ -33,4 +33,10 @@ public class OAuthCodeProperties implements Serializable {
      * Duration in seconds where the code is valid.
      */
     private long timeToKillInSeconds = 30;
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth codes in the
+     * backing ticket registry implementation.
+     */
+    private String storageName = "oauthCodesCache";
 }
