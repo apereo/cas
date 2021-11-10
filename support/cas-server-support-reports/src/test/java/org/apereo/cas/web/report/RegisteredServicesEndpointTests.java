@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -43,6 +44,7 @@ public class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         servicesManager.save(service1, service2);
 
         assertNotNull(endpoint.handle().getBody());
+        assertNotNull(endpoint.fetchServicesByType(RegexRegisteredService.class.getSimpleName()).getBody());
         assertNotNull(endpoint.fetchService(service1.getServiceId()).getBody());
         assertNotNull(endpoint.deleteService(service1.getServiceId()).getBody());
         assertEquals(HttpStatus.NOT_FOUND, endpoint.fetchService(String.valueOf(service1.getId())).getStatusCode());
