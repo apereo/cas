@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
