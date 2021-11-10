@@ -90,5 +90,17 @@ public interface OidcJsonWebKeystoreRotationService {
         public static void setJsonWebKeyState(final JsonWebKey key, final JsonWebKeyLifecycleStates state) {
             key.setOtherParameter(OidcJsonWebKeystoreRotationService.PARAMETER_STATE, state.getState());
         }
+
+        public boolean isCurrent() {
+            return getState() == CURRENT.getState();
+        }
+
+        public boolean isPrevious() {
+            return getState() == PREVIOUS.getState();
+        }
+
+        public boolean isFuture() {
+            return getState() == FUTURE.getState();
+        }
     }
 }

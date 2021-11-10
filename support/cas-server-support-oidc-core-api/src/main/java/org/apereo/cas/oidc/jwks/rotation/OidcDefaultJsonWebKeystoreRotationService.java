@@ -44,7 +44,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                 val jsonWebKeySet = new JsonWebKeySet(jwksJson);
 
                 jsonWebKeySet.getJsonWebKeys().forEach(key -> {
-                    LOGGER.debug("Processing key [{}]", key.getKeyId());
+                    LOGGER.debug("Processing key [{}] to determine rotation eligibility", key.getKeyId());
 
                     val state = JsonWebKeyLifecycleStates.getJsonWebKeyState(key);
                     if (state == JsonWebKeyLifecycleStates.CURRENT) {
@@ -59,8 +59,17 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                 val generatedKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
                 JsonWebKeyLifecycleStates.setJsonWebKeyState(generatedKey, JsonWebKeyLifecycleStates.FUTURE);
                 LOGGER.trace("Generated future key with id [{}]", generatedKey.getKeyId());
-                jsonWebKeySet.addJsonWebKey(generatedKey);
 
+                val foundCurrent = jsonWebKeySet.getJsonWebKeys()
+                    .stream().anyMatch(key -> JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent());
+                if (!foundCurrent) {
+                    val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
+                    JsonWebKeyLifecycleStates.setJsonWebKeyState(currentKey, JsonWebKeyLifecycleStates.CURRENT);
+                    LOGGER.trace("Generated current key with id [{}]", currentKey.getKeyId());
+                    jsonWebKeySet.addJsonWebKey(currentKey);
+                }
+
+                jsonWebKeySet.addJsonWebKey(generatedKey);
                 storeJsonWebKeys(resource, jsonWebKeySet);
                 return jsonWebKeySet;
             }))
@@ -75,7 +84,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                 val jwksJson = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
                 val jsonWebKeySet = new JsonWebKeySet(jwksJson);
                 jsonWebKeySet.getJsonWebKeys().removeIf(key -> {
-                    LOGGER.debug("Processing key [{}]", key.getKeyId());
+                    LOGGER.debug("Processing key [{}] to determine revocation eligibility", key.getKeyId());
                     val state = JsonWebKeyLifecycleStates.getJsonWebKeyState(key);
                     return state == JsonWebKeyLifecycleStates.PREVIOUS;
                 });
@@ -90,7 +99,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
         LOGGER.trace("Storing keys in [{}]", resource);
         FileUtils.write(resource.getFile(), data, StandardCharsets.UTF_8);
 
-        LOGGER.info("Publishing event to broadcast change in [{}]", resource.getFile());
+        LOGGER.debug("Publishing event to broadcast change in [{}]", resource.getFile());
         applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, resource.getFile()));
     }
 

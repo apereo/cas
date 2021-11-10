@@ -73,4 +73,16 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovy = new SpringResourceProperties();
+
+    /**
+     * OIDC key rotation properties.
+     */
+    @NestedConfigurationProperty
+    private OidcJsonWebKeyStoreRotationProperties rotation = new OidcJsonWebKeyStoreRotationProperties();
+
+    /**
+     * OIDC key revocation properties.
+     */
+    @NestedConfigurationProperty
+    private OidcJsonWebKeyStoreRevocationProperties revocation = new OidcJsonWebKeyStoreRevocationProperties();
 }
