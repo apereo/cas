@@ -30,4 +30,11 @@ public class OAuthRefreshTokenProperties implements Serializable {
      */
     @DurationCapable
     private String timeToKillInSeconds = "P14D";
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth refresh tokens
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthRefreshTokensCache";
+
 }

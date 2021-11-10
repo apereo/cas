@@ -35,4 +35,10 @@ public class OAuthDeviceUserCodeProperties implements Serializable {
      * Length of the generated user code.
      */
     private int userCodeLength = 8;
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth device user
+     * codes in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthDeviceUserCodesCache";
 }
