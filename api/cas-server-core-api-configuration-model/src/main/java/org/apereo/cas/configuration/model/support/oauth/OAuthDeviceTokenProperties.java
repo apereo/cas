@@ -33,4 +33,10 @@ public class OAuthDeviceTokenProperties implements Serializable {
      * by POSTing to the access token endpoint on the server.
      */
     private String refreshInterval = "PT15S";
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth device tokens
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthDeviceTokensCache";
 }
