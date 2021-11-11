@@ -52,6 +52,4 @@ specify additional account details mostly useful for development and basic testi
 
 The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`.
 
-{% include_cached {{ version }}/password-policy-configuration.md configKey="cas.authn.json.password-policy" %}
-
 {% include_cached casproperties.html properties="cas.authn.json"  %}
