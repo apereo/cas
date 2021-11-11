@@ -53,6 +53,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
             + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
 
         val registeredService = getOidcRegisteredService();
+        registeredService.setJwks("classpath:servicekid.jwks");
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
         val webKey = oidcServiceJsonWebKeystoreCache.get(registeredService).get();
