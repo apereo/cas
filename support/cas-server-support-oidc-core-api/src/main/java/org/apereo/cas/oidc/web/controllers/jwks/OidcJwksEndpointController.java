@@ -85,7 +85,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
                 jsonWebKeySet.getJsonWebKeys()
                     .removeIf(key -> {
                         val st = OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).name();
-                        return state.equalsIgnoreCase(st);
+                        return !state.equalsIgnoreCase(st);
                     });
             }
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);

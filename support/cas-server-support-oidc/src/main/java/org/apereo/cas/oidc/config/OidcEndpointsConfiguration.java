@@ -25,6 +25,7 @@ import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointContro
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
+import org.apereo.cas.oidc.web.controllers.jwks.JwksRotationEndpoint;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatcher;
@@ -70,6 +71,7 @@ import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -297,7 +299,7 @@ public class OidcEndpointsConfiguration {
             final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
             return new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService);
         }
-        
+
         @RequiredArgsConstructor
         @Slf4j
         public static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
@@ -505,6 +507,15 @@ public class OidcEndpointsConfiguration {
             @Qualifier("oidcConfigurationContext")
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcIntrospectionEndpointController(oidcConfigurationContext);
+        }
+
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        public JwksRotationEndpoint jwksRotationEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("oidcJsonWebKeystoreRotationService")
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            return new JwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
         }
     }
 
