@@ -99,8 +99,8 @@ public class SamlIdPUtils {
     @SneakyThrows
     public static <T extends RequestAbstractType> T retrieveSamlRequest(final OpenSamlConfigBean openSamlConfigBean,
                                                                         final Class<T> clazz, final String requestValue) {
-        LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
         try {
+            LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
             val decodedBytes = Base64Support.decode(requestValue);
             try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
                 return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(

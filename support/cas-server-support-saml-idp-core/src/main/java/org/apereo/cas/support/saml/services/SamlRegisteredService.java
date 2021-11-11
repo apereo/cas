@@ -34,6 +34,11 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 1218757374062931021L;
 
+    /**
+     * Service definition friendly name.
+     */
+    public static final String FRIENDLY_NAME = "SAML2 Service Provider";
+
     @ExpressionLanguageCapable
     private String metadataLocation;
 
@@ -151,7 +156,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "SAML2 Service Provider";
+        return FRIENDLY_NAME;
     }
 
     @Override

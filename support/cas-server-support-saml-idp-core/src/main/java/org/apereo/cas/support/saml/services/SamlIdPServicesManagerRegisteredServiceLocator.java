@@ -56,11 +56,13 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
 
     @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
-        return getSamlParameterValue(registeredService, service).isPresent();
+        val matched = SamlRegisteredService.class.isAssignableFrom(registeredService.getClass())
+            && registeredService.getFriendlyName().equalsIgnoreCase(SamlRegisteredService.FRIENDLY_NAME);
+        return matched && getSamlParameterValue(registeredService, service).isPresent();
     }
 
     /**
-     * Get the saml2 request or entity id as a service atribute.
+     * Get the saml2 request or entity id as a service attribute.
      *
      * @param registeredService the registered service
      * @param service           the service
