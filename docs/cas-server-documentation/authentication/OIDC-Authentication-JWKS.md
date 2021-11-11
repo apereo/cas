@@ -135,6 +135,20 @@ case of an emergency, client applications should be able to use any of the keys 
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks" includes=".revocation,.rotation" %}
 
+### Custom
+
+It is possible to design and inject your own key rotation and revocation 
+strategy into CAS using the following `@Bean` that would be registered in a `@Configuration` class:
+
+```java
+@Bean
+public OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService() {
+    return new MyJsonWebKeystoreRotationService();
+}
+```
+
+Your configuration class needs to be registered
+with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
 
 ## Actuator Endpoints
 
