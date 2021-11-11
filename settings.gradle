@@ -65,7 +65,6 @@ dependencyResolutionManagement {
             mavenContent { releasesOnly() }
             content {
                 includeGroupByRegex "org.springframework.*"
-                includeGroupByRegex "io.micrometer.*"
             }
         }
     }

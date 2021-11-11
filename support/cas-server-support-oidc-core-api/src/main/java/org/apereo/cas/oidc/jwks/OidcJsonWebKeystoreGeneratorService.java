@@ -26,6 +26,7 @@ public interface OidcJsonWebKeystoreGeneratorService {
     /**
      * Generate json web key json web key.
      *
+     * @param oidcProperties the oidc properties
      * @return the json web key
      */
     static JsonWebKey generateJsonWebKey(final OidcProperties oidcProperties) {

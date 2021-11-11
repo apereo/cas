@@ -63,6 +63,8 @@ such as Spring Cloud, Spring Data, Spring Security, etc have also been upgraded.
 upgrade, its effects and consequences should largely remain invisible to the end-user. Aside from all the usual 
 reasons, this upgrade should allow CAS to be one step closer to native builds using the likes of GraalVM. 
 
+Make sure this Maven repository, `https://repo.spring.io/milestone`, is listed and made available in your build.
+
 <div class="alert alert-info">
 <strong>Remember</strong><br/>Be sure to review your CAS Overlay configuration
 to make sure the Spring Boot version correctly matches that of CAS. Creating a CAS Overlay
@@ -84,7 +86,8 @@ keys to assist with integrations and caching concerns. There is also a revocatio
 inactive keys that should be removed from the keystore.
 
 ## Other Stuff
-       
+                     
+- Minor performance improvements to assist with locating SAML2 services in the service registry.
 - All Redis integrations are now able to support TLS options for encrypted connections and transports.
 - All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
 - DynamoDb tables names that affect OAuth and OpenID Connect functionality are now customizable via CAS settings.
@@ -97,4 +100,6 @@ inactive keys that should be removed from the keystore.
 - Spring Security
 - Spring Cloud
 - Micrometer
-
+- Amazon SDK
+- SpotBugs
+- Spring Framework
