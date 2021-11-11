@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
 @ConditionalOnProperty(prefix="cas.authn.mfa.authy", name="api-key")
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
 

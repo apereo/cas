@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,6 +39,8 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @Configuration("authyConfiguration")
+@ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
+@ConditionalOnProperty(prefix="cas.authn.mfa.authy", name="api-key")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AuthyConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -105,7 +108,6 @@ public class AuthyConfiguration {
      * The Authy multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
     @Configuration("authyMultifactorTrustConfiguration")
     public class AuthyMultifactorTrustConfiguration {
 
