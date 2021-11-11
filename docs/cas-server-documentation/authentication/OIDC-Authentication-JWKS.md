@@ -124,9 +124,9 @@ the lifecycle status of the assigned key. The following values are accepted life
 
 | Value          | Description
 |----------------|---------------------------------------------------
-| `0`            | The key state is active and current.
-| `1`            |
-| `2`            |
+| `0`            | The key is active and current, used for required operations.
+| `1`            | The key is will be the next key used during key rotation.
+| `2`            | The key is no longer used and active, and will be removed after revocation operations.
 
 CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore.
 The dynamic discovery endpoint will always include both the current key and the next key, and it may also 
@@ -134,3 +134,10 @@ include the previous key(s) if the previous key has not yet been revoked. To pro
 case of an emergency, client applications should be able to use any of the keys specified in the discovery document. 
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks" includes=".revocation,.rotation" %}
+
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="oidcJwks" %}

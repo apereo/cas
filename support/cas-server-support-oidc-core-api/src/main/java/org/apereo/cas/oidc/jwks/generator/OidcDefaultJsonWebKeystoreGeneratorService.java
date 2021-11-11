@@ -50,12 +50,14 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val resolve = SpringExpressionLanguageValueResolver.getInstance()
             .resolve(oidcProperties.getJwks().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
-        resourceWatcherService = new FileWatcherService(resource.getFile(),
-            file -> {
-                LOGGER.info("Publishing event to broadcast change in [{}]", file);
-                applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
-            });
-        resourceWatcherService.start(resource.getFilename());
+        if (ResourceUtils.isFile(resource)) {
+            resourceWatcherService = new FileWatcherService(resource.getFile(),
+                file -> {
+                    LOGGER.info("Publishing event to broadcast change in [{}]", file);
+                    applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
+                });
+            resourceWatcherService.start(resource.getFilename());
+        }
         return generate(resource);
     }
 
