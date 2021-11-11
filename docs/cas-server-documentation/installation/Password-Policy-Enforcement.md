@@ -40,4 +40,5 @@ determined through pre-configured LDAP attributes with default values in place.
 ## JDBC
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
-via column names that are defined in the CAS settings. 
+via column names that are defined in the CAS settings.
+

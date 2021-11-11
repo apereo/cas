@@ -20,6 +20,13 @@ The JAAS handler delegates to the built-in JAAS subsystem to perform authenticat
 directives in the JAAS config file.
 
 {% include_cached casproperties.html properties="cas.authn.jaas" %}
+  
+### Password Policy
+
+JAAS authentication components have limited support for detecting account status and password policy
+settings defined via CAS settings.
+
+{% include_cached casproperties.html properties="cas.authn.jaas" includes=".password-policy" %}
 
 ## JAAS Configuration File
 
