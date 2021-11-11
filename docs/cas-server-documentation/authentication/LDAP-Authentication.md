@@ -27,7 +27,6 @@ Attributes retrieved directly as part of LDAP authentication trump all other att
 
 {% include_cached casproperties.html properties="cas.authn.ldap" %}
 
-
 ## Password Policy Enforcement
 
 To learn how to enforce a password policy for LDAP, please [review this guide](../installation/Password-Policy-Enforcement.html).
