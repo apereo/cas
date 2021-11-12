@@ -14,17 +14,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * This is {@link JwksRotationEndpoint}.
+ * This is {@link OidcJwksRotationEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @RestControllerEndpoint(id = "oidcJwks", enableByDefault = false)
-public class JwksRotationEndpoint extends BaseCasActuatorEndpoint {
+public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
     private final OidcJsonWebKeystoreRotationService rotationService;
 
-    public JwksRotationEndpoint(final CasConfigurationProperties casProperties,
-                                final OidcJsonWebKeystoreRotationService rotationService) {
+    public OidcJwksRotationEndpoint(final CasConfigurationProperties casProperties,
+                                    final OidcJsonWebKeystoreRotationService rotationService) {
         super(casProperties);
         this.rotationService = rotationService;
     }
