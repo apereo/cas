@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * This is {@link OAuth20LogoutReplicateSessionTests}.
  *
  * @author Jerome Leleu
- * @since 6.5.0
+ * @since 6.4.3
  */
 @SpringBootTest(classes = {
         OAuth20LogoutReplicateSessionTests.OAuthDistributedSessionTestConfiguration.class,
