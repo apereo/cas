@@ -166,9 +166,10 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      * @param outboundContext the outbound context
      * @param service         the service
      */
-    protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                           final MessageContext outboundContext,
-                                                                           final SamlRegisteredService service) {
+    protected <T extends SAMLObject> void prepareSecurityParametersContext(
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final MessageContext outboundContext,
+        final SamlRegisteredService service) {
         val secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         val roleDesc = adaptor.getSsoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
@@ -186,11 +187,12 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      * @param authnRequest    the authn request
      * @throws SamlException the saml exception
      */
-    protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject,
-                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                 final MessageContext outboundContext,
-                                                                 final String binding,
-                                                                 final RequestAbstractType authnRequest) throws SamlException {
+    protected <T extends SAMLObject> void prepareOutboundContext(
+        final T samlObject,
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+        final MessageContext outboundContext,
+        final String binding,
+        final RequestAbstractType authnRequest) throws SamlException {
 
         LOGGER.trace("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
@@ -217,17 +219,17 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         val params = resolver.resolveSingle(criteria);
         if (params != null) {
             LOGGER.trace("Created signature signing parameters."
-                    + "\nSignature algorithm: [{}]"
-                    + "\nSignature canonicalization algorithm: [{}]"
-                    + "\nSignature reference digest methods: [{}]"
-                    + "\nSignature reference canonicalization algorithm: [{}]",
+                         + "\nSignature algorithm: [{}]"
+                         + "\nSignature canonicalization algorithm: [{}]"
+                         + "\nSignature reference digest methods: [{}]"
+                         + "\nSignature reference canonicalization algorithm: [{}]",
                 params.getSignatureAlgorithm(),
                 params.getSignatureCanonicalizationAlgorithm(),
                 params.getSignatureReferenceDigestMethod(),
                 params.getSignatureReferenceCanonicalizationAlgorithm());
         } else {
             LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
+                        + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
         }
         return params;
     }
@@ -255,9 +257,10 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
             samlIdPMetadataResolver,
             samlIdp.getMetadata().getCore().isRequireValidMetadata());
         mdCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
-        mdCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+        mdCredentialResolver.setKeyInfoCredentialResolver(
+            DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         mdCredentialResolver.initialize();
-        
+
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new SignatureSigningConfigurationCriterion(config));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
