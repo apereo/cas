@@ -31,7 +31,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
      */
     public static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
     
-    private static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
+    public static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
 
     /**
      * CAS configuration settings.
