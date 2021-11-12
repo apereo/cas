@@ -162,4 +162,28 @@ public class ChainingRegisteredServiceAccessStrategyTests {
         val policyRead = MAPPER.readValue(JSON_FILE, ChainingRegisteredServiceAccessStrategy.class);
         assertEquals(chain, policyRead);
     }
+
+    @Test
+    public void verifyPrincipalAccessMixedRules() throws Exception {
+        val chain1 = new ChainingRegisteredServiceAccessStrategy();
+        chain1.setOperator(RegisteredServiceChainOperatorTypes.AND);
+        chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
+        chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
+
+        val chain2 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key3", Set.of("value3")));
+
+        val parentChain = new ChainingRegisteredServiceAccessStrategy();
+        parentChain.setOperator(RegisteredServiceChainOperatorTypes.OR);
+        parentChain.addStrategies(chain1, chain2);
+
+        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
+            CollectionUtils.wrap("key1", Set.of("value1"))));
+        assertFalse(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
+            CollectionUtils.wrap("key2", Set.of("value2"))));
+
+        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
+            CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))));
+        assertTrue(parentChain.doPrincipalAttributesAllowServiceAccess("casuser",
+            CollectionUtils.wrap("key3", Set.of("value3"))));
+    }
 }
