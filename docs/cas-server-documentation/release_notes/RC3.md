@@ -85,6 +85,12 @@ based on a predefined schedule. Rotation will include previous keys as well as c
 keys to assist with integrations and caching concerns. There is also a revocation schedule for old
 inactive keys that should be removed from the keystore.
 
+### Chained Service Access Strategies
+
+[Service access strategies](../services/Configuring-Service-Access-Strategy.html) can now 
+be chained and group together to deliver advanced conditions
+and grouping logic using multiple `AND` or `OR` rules.
+
 ## Other Stuff
                      
 - Minor performance improvements to assist with locating SAML2 services in the service registry.
