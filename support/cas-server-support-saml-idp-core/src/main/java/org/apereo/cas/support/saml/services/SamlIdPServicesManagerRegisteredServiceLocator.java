@@ -20,6 +20,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.core.Ordered;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,11 +57,13 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
 
     @Override
     public boolean supports(final RegisteredService registeredService, final Service service) {
-        return getSamlParameterValue(registeredService, service).isPresent();
+        val matched = SamlRegisteredService.class.isAssignableFrom(registeredService.getClass())
+            && registeredService.getFriendlyName().equalsIgnoreCase(SamlRegisteredService.FRIENDLY_NAME);
+        return matched && getSamlParameterValue(registeredService, service).isPresent();
     }
 
     /**
-     * Get the saml2 request or entity id as a service atribute.
+     * Get the saml2 request or entity id as a service attribute.
      *
      * @param registeredService the registered service
      * @param service           the service
@@ -75,6 +78,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
 
             return SamlProtocolServiceAttribute.values()
                 .stream()
+                .sorted(Comparator.comparing(SamlProtocolServiceAttribute::getOrder))
                 .filter(attr -> attributes.containsKey(attr.getAttributeName()))
                 .map(attr -> Pair.of(attr, CollectionUtils.firstElement(attributes.get(attr.getAttributeName()))
                     .map(Object::toString).orElseThrow()))
@@ -86,22 +90,27 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
 
     @RequiredArgsConstructor
     @Getter
-    private static class SamlProtocolServiceAttribute {
-        private static final SamlProtocolServiceAttribute SAML_REQUEST = new SamlProtocolServiceAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST) {
-            @Override
-            public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
-                val openSamlConfigBean = resolver.getOpenSamlConfigBean();
-                val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
-                SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
-                return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-            }
-        };
+    private static class SamlProtocolServiceAttribute implements Ordered {
+        private static final SamlProtocolServiceAttribute SAML_REQUEST =
+            new SamlProtocolServiceAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, Ordered.LOWEST_PRECEDENCE) {
+                @Override
+                public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
+                    val openSamlConfigBean = resolver.getOpenSamlConfigBean();
+                    val authnRequest = SamlIdPUtils.retrieveSamlRequest(openSamlConfigBean, RequestAbstractType.class, attributeValue);
+                    SamlUtils.logSamlObject(openSamlConfigBean, authnRequest);
+                    return SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
+                }
+            };
 
-        private static final SamlProtocolServiceAttribute ENTITY_ID = new SamlProtocolServiceAttribute(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        private static final SamlProtocolServiceAttribute ENTITY_ID =
+            new SamlProtocolServiceAttribute(SamlProtocolConstants.PARAMETER_ENTITY_ID, Ordered.HIGHEST_PRECEDENCE);
 
-        private static final SamlProtocolServiceAttribute PROVIDER_ID = new SamlProtocolServiceAttribute(SamlIdPConstants.PROVIDER_ID);
+        private static final SamlProtocolServiceAttribute PROVIDER_ID =
+            new SamlProtocolServiceAttribute(SamlIdPConstants.PROVIDER_ID, Ordered.HIGHEST_PRECEDENCE);
 
         private final String attributeName;
+
+        private final int order;
 
         /**
          * Known values.
@@ -109,7 +118,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
          * @return the list
          */
         public static List<SamlProtocolServiceAttribute> values() {
-            return List.of(SAML_REQUEST, ENTITY_ID, PROVIDER_ID);
+            return List.of(ENTITY_ID, PROVIDER_ID, SAML_REQUEST);
         }
 
         /**
