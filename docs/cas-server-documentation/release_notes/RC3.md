@@ -49,8 +49,7 @@ cas.version=6.5.0-RC3
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
@@ -62,7 +61,7 @@ The following items are new improvements and enhancements presented in this rele
 CAS has now switched to use the Spring Boot `2.6.x` release line, and all other relevant dependencies
 such as Spring Cloud, Spring Data, Spring Security, etc have also been upgraded. While this is a somewhat significant
 upgrade, its effects and consequences should largely remain invisible to the end-user. Aside from all the usual 
-reasons, this upgrade should allow CAS to be one step closer to native build using the likes of GraalVM. 
+reasons, this upgrade should allow CAS to be one step closer to native builds using the likes of GraalVM. 
 
 <div class="alert alert-info">
 <strong>Remember</strong><br/>Be sure to review your CAS Overlay configuration
@@ -88,6 +87,8 @@ inactive keys that should be removed from the keystore.
        
 - All Redis integrations are now able to support TLS options for encrypted connections and transports.
 - All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
+- DynamoDb tables names that affect OAuth and OpenID Connect functionality are now customizable via CAS settings.
+- Cache invalidation rules for static resources such as JSS/JS files using `ResourceUrlProviderExposingInterceptor` is now restored.
 
 ## Library Upgrades
 

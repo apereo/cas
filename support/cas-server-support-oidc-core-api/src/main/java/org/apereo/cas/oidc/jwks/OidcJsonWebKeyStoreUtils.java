@@ -129,6 +129,7 @@ public class OidcJsonWebKeyStoreUtils {
         }
 
         val keyId = kid.get();
+        LOGGER.debug("Attempting to locate key [{}]", keyId);
         return jwks.getJsonWebKeys()
             .stream()
             .filter(k -> StringUtils.equalsIgnoreCase(k.getKeyId(), keyId))
