@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -10,11 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.val;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -55,7 +56,17 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
         strategies.add(policy);
     }
 
+    /**
+     * Add strategies.
+     *
+     * @param policies the policies
+     */
+    public void addStrategies(final RegisteredServiceAccessStrategy... policies) {
+        Arrays.stream(policies).forEach(this::addStrategy);
+    }
+
     @Override
+    @JsonIgnore
     public boolean isServiceAccessAllowed() {
         if (operator == RegisteredServiceChainOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowed);
@@ -64,11 +75,13 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
+    @JsonIgnore
     public void setServiceAccessAllowed(final boolean enabled) {
         strategies.forEach(strategy -> strategy.setServiceAccessAllowed(enabled));
     }
 
     @Override
+    @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
         if (operator == RegisteredServiceChainOperatorTypes.OR) {
             return strategies.stream().anyMatch(RegisteredServiceAccessStrategy::isServiceAccessAllowedForSso);
@@ -85,6 +98,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
+    @JsonIgnore
     public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         val policy = new ChainingRegisteredServiceDelegatedAuthenticationPolicy();
         policy.setOperator(this.operator);
@@ -95,6 +109,7 @@ public class ChainingRegisteredServiceAccessStrategy implements RegisteredServic
     }
 
     @Override
+    @JsonIgnore
     public Map<String, Set<String>> getRequiredAttributes() {
         val results = new LinkedHashMap<String, List<Object>>();
         val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
