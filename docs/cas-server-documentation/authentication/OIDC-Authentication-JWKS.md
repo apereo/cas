@@ -128,7 +128,10 @@ the lifecycle status of the assigned key. The following values are accepted life
 | `1`            | The key is will be the next key used during key rotation.
 | `2`            | The key is no longer used and active, and will be removed after revocation operations.
 
-CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore.
+CAS always signs with only one signing key at a time, typically the *very first key* listed and loaded from the keystore,
+that is deemed active and current judging by the `state` parameter. For backward compatibility, the absence of this
+parameter indicates that the key is active and current.
+
 The dynamic discovery endpoint will always include both the current key and the next key, and it may also 
 include the previous key(s) if the previous key has not yet been revoked. To provide a seamless experience in 
 case of an emergency, client applications should be able to use any of the keys specified in the discovery document. 

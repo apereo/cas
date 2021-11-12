@@ -25,8 +25,8 @@ import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointContro
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
-import org.apereo.cas.oidc.web.controllers.jwks.JwksRotationEndpoint;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksRotationEndpoint;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
 import org.apereo.cas.oidc.web.controllers.logout.OidcPostLogoutRedirectUrlMatcher;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
@@ -511,11 +511,11 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        public JwksRotationEndpoint jwksRotationEndpoint(
+        public OidcJwksRotationEndpoint jwksRotationEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
-            return new JwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
+            return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
         }
     }
 

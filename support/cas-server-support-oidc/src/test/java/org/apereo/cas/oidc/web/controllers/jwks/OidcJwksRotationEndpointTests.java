@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JwksRotationEndpointTests}.
+ * This is {@link OidcJwksRotationEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "management.endpoint.oidcJwks.enabled=true"
 })
 @Tag("ActuatorEndpoint")
-public class JwksRotationEndpointTests extends AbstractCasEndpointTests {
+public class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwksRotationEndpoint")
-    private JwksRotationEndpoint jwksRotationEndpoint;
+    private OidcJwksRotationEndpoint jwksRotationEndpoint;
 
     @Test
     public void verifyOperation() throws Exception {
