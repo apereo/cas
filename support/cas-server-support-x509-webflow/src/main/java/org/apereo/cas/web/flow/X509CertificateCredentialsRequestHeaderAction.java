@@ -62,7 +62,8 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        WebUtils.putCasLoginFormViewable(requestContext, casProperties.getAuthn().getX509().isMixedMode());
+        WebUtils.putCasLoginFormViewable(requestContext,
+            WebUtils.isCasLoginFormSetToViewable(requestContext) || casProperties.getAuthn().getX509().isMixedMode());
         requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }
