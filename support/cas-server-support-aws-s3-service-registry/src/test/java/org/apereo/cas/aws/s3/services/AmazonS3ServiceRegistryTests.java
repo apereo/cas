@@ -42,6 +42,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 }, properties = {
     "cas.service-registry.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "cas.service-registry.amazon-s3.region=us-east-1",
     "cas.service-registry.amazon-s3.credential-access-key=test",
     "cas.service-registry.amazon-s3.credential-secret-key=test"
 })

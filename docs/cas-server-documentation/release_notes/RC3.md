@@ -109,3 +109,6 @@ and grouping logic using multiple `AND` or `OR` rules.
 - Amazon SDK
 - SpotBugs
 - Spring Framework
+- MongoDb Driver
+- Azure CosmosDb
+- Spring Boot Admin
