@@ -475,11 +475,11 @@ one can implement advanced Boolean logic to group results together. Note that ch
 
 The following access strategy chain allows service access if the authenticated principal,
 
-- has an attribute `key1` with a value of `value1` **AND** an attribute `key2` with a value of `value2.
+- has an attribute `key1` with a value of `value1` **AND** an attribute `key2` with a value of `value2`.
 
 ...**OR**...
 
-- has an attribute `key3` with a value of `value`.
+- has an attribute `key3` with a value of `value3`.
 
 ```json
 {
