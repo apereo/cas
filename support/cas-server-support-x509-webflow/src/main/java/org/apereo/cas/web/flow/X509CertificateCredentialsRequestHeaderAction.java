@@ -37,12 +37,17 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        if (context.getRequestScope().contains(REQUEST_ATTRIBUTE_X509_ERROR)) {
+            LOGGER.debug("Not getting certificates from header because error found in the request.");
+            return null;
+        }
+
         val x509Credential = super.constructCredentialsFromRequest(context);
         if (x509Credential != null) {
             return x509Credential;
         }
         if (x509CertificateExtractor != null) {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val certFromHeader = x509CertificateExtractor.extract(request);
             if (certFromHeader != null) {
                 LOGGER.debug("Certificate found in HTTP request via [{}]", x509CertificateExtractor.getClass().getName());
@@ -53,5 +58,12 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
             LOGGER.trace("No certificate extractor was configured");
         }
         return null;
+    }
+
+    @Override
+    protected void onError(final RequestContext requestContext) {
+        WebUtils.putCasLoginFormViewable(requestContext,
+            WebUtils.isCasLoginFormSetToViewable(requestContext) || casProperties.getAuthn().getX509().isMixedMode());
+        requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }

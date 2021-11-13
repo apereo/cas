@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://github.com",
+  "id": 1,
+  "name": "Sample",
+  "singleSignOnParticipationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy",
+    "createCookieOnRenewedAuthentication": "TRUE"
+  },
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "allowedaccess" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}

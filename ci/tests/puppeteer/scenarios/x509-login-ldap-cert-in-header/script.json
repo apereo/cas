@@ -1,0 +1,61 @@
+{
+  "dependencies": "x509-webflow,ldap,json-service-registry",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "--cas.authn.ldap[0].bind-credential=M3110nM3110n#1",
+    "--cas.authn.ldap[0].bind-dn=Administrator@cas.example.org",
+    "--cas.authn.ldap[0].ldap-url=ldap://localhost:10390",
+    "--cas.authn.ldap[0].max-pool-size=5",
+    "--cas.authn.ldap[0].min-pool-size=0",
+    "--cas.authn.ldap[0].subtree-search=true",
+    "--cas.authn.ldap[0].type=AUTHENTICATED",
+    "--cas.authn.ldap[0].search-filter=(sAMAccountName={user})",
+    "--cas.authn.ldap[0].use-start-tls=false",
+    "--cas.authn.ldap[0].trust-store=JKS",
+    "--cas.authn.ldap[0].trust-store-password=changeit",
+    "--cas.authn.ldap[0].trust-store-type=JKS",
+    "--cas.authn.ldap[0].hostname-verifier=ANY",
+
+    "--cas.authn.attribute-repository.ldap[0].id=ADAUTH",
+    "--cas.authn.attribute-repository.ldap[0].order=0",
+    "--cas.authn.attribute-repository.ldap[0].attributes.sAMAccountName=uid",
+    "--cas.authn.attribute-repository.ldap[0].attributes.userAccountControl=user-account-control",
+    "--cas.authn.attribute-repository.ldap[0].attributes.distinguishedName=ldap-dn",
+    "--cas.authn.attribute-repository.ldap[0].bind-dn=Administrator@cas.example.org",
+    "--cas.authn.attribute-repository.ldap[0].bind-credential=M3110nM3110n#1",
+    "--cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10390",
+    "--cas.authn.attribute-repository.ldap[0].use-start-tls=false",
+    "--cas.authn.attribute-repository.ldap[0].subtree-search=true",
+    "--cas.authn.attribute-repository.ldap[0].base-dn=dc=cas,dc=example,dc=org",
+    "--cas.authn.attribute-repository.ldap[0].follow-referrals=false",
+    "--cas.authn.attribute-repository.ldap[0].search-filter=(sAMAccountName={username})",
+    "--cas.authn.attribute-repository.ldap[0].min-pool-size=0",
+    "--cas.authn.attribute-repository.ldap[0].trust-store=file:/tmp/adcacerts.jks",
+    "--cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
+    "--cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
+    "--cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",
+
+    "--cas.authn.x509.extract-cert=true",
+    "--cas.authn.x509.ssl-header-name=ssl-client-cert-from-proxy",
+
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn",
+
+    "--cas.person-directory.active-attribute-repository-ids=COMMONATTRS,ADAUTH",
+    "--cas.authn.x509.principal.active-attribute-repository-ids=COMMONATTRS",
+
+    "--cas.authn.attribute-repository.core.default-attributes-to-release=allowedaccess,someattribute,anotherattribute,x509Rfc822Email,x509subjectUPN,ldap-dn,sAMAccountName",
+
+    "--cas.authn.attribute-repository.groovy[0].id=COMMONATTRS",
+    "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
+    "--cas.authn.attribute-repository.groovy[0].order=2",
+    "--cas.authn.attribute-repository.groovy[0].case-insensitive=false"
+  ],
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-cert-in-header/cert.pem",
+  "initScript": "${PWD}/ci/tests/ldap/run-ad-server.sh"
+}

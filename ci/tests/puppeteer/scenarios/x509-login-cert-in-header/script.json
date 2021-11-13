@@ -1,0 +1,30 @@
+{
+  "dependencies": "x509-webflow,json-service-registry",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",
+    "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
+
+    "--cas.authn.x509.extract-cert=true",
+    "--cas.authn.x509.ssl-header-name=ssl-client-cert-from-proxy",
+
+    "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",
+    "--cas.authn.x509.subject-alt-name.alternate-principal-attribute=subjectDn",
+
+    "--cas.authn.x509.principal.active-attribute-repository-ids=COMMONATTRS",
+
+    "--cas.authn.attribute-repository.core.default-attributes-to-release=allowedaccess,someattribute,anotherattribute,x509Rfc822Email,x509subjectUPN",
+
+    "--cas.authn.attribute-repository.groovy[0].id=COMMONATTRS",
+    "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
+    "--cas.authn.attribute-repository.groovy[0].order=2",
+    "--cas.authn.attribute-repository.groovy[0].case-insensitive=false"
+  ],
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-cert-in-header/cert.pem"
+}
