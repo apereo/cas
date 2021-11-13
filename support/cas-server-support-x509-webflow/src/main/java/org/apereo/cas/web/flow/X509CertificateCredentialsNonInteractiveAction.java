@@ -30,8 +30,12 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
      * Attribute to indicate the x509 certificate.
      */
     public static final String REQUEST_ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
-    
-    private static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
+
+    /**
+     * Attribute that indicates an error has occurred. Used to break out of the flow and send user to a page
+     * with an error message.
+     */
+    public static final String REQUEST_ATTRIBUTE_X509_ERROR = "X509CertificateAuthenticationError";
 
     /**
      * CAS configuration settings.
@@ -63,7 +67,8 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
 
     @Override
     protected void onError(final RequestContext requestContext) {
-        WebUtils.putCasLoginFormViewable(requestContext, casProperties.getAuthn().getX509().isMixedMode());
+        WebUtils.putCasLoginFormViewable(requestContext,
+            WebUtils.isCasLoginFormSetToViewable(requestContext) || casProperties.getAuthn().getX509().isMixedMode());
         requestContext.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
     }
 }
