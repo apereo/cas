@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -57,6 +58,8 @@ public class DynamoDbAuditTrailManagerFacilitator {
         values.put(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName(), AttributeValue.builder().s(record.getResourceOperatedUpon()).build());
         values.put(ColumnNames.APPLICATION_CODE.getColumnName(), AttributeValue.builder().s(record.getApplicationCode()).build());
         values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(record.getActionPerformed()).build());
+        values.put(ColumnNames.USER_AGENT.getColumnName(),
+            AttributeValue.builder().s(StringUtils.defaultString(record.getUserAgent(), "N/A")).build());
         val time = record.getWhenActionWasPerformed().getTime();
         values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
@@ -124,9 +127,10 @@ public class DynamoDbAuditTrailManagerFacilitator {
                     val clientIp = item.get(ColumnNames.CLIENT_IP_ADDRESS.getColumnName()).s();
                     val serverIp = item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName()).s();
                     val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).s();
+                    val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
                     val time1 = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
                     return new AuditActionContext(principal, resource, actionPerformed,
-                        appCode, new Date(time1), clientIp, serverIp);
+                        appCode, new Date(time1), clientIp, serverIp, userAgent);
                 })
             .collect(Collectors.toSet());
     }
@@ -160,6 +164,10 @@ public class DynamoDbAuditTrailManagerFacilitator {
          * actionPerformed column.
          */
         ACTION_PERFORMED("actionPerformed"),
+        /**
+         * userAgent column.
+         */
+        USER_AGENT("userAgent"),
         /**
          * applicationCode column.
          */

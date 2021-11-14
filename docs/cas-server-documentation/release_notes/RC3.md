@@ -71,6 +71,11 @@ to make sure the Spring Boot version correctly matches that of CAS. Creating a C
 project using the CAS Initializr service should already account for this change.
 </div>
 
+This upgrade affects CAS via the following ways:
+
+- By default, circular `@Bean` references are no longer allowed by Spring Boot. The only module affected by this change is the CAS Command-line Shell.
+- The default MVC path matcher is set as `spring.mvc.pathmatch.matching-strategy=ant-path-matcher` to restore and enforce current behavior, particularly for OpenID Connect endpoints.
+
 ### Account (Self-Service) Registration
 
 CAS provides a modest workflow to 
@@ -80,16 +85,23 @@ and improved in the future to match and accommodate realistic workflows deployed
  
 ### OpenID Connect Key Rotation
      
-CAS can now be configured to rotate keys in the OpenID Connect keystore automatically 
-based on a predefined schedule. Rotation will include previous keys as well as current and future
+CAS can now be configured to rotate keys in the [OpenID Connect](../authentication/OIDC-Authentication-JWKS.html) 
+keystore automatically based on a predefined schedule. Rotation will include previous keys as well as current and future
 keys to assist with integrations and caching concerns. There is also a revocation schedule for old
 inactive keys that should be removed from the keystore.
 
 ### Chained Service Access Strategies
 
 [Service access strategies](../services/Configuring-Service-Access-Strategy.html) can now 
-be chained and group together to deliver advanced conditions
+be chained and grouped together to deliver advanced conditions
 and grouping logic using multiple `AND` or `OR` rules.
+  
+### Audit Log Data Structure
+
+Audit log records and storage services are now modified to include user agent information using the `User-Agent` header.
+This *might* be a breaking change, particularly for relational databases that have a fixed table structure. 
+If you are not allowing CAS to update database schemas automatically, you will need to ensure the audit log table
+contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 512)`.
 
 ## Other Stuff
                      
@@ -108,6 +120,7 @@ and grouping logic using multiple `AND` or `OR` rules.
 - Micrometer
 - Amazon SDK
 - SpotBugs
+- Spring Session
 - Spring Framework
 - MongoDb Driver
 - Azure CosmosDb

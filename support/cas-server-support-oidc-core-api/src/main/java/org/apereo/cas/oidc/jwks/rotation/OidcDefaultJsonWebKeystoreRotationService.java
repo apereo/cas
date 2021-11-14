@@ -95,12 +95,14 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     }
 
     private void storeJsonWebKeys(final Resource resource, final JsonWebKeySet jsonWebKeySet) throws IOException {
-        val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-        LOGGER.trace("Storing keys in [{}]", resource);
-        FileUtils.write(resource.getFile(), data, StandardCharsets.UTF_8);
+        if (ResourceUtils.isFile(resource)) {
+            val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            LOGGER.trace("Storing keys in [{}]", resource);
+            FileUtils.write(resource.getFile(), data, StandardCharsets.UTF_8);
 
-        LOGGER.debug("Publishing event to broadcast change in [{}]", resource.getFile());
-        applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, resource.getFile()));
+            LOGGER.debug("Publishing event to broadcast change in [{}]", resource.getFile());
+            applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, resource.getFile()));
+        }
     }
 
     private Optional<Resource> whenKeystoreResourceExists() throws Exception {
