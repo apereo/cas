@@ -80,7 +80,7 @@ public class RegisteredServicesEventListenerTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                val listener = new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
+                val listener = new RegisteredServicesEventListenerImpl(servicesManager, casProperties, communicationsManager);
                 val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false);
                 listener.handleRegisteredServiceExpiredEvent(event);
             }
@@ -95,7 +95,7 @@ public class RegisteredServicesEventListenerTests {
         contact.setEmail("casuser@example.org");
         contact.setPhone("13477465421");
         registeredService.getContacts().add(contact);
-        val listener = new RegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
+        val listener = new RegisteredServicesEventListenerImpl(this.servicesManager, casProperties, communicationsManager);
         val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false);
         assertDoesNotThrow(new Executable() {
             @Override
@@ -113,7 +113,7 @@ public class RegisteredServicesEventListenerTests {
         contact.setEmail("casuser@example.org");
         contact.setPhone("13477465421");
         registeredService.getContacts().add(contact);
-        val listener = new RegisteredServicesEventListener(this.servicesManager, casProperties, communicationsManager);
+        val listener = new RegisteredServicesEventListenerImpl(this.servicesManager, casProperties, communicationsManager);
         listener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this));
         listener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
         val event = new CasRegisteredServiceExpiredEvent(this, registeredService, true);
