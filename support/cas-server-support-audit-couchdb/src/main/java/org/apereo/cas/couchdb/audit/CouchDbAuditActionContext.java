@@ -26,7 +26,7 @@ public class CouchDbAuditActionContext extends AuditActionContext {
     private String rev;
 
     @JsonCreator
-    public CouchDbAuditActionContext(@JsonProperty("_id") final String cid, 
+    public CouchDbAuditActionContext(@JsonProperty("_id") final String cid,
                                      @JsonProperty("_rev") final String rev,
                                      @JsonProperty("principal") final String principal,
                                      @JsonProperty("resourceOperatedUpon") final String resourceOperatedUpon,
@@ -34,14 +34,18 @@ public class CouchDbAuditActionContext extends AuditActionContext {
                                      @JsonProperty("applicationCode") final String applicationCode,
                                      @JsonProperty("whenActionWasPerformed") final Date whenActionWasPerformed,
                                      @JsonProperty("clientIpAddress") final String clientIpAddress,
-                                     @JsonProperty("serverIpAddress") final String serverIpAddress) {
-        super(principal, resourceOperatedUpon, actionPerformed, applicationCode, whenActionWasPerformed, clientIpAddress, serverIpAddress);
+                                     @JsonProperty("serverIpAddress") final String serverIpAddress,
+                                     @JsonProperty("userAgent") final String userAgent) {
+        super(principal, resourceOperatedUpon, actionPerformed, applicationCode,
+            whenActionWasPerformed, clientIpAddress, serverIpAddress, userAgent);
         this.cid = cid;
         this.rev = rev;
     }
 
     public CouchDbAuditActionContext(final AuditActionContext context) {
-        super(context.getPrincipal(), context.getResourceOperatedUpon(), context.getActionPerformed(), context.getApplicationCode(),
-            context.getWhenActionWasPerformed(), context.getClientIpAddress(), context.getServerIpAddress());
+        super(context.getPrincipal(), context.getResourceOperatedUpon(),
+            context.getActionPerformed(), context.getApplicationCode(),
+            context.getWhenActionWasPerformed(), context.getClientIpAddress(),
+            context.getServerIpAddress(), context.getUserAgent());
     }
 }

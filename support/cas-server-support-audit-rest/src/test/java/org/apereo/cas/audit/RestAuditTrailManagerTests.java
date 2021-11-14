@@ -65,7 +65,7 @@ public class RestAuditTrailManagerTests {
     @Test
     public void verifyGet() throws Exception {
         val audit = new AuditActionContext("casuser", "resource", "action",
-            "CAS", new Date(), "123.456.789.000", "123.456.789.000");
+            "CAS", new Date(), "123.456.789.000", "123.456.789.000", "GoogleChrome");
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
 
         try (val webServer = new MockWebServer(9296,

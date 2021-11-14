@@ -39,6 +39,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,7 +98,7 @@ public class MongoDbHealthIndicatorTests {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
             "action", "appcode", new Date(), "clientIp",
-            "serverIp"), "monitor");
+            "serverIp", UUID.randomUUID().toString()), "monitor");
     }
 
     @Test

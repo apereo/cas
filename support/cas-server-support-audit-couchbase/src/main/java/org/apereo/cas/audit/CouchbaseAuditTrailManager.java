@@ -69,7 +69,8 @@ public class CouchbaseAuditTrailManager extends AbstractAuditTrailManager {
                     bucket.getString("applicationCode"),
                     new Date(bucket.getArray("whenActionWasPerformed").getLong(1)),
                     bucket.getString("clientIpAddress"),
-                    bucket.getString("serverIpAddress"));
+                    bucket.getString("serverIpAddress"),
+                    bucket.getString("userAgent"));
             })
             .collect(Collectors.toSet());
     }

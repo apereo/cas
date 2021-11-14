@@ -50,6 +50,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
      *
      * @param request  the request
      * @param response the response
+     * @param state    the state
      * @return the jwk set
      */
     @GetMapping(value = {
