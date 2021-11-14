@@ -173,7 +173,7 @@ public class InitialFlowSetupAction extends AbstractAction {
             val auth = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, auth != null);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context,
-                Optional.ofNullable(auth).map(Authentication::getPrincipal).orElse(NullPrincipal.getInstance()));
+                Optional.ofNullable(auth).map(Authentication::getPrincipal).orElseGet(NullPrincipal::getInstance));
         }
     }
 

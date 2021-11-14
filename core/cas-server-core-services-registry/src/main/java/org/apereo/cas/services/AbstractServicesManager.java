@@ -151,7 +151,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
                         LOGGER.trace("Service [{}] is now cached from [{}]", service, serviceRegistry.getName());
                         return Optional.of(registeredService);
                     })
-                    .orElse(Optional.empty());
+                    .orElseGet(Optional::empty);
             }
         }
 

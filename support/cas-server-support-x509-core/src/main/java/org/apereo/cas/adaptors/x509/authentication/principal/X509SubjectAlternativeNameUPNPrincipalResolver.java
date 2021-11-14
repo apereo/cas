@@ -28,6 +28,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
         val subjectAltNames = X509ExtractorUtils.getSubjectAltNames(certificate);
         val upnString = X509UPNExtractorUtils.extractUPNString(subjectAltNames);
-        return upnString.orElse(getAlternatePrincipal(certificate));
+        return upnString.orElseGet(() -> getAlternatePrincipal(certificate));
     }
 }

@@ -97,7 +97,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
             val policy = registeredService.getTicketGrantingTicketExpirationPolicy();
             if (policy != null) {
                 return policy.toExpirationPolicy()
-                    .orElse(ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+                    .orElseGet(ticketGrantingTicketExpirationPolicy::buildTicketExpirationPolicy);
             }
         }
         return ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy();

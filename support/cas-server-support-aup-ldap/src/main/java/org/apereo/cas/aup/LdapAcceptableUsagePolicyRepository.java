@@ -64,7 +64,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                         .anyMatch(value -> value.equalsIgnoreCase(getAcceptedAttributeValue()));
                 })
                 .map(result -> new AcceptableUsagePolicyStatus(result, status.getPrincipal()))
-                .orElse(AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
+                .orElseGet(() -> AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
         }
         return status;
     }

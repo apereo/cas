@@ -130,7 +130,7 @@ public class OAuth20Utils {
             .map(name -> {
                 val values = getRequestParameter(context, name)
                     .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
-                    .orElse(Set.of());
+                    .orElseGet(Set::of);
                 return Pair.of(name, values);
             })
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));

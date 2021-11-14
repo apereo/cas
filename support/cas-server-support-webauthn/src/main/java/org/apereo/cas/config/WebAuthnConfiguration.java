@@ -104,7 +104,7 @@ public class WebAuthnConfiguration {
             final ObjectProvider<List<AttestationResolver>> foundAttestations) throws Exception {
             val trustResolvers = new ArrayList<TrustResolver>();
             trustResolvers.add(StandardMetadataService.createDefaultTrustResolver());
-            trustResolvers.addAll(Optional.ofNullable(foundTrustResolvers.getIfAvailable()).orElse(new ArrayList<>()));
+            trustResolvers.addAll(Optional.ofNullable(foundTrustResolvers.getIfAvailable()).orElseGet(ArrayList::new));
             val trustResolver = new CompositeTrustResolver(trustResolvers);
             val attestationResolvers = new ArrayList<AttestationResolver>();
             attestationResolvers.add(StandardMetadataService.createDefaultAttestationResolver(trustResolver));
@@ -113,7 +113,7 @@ public class WebAuthnConfiguration {
                 val metadata = WebAuthnUtils.getObjectMapper().readValue(resource.getInputStream(), MetadataObject.class);
                 attestationResolvers.add(new SimpleAttestationResolver(CollectionUtils.wrapList(metadata), trustResolver));
             }
-            attestationResolvers.addAll(Optional.ofNullable(foundAttestations.getIfAvailable()).orElse(new ArrayList<>()));
+            attestationResolvers.addAll(Optional.ofNullable(foundAttestations.getIfAvailable()).orElseGet(ArrayList::new));
             val attestationResolver = new CompositeAttestationResolver(attestationResolvers);
             return new StandardMetadataService(attestationResolver);
         }

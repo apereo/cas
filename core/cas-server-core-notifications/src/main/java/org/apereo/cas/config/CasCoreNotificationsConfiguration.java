@@ -72,7 +72,7 @@ public class CasCoreNotificationsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public NotificationSender notificationSender(
         final ObjectProvider<List<NotificationSenderExecutionPlanConfigurer>> configurerProviders) {
-        val configurers = Optional.ofNullable(configurerProviders.getIfAvailable()).orElse(new ArrayList<>());
+        val configurers = Optional.ofNullable(configurerProviders.getIfAvailable()).orElseGet(ArrayList::new);
         val results = configurers
             .stream()
             .map(cfg -> {

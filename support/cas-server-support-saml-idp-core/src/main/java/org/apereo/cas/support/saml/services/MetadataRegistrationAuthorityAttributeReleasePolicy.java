@@ -45,7 +45,7 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
         final EntityDescriptor entityDescriptor,
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val extensions = Optional.ofNullable(facade.getExtensions())
-            .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElse(List.of());
+            .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 
         val matched = extensions.stream()
             .filter(object -> object instanceof RegistrationInfo)

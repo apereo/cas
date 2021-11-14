@@ -98,6 +98,6 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     protected Map<String, List<Object>> fetchCachedPrincipalAttributes(final Principal principal, final RegisteredService registeredService) {
         return ApplicationContextProvider.getPrincipalAttributesRepositoryCache()
             .map(cache -> cache.fetchAttributes(registeredService, this, principal))
-            .orElse(new HashMap<>(0));
+            .orElseGet(() -> new HashMap<>(0));
     }
 }

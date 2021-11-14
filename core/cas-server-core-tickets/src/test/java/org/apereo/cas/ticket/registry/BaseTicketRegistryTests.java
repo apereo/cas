@@ -401,11 +401,11 @@ public abstract class BaseTicketRegistryTests {
             }
             val sessionCount = this.ticketRegistry.sessionCount();
             assertEquals(tgts.size(), sessionCount,
-                "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
+                () -> "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
 
             val ticketCount = this.ticketRegistry.serviceTicketCount();
             assertEquals(sts.size(), ticketCount,
-                "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
+                () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
             return null;
         });
     }

@@ -94,7 +94,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             if (result.isSuccess()) {
                 val entry = result.getEntry();
                 val attribute = Objects.requireNonNull(entry.getAttribute(this.certificateAttribute),
-                    String.format("Certificate attribute %s does not exist or has no value", this.certificateAttribute));
+                    () -> String.format("Certificate attribute %s does not exist or has no value", this.certificateAttribute));
 
                 if (attribute.isBinary()) {
                     LOGGER.debug("Located entry [{}]. Retrieving first attribute [{}]", entry, attribute);

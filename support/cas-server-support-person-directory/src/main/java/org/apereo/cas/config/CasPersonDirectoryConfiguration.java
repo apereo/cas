@@ -124,7 +124,7 @@ public class CasPersonDirectoryConfiguration {
             final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers,
             final ObjectProvider<List<PersonDirectoryAttributeRepositoryCustomizer>> customizers) {
             val plan = new DefaultPersonDirectoryAttributeRepositoryPlan(
-                Optional.ofNullable(customizers.getIfAvailable()).orElse(new ArrayList<>()));
+                Optional.ofNullable(customizers.getIfAvailable()).orElseGet(ArrayList::new));
             configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
             AnnotationAwareOrderComparator.sort(plan.getAttributeRepositories());
             LOGGER.trace("Final list of attribute repositories is [{}]", plan.getAttributeRepositories());

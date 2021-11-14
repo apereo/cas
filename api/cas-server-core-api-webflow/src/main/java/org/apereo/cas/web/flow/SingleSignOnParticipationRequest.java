@@ -101,7 +101,7 @@ public class SingleSignOnParticipationRequest {
         val result = getHttpServletRequest()
             .map(request -> request.getParameter(key))
             .filter(StringUtils::isNotBlank)
-            .orElse(getRequestContext().map(context -> context.getRequestParameters().get(key)).orElse(null));
+            .orElseGet(() -> getRequestContext().map(context -> context.getRequestParameters().get(key)).orElse(null));
         return Optional.ofNullable(result);
     }
 }

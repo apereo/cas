@@ -91,7 +91,7 @@ public class OidcRequestSupport {
                 val maxAge = NumberUtils.toLong(param, -1);
                 return Optional.of(maxAge);
             })
-            .orElse(Optional.empty());
+            .orElseGet(Optional::empty);
     }
 
     /**

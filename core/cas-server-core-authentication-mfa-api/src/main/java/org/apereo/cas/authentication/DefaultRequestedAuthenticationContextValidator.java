@@ -117,7 +117,7 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
                 }
                 return List.of(provider);
             })
-            .orElse(List.of());
+            .orElseGet(List::of);
 
         if (providers.stream()
             .map(provider -> validateMultifactorProviderBypass(provider, registeredService, authentication, service, request))
