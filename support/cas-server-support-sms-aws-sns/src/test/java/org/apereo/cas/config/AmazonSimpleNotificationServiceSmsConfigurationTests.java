@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     AmazonSimpleNotificationServiceSmsConfiguration.class
 }, properties = {
     "cas.sms-provider.sns.endpoint=http://127.0.0.1:8811",
+    "cas.sms-provider.sns.region=us-east-1",
     "cas.sms-provider.sns.credential-access-key=test",
     "cas.sms-provider.sns.credential-secret-key=test"
 })

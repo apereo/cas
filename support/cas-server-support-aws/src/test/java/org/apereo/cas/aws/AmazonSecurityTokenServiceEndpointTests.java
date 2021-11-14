@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AmazonSecurityTokenServiceEndpointTests {
     @TestPropertySource(properties = {
         "cas.amazon-sts.endpoint=http://127.0.0.1:4566",
+        "cas.amazon-sts.region=us-east-1",
         "cas.amazon-sts.credential-access-key=test",
         "cas.amazon-sts.credential-secret-key=test",
         "cas.authn.mfa.groovy-script.location=classpath:AmazonStsGroovyMfa.groovy",

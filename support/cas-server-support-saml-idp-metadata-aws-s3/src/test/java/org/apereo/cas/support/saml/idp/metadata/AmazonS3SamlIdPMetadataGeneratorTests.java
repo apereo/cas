@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
