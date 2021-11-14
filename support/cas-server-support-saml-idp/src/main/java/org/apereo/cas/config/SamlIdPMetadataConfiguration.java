@@ -171,7 +171,7 @@ public class SamlIdPMetadataConfiguration {
             plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
             plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
 
-            val configurers = Optional.ofNullable(configurersList.getIfAvailable()).orElse(new ArrayList<>());
+            val configurers = Optional.ofNullable(configurersList.getIfAvailable()).orElseGet(ArrayList::new);
             configurers.forEach(c -> {
                 LOGGER.trace("Configuring saml metadata resolution plan [{}]", c.getName());
                 c.configureMetadataResolutionPlan(plan);

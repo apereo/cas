@@ -136,7 +136,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                         .filter(entry -> entry.getValue().equalsIgnoreCase(acrValue.toString()))
                         .map(Map.Entry::getKey)
                         .findFirst()
-                        .orElse(acrValue.toString()))
+                        .orElseGet(acrValue::toString))
                 .collect(Collectors.joining(" "));
             LOGGER.debug("ID token acr claim calculated as [{}]", acrMapped);
             claims.setStringClaim(OidcConstants.ACR, acrMapped);

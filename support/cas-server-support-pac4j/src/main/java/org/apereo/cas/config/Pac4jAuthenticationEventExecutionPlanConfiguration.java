@@ -216,7 +216,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                 .map(result -> {
                     AnnotationAwareOrderComparator.sortIfNecessary(result);
                     return result;
-                }).orElse(new ArrayList<>(0));
+                }).orElseGet(() -> new ArrayList<>(0));
             return new DefaultDelegatedClientFactory(casProperties, customizers, casSslContext, applicationContext);
         }
     }

@@ -184,7 +184,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             @Qualifier("builtClients")
             final Clients builtClients) {
 
-            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable()).orElse(new ArrayList<>());
+            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable()).orElseGet(ArrayList::new);
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
             return new DefaultDelegatedClientIdentityProviderConfigurationProducer(authenticationRequestServiceSelectionStrategies,
                 builtClients, helper, casProperties, customizers, delegatedClientIdentityProviderRedirectionStrategy);
@@ -316,7 +316,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
             val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable())
-                .orElse(new ArrayList<>());
+                .orElseGet(ArrayList::new);
 
             return DelegatedClientAuthenticationConfigurationContext.builder()
                 .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)

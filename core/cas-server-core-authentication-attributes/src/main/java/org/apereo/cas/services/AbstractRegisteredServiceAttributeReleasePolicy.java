@@ -287,7 +287,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 });
                 return defaultAttributesToRelease;
             })
-            .orElse(new TreeMap<>());
+            .orElseGet(TreeMap::new);
     }
 
     /**

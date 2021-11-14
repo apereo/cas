@@ -37,7 +37,7 @@ public class CasCoreTicketsSerializationConfiguration {
         @ConditionalOnMissingBean(name = "ticketSerializationExecutionPlan")
         public TicketSerializationExecutionPlan ticketSerializationExecutionPlan(
             final ObjectProvider<List<TicketSerializationExecutionPlanConfigurer>> providerList) {
-            val providers = Optional.ofNullable(providerList.getIfAvailable()).orElse(new ArrayList<>());
+            val providers = Optional.ofNullable(providerList.getIfAvailable()).orElseGet(ArrayList::new);
             AnnotationAwareOrderComparator.sort(providers);
             val plan = new DefaultTicketSerializationExecutionPlan();
             providers.forEach(provider -> provider.configureTicketSerialization(plan));

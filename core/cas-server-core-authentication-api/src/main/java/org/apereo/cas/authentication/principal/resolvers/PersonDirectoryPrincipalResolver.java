@@ -190,8 +190,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                  final Optional<Principal> currentPrincipal,
                                                                  final Map<String, List<Object>> queryAttributes) {
 
-        queryAttributes.putIfAbsent("credentialId", CollectionUtils.wrapList(credential.getId()));
-        queryAttributes.putIfAbsent("credentialClass", CollectionUtils.wrapList(credential.getClass().getSimpleName()));
+        queryAttributes.computeIfAbsent("credentialId", k1 -> CollectionUtils.wrapList(credential.getId()));
+        queryAttributes.computeIfAbsent("credentialClass", k -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
         return PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(context.getAttributeRepository())
             .principalId(principalId)
