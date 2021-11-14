@@ -1,0 +1,28 @@
+{
+  "dependencies": "reports,redis-ticket-registry,redis-service-registry,gauth,gauth-redis,audit-redis",
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--management.health.redis.enabled=true",
+    
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--cas.service-registry.redis.host=localhost",
+    "--cas.service-registry.redis.port=6379",
+
+    "--cas.ticket.registry.redis.host=localhost",
+    "--cas.ticket.registry.redis.port=6379",
+
+    "--cas.authn.mfa.gauth.redis.host=localhost",
+    "--cas.authn.mfa.gauth.redis.port=6379",
+
+    "--cas.audit.redis.host=localhost",
+    "--cas.audit.redis.port=6379"
+
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
