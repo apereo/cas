@@ -5,7 +5,6 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,40 +24,28 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class RegisteredServicesEventListener implements CasEventListener {
+public class RegisteredServicesEventListener implements RegisteredServicesEventListenerAsync {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;
 
     private final CommunicationsManager communicationsManager;
 
-    /**
-     * Handle services manager refresh event.
-     *
-     * @param event the event
-     */
+    @Override
     @EventListener
     @Async
     public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         servicesManager.load();
     }
 
-    /**
-     * Handle environment change event.
-     *
-     * @param event the event
-     */
+    @Override
     @EventListener
     @Async
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
     }
     
-    /**
-     * Handle registered service expired event.
-     *
-     * @param event the event
-     */
+    @Override
     @EventListener
     @Async
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
