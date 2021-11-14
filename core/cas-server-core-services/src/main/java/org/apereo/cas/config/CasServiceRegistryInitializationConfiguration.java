@@ -130,7 +130,7 @@ public class CasServiceRegistryInitializationConfiguration {
             val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
             val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
                 Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
-            if (!(location instanceof ClassPathResource)) {
+            if (!(location instanceof ClassPathResource) && casProperties.getServiceRegistry().getJson().isWatcherEnabled()) {
                 registry.enableDefaultWatcherService();
             }
             return registry;

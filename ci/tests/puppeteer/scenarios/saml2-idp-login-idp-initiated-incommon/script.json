@@ -10,7 +10,13 @@
 
     "--logging.level.org.apereo.cas=info",
     "--cas.audit.engine.enabled=false",
-    
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.service-registry.json.watcher-enabled=false",
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
