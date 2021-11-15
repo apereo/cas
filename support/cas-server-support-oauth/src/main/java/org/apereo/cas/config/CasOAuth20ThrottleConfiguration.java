@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.web.OAuth20AccessTokenSecurityLogic;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -14,6 +13,7 @@ import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -137,7 +137,10 @@ public class CasOAuth20ThrottleConfiguration {
             val interceptor = new SecurityInterceptor(oauthSecConfig, clients, JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-            interceptor.setSecurityLogic(new OAuth20AccessTokenSecurityLogic());
+
+            val logic = new DefaultSecurityLogic();
+            logic.setLoadProfilesFromSession(false);
+            interceptor.setSecurityLogic(logic);
             return interceptor;
         }
     }
