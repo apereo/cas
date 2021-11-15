@@ -136,7 +136,7 @@ public class UserAuthenticationResourceTests {
     public void verifyStatus() throws Exception {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         val result = builder.build(new DefaultPrincipalElectionStrategy());
-        when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
+        lenient().when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(authenticationSupport.finalizeAllAuthenticationTransactions(any(), any())).thenReturn(result);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
