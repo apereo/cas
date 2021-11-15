@@ -9,6 +9,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListener;
+import org.apereo.cas.support.saml.idp.SamlIdPCasEventListener;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
@@ -320,6 +322,17 @@ public class SamlIdPMetadataConfiguration {
                 .openSamlConfigBean(openSamlConfigBean)
                 .velocityEngine(velocityEngineFactoryBean)
                 .build();
+        }
+    }
+
+    @Configuration(value = "SamlIdPMetadataInitializationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SamlIdPMetadataInitializationConfiguration {
+        @Bean
+        public SamlIdPCasEventListener samlIdPCasEventListener(
+            @Qualifier("samlIdPMetadataGenerator")
+            final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
+            return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
         }
     }
 }
