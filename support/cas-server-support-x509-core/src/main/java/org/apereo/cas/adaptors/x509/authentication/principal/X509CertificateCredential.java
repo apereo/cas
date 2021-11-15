@@ -46,11 +46,6 @@ public class X509CertificateCredential extends AbstractCredential {
      */
     private X509Certificate certificate;
 
-    /**
-     * Instantiates a new x509 certificate credential.
-     *
-     * @param certificates the certificates
-     */
     public X509CertificateCredential(final X509Certificate[] certificates) {
         this.certificates = Arrays.copyOf(certificates, certificates.length);
     }

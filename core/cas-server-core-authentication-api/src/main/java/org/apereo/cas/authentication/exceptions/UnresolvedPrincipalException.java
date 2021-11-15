@@ -33,18 +33,10 @@ public class UnresolvedPrincipalException extends PrincipalException {
         super(UNRESOLVED_PRINCIPAL, authentication.getFailures(), authentication.getSuccesses());
     }
 
-    /**
-     * Instantiates a new Unresolved principal exception.
-     */
     public UnresolvedPrincipalException() {
         super(UNRESOLVED_PRINCIPAL, new HashMap<>(0), new HashMap<>(0));
     }
 
-    /**
-     * Instantiates a new Unresolved principal exception.
-     *
-     * @param e the e
-     */
     public UnresolvedPrincipalException(final Exception e) {
         super(e.getMessage(), new HashMap<>(0), new HashMap<>(0));
     }
