@@ -58,15 +58,15 @@ public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflo
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
-        var state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
+        var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_DISPLAY);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_GET_USERID);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
         assertNotNull(state);
-        state = (TransitionableState) flow.getState(PasswordlessAuthenticationWebflowConfigurer.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
+        state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         assertNotNull(state);
     }
 

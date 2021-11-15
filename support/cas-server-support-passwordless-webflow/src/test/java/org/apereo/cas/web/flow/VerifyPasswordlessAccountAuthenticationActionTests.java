@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy")
 public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier("verifyPasswordlessAccountAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     private Action verifyPasswordlessAccountAuthenticationAction;
 
     @Test
