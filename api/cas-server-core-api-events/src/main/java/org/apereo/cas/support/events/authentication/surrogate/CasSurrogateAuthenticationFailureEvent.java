@@ -22,13 +22,6 @@ public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
 
     private final String surrogate;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source    the source
-     * @param principal the principal
-     * @param surrogate the surrogate
-     */
     public CasSurrogateAuthenticationFailureEvent(final Object source, final Principal principal, final String surrogate) {
         super(source);
         this.principal = principal;

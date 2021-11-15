@@ -20,13 +20,6 @@ public class CasAuthenticationTransactionCompletedEvent extends AbstractCasEvent
 
     private final Authentication authentication;
 
-
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source         the source
-     * @param authentication the authentication
-     */
     public CasAuthenticationTransactionCompletedEvent(final Object source, final Authentication authentication) {
         super(source);
         this.authentication = authentication;

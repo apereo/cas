@@ -61,12 +61,6 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     private final File metadataBackupDirectory;
 
-    /**
-     * Instantiates a new Url resource metadata resolver.
-     *
-     * @param samlIdPProperties the saml id p properties
-     * @param configBean        the config bean
-     */
     @SneakyThrows
     public UrlResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                        final OpenSamlConfigBean configBean) {
