@@ -31,13 +31,12 @@ import java.util.TreeMap;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class SamlRegisteredService extends RegexRegisteredService {
-
-    private static final long serialVersionUID = 1218757374062931021L;
-
     /**
      * Service definition friendly name.
      */
     public static final String FRIENDLY_NAME = "SAML2 Service Provider";
+    
+    private static final long serialVersionUID = 1218757374062931021L;
 
     @ExpressionLanguageCapable
     private String metadataLocation;
