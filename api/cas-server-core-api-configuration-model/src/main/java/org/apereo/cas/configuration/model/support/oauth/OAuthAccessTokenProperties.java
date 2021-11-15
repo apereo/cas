@@ -47,6 +47,12 @@ public class OAuthAccessTokenProperties implements Serializable {
     private boolean createAsJwt;
 
     /**
+     * The storage object name used and created by CAS to hold OAuth access tokens
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthAccessTokensCache";
+
+    /**
      * Crypto settings.
      */
     @NestedConfigurationProperty

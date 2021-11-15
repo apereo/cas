@@ -6,6 +6,8 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticatio
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20RefreshTokenAuthenticatorTests;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
+import org.apereo.cas.support.oauth.logout.OAuth20LogoutDontReplicateSessionTests;
+import org.apereo.cas.support.oauth.logout.OAuth20LogoutReplicateSessionTests;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilterTests;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreatorTests;
 import org.apereo.cas.support.oauth.profile.OAuth20ClientIdAwareProfileManagerTests;
@@ -164,7 +166,9 @@ import org.junit.platform.suite.api.Suite;
     OAuth20TokenAuthorizationResponseBuilderTests.class,
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
     OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
-    CSRFCookieTests.class
+    CSRFCookieTests.class,
+    OAuth20LogoutDontReplicateSessionTests.class,
+    OAuth20LogoutReplicateSessionTests.class
 })
 @Suite
 public class OAuth20TestsSuite {
