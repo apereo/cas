@@ -208,7 +208,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         viewState.setBinder(bm);
 
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM_ACTION));
+        actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM));
         viewState.setOnEntryActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
@@ -243,7 +243,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     private static void createDuoDoNonWebAuthenticationAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_DUO_NON_WEB_AUTHENTICATION);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION_ACTION));
+        actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();

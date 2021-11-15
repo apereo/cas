@@ -52,7 +52,7 @@ public class DisplayBeforePasswordlessAuthenticationActionTests extends BasePass
     }
     
     @Autowired
-    @Qualifier("displayBeforePasswordlessAuthenticationAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
     private Action displayBeforePasswordlessAuthenticationAction;
 
     @Autowired

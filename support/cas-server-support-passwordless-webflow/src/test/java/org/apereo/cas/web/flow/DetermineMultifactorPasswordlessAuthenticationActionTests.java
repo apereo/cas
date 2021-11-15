@@ -67,7 +67,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
     public class WithoutMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
 
         @Autowired
-        @Qualifier("determineMultifactorPasswordlessAuthenticationAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
         private Action determineMultifactorPasswordlessAuthenticationAction;
 
         @Test
@@ -98,7 +98,7 @@ public class DetermineMultifactorPasswordlessAuthenticationActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class WithMultifactorAuthenticationTrigger extends BasePasswordlessAuthenticationActionTests {
         @Autowired
-        @Qualifier("determineMultifactorPasswordlessAuthenticationAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
         private Action determineMultifactorPasswordlessAuthenticationAction;
 
         @Test

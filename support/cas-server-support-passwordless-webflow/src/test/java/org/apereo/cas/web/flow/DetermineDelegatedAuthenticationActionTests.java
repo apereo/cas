@@ -42,7 +42,7 @@ public class DetermineDelegatedAuthenticationActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class WithoutClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
-        @Qualifier("determineDelegatedAuthenticationAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;
 
         @Test
@@ -74,7 +74,7 @@ public class DetermineDelegatedAuthenticationActionTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class WithClients extends BasePasswordlessAuthenticationActionTests {
         @Autowired
-        @Qualifier("determineDelegatedAuthenticationAction")
+        @Qualifier(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
         private Action determineDelegatedAuthenticationAction;
 
         @Test

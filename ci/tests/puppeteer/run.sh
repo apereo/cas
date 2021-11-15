@@ -26,6 +26,7 @@ DEBUG_PORT="5000"
 DEBUG_SUSPEND="n"
 DAEMON=""
 BUILDFLAGS=""
+DRYRUN=""
 
 while (( "$#" )); do
   case "$1" in
@@ -53,11 +54,16 @@ while (( "$#" )); do
     REBUILD="true"
     shift 1
     ;;
+  --dry-run)
+    DRYRUN="true"
+    shift 1
+    printyellow "Skipping execution of test scenario while in dry-run mode."
+    ;;
   --headless)
     export HEADLESS="true"
     shift 1;
     ;;
-  --rerun)
+  --rerun|--resume)
     RERUN="true"
     shift 1;
     ;;
@@ -207,6 +213,10 @@ if [[ "${RERUN}" != "true" ]]; then
     runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
   fi
   echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+
+  springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
+  [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+
   java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} ${properties} \
     -Dcom.sun.net.ssl.checkRevocation=false \
     --spring.profiles.active=none --server.ssl.key-store="$keystore" &
@@ -220,38 +230,40 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 
-clear
-scriptPath="${scenario}/script.js"
-echo -e "*************************************"
-echo -e "Running ${scriptPath}\n"
-export NODE_TLS_REJECT_UNAUTHORIZED=0
-node --unhandled-rejections=strict ${scriptPath} ${config}
-RC=$?
-if [[ $RC -ne 0 ]]; then
-  printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
+if [[ "${DRYRUN}" != "true" ]]; then
+  clear
+  scriptPath="${scenario}/script.js"
+  echo -e "*************************************"
+  echo -e "Running ${scriptPath}\n"
+  export NODE_TLS_REJECT_UNAUTHORIZED=0
+  node --unhandled-rejections=strict ${scriptPath} ${config}
+  RC=$?
+  if [[ $RC -ne 0 ]]; then
+    printred "Script: ${scriptPath} with config: ${config} failed with return code ${RC}"
+  fi
+  echo -e "*************************************\n"
+
+  exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
+  exitScript="${exitScript//\$\{PWD\}/${PWD}}"
+  exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
+
+  [ -n "${exitScript}" ] && \
+    printgreen "Exit script: ${exitScript}" && \
+    chmod +x "${exitScript}" && \
+    eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
+
+  printgreen "Done!\n"
 fi
-echo -e "*************************************\n"
-
-exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
-exitScript="${exitScript//\$\{PWD\}/${PWD}}"
-exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
-
-[ -n "${exitScript}" ] && \
-  printgreen "Exit script: ${exitScript}" && \
-  chmod +x "${exitScript}" && \
-  eval "export SCENARIO=${scenarioName}"; eval "${exitScript}"
-
-printgreen "Done!\n"
 
 if [[ "${RERUN}" != "true" ]]; then
   if [[ "${CI}" != "true" ]]; then
-    printgreen "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC \n"
+    printgreen "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC\n"
     read -r
   fi
 
-  printyellow "\nKilling CAS process ${pid} ..."
+  printgreen "\nKilling CAS process ${pid}..."
   kill -9 $pid
-  printyellow "\nRemoving previous build artifacts ..."
+  printgreen "Removing previous build artifacts..."
   rm "$PWD"/cas.${projectType}
   rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
   rm -Rf "$PWD"/ci/tests/puppeteer/overlay
@@ -261,4 +273,5 @@ if [[ "${RERUN}" != "true" ]]; then
     docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
   fi
 fi
+printgreen "Bye!\n"
 exit $RC

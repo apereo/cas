@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 public class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier("accountMgmtRegistrationInitializeCaptchaAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
     private Action initCaptchaAction;
 
     @Test
