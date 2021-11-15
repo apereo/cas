@@ -18,14 +18,14 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.Map;
 
 /**
- * This is {@link SurrogateAuthenticationEventListenerImpl}.
+ * This is {@link DefaultSurrogateAuthenticationEventListener}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SurrogateAuthenticationEventListenerImpl implements SurrogateAuthenticationEventListener {
+public class DefaultSurrogateAuthenticationEventListener implements SurrogateAuthenticationEventListener {
     private final CommunicationsManager communicationsManager;
     private final CasConfigurationProperties casProperties;
 

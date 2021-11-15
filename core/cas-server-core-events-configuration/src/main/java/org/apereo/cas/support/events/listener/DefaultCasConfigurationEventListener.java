@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This is {@link CasConfigurationEventListenerImpl}.
+ * This is {@link DefaultCasConfigurationEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationEventListenerImpl implements CasConfigurationEventListener {
+public class DefaultCasConfigurationEventListener implements CasConfigurationEventListener {
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 

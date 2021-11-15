@@ -10,14 +10,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * This is {@link CasCloudBusConfigurationEventListenerImpl}.
+ * This is {@link DefaultCasCloudBusConfigurationEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasCloudBusConfigurationEventListenerImpl implements CasCloudBusConfigurationEventListener {
+public class DefaultCasCloudBusConfigurationEventListener implements CasCloudBusConfigurationEventListener {
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
     private final ApplicationContext applicationContext;

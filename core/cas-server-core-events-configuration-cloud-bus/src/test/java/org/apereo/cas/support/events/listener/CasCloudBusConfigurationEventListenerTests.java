@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasCloudBusConfigurationEventListenerTests {
     @Autowired
     @Qualifier("casCloudBusConfigurationEventListener")
-    private CasCloudBusConfigurationEventListenerImpl casCloudBusConfigurationEventListener;
+    private DefaultCasCloudBusConfigurationEventListener casCloudBusConfigurationEventListener;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

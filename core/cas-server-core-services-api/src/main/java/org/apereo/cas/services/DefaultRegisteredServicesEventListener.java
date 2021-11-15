@@ -17,14 +17,14 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.Map;
 
 /**
- * This is {@link RegisteredServicesEventListenerImpl}.
+ * This is {@link DefaultRegisteredServicesEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class RegisteredServicesEventListenerImpl implements RegisteredServicesEventListener {
+public class DefaultRegisteredServicesEventListener implements RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;

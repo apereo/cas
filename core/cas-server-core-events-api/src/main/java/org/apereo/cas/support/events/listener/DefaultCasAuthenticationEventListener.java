@@ -23,7 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import java.time.Instant;
 
 /**
- * This is {@link DefaultCasEventListenerImpl} that attempts to consume CAS events
+ * This is {@link DefaultCasAuthenticationEventListener} that attempts to consume CAS events
  * upon various authentication events. Event data is persisted into a repository
  * via {@link CasEventRepository}.
  *
@@ -33,7 +33,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class DefaultCasEventListenerImpl implements DefaultCasEventListener {
+public class DefaultCasAuthenticationEventListener implements DefaultCasEventListener {
 
     private final CasEventRepository casEventRepository;
 

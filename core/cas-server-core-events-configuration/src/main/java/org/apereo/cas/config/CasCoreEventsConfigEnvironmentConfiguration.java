@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.support.events.listener.CasConfigurationEventListenerImpl;
+import org.apereo.cas.support.events.listener.DefaultCasConfigurationEventListener;
 import org.apereo.cas.util.spring.CasEventListener;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +32,6 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
         final ConfigurationPropertiesBindingPostProcessor binder,
         final ContextRefresher contextRefresher,
         final ConfigurableApplicationContext applicationContext) {
-        return new CasConfigurationEventListenerImpl(manager, binder, contextRefresher, applicationContext);
+        return new DefaultCasConfigurationEventListener(manager, binder, contextRefresher, applicationContext);
     }
 }

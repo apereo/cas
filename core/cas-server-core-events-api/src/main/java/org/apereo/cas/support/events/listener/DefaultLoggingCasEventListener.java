@@ -24,7 +24,7 @@ import static org.apereo.cas.util.serialization.MessageSanitizationUtils.*;
  * @since 6.1.0
  */
 @Slf4j
-public class LoggingCasEventListenerImpl implements LoggingCasEventListener {
+public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
 
     private static final String GRANTED_TGT_MSG = "Established SSO session at [{}]\nTGT: [{}], With TimeToLive: [{}], TimeToIdle: [{}]\n"
                                                   + "For principal: [{}]";

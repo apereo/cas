@@ -24,7 +24,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
-import org.apereo.cas.services.RegisteredServicesEventListenerImpl;
+import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -111,7 +111,7 @@ public class CasCoreServicesConfiguration {
             final ServicesManager servicesManager,
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager) {
-            return new RegisteredServicesEventListenerImpl(servicesManager, casProperties, communicationsManager);
+            return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
         }
     }
 

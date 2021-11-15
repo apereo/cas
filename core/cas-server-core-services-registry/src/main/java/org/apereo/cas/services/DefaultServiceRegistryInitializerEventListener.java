@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +9,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * This is {@link ServiceRegistryInitializerEventListenerImpl}.
+ * This is {@link DefaultServiceRegistryInitializerEventListener}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ServiceRegistryInitializerEventListenerImpl implements ServiceRegistryInitializerEventListener {
+public class DefaultServiceRegistryInitializerEventListener implements ServiceRegistryInitializerEventListener {
     private final ServiceRegistryInitializer serviceRegistryInitializer;
 
     @Override
