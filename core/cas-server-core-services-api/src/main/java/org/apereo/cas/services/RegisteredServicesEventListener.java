@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * Interface for {@code RegisteredServicesEventListener} to allow spring {@code @Async} support to use JDK proxy.
+ * Interface for {@code RegisteredServicesEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
  * @author Hal Deadman
  * @since 6.5.0
  */

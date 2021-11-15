@@ -65,7 +65,7 @@ public class SurrogateAuthenticationEventListenerTests {
 
     @Test
     public void verifyOperation() {
-        val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+        val listener = new SurrogateAuthenticationEventListenerImpl(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
             Map.of("phone", List.of("1234567890"), "mail", List.of("cas@example.org")));
         assertDoesNotThrow(new Executable() {
@@ -81,7 +81,7 @@ public class SurrogateAuthenticationEventListenerTests {
 
     @Test
     public void verifyFailsOperation() {
-        val listener = new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+        val listener = new SurrogateAuthenticationEventListenerImpl(communicationsManager, casProperties);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", Map.of());
         assertDoesNotThrow(new Executable() {
             @Override
