@@ -63,10 +63,19 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
         val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
-        return new OAuth20DefaultCode(codeId, service, authentication,
+        val oauthCode = new OAuth20DefaultCode(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
+        if (ticketGrantingTicket != null) {
+            ticketGrantingTicket.getDescendantTickets().add(oauthCode.getId());
+        }
+        return oauthCode;
+    }
+
+    @Override
+    public Class<? extends Ticket> getTicketType() {
+        return OAuth20Code.class;
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final String clientId) {
@@ -80,10 +89,5 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             }
         }
         return this.expirationPolicy.buildTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<? extends Ticket> getTicketType() {
-        return OAuth20Code.class;
     }
 }
