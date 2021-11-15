@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.configuration.model.support.oauth.CsrfCookieProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthCsrfCookieProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This class tests the {@link CsrfCookieProperties} class.
+ * This class tests the {@link OAuthCsrfCookieProperties} class.
  *
  * @author Hal Deadman
  * @since 6.4.0

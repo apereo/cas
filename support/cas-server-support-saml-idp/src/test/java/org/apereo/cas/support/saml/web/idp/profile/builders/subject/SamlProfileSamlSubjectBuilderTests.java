@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -75,5 +76,36 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
 
         val subjectData = subject.getSubjectConfirmations().get(0).getSubjectConfirmationData();
         assertEquals(now, subjectData.getNotOnOrAfter().truncatedTo(ChronoUnit.SECONDS));
+    }
+
+    @Test
+    public void verifyEncryptedSubject() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setSkipGeneratingSubjectConfirmationNameId(false);
+        service.setSkipGeneratingSubjectConfirmationNotOnOrAfter(false);
+        service.setSkewAllowance(0);
+
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
+            samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
+
+        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
+            assertion, service, adaptor,
+            SAMLConstants.SAML2_POST_BINDING_URI,
+            new MessageContext());
+        assertNotNull(subject);
+
+        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        assertNotNull(subjectConfirmation.getEncryptedID());
+        assertNull(subjectConfirmation.getNameID());
+        assertNotNull(subject.getEncryptedID());
+        assertNull(subject.getNameID());
     }
 }

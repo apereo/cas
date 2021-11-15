@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.web.support.RedisThrottledSubmissionHandlerInterceptorAdapter;
@@ -7,7 +8,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerConfigurationContext
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,10 +32,12 @@ public class CasRedisThrottlingConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
-    @Autowired
-    public RedisConnectionFactory redisThrottleConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisThrottleConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean
@@ -46,7 +48,6 @@ public class CasRedisThrottlingConfiguration {
         return RedisObjectFactory.newRedisTemplate(redisThrottleConnectionFactory);
     }
 
-    @Autowired
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(

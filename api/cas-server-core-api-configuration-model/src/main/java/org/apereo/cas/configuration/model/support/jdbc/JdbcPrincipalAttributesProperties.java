@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -140,4 +141,9 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * and the value is the database column that should map.
      */
     private Map<String, String> queryAttributes = new HashMap<>(0);
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

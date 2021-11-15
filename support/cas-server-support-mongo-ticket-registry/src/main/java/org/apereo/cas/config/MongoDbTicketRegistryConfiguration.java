@@ -11,7 +11,6 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class MongoDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public TicketRegistry ticketRegistry(
         @Qualifier("ticketCatalog")
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
@@ -52,7 +50,6 @@ public class MongoDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MongoTemplate mongoDbTicketRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")

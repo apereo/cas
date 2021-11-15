@@ -5,7 +5,6 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.sms.SmsModeSmsSender;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 public class SmsModeSmsConfiguration {
 
     @Bean
-    @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val smsMode = casProperties.getSmsProvider().getSmsMode();
         return new SmsModeSmsSender(smsMode);

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -9,7 +10,6 @@ import org.apereo.cas.trusted.authentication.storage.RedisMultifactorAuthenticat
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,10 +37,12 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public RedisConnectionFactory redisMfaTrustedConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisMfaTrustedConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getTrusted().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -54,7 +56,6 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("redisMfaTrustedAuthnTemplate")

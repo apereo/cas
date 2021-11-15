@@ -14,18 +14,19 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class is testing that the conditional expression on the SamlIdPRedisIdPMetadataConfiguration class works.
  * The class should not be created because one of the properties is false.
+ *
  * @since 6.4.0
  */
 @Tag("Redis")
 @SpringBootTest(classes = SamlIdPRedisIdPMetadataConfiguration.class)
 @TestPropertySource(properties = {
-        "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
-        "cas.authn.saml-idp.metadata.redis.enabled=false"
+    "cas.authn.saml-idp.metadata.redis.idp-metadata-enabled=true",
+    "cas.authn.saml-idp.metadata.redis.enabled=false"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {

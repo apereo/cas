@@ -32,7 +32,8 @@ public class OidcServicesManagerRegisteredServiceLocator extends DefaultServices
                 if (match) {
                     val oidcService = (OidcRegisteredService) registeredService;
                     LOGGER.trace("Attempting to locate service [{}] via [{}]", service, oidcService);
-                    match = CollectionUtils.firstElement(service.getAttributes().get(OAuth20Constants.CLIENT_ID))
+                    val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
+                    match = CollectionUtils.firstElement(clientIdAttribute)
                         .map(Object::toString)
                         .stream()
                         .anyMatch(clientId -> oidcService.getClientId().equalsIgnoreCase(clientId));

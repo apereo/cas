@@ -49,15 +49,79 @@ cas.version=6.5.0-RC3
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+     
+### Spring Boot `2.6.x`
+
+CAS has now switched to use the Spring Boot `2.6.x` release line, and all other relevant dependencies
+such as Spring Cloud, Spring Data, Spring Security, etc have also been upgraded. While this is a somewhat significant
+upgrade, its effects and consequences should largely remain invisible to the end-user. Aside from all the usual 
+reasons, this upgrade should allow CAS to be one step closer to native builds using the likes of GraalVM. 
+
+Make sure this Maven repository, `https://repo.spring.io/milestone`, is listed and made available in your build.
+
+<div class="alert alert-info">
+<strong>Remember</strong><br/>Be sure to review your CAS Overlay configuration
+to make sure the Spring Boot version correctly matches that of CAS. Creating a CAS Overlay
+project using the CAS Initializr service should already account for this change.
+</div>
+
+This upgrade affects CAS via the following ways:
+
+- By default, circular `@Bean` references are no longer allowed by Spring Boot. The only module affected by this change is the CAS Command-line Shell.
+- The default MVC path matcher is set as `spring.mvc.pathmatch.matching-strategy=ant-path-matcher` to restore and enforce current behavior, particularly for OpenID Connect endpoints.
+
+### Account (Self-Service) Registration
+
+CAS provides a modest workflow to 
+handle [self-service account registration](../registration/Account-Registration-Overview.html).
+This capability was developed and first released in `6.5.0-RC1`, and it will be repeatedly refined
+and improved in the future to match and accommodate realistic workflows deployed today as much as possible. 
+ 
+### OpenID Connect Key Rotation
+     
+CAS can now be configured to rotate keys in the [OpenID Connect](../authentication/OIDC-Authentication-JWKS.html) 
+keystore automatically based on a predefined schedule. Rotation will include previous keys as well as current and future
+keys to assist with integrations and caching concerns. There is also a revocation schedule for old
+inactive keys that should be removed from the keystore.
+
+### Chained Service Access Strategies
+
+[Service access strategies](../services/Configuring-Service-Access-Strategy.html) can now 
+be chained and grouped together to deliver advanced conditions
+and grouping logic using multiple `AND` or `OR` rules.
+  
+### Audit Log Data Structure
+
+Audit log records and storage services are now modified to include user agent information using the `User-Agent` header.
+This *might* be a breaking change, particularly for relational databases that have a fixed table structure. 
+If you are not allowing CAS to update database schemas automatically, you will need to ensure the audit log table
+contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 512)`.
 
 ## Other Stuff
+                     
+- Minor performance improvements to assist with locating SAML2 services in the service registry.
+- All Redis integrations are now able to support TLS options for encrypted connections and transports.
+- All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
+- DynamoDb tables names that affect OAuth and OpenID Connect functionality are now customizable via CAS settings.
+- Cache invalidation rules for static resources such as JSS/JS files using `ResourceUrlProviderExposingInterceptor` is now restored.
 
 ## Library Upgrades
 
+- Spring Boot
+- Spring Data
+- Spring Security
+- Spring Cloud
+- Micrometer
+- Amazon SDK
+- SpotBugs
+- Spring Session
+- Spring Framework
+- MongoDb Driver
+- Azure CosmosDb
+- Spring Boot Admin

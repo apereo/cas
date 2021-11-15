@@ -67,8 +67,8 @@ public class OidcJsonWebKeyStoreUtils {
 
             val badKeysCount = jsonWebKeySet.getJsonWebKeys().stream().filter(k ->
                 StringUtils.isBlank(k.getAlgorithm())
-                    && StringUtils.isBlank(k.getKeyId())
-                    && StringUtils.isBlank(k.getKeyType())).count();
+                && StringUtils.isBlank(k.getKeyId())
+                && StringUtils.isBlank(k.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
                 LOGGER.warn("No valid JSON web keys could be found for [{}]", service);
@@ -129,6 +129,7 @@ public class OidcJsonWebKeyStoreUtils {
         }
 
         val keyId = kid.get();
+        LOGGER.debug("Attempting to locate key [{}]", keyId);
         return jwks.getJsonWebKeys()
             .stream()
             .filter(k -> StringUtils.equalsIgnoreCase(k.getKeyId(), keyId))
@@ -205,7 +206,9 @@ public class OidcJsonWebKeyStoreUtils {
                 return jwk;
             case "rsa":
             default:
-                return RsaJwkGenerator.generateJwk(jwksKeySize);
+                val newJwk = RsaJwkGenerator.generateJwk(jwksKeySize);
+                newJwk.setKeyId(UUID.randomUUID().toString());
+                return newJwk;
         }
     }
 }

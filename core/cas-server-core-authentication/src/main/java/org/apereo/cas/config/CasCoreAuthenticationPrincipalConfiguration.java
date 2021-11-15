@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,14 +52,13 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalResolver defaultPrincipalResolver(
             final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
             final CasConfigurationProperties casProperties,
             @Qualifier("principalElectionStrategy")
             final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
-            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElse(new ArrayList<>(0)));
+            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
             sortedConfigurers.forEach(Unchecked.consumer(c -> {
@@ -82,7 +80,6 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "principalElectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
                                                                    final CasConfigurationProperties casProperties) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
@@ -101,7 +98,6 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "defaultPrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("principalFactory")
@@ -131,7 +127,6 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_GLOBAL_PRINCIPAL_ATTRIBUTE_REPOSITORY)
-        @Autowired
         public RegisteredServicePrincipalAttributesRepository globalPrincipalAttributeRepository(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getAttributeRepository().getCore();
             val cacheTime = props.getExpirationTime();

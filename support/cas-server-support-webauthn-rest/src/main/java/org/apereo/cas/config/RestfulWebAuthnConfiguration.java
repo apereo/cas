@@ -5,7 +5,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.RestfulWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,7 +24,6 @@ public class RestfulWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public WebAuthnCredentialRepository webAuthnCredentialRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("webAuthnCredentialRegistrationCipherExecutor")

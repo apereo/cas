@@ -7,9 +7,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,21 +29,18 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "casAcceptableUsagePolicyJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasCoreTicketsConfiguration.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyDataSource")
-    @Autowired
     public DataSource acceptableUsagePolicyDataSource(final CasConfigurationProperties casProperties) {
         val jdbc = casProperties.getAcceptableUsagePolicy().getJdbc();
         return JpaBeans.newDataSource(jdbc);
     }
 
     @Bean
-    @Autowired
     public PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager(
         @Qualifier("acceptableUsagePolicyDataSource")
         final DataSource acceptableUsagePolicyDataSource) {
@@ -54,7 +49,6 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAcceptableUsagePolicyTransactionTemplate")
     @Bean
-    @Autowired
     public TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate(
         @Qualifier("jdbcAcceptableUsagePolicyTransactionManager")
         final PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager,
@@ -67,7 +61,6 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("acceptableUsagePolicyDataSource")
         final DataSource acceptableUsagePolicyDataSource,

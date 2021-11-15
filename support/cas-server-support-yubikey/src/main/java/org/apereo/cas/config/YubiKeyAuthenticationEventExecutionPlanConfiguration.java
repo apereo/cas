@@ -33,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,14 +64,15 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMetaDataPopulator")
-    @Autowired
-    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                  @Qualifier("yubikeyAuthenticationHandler")
-                                                                                  final AuthenticationHandler yubikeyAuthenticationHandler,
-                                                                                  @Qualifier("yubikeyMultifactorAuthenticationProvider")
-                                                                                  final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
+    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyAuthenticationHandler")
+        final AuthenticationHandler yubikeyAuthenticationHandler,
+        @Qualifier("yubikeyMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler, yubikeyMultifactorAuthenticationProvider.getId());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+            yubikeyAuthenticationHandler, yubikeyMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
@@ -85,15 +85,8 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "yubicoClient")
-    @Autowired
     public YubicoClient yubicoClient(final CasConfigurationProperties casProperties) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        if (StringUtils.isBlank(yubi.getSecretKey())) {
-            throw new IllegalArgumentException("Yubikey secret key cannot be blank");
-        }
-        if (yubi.getClientId() <= 0) {
-            throw new IllegalArgumentException("Yubikey client id is undefined");
-        }
         val client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
         if (!yubi.getApiUrls().isEmpty()) {
             val urls = yubi.getApiUrls().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
@@ -105,7 +98,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
-    @Autowired
     public AuthenticationHandler yubikeyAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                               @Qualifier("yubikeyPrincipalFactory")
                                                               final PrincipalFactory yubikeyPrincipalFactory,
@@ -131,7 +123,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
-    @Autowired
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(final CasConfigurationProperties casProperties,
                                                          @Qualifier("yubiKeyAccountValidator")
                                                          final YubiKeyAccountValidator yubiKeyAccountValidator,
@@ -156,9 +147,10 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry", yubi.getAllowedDevices().keySet());
             val map = (Map<String, YubiKeyAccount>) yubi.getAllowedDevices().entrySet()
                 .stream().map(entry -> YubiKeyAccount.builder().id(System.currentTimeMillis()).username(entry.getKey())
-                .devices(
-                    List.of(YubiKeyRegisteredDevice.builder().publicId(entry.getValue()).name(UUID.randomUUID().toString()).registrationDate(ZonedDateTime.now(Clock.systemUTC())).build()))
-                .build()).collect(Collectors.toMap(YubiKeyAccount::getUsername, acct -> acct));
+                    .devices(
+                        List.of(
+                            YubiKeyRegisteredDevice.builder().publicId(entry.getValue()).name(UUID.randomUUID().toString()).registrationDate(ZonedDateTime.now(Clock.systemUTC())).build()))
+                    .build()).collect(Collectors.toMap(YubiKeyAccount::getUsername, acct -> acct));
             val registry = new PermissiveYubiKeyAccountRegistry(map, yubiKeyAccountValidator);
             registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
             return registry;
@@ -172,7 +164,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    @Autowired
     public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("yubiKeyAccountRegistry")
                                                                          final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
@@ -181,7 +172,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                       @Qualifier("yubicoClient")
                                                                                       final YubicoClient yubicoClient,
@@ -203,7 +193,6 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                         @Qualifier("yubikeyAuthenticationHandler")
                                                                                                         final AuthenticationHandler yubikeyAuthenticationHandler,

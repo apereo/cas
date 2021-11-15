@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
@@ -17,7 +16,6 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.message.BasicHeader;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +45,6 @@ public class CasCoreHttpConfiguration {
     public static class CasCoreHttpSslFactoryConfiguration {
         @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
         @Bean
-        @Autowired
         public SSLConnectionSocketFactory trustStoreSslSocketFactory(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
@@ -63,7 +60,6 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "hostnameVerifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public HostnameVerifier hostnameVerifier(final CasConfigurationProperties casProperties) {
             if (casProperties.getHttpClient().getHostNameVerifier().equalsIgnoreCase("none")) {
                 return NoopHostnameVerifier.INSTANCE;
@@ -71,12 +67,11 @@ public class CasCoreHttpConfiguration {
             return new DefaultHostnameVerifier();
         }
     }
-    
+
     @Configuration(value = "CasCoreHttpTlsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreHttpTlsConfiguration {
         @ConditionalOnMissingBean(name = "casSslContext")
-        @Autowired
         @Bean
         public CasSSLContext casSslContext(
             @Qualifier("hostnameVerifier")
@@ -122,7 +117,7 @@ public class CasCoreHttpConfiguration {
             return c;
         }
 
-        private static HttpClient getHttpClient(final boolean redirectEnabled,
+        private static SimpleHttpClient getHttpClient(final boolean redirectEnabled,
                                                 final CasSSLContext casSslContext,
                                                 final HostnameVerifier hostnameVerifier,
                                                 final SSLConnectionSocketFactory trustStoreSslSocketFactory,
@@ -134,8 +129,7 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "httpClient")
-        @Bean(destroyMethod = "destroy")
-        @Autowired
+        @Bean
         public FactoryBean<SimpleHttpClient> httpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
@@ -149,9 +143,8 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "noRedirectHttpClient")
-        @Bean(destroyMethod = "destroy")
-        @Autowired
-        public HttpClient noRedirectHttpClient(
+        @Bean
+        public SimpleHttpClient noRedirectHttpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
@@ -164,9 +157,8 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
-        @Bean(destroyMethod = "destroy")
-        @Autowired
-        public HttpClient supportsTrustStoreSslSocketFactoryHttpClient(
+        @Bean
+        public SimpleHttpClient supportsTrustStoreSslSocketFactoryHttpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")

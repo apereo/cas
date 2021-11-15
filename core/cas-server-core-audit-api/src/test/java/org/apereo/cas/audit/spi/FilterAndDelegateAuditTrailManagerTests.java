@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +31,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
     public void verifyExcludeOperationForAllActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4");
+            "1.2.3.4", UUID.randomUUID().toString());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
         mgr.record(ctx);
@@ -41,7 +42,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
     public void verifyOperationForAllActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4");
+            "1.2.3.4", UUID.randomUUID().toString());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
         mgr.record(ctx);
@@ -52,7 +53,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
     public void verifyOperationForAllSupportedActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4");
+            "1.2.3.4", UUID.randomUUID().toString());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
@@ -63,7 +64,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
     public void verifyOperationForUnmatchedActions() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", new Date(), "1.2.3.4",
-            "1.2.3.4");
+            "1.2.3.4", UUID.randomUUID().toString());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
         mgr.record(ctx);
@@ -76,7 +77,7 @@ public class FilterAndDelegateAuditTrailManagerTests {
             "CAS",
             DateTimeUtils.dateOf(LocalDateTime.now(ZoneOffset.UTC).plusDays(1)),
             "1.2.3.4",
-            "1.2.3.4");
+            "1.2.3.4", UUID.randomUUID().toString());
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);

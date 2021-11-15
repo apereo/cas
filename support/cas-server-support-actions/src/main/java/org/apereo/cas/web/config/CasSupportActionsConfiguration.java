@@ -46,7 +46,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -101,7 +100,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SERVICE_AUTHZ_CHECK)
         @Bean
-        @Autowired
         public Action serviceAuthorizationCheck(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -136,7 +134,6 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action finishLogoutAction(final CasConfigurationProperties casProperties,
                                          @Qualifier(ServicesManager.BEAN_NAME)
                                          final ServicesManager servicesManager,
@@ -155,7 +152,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT)
-        @Autowired
         public Action logoutAction(final CasConfigurationProperties casProperties,
                                    @Qualifier(ServicesManager.BEAN_NAME)
                                    final ServicesManager servicesManager,
@@ -174,7 +170,6 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action initializeLoginAction(final CasConfigurationProperties casProperties,
                                             @Qualifier(ServicesManager.BEAN_NAME)
                                             final ServicesManager servicesManager) {
@@ -193,7 +188,6 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action renderLoginFormAction(final CasConfigurationProperties casProperties,
                                             final ConfigurableApplicationContext applicationContext,
                                             @Qualifier(ServicesManager.BEAN_NAME)
@@ -204,7 +198,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
-        @Autowired
         public Action initialFlowSetupAction(final CasConfigurationProperties casProperties,
                                              @Qualifier("authenticationEventExecutionPlan")
                                              final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -231,7 +224,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE)
-        @Autowired
         public Action verifyRequiredServiceAction(final CasConfigurationProperties casProperties,
                                                   @Qualifier(ServicesManager.BEAN_NAME)
                                                   final ServicesManager servicesManager,
@@ -254,7 +246,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "genericSuccessViewAction")
-        @Autowired
         public Action genericSuccessViewAction(final CasConfigurationProperties casProperties,
                                                @Qualifier(ServicesManager.BEAN_NAME)
                                                final ServicesManager servicesManager,
@@ -269,7 +260,6 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
-        @Autowired
         public Action redirectUnauthorizedServiceUrlAction(final ConfigurableApplicationContext applicationContext,
                                                            @Qualifier(ServicesManager.BEAN_NAME)
                                                            final ServicesManager servicesManager) {
@@ -300,7 +290,6 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action gatewayServicesManagementCheck(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -311,7 +300,6 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
-        @Autowired
         public Action frontChannelLogoutAction(final CasConfigurationProperties casProperties,
                                                @Qualifier(ServicesManager.BEAN_NAME)
                                                final ServicesManager servicesManager,
@@ -328,7 +316,6 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
-        @Autowired
         public Action ticketGrantingTicketCheckAction(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
@@ -338,7 +325,6 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action terminateSessionAction(final CasConfigurationProperties casProperties,
                                              final ConfigurableApplicationContext applicationContext,
                                              @Qualifier("logoutManager")
@@ -359,7 +345,6 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "confirmLogoutAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action confirmLogoutAction(final CasConfigurationProperties casProperties,
                                           @Qualifier(ServicesManager.BEAN_NAME)
                                           final ServicesManager servicesManager,
@@ -378,7 +363,6 @@ public class CasSupportActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
-        @Autowired
         public Action logoutViewSetupAction(final CasConfigurationProperties casProperties,
                                             @Qualifier(ServicesManager.BEAN_NAME)
                                             final ServicesManager servicesManager,

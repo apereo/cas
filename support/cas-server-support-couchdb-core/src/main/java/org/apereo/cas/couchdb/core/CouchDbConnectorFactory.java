@@ -3,7 +3,6 @@ package org.apereo.cas.couchdb.core;
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +27,9 @@ import org.ektorp.impl.StdCouchDbInstance;
 @Slf4j
 public class CouchDbConnectorFactory {
 
-    private final @NonNull BaseCouchDbProperties couchDbProperties;
+    private final BaseCouchDbProperties couchDbProperties;
 
-    private final @NonNull ObjectMapperFactory objectMapperFactory;
+    private final ObjectMapperFactory objectMapperFactory;
 
     @Getter(lazy = true)
     private final CouchDbConnector couchDbConnector = createConnector();
@@ -49,7 +48,6 @@ public class CouchDbConnectorFactory {
     public CouchDbConnector createConnector() {
         val connector = new StdCouchDbConnector(couchDbProperties.getDbName(), getCouchDbInstance(), objectMapperFactory);
         LOGGER.debug("Connector created: [{}]", connector);
-
         return connector;
     }
 

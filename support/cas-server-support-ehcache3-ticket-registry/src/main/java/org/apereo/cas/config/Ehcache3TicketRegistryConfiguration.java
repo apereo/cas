@@ -33,7 +33,6 @@ import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.ehcache.jsr107.config.ConfigurationElementState;
 import org.ehcache.jsr107.config.Jsr107Configuration;
 import org.ehcache.spi.service.ServiceCreationConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -65,7 +64,6 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ehcache3CacheManagerConfiguration")
-    @Autowired
     public ServiceCreationConfiguration ehcache3CacheManagerConfiguration(final CasConfigurationProperties casProperties) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val terracottaClusterUri = ehcacheProperties.getTerracottaClusterUri();
@@ -94,7 +92,6 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "ehcache3TicketCacheManager")
-    @Autowired
     public CacheManager ehcache3TicketCacheManager(
         @Qualifier("ehcache3CacheManagerConfiguration")
         final ServiceCreationConfiguration ehcache3CacheManagerConfiguration, final CasConfigurationProperties casProperties) {
@@ -116,7 +113,6 @@ public class Ehcache3TicketRegistryConfiguration {
      * @param casProperties  the cas properties
      * @return Ticket Registry
      */
-    @Autowired
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(

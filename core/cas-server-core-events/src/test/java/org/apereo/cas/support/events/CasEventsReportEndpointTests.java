@@ -28,9 +28,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,7 +73,7 @@ public class CasEventsReportEndpointTests {
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         applicationContext.publishEvent(event);
-        assertFalse(casEventRepository.load().isEmpty());
+        assertFalse(casEventRepository.load().findAny().isEmpty());
 
         val endpoint = new CasEventsReportEndpoint(casProperties, casEventRepository);
         val result = endpoint.events();
@@ -96,8 +96,8 @@ public class CasEventsReportEndpointTests {
                 }
 
                 @Override
-                public Collection<CasEvent> load() {
-                    return events;
+                public Stream<CasEvent> load() {
+                    return events.stream();
                 }
             };
         }

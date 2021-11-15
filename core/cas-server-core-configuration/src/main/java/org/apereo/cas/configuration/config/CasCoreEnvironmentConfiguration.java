@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
@@ -34,7 +33,6 @@ public class CasCoreEnvironmentConfiguration {
     @Configuration(value = "CasCoreEnvironmentManagerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEnvironmentManagerConfiguration {
-        @Autowired
         @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
         @Bean
         public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
@@ -55,7 +53,6 @@ public class CasCoreEnvironmentConfiguration {
 
         @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
         @Bean
-        @Autowired
         public CipherExecutor<String, String> casConfigurationCipherExecutor(
             final Environment environment) {
             return new CasConfigurationJasyptCipherExecutor(environment);
@@ -63,7 +60,6 @@ public class CasCoreEnvironmentConfiguration {
 
         @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
         @Bean
-        @Autowired
         public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
             @Qualifier("casConfigurationCipherExecutor")
             final CipherExecutor<String, String> casConfigurationCipherExecutor,
@@ -76,7 +72,6 @@ public class CasCoreEnvironmentConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEnvironmentLocatorConfiguration {
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
             @Qualifier("configurationPropertiesEnvironmentManager")

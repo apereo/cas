@@ -39,7 +39,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.net.URL;
 import java.util.List;
@@ -85,17 +84,16 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     protected ServicesManager servicesManager;
 
     @TestConfiguration("TokenTicketBuilderTestConfiguration")
-    @Lazy(false)
     public static class TokenTicketBuilderTestConfiguration implements InitializingBean {
         @Autowired
-        @Qualifier("inMemoryRegisteredServices")
-        private List inMemoryRegisteredServices;
+        @Qualifier("servicesManager")
+        private ServicesManager servicesManager;
 
         @Override
         public void afterPropertiesSet() {
-            inMemoryRegisteredServices.add(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
-            inMemoryRegisteredServices.add(createRegisteredService("https://jwt.example.org/cas.*", true, true));
-            inMemoryRegisteredServices.add(createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://cas.example.org.+"));
+            servicesManager.save(createRegisteredService("https://jwt.example.org/cas.*", true, true));
+            servicesManager.save(createRegisteredService("https://jwt.no-encryption-key.example.org/cas.*", true, false));
         }
 
         @Bean
@@ -135,7 +133,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
                 registeredService.getProperties().put(
                     RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
 
-                inMemoryRegisteredServices.add(registeredService);
+                servicesManager.save(registeredService);
             }
             return registeredService;
         }

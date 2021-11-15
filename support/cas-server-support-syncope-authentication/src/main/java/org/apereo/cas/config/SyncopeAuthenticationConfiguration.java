@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.syncope.authentication.SyncopeAuthenticationHandler;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +43,6 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler syncopeAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                                               @Qualifier("syncopePrincipalFactory")
                                                               final PrincipalFactory syncopePrincipalFactory,
@@ -65,7 +63,6 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                         @Qualifier("syncopeAuthenticationHandler")
                                                                                                         final AuthenticationHandler syncopeAuthenticationHandler,

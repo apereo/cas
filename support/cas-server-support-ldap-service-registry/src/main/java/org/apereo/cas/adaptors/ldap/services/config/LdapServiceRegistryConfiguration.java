@@ -12,7 +12,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +41,6 @@ public class LdapServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapServiceRegistryMapper")
-    @Autowired
     public LdapRegisteredServiceMapper ldapServiceRegistryMapper(final CasConfigurationProperties casProperties) {
         return new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap());
     }
@@ -50,7 +48,6 @@ public class LdapServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapServiceRegistry")
-    @Autowired
     public ServiceRegistry ldapServiceRegistry(
         @Qualifier("ldapServiceRegistryMapper")
         final LdapRegisteredServiceMapper ldapServiceRegistryMapper,
@@ -69,7 +66,6 @@ public class LdapServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ldapServiceRegistryExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistryExecutionPlanConfigurer ldapServiceRegistryExecutionPlanConfigurer(
         @Qualifier("ldapServiceRegistry")
         final ServiceRegistry ldapServiceRegistry) {

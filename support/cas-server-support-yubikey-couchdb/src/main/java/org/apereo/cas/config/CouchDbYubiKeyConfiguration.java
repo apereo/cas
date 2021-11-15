@@ -12,7 +12,6 @@ import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +33,6 @@ public class CouchDbYubiKeyConfiguration {
     @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public YubiKeyAccountCouchDbRepository couchDbYubiKeyAccountRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("yubikeyCouchDbFactory")
                                                                            final CouchDbConnectorFactory yubikeyCouchDbFactory) {
@@ -63,7 +61,6 @@ public class CouchDbYubiKeyConfiguration {
     @ConditionalOnMissingBean(name = "yubikeyCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory yubikeyCouchDbFactory(final CasConfigurationProperties casProperties,
                                                          @Qualifier("defaultObjectMapperFactory")
                                                          final ObjectMapperFactory objectMapperFactory) {

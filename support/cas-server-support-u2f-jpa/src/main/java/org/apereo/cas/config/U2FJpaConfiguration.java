@@ -15,7 +15,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +46,6 @@ public class U2FJpaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FJpaTransactionConfiguration {
 
-        @Autowired
         @Bean
         public PlatformTransactionManager transactionManagerU2f(
             @Qualifier("u2fEntityManagerFactory")
@@ -64,7 +62,6 @@ public class U2FJpaConfiguration {
     public static class U2FJpaRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public U2FDeviceRepository u2fDeviceRepository(
             @Qualifier("transactionManagerU2f")
             final PlatformTransactionManager mgr, final CasConfigurationProperties casProperties,
@@ -85,7 +82,6 @@ public class U2FJpaConfiguration {
     public static class U2FJpaEntityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public JpaVendorAdapter jpaU2fVendorAdapter(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaBeanFactory")
@@ -100,7 +96,6 @@ public class U2FJpaConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
-        @Autowired
         public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceU2f")
@@ -126,7 +121,6 @@ public class U2FJpaConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceU2f")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DataSource dataSourceU2f(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
         }

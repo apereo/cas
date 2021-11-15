@@ -6,7 +6,6 @@ import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
 
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -35,7 +34,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
-    @Autowired
     public ConfigurableServletWebServerFactory casServletWebServerFactory(
         final ServerProperties serverProperties,
         final CasConfigurationProperties casProperties) {
@@ -44,7 +42,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
     @Bean
-    @Autowired
     public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer(
         final ServerProperties serverProperties,
         final CasConfigurationProperties casProperties) {

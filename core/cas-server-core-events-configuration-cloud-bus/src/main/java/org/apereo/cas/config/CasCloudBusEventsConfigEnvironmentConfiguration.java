@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.apereo.cas.support.events.listener.CasCloudBusConfigurationEventListener;
 import org.apereo.cas.util.spring.CasEventListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,10 +24,10 @@ public class CasCloudBusEventsConfigEnvironmentConfiguration {
 
     @ConditionalOnMissingBean(name = "casCloudBusConfigurationEventListener")
     @Bean
-    @Autowired
     public CasEventListener casCloudBusConfigurationEventListener(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("configurationPropertiesEnvironmentManager") final CasConfigurationPropertiesEnvironmentManager manager) {
+        @Qualifier("configurationPropertiesEnvironmentManager")
+        final CasConfigurationPropertiesEnvironmentManager manager) {
         return new CasCloudBusConfigurationEventListener(manager, applicationContext);
     }
 

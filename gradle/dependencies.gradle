@@ -414,8 +414,6 @@ ext.libraries = [
                 dependencies.create("commons-beanutils:commons-beanutils:$commonsBeansVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                 },
-                dependencies.create("commons-logging:commons-logging:$commonsLoggingVersion") {
-                },
                 dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -772,6 +770,7 @@ ext.libraries = [
         httpclient              : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                 },
                 dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
@@ -900,7 +899,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-aws-actuator:$springCloudAwsVersion") {
+                dependencies.create("io.awspring.cloud:spring-cloud-aws-context:$springCloudAwsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -1308,9 +1307,7 @@ ext.libraries = [
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
-                },
+                }
         ],
         oktasdk                 : [
                 dependencies.create("com.okta.authn.sdk:okta-authn-sdk-api:$oktaSdkVersion") {
@@ -1619,7 +1616,7 @@ ext.libraries = [
                 dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.apache.logging.log4j:log4j-slf4j18-impl:$log4jVersion") {
+                dependencies.create("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.apache.logging.log4j:log4j-layout-template-json:$log4jVersion") {
@@ -1629,8 +1626,7 @@ ext.libraries = [
         ],
         slf4j                   : [
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
-                dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion"),
-                dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
+                dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion")
         ],
         metrics                 : [
                 dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
@@ -2004,7 +2000,9 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-saml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-core")
-
+                },
+                dependencies.create("org.apache.santuario:xmlsec:$xmlSecVersion") {
+                    exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
         pac4jcore               : [
@@ -3370,7 +3368,12 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework:spring-core:$springVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.springframework", module: "spring-jcl")
 
+                },
+                dependencies.create("org.springframework:spring-jcl:$springVersion") {
+                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.springframework.data:spring-data-commons:$springDataCommonsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -3656,6 +3659,9 @@ ext.libraries = [
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-dom")
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.apache.wss4j", module: "wss4j-ws-security-common")
+                },
+                dependencies.create("org.apache.santuario:xmlsec:$xmlSecVersion") {
+                    exclude(group: "jakarta.xml.bind", module: "jakarta.xml.bind-api")
                 }
         ],
         validationapi           : dependencies.create("javax.validation:validation-api:$javaxValidationVersion"),

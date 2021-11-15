@@ -9,7 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class LdapPasswordManagementConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public PasswordManagementService passwordChangeService(
         final CasConfigurationProperties casProperties,
         @Qualifier("passwordManagementCipherExecutor")

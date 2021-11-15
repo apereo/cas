@@ -120,7 +120,7 @@ public class SamlIdPMetadataResolver extends DOMMetadataResolver {
             .or(() -> criteriaSet.contains(EntityIdCriterion.class)
                 ? Optional.of(criteriaSet.get(EntityIdCriterion.class).getEntityId())
                 : Optional.empty())
-            .orElse(casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
+            .orElseGet(() -> casProperties.getAuthn().getSamlIdp().getCore().getEntityId());
     }
 
     @SneakyThrows

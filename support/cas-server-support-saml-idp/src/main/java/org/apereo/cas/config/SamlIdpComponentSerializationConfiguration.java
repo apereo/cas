@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttribute
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
-import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +30,6 @@ public class SamlIdpComponentSerializationConfiguration {
     public ComponentSerializationPlanConfigurer samlIdPComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(SamlArtifactTicketExpirationPolicy.class);
-            plan.registerSerializableClass(SamlAttributeQueryTicketExpirationPolicy.class);
             plan.registerSerializableClass(SamlRegisteredService.class);
 
             plan.registerSerializableClass(EduPersonTargetedIdAttributeReleasePolicy.class);

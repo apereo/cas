@@ -19,7 +19,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
-    @Autowired
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
                                                                               @Qualifier("u2fAuthenticationHandler")
                                                                               final AuthenticationHandler u2fAuthenticationHandler,
@@ -61,7 +59,6 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "u2fAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler u2fAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                           @Qualifier("u2fPrincipalFactory")
                                                           final PrincipalFactory u2fPrincipalFactory,
@@ -78,7 +75,6 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
                                                                                   @Qualifier("u2fBypassEvaluator")
                                                                                   final MultifactorAuthenticationProviderBypassEvaluator u2fBypassEvaluator,

@@ -13,7 +13,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-surrogate-api")
 
-    compileOnlyApi  project(":core:cas-server-core-rest")
+    compileOnlyApi project(":core:cas-server-core-rest-api")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-tickets")

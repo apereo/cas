@@ -71,13 +71,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @Setter
     private boolean ignoreResolvedAttributes;
 
-    @Override
-    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
-
-    @Override
-    public void close() {
-    }
-
     /**
      * Gets attribute repository.
      *
@@ -123,6 +116,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    @Override
+    public void close() {
+    }
+
     /**
      * Convert attributes to principal attributes and cache.
      *
@@ -139,7 +136,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
         LOGGER.trace("Final principal attributes after caching, if any, are [{}]", finalAttributes);
         return finalAttributes;
     }
-    
+
     /**
      * Calculate merging strategy attribute merging strategy.
      *

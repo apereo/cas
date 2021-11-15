@@ -3,10 +3,17 @@
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
     "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=memberOf",
     "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=mfa",
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.audit.engine.enabled=false",
+
     "--logging.level.org.apereo.cas=debug"
   ]
 }

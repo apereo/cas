@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,14 +25,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "coreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecuritySecurityTokenTicketConfiguration {
-    
+
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketFactoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecuritySecurityTokenTicketFactoryConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SecurityTokenTicketFactory securityTokenTicketFactory(
             @Qualifier("securityTokenTicketIdGenerator")
             final UniqueTicketIdGenerator securityTokenTicketIdGenerator,
@@ -48,23 +46,21 @@ public class CoreWsSecuritySecurityTokenTicketConfiguration {
         public UniqueTicketIdGenerator securityTokenTicketIdGenerator() {
             return new DefaultUniqueTicketIdGenerator();
         }
-        
+
     }
-    
+
     @Configuration(value = "CoreWsSecuritySecurityTokenTicketPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecuritySecurityTokenTicketPlanConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenTicketFactoryConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public TicketFactoryExecutionPlanConfigurer securityTokenTicketFactoryConfigurer(
             @Qualifier("securityTokenTicketFactory")
             final SecurityTokenTicketFactory securityTokenTicketFactory) {
             return () -> securityTokenTicketFactory;
         }
     }
-
 
 
 }

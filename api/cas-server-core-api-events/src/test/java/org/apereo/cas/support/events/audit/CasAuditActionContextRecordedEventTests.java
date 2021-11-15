@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,7 @@ public class CasAuditActionContextRecordedEventTests {
             public void execute() throws Throwable {
                 val ctx = new AuditActionContext("casuser", "TEST", "TEST",
                     "CAS", new Date(), "1.2.3.4",
-                    "1.2.3.4");
+                    "1.2.3.4", UUID.randomUUID().toString());
                 new CasAuditActionContextRecordedEvent(this, ctx);
             }
         });

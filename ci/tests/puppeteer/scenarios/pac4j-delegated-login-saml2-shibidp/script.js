@@ -32,7 +32,7 @@ const assert = require("assert");
     assert(body.includes('<cas:authenticationMethod>DelegatedClientAuthenticationHandler</cas:authenticationMethod>'))
     await page.goto(`https://localhost:8443/cas/login`);
     await cas.assertTicketGrantingCookie(page);
-    await cas.assertPageTitle(page, "CAS - Central Authentication Service");
+    await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

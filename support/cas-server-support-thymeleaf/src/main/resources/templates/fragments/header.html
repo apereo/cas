@@ -201,13 +201,11 @@
                 },
                 attachDrawerToggle: function (drawer) {
                     let appBar = document.getElementById('app-bar');
-                    console.log('hi there')
                     if (appBar != null) {
                         let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
                         topAppBar.setScrollTarget(document.getElementById('main-content'));
                         topAppBar.listen('MDCTopAppBar:nav', function () {
                             drawer.open = !drawer.open;
-                            console.log('hi there click')
                         });
                         return topAppBar;
                     }

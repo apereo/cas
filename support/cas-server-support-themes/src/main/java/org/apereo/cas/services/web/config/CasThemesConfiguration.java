@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,7 +62,6 @@ public class CasThemesConfiguration {
 
     @ConditionalOnMissingBean(name = "casThemeResolver")
     @Bean
-    @Autowired
     public ThemeResolver themeResolver(
         @Qualifier("serviceThemeResolverSupportedBrowsers")
         final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers,
@@ -101,7 +99,6 @@ public class CasThemesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "themesStaticResourcesWebMvcConfigurer")
-    @Autowired
     public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer(final CasConfigurationProperties casProperties,
                                                                   final WebProperties webProperties,
                                                                   final ThymeleafProperties thymeleafProperties) {
@@ -112,7 +109,7 @@ public class CasThemesConfiguration {
                 if (!templatePrefixes.isEmpty()) {
                     val registration = registry.addResourceHandler("/**");
                     val resources = templatePrefixes.stream().map(prefix -> StringUtils.appendIfMissing(prefix, "/"))
-                            .map(Unchecked.function(ResourceUtils::getRawResourceFrom)).toArray(Resource[]::new);
+                        .map(Unchecked.function(ResourceUtils::getRawResourceFrom)).toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     registration.addResourceLocations(templatePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     registration.addResourceLocations(webProperties.getResources().getStaticLocations());

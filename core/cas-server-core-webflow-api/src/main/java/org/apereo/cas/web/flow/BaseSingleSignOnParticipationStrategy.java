@@ -46,7 +46,7 @@ public abstract class BaseSingleSignOnParticipationStrategy implements SingleSig
      */
     protected static Authentication getAuthenticationFrom(final SingleSignOnParticipationRequest ssoRequest) {
         return ssoRequest.getRequestContext().map(WebUtils::getAuthentication)
-            .orElse(ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class));
+            .orElseGet(() -> ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class));
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class BaseSingleSignOnParticipationStrategy implements SingleSig
     protected static Optional<String> getTicketGrantingTicketId(final SingleSignOnParticipationRequest ssoRequest) {
         return Optional.ofNullable(ssoRequest.getRequestContext()
             .map(WebUtils::getTicketGrantingTicketId)
-            .orElse(ssoRequest.getAttributeValue(TicketGrantingTicket.class.getName(), String.class)));
+            .orElseGet(() -> ssoRequest.getAttributeValue(TicketGrantingTicket.class.getName(), String.class)));
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class BaseSingleSignOnParticipationStrategy implements SingleSig
     protected RegisteredService getRegisteredService(final SingleSignOnParticipationRequest ssoRequest) {
         return ssoRequest.getRequestContext()
             .map(requestContext -> WebUtils.resolveRegisteredService(requestContext, servicesManager, serviceSelectionStrategy))
-            .orElse(ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class));
+            .orElseGet(() -> ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class));
     }
 
     /**

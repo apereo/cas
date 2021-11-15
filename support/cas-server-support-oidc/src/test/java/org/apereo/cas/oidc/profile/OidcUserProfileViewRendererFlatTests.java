@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.oidc.discovery.user-info-signing-alg-values-supported=RS256",
     "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",
-    "cas.authn.oauth.user-profile-view-type=FLAT"
+    "cas.authn.oauth.core.user-profile-view-type=FLAT"
 })
 public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

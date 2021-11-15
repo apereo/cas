@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -60,7 +59,6 @@ public class CasSamlServiceProvidersConfiguration {
     }
 
     @Bean
-    @Autowired
     public InitializingBean coreSamlServiceProvidersInitializingBean(
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

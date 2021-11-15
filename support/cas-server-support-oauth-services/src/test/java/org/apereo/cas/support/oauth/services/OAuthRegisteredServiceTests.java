@@ -85,4 +85,15 @@ public class OAuthRegisteredServiceTests {
         val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);
     }
+
+    @Test
+    public void verifyInitialization() {
+        val service = new OAuthRegisteredService();
+        assertEquals(service.newInstance().getClass(), service.getClass());
+        service.setSupportedGrantTypes(null);
+        service.setSupportedResponseTypes(null);
+        service.initialize();
+        assertNotNull(service.getSupportedGrantTypes());
+        assertNotNull(service.getSupportedResponseTypes());
+    }
 }

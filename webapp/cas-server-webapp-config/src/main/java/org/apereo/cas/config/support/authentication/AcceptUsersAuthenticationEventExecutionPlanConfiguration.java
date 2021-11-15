@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("acceptUsersAuthenticationHandler")
         final AuthenticationHandler acceptUsersAuthenticationHandler,
@@ -49,16 +47,15 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
-    @Autowired
     public InitializingBean acceptUsersAuthenticationInitializingBean(final CasConfigurationProperties casProperties) {
         return () -> {
             val accept = casProperties.getAuthn().getAccept();
             if (accept.isEnabled() && StringUtils.isNotBlank(accept.getUsers())) {
                 val header =
                     "\nCAS is configured to accept a static list of credentials for authentication. "
-                        + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                        + "that you DISABLE this authentication method by setting 'cas.authn.accept.enabled=false' "
-                        + "and switch to a mode that is more suitable for production.";
+                    + "While this is generally useful for demo purposes, it is STRONGLY recommended "
+                    + "that you DISABLE this authentication method by setting 'cas.authn.accept.enabled=false' "
+                    + "and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, header);
             }
         };

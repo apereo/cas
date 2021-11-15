@@ -5,7 +5,6 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-protocol")
     
-    implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oauth-core")
@@ -33,23 +32,22 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.jose4j
     implementation libraries.nimbus
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow-mfa")
-    
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
-    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-services")
-    
+
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-throttle")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

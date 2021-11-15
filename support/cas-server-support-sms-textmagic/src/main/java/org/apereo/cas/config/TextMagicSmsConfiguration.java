@@ -6,7 +6,6 @@ import org.apereo.cas.support.sms.TextMagicSmsSender;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,7 +27,6 @@ public class TextMagicSmsConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SmsSender smsSender(final CasConfigurationProperties casProperties,
                                @Qualifier("httpClient")
                                final HttpClient httpClient) {

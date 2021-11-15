@@ -17,7 +17,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +45,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -57,7 +55,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer(
         @Qualifier("identityProviderDiscoveryWebflowConfigurer")
@@ -66,7 +63,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
-    @Autowired
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
@@ -84,7 +80,6 @@ public class SamlIdentityProviderDiscoveryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
-    @Autowired
     public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(final CasConfigurationProperties casProperties,
                                                                                              @Qualifier("builtClients")
                                                                                              final Clients builtClients) {

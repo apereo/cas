@@ -11,7 +11,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,7 +32,6 @@ public class U2FCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "u2fCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory u2fCouchDbFactory(
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultObjectMapperFactory")
@@ -44,7 +42,6 @@ public class U2FCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository(
         @Qualifier("u2fCouchDbFactory")
         final CouchDbConnectorFactory u2fCouchDbFactory,
@@ -57,7 +54,6 @@ public class U2FCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public U2FCouchDbDeviceRepository u2fDeviceRepository(
         @Qualifier("u2fRegistrationRecordCipherExecutor")
         final CipherExecutor u2fRegistrationRecordCipherExecutor,

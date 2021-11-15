@@ -47,10 +47,8 @@ import lombok.val;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -85,18 +83,15 @@ public class DelegatedAuthenticationWebflowConfiguration {
     }
 
     @Configuration(value = "DelegatedAuthenticationWebflowErrorConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties({CasConfigurationProperties.class, ResourceProperties.class, WebProperties.class, WebMvcProperties.class})
+    @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})
     public static class DelegatedAuthenticationWebflowErrorConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ErrorViewResolver pac4jErrorViewResolver(
             final WebProperties webProperties,
-            final ResourceProperties resourceProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val resources = (WebProperties.Resources) (webProperties.getResources().hasBeenCustomized()
-                ? webProperties.getResources() : resourceProperties);
-            return new DelegatedAuthenticationErrorViewResolver(applicationContext, resources);
+            return new DelegatedAuthenticationErrorViewResolver(applicationContext, webProperties.getResources());
         }
     }
 
@@ -117,7 +112,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -175,7 +169,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
-        @Autowired
         public DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer(
             @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
@@ -191,7 +184,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             @Qualifier("builtClients")
             final Clients builtClients) {
 
-            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable()).orElse(new ArrayList<>());
+            val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable()).orElseGet(ArrayList::new);
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
             return new DefaultDelegatedClientIdentityProviderConfigurationProducer(authenticationRequestServiceSelectionStrategies,
                 builtClients, helper, casProperties, customizers, delegatedClientIdentityProviderRedirectionStrategy);
@@ -200,7 +193,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderRedirectionStrategy")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy(
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedAuthenticationCookieGenerator")
@@ -221,7 +213,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasCookieBuilder delegatedAuthenticationCookieGenerator(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getPac4j().getCookie();
             return new DelegatedAuthenticationCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
@@ -282,7 +273,6 @@ public class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.DEFAULT_BEAN_NAME)
-        @Autowired
         public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext(
             @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
@@ -326,7 +316,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
             val helper = getDelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
             val customizers = Optional.ofNullable(delegatedClientAuthenticationRequestCustomizers.getIfAvailable())
-                .orElse(new ArrayList<>());
+                .orElseGet(ArrayList::new);
 
             return DelegatedClientAuthenticationConfigurationContext.builder()
                 .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)

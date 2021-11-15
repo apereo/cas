@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     
     "cas.authn.saml-idp.metadata.amazon-s3.bucket-name=cassamlmetadata",
     "cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false"

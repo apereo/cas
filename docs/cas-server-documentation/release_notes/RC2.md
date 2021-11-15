@@ -68,20 +68,21 @@ must be passed and injected dynamically. This has led to a significant cleanup e
 ensure all field injections are removed and all circular dependencies and injections are re-adjusted.
                                         
 Given the number of variations and combinations across modules, it's quite likely that there will be accidental 
-mishaps and misconfigurations at runtime leading to circular dependencies issues. Additional test scenarios and scripts will continuously
+mishaps and misconfigurations at runtime leading to circular dependencies 
+issues. Additional test scenarios and scripts will continuously
 be added to ensure validity of as many combinations as possible.
 
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are 
-approximately `190` test scenarios and we'll continue to add more in the coming releases.
+approximately `200` test scenarios and we'll continue to add more in the coming releases.
 
-### Groovy Access Strategy
+### Global Groovy Access Strategy
 
 Access strategy and authorization decision can be carried [using a Groovy script](../services/Configuring-Service-Access-Strategy.html) 
 for all services and applications.
   
-### SAML2 Attribute Query
+### SAML2 Attribute Queries
               
 Various improvements to SAML2 attribute query requests:
        
@@ -90,26 +91,50 @@ Various improvements to SAML2 attribute query requests:
 - SAML2 attribute query tracking tokens now gain their own expiration policy in the CAS configuration schema.
 - The expiration policies of the SAML2 attribute query token and its linked ticket-granting ticket are now taken into account. 
 - Attributes released in response to an attribute query pass through relevant attribute release policies for the service provider.
-   
+  
+### Attribute Repository States
+
+An [attribute repository](../integration/Attribute-Resolution.html) can be put into standby mode; this means the repository 
+configuration is processed and registered into the application runtime and is 
+effectively available as a Spring `@Bean`. However, it is not registered into 
+the resolution plan and can only be called and invoked explicitly when needed.
+
 ### Bootstrap Themes
        
 There is now additional, optional support for [Bootstrap](http://getbootstrap.com "Bootstrap") themes. The collection of themes
 that ship with CAS now include a special `twbs` theme that is based on Bootstrap support.
+  
+### Docker Integration Tests
+
+Several Docker images that are used for integration tests are now updated to use more recent versions. Those are:
+
+- MongoDb
+- Apache Cassandra
+- AWS Localstack
+- DynamoDb 
+- InfluxDb
+- MariaDb
+- MySQL
+- MS SQL Server
+- Redis
+- Apache CouchDb
 
 ### Reusing Chained Attributes
 
 Attribute release policies, when grouped and ordered together in a chain are now able to reuse and build on top of previously-selected
 attributes, tagged for release by previous policies in the same chain. For example, a typical scenario might be that the first attribute
-release policy in the first releases attribute `A1` and the second attribute policy creates attribute `A3`  whose 
-value is constructed based on a dynamic construct such as `A1 + ': Hello`.
+release policy in the first releases attribute `A1` and the second attribute policy creates attribute `A2`  whose 
+value is constructed based on a dynamic construct such as `A1 + '-Hello'`.
 
 ## Other Stuff
      
 - Delegated identity providers are now allowed to go through a [post-processing phase](../integration/Delegate-Authentication-PostProcessing.html).
+- Cipher executor components, particularly those that operate on binary data, are now allowed to use larger key sizes (`128`, `256`, etc.) for encryption operations.
 - Configuration schema is now updated to support multiple MongoDb instances for monitoring and health indication. 
 - [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) is adjusted to work well with timeout expiration policy assigned to ticket-granting tickets. 
 - [Duo Security Universal Prompt](../mfa/DuoSecurity-Authentication.html) can 
   handle [impersonation requests](../authentication/Surrogate-Authentication.html) that require user selection.
+- Bypassing OAuth or OpenID Connect approval screen can now be done globally via CAS configuration.
 
 ## Library Upgrades
             

@@ -15,6 +15,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -102,6 +103,21 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(MAPPER.writeValueAsString(service));
+    }
+
+    /**
+     * Fetch services by type response entity.
+     *
+     * @param type the simple name of the CAS service type (i.e {@link org.apereo.cas.services.RegexRegisteredService}
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @Operation(summary = "Fetch services by their type",
+        parameters = {@Parameter(name = "type", in = ParameterIn.PATH, required = true)})
+    @GetMapping(path = "type/{type}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<String> fetchServicesByType(@PathVariable final String type) throws Exception {
+        val services = servicesManager.findServiceBy(registeredService -> registeredService.getClass().getSimpleName().equalsIgnoreCase(type));
+        return ResponseEntity.ok(MAPPER.writeValueAsString(services));
     }
 
     /**

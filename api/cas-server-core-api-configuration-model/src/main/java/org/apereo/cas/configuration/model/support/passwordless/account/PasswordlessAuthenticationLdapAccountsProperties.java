@@ -33,4 +33,10 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * indicates the user's phone.
      */
     private String phoneAttribute = "phoneNumber";
+
+    /**
+     * Name of the LDAP attribute that
+     * indicates the user's name.
+     */
+    private String nameAttribute = "cn";
 }

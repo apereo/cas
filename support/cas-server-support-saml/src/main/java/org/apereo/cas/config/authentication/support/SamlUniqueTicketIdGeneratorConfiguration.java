@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 public class SamlUniqueTicketIdGeneratorConfiguration {
 
     @Bean
-    @Autowired
     public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator(final CasConfigurationProperties casProperties) {
         val gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());

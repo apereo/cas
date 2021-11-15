@@ -32,7 +32,6 @@ import org.apereo.cas.util.spring.CasEventListener;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -67,7 +66,6 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public AuthenticationPostProcessor surrogateAuthenticationPostProcessor(
             @Qualifier("surrogateAuthenticationService")
             final SurrogateAuthenticationService surrogateAuthenticationService,
@@ -103,7 +101,6 @@ public class SurrogateAuthenticationConfiguration {
     public static class SurrogateAuthenticationExpirationPolicyConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ExpirationPolicyBuilder grantingTicketExpirationPolicy(final CasConfigurationProperties casProperties) {
             val grantingTicketExpirationPolicy = new TicketGrantingTicketExpirationPolicyBuilder(casProperties);
             return new SurrogateAuthenticationExpirationPolicyBuilder(grantingTicketExpirationPolicy, casProperties);
@@ -116,7 +113,6 @@ public class SurrogateAuthenticationConfiguration {
     public static class SurrogateAuthenticationEventsConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
-        @Autowired
         public CasEventListener surrogateAuthenticationEventListener(
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager,
@@ -143,7 +139,6 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer(final CasConfigurationProperties casProperties) {
             return chain -> {
                 val strategy = new SurrogatePrincipalElectionStrategy();
@@ -161,7 +156,6 @@ public class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
         @Bean
-        @Autowired
         public SurrogateAuthenticationService surrogateAuthenticationService(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager, final CasConfigurationProperties casProperties) throws Exception {
@@ -199,7 +193,6 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SurrogatePrincipalBuilder surrogatePrincipalBuilder(
             @Qualifier("surrogateAuthenticationService")
             final SurrogateAuthenticationService surrogateAuthenticationService,
@@ -219,7 +212,6 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public PrincipalResolver surrogatePrincipalResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier("surrogatePrincipalFactory")
@@ -258,7 +250,6 @@ public class SurrogateAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
         @Bean
-        @Autowired
         public PrincipalResolutionExecutionPlanConfigurer surrogatePrincipalResolutionExecutionPlanConfigurer(
             @Qualifier("surrogatePrincipalResolver")
             final PrincipalResolver surrogatePrincipalResolver) {

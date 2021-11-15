@@ -63,7 +63,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
         if (consent) {
             getConsentDecisions().remove(decision);
         } else {
-            decision.setId(RandomUtils.getNativeInstance().nextInt());
+            decision.setId(RandomUtils.nextLong());
         }
         getConsentDecisions().add(decision);
         return decision;

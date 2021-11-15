@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.u2f.redis.U2FRedisDeviceRepository;
@@ -10,7 +11,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,20 +45,22 @@ public class U2FRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public RedisConnectionFactory u2fRedisConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory u2fRedisConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public U2FDeviceRepository u2fDeviceRepository(final CasConfigurationProperties casProperties,
-                                                   @Qualifier("u2fRedisTemplate")
-                                                   final RedisTemplate u2fRedisTemplate,
-                                                   @Qualifier("u2fRegistrationRecordCipherExecutor")
-                                                   final CipherExecutor u2fRegistrationRecordCipherExecutor) {
+    public U2FDeviceRepository u2fDeviceRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fRedisTemplate")
+        final RedisTemplate u2fRedisTemplate,
+        @Qualifier("u2fRegistrationRecordCipherExecutor")
+        final CipherExecutor u2fRegistrationRecordCipherExecutor) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);

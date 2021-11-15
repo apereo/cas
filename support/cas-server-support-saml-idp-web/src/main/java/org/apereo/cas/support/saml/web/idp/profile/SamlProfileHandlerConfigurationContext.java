@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.opensaml.saml.common.SAMLObject;
 import org.pac4j.core.context.session.SessionStore;
@@ -122,4 +123,7 @@ public class SamlProfileHandlerConfigurationContext {
 
     @Nonnull
     private final TicketFactory ticketFactory;
+
+    @Nonnull
+    private final IPersonAttributeDao attributeRepository;
 }

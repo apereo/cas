@@ -16,7 +16,6 @@ import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,7 +48,6 @@ public class CasFiltersConfiguration {
     public static class CasFiltersBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public FilterRegistrationBean<CharacterEncodingFilter> characterEncodingFilter(final CasConfigurationProperties casProperties) {
             val bean = new FilterRegistrationBean<CharacterEncodingFilter>();
             val web = casProperties.getHttpWebRequest().getWeb();
@@ -78,7 +76,6 @@ public class CasFiltersConfiguration {
     public static class CasFiltersResponseHeadersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public FilterRegistrationBean<AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
             val bean = new FilterRegistrationBean<AddResponseHeadersFilter>();
             val filter = new AddResponseHeadersFilter();
@@ -93,7 +90,6 @@ public class CasFiltersConfiguration {
         @ConditionalOnProperty(prefix = "cas.http-web-request.header", name = "enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
             @Qualifier("argumentExtractor")
@@ -129,7 +125,6 @@ public class CasFiltersConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public FilterRegistrationBean<RequestParameterPolicyEnforcementFilter> requestParameterSecurityFilter(
             final CasConfigurationProperties casProperties) {
             val httpWebRequest = casProperties.getHttpWebRequest();
@@ -168,7 +163,6 @@ public class CasFiltersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "corsConfigurationSource")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CorsConfigurationSource corsConfigurationSource(
             final CasConfigurationProperties casProperties,
             @Qualifier("argumentExtractor")
@@ -180,7 +174,6 @@ public class CasFiltersConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public FilterRegistrationBean<CorsFilter> casCorsFilter(
             @Qualifier("corsConfigurationSource")
             final CorsConfigurationSource corsConfigurationSource) {

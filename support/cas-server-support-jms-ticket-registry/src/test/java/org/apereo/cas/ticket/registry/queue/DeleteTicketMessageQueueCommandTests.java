@@ -7,6 +7,7 @@ import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 61616)
 @Tag("JMS")
 public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
+
+    @BeforeEach
+    public void setup() {
+        ticketRegistry.getObject().deleteAll();
+    }
 
     @Test
     public void verifyDeleteTicket() {

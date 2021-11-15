@@ -49,6 +49,7 @@ and fields can be described in *metadata* form using a JSON document that matche
     "title" : "cas.screen.acct.title.field",
     "pattern": ".+",
     "type": "email",
+    "values" : [ "java.util.ArrayList", [ "sample@gmail.com", "sample2@hotmail.com" ] ],
     "order": 0
   }
 }
@@ -63,12 +64,13 @@ The following fields are supported:
 | `label`        | Key to a message key in the CAS language bundles to describe the label text for this input.
 | `title`        | Key to a message key in the CAS language bundles to describe the title text for this input.
 | `pattern`      | Regular expression pattern to force and validate the acceptable pattern for the input value.  
-| `type`         | The type of this input field (i.e. `email`, `phone`, `text`, etc.).
+| `type`         | The type of this input field (i.e. `select`, `email`, `phone`, `text`, etc.).
 | `order`        | The display order of this input on the screen.
+| `values`       | List of values to display in order, when type is set to `select`.
 
 <div class="alert alert-info"><strong>Is it possible to...?</strong><p>You must be wondering 
-by now whether it's possible to customize the screen and include <code>42</code> other types of fields and values. 
-Yes. In general, you should be able to use JSON metadata to describe additional fields so long as the input field's
+by now whether it's possible to customize the screen and include other types of fields, forms and values. 
+In general, you should be able to use JSON metadata to describe additional fields so long as the input field's
 type is simple enough and supported. If you have a type that isn't supported by the existing 
 metadata, you will need to build the input field and workflows and rules linked to it yourself as custom code.</p></div>
 

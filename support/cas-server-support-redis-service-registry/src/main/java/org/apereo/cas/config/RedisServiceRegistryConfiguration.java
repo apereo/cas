@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -10,7 +11,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,14 +41,15 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
-    public RedisConnectionFactory redisServiceConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisServiceConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getServiceRegistry().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @Bean
-    @Autowired
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
     public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(
         @Qualifier("redisServiceConnectionFactory")
@@ -58,7 +59,6 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     @ConditionalOnMissingBean(name = "redisServiceRegistry")
     public ServiceRegistry redisServiceRegistry(
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
@@ -71,7 +71,6 @@ public class RedisServiceRegistryConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisServiceRegistryExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ServiceRegistryExecutionPlanConfigurer redisServiceRegistryExecutionPlanConfigurer(
         @Qualifier("redisServiceRegistry")
         final ServiceRegistry redisServiceRegistry) {

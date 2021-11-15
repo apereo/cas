@@ -21,7 +21,6 @@ import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +45,7 @@ import javax.persistence.EntityManagerFactory;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "jpaTicketRegistryConfiguration", proxyBeanMethods = false)
 public class JpaTicketRegistryConfiguration {
-    
+
     @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryDataConfiguration {
@@ -54,7 +53,6 @@ public class JpaTicketRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceTicket")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CloseableDataSource dataSourceTicket(final CasConfigurationProperties casProperties) {
             return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
         }
@@ -65,7 +63,6 @@ public class JpaTicketRegistryConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryEntityConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> ticketPackagesToScan(final CasConfigurationProperties casProperties) {
             val jpa = casProperties.getTicket().getRegistry().getJpa();
@@ -75,7 +72,6 @@ public class JpaTicketRegistryConfiguration {
         }
 
         @Bean
-        @Autowired
         public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -100,7 +96,6 @@ public class JpaTicketRegistryConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaTicketRegistryTransactionConfiguration {
         @Bean
-        @Autowired
         public PlatformTransactionManager ticketTransactionManager(
             @Qualifier("ticketEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -113,7 +108,6 @@ public class JpaTicketRegistryConfiguration {
     public static class JpaTicketRegistryCoreConfiguration {
         @ConditionalOnMissingBean(name = "jpaTicketRegistryTransactionTemplate")
         @Bean
-        @Autowired
         public TransactionTemplate jpaTicketRegistryTransactionTemplate(
             @Qualifier("ticketTransactionManager")
             final PlatformTransactionManager ticketTransactionManager,
@@ -127,7 +121,6 @@ public class JpaTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public TicketRegistry ticketRegistry(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaTicketRegistryTransactionTemplate")
@@ -144,7 +137,6 @@ public class JpaTicketRegistryConfiguration {
         }
 
         @Bean
-        @Autowired
         public LockingStrategy lockingStrategy(final CasConfigurationProperties casProperties) {
             val registry = casProperties.getTicket().getRegistry();
             val uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());

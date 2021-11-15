@@ -12,7 +12,6 @@ import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 
 import lombok.val;
 import org.pac4j.core.context.session.JEESessionStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +37,6 @@ public class TokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
-    @Autowired
     public AuthenticationHandler tokenAuthenticationHandler(final CasConfigurationProperties casProperties,
                                                             @Qualifier("tokenPrincipalFactory")
                                                             final PrincipalFactory tokenPrincipalFactory,

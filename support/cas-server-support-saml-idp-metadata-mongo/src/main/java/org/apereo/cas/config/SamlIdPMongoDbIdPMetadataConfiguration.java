@@ -16,7 +16,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +40,6 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getMongo().getCrypto();
@@ -57,7 +55,6 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public MongoTemplate mongoDbSamlIdPMetadataTemplate(final CasConfigurationProperties casProperties,
                                                         @Qualifier("casSslContext")
                                                         final CasSSLContext casSslContext) {
@@ -71,7 +68,6 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(final CasConfigurationProperties casProperties,
                                                              @Qualifier("mongoDbSamlIdPMetadataTemplate")
                                                              final MongoTemplate mongoDbSamlIdPMetadataTemplate,
@@ -83,7 +79,6 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public SamlIdPMetadataLocator samlIdPMetadataLocator(final CasConfigurationProperties casProperties,
                                                          @Qualifier("samlIdPMetadataCache")
                                                          final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,

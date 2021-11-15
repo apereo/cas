@@ -58,7 +58,6 @@ import org.apache.cxf.ws.security.tokenstore.TokenStore;
 import org.apache.wss4j.dom.validate.Validator;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -123,7 +122,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         @ConditionalOnMissingBean(name = "transportIssueDelegate")
         @Bean
-        @Autowired
         public IssueOperation transportIssueDelegate(
             final CasConfigurationProperties casProperties,
             final List<TokenProvider> transportTokenProviders,
@@ -176,7 +174,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         @ConditionalOnMissingBean(name = "transportSamlTokenProvider")
         @Bean
-        @Autowired
         public SAMLTokenProvider transportSamlTokenProvider(final CasConfigurationProperties casProperties,
                                                             @Qualifier("securityTokenServiceRealms")
                                                             final Map<String, RealmProperties> securityTokenServiceRealms) {
@@ -224,7 +221,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public static class CoreWsSecuritySecurityTokenServiceClientConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenServiceClientBuilder")
         @Bean
-        @Autowired
         public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("hostnameVerifier")
@@ -241,7 +237,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public static class CoreWsSecuritySecurityTokenServiceRealmsConfiguration {
         @ConditionalOnMissingBean(name = "casRealm")
         @Bean
-        @Autowired
         public RealmProperties casRealm(final CasConfigurationProperties casProperties) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val realmConfig = wsfed.getRealm();
@@ -264,7 +259,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "securityTokenServiceRealms")
-        @Autowired
         public Map<String, RealmProperties> securityTokenServiceRealms(
             final CasConfigurationProperties casProperties,
             @Qualifier("casRealm")
@@ -344,7 +338,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         @ConditionalOnMissingBean(name = "securityTokenServiceCredentialCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public CipherExecutor securityTokenServiceCredentialCipherExecutor(final CasConfigurationProperties casProperties) {
             val crypto = casProperties.getAuthn().getWsfedIdp().getSts().getCrypto();
             return CipherExecutorUtils.newStringCipherExecutor(crypto, SecurityTokenServiceCredentialCipherExecutor.class);
@@ -369,7 +362,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         @ConditionalOnMissingBean(name = "transportSTSProperties")
         @Bean
-        @Autowired
         public STSPropertiesMBean transportSTSProperties(
             final CasConfigurationProperties casProperties,
             @Qualifier("securityTokenServiceRealms")
@@ -417,7 +409,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public static class CoreWsSecuritySecurityTokenServiceClaimsConfiguration {
         @ConditionalOnMissingBean(name = "wrappingSecurityTokenServiceClaimsHandler")
         @Bean
-        @Autowired
         public ClaimsHandler wrappingSecurityTokenServiceClaimsHandler(final CasConfigurationProperties casProperties) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
@@ -426,7 +417,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         @ConditionalOnMissingBean(name = "nonWSFederationClaimsClaimsHandler")
         @Bean
-        @Autowired
         public ClaimsHandler nonWSFederationClaimsClaimsHandler(final CasConfigurationProperties casProperties) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val idp = casProperties.getAuthn().getWsfedIdp().getIdp();
@@ -435,7 +425,6 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         @ConditionalOnMissingBean(name = "customNamespaceWSFederationClaimsClaimsHandler")
         @Bean
-        @Autowired
         public ClaimsHandler customNamespaceWSFederationClaimsClaimsHandler(final CasConfigurationProperties casProperties) {
             val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
             val idp = casProperties.getAuthn().getWsfedIdp().getIdp();

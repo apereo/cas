@@ -60,6 +60,10 @@ dependencyResolutionManagement {
                 includeGroupByRegex "org.terracotta.*"
             }
         }
+        maven {
+            url "https://repo.spring.io/milestone"
+            mavenContent { releasesOnly() }
+        }
     }
 }
 
@@ -110,6 +114,7 @@ include "core:cas-server-core-logout-api"
 include "core:cas-server-core-monitor"
 include "core:cas-server-core-notifications"
 include "core:cas-server-core-rest"
+include "core:cas-server-core-rest-api"
 include "core:cas-server-core-services"
 include "core:cas-server-core-services-api"
 include "core:cas-server-core-services-authentication"

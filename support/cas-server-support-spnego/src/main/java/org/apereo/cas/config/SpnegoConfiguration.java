@@ -21,7 +21,6 @@ import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -48,7 +47,6 @@ public class SpnegoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "spnegoAuthentications")
-    @Autowired
     public BeanContainer<Authentication> spnegoAuthentications(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
@@ -88,7 +86,6 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoHandler")
-    @Autowired
     public AuthenticationHandler spnegoHandler(
         @Qualifier("spnegoAuthentications")
         final BeanContainer<Authentication> spnegoAuthentications,
@@ -107,7 +104,6 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
-    @Autowired
     public AuthenticationHandler ntlmAuthenticationHandler(
         @Qualifier("ntlmPrincipalFactory")
         final PrincipalFactory ntlmPrincipalFactory,
@@ -130,7 +126,6 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
-    @Autowired
     public PrincipalResolver spnegoPrincipalResolver(
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
@@ -153,7 +148,6 @@ public class SpnegoConfiguration {
 
     @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ntlmAuthenticationHandler")
         final ObjectProvider<AuthenticationHandler> ntlmAuthenticationHandler,

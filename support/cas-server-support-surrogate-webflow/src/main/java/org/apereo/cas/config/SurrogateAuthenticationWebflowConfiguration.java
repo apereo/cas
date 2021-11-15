@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -66,7 +65,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer surrogateWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
@@ -79,7 +77,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         @ConditionalOnDuoSecurityConfigured
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
@@ -101,7 +98,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action selectSurrogateAction(
             @Qualifier("surrogatePrincipalBuilder")
             final SurrogatePrincipalBuilder surrogatePrincipalBuilder) {
@@ -109,7 +105,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         }
 
         @Bean
-        @Autowired
         public Action authenticationViaFormAction(
             @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -125,7 +120,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action surrogateAuthorizationCheck(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -135,7 +129,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public Action loadSurrogatesListAction(
             @Qualifier("surrogateAuthenticationService")
             final SurrogateAuthenticationService surrogateAuthenticationService,
@@ -150,7 +143,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
     public static class SurrogateAuthenticationInitializerConfiguration {
 
         @Bean
-        @Autowired
         public InitializingBean surrogateAuthenticationWebflowInitializer(
             @Qualifier("handledAuthenticationExceptions")
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
@@ -166,7 +158,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer(
             @Qualifier("surrogateWebflowConfigurer")
             final CasWebflowConfigurer surrogateWebflowConfigurer) {
@@ -180,7 +171,6 @@ public class SurrogateAuthenticationWebflowConfiguration {
     public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
-        @Autowired
         public CasWebflowExecutionPlanConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer(
             @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
             final CasWebflowConfigurer surrogateWebflowConfigurer) {

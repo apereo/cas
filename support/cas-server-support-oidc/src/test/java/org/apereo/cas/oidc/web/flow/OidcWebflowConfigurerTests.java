@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasThymeleafConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasThemesConfiguration.class,
     OidcConfiguration.class,
     OidcResponseConfiguration.class,
@@ -54,12 +55,14 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuth20ThrottleConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
-    CasThrottlingConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks")
+@TestPropertySource(properties = {
+    "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
+    "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
+})
 @Tag("OIDC")
 public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 

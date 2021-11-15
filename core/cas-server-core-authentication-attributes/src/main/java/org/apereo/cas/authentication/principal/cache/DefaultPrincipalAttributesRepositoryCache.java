@@ -43,14 +43,9 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
         val key = registeredService.getId() + '@' + registeredService.getName();
         return DigestUtils.sha512(key);
     }
-
-    /**
-     * Initialize cache cache.
-     *
-     * @param repository the repository
-     * @return the cache
-     */
-    private static Cache<String, Map<String, List<Object>>> initializeCache(final RegisteredServicePrincipalAttributesRepository repository) {
+    
+    private static Cache<String, Map<String, List<Object>>> initializeCache(
+        final RegisteredServicePrincipalAttributesRepository repository) {
         val cachedRepository = CachingPrincipalAttributesRepository.class.cast(repository);
         val unit = TimeUnit.valueOf(StringUtils.defaultString(cachedRepository.getTimeUnit(), DEFAULT_CACHE_EXPIRATION_UNIT));
         return Caffeine.newBuilder()
@@ -101,7 +96,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
      */
     private Cache<String, Map<String, List<Object>>> getRegisteredServiceCacheInstance(
         final RegisteredService registeredService, final RegisteredServicePrincipalAttributesRepository repository) {
-        
+
         val key = buildRegisteredServiceCacheKey(registeredService);
         if (registeredServicesCache.containsKey(key)) {
             return registeredServicesCache.get(key);

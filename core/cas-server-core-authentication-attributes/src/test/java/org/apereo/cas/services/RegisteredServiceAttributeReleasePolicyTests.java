@@ -2,9 +2,11 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -326,12 +328,17 @@ public class RegisteredServiceAttributeReleasePolicyTests {
             private static final long serialVersionUID = 6118477243447737445L;
 
             @Override
+            public RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
+                return new DefaultPrincipalAttributesRepository();
+            }
+
+            @Override
             public Map<String, List<Object>> getAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
                 return context.getPrincipal().getAttributes();
             }
         };
         assertNull(policy.getConsentPolicy());
-        assertNull(policy.getPrincipalAttributesRepository());
+        assertNotNull(policy.getPrincipalAttributesRepository());
         assertTrue(policy.isAuthorizedToReleaseAuthenticationAttributes());
         assertFalse(policy.isAuthorizedToReleaseCredentialPassword());
         assertFalse(policy.isAuthorizedToReleaseProxyGrantingTicket());

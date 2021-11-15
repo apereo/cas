@@ -21,11 +21,14 @@ import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerServiceTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListenerTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicyTests;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationServiceTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreatorTests;
 import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionServiceTests;
@@ -61,6 +64,7 @@ import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointContro
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksRotationEndpointTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerMatcherTests;
 import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointControllerTests;
@@ -140,6 +144,7 @@ import org.junit.platform.suite.api.Suite;
     OidcWebFingerUserInfoRepositoryTests.class,
     OidcClientRegistrationResponseTests.class,
     OidcCallbackAuthorizeViewResolverTests.class,
+    OidcGroovyJsonWebKeystoreGeneratorServiceTests.class,
     OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests.class,
     OidcRestfulJsonWebKeystoreGeneratorServiceTests.class,
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
@@ -147,11 +152,14 @@ import org.junit.platform.suite.api.Suite;
     OidcDefaultIssuerServiceTests.class,
     OidcAuthorizationModelAndViewBuilderTests.class,
     OidcLocaleChangeInterceptorTests.class,
+    OidcJwksRotationEndpointTests.class,
     OidcCasWebflowLoginContextProviderTests.class,
     OidcCasCallbackUrlResolverTests.class,
+    OidcJsonWebKeyStoreListenerTests.class,
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
+    OidcDefaultJsonWebKeystoreRotationServiceTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })
 @Suite

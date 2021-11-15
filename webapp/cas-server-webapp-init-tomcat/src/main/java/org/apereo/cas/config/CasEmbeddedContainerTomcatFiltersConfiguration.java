@@ -6,7 +6,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,7 +44,6 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
-    @Autowired
     public FilterRegistrationBean<RemoteAddrFilter> tomcatRemoteAddressFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         val addr = casProperties.getServer().getTomcat().getRemoteAddr();

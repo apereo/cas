@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,7 +43,6 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
         @Bean
-        @Autowired
         public Action checkConsentRequiredAction(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier("attributeDefinitionStore")
@@ -64,7 +62,6 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "confirmConsentAction")
         @Bean
-        @Autowired
         public Action confirmConsentAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
                                            @Qualifier("attributeDefinitionStore")
                                            final AttributeDefinitionStore attributeDefinitionStore,
@@ -84,7 +81,6 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
         @Bean
-        @Autowired
         public CasWebflowConfigurer consentWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,

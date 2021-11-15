@@ -11,7 +11,6 @@ import org.apereo.cas.support.saml.ShibbolethIdPEntityIdAuthenticationServiceSel
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Slf4j
 public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration {
 
-    @Autowired
     @ConditionalOnMissingBean(name = "shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -51,7 +49,6 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     }
 
     @Bean
-    @Autowired
     public AuthenticationServiceSelectionStrategyConfigurer shibbolethIdPAuthenticationServiceSelectionStrategyConfigurer(
         @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy,

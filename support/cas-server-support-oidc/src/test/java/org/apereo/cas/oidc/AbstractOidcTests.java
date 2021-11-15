@@ -50,6 +50,7 @@ import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -85,6 +86,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -137,6 +139,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.main.allow-bean-definition-overriding=true",
+        "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
     })
@@ -153,6 +156,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcIssuerService")
     protected OidcIssuerService oidcIssuerService;
 
+    @Autowired
+    @Qualifier("oidcJsonWebKeystoreRotationService")
+    protected OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService;
+    
     @Autowired
     @Qualifier("singleLogoutServiceLogoutUrlBuilder")
     protected SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
@@ -217,6 +224,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oidcServiceRegistryListener")
     protected ServiceRegistryListener oidcServiceRegistryListener;
+
+    @Autowired
+    @Qualifier("oidcJsonWebKeyStoreListener")
+    protected CasEventListener oidcJsonWebKeyStoreListener;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")

@@ -8,7 +8,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportMongoDbAuditConfiguration {
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbAuditTrailManager")
     public AuditTrailManager mongoDbAuditTrailManager(final CasConfigurationProperties casProperties,
@@ -39,7 +37,6 @@ public class CasSupportMongoDbAuditConfiguration {
     }
 
     @Bean
-    @Autowired
     public AuditTrailExecutionPlanConfigurer mongoDbAuditTrailExecutionPlanConfigurer(
         @Qualifier("mongoDbAuditTrailManager")
         final AuditTrailManager mongoDbAuditTrailManager) {

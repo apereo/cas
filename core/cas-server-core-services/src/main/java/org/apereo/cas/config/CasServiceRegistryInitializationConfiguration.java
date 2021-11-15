@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -74,7 +73,6 @@ public class CasServiceRegistryInitializationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
-        @Autowired
         public CasEventListener serviceRegistryInitializerConfigurationEventListener(
             @Qualifier("serviceRegistryInitializer")
             final ServiceRegistryInitializer serviceRegistryInitializer) {
@@ -86,7 +84,6 @@ public class CasServiceRegistryInitializationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasServiceRegistryInitializationBaseConfiguration {
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryInitializer serviceRegistryInitializer(
             @Qualifier("embeddedJsonServiceRegistry")
@@ -126,7 +123,6 @@ public class CasServiceRegistryInitializationConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @Autowired
         public ServiceRegistry embeddedJsonServiceRegistry(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -134,14 +130,13 @@ public class CasServiceRegistryInitializationConfiguration {
             val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
             val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
                 Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
-            if (!(location instanceof ClassPathResource)) {
+            if (!(location instanceof ClassPathResource) && casProperties.getServiceRegistry().getJson().isWatcherEnabled()) {
                 registry.enableDefaultWatcherService();
             }
             return registry;
         }
 
         @Bean
-        @Autowired
         @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
         public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
             @Qualifier("embeddedJsonServiceRegistry")

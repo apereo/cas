@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.NameID;
@@ -55,7 +56,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     private final ServiceFactory<WebApplicationService> serviceFactory;
 
-    private final SamlProfileObjectBuilder<NameID> samlNameIdBuilder;
+    private final SamlProfileObjectBuilder<SAMLObject> samlNameIdBuilder;
 
     private final MetadataResolver samlIdPMetadataResolver;
 
@@ -64,7 +65,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter,
                                                     final AttributeDefinitionStore attributeDefinitionStore,
                                                     final ServiceFactory<WebApplicationService> serviceFactory,
-                                                    final SamlProfileObjectBuilder<NameID> samlNameIdBuilder,
+                                                    final SamlProfileObjectBuilder<SAMLObject> samlNameIdBuilder,
                                                     final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.samlIdPProperties = samlIdPProperties;
@@ -170,14 +171,17 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                 val valueType = samlRegisteredService.getAttributeValueTypes().get(name);
 
                 if (NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
-                    val nameId = samlNameIdBuilder.build(authnRequest, request, response, casAssertion,
+                    val nameIdObject = samlNameIdBuilder.build(authnRequest, request, response, casAssertion,
                         samlRegisteredService, adaptor, binding, messageContext);
-                    val nameID = newSamlObject(NameID.class);
-                    nameID.setFormat(nameId.getFormat());
-                    nameID.setNameQualifier(nameId.getNameQualifier());
-                    nameID.setSPNameQualifier(nameId.getSPNameQualifier());
-                    nameID.setValue(nameId.getValue());
-                    attributeValue = nameID;
+                    if (nameIdObject instanceof NameID) {
+                        val nameID = newSamlObject(NameID.class);
+                        val nameId = (NameID) nameIdObject;
+                        nameID.setFormat(nameId.getFormat());
+                        nameID.setNameQualifier(nameId.getNameQualifier());
+                        nameID.setSPNameQualifier(nameId.getSPNameQualifier());
+                        nameID.setValue(nameId.getValue());
+                        attributeValue = nameID;
+                    }
                 }
                 if (NameID.PERSISTENT.equalsIgnoreCase(valueType)) {
                     val nameID = newSamlObject(NameID.class);

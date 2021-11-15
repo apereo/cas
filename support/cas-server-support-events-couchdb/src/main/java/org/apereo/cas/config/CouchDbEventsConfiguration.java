@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.CouchDbCasEventRepository;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,11 +31,12 @@ public class CouchDbEventsConfiguration {
     @ConditionalOnMissingBean(name = "couchDbEventRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public EventCouchDbRepository couchDbEventRepository(
         @Qualifier("eventCouchDbFactory")
         final CouchDbConnectorFactory eventCouchDbFactory, final CasConfigurationProperties casProperties) {
-        val repository = new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(), casProperties.getEvents().getCouchDb().isCreateIfNotExists());
+        val repository = new EventCouchDbRepository(eventCouchDbFactory.getCouchDbConnector(),
+            casProperties.getEvents().getCouchDb().isCreateIfNotExists(),
+            eventCouchDbFactory.getObjectMapperFactory());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -44,7 +44,6 @@ public class CouchDbEventsConfiguration {
     @ConditionalOnMissingBean(name = "eventCouchDbFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CouchDbConnectorFactory eventCouchDbFactory(final CasConfigurationProperties casProperties,
                                                        @Qualifier("defaultObjectMapperFactory")
                                                        final ObjectMapperFactory objectMapperFactory) {
@@ -54,7 +53,6 @@ public class CouchDbEventsConfiguration {
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasEventRepository casEventRepository(
         @Qualifier("couchDbEventRepository")
         final EventCouchDbRepository eventCouchDbRepository,

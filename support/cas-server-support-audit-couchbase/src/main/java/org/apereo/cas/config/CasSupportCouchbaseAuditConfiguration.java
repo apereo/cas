@@ -8,7 +8,6 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,14 +27,12 @@ public class CasSupportCouchbaseAuditConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    @Autowired
     public CouchbaseClientFactory auditsCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val cb = casProperties.getAudit().getCouchbase();
         return new CouchbaseClientFactory(cb);
     }
 
     @Bean
-    @Autowired
     public AuditTrailManager couchbaseAuditTrailManager(
         @Qualifier("auditsCouchbaseClientFactory")
         final CouchbaseClientFactory auditsCouchbaseClientFactory,
@@ -46,7 +43,6 @@ public class CasSupportCouchbaseAuditConfiguration {
     }
 
     @Bean
-    @Autowired
     public AuditTrailExecutionPlanConfigurer couchbaseAuditTrailExecutionPlanConfigurer(
         @Qualifier("couchbaseAuditTrailManager")
         final AuditTrailManager couchbaseAuditTrailManager) {

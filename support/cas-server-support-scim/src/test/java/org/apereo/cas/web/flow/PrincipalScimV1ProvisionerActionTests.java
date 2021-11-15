@@ -70,7 +70,7 @@ public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerAc
         val resources = new Resources(CollectionUtils.wrapList(user));
         val stream = new ByteArrayOutputStream();
         resources.marshal(new JsonMarshaller(), stream);
-        val data = stream.toString();
+        val data = stream.toString(StandardCharsets.UTF_8);
         try (val webServer = new MockWebServer(8215,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();

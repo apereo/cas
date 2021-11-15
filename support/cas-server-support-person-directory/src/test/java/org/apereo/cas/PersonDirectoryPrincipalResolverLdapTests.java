@@ -37,12 +37,14 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
     "cas.authn.attribute-repository.ldap[0].base-dn=dc=example,dc=org",
     "cas.authn.attribute-repository.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.attribute-repository.ldap[0].search-filter=cn={user}",
+    "cas.authn.attribute-repository.ldap[0].search-filter=cn={cnuser}",
     "cas.authn.attribute-repository.ldap[0].attributes.cn=cn",
     "cas.authn.attribute-repository.ldap[0].attributes.description=description",
     "cas.authn.attribute-repository.ldap[0].attributes.entryDN=entryDN",
     "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.attribute-repository.ldap[0].bind-credential=password",
+    "cas.authn.attribute-repository.ldap[0].use-all-query-attributes=false",
+    "cas.authn.attribute-repository.ldap[0].query-attributes.principal=cnuser",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=DN_ATTRIBUTE_ENTRY",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[0].type=MERGE_ENTRIES",
     "cas.authn.attribute-repository.ldap[0].search-entry-handlers[1].type=ACTIVE_DIRECTORY"
@@ -59,12 +61,11 @@ public class PersonDirectoryPrincipalResolverLdapTests {
 
     @Test
     public void verifyResolver() {
+        val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-            this.attributeRepository,
-            CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
-            casProperties.getPersonDirectory());
+            this.attributeRepository, attributeMerger, casProperties.getPersonDirectory());
         val p = resolver.resolve(new UsernamePasswordCredential("admin", "password"),
-            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal("admin")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("description"));

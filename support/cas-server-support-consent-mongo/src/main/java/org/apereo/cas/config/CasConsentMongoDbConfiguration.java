@@ -7,7 +7,6 @@ import org.apereo.cas.consent.MongoDbConsentRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 public class CasConsentMongoDbConfiguration {
 
     @Bean
-    @Autowired
     public ConsentRepository consentRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("casSslContext")

@@ -9,7 +9,7 @@ category: Multifactor Authentication
 # REST U2F - FIDO Universal Registration
 
 Device registrations may be managed via REST APIs. Endpoints must be designed to 
-accept/process `application/json`. The syntax for he collection of devices passed back and 
+accept/process `application/json`. The syntax for the collection of devices passed back and 
 forth is designed in JSON and is identical to the JSON structure defined above.
 
 The following parameters are passed:

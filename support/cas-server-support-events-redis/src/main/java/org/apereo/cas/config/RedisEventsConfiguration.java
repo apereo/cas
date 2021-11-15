@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -7,7 +8,6 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.redis.RedisCasEventRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,17 +36,19 @@ public class RedisEventsConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisEventConnectionFactory")
-    @Autowired
-    public RedisConnectionFactory redisEventConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisEventConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getEvents().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisEventTemplate")
-    @Autowired
     public RedisTemplate redisEventTemplate(
         @Qualifier("redisEventConnectionFactory")
         final RedisConnectionFactory redisEventConnectionFactory) {
@@ -61,7 +63,6 @@ public class RedisEventsConfiguration {
     }
 
     @Bean
-    @Autowired
     public CasEventRepository casEventRepository(
         @Qualifier("redisEventTemplate")
         final RedisTemplate redisEventTemplate,

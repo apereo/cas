@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapP
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,7 +47,6 @@ public class LdapPasswordSynchronizationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @Autowired
     public AuthenticationEventExecutionPlanConfigurer ldapPasswordSynchronizationAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("ldapPasswordSynchronizationAuthenticationPostProcessorListFactoryBean")

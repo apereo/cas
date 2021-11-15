@@ -13,7 +13,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +45,6 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistryCleaner ticketRegistryCleaner(final CasConfigurationProperties casProperties,
                                                        @Qualifier("lockingStrategy")
                                                        final LockingStrategy lockingStrategy,
@@ -60,8 +58,8 @@ public class CasCoreTicketsSchedulingConfiguration {
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
-            + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "
-            + "clean up tickets based on its own expiration and eviction policies.");
+                     + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "
+                     + "clean up tickets based on its own expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
@@ -70,7 +68,6 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(
         @Qualifier("ticketRegistryCleaner")
         final TicketRegistryCleaner ticketRegistryCleaner) {
@@ -90,7 +87,7 @@ public class CasCoreTicketsSchedulingConfiguration {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
-                   fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
+            fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         public void run() {
             try {
                 this.ticketRegistryCleaner.clean();

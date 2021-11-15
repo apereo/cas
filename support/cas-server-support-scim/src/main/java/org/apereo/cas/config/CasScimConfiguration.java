@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +41,6 @@ public class CasScimConfiguration {
 
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
     @Bean
-    @Autowired
     public CasWebflowConfigurer scimWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -69,7 +67,6 @@ public class CasScimConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "scimProvisioner")
-    @Autowired
     public PrincipalProvisioner scimProvisioner(final CasConfigurationProperties casProperties,
                                                 @Qualifier("scim1PrincipalAttributeMapper")
                                                 final ScimV1PrincipalAttributeMapper scim1PrincipalAttributeMapper,

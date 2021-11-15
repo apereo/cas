@@ -1,0 +1,15 @@
+{
+  "dependencies": "reports",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.service-registry.schedule.enabled=false",
+    
+    "--cas.service-registry.cache.duration=PT2S",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=registeredServices",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

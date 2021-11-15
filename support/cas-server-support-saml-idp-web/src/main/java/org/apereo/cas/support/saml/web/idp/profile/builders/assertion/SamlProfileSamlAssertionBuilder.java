@@ -59,13 +59,14 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private final MetadataResolver samlIdPMetadataResolver;
 
-    public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
-                                           final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
-                                           final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
-                                           final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
-                                           final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
-                                           final SamlIdPObjectSigner samlObjectSigner,
-                                           final MetadataResolver samlIdPMetadataResolver) {
+    public SamlProfileSamlAssertionBuilder(
+        final OpenSamlConfigBean configBean,
+        final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
+        final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
+        final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
+        final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
+        final SamlIdPObjectSigner samlObjectSigner,
+        final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
         this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
         this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
@@ -97,15 +98,15 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         }
 
         val issuerId = FunctionUtils.doIf(StringUtils.isNotBlank(service.getIssuerEntityId()),
-            service::getIssuerEntityId,
-            Unchecked.supplier(() -> {
-                val criteriaSet = new CriteriaSet(
-                    new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
-                    new SamlIdPSamlRegisteredServiceCriterion(service));
-                LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
-                val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
-                return entityDescriptor.getEntityID();
-            }))
+                service::getIssuerEntityId,
+                Unchecked.supplier(() -> {
+                    val criteriaSet = new CriteriaSet(
+                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                        new SamlIdPSamlRegisteredServiceCriterion(service));
+                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", service.getName());
+                    val entityDescriptor = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(criteriaSet));
+                    return entityDescriptor.getEntityID();
+                }))
             .get();
 
         val id = '_' + String.valueOf(RandomUtils.nextLong());

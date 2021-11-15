@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,13 +56,12 @@ public class Pac4jDelegatedAuthenticationConfiguration {
             return module;
         }
     }
-    
+
     @Configuration(value = "Pac4jDelegatedAuthenticationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jDelegatedAuthenticationAuthorizerConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer(
             @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
@@ -75,7 +73,6 @@ public class Pac4jDelegatedAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ServiceTicketValidationAuthorizerConfigurer pac4jServiceTicketValidationAuthorizerConfigurer(
             @Qualifier("pac4jServiceTicketValidationAuthorizer")
             final ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer) {
@@ -89,7 +86,6 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     public static class Pac4jDelegatedAuthenticationSingleSignOnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
         public SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
@@ -105,7 +101,6 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public SingleSignOnParticipationStrategyConfigurer pac4jDelegatedAuthenticationSingleSignOnParticipationStrategyConfigurer(
             @Qualifier("pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy pac4jDelegatedAuthenticationSingleSignOnParticipationStrategy) {

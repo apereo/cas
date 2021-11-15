@@ -58,6 +58,11 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * The transition state 'passwordlessGetUserId'.
+     */
+    String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
+    
+    /**
      * The transition state 'discovery'.
      */
     String TRANSITION_ID_DISCOVERY = "discovery";
@@ -923,6 +928,36 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "duoNonWebAuthentication";
 
+    /**
+     * State id 'passwordlessDisplayUser'.
+     */
+    String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
+
+    /**
+     * State id 'determineMultifactorPasswordlessAuthentication'.
+     */
+    String STATE_ID_PASSWORDLESS_DETERMINE_MFA = "determineMultifactorPasswordlessAuthentication";
+
+    /**
+     * State id 'determineDelegatedAuthentication'.
+     */
+    String STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN= "determineDelegatedAuthentication";
+
+    /**
+     * State id 'passwordlessVerifyAccount'.
+     */
+    String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
+
+    /**
+     * State id 'acceptPasswordlessAuthentication'.
+     */
+    String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
+
+    /**
+     * State id 'passwordlessGetUserIdView'.
+     */
+    String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
+
     /*
      ****************************************
      * Views.
@@ -1339,7 +1374,7 @@ public interface CasWebflowConstants {
     /**
      * Action id 'prepareDuoWebLoginFormAction .
      */
-    String ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM_ACTION = "prepareDuoWebLoginFormAction";
+    String ACTION_ID_PREPARE_DUO_WEB_LOGIN_FORM = "prepareDuoWebLoginFormAction";
 
     /**
      * Action id 'duoAuthenticationWebflowAction .
@@ -1349,6 +1384,26 @@ public interface CasWebflowConstants {
     /**
      * Action id 'duoNonWebAuthenticationAction .
      */
-    String ACTION_ID_DUO_NON_WEB_AUTHENTICATION_ACTION = "duoNonWebAuthenticationAction";
+    String ACTION_ID_DUO_NON_WEB_AUTHENTICATION = "duoNonWebAuthenticationAction";
 
+    /**
+     * Action id 'displayBeforePasswordlessAuthenticationAction .
+     */
+    String ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN = "displayBeforePasswordlessAuthenticationAction";
+    /**
+     * Action id 'verifyPasswordlessAccountAuthenticationAction .
+     */
+    String ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN = "verifyPasswordlessAccountAuthenticationAction";
+    /**
+     * Action id 'verifyPasswordlessAccountAuthenticationAction .
+     */
+    String ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN = "determineDelegatedAuthenticationAction";
+    /**
+     * Action id 'determineMultifactorPasswordlessAuthenticationAction .
+     */
+    String ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN = "determineMultifactorPasswordlessAuthenticationAction";
+    /**
+     * Action id 'determineMultifactorPasswordlessAuthenticationAction .
+     */
+    String ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN = "acceptPasswordlessAuthenticationAction";
 }

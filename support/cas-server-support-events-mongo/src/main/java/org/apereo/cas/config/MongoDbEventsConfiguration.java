@@ -8,7 +8,6 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
 
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,7 +38,6 @@ public class MongoDbEventsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
-    @Autowired
     public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
                                              @Qualifier("casSslContext")
                                              final CasSSLContext casSslContext) {
@@ -57,7 +55,6 @@ public class MongoDbEventsConfiguration {
     }
 
     @Bean
-    @Autowired
     public CasEventRepository casEventRepository(final CasConfigurationProperties casProperties,
                                                  @Qualifier("mongoEventRepositoryFilter")
                                                  final CasEventRepositoryFilter mongoEventRepositoryFilter,

@@ -13,7 +13,6 @@ import org.apereo.cas.util.ResourceUtils;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,7 +31,7 @@ import java.util.Map;
 @TestConfiguration("casPersonDirectoryTestConfiguration")
 @Lazy(false)
 @ConditionalOnProperty(value = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled",
-                       havingValue = "true", matchIfMissing = true)
+    havingValue = "true", matchIfMissing = true)
 public class CasPersonDirectoryTestConfiguration {
     @Bean
     public List<IPersonAttributeDao> attributeRepositories() {
@@ -44,6 +43,7 @@ public class CasPersonDirectoryTestConfiguration {
     public IPersonAttributeDao attributeRepository() {
         val attrs = CollectionUtils.wrap(
             "uid", CollectionUtils.wrap("uid"),
+            "mail", CollectionUtils.wrap("cas@apereo.org"),
             "eduPersonAffiliation", CollectionUtils.wrap("developer"),
             "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao((Map) attrs);
@@ -51,7 +51,6 @@ public class CasPersonDirectoryTestConfiguration {
 
     @ConditionalOnMissingBean(name = AttributeDefinitionStore.BEAN_NAME)
     @Bean
-    @Autowired
     public AttributeDefinitionStore attributeDefinitionStore(final CasConfigurationProperties casProperties) throws Exception {
         val resource = casProperties.getAuthn().getAttributeRepository()
             .getAttributeDefinitionStore().getJson().getLocation();
@@ -62,7 +61,6 @@ public class CasPersonDirectoryTestConfiguration {
     }
 
     @Bean
-    @Autowired
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties) {
         return plan -> {

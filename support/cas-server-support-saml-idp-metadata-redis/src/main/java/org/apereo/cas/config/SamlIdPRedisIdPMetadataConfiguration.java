@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataCipherExecutor;
@@ -15,7 +16,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +41,6 @@ public class SamlIdPRedisIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CipherExecutor samlIdPMetadataGeneratorCipherExecutor(final CasConfigurationProperties casProperties) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val crypto = idp.getMetadata().getRedis().getCrypto();
@@ -56,10 +55,12 @@ public class SamlIdPRedisIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataConnectionFactory")
-    @Autowired
-    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(final CasConfigurationProperties casProperties) {
+    public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(
+        @Qualifier("casSslContext")
+        final CasSSLContext casSslContext,
+        final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getSamlIdp().getMetadata().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis);
+        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataTemplate")

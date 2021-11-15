@@ -22,11 +22,8 @@ import lombok.val;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -36,7 +33,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
@@ -73,7 +69,6 @@ import java.util.Set;
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)
 @Slf4j
-@AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasThymeleafConfiguration {
 
     private static final int THYMELEAF_VIEW_RESOLVER_ORDER = Ordered.LOWEST_PRECEDENCE - 5;
@@ -105,7 +100,6 @@ public class CasThymeleafConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
-    @Autowired
     public AbstractTemplateResolver chainingTemplateViewResolver(
         final ThymeleafProperties thymeleafProperties,
         @Qualifier("themeResolver")
@@ -152,7 +146,6 @@ public class CasThymeleafConfiguration {
     @ConditionalOnMissingBean(name = "casPropertiesThymeleafViewResolverConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public CasThymeleafViewResolverConfigurer casPropertiesThymeleafViewResolverConfigurer(final CasConfigurationProperties casProperties) {
         return new CasThymeleafViewResolverConfigurer() {
 
@@ -176,14 +169,11 @@ public class CasThymeleafConfiguration {
     }
 
     @Configuration(value = "ThymeleafWebflowConfiguration", proxyBeanMethods = false)
-    @ConditionalOnBean(name = CasWebflowExecutionPlan.BEAN_NAME)
-    @DependsOn(CasWebflowExecutionPlan.BEAN_NAME)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ThymeleafWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
         @Bean
-        @Autowired
         public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
             final CasWebflowExecutionPlan webflowExecutionPlan) {
@@ -198,14 +188,13 @@ public class CasThymeleafConfiguration {
         @ConditionalOnMissingBean(name = "casProtocolViewFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public CasProtocolViewFactory casProtocolViewFactory(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties) {
             return new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
         }
 
         @Bean
-        @Autowired
-        public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties, final ObjectProvider<ITemplateResolver> templateResolvers,
+        public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties,
+                                                   final ObjectProvider<ITemplateResolver> templateResolvers,
                                                    final ObjectProvider<IDialect> dialects) {
             val engine = new SpringTemplateEngine();
             engine.setEnableSpringELCompiler(thymeleafProperties.isEnableSpringElCompiler());
@@ -217,7 +206,6 @@ public class CasThymeleafConfiguration {
 
         @ConditionalOnMissingBean(name = "registeredServiceViewResolver")
         @Bean
-        @Autowired
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ViewResolver registeredServiceViewResolver(
             @Qualifier("themeResolver")
@@ -232,7 +220,6 @@ public class CasThymeleafConfiguration {
         @ConditionalOnMissingBean(name = "themeViewResolverFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Autowired
         public ThemeViewResolverFactory themeViewResolverFactory(final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties,
                                                                  final ConfigurableApplicationContext applicationContext,
                                                                  @Qualifier("thymeleafViewResolver")
@@ -244,7 +231,6 @@ public class CasThymeleafConfiguration {
         }
 
         @Bean
-        @Autowired
         public ThymeleafViewResolver thymeleafViewResolver(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties,
                                                            final ConfigurableApplicationContext applicationContext,
                                                            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {

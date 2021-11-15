@@ -67,7 +67,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
                 .sorted()
                 .distinct()
                 .collect(Collectors.toList()))
-            .orElse(new ArrayList<>());
+            .orElseGet(ArrayList::new);
     }
 
     private Map<String, List<Object>> fetchRequestedAttributes(final Map<String, List<Object>> attributes,

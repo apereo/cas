@@ -18,7 +18,6 @@ import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.couch.profile.service.CouchProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,7 +41,6 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
-    @Autowired
     public CouchDbConnectorFactory authenticationCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
@@ -52,7 +50,6 @@ public class CouchDbAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public ProfileCouchDbRepository authenticationCouchDbRepository(
         @Qualifier("authenticationCouchDbFactory")
         final CouchDbConnectorFactory authenticationCouchDbFactory, final CasConfigurationProperties casProperties) {
@@ -78,7 +75,6 @@ public class CouchDbAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchDbAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Autowired
     public AuthenticationHandler couchDbAuthenticationHandler(
         @Qualifier("couchDbAuthenticatorProfileService")
         final CouchProfileService couchProfileService,
@@ -95,7 +91,6 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticatorProfileService")
     @Bean
-    @Autowired
     public CouchProfileService couchDbAuthenticatorProfileService(
         @Qualifier("authenticationCouchDbFactory")
         final CouchDbConnectorFactory authenticationCouchDbFactory, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {

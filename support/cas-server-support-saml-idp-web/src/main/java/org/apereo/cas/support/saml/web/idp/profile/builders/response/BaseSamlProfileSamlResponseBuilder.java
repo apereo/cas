@@ -39,7 +39,8 @@ import java.util.Objects;
  */
 @Slf4j
 @Getter
-public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
+public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder
+    implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
     private final transient SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
