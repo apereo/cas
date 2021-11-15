@@ -24,7 +24,7 @@ public class DefaultServiceRegistryInitializerEventListenerTests {
 
     @Test
     public void verifyOperation() {
-        val listener = new ServiceRegistryInitializerEventListener(mock(ServiceRegistryInitializer.class));
+        val listener = new ServiceRegistryInitializerEventListenerImpl(mock(ServiceRegistryInitializer.class));
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {

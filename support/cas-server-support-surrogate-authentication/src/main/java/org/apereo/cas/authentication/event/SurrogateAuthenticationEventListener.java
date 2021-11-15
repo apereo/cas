@@ -3,8 +3,6 @@ package org.apereo.cas.authentication.event;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.spring.CasEventListener;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code SurrogateAuthenticationEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
@@ -18,8 +16,6 @@ public interface SurrogateAuthenticationEventListener extends CasEventListener {
      *
      * @param event the event
      */
-    @EventListener
-    @Async
     void handleSurrogateAuthenticationFailureEvent(CasSurrogateAuthenticationFailureEvent event);
 
     /**
@@ -27,7 +23,5 @@ public interface SurrogateAuthenticationEventListener extends CasEventListener {
      *
      * @param event the event
      */
-    @EventListener
-    @Async
     void handleSurrogateAuthenticationSuccessEvent(CasSurrogateAuthenticationSuccessfulEvent event);
 }
