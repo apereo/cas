@@ -4,7 +4,7 @@ import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 
 /**
- * Interface for {@code CasCloudBusConfigurationEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
+ * Interface for {@code DefaultCasCloudBusConfigurationEventListener} to allow spring {@code @Async} support to use JDK proxy.
  * @author Hal Deadman
  * @since 6.5.0
  */

@@ -10,7 +10,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 import org.apereo.cas.util.spring.CasEventListener;
 
 /**
- * Interface for {@code LoggingCasEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
+ * Interface for {@code DefaultLoggingCasEventListener} to allow spring {@code @Async} support to use JDK proxy.
  * @author Hal Deadman
  * @since 6.5.0
  */

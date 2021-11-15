@@ -5,7 +5,7 @@ import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthen
 import org.apereo.cas.util.spring.CasEventListener;
 
 /**
- * Interface for {@code SurrogateAuthenticationEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
+ * Interface for {@code DefaultSurrogateAuthenticationEventListener} to allow spring {@code @Async} support to use JDK proxy.
  * @author Hal Deadman
  * @since 6.5.0
  */

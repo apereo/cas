@@ -5,7 +5,7 @@ import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 /**
- * Interface for {@code ServiceRegistryInitializerEventListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
+ * Interface for {@code DefaultServiceRegistryInitializerEventListener} to allow spring {@code @Async} support to use JDK proxy.
  * @author Hal Deadman
  * @since 6.5.0
  */
