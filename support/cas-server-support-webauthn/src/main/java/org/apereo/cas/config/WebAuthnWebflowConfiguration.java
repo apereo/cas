@@ -16,6 +16,7 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolver;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
+import org.apereo.cas.webauthn.web.flow.WebAuthnPreparePrimaryLoginAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAction;
@@ -160,6 +161,15 @@ public class WebAuthnWebflowConfiguration {
     @Configuration(value = "WebAuthnWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowActionConfiguration {
+
+        @ConditionalOnMissingBean(name = "webAuthnPreparePrimaryLoginAction")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action webAuthnPreparePrimaryLoginAction(
+                @Qualifier("webAuthnCsrfTokenRepository")
+                final CsrfTokenRepository webAuthnCsrfTokenRepository) {
+            return new WebAuthnPreparePrimaryLoginAction(webAuthnCsrfTokenRepository);
+        }
 
         @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
         @Bean

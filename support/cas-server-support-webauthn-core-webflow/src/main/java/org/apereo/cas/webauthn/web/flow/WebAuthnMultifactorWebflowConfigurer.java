@@ -100,6 +100,8 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 StringUtils.quote(webAuthn.getCore().getApplicationId()));
             flow.getStartActionList().add(setAppIdAction);
 
+            flow.getStartActionList().add(createEvaluateAction("webAuthnPreparePrimaryLoginAction"));
+
             val setPrimaryAuthAction = createSetAction("flowScope.webAuthnPrimaryAuthenticationEnabled", "true");
             flow.getStartActionList().add(setPrimaryAuthAction);
 
