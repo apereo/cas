@@ -50,4 +50,10 @@ public class AcceptableUsagePolicyCoreProperties implements Serializable {
      */
     private String aupPolicyTermsAttributeName;
 
+    /**
+     * AUP behaviour if status attribute is missing.
+     */
+    @RequiredProperty
+    private boolean aupOmitIfAttributeMissing = false;
+
 }
