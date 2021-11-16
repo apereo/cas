@@ -39,7 +39,7 @@ public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswor
 
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
         val account = PasswordlessUserAccount.builder()
             .email("email")
             .phone("phone")

@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,7 @@ import java.util.Optional;
 @Controller("samlIdPMetadataController")
 @Slf4j
 @RequiredArgsConstructor
-public class SamlIdPMetadataController implements InitializingBean {
+public class SamlIdPMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
     private final SamlIdPMetadataGenerator metadataAndCertificatesGenerationService;
@@ -44,11 +43,6 @@ public class SamlIdPMetadataController implements InitializingBean {
     private final ServicesManager servicesManager;
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    @Override
-    public void afterPropertiesSet() {
-        this.metadataAndCertificatesGenerationService.generate(Optional.empty());
-    }
 
     /**
      * Displays the identity provider metadata.

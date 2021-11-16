@@ -58,7 +58,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             @Qualifier("principalElectionStrategy")
             final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
-            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElse(new ArrayList<>(0)));
+            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
             sortedConfigurers.forEach(Unchecked.consumer(c -> {

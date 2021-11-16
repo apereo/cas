@@ -899,7 +899,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-aws-actuator:$springCloudAwsVersion") {
+                dependencies.create("io.awspring.cloud:spring-cloud-aws-context:$springCloudAwsVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -1307,9 +1307,7 @@ ext.libraries = [
                 },
                 dependencies.create("com.squareup.okhttp3:okhttp:$okhttp3Version") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {
-                },
+                }
         ],
         oktasdk                 : [
                 dependencies.create("com.okta.authn.sdk:okta-authn-sdk-api:$oktaSdkVersion") {

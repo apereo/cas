@@ -30,6 +30,8 @@ fully explaining the nature of the problem.
 The translation of LDAP errors into CAS workflow is all
 handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). 
 
+{% include_cached casproperties.html properties="cas.authn.ldap" includes=".password-policy" %}
+
 ### Account Expiration Notification
 
 LPPE is also able to warn the user when the account is about to expire. The expiration policy is
@@ -38,4 +40,5 @@ determined through pre-configured LDAP attributes with default values in place.
 ## JDBC
 
 A certain number of database authentication schemes have limited support for detecting locked/disabled/etc accounts
-via column names that are defined in the CAS settings. 
+via column names that are defined in the CAS settings.
+

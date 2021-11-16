@@ -88,7 +88,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         if (result != null && !result.isEmpty()) {
             return CollectionUtils.firstElement(result)
                 .map(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), this.applicationContext))
-                .orElse(unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
+                .orElseGet(() -> unmatchedMultifactorAuthenticationTrigger(principal, registeredService));
         }
 
         return unmatchedMultifactorAuthenticationTrigger(principal, registeredService);

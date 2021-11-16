@@ -42,7 +42,7 @@ public class RedisTicketRegistryConfiguration {
         return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
     }
 
-    @Bean
+    @Bean(name = {"redisTemplate", "ticketRedisTemplate"})
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate(

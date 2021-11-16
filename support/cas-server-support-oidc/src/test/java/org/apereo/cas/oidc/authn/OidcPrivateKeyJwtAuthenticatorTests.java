@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.authn;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -10,7 +11,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -20,10 +24,12 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,9 +40,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties =
-    "cas.authn.oauth.code.time-to-kill-in-seconds=60"
-)
+@TestPropertySource(properties = {
+    "cas.authn.oauth.code.time-to-kill-in-seconds=60",
+    "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
+})
 public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
     @Test
@@ -49,15 +56,29 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val audience = casProperties.getServer().getPrefix()
+            .concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
 
         val registeredService = getOidcRegisteredService();
+        registeredService.setClientId(UUID.randomUUID().toString());
+        
+        val file = File.createTempFile("jwks-service", ".jwks");
+        val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
+            casProperties.getAuthn().getOidc().getJwks().getJwksType(),
+            casProperties.getAuthn().getOidc().getJwks().getJwksKeySize());
+        jsonWebKey.setKeyId("cas-kid");
+        
+        val jsonWebKeySet = new JsonWebKeySet(jsonWebKey);
+        val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        FileUtils.write(file, data, StandardCharsets.UTF_8);
+        registeredService.setJwks("file://" + file.getAbsolutePath());
+        servicesManager.save(registeredService);
+
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
         val webKey = oidcServiceJsonWebKeystoreCache.get(registeredService).get();
-        val jwt = EncodingUtils.signJwsRSASha512(webKey.getPrivateKey(), claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
-
+        val jwt = EncodingUtils.signJwsRSASha512(webKey.getPrivateKey(),
+            claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
 

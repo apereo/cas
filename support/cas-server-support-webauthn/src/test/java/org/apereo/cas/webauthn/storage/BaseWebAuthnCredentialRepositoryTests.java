@@ -8,7 +8,9 @@ import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
+import com.yubico.webauthn.data.AuthenticatorAssertionExtensionOutputs;
 import com.yubico.webauthn.data.ByteArray;
+import com.yubico.webauthn.data.ClientAssertionExtensionOutputs;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -49,7 +51,24 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
     protected CipherExecutor<String, String> cipherExecutor;
-    
+
+    @SneakyThrows
+    public static CredentialRegistration getCredentialRegistration(final String username) {
+        return CredentialRegistration.builder()
+            .registrationTime(Instant.now(Clock.systemUTC()))
+            .credential(RegisteredCredential.builder()
+                .credentialId(ByteArray.fromBase64Url(username))
+                .userHandle(ByteArray.fromBase64Url(username))
+                .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
+                .build())
+            .userIdentity(UserIdentity.builder()
+                .name(username)
+                .displayName("CAS")
+                .id(ByteArray.fromBase64Url(username))
+                .build())
+            .build();
+    }
+
     @Test
     public void verifyOperation() throws Exception {
         val id = getUsername();
@@ -71,9 +90,15 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertTrue(webAuthnCredentialRepository.stream().count() > 0);
 
         val constructor = AssertionResult.class.getDeclaredConstructor(boolean.class, ByteArray.class,
-            ByteArray.class, String.class, long.class, boolean.class, List.class);
+            ByteArray.class, String.class, long.class, boolean.class,
+            ClientAssertionExtensionOutputs.class,
+            AuthenticatorAssertionExtensionOutputs.class,
+            List.class);
         constructor.setAccessible(true);
-        val result = constructor.newInstance(true, ba, ba, id, 1, true, List.of());
+        val result = constructor.newInstance(true, ba, ba, id, 1, true,
+            ClientAssertionExtensionOutputs.builder().build(),
+            AuthenticatorAssertionExtensionOutputs.builder().build(),
+            List.of());
         webAuthnCredentialRepository.updateSignatureCount(result);
 
         webAuthnCredentialRepository.removeAllRegistrations(id.toUpperCase());
@@ -90,22 +115,5 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
 
     protected String getUsername() {
         return UUID.randomUUID().toString();
-    }
-
-    @SneakyThrows
-    public static CredentialRegistration getCredentialRegistration(final String username) {
-        return CredentialRegistration.builder()
-            .registrationTime(Instant.now(Clock.systemUTC()))
-            .credential(RegisteredCredential.builder()
-                .credentialId(ByteArray.fromBase64Url(username))
-                .userHandle(ByteArray.fromBase64Url(username))
-                .publicKeyCose(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))
-                .build())
-            .userIdentity(UserIdentity.builder()
-                .name(username)
-                .displayName("CAS")
-                .id(ByteArray.fromBase64Url(username))
-                .build())
-            .build();
     }
 }

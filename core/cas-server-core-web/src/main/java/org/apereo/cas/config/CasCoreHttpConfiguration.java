@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
@@ -118,7 +117,7 @@ public class CasCoreHttpConfiguration {
             return c;
         }
 
-        private static HttpClient getHttpClient(final boolean redirectEnabled,
+        private static SimpleHttpClient getHttpClient(final boolean redirectEnabled,
                                                 final CasSSLContext casSslContext,
                                                 final HostnameVerifier hostnameVerifier,
                                                 final SSLConnectionSocketFactory trustStoreSslSocketFactory,
@@ -130,7 +129,7 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "httpClient")
-        @Bean(destroyMethod = "destroy")
+        @Bean
         public FactoryBean<SimpleHttpClient> httpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
@@ -144,8 +143,8 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "noRedirectHttpClient")
-        @Bean(destroyMethod = "destroy")
-        public HttpClient noRedirectHttpClient(
+        @Bean
+        public SimpleHttpClient noRedirectHttpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
@@ -158,8 +157,8 @@ public class CasCoreHttpConfiguration {
         }
 
         @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
-        @Bean(destroyMethod = "destroy")
-        public HttpClient supportsTrustStoreSslSocketFactoryHttpClient(
+        @Bean
+        public SimpleHttpClient supportsTrustStoreSslSocketFactoryHttpClient(
             @Qualifier("casSslContext")
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")

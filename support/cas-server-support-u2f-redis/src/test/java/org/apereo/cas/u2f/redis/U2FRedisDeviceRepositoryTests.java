@@ -2,6 +2,7 @@ package org.apereo.cas.u2f.redis;
 
 import org.apereo.cas.adaptors.u2f.storage.AbstractU2FDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FRedisConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     U2FRedisConfiguration.class,
     U2FConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {

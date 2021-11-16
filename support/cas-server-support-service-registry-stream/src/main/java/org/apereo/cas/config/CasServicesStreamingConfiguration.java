@@ -44,7 +44,7 @@ public class CasServicesStreamingConfiguration {
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Bean(destroyMethod = "destroy")
+    @Bean
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy(
         final CasConfigurationProperties casProperties,
         @Qualifier("registeredServiceDistributedCacheManager")

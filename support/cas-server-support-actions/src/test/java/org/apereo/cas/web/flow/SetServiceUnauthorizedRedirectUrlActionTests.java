@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 public class SetServiceUnauthorizedRedirectUrlActionTests extends AbstractWebflowActionsTests {
+    @BeforeEach
+    public void setup() {
+        val services = RegisteredServiceTestUtils.getRegisteredServicesForTests();
+        getServicesManager().save(services.stream());
+    }
+
     @Test
     public void verifyOperation() throws Exception {
         val context = new MockRequestContext();

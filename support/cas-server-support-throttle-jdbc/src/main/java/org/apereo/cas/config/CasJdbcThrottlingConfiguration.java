@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,7 +25,6 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "casJdbcThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@AutoConfigureAfter(CasThrottlingConfiguration.class)
 public class CasJdbcThrottlingConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

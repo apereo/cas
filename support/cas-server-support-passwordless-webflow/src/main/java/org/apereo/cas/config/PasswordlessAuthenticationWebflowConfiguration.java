@@ -52,7 +52,7 @@ import org.springframework.webflow.execution.Action;
 public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action verifyPasswordlessAccountAuthenticationAction(
         @Qualifier("passwordlessUserAccountStore")
@@ -61,7 +61,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "determineMultifactorPasswordlessAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action determineMultifactorPasswordlessAuthenticationAction(
         final CasConfigurationProperties casProperties,
@@ -76,7 +76,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "determineDelegatedAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action determineDelegatedAuthenticationAction(
         @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
@@ -111,7 +111,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action displayBeforePasswordlessAuthenticationAction(
         final CasConfigurationProperties casProperties,

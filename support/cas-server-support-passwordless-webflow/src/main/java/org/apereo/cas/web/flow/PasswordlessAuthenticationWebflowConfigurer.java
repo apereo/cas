@@ -22,41 +22,6 @@ import java.util.Arrays;
  * @since 5.3.0
  */
 public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    /**
-     * Transition to obtain username.
-     */
-    static final String TRANSITION_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserId";
-
-    /**
-     * State to display username.
-     */
-    static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
-
-    /**
-     * State to determine mfa for passwordless.
-     */
-    static final String STATE_ID_PASSWORDLESS_DETERMINE_MFA = "determineMultifactorPasswordlessAuthentication";
-
-    /**
-     * State to determine delegated authn.
-     */
-    static final String STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN= "determineDelegatedAuthentication";
-
-    /**
-     * State to verify account.
-     */
-    static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
-
-    /**
-     * State to accept authentication.
-     */
-    static final String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
-
-    /**
-     * State to get user id.
-     */
-    static final String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
-
     public PasswordlessAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                        final ConfigurableApplicationContext applicationContext,
@@ -86,7 +51,8 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      */
     protected void createStateInitialPasswordless(final Flow flow) {
         val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-        createTransitionForState(state, TRANSITION_ID_PASSWORDLESS_GET_USERID, STATE_ID_PASSWORDLESS_GET_USERID, true);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID, true);
     }
 
     /**
@@ -95,9 +61,10 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateAcceptPasswordless(final Flow flow) {
-        val acceptAction = createEvaluateAction("acceptPasswordlessAuthenticationAction");
-        val acceptState = createActionState(flow, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION, acceptAction);
-        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, STATE_ID_PASSWORDLESS_DISPLAY);
+        val acceptAction = createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN);
+        val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION, acceptAction);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY);
 
         val submission = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         val transition = (Transition) submission.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
@@ -111,9 +78,10 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateDisplayPasswordless(final Flow flow) {
-        val viewStateDisplay = createViewState(flow, STATE_ID_PASSWORDLESS_DISPLAY, "passwordless/casPasswordlessDisplayView");
-        viewStateDisplay.getEntryActionList().add(createEvaluateAction("displayBeforePasswordlessAuthenticationAction"));
-        createTransitionForState(viewStateDisplay, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
+        val viewStateDisplay = createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY, "passwordless/casPasswordlessDisplayView");
+        viewStateDisplay.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN));
+        createTransitionForState(viewStateDisplay, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
     }
 
     /**
@@ -122,9 +90,12 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateVerifyPasswordlessAccount(final Flow flow) {
-        val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+        val verifyAccountState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT,
+            CasWebflowConstants.ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
 
         val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
@@ -137,9 +108,12 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateDetermineDelegatedAuthenticationAction(final Flow flow) {
-        val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN, "determineDelegatedAuthenticationAction");
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DETERMINE_MFA);
+        val verifyAccountState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN,
+            CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_REDIRECT, "redirectToDelegatedIdentityProviderView");
         createEndState(flow, "redirectToDelegatedIdentityProviderView", "flashScope.delegatedClientIdentityProvider.redirectUrl", true);
     }
@@ -150,9 +124,12 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateDetermineMultifactorAuthenticationAction(final Flow flow) {
-        val verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_DETERMINE_MFA, "determineMultifactorPasswordlessAuthenticationAction");
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DISPLAY);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_PASSWORDLESS_GET_USERID);
+        val verifyAccountState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA,
+            CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
 
         val cfgs = applicationContext.getBeansOfType(CasMultifactorWebflowConfigurer.class).values();
         cfgs.forEach(cfg -> cfg.getMultifactorAuthenticationFlowDefinitionRegistries()
@@ -166,7 +143,9 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
      * @param flow the flow
      */
     protected void createStateGetUserIdentifier(final Flow flow) {
-        val viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "passwordless/casPasswordlessGetUserIdView");
-        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID,
+            "passwordless/casPasswordlessGetUserIdView");
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
     }
 }
