@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @EnableScheduling
-@Configuration(value = "googleAuthenticatorMongoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorMongoDbConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

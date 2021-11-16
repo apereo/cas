@@ -47,7 +47,7 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "wsfedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WsfedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationProvidersConfiguration", proxyBeanMethods = false)

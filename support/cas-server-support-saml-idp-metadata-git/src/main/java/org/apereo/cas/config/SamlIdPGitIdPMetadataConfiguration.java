@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.git", name = {"idp-metadata-enabled", "repository-url"})
-@Configuration(value = "samlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPGitIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPGitIdPMetadataConfiguration {
 
     @Bean

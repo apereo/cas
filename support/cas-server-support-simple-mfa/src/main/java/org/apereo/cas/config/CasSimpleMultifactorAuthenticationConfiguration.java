@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "casSimpleMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class CasSimpleMultifactorAuthenticationConfiguration {
@@ -209,7 +209,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @Configuration(value = "casSimpleMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasSimpleMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
     public static class CasSimpleMultifactorTrustConfiguration {
 

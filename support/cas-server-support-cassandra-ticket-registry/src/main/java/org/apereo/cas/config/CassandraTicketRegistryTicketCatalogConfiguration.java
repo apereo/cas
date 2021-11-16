@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "cassandraTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CassandraTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CassandraTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 

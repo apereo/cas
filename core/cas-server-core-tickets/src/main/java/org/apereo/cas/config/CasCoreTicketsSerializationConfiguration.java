@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreTicketsSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketsSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketsSerializationConfiguration {
 

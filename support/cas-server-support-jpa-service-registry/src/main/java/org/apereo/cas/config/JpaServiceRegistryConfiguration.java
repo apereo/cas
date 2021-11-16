@@ -46,7 +46,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jpaServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
 
     @Configuration(value = "JpaServiceRegistryPlanConfiguration", proxyBeanMethods = false)

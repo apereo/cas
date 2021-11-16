@@ -39,7 +39,7 @@ public class DistributedJEESessionStoreTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory ticketFactory;
 
     @Test

@@ -42,7 +42,7 @@ import javax.security.auth.login.AccountLockedException;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casCoreAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationComponentSerializationConfiguration {
     @Bean

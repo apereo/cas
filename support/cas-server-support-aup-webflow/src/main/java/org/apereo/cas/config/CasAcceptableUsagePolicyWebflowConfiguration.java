@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casAcceptableUsagePolicyWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyWebflowConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowCoreConfiguration", proxyBeanMethods = false)

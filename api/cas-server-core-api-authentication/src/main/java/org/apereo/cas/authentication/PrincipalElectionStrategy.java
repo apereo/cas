@@ -20,6 +20,11 @@ import java.util.Map;
 public interface PrincipalElectionStrategy extends Serializable, Ordered {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "principalElectionStrategy";
+
+    /**
      * Elect the principal.
      *
      * @param authentications     the authentications

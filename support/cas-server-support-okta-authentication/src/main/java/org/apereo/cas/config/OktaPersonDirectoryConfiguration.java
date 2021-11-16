@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "oktaPersonDirectoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OktaPersonDirectoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty("cas.authn.attribute-repository.okta.organization-url")
 public class OktaPersonDirectoryConfiguration {

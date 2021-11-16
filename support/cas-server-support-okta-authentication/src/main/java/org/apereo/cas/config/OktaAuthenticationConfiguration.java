@@ -30,14 +30,14 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "oktaAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OktaAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty("cas.authn.okta.organization-url")
 public class OktaAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "oktaAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer oktaAuthenticationEventExecutionPlanConfigurer(
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver,
         @Qualifier("oktaAuthenticationHandler")
         final AuthenticationHandler oktaAuthenticationHandler) {

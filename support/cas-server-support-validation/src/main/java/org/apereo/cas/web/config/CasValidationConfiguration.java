@@ -60,7 +60,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casValidationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
 

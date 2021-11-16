@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
     @Configuration(value = "SamlIdPAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "couchDbEventsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbEventsConfiguration {
 

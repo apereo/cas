@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casOAuth20ComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20ComponentSerializationConfiguration {
 

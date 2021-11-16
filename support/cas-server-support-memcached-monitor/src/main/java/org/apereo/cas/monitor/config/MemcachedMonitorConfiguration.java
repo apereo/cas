@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "memcachedMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MemcachedMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MemcachedMonitorConfiguration {
 

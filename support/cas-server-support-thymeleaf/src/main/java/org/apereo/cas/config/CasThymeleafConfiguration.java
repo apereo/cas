@@ -64,7 +64,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "casThymeleafConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasThymeleafConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = SpringTemplateEngine.class)
 @ImportAutoConfiguration(ThymeleafAutoConfiguration.class)

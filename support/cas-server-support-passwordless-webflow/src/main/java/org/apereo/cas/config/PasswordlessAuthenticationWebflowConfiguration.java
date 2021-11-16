@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.Action;
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "passwordlessAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "PasswordlessAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class PasswordlessAuthenticationWebflowConfiguration {
 
     @Bean

@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jpaEventsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
 public class JpaEventsConfiguration {
 
     @Configuration(value = "JpaEventsDataConfiguration", proxyBeanMethods = false)

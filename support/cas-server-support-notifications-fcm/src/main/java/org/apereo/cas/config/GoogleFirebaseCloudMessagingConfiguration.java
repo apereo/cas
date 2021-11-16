@@ -25,7 +25,7 @@ import java.io.FileInputStream;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "googleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleFirebaseCloudMessagingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleFirebaseCloudMessagingConfiguration {
 

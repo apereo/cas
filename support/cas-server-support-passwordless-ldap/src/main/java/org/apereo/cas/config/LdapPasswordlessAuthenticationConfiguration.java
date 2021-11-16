@@ -19,7 +19,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "ldapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "LdapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.authn.passwordless.accounts.ldap.ldap-url")
 public class LdapPasswordlessAuthenticationConfiguration {

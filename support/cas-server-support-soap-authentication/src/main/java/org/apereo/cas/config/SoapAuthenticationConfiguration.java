@@ -38,7 +38,7 @@ import java.util.HashMap;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "soapAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SoapAuthenticationConfiguration", proxyBeanMethods = false)
 public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationPrincipalFactory")
@@ -69,7 +69,7 @@ public class SoapAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("soapAuthenticationAuthenticationHandler")
         final AuthenticationHandler soapAuthenticationAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(soapAuthenticationAuthenticationHandler, defaultPrincipalResolver);
     }
