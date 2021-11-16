@@ -26,7 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "redisYubiKeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RedisYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisYubiKeyConfiguration {

@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "coreWsSecurityIdentityProviderWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecurityIdentityProviderWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecurityIdentityProviderWebflowConfiguration {
 

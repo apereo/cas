@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Bob Sandiford
  * @since 5.2.0
  */
-@Configuration(value = "samlIdpTicketSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdpTicketSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlIdPTicketSerializationConfiguration {
 

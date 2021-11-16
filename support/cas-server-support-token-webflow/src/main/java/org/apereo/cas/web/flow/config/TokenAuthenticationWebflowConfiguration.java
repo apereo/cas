@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "tokenAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TokenAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class TokenAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenWebflowConfigurer")

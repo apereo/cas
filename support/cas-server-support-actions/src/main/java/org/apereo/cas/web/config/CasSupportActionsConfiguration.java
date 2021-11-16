@@ -64,7 +64,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casSupportActionsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasSupportActionsConfiguration {
@@ -280,7 +280,7 @@ public class CasSupportActionsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
             return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                 ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
@@ -390,7 +390,7 @@ public class CasSupportActionsConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
             return new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
                 ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy);

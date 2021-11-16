@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.sns.SnsClient;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "amazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AmazonSimpleNotificationServiceSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonSimpleNotificationServiceSmsConfiguration {
 

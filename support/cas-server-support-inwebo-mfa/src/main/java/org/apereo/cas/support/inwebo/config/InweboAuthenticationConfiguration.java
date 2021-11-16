@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "inweboAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "InweboAuthenticationConfiguration", proxyBeanMethods = false)
 public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboPrincipalFactory")

@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "mongoDbYubiKeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbYubiKeyConfiguration {
 

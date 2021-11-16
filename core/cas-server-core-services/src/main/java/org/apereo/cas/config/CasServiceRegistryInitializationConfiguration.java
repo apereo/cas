@@ -55,7 +55,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",

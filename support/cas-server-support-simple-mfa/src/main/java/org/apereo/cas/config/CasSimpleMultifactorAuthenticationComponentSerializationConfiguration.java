@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "casSimpleMultifactorAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSimpleMultifactorAuthenticationComponentSerializationConfiguration {
     @Bean

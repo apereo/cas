@@ -19,7 +19,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Curtis W Ruck
  * @since 5.3.3
  */
-@Configuration(value = "x509CertificateExtractorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "X509CertificateExtractorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509CertificateExtractorConfiguration {
 

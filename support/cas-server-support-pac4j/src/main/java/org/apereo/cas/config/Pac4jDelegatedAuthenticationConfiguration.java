@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "pac4jDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "Pac4jDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class Pac4jDelegatedAuthenticationConfiguration {
 

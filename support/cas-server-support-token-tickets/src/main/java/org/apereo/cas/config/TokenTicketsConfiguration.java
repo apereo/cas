@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "tokenTicketsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TokenTicketsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenTicketsConfiguration {
 

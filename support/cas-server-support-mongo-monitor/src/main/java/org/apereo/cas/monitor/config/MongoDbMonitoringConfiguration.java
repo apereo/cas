@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "mongoDbMonitoringConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbMonitoringConfiguration", proxyBeanMethods = false)
 public class MongoDbMonitoringConfiguration {
 
     @Bean

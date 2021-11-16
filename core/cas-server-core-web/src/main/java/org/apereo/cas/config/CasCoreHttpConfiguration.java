@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreHttpConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreHttpConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreHttpConfiguration {

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "fileAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "FileAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class FileAuthenticationEventExecutionPlanConfiguration {
@@ -69,7 +69,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("fileAuthenticationHandler")
         final AuthenticationHandler fileAuthenticationHandler,
         final CasConfigurationProperties casProperties,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getFile().getFilename();

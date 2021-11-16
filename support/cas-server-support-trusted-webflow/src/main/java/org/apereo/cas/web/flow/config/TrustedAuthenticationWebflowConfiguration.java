@@ -23,7 +23,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "trustedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TrustedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TrustedAuthenticationWebflowConfiguration {
 

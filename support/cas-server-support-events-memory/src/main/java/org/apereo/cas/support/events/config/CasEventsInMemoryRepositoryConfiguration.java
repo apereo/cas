@@ -23,7 +23,7 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasEventsInMemoryRepositoryConfiguration {

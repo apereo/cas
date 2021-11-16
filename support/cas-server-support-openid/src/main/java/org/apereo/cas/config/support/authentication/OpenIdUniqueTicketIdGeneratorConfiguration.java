@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.1.0
  * @deprecated 6.2
  */
-@Configuration(value = "openIdUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OpenIdUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
 public class OpenIdUniqueTicketIdGeneratorConfiguration {

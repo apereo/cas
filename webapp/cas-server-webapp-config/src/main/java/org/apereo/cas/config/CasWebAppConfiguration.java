@@ -36,7 +36,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casWebAppConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWebAppConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

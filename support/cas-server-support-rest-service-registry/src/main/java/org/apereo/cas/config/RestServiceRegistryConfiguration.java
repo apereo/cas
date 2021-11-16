@@ -33,7 +33,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.service-registry.rest.url")
 @Slf4j
-@Configuration(value = "restServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RestServiceRegistryConfiguration", proxyBeanMethods = false)
 public class RestServiceRegistryConfiguration {
 
     @Bean

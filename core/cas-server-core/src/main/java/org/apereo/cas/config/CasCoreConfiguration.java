@@ -40,7 +40,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Slf4j
@@ -88,7 +88,7 @@ public class CasCoreConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,

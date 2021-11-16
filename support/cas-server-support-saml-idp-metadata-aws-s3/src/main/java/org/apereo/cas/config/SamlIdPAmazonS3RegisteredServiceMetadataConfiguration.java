@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  * @since 5.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPAmazonS3RegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPAmazonS3RegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
 
     @Bean

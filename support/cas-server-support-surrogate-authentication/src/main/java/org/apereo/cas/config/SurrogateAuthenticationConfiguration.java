@@ -55,7 +55,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "surrogateAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateAuthenticationConfiguration {

@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "couchDbU2fConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbU2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FCouchDbConfiguration {
 

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "tokenCoreComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TokenCoreComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenCoreComponentSerializationConfiguration {
     @Bean

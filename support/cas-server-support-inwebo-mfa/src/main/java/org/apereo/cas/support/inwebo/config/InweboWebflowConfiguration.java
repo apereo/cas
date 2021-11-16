@@ -43,7 +43,7 @@ import org.springframework.webflow.execution.Action;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration(value = "inweboWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "InweboWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class InweboWebflowConfiguration {
@@ -164,7 +164,7 @@ public class InweboWebflowConfiguration {
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.inwebo")
-    @Configuration(value = "inweboMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")
     public static class InweboMultifactorTrustConfiguration {
 

@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "samlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlIdentityProviderDiscoveryConfiguration {
 

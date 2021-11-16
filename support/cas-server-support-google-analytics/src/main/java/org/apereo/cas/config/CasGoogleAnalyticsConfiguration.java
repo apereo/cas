@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casGoogleAnalyticsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasGoogleAnalyticsConfiguration", proxyBeanMethods = false)
 public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsCookieGenerator")

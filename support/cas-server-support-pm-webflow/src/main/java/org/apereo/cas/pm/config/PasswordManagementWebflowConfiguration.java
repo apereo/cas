@@ -60,7 +60,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "passwordManagementWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "PasswordManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class PasswordManagementWebflowConfiguration {
@@ -179,11 +179,11 @@ public class PasswordManagementWebflowConfiguration {
             final PasswordManagementService passwordManagementService,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             return new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
                 passwordManagementService, ticketRegistry, ticketFactory, defaultPrincipalResolver);
@@ -236,7 +236,7 @@ public class PasswordManagementWebflowConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
-    @Configuration(value = "passwordManagementCaptchaConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
     public static class PasswordManagementCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowConfigurer")

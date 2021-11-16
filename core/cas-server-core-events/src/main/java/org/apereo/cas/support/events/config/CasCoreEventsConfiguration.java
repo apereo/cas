@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreEventsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.events.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasCoreEventsConfiguration {

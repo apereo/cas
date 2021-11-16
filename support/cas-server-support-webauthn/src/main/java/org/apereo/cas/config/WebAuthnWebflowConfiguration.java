@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "webAuthnWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebAuthnEnabled
 public class WebAuthnWebflowConfiguration {
@@ -123,7 +123,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnWebAuthnEnabled
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
-    @Configuration(value = "webAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "WebAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("webAuthnMultifactorWebflowConfigurer")
     public static class WebAuthnMultifactorTrustConfiguration {
 

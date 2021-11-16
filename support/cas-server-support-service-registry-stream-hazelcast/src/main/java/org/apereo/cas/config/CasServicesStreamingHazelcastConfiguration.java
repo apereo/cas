@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
-@Configuration(value = "casServicesStreamingHazelcastConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasServicesStreamingHazelcastConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingHazelcastConfiguration {
 
     @Configuration(value = "CasServicesStreamingHazelcastCacheConfiguration", proxyBeanMethods = false)

@@ -33,7 +33,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@Configuration(value = "googleAuthenticatorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -83,7 +83,7 @@ public class GoogleAuthenticatorConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.gauth.core")
-    @Configuration(value = "gauthMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "GauthMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("googleAuthenticatorMultifactorWebflowConfigurer")
     public static class GoogleAuthenticatorMultifactorTrustConfiguration {
 

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casMongoAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasMongoAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasMongoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
@@ -67,7 +67,7 @@ public class CasMongoAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer mongoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("mongoAuthenticationHandler")
         final AuthenticationHandler mongoAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(mongoAuthenticationHandler, defaultPrincipalResolver);
     }

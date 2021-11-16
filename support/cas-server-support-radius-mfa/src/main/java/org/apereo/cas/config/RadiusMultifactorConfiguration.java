@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
-@Configuration(value = "radiusMfaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RadiusMfaConfiguration", proxyBeanMethods = false)
 public class RadiusMultifactorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -131,7 +131,7 @@ public class RadiusMultifactorConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.radius")
-    @Configuration(value = "radiusMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "RadiusMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("radiusMultifactorWebflowConfigurer")
     public static class RadiusMultifactorTrustConfiguration {
 

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casDefaultServiceTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasDefaultServiceTicketIdGeneratorsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasDefaultServiceTicketIdGeneratorsConfiguration {
 

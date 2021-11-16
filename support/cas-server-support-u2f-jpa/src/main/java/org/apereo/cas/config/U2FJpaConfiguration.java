@@ -39,7 +39,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "u2fJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fJpaConfiguration", proxyBeanMethods = false)
 public class U2FJpaConfiguration {
 
     @Configuration(value = "U2FJpaTransactionConfiguration", proxyBeanMethods = false)

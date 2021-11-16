@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "samlIdPDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPDelegatedAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(DelegatedAuthenticationWebflowConfiguration.class)
 public class SamlIdPDelegatedAuthenticationConfiguration {

@@ -57,7 +57,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlConfiguration", proxyBeanMethods = false)
 public class SamlConfiguration {
 
     @Configuration(value = "SamlViewFactoryConfiguration", proxyBeanMethods = false)

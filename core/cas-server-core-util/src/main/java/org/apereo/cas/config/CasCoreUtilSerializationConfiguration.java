@@ -20,7 +20,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreUtilSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreUtilSerializationConfiguration", proxyBeanMethods = false)
 @Slf4j
 public class CasCoreUtilSerializationConfiguration {
 

@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "jsonResourceAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JsonResourceAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
@@ -64,7 +64,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                              @Qualifier("jsonResourceAuthenticationHandler")
                                                                                                              final AuthenticationHandler jsonResourceAuthenticationHandler,
-                                                                                                             @Qualifier("defaultPrincipalResolver")
+                                                                                                             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
                                                                                                              final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getJson().getLocation();

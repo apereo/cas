@@ -38,7 +38,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreValidationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration {

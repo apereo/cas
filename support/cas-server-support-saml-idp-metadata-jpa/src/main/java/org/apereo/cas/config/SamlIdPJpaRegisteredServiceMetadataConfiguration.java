@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "samlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataResolverConfiguration", proxyBeanMethods = false)

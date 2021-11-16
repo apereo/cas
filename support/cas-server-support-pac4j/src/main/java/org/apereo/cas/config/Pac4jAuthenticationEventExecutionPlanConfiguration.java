@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "pac4jAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "Pac4jAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "Pac4jAuthenticationEventExecutionPlanSessionConfiguration", proxyBeanMethods = false)
@@ -82,7 +82,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedClientDistributedSessionCookieGenerator")
             final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
@@ -306,7 +306,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final AuthenticationHandler clientAuthenticationHandler,
             @Qualifier("clientAuthenticationMetaDataPopulator")
             final AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return plan -> {
                 if (!builtClients.findAllClients().isEmpty()) {

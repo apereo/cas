@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "couchDbYubiKeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbYubiKeyConfiguration", proxyBeanMethods = false)
 public class CouchDbYubiKeyConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")

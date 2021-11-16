@@ -18,7 +18,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "couchDbSamlIdPFactoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbSamlIdPFactoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbSamlIdPFactoryConfiguration {
 

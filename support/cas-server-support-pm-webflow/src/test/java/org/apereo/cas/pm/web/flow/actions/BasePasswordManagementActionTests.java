@@ -112,7 +112,7 @@ public class BasePasswordManagementActionTests {
     protected Action sendPasswordResetInstructionsAction;
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
 
     @Autowired

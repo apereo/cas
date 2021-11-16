@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCookieConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCookieConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCookieConfiguration {

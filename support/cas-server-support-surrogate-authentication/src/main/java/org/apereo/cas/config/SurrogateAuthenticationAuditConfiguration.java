@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Configuration(value = "surrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
 public class SurrogateAuthenticationAuditConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationAuditExecutionConfiguration", proxyBeanMethods = false)

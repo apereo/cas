@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPRestMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPRestMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPRestfulMetadataConfiguration {
 
     @Bean

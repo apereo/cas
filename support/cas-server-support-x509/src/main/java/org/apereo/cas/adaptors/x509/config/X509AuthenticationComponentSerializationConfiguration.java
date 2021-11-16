@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "x509AuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "X509AuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationComponentSerializationConfiguration {
     @Bean

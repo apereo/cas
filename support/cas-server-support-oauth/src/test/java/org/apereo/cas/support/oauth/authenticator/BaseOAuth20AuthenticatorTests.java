@@ -95,7 +95,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected JwtBuilder accessTokenJwtBuilder;
 
     @Autowired
-    @Qualifier("defaultPrincipalResolver")
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     protected PrincipalResolver defaultPrincipalResolver;
 
     @Autowired

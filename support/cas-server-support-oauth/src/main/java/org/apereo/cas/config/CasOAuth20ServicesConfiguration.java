@@ -27,7 +27,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casOAuth20ServicesConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20ServicesConfiguration {
 

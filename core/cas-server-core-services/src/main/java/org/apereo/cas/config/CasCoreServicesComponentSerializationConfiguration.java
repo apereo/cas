@@ -71,7 +71,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casCoreServicesComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreServicesComponentSerializationConfiguration {
     @Bean

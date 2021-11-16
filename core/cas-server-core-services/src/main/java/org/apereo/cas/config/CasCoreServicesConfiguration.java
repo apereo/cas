@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreServicesConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableAsync

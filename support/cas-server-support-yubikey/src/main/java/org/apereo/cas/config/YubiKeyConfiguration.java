@@ -23,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "yubikeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "YubikeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class YubiKeyConfiguration {

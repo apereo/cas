@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jdbcMultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JdbcMultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
 public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustEngineConfiguration", proxyBeanMethods = false)

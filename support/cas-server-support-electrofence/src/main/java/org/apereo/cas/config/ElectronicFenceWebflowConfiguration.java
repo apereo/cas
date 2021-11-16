@@ -31,7 +31,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "electronicFenceWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ElectronicFenceWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class ElectronicFenceWebflowConfiguration {

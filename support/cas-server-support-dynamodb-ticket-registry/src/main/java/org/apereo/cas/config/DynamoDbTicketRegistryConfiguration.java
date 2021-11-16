@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "dynamoDbTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DynamoDbTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DynamoDbTicketRegistryConfiguration {
 

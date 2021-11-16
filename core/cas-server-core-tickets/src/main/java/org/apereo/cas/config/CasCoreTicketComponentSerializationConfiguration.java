@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreTicketComponentSerializationConfiguration {
     @Bean

@@ -39,7 +39,7 @@ import javax.jms.ConnectionFactory;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableJms
 @Slf4j
-@Configuration(value = "jmsTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JmsTicketRegistryConfiguration", proxyBeanMethods = false)
 public class JmsTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
     @Bean

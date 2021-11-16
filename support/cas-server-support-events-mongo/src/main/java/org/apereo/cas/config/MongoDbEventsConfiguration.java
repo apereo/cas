@@ -26,7 +26,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "mongoDbEventsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbEventsConfiguration", proxyBeanMethods = false)
 public class MongoDbEventsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -43,7 +43,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casConsentCoreConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasConsentCoreConfiguration {

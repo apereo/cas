@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreWebConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreWebConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebConfiguration {
 

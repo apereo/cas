@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "couchDbTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

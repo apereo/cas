@@ -42,7 +42,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "casOAuth20ThrottleConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20ThrottleConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20ThrottleConfiguration {
 

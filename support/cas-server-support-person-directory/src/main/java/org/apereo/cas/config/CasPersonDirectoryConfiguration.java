@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casPersonDirectoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasPersonDirectoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasPersonDirectoryConfiguration {

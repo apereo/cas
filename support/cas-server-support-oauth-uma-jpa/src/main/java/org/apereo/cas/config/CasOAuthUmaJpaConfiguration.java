@@ -39,7 +39,7 @@ import javax.sql.DataSource;
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
 @EnableTransactionManagement
 @ConditionalOnProperty(name = "cas.authn.oauth.uma.resource-set.jpa.url")
-@Configuration(value = "casOAuthUmaJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuthUmaJpaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaJpaConfiguration {
 
 

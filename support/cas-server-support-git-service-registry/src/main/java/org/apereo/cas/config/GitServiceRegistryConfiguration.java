@@ -39,7 +39,7 @@ import java.util.Optional;
  */
 @ConditionalOnProperty(prefix = "cas.service-registry.git", name = "repository-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "gitServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GitServiceRegistryConfiguration", proxyBeanMethods = false)
 public class GitServiceRegistryConfiguration {
 
     @Bean

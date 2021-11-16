@@ -28,7 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "googleAuthenticatorCouchDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorCouchDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class GoogleAuthenticatorCouchDbConfiguration {

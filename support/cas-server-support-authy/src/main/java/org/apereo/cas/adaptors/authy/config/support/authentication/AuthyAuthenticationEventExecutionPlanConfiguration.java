@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "api-key")
-@Configuration(value = "authyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AuthyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

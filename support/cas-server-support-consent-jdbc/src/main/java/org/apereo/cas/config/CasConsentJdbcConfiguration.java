@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casConsentJdbcConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasConsentJdbcConfiguration {

@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "u2fAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class U2FAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fBypassEvaluator")

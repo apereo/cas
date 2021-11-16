@@ -19,7 +19,7 @@ import org.springframework.context.annotation.EnableMBeanExport;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casJmxConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasJmxConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableMBeanExport
 @EnableAspectJAutoProxy

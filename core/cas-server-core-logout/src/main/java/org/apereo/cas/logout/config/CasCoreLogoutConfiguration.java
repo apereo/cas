@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreLogoutConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreLogoutConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreLogoutConfiguration {
@@ -206,7 +206,7 @@ public class CasCoreLogoutConfiguration {
         }
     }
 
-    @Configuration(value = "casCoreLogoutServiceConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasCoreLogoutServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class CasCoreLogoutServiceConfiguration {

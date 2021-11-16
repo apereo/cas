@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casRemoteAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasRemoteAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasRemoteAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
@@ -92,7 +92,7 @@ public class CasRemoteAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("remoteAddressAuthenticationHandler")
         final AuthenticationHandler remoteAddressAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler, defaultPrincipalResolver);
     }

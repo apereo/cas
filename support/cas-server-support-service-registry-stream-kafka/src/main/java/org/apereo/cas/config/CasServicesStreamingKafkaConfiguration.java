@@ -46,7 +46,7 @@ import java.util.concurrent.ExecutionException;
 @ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 @EnableKafka
-@Configuration(value = "casServicesStreamingKafkaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasServicesStreamingKafkaConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingKafkaConfiguration {
 
     @Bean

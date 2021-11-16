@@ -43,7 +43,7 @@ import java.util.Objects;
  * @since 5.0.0
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
-@Configuration(value = "ehcacheTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "EhcacheTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Deprecated(since = "6.2.0")

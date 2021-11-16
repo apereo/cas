@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Configuration(value = "hazelcastTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "HazelcastTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class HazelcastTicketRegistryConfiguration {

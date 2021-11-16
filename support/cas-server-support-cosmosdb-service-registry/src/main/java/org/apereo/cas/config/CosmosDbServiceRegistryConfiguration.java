@@ -29,7 +29,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "cosmosDbServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CosmosDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CosmosDbServiceRegistryConfiguration {
 

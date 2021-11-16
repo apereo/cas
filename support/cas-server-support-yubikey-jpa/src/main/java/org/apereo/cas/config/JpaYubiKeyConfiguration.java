@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jpaYubiKeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaYubiKeyConfiguration", proxyBeanMethods = false)
 public class JpaYubiKeyConfiguration {
 
 

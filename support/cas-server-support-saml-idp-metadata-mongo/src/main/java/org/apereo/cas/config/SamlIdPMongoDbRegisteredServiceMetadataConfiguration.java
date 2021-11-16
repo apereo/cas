@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPMongoDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPMongoDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Bean

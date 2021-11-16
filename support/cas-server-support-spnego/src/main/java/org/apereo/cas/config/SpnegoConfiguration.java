@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "spnegoConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SpnegoConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
 

@@ -28,7 +28,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "oauthProtocolTicketMetadataRegistrationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OauthProtocolTicketMetadataRegistrationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OAuth20ProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {

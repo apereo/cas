@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "hazelcastTicketRegistryTicketMetadataCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "HazelcastTicketRegistryTicketMetadataCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 

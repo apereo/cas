@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "rejectUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RejectUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPrincipalFactory")
@@ -65,7 +65,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                             @Qualifier("rejectUsersAuthenticationHandler")
                                                                                                             final AuthenticationHandler rejectUsersAuthenticationHandler,
-                                                                                                            @Qualifier("defaultPrincipalResolver")
+                                                                                                            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
                                                                                                             final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val users = casProperties.getAuthn().getReject().getUsers();

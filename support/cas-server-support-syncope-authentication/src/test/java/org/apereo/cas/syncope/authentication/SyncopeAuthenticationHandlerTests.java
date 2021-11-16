@@ -23,6 +23,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,8 +81,18 @@ public class SyncopeAuthenticationHandlerTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("syncopeAuthenticationHandler")
-    private AuthenticationHandler syncopeAuthenticationHandler;
+    @Qualifier("syncopeAuthenticationHandlers")
+    private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
+
+    @SneakyThrows
+    private static MockWebServer startMockSever(final JsonNode user) {
+        val data = MAPPER.writeValueAsString(user);
+        val webServer = new MockWebServer(8095,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE);
+        webServer.start();
+        return webServer;
+    }
 
     @Test
     @SuppressWarnings("JavaUtilDate")
@@ -121,6 +132,8 @@ public class SyncopeAuthenticationHandlerTests {
         user.put("changePwdDate", new Date().toString());
         user.put("lastLoginDate", new Date().toString());
 
+        val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
+
         @Cleanup("stop")
         val webserver = startMockSever(user);
         assertDoesNotThrow(() ->
@@ -136,6 +149,7 @@ public class SyncopeAuthenticationHandlerTests {
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
+        val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
         assertThrows(AccountPasswordMustChangeException.class,
             () -> syncopeAuthenticationHandler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
@@ -149,18 +163,9 @@ public class SyncopeAuthenticationHandlerTests {
         @Cleanup("stop")
         val webserver = startMockSever(user);
 
+        val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
         assertThrows(AccountDisabledException.class,
             () -> syncopeAuthenticationHandler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
-    }
-
-    @SneakyThrows
-    private static MockWebServer startMockSever(final JsonNode user) {
-        val data = MAPPER.writeValueAsString(user);
-        val webServer = new MockWebServer(8095,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE);
-        webServer.start();
-        return webServer;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "restfulCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RestfulCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 public class RestfulCloudConfigBootstrapConfiguration {
 
     @Bean

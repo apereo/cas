@@ -67,7 +67,7 @@ import java.security.PublicKey;
 @EnableScheduling
 @EnableRetry
 @Slf4j
-@Configuration(value = "accepttoMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AccepttoMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 public class AccepttoMultifactorAuthenticationConfiguration {
 
     @Configuration(value = "AccepttoMultifactorAuthenticationCoreConfiguration", proxyBeanMethods = false)
@@ -162,7 +162,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val cookie = casProperties.getSessionReplication().getCookie();
             val cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
@@ -182,7 +182,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             final AuthenticationHandler casAccepttoQRCodeAuthenticationHandler,
             @Qualifier("casAccepttoQRCodeAuthenticationMetaDataPopulator")
             final AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return plan -> {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler, defaultPrincipalResolver);

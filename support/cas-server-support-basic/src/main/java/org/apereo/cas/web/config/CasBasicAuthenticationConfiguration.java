@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casBasicAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasBasicAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasBasicAuthenticationConfiguration {
 
     @Bean

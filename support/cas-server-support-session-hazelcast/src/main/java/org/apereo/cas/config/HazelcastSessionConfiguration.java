@@ -35,7 +35,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "hazelcastSessionConfiguration", proxyBeanMethods = false)
+@Configuration(value = "HazelcastSessionConfiguration", proxyBeanMethods = false)
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties({CasConfigurationProperties.class,
     SessionProperties.class, HazelcastSessionProperties.class, ServerProperties.class})

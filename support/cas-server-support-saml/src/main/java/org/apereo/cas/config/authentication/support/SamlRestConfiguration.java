@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "samlRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = ServiceTicketResourceEntityResponseFactoryConfigurer.class)
 public class SamlRestConfiguration {

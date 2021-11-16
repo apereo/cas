@@ -173,7 +173,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         private static final String TEST = "test";
 
         @Autowired
-        @Qualifier("principalElectionStrategy")
+        @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
 
         @Bean
