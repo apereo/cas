@@ -41,11 +41,12 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
             throw new AuthenticationException("No authentication could be found in the current context");
         }
         val principal = authentication.getPrincipal();
+                
         if (map.containsKey(key)) {
-            val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE) || isUsagePolicyAcceptedBy(principal);
-            return new AcceptableUsagePolicyStatus(accepted, principal);
+            return new AcceptableUsagePolicyStatus((boolean) map.getOrDefault(key, Boolean.FALSE), principal);
         }
-        return AcceptableUsagePolicyStatus.denied(principal);
+        
+        return new AcceptableUsagePolicyStatus(isUsagePolicyAcceptedBy(principal), principal);
     }
 
     @Override
