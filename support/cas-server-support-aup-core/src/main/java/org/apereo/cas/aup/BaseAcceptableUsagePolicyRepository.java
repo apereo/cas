@@ -133,11 +133,18 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      */
     protected boolean isUsagePolicyAcceptedBy(final Map<String, List<Object>> attributes) {
         val core = aupProperties.getCore();
+
         if (attributes != null && attributes.containsKey(core.getAupAttributeName())) {
             val value = CollectionUtils.toCollection(attributes.get(core.getAupAttributeName()));
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, core.getAupAttributeName());
             return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(getAcceptedAttributeValue()));
         }
+
+        if (core.isAupOmitIfAttributeMissing()) {
+            LOGGER.debug("Omitted with attributes: [{}]", attributes);
+            return true;
+        }
+
         return false;
     }
 
