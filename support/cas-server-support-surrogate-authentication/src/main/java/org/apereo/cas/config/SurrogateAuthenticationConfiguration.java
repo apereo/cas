@@ -122,17 +122,6 @@ public class SurrogateAuthenticationConfiguration {
 
     }
 
-    @Configuration(value = "SurrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
-        public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
-            return new SurrogateAuditPrincipalIdProvider();
-        }
-
-    }
-
     @Configuration(value = "SurrogateAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationPrincipalElectionConfiguration {

@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
@@ -31,8 +32,8 @@ public class CasConfigurationPropertiesEnvironmentManagerTests {
         val file = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(file, "server.port=8899", StandardCharsets.UTF_8);
         env.setProperty(CasConfigurationPropertiesEnvironmentManager.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
-        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor(), env);
-        assertEquals(file.getCanonicalPath(), mgr.getStandaloneProfileConfigurationFile().getCanonicalPath());
+        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor());
+        assertEquals(file.getCanonicalPath(), mgr.getStandaloneProfileConfigurationFile(env).getCanonicalPath());
     }
 
     @Test
@@ -40,8 +41,8 @@ public class CasConfigurationPropertiesEnvironmentManagerTests {
         val env = new MockEnvironment();
         val dir = FileUtils.getTempDirectory();
         env.setProperty(CasConfigurationPropertiesEnvironmentManager.PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY, dir.getCanonicalPath());
-        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor(), env);
-        assertEquals(dir.getCanonicalPath(), mgr.getStandaloneProfileConfigurationDirectory().getCanonicalPath());
+        val mgr = new CasConfigurationPropertiesEnvironmentManager(new ConfigurationPropertiesBindingPostProcessor());
+        assertEquals(dir.getCanonicalPath(), mgr.getStandaloneProfileConfigurationDirectory(env).getCanonicalPath());
     }
 
 }
