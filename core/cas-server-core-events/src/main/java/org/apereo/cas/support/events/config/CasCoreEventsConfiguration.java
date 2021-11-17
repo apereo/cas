@@ -3,8 +3,8 @@ package org.apereo.cas.support.events.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
-import org.apereo.cas.support.events.listener.DefaultCasEventListener;
-import org.apereo.cas.support.events.listener.LoggingCasEventListener;
+import org.apereo.cas.support.events.listener.DefaultCasAuthenticationEventListener;
+import org.apereo.cas.support.events.listener.DefaultLoggingCasEventListener;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.apereo.cas.util.spring.CasEventListener;
 
@@ -35,13 +35,13 @@ public class CasCoreEventsConfiguration {
         public CasEventListener defaultCasEventListener(
             @Qualifier("casEventRepository")
             final CasEventRepository casEventRepository) {
-            return new DefaultCasEventListener(casEventRepository);
+            return new DefaultCasAuthenticationEventListener(casEventRepository);
         }
 
         @ConditionalOnMissingBean(name = "loggingCasEventListener")
         @Bean
         public CasEventListener loggingCasEventListener() {
-            return new LoggingCasEventListener();
+            return new DefaultLoggingCasEventListener();
         }
     }
 
