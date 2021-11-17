@@ -43,6 +43,9 @@ public class SyncopeAuthenticationProperties implements Serializable, CasFeature
 
     /**
      * Syncope domain used for authentication, etc.
+     * Multiple domains can be separated via comma.
+     * Each domain entry results in a separate authentication attempt
+     * and transaction by CAS.
      */
     @RequiredProperty
     private String domain = "Master";

@@ -63,7 +63,7 @@ public class SyncopeAuthenticationConfiguration {
             .stream()
             .map(domain -> {
                 val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
-                    syncopePrincipalFactory, syncope.getUrl(), syncope.getDomain());
+                    syncopePrincipalFactory, syncope.getUrl(), domain.trim());
                 h.setState(syncope.getState());
                 h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
                 h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);

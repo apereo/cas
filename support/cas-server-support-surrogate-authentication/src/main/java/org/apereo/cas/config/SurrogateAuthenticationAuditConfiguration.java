@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.audit.SurrogateAuthenticationEligibilityAuditableExecution;
 import org.apereo.cas.authentication.audit.SurrogateEligibilitySelectionAuditResourceResolver;
 import org.apereo.cas.authentication.audit.SurrogateEligibilityVerificationAuditResourceResolver;
@@ -28,6 +30,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "SurrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
 public class SurrogateAuthenticationAuditConfiguration {
+
+    @Configuration(value = "SurrogateAuthenticationAuditPrincipalConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class SurrogateAuthenticationAuditPrincipalConfiguration {
+        @Bean
+        @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
+        public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
+            return new SurrogateAuditPrincipalIdProvider();
+        }
+
+    }
 
     @Configuration(value = "SurrogateAuthenticationAuditExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
