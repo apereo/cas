@@ -51,9 +51,10 @@ public class AcceptableUsagePolicyCoreProperties implements Serializable {
     private String aupPolicyTermsAttributeName;
 
     /**
-     * AUP behaviour if status attribute is missing.
+     * By default, the policy status is considered as denied when the attribute
+     * {@link AcceptableUsagePolicyCoreProperties#aupAttributeName} is not found.
+     * If set to {@code true}, the policy status in those cases is considered as accepted.
      */
-    @RequiredProperty
     private boolean aupOmitIfAttributeMissing = false;
 
 }
