@@ -141,7 +141,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         }
 
         if (core.isAupOmitIfAttributeMissing()) {
-            LOGGER.debug("Omitted with attributes: [{}]", attributes);
+            LOGGER.trace("Value for [{}] is missing.", core.getAupAttributeName());
             return true;
         }
 
