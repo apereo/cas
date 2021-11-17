@@ -54,6 +54,7 @@ public class SamlResponseAuditResourceResolverTests {
         when(issuer.getValue()).thenReturn("https://idp.example.org");
         when(response.getIssuer()).thenReturn(issuer);
         when(response.getDestination()).thenReturn("https://sp.example.org");
+        when(response.getID()).thenReturn("_123456789");
 
         var result = r.resolveFrom(mock(JoinPoint.class), response);
         assertNotNull(result);
