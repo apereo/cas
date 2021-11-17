@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.support.events.listener.CasCloudBusConfigurationEventListener;
+import org.apereo.cas.support.events.listener.DefaultCasCloudBusConfigurationEventListener;
 import org.apereo.cas.util.spring.CasEventListener;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +28,7 @@ public class CasCloudBusEventsConfigEnvironmentConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("configurationPropertiesEnvironmentManager")
         final CasConfigurationPropertiesEnvironmentManager manager) {
-        return new CasCloudBusConfigurationEventListener(manager, applicationContext);
+        return new DefaultCasCloudBusConfigurationEventListener(manager, applicationContext);
     }
 
 }
