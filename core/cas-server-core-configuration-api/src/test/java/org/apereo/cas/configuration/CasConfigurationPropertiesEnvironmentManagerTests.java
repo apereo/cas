@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
