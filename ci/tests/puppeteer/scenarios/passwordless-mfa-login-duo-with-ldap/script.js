@@ -7,10 +7,10 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login?service=https://apereo.github.io");
     await cas.type(page, '#username', "duobypass");
     await page.keyboard.press('Enter');
-    await this.screenshot(page);
+    await cas.screenshot(page);
     await page.waitForNavigation();
     await page.waitForTimeout(10000)
-    await this.screenshot(page);
+    await cas.screenshot(page);
     await cas.assertTicketParameter(page);
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
