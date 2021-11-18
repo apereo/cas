@@ -11,7 +11,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListener;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListenerImpl;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
@@ -348,7 +348,7 @@ public class OidcEndpointsConfiguration {
         public CasEventListener oidcJsonWebKeyStoreListener(
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
             final LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache) {
-            return new OidcJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);
+            return new OidcJsonWebKeyStoreListenerImpl(oidcDefaultJsonWebKeystoreCache);
         }
 
         @Bean

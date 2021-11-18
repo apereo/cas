@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipal
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
-import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
+import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -115,7 +115,7 @@ public class SurrogateAuthenticationConfiguration {
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager,
             final CasConfigurationProperties casProperties) {
-            return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+            return new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
         }
 
     }
