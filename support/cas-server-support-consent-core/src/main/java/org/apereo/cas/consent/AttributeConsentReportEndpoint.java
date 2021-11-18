@@ -136,7 +136,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
      */
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete a consent decision for principal using a decision id",
-        parameters = {@Parameter(name = "principal"), @Parameter(name = "decisionId", required = true)})
+        parameters = {@Parameter(name = "principal", required = true), @Parameter(name = "decisionId", required = true)})
     public boolean revokeConsents(
         @PathVariable
         final String principal,

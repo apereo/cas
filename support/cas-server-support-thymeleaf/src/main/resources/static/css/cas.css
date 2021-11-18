@@ -273,7 +273,7 @@ button.close {
 
 .custom-select {
     display: inline-block;
-    min-width: 100%;
+    min-width: 80%;
     height: 56px;
     padding: .375rem 1.75rem .375rem .75rem;
     font-size: 1rem;
