@@ -39,7 +39,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
         setConsentDecisions(readDecisionsFromJsonResource());
         if (ResourceUtils.isFile(this.jsonResource)) {
             this.watcherService = new FileWatcherService(resource.getFile(),
-                Unchecked.consumer(file -> readDecisionsFromJsonResource()));
+                Unchecked.consumer(file -> setConsentDecisions(readDecisionsFromJsonResource())));
             this.watcherService.start(getClass().getSimpleName());
         }
     }
