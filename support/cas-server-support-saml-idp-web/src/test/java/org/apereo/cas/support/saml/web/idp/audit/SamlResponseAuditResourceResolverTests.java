@@ -59,6 +59,9 @@ public class SamlResponseAuditResourceResolverTests {
         var result = r.resolveFrom(mock(JoinPoint.class), response);
         assertNotNull(result);
         assertTrue(result.length > 0);
+        assertTrue(result[0].contains("https://idp.example.org"));
+        assertTrue(result[0].contains("https://sp.example.org"));
+        assertTrue(result[0].contains("_123456789"));
 
         val envelope = mock(Envelope.class);
         val body = mock(Body.class);
