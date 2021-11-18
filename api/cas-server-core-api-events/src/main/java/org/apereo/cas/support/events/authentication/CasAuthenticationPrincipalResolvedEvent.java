@@ -20,12 +20,6 @@ public class CasAuthenticationPrincipalResolvedEvent extends AbstractCasEvent {
 
     private final Principal principal;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source the source
-     * @param p      the principal
-     */
     public CasAuthenticationPrincipalResolvedEvent(final Object source, final Principal p) {
         super(source);
         this.principal = p;

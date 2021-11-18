@@ -28,7 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "redisTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RedisTicketRegistryConfiguration", proxyBeanMethods = false)
 public class RedisTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")

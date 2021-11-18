@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "casThrottlingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasThrottlingConfiguration", proxyBeanMethods = false)
 public class CasThrottlingConfiguration {
 
     @Configuration(value = "CasThrottlingInterceptorConfiguration", proxyBeanMethods = false)

@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "groovyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GroovyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyPrincipalFactory")
@@ -55,7 +55,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                                @Qualifier("groovyResourceAuthenticationHandler")
                                                                                                                final AuthenticationHandler groovyResourceAuthenticationHandler,
-                                                                                                               @Qualifier("defaultPrincipalResolver")
+                                                                                                               @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
                                                                                                                final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getGroovy().getLocation();

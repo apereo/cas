@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "u2fAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FAuthenticationComponentSerializationConfiguration {
     @Bean

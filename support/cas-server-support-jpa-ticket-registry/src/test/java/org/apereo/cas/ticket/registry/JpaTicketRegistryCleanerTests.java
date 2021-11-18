@@ -60,7 +60,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JpaTicketRegistryCleanerTests {
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
 
     @Autowired

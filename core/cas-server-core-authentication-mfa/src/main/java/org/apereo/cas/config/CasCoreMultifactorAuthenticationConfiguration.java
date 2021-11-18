@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Travis Schmidt
  * @since 6.0.0
  */
-@Configuration(value = "casCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreMultifactorAuthenticationConfiguration {

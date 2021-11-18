@@ -28,7 +28,7 @@ import java.security.KeyStore;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-@Configuration(value = "inweboConfiguration", proxyBeanMethods = false)
+@Configuration(value = "InweboConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class InweboServiceConfiguration {

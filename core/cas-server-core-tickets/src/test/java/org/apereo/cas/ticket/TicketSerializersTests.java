@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TicketSerializersTests {
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory defaultTicketFactory;
 
     @Autowired

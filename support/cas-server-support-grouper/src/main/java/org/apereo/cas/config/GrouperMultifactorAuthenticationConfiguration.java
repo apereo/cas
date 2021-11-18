@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(name = "cas.authn.mfa.triggers.grouper.grouper-group-field")
-@Configuration(value = "grouperMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GrouperMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
 public class GrouperMultifactorAuthenticationConfiguration {
 
     @Bean

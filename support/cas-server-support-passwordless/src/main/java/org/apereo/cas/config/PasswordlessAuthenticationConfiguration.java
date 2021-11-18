@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "passwordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "PasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 public class PasswordlessAuthenticationConfiguration {
 
     @Bean
@@ -121,7 +121,7 @@ public class PasswordlessAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("passwordlessTokenAuthenticationHandler")
         final AuthenticationHandler passwordlessTokenAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(passwordlessTokenAuthenticationHandler, defaultPrincipalResolver);
     }

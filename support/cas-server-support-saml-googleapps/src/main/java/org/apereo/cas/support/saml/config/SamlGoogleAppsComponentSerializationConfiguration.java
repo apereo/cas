@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 6.1.0
  * @deprecated Since 6.2, to be replaced with CAS SAML2 identity provider functionality.
  */
-@Configuration(value = "samlGoogleAppsComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlGoogleAppsComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
 public class SamlGoogleAppsComponentSerializationConfiguration {

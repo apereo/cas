@@ -34,7 +34,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "jsonServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JsonServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 1)
 public class JsonServiceRegistryConfiguration {

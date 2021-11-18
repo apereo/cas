@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationServiceSelectionStrategyConfiguration {
 

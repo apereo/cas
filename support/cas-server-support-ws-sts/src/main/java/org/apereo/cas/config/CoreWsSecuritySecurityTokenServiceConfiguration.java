@@ -82,7 +82,7 @@ import java.util.Map;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:jaxws-realms.xml")
-@Configuration(value = "coreWsSecuritySecurityTokenServiceConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceConfiguration", proxyBeanMethods = false)
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Configuration(value = "CoreWsSecuritySecurityTokenServiceDelegationConfiguration", proxyBeanMethods = false)

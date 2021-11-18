@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casOAuth20WebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20WebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20WebflowConfiguration {
 

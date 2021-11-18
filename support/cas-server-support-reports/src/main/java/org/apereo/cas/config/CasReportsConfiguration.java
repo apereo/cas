@@ -57,7 +57,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Configuration(value = "casReportsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasReportsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasReportsConfiguration {
 
@@ -160,7 +160,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint(
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver,
         final CasConfigurationProperties casProperties) {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver);
@@ -209,7 +209,7 @@ public class CasReportsConfiguration {
      * @since 6.0.0
      * @deprecated since 6.2.0
      */
-    @Configuration(value = "statusEndpointConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "StatusEndpointConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
     @Deprecated(since = "6.2.0")

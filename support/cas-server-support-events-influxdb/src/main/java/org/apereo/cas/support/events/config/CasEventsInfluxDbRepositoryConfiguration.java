@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
 public class CasEventsInfluxDbRepositoryConfiguration {
 
     @Bean

@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "mongoDbWebAuthnConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbWebAuthnConfiguration", proxyBeanMethods = false)
 public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

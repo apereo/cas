@@ -20,7 +20,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casSimpleMultifactorAuthenticationTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSimpleMultifactorAuthenticationTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {

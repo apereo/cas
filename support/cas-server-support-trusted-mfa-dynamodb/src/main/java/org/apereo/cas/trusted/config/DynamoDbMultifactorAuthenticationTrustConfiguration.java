@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "dynamoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DynamoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 public class DynamoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -181,7 +181,7 @@ public class CasJdbcAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer jdbcAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("jdbcAuthenticationHandlers")
         final Collection<AuthenticationHandler> jdbcAuthenticationHandlers,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> jdbcAuthenticationHandlers.forEach(h ->
             plan.registerAuthenticationHandlerWithPrincipalResolver(h, defaultPrincipalResolver));
