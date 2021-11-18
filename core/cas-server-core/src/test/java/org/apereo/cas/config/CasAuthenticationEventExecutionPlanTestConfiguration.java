@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Lazy;
 @Lazy(false)
 public class CasAuthenticationEventExecutionPlanTestConfiguration {
     @Autowired
-    @Qualifier("defaultPrincipalResolver")
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     private PrincipalResolver defaultPrincipalResolver;
 
     @Bean

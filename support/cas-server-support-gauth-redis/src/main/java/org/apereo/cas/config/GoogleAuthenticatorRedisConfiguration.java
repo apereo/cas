@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableScheduling
 @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "googleAuthenticatorRedisConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorRedisConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorRedisConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

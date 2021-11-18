@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "googleAuthenticatorDynamoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorDynamoDbConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorDynamoDbConfiguration {
 
     @Bean

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.DisposableBean;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,18 +30,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
-    
+
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;
 
-    /**
-     * Instantiates a new EhCache ticket registry.
-     *
-     * @param ticketCatalog the ticket catalog
-     * @param cacheManager  the cache manager
-     * @param cipher        the cipher
-     */
     public EhCache3TicketRegistry(final TicketCatalog ticketCatalog,
                                   final CacheManager cacheManager,
                                   final CipherExecutor cipher) {
@@ -50,6 +42,17 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
         this.cacheManager = cacheManager;
         setCipherExecutor(cipher);
         LOGGER.info("Setting up Ehcache Ticket Registry...");
+    }
+
+    private static Map<String, Ticket> getAllUnexpired(final Cache<String, Ticket> map) {
+        try {
+            val returnMap = new HashMap<String, Ticket>();
+            map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
+            return returnMap;
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+            return new HashMap<>(0);
+        }
     }
 
     @Override
@@ -139,27 +142,16 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
         return ticket;
     }
 
-    private Cache<String, Ticket> getTicketCacheFor(final TicketDefinition metadata) {
-        val mapName = metadata.getProperties().getStorageName();
-        LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
-        return this.cacheManager.getCache(mapName, String.class, Ticket.class);
-    }
-
-    private static Map<String, Ticket> getAllUnexpired(final Cache<String, Ticket> map) {
-        try {
-            val returnMap = new HashMap<String, Ticket>();
-            map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
-            return returnMap;
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-            return new HashMap<>(0);
-        }
-    }
-
     @Override
     public void destroy() {
         if (!this.cacheManager.isClosed()) {
             this.cacheManager.close();
         }
+    }
+
+    private Cache<String, Ticket> getTicketCacheFor(final TicketDefinition metadata) {
+        val mapName = metadata.getProperties().getStorageName();
+        LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
+        return this.cacheManager.getCache(mapName, String.class, Ticket.class);
     }
 }

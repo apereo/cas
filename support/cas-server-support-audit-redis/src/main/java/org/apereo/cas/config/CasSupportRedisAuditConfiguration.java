@@ -23,7 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casSupportRedisAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportRedisAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasSupportRedisAuditConfiguration {

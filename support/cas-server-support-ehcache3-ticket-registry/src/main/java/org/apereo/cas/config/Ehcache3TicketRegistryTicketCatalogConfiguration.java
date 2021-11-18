@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@Configuration(value = "ehcache3TicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "Ehcache3TicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class Ehcache3TicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 

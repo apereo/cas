@@ -35,7 +35,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "coreSamlConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreSamlConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreSamlConfiguration {
 

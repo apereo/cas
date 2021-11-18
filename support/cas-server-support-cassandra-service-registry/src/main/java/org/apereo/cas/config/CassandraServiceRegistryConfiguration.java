@@ -31,7 +31,7 @@ import java.util.Optional;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "cassandraServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CassandraServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraServiceRegistryConfiguration {
 
     @Bean

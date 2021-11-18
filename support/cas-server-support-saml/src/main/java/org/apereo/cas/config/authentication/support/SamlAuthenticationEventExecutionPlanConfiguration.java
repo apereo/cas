@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "samlAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlAuthenticationEventExecutionPlanConfiguration {
 

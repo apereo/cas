@@ -281,7 +281,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         private PrincipalResolver defaultPrincipalResolver;
 
         @Autowired

@@ -23,14 +23,6 @@ public class CasRiskyAuthenticationMitigatedEvent extends AbstractCasEvent {
     private final RegisteredService service;
     private final Object response;
 
-    /**
-     * Instantiates a new CAS risky authentication mitigated event.
-     *
-     * @param source         the source
-     * @param authentication the authentication
-     * @param service        the service
-     * @param response       the response
-     */
     public CasRiskyAuthenticationMitigatedEvent(final Object source, final Authentication authentication,
                                                 final RegisteredService service, final Object response) {
         super(source);

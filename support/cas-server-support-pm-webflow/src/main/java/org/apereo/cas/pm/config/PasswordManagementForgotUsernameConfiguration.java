@@ -79,7 +79,7 @@ public class PasswordManagementForgotUsernameConfiguration {
             final CommunicationsManager communicationsManager,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager,
                 passwordManagementService, defaultPrincipalResolver);
@@ -109,7 +109,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username.google-recaptcha", name = "enabled", havingValue = "true")
-    @Configuration(value = "forgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "ForgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
     public static class ForgotUsernameCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowConfigurer")

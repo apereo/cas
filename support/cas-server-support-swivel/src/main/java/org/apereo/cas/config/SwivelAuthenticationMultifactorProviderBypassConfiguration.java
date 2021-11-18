@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "swivelAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SwivelAuthenticationMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class SwivelAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelBypassEvaluator")

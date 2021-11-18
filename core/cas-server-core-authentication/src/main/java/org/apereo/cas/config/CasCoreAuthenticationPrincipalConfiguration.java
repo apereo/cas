@@ -40,7 +40,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationPrincipalConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuthenticationPrincipalConfiguration {
@@ -50,15 +50,16 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public static class CasCoreAuthenticationPrincipalResolutionConfiguration {
 
         @Bean
-        @ConditionalOnMissingBean(name = "defaultPrincipalResolver")
+        @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver defaultPrincipalResolver(
             final ObjectProvider<List<PrincipalResolutionExecutionPlanConfigurer>> configurers,
             final CasConfigurationProperties casProperties,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
             val plan = new DefaultPrincipalResolutionExecutionPlan();
-            val sortedConfigurers = new ArrayList<>(Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
+            val sortedConfigurers = new ArrayList<>(
+                Optional.ofNullable(configurers.getIfAvailable()).orElseGet(() -> new ArrayList<>(0)));
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
             sortedConfigurers.forEach(Unchecked.consumer(c -> {
@@ -77,11 +78,12 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     @Configuration(value = "CasCoreAuthenticationPrincipalElectionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuthenticationPrincipalElectionConfiguration {
-        @ConditionalOnMissingBean(name = "principalElectionStrategy")
+        @ConditionalOnMissingBean(name = PrincipalElectionStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PrincipalElectionStrategy principalElectionStrategy(final List<PrincipalElectionStrategyConfigurer> configurers,
-                                                                   final CasConfigurationProperties casProperties) {
+        public PrincipalElectionStrategy principalElectionStrategy(
+            final List<PrincipalElectionStrategyConfigurer> configurers,
+            final CasConfigurationProperties casProperties) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
             val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());

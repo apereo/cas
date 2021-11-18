@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@Configuration(value = "casHazelcastThrottlingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasHazelcastThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasHazelcastThrottlingConfiguration {

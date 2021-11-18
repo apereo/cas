@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "mongoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -37,7 +37,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "casWebAppSecurityConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWebAppSecurityConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class CasWebAppSecurityConfiguration {

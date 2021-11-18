@@ -24,7 +24,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.consent.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casConsentRedisConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentRedisConfiguration", proxyBeanMethods = false)
 public class CasConsentRedisConfiguration {
 
     @Bean

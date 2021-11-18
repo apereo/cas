@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casRestAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasRestAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasRestAuthenticationConfiguration {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).singleValueAsArray(true).build().toObjectMapper();
@@ -87,7 +87,7 @@ public class CasRestAuthenticationConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("restAuthenticationHandler")
         final AuthenticationHandler restAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {

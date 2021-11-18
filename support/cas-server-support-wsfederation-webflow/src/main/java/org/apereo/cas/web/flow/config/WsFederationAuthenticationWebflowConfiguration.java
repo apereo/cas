@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "wsFederationAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WsFederationAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class WsFederationAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")

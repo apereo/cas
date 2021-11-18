@@ -48,7 +48,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.jpa", name = "idp-metadata-enabled", havingValue = "true")
-@Configuration(value = "samlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataEntityConfiguration", proxyBeanMethods = false)

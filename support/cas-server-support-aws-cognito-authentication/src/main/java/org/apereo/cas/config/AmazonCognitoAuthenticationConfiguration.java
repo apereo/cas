@@ -42,7 +42,7 @@ import java.net.URL;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "amazonCognitoAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AmazonCognitoAuthenticationConfiguration", proxyBeanMethods = false)
 public class AmazonCognitoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCognitoIdentityProvider")
@@ -89,7 +89,7 @@ public class AmazonCognitoAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer amazonCognitoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("amazonCognitoAuthenticationHandler")
         final AuthenticationHandler amazonCognitoAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(amazonCognitoAuthenticationHandler, defaultPrincipalResolver);
     }

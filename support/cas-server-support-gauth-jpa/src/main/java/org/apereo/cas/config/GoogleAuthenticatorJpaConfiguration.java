@@ -42,7 +42,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @EnableScheduling
-@Configuration(value = "googleAuthentiacatorJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthentiacatorJpaConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorJpaConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorJpaTransactionConfiguration", proxyBeanMethods = false)

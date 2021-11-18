@@ -42,7 +42,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "casCoreAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)

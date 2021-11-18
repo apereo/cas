@@ -21,7 +21,7 @@ import org.springframework.util.ReflectionUtils;
  * @author Paul Spaude
  * @since 5.3.6
  */
-@Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
 public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {

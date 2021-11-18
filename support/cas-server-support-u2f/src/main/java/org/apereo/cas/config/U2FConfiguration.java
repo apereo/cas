@@ -38,7 +38,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "u2fConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
