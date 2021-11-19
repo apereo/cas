@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;

@@ -20,7 +20,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcDefaultIssuerService implements OidcIssuerService {
-    private final OidcProperties properties;
+    /**
+     * The OIDC configuration properties.
+     */
+    protected final OidcProperties properties;
 
     @Override
     public String determineIssuer(final Optional<OidcRegisteredService> registeredService) {
