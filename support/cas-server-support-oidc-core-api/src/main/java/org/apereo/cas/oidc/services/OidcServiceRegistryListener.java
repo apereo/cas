@@ -82,6 +82,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                     .stream()
                     .filter(t -> t.getScopeName().equals(givenScope.trim()))
                     .findFirst()
+                    .map(userScope -> new OidcCustomScopeAttributeReleasePolicy(userScope.getScopeName(), userScope.getAllowedAttributes()))
                     .ifPresent(userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService));
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
@@ -137,5 +138,9 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             oidcService.getServiceId(), oidcService.getAttributeReleasePolicy());
 
         return oidcService;
+    }
+
+    private void addCustomScope(final OidcCustomScopeAttributeReleasePolicy userPolicy) {
+        val policy = new OidcCustomScopeAttributeReleasePolicy(userPolicy.getScopeName(), userPolicy.getAllowedAttributes());
     }
 }
