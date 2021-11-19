@@ -15,7 +15,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
 
-    compileOnlyApi project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-jpa-util")
     
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-pac4j-core")

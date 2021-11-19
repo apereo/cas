@@ -17,8 +17,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi  project(":core:cas-server-core-events")
-    compileOnlyApi  project(":support:cas-server-support-discovery-profile")
+    compileOnly  project(":core:cas-server-core-events")
+    compileOnly  project(":support:cas-server-support-discovery-profile")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")

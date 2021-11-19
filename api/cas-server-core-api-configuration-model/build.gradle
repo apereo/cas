@@ -14,7 +14,7 @@ dependencies {
     
     testImplementation libraries.springbootconfigmetadata
     
-    compileOnlyApi libraries.javaparser
+    compileOnly libraries.javaparser
     
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
