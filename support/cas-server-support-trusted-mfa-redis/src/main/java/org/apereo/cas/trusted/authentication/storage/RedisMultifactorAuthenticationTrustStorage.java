@@ -83,10 +83,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
         }
     }
 
-    @Override
-    public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
-        remove();
-        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+    private Set<? extends MultifactorAuthenticationTrustRecord> getFromRedisKeys(Set<String> keys) {
         if (keys != null) {
             return keys.stream()
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
@@ -95,6 +92,13 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
                 .collect(Collectors.toSet());
         }
         return new HashSet<>(0);
+    }
+
+    @Override
+    public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
+        remove();
+        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+        return getFromRedisKeys(keys);
     }
 
     @Override
@@ -110,13 +114,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         remove();
         val keys = redisTemplate.keys(buildRedisKeyForRecord(principal));
-        if (keys != null && !keys.isEmpty()) {
-            val redisKey = keys.iterator().next();
-            val results = (List<MultifactorAuthenticationTrustRecord>)
-                ObjectUtils.defaultIfNull(redisTemplate.boundValueOps(redisKey).get(), new ArrayList<>());
-            return new HashSet<>(results);
-        }
-        return new HashSet<>(0);
+        return getFromRedisKeys(keys);
     }
 
     @Override
