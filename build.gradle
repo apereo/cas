@@ -538,7 +538,7 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
-        compileOnlyApi libraries.spotbugsannotations
+        compileOnly libraries.spotbugsannotations
     }
 }
 

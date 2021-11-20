@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SyncopeAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
@@ -75,6 +77,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.authn.syncope.url=http://localhost:8095")
 @ResourceLock("Syncope")
 @Tag("AuthenticationHandler")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SyncopeAuthenticationHandlerTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
