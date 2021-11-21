@@ -50,6 +50,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
         val values = new HashMap<>();
         values.put("issuer", response.getIssuer().getValue());
         values.put("destination", response.getDestination());
+        values.put("responseId", response.getID());
         return new String[]{auditFormat.serialize(values)};
     }
 
