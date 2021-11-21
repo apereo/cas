@@ -164,17 +164,20 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        val throughput = ProvisionedThroughput.builder()
+
+        val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
+
+        val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
             .readCapacityUnits(dynamoDbProperties.getReadCapacity())
             .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
+            .build() : null;
 
         metadata.forEach(Unchecked.consumer(r -> {
             val request = CreateTableRequest.builder()
                 .attributeDefinitions(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.S).build())
                 .keySchema(KeySchemaElement.builder().attributeName(ColumnNames.ID.getColumnName()).keyType(KeyType.HASH).build())
                 .provisionedThroughput(throughput)
-                .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
+                .billingMode(billingMode)
                 .tableName(r.getProperties().getStorageName())
                 .build();
             if (deleteTables) {
