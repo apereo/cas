@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -36,6 +37,20 @@ public class CasPullRequestListener implements PullRequestListener {
         processLabelsByChangeset(pr);
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
+        checkForPullRequestDescription(pr);
+    }
+
+    @SneakyThrows
+    private void checkForPullRequestDescription(final PullRequest pr) {
+        val committer = repository.getGitHubProperties().getRepository()
+            .getCommitters().contains(pr.getUser().getLogin());
+        if (!committer && !StringUtils.hasText(pr.getBody()) && !pr.isWorkInProgress() && !pr.isDraft()) {
+            var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
+            log.info("Pull request {} has no valid description", pr);
+            repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+            repository.addComment(pr, template);
+            repository.close(pr);
+        }
     }
 
     private void processLabelsByChangeset(final PullRequest pr) {
@@ -80,7 +95,7 @@ public class CasPullRequestListener implements PullRequestListener {
             !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
         if (modifiesJava) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
-                || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
+                                                           || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
             if (!hasTests) {
                 var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                 if (!isCommitter && !pr.isDraft() && !pr.isWorkInProgress()) {
@@ -110,20 +125,20 @@ public class CasPullRequestListener implements PullRequestListener {
             .filter(file -> {
                 var fname = file.getFilename();
                 return !fname.contains("src/test/java")
-                    && !fname.endsWith(".html")
-                    && !fname.endsWith(".properties")
-                    && !fname.endsWith(".js")
-                    && !fname.endsWith(".yml")
-                    && !fname.endsWith(".yaml")
-                    && !fname.endsWith(".json")
-                    && !fname.endsWith(".jpg")
-                    && !fname.endsWith(".jpeg")
-                    && !fname.endsWith(".sh")
-                    && !fname.endsWith(".bat")
-                    && !fname.endsWith(".txt")
-                    && !fname.endsWith(".md")
-                    && !fname.endsWith(".gif")
-                    && !fname.endsWith(".css");
+                       && !fname.endsWith(".html")
+                       && !fname.endsWith(".properties")
+                       && !fname.endsWith(".js")
+                       && !fname.endsWith(".yml")
+                       && !fname.endsWith(".yaml")
+                       && !fname.endsWith(".json")
+                       && !fname.endsWith(".jpg")
+                       && !fname.endsWith(".jpeg")
+                       && !fname.endsWith(".sh")
+                       && !fname.endsWith(".bat")
+                       && !fname.endsWith(".txt")
+                       && !fname.endsWith(".md")
+                       && !fname.endsWith(".gif")
+                       && !fname.endsWith(".css");
             })
             .count();
 
@@ -223,7 +238,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 }
                 if (assign) {
                     val ci = l == CasLabels.LABEL_CI
-                        && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                             && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                     if (l != CasLabels.LABEL_CI || ci) {
                         log.info("Assigning label {} to pr {}", l, pr);
                         repository.labelPullRequestAs(pr, l);

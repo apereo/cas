@@ -8,7 +8,7 @@ modifies CAS functionality that is extremely and obviously trivial (i.e. fixes a
 presents any other type of change that generally can be accepted without proper tests, 
 please comment and explain on the pull request.
 
-Please re-open the pull request when you're ready and have included tests to verify 
+Please re-open the pull request (or ask project maintainers to do this for you) when you're ready and have included tests to verify 
 functionality. If you feel like you are not immediately available or have no time to work out test cases and steps to
 reproduce and verify the changes, that's not an issue. Please revisit the pull request as soon as it's convenient for you
 to resume work as your schedule allows. If you'd like to keep the patch around and open while you make progress, 
