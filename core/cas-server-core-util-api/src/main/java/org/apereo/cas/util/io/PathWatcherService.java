@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -122,7 +124,8 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             val fullPath = parent.resolve(filename);
             val file = fullPath.toFile();
 
-            Thread.sleep(DELAY_MILLI_SECONDS);
+            FunctionUtils.doAndIgnore(o -> Thread.sleep(DELAY_MILLI_SECONDS));
+
             LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
             if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
                 onCreate.accept(file);

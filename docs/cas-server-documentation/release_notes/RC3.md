@@ -137,3 +137,5 @@ contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 
 - Spring Boot Admin
 - Pac4j
 - Bucket4j
+- Maxmind
+- Apache Tomcat
