@@ -64,7 +64,7 @@ public class WebAuthnWebflowConfiguration {
             final FlowBuilder flowBuilder,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.MFA_WEB_AUTHN_EVENT_ID);
+            builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN);
             return builder.build();
         }
     }
