@@ -17,6 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-passwordless")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")

@@ -24,6 +24,7 @@ dependencies {
     
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

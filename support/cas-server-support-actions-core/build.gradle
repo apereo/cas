@@ -1,4 +1,4 @@
-description = "Apereo CAS Web Application Spring Webflow Actions"
+description = "Apereo CAS Web Application Spring Webflow Actions Core"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-cookie")
@@ -12,16 +12,14 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-tickets-api")
-    implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-services-authentication")
-
+    
     implementation project(":support:cas-server-support-geolocation")
-    implementation project(":support:cas-server-support-actions-core")
 
     testImplementation project(":support:cas-server-support-person-directory")
 
