@@ -17,6 +17,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 

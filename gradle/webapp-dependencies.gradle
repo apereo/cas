@@ -17,6 +17,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")

@@ -17,6 +17,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-captcha-core")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm")
     implementation project(":support:cas-server-support-pm-core")
     implementation project(":support:cas-server-support-token-core-api")

@@ -20,6 +20,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-ldap-core")
     
