@@ -18,7 +18,7 @@ dependencies {
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
     compileOnlyApi project(":core:cas-server-core-rest-api")
-    compileOnlyApi project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
     implementation libraries.yubicoapi
     implementation libraries.u2flibserver

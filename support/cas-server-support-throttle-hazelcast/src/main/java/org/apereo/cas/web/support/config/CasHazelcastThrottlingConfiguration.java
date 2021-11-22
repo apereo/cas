@@ -3,12 +3,14 @@ package org.apereo.cas.web.support.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import org.apereo.cas.web.support.HazelcastMapThrottledSubmissionsStore;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +30,8 @@ public class CasHazelcastThrottlingConfiguration {
     private static final String MAP_KEY = "ipMap";
 
     @Bean
-    public IMap throttleSubmissionMap(
+    @ConditionalOnMissingBean(name = "hazelcastThrottleSubmissionMap")
+    public ThrottledSubmissionsStore throttleSubmissionMap(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         final CasConfigurationProperties casProperties) {
@@ -37,6 +40,6 @@ public class CasHazelcastThrottlingConfiguration {
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
         val ipMapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, MAP_KEY, timeout);
         HazelcastConfigurationFactory.setConfigMap(ipMapConfig, casTicketRegistryHazelcastInstance.getConfig());
-        return casTicketRegistryHazelcastInstance.getMap(MAP_KEY);
+        return new HazelcastMapThrottledSubmissionsStore(casTicketRegistryHazelcastInstance.getMap(MAP_KEY));
     }
 }

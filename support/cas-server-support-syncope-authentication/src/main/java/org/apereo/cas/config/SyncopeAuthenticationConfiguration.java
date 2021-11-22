@@ -59,7 +59,7 @@ public class SyncopeAuthenticationConfiguration {
         final ServicesManager servicesManager) {
 
         val syncope = casProperties.getAuthn().getSyncope();
-        var handlers = Splitter.on(",").splitToList(syncope.getDomain())
+        val handlers = Splitter.on(",").splitToList(syncope.getDomain())
             .stream()
             .map(domain -> {
                 val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
@@ -67,8 +67,10 @@ public class SyncopeAuthenticationConfiguration {
                 h.setState(syncope.getState());
                 h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
                 h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);
-                h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria()));
-                h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation()));
+                val predicate = CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria());
+                h.setCredentialSelectionPredicate(predicate);
+                val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation());
+                h.setPrincipalNameTransformer(transformer);
                 return h;
             })
             .map(AuthenticationHandler.class::cast)

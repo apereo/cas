@@ -74,7 +74,8 @@ public class ConsentDecisionCouchDbRepository extends CouchDbRepositorySupport<C
      */
     @View(name = "by_principal_and_id", map = "function(doc) {emit([doc.principal, doc.id], doc)}")
     public CouchDbConsentDecision findByPrincipalAndId(final String principal, final long id) {
-        val view = createQuery("by_principal_and_id").key(ComplexKey.of(principal, id)).limit(1).includeDocs(true);
+        val view = createQuery("by_principal_and_id")
+            .key(ComplexKey.of(principal, String.valueOf(id))).limit(1).includeDocs(true);
         return db.queryView(view, CouchDbConsentDecision.class).stream().findFirst().orElse(null);
     }
 }

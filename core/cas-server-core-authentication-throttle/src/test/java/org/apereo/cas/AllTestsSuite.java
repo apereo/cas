@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.throttle.ConcurrentThrottledSubmissionsStoreTests;
 import org.apereo.cas.throttle.DefaultAuthenticationThrottlingExecutionPlanTests;
 import org.apereo.cas.throttle.DefaultThrottledRequestResponseHandlerTests;
 import org.apereo.cas.throttle.ThrottledRequestFilterTests;
@@ -16,6 +17,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     DefaultAuthenticationThrottlingExecutionPlanTests.class,
     ThrottledRequestFilterTests.class,
+    ConcurrentThrottledSubmissionsStoreTests.class,
     DefaultThrottledRequestResponseHandlerTests.class
 })
 @Suite
