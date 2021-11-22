@@ -1,11 +1,7 @@
-package org.apereo.cas.web.security.flow;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasWebAppSecurityConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -13,15 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.info.InfoEndpointAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -43,20 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebflowActions")
-@SpringBootTest(classes = {
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasWebAppSecurityConfiguration.class,
-    SecurityAutoConfiguration.class,
-    EndpointAutoConfiguration.class,
-    InfoEndpointAutoConfiguration.class,
-    BeansEndpointAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    WebEndpointAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class
-})
-public class PopulateSpringSecurityContextActionTests {
+public class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

@@ -30,6 +30,7 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -84,6 +85,7 @@ public abstract class BaseWebAuthnWebflowTests {
         CasPersonDirectoryTestConfiguration.class,
         MultifactorAuthnTrustConfiguration.class,
         MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
+        CasSupportActionsConfiguration.class,
         WebAuthnComponentSerializationConfiguration.class,
         WebAuthnMultifactorProviderBypassConfiguration.class,
         WebAuthnConfiguration.class,
