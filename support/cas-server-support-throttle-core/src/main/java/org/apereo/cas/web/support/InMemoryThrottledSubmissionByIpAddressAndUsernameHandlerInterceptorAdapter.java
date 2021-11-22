@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
@@ -18,8 +16,9 @@ import java.util.concurrent.ConcurrentMap;
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
     extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                                                      final ConcurrentMap<String, ZonedDateTime> ipMap) {
+    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final ThrottledSubmissionsStore ipMap) {
         super(configurationContext, ipMap);
     }
 
