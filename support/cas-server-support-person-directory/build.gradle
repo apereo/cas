@@ -8,7 +8,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-person-directory-core")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
+    compileOnly  project(":support:cas-server-support-jpa-util")
 
     implementation libraries.ldaptive
     

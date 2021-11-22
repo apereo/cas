@@ -65,7 +65,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
     }
 
     @SneakyThrows
-    private static void validate(final OidcClientRegistrationRequest registrationRequest, final OidcRegisteredService registeredService) {
+    private static void validate(final OidcClientRegistrationRequest registrationRequest,
+                                 final OidcRegisteredService registeredService) {
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
@@ -161,8 +162,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             registeredService.setClientId(getConfigurationContext().getClientIdGenerator().getNewString());
             registeredService.setClientSecret(getConfigurationContext().getClientSecretGenerator().getNewString());
             registeredService.setEvaluationOrder(0);
-            registeredService.setLogoutUrl(
-                org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
+            val urls = org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris());
+            registeredService.setLogoutUrl(urls);
 
             if (StringUtils.isNotBlank(registrationRequest.getLogo())) {
                 registeredService.setLogo(registrationRequest.getLogo());
@@ -192,6 +193,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
             val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
             val prefix = properties.getServer().getPrefix();
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
+            clientResponse.setClientSecretExpiresAt(0);
 
             val accessToken = generateRegistrationAccessToken(request, response, registeredService, registrationRequest);
 

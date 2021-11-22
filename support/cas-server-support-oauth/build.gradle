@@ -23,7 +23,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
 
-    compileOnlyApi project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-jpa-util")
 
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-core")

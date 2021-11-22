@@ -40,6 +40,8 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -96,6 +98,10 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("themeChangeInterceptor")
     private ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor;
+
+    @Autowired
+    @Qualifier("mvcResourceUrlProvider")
+    private ObjectProvider<ResourceUrlProvider> resourceUrlProvider;
 
     @Bean
     @Lazy(false)
@@ -176,13 +182,29 @@ public class CasWebflowContextConfiguration {
         return interceptor;
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "resourceUrlProviderExposingInterceptor")
+    public ResourceUrlProviderExposingInterceptor resourceUrlProviderExposingInterceptor() {
+        val provider = resourceUrlProvider.getIfAvailable();
+        if (provider != null) {
+            return new ResourceUrlProviderExposingInterceptor(provider);
+        }
+        return null;
+    }
+
     @Lazy(false)
     @Bean
     public HandlerMapping logoutFlowHandlerMapping() {
         val handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
         handler.setFlowRegistry(logoutFlowRegistry());
-        val interceptors = new Object[]{localeChangeInterceptor()};
+        val interceptor = resourceUrlProviderExposingInterceptor();
+        final Object[] interceptors;
+        if (interceptor != null) {
+            interceptors = new Object[]{localeChangeInterceptor(), interceptor};
+        } else {
+            interceptors = new Object[]{localeChangeInterceptor()};
+        }
         handler.setInterceptors(interceptors);
         return handler;
     }
@@ -296,6 +318,10 @@ public class CasWebflowContextConfiguration {
             plan.registerWebflowConfigurer(groovyWebflowConfigurer());
 
             plan.registerWebflowInterceptor(localeChangeInterceptor());
+            val interceptor = resourceUrlProviderExposingInterceptor();
+            if (interceptor != null) {
+                plan.registerWebflowInterceptor(interceptor);
+            }
             themeChangeInterceptor.ifAvailable(plan::registerWebflowInterceptor);
 
             authenticationThrottlingExecutionPlan.ifAvailable(

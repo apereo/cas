@@ -39,7 +39,7 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreSamlConfiguration {
 
-    private static final int POOL_SIZE = 200;
+    private static final int POOL_SIZE = 1_000;
 
     /**
      * Make that SAML2 responses is not built with linebreaks.

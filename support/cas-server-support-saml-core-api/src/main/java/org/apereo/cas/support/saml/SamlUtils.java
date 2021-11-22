@@ -59,6 +59,12 @@ import java.util.Objects;
 @Slf4j
 @UtilityClass
 public class SamlUtils {
+    private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = new ThreadLocal<>() {
+        protected synchronized TransformerFactory initialValue() {
+            return TransformerFactory.newInstance();
+        }
+    };
+
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
      */
@@ -196,7 +202,7 @@ public class SamlUtils {
                     val result = marshaller.unmarshall(root);
                     if (!clazz.isAssignableFrom(result.getClass())) {
                         throw new ClassCastException("Result [" + result + " is of type "
-                            + result.getClass() + " when we were expecting " + clazz);
+                                                     + result.getClass() + " when we were expecting " + clazz);
                     }
                     return (T) result;
                 }
@@ -226,7 +232,7 @@ public class SamlUtils {
                 val domSource = new DOMSource(element);
 
                 val result = new StreamResult(writer);
-                val tf = TransformerFactory.newInstance();
+                val tf = TRANSFORMER_FACTORY_INSTANCE.get();
                 tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                 val transformer = tf.newTransformer();
 
@@ -312,18 +318,18 @@ public class SamlUtils {
      *
      * @param configBean the config bean
      * @param samlObject the saml object
-     * @return the string
      * @throws SamlException the saml exception
      */
-    public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
-        val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
-        LOGGER.debug(repeat);
-        try (val writer = transformSamlObject(configBean, samlObject, true)) {
-            LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
+    public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
+        if (LOGGER.isDebugEnabled()) {
+            val repeat = "*".repeat(SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
             LOGGER.debug(repeat);
-            return writer.toString();
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
+            try (val writer = transformSamlObject(configBean, samlObject, true)) {
+                LOGGER.debug("Logging [{}]\n\n[{}]\n\n", samlObject.getClass().getName(), writer);
+                LOGGER.debug(repeat);
+            } catch (final Exception e) {
+                throw new SamlException(e.getMessage(), e);
+            }
         }
     }
 

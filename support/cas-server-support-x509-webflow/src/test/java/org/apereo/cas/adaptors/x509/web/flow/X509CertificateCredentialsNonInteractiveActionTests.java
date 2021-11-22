@@ -17,6 +17,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.cert.X509Certificate;
 
+import static org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_ERROR;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -62,4 +63,18 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends BaseCer
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS,
             this.action.execute(context).getId());
     }
+
+    @Test
+    public void verifyErrorInRequestResultsInError() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE,
+            new X509Certificate[]{VALID_CERTIFICATE});
+        context.setExternalContext(new ServletExternalContext(
+            new MockServletContext(), request, new MockHttpServletResponse()));
+        context.getRequestScope().put(REQUEST_ATTRIBUTE_X509_ERROR, "true");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR,
+            this.action.execute(context).getId());
+    }
+
 }

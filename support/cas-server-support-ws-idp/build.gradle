@@ -30,7 +30,7 @@ dependencies {
     implementation project(":support:cas-server-support-ws-sts")
     implementation project(":support:cas-server-support-ws-idp-api")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
+    compileOnly  project(":support:cas-server-support-jpa-util")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")

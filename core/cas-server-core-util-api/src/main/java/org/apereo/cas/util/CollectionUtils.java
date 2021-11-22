@@ -617,4 +617,16 @@ public class CollectionUtils {
             });
         }
     }
+
+    /**
+     * Merge map.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, Object> merge(final Map<String, ?>... attributes) {
+        val result = new LinkedHashMap<String, Object>();
+        Arrays.stream(attributes).forEach(result::putAll);
+        return result;
+    }
 }

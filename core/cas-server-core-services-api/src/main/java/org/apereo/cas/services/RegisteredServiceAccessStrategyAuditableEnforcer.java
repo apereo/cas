@@ -7,9 +7,12 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+
+import java.util.Map;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
@@ -29,9 +32,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             val result = AuditableExecutionResult.of(context);
             try {
                 val serviceTicket = context.getServiceTicket().orElseThrow();
-                val authResult = context.getAuthenticationResult().orElseThrow();
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket,
-                    authResult, providedRegisteredService.get());
+                val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
+                    providedRegisteredService.get(), authResult.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
@@ -49,14 +53,37 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .ticketGrantingTicket(ticketGrantingTicket.get())
                 .build();
             try {
+                val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService,
-                    ticketGrantingTicket.get());
+                    registeredService, authResult.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authResult.getAttributes(), authResult.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
             return result;
         }
+
+
+        val providedPrincipal = context.getPrincipal();
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedPrincipal.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val principal = providedPrincipal.get();
+
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .build();
+
+            try {
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, principal.getId(), principal.getAttributes());
+            } catch (final PrincipalException | UnauthorizedServiceException e) {
+                result.setException(e);
+            }
+            return result;
+        }
+
 
         val providedAuthn = context.getAuthentication();
         if (providedService.isPresent() && providedRegisteredService.isPresent() && providedAuthn.isPresent()) {
@@ -72,8 +99,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
 
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService,
-                    authentication);
+                    registeredService, authentication.getPrincipal().getId(),
+                    (Map) CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes()));
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }

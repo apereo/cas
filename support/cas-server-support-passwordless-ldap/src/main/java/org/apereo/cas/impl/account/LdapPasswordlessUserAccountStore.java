@@ -43,7 +43,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
 
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getEntry();
-                val acctBuilder = PasswordlessUserAccount.builder().username(username);
+                val acctBuilder = PasswordlessUserAccount.builder().username(username).name(username);
 
                 if (entry.getAttribute(ldapProperties.getEmailAttribute()) != null) {
                     acctBuilder.email(entry.getAttribute(ldapProperties.getEmailAttribute()).getStringValue());

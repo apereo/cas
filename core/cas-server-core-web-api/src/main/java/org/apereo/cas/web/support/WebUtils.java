@@ -1356,10 +1356,20 @@ public class WebUtils {
      * Is cas login form viewable.
      *
      * @param context the context
-     * @return true /false
+     * @return true /false Defaults to TRUE if not set in flow scope
      */
     public static boolean isCasLoginFormViewable(final RequestContext context) {
         return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.TRUE);
+    }
+
+    /**
+     * Has login form been set to viewable explicitly.
+     *
+     * @param context the context
+     * @return true /false Defaults to FALSE if not set in flow scope
+     */
+    public static boolean isCasLoginFormSetToViewable(final RequestContext context) {
+        return context.getFlowScope().getBoolean("casLoginFormViewable", Boolean.FALSE);
     }
 
     /**
