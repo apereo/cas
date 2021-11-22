@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /**
@@ -25,45 +24,13 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap;
+    private final ThrottledSubmissionsStore submissionsStore;
 
     protected AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(
         final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-        final ConcurrentMap<String, ZonedDateTime> ipMap) {
+        final ThrottledSubmissionsStore ipMap) {
         super(configurationContext);
-        this.ipMap = ipMap;
-    }
-
-    @Override
-    public void recordSubmissionFailure(final HttpServletRequest request) {
-        val key = constructKey(request);
-        LOGGER.debug("Recording submission failure [{}]", key);
-        this.ipMap.put(key, ZonedDateTime.now(ZoneOffset.UTC));
-    }
-
-    @Override
-    public boolean exceedsThreshold(final HttpServletRequest request) {
-        val key = constructKey(request);
-        LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
-        val last = this.ipMap.get(key);
-        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
-        return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
-    }
-
-    @Override
-    public Collection getRecords() {
-        return ipMap.entrySet()
-            .stream()
-            .map(entry -> entry.getKey() + "<->" + entry.getValue())
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public void decrement() {
-        LOGGER.info("Beginning audit cleanup...");
-        val now = ZonedDateTime.now(ZoneOffset.UTC);
-        this.ipMap.entrySet().removeIf(entry -> submissionRate(now, entry.getValue()) < getThresholdRate());
-        LOGGER.debug("Done decrementing count for throttler.");
+        this.submissionsStore = ipMap;
     }
 
     /**
@@ -77,5 +44,36 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         val rate = SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
         LOGGER.debug("Submitting rate for [{}] and [{}] is [{}]", a, b, rate);
         return rate;
+    }
+
+    @Override
+    public void recordSubmissionFailure(final HttpServletRequest request) {
+        val key = constructKey(request);
+        LOGGER.debug("Recording submission failure [{}]", key);
+        this.submissionsStore.put(key, ZonedDateTime.now(ZoneOffset.UTC));
+    }
+
+    @Override
+    public boolean exceedsThreshold(final HttpServletRequest request) {
+        val key = constructKey(request);
+        LOGGER.trace("Throttling threshold key is [{}] with submission threshold [{}]", key, getThresholdRate());
+        val last = this.submissionsStore.get(key);
+        LOGGER.debug("Last throttling date time for key [{}] is [{}]", key, last);
+        return last != null && submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate();
+    }
+
+    @Override
+    public Collection getRecords() {
+        return submissionsStore.entries()
+            .map(entry -> entry.getKey() + "<->" + entry.getValue())
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public void decrement() {
+        LOGGER.info("Beginning audit cleanup...");
+        val now = ZonedDateTime.now(ZoneOffset.UTC);
+        submissionsStore.removeIf(entry -> submissionRate(now, entry.getValue()) < getThresholdRate());
+        LOGGER.debug("Done decrementing count for throttler.");
     }
 }
