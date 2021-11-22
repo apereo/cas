@@ -78,6 +78,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                     .stream()
                     .filter(t -> t.getScopeName().equals(givenScope.trim()))
                     .findFirst()
+                    .map(scope -> attributeReleasePolicyFactory.custom(scope.getScopeName(), scope.getAllowedAttributes()))
                     .ifPresent(userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService));
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
