@@ -83,7 +83,6 @@ public class WebAuthnStartAuthenticationActionTests {
                 .build());
         result = webAuthnStartAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        assertTrue(context.getFlowScope().contains("_csrf"));
     }
 
 }

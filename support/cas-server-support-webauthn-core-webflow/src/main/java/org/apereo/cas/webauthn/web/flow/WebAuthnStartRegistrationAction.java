@@ -6,12 +6,10 @@ import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
-import com.yubico.core.RegistrationStorage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,11 +29,7 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
      */
     public static final String FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID = "webauthnApplicationId";
 
-    private final RegistrationStorage webAuthnCredentialRepository;
-
     private final CasConfigurationProperties casProperties;
-
-    private final CsrfTokenRepository csrfTokenRepository;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -53,8 +47,6 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
             flowScope.put("displayName", principal.getId());
         }
         flowScope.put(FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID, webAuthn.getApplicationId());
-
-        WebAuthnActionHelper.addCsrfTokenToFlowScope(requestContext, csrfTokenRepository);
         return null;
     }
 }

@@ -16,7 +16,6 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowEventResolver;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
-import org.apereo.cas.webauthn.web.flow.WebAuthnPreparePrimaryLoginAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAction;
@@ -83,11 +82,14 @@ public class WebAuthnWebflowConfiguration {
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
             val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, webAuthnFlowRegistry,
                 applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext),
+                webAuthnCsrfTokenRepository);
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
             return cfg;
         }
@@ -162,37 +164,21 @@ public class WebAuthnWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowActionConfiguration {
 
-        @ConditionalOnMissingBean(name = "webAuthnPreparePrimaryLoginAction")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action webAuthnPreparePrimaryLoginAction(
-                @Qualifier("webAuthnCsrfTokenRepository")
-                final CsrfTokenRepository webAuthnCsrfTokenRepository) {
-            return new WebAuthnPreparePrimaryLoginAction(webAuthnCsrfTokenRepository);
-        }
-
         @ConditionalOnMissingBean(name = "webAuthnStartAuthenticationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartAuthenticationAction(
             @Qualifier("webAuthnCredentialRepository")
-            final RegistrationStorage webAuthnCredentialRepository,
-            @Qualifier("webAuthnCsrfTokenRepository")
-            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
-            return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository, webAuthnCsrfTokenRepository);
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository);
         }
 
         @ConditionalOnMissingBean(name = "webAuthnStartRegistrationAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartRegistrationAction(
-            @Qualifier("webAuthnCsrfTokenRepository")
-            final CsrfTokenRepository webAuthnCsrfTokenRepository,
-            @Qualifier("webAuthnCredentialRepository")
-            final RegistrationStorage webAuthnCredentialRepository,
             final CasConfigurationProperties casProperties) {
-            return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository,
-                casProperties, webAuthnCsrfTokenRepository);
+            return new WebAuthnStartRegistrationAction(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
