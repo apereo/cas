@@ -82,11 +82,14 @@ public class WebAuthnWebflowConfiguration {
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
             val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, webAuthnFlowRegistry,
                 applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext),
+                webAuthnCsrfTokenRepository);
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
             return cfg;
         }
@@ -174,13 +177,8 @@ public class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartRegistrationAction(
-            @Qualifier("webAuthnCsrfTokenRepository")
-            final CsrfTokenRepository webAuthnCsrfTokenRepository,
-            @Qualifier("webAuthnCredentialRepository")
-            final RegistrationStorage webAuthnCredentialRepository,
             final CasConfigurationProperties casProperties) {
-            return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository,
-                casProperties, webAuthnCsrfTokenRepository);
+            return new WebAuthnStartRegistrationAction(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
