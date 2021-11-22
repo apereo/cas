@@ -73,9 +73,40 @@ public class DynamoDbTicketRegistryFacilitatorTests {
                 DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
                         .tableName(td.getProperties().getStorageName())
                         .build());
-                assertEquals(BillingMode.PAY_PER_REQUEST, resp.table().billingModeSummary().billingMode());
+                val respTD = resp.table();
+                assertEquals(BillingMode.PAY_PER_REQUEST, respTD.billingModeSummary().billingMode());
+
+                val throughput = respTD.provisionedThroughput();
+                assertEquals(0, throughput.readCapacityUnits());
+                assertEquals(0, throughput.writeCapacityUnits());
             });
         }
     }
 
+    @Nested
+    @EnabledIfPortOpen(port = 8000)
+    @TestPropertySource(properties = {"cas.ticket.registry.dynamo-db.billing-mode=PROVISIONED",
+                                        "cas.ticket.registry.dynamo-db.read-capacity=7",
+                                        "cas.ticket.registry.dynamo-db.write-capacity=9"})
+    @SuppressWarnings("ClassCanBeStatic")
+    public class DynamoDbTicketRegistryFacilitatorBillingModeProvisionedTests
+            extends BaseDynamoDbTicketRegistryFacilitatorTests {
+        @Test
+        public void verifyCreateTableWithProvisionedBilling() {
+
+            dynamoDbTicketRegistryFacilitator.createTicketTables(true);
+            val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
+            dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
+                DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
+                        .tableName(td.getProperties().getStorageName())
+                        .build());
+                val respTD = resp.table();
+                assertNull(respTD.billingModeSummary());
+
+                val throughput = respTD.provisionedThroughput();
+                assertEquals(7, throughput.readCapacityUnits());
+                assertEquals(9, throughput.writeCapacityUnits());
+            });
+        }
+    }
 }
