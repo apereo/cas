@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "couchbaseAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchbaseAuthenticationConfiguration", proxyBeanMethods = false)
 public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")
@@ -73,7 +73,7 @@ public class CouchbaseAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                           @Qualifier("couchbaseAuthenticationHandler")
                                                                                                           final AuthenticationHandler couchbaseAuthenticationHandler,
-                                                                                                          @Qualifier("defaultPrincipalResolver")
+                                                                                                          @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
                                                                                                           final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();

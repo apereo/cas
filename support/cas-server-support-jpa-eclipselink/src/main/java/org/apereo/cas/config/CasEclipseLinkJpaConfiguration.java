@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "casEclipseLinkJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasEclipseLinkJpaConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasEclipseLinkJpaConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

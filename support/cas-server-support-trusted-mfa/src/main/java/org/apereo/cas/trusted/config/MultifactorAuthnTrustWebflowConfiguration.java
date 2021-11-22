@@ -29,7 +29,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "multifactorAuthnTrustWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MultifactorAuthnTrustWebflowConfiguration", proxyBeanMethods = false)
 public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")

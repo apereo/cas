@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casAcceptableUsagePolicyLdapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyLdapConfiguration {

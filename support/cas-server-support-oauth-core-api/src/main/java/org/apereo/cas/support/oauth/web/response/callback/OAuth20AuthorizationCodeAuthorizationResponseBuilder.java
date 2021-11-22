@@ -36,7 +36,10 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
      */
     protected final TicketRegistry ticketRegistry;
 
-    private final OAuth20CodeFactory oAuthCodeFactory;
+    /**
+     * The OAuth 2.0 code factory.
+     */
+    protected final OAuth20CodeFactory oAuthCodeFactory;
 
     public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final ServicesManager servicesManager,
                                                                 final CasConfigurationProperties casProperties,

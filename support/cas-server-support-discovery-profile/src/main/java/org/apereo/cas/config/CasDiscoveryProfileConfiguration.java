@@ -29,7 +29,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casDiscoveryProfileConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasDiscoveryProfileConfiguration", proxyBeanMethods = false)
 public class CasDiscoveryProfileConfiguration {
 
     private static Set<String> transformAttributes(final List<String> attributes) {

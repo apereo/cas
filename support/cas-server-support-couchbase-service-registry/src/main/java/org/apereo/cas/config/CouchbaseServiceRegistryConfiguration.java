@@ -31,7 +31,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "couchbaseServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchbaseServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchbaseServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

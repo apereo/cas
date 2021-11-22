@@ -34,7 +34,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "cassandraAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CassandraAuthenticationConfiguration", proxyBeanMethods = false)
 public class CassandraAuthenticationConfiguration {
 
     @Bean
@@ -83,7 +83,7 @@ public class CassandraAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("cassandraAuthenticationHandler")
         final AuthenticationHandler cassandraAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler, defaultPrincipalResolver);
     }

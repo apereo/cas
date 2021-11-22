@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * @since 6.0.0
  */
 @ConditionalOnProperty(name = "spring.datasource.url")
-@Configuration(value = "conditionalDataSourceConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ConditionalDataSourceConfiguration", proxyBeanMethods = false)
 @Import(DataSourceAutoConfiguration.class)
 public class ConditionalDataSourceConfiguration {
 }

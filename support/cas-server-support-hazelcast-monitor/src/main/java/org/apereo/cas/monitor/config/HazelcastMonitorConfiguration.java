@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "hazelcastMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "HazelcastMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastMonitorConfiguration {
 

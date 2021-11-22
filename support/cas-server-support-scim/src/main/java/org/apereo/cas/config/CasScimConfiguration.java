@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @ConditionalOnProperty(prefix = "cas.scim", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casScimConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasScimConfiguration", proxyBeanMethods = false)
 public class CasScimConfiguration {
 
     @ConditionalOnMissingBean(name = "scimWebflowConfigurer")

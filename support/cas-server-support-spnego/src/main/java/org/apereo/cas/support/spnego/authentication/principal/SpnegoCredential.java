@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
@@ -67,12 +66,7 @@ public class SpnegoCredential implements Credential {
      */
     private boolean isNtlm;
 
-    /**
-     * Instantiates a new SPNEGO credential.
-     *
-     * @param initToken the init token
-     */
-    public SpnegoCredential(final @NonNull byte[] initToken) {
+    public SpnegoCredential(final byte[] initToken) {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }

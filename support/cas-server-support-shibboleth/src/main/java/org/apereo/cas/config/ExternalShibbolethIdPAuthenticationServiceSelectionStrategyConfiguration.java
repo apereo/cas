@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "externalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration {

@@ -11,5 +11,5 @@ docker exec -it ldap-server ls
 docker exec ldap-server bash -c "cat ./users.ldif"
 
 echo -e "Adding entry..."
-docker exec -it ldap-server bash -c "ldapadd -x -D 'cn=Directory Manager' -w password -H ldap:// -f ./users.ldif"
+docker exec ldap-server bash -c "ldapadd -x -D 'cn=Directory Manager' -w password -H ldap:// -f ./users.ldif"
 echo -e "\n\nReady!"

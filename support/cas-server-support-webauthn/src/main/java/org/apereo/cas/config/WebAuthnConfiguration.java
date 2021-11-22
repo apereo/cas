@@ -83,7 +83,7 @@ import java.util.Optional;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebAuthnEnabled
-@Configuration(value = "webAuthnConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WebAuthnConfiguration", proxyBeanMethods = false)
 public class WebAuthnConfiguration {
 
     private static final int CACHE_MAX_SIZE = 10_000;

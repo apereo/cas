@@ -43,7 +43,7 @@ import javax.persistence.EntityManagerFactory;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "jpaTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaTicketRegistryConfiguration", proxyBeanMethods = false)
 public class JpaTicketRegistryConfiguration {
 
     @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)

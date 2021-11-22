@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "casConsulDiscoveryClientConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsulDiscoveryClientConfiguration", proxyBeanMethods = false)
 public class CasConsulDiscoveryClientConfiguration {
 }

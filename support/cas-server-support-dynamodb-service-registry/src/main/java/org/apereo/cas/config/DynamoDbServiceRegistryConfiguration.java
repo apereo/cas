@@ -31,7 +31,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "dynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

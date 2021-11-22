@@ -46,7 +46,7 @@ import java.util.List;
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "multifactorAuthnTrustedDeviceFingerprintConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintConfiguration", proxyBeanMethods = false)
 public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration", proxyBeanMethods = false)

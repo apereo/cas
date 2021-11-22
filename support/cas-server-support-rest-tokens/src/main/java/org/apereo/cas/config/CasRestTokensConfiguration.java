@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casRestTokensConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasRestTokensConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRestTokensConfiguration {
 

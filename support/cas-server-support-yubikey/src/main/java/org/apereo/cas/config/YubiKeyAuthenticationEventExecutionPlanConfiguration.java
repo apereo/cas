@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "yubikeyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "YubikeyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

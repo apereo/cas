@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  * @deprecated Since 6.2, due to Ehcache 2.x being unmaintained. Other registries are available, including Ehcache 3.x.
  */
-@Configuration(value = "ehcacheMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "EhcacheMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
 public class EhCacheMonitorConfiguration {

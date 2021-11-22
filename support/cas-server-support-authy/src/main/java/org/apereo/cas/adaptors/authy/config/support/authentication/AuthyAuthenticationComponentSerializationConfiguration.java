@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "authyAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AuthyAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AuthyAuthenticationComponentSerializationConfiguration {
     @Bean

@@ -94,7 +94,7 @@ public abstract class BaseTicketRegistryTests {
     private static final String TICKET_SHOULD_BE_NULL_USE_ENCRYPTION = "Ticket should be null. useEncryption[";
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
 
     protected boolean useEncryption;

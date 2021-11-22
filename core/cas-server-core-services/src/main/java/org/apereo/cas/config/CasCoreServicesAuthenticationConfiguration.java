@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)

@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "x509AuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "X509AuthenticationConfiguration", proxyBeanMethods = false)
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;

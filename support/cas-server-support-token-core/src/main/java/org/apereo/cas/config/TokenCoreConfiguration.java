@@ -42,7 +42,7 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-@Configuration(value = "tokenCoreConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TokenCoreConfiguration", proxyBeanMethods = false)
 public class TokenCoreConfiguration {
 
     @Configuration(value = "TokenCoreValidatorConfiguration", proxyBeanMethods = false)

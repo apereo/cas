@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
-@Configuration(value = "openIdServiceFactoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OpenIdServiceFactoryConfiguration", proxyBeanMethods = false)
 public class OpenIdServiceFactoryConfiguration {
 
     @Bean

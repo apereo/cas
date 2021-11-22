@@ -36,7 +36,7 @@ import java.util.Set;
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "jpaPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 public class JpaPasswordlessAuthenticationConfiguration {
 
     @Configuration(value = "JpaPasswordlessAuthenticationEntityConfiguration", proxyBeanMethods = false)

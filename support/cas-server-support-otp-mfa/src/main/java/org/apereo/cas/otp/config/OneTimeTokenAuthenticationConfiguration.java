@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "oneTimeTokenAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OneTimeTokenAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 public class OneTimeTokenAuthenticationConfiguration {

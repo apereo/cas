@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
-@Configuration(value = "radiusMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RadiusMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusBypassEvaluator")
