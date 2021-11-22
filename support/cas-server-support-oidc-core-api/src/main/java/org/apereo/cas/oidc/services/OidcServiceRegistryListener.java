@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -78,6 +79,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                     .stream()
                     .filter(t -> t.getScopeName().equals(givenScope.trim()))
                     .findFirst()
+                    .map(scope -> attributeReleasePolicyFactory.custom(scope.getScopeName(), scope.getAllowedAttributes()))
                     .ifPresent(userPolicy -> addAttributeReleasePolicy(policyChain, userPolicy, givenScope, oidcService));
             } else {
                 val scope = OidcConstants.StandardScopes.valueOf(givenScope.trim().toUpperCase());
