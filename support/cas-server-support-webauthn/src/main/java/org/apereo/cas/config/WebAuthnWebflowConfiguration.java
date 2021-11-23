@@ -113,7 +113,8 @@ public class WebAuthnWebflowConfiguration {
         val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
             loginFlowDefinitionRegistry.getObject(), webAuthnFlowRegistry(),
             applicationContext, casProperties,
-            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext),
+            webAuthnCsrfTokenRepository.getObject());
         cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
         return cfg;
     }
@@ -129,8 +130,7 @@ public class WebAuthnWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action webAuthnStartRegistrationAction() {
-        return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository.getObject(),
-            casProperties, webAuthnCsrfTokenRepository.getObject());
+        return new WebAuthnStartRegistrationAction(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")
