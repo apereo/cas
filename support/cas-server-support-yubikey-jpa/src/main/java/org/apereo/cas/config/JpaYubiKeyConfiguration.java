@@ -48,7 +48,7 @@ public class JpaYubiKeyConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaYubiKeyVendorAdapter(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("jpaBeanFactory")
+                                                        @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                         final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -67,7 +67,7 @@ public class JpaYubiKeyConfiguration {
             final BeanContainer<String> jpaYubiKeyPackagesToScan,
             @Qualifier("jpaYubiKeyVendorAdapter")
             final JpaVendorAdapter jpaYubiKeyVendorAdapter,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceYubiKey)

@@ -18,7 +18,7 @@ dependencies {
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
 
-    compileOnlyApi project(":support:cas-server-support-duo-core-mfa")
+    compileOnly project(":support:cas-server-support-duo-core-mfa")
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-duo")

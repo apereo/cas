@@ -58,7 +58,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
         public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("jpaBeanFactory")
+                                                                @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                                 final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -80,7 +80,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final DataSource dataSourceSamlMetadataIdP,
             @Qualifier("jpaSamlMetadataIdPPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter)

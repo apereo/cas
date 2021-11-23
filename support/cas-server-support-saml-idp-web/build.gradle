@@ -19,7 +19,7 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
-    compileOnlyApi project(":support:cas-server-support-consent-api")
+    compileOnly project(":support:cas-server-support-consent-api")
 
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-saml-core")
@@ -31,7 +31,7 @@ dependencies {
     implementation libraries.casclient
     implementation libraries.shibutiljavasupport
     implementation libraries.pac4jcore
-    compileOnlyApi libraries.pac4jsaml
+    compileOnly libraries.pac4jsaml
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
