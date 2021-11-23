@@ -53,7 +53,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
             final JpaVendorAdapter jpaPasswordlessVendorAdapter,
             @Qualifier("passwordlessDataSource")
             final DataSource passwordlessDataSource,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
 
             val ctx = JpaConfigurationContext.builder()
@@ -68,7 +68,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaPasswordlessVendorAdapter(final CasConfigurationProperties casProperties,
-                                                             @Qualifier("jpaBeanFactory")
+                                                             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                              final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }

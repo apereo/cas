@@ -45,7 +45,7 @@ public class CasHibernateJpaBeanFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("jpaBeanFactory")
+    @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
     private JpaBeanFactory jpaBeanFactory;
 
     @SneakyThrows

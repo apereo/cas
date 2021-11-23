@@ -66,7 +66,7 @@ public class CasConsentJdbcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaConsentVendorAdapter(
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
@@ -85,7 +85,7 @@ public class CasConsentJdbcConfiguration {
             final DataSource dataSourceConsent,
             @Qualifier("jpaConsentPackagesToScan")
             final BeanContainer<String> jpaConsentPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties) {
             val ctx = JpaConfigurationContext.builder()

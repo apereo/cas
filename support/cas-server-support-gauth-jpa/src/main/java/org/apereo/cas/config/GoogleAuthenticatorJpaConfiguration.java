@@ -107,7 +107,7 @@ public class GoogleAuthenticatorJpaConfiguration {
         @Bean
         public JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -122,7 +122,7 @@ public class GoogleAuthenticatorJpaConfiguration {
             final DataSource dataSourceGoogleAuthenticator,
             @Qualifier("jpaPackagesToScanGoogleAuthenticator")
             final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)

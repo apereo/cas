@@ -64,8 +64,8 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         
         val file = File.createTempFile("jwks-service", ".jwks");
         val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
-            casProperties.getAuthn().getOidc().getJwks().getJwksType(),
-            casProperties.getAuthn().getOidc().getJwks().getJwksKeySize());
+            casProperties.getAuthn().getOidc().getJwks().getCore().getJwksType(),
+            casProperties.getAuthn().getOidc().getJwks().getCore().getJwksKeySize());
         jsonWebKey.setKeyId("cas-kid");
         
         val jsonWebKeySet = new JsonWebKeySet(jsonWebKey);

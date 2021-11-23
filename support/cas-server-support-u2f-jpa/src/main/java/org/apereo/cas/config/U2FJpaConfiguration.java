@@ -84,7 +84,7 @@ public class U2FJpaConfiguration {
         @Bean
         public JpaVendorAdapter jpaU2fVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -104,7 +104,7 @@ public class U2FJpaConfiguration {
             final BeanContainer<String> jpaU2fPackagesToScan,
             @Qualifier("jpaU2fVendorAdapter")
             final JpaVendorAdapter jpaU2fVendorAdapter,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f)
                 .packagesToScan(jpaU2fPackagesToScan.toSet()).persistenceUnitName("jpaU2fRegistryContext")

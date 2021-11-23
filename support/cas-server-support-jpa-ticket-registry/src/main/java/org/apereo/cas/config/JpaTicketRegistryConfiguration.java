@@ -79,7 +79,7 @@ public class JpaTicketRegistryConfiguration {
             final CloseableDataSource dataSourceTicket,
             @Qualifier("ticketPackagesToScan")
             final BeanContainer<String> ticketPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             val ctx = JpaConfigurationContext.builder()
@@ -127,7 +127,7 @@ public class JpaTicketRegistryConfiguration {
             final TransactionTemplate jpaTicketRegistryTransactionTemplate,
             @Qualifier("ticketCatalog")
             final TicketCatalog ticketCatalog,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val jpa = casProperties.getTicket().getRegistry().getJpa();
             val bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog,

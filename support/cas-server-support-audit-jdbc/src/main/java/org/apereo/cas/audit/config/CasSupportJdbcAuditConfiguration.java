@@ -54,7 +54,7 @@ public class CasSupportJdbcAuditConfiguration {
         public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))

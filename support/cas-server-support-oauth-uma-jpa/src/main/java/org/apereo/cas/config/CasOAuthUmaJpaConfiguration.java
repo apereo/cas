@@ -50,7 +50,7 @@ public class CasOAuthUmaJpaConfiguration {
         @Bean
         public JpaVendorAdapter jpaUmaVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -70,7 +70,7 @@ public class CasOAuthUmaJpaConfiguration {
             final DataSource dataSourceUma,
             @Qualifier("jpaUmaPackagesToScan")
             final BeanContainer<String> jpaUmaPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaUmaVendorAdapter)
