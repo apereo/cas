@@ -130,6 +130,14 @@ configurations.all {
     exclude(group: "commons-logging", module: "commons-logging")
 }
 
+dependencies {
+    modules {
+        module("com.sun.mail:javax.mail") {
+            replacedBy("com.sun.mail:jakarta.mail", "javax.mail is now named jakarta.mail")
+        }
+    }
+}
+
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
