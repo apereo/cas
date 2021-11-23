@@ -59,7 +59,7 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
             .count();
     }
 
-    @TestPropertySource(properties = "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rotation.jwks")
+    @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/rotation.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class EmptyKeystoreTests extends AbstractOidcTests {
@@ -93,7 +93,7 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
         }
     }
 
-    @TestPropertySource(properties = "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/current.jwks")
+    @TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/current.jwks")
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class ExistingKeystoreTests extends AbstractOidcTests {

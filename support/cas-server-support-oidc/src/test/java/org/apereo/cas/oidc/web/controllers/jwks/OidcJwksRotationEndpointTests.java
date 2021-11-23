@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
     "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
-    "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc-jwks.jwks",
+    "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc-jwks.jwks",
     "management.endpoint.oidcJwks.enabled=true"
 })
 @Tag("ActuatorEndpoint")

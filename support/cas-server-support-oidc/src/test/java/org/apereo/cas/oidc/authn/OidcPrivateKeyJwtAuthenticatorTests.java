@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 @TestPropertySource(properties = {
     "cas.authn.oauth.code.time-to-kill-in-seconds=60",
-    "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
+    "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
 })
 public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 

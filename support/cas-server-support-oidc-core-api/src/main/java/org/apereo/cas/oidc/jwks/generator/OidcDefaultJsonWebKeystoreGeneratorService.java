@@ -48,7 +48,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     @Override
     public Resource generate() {
         val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getJwksFile());
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
         if (ResourceUtils.isFile(resource)) {
             resourceWatcherService = new FileWatcherService(resource.getFile(),
@@ -58,7 +58,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
                 });
             resourceWatcherService.start(resource.getFilename());
         }
-        return generate(resource);
+        val resultingResource = generate(resource);
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource));
+        return resultingResource;
     }
 
     /**
@@ -73,20 +75,28 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
-        val currentKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT);
-        val futureKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE);
+        val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
+        val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
         val jsonWebKeySet = new JsonWebKeySet(currentKey, futureKey);
-        
+
+        return storeJsonWebKeySet(file, jsonWebKeySet);
+    }
+
+    /**
+     * Store json web key set resource.
+     *
+     * @param file          the file
+     * @param jsonWebKeySet the json web key set
+     * @return the resource
+     * @throws Exception the io exception
+     */
+    protected Resource storeJsonWebKeySet(final Resource file, final JsonWebKeySet jsonWebKeySet) throws Exception {
         val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
         val location = file.getFile();
         FileUtils.write(location, data, StandardCharsets.UTF_8);
         LOGGER.debug("Generated JSON web keystore at [{}]", location);
         return file;
-    }
-
-    private JsonWebKey generateKeyWithState(final OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates state) {
-        val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
-        OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(key, state);
-        return key;
     }
 }

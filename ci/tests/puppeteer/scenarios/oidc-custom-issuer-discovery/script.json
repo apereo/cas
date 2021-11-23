@@ -5,7 +5,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc/custom/issuer/fawnoos",
-    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks"
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks"
   ]
 }
 

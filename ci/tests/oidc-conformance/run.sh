@@ -29,7 +29,7 @@ java -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n\
   -jar "$PWD"/cas.war \
   --cas.authn.attribute-repository.json[0].location="$PWD"/ci/tests/oidc-conformance/cas-config/attribute-repository.json \
   --cas.authn.oidc.core.issuer=https://localhost:8446/cas/oidc \
-  --cas.authn.oidc.jwks.jwks-file=file:"$PWD"/ci/tests/oidc-conformance/cas-config/keystore.jwks \
+  --cas.authn.oidc.jwks.file-system.jwks-file=file:"$PWD"/ci/tests/oidc-conformance/cas-config/keystore.jwks \
   --cas.service-registry.core.init-from-json=true \
   --cas.service-registry.json.location=file:"$PWD"/ci/tests/oidc-conformance/cas-config/services \
   --cas.authn.oidc.core.dynamic-client-registration-mode=OPEN \
