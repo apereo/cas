@@ -107,7 +107,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
 
     private Optional<Resource> whenKeystoreResourceExists() throws Exception {
         val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getJwksFile());
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
         val resource = ResourceUtils.getRawResourceFrom(resolve);
         return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
     }

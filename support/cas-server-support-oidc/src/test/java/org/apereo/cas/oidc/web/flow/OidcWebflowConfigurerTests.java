@@ -12,6 +12,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;
+import org.apereo.cas.oidc.config.OidcJwksConfiguration;
 import org.apereo.cas.oidc.config.OidcLogoutConfiguration;
 import org.apereo.cas.oidc.config.OidcResponseConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     OidcConfiguration.class,
     OidcResponseConfiguration.class,
     OidcLogoutConfiguration.class,
+    OidcJwksConfiguration.class,
     OidcEndpointsConfiguration.class,
     OidcComponentSerializationConfiguration.class,
     OidcThrottleConfiguration.class,
@@ -61,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = {
     "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
-    "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
+    "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
 })
 @Tag("OIDC")
 public class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {

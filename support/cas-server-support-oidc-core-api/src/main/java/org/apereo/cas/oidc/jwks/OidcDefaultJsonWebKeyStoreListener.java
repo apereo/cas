@@ -12,14 +12,14 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.Optional;
 
 /**
- * This is {@link OidcJsonWebKeyStoreListenerImpl}.
+ * This is {@link OidcDefaultJsonWebKeyStoreListener}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @RequiredArgsConstructor
 @Slf4j
-public class OidcJsonWebKeyStoreListenerImpl implements OidcJsonWebKeyStoreListener {
+public class OidcDefaultJsonWebKeyStoreListener implements OidcJsonWebKeyStoreListener {
     private final LoadingCache<String, Optional<PublicJsonWebKey>> oidcJsonWebKeystoreCache;
 
     @Override

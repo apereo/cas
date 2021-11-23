@@ -209,7 +209,6 @@ public class OidcConfiguration {
         }
     }
 
-
     @Configuration(value = "OidcClaimsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcClaimsConfiguration {

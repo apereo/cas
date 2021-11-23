@@ -43,6 +43,7 @@ import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.config.OidcEndpointsConfiguration;
+import org.apereo.cas.oidc.config.OidcJwksConfiguration;
 import org.apereo.cas.oidc.config.OidcLogoutConfiguration;
 import org.apereo.cas.oidc.config.OidcResponseConfiguration;
 import org.apereo.cas.oidc.config.OidcThrottleConfiguration;
@@ -141,7 +142,7 @@ import static org.mockito.Mockito.*;
         "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
-        "cas.authn.oidc.jwks.jwks-file=classpath:keystore.jwks"
+        "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
@@ -505,6 +506,7 @@ public abstract class AbstractOidcTests {
         CasOAuth20AuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         OidcConfiguration.class,
+        OidcJwksConfiguration.class,
         OidcEndpointsConfiguration.class,
         OidcResponseConfiguration.class,
         OidcLogoutConfiguration.class,

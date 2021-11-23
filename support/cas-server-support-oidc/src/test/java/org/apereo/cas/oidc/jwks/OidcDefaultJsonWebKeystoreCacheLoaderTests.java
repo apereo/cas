@@ -33,15 +33,15 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = {
-    "cas.authn.oidc.jwks.jwks-type=ec",
-    "cas.authn.oidc.jwks.jwks-key-size=384",
-    "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks"
+    "cas.authn.oidc.jwks.core.jwks-type=ec",
+    "cas.authn.oidc.jwks.core.jwks-key-size=384",
+    "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks"
 })
 public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws Exception {
         val file = new File(FileUtils.getTempDirectory(), "keystore.jwks");
-        file.delete();
+        FileUtils.delete(file);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
         when(loader.getJsonSigningWebKeyFromJwks(any())).thenReturn(jsonWebKey);
         assertTrue(loader.load(UUID.randomUUID().toString()).isEmpty());
     }
-    
+
     @Test
     public void verifyOperation() {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get("https://sso.example.org/cas/oidc");
@@ -111,8 +111,8 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
     public void verifyBadKeys() {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         val keys = "{ \"keys\": [ {\"kty\":\"EC\","
-            + "\"x\":\"sPlKwAgSxxOE\",\"y\":\"6AyisnUKM"
-            + "9H8\",\"crv\":\"P-256\"} ]}";
+                   + "\"x\":\"sPlKwAgSxxOE\",\"y\":\"6AyisnUKM"
+                   + "9H8\",\"crv\":\"P-256\"} ]}";
         when(gen.generate()).thenReturn(new ByteArrayResource(keys.getBytes(StandardCharsets.UTF_8)));
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
         assertTrue(loader.load("https://cas.example.org").isEmpty());

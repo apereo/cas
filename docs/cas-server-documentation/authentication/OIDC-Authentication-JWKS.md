@@ -10,7 +10,7 @@ category: Protocols
 The JWKS (JSON Web Key Set) endpoint and functionality returns a JWKS containing public keys that enable 
 clients to validate a JSON Web Token (JWT) issued by CAS as an OpenID Connect Provider.
 
-{% include_cached casproperties.html properties="cas.authn.oidc.jwks" excludes=".rest,.groovy,.revocation,.rotation" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks.core" %}
 
 ## Keystores
        
