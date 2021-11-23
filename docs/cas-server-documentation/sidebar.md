@@ -188,6 +188,7 @@ layout: null
             *   [Python/Javascript/Groovy](/cas/{{ version }}/integration/Attribute-Resolution-Scripted.html)
             *   [Redis](/cas/{{ version }}/integration/Attribute-Resolution-Redis.html)
             *   [Okta](/cas/{{ version }}/integration/Attribute-Resolution-Okta.html)
+            *   [Custom](/cas/{{ version }}/integration/Attribute-Resolution-Custom.html)
             *   [Microsoft Azure AD](/cas/{{ version }}/integration/Attribute-Resolution-AzureAD.html)
     *   [Attribute Release](#attrrelease)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Release.html)
