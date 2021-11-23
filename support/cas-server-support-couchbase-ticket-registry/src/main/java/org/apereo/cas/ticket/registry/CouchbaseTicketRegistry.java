@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.couchbase.client.core.retry.RetryStrategy;
 import com.couchbase.client.java.codec.JacksonJsonSerializer;
 import com.couchbase.client.java.codec.JsonTranscoder;
 import com.couchbase.client.java.kv.GetOptions;
