@@ -12,17 +12,23 @@ clients to validate a JSON Web Token (JWT) issued by CAS as an OpenID Connect Pr
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.core" %}
 
+This keystore is cached and is reloaded at defined intervals periodically.
+
 ## Keystores
        
 CAS expects a single global keystore to load and use for signing and encryption operations of various tokens. 
 In addition to the global keystore, each [registered application in CAS](OIDC-Authentication-Clients.html) 
 can *optionally* contain its own keystore as a `jwks` resource.
 
+CAS will attempt to auto-generate a keystore if it can't find one at the location specified in settings. If
+you wish to generate one manually, a JWKS file can be generated using [this tool](https://mkjwk.org/)
+or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
+
 The following strategies can be used to generate a keystore.
 
 ### Default
 
-By default, a global keystore can be expected and defined via CAS properties. The format 
+By default, a global keystore can be expected and defined via CAS properties as a path on the file system. The format 
 of the keystore file is similar to the following:
 
 ```json
@@ -39,24 +45,26 @@ of the keystore file is similar to the following:
 }
 ```
 
-CAS will attempt to auto-generate a keystore if it can't find one at the location specified in settings. If 
-you wish to generate one manually, a JWKS file can be generated using [this tool](https://mkjwk.org/)
-or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
-
 <div class="alert alert-info"><strong>Clustered Deployments</strong><p>
 When deploying CAS in a cluster, you must make sure all CAS server nodes have access to 
 and share an <strong>identical and exact copy</strong> of the keystore file. Keystore differences
 will lead to various validation failures and application integration issues.
 </p></div>
 
-<div class="alert alert-info"><strong>Key Rotation</strong><p>
-Allowing CAS to rotate keys in the keystore is only applicable and relevant with this option,
-where CAS is in charge of the keystore location and generation directly. If you outsource the
-keystore generation task, you are also taking on the responsibility of rotation.
-</p></div>
-
-This keystore is cached, and is then automatically watched and monitored by CAS for changes. As changes are detected, CAS
+The keystore is automatically watched and monitored by CAS for changes. As changes are detected, CAS
 will invalidate the cache and will reload the keystore once again.
+ 
+### JPA
+     
+Keystore generation can be outsourced to an external relational database, such as MySQL, etc. 
+
+Support is enabled by including the following module in the WAR Overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-hibernate" %}
+
+To learn how to configure database drivers and JPA implementation options, please [review this guide](../installation/JDBC-Drivers.html).
+
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks.jpa" %}
 
 ### REST
 

@@ -11,3 +11,10 @@ def run(Object[] args) {
     logger.info("Generated JWKS ${json}")
     return new JsonWebKeySet(jsonWebKey).toJson()
 }
+
+def store(Object[] args) {
+    def jwks = args[0] as JsonWebKeySet
+    def logger = args[1]
+    logger.info("Storing JWKS ${jwks.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)} for CAS...")
+    return jwks
+}
