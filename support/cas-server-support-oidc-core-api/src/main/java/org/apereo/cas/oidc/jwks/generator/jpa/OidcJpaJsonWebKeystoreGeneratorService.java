@@ -36,6 +36,13 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
     private EntityManager entityManager;
 
     @Override
+    public Optional<Resource> find() {
+        val issuer = oidcProperties.getCore().getIssuer();
+        return Optional.ofNullable(entityManager.find(OidcJpaJsonWebKeystore.class, issuer))
+            .map(Unchecked.function(jwks -> OidcJsonWebKeystoreGeneratorService.toResource(new JsonWebKeySet(jwks.getData()))));
+    }
+
+    @Override
     public Resource generate() {
         val issuer = oidcProperties.getCore().getIssuer();
         return Optional.ofNullable(entityManager.find(OidcJpaJsonWebKeystore.class, issuer))

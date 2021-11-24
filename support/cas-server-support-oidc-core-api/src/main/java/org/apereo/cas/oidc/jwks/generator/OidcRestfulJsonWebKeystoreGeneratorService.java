@@ -7,7 +7,6 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcRestfulJsonWebKeystoreGeneratorService}.
@@ -32,14 +32,18 @@ import java.nio.charset.StandardCharsets;
 public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
     private final OidcProperties oidcProperties;
 
-    @SneakyThrows
     @Override
-    public Resource generate() {
+    public Optional<Resource> find() throws Exception {
+        return Optional.ofNullable(generate());
+    }
+
+    @Override
+    public Resource generate() throws Exception {
         val rest = oidcProperties.getJwks().getRest();
         val exec = HttpUtils.HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())
             .basicAuthUsername(rest.getBasicAuthUsername())
-            .method(HttpMethod.valueOf(rest.getMethod().toUpperCase().trim()))
+            .method(HttpMethod.GET)
             .url(rest.getUrl())
             .build();
         val response = HttpUtils.execute(exec);

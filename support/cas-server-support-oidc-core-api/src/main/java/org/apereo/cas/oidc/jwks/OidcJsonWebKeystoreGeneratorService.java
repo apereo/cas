@@ -11,6 +11,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcJsonWebKeystoreGeneratorService}.
@@ -74,8 +75,9 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * Generate keystore for OIDC.
      *
      * @return the resource
+     * @throws Exception the exception
      */
-    Resource generate();
+    Resource generate() throws Exception;
 
     /**
      * Store json web key set.
@@ -86,4 +88,11 @@ public interface OidcJsonWebKeystoreGeneratorService {
      */
     JsonWebKeySet store(JsonWebKeySet jsonWebKeySet) throws Exception;
 
+    /**
+     * Find keystore resource for the issuer.
+     *
+     * @return the optional
+     * @throws Exception the exception
+     */
+    Optional<Resource> find() throws Exception;
 }

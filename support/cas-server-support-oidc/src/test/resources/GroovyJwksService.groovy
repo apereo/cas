@@ -1,5 +1,6 @@
-import org.apereo.cas.oidc.jwks.*
-import org.jose4j.jwk.*
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils
+import org.jose4j.jwk.JsonWebKey
+import org.jose4j.jwk.JsonWebKeySet
 
 def run(Object[] args) {
     def logger = args[0]
@@ -17,4 +18,11 @@ def store(Object[] args) {
     def logger = args[1]
     logger.info("Storing JWKS ${jwks.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)} for CAS...")
     return jwks
+}
+
+def find(Object[] args) {
+    def logger = args[0]
+    logger.info("Looking up keystore...")
+    def jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("RSA", 2048)
+    return new JsonWebKeySet(jsonWebKey)
 }

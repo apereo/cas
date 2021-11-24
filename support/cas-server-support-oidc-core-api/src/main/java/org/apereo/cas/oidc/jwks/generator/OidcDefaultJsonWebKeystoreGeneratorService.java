@@ -21,6 +21,7 @@ import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreGeneratorService}.
@@ -46,6 +47,14 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
     @Override
+    public Optional<Resource> find() throws Exception {
+        val resolve = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
+        val resource = ResourceUtils.getRawResourceFrom(resolve);
+        return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
+    }
+
+    @Override
     public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
         val resource = determineJsonWebKeystoreResource();
         if (ResourceUtils.isFile(resource)) {
@@ -56,7 +65,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         }
         return jsonWebKeySet;
     }
-    
+
     @SneakyThrows
     @Override
     public Resource generate() {

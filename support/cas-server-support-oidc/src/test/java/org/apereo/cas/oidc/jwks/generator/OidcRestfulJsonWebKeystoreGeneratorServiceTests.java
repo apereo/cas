@@ -56,12 +56,14 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
 
+        assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
+
         val jwks = new JsonWebKeySet(OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(casProperties.getAuthn().getOidc()));
         assertNotNull(oidcJsonWebKeystoreGeneratorService.store(jwks));
     }
 
     @Test
-    public void verifyFailsOperation() {
+    public void verifyFailsOperation() throws Exception {
         var oidcProperties = new OidcProperties();
         oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
         oidcProperties.getJwks().getRest().setMethod("get");

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.oidc.jwks;
 
-import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;

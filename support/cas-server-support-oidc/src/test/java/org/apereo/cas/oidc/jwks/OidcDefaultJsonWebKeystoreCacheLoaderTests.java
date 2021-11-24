@@ -89,7 +89,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
     }
 
     @Test
-    public void verifyNullResource() {
+    public void verifyNullResource() throws Exception {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         when(gen.generate()).thenReturn(null);
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
@@ -110,7 +110,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
     }
 
     @Test
-    public void verifyBadKeys() {
+    public void verifyBadKeys() throws Exception {
         val gen = mock(OidcJsonWebKeystoreGeneratorService.class);
         val keys = "{ \"keys\": [ {\"kty\":\"EC\","
                    + "\"x\":\"sPlKwAgSxxOE\",\"y\":\"6AyisnUKM"

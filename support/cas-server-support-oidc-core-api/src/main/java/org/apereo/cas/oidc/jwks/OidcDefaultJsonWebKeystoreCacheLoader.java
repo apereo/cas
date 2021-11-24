@@ -121,6 +121,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         try {
             val jwksFile = generateJwksResource();
             if (jwksFile == null) {
+                LOGGER.warn("Unable to load or generate a JWKS resource");
                 return Optional.empty();
             }
             LOGGER.trace("Retrieving default JSON web key from [{}]", jwksFile);
@@ -136,13 +137,14 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
                 && StringUtils.isBlank(k.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
-                LOGGER.warn("No valid JSON web keys could be found");
+                LOGGER.warn("No valid JSON web keys could be found. The keys that are found in the keystore "
+                            + "do not define an algorithm, key id or key type and cannot be used for JWKS operations.");
                 return Optional.empty();
             }
 
             val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
             if (webKey != null && webKey.getPrivateKey() == null) {
-                LOGGER.warn("JSON web key retrieved [{}] has no associated private key", webKey.getKeyId());
+                LOGGER.warn("JSON web key retrieved [{}] has no associated private key.", webKey.getKeyId());
                 return Optional.empty();
             }
             LOGGER.trace("Loaded JSON web key set as [{}]", jsonWebKeySet.toJson());
@@ -157,8 +159,9 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      * Generate jwks resource.
      *
      * @return the resource
+     * @throws Exception the exception
      */
-    protected Resource generateJwksResource() {
+    protected Resource generateJwksResource() throws Exception {
         val jwksFile = getOidcJsonWebKeystoreGeneratorService().generate();
         LOGGER.debug("Loading default JSON web key from [{}]", jwksFile);
         return jwksFile;
