@@ -75,7 +75,8 @@ The following requests are made by CAS to the endpoint:
 
 | Operation        | Parameters      | Description      | Result
 |------------------|-----------------|------------------|----------------------------------------------------
-| `GET`            | N/A             | Retrieve the keystore.  | `2xx` status code; JWKS resource in response body.
+| `GET`            | N/A             | Retrieve the keystore, or generate one.  | `2xx` status code; JWKS resource in response body.
+| `POST`           | JWKS in request body. | Store the keystore.  | `2xx` status code.
 
 {% include_cached casproperties.html properties="cas.authn.oidc.jwks.rest" %}
   
@@ -92,6 +93,19 @@ def run(Object[] args) {
     logger.info("Generating JWKS for CAS...")
     def jsonWebKeySet = "{ \"keys\": [...] }"
     return jsonWebKeySet
+}
+
+def store(Object[] args) {
+    def jwks = args[0] as JsonWebKeySet
+    def logger = args[1]
+    logger.info("Storing JWKS for CAS...")
+    return jwks
+}
+
+def find(Object[] args) {
+    def logger = args[0]
+    logger.info("Looking up JWKS...")
+    return new JsonWebKeySet(...)
 }
 ```
 

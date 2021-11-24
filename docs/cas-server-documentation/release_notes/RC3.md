@@ -101,6 +101,12 @@ inactive keys that should be removed from the keystore.
 be chained and grouped together to deliver advanced conditions
 and grouping logic using multiple `AND` or `OR` rules.
   
+### OpenID Connect JWKS Storage
+
+The generation of the [JWKS resource for OpenID Connect](../authentication/OIDC-Authentication-JWKS.html) 
+can now be outsourced to external REST APIs, Groovy scripts or relational databases. Each storage service implementation
+should also be able to support key rotation and revocation as is handled by CAS itself.
+
 ### Audit Log Data Structure
 
 Audit log records and storage services are now modified to include user agent information using the `User-Agent` header.
@@ -120,6 +126,7 @@ contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 
 - When performing a logout after an OIDC login process, the OIDC session is now properly removed when it is distributed.
 - [Authy MFA](../mfa/AuthyAuthenticator-Authentication.html) configuration is now conditionally activated when Authy API keys are found in CAS configuration.
 - [Passwordless LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) configuration is activated when an LDAP url is found in configuration.
+- Identifiers of consent decisions are now fixed to be operable using the consent actuator endpoint. These IDs are now serialized as `String` to avoid rounding issues with long numbers during JSON serialization.
 
 ## Library Upgrades
 
