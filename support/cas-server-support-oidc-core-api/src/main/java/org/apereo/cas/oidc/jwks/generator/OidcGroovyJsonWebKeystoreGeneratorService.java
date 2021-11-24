@@ -5,6 +5,7 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -30,5 +31,13 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
         val result = watchableScript.execute(args, String.class);
         LOGGER.debug("Received payload result from [{}] as [{}]", watchableScript, result);
         return new ByteArrayResource(result.getBytes(StandardCharsets.UTF_8), "OIDC JWKS");
+    }
+
+    @Override
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+        val args = new Object[]{jsonWebKeySet, LOGGER};
+        val result = watchableScript.execute("store", JsonWebKeySet.class, args);
+        LOGGER.debug("Received payload result from [{}] as [{}]", watchableScript, result);
+        return result;
     }
 }

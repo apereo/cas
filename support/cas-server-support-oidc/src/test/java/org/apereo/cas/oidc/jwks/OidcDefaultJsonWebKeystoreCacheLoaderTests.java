@@ -41,7 +41,9 @@ public class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTest
     @BeforeAll
     public static void setup() throws Exception {
         val file = new File(FileUtils.getTempDirectory(), "keystore.jwks");
-        FileUtils.delete(file);
+        if (file.exists()) {
+            FileUtils.delete(file);
+        }
     }
 
     @Test

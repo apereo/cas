@@ -556,6 +556,7 @@ layout: null
     *   [Swagger](/cas/{{ version }}/integration/Swagger-Integration.html)
     *   [JMX](/cas/{{ version }}/integration/JMX-Integration.html)
     *   [Shibboleth Identity Provider](/cas/{{ version }}/integration/Shibboleth.html)
+    *   [JDBC Drivers](/cas/{{ version }}/installation/JDBC-Drivers.html)
 
 * [Developer](#developer)
     *   [Javadocs](https://www.javadoc.io/doc/org.apereo.cas)

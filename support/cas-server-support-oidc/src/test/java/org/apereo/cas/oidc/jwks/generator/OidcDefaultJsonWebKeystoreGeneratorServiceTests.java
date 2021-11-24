@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -43,6 +44,8 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
         assertTrue(resource.exists());
         assertTrue(KEYSTORE.setLastModified(new Date().getTime()));
         Thread.sleep(2000);
+        oidcJsonWebKeystoreGeneratorService.store(
+            OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource));
         ((DisposableBean) oidcJsonWebKeystoreGeneratorService).destroy();
     }
 

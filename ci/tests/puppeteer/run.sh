@@ -34,11 +34,11 @@ while (( "$#" )); do
     scenario="$2"
     shift 2
     ;;
-  --install-puppeteer|--install)
+  --install-puppeteer|--install|--i)
       INSTALL_PUPPETEER="true"
       shift 1
       ;;
-  --debug)
+  --debug|--d)
     DEBUG="true"
     shift 1
     ;;
@@ -46,24 +46,24 @@ while (( "$#" )); do
     DEBUG_PORT="$2"
     shift 2
     ;;
-  --debug-suspend|--suspend)
+  --debug-suspend|--suspend|--s)
     DEBUG_SUSPEND="y"
     shift 1
     ;;
-  --rebuild)
+  --rebuild|--r)
     REBUILD="true"
     shift 1
     ;;
-  --dry-run)
+  --dry-run|--y)
     DRYRUN="true"
     shift 1
     printyellow "Skipping execution of test scenario while in dry-run mode."
     ;;
-  --headless)
+  --headless|--h)
     export HEADLESS="true"
     shift 1;
     ;;
-  --rerun|--resume)
+  --rerun|--resume|--z)
     RERUN="true"
     shift 1;
     ;;

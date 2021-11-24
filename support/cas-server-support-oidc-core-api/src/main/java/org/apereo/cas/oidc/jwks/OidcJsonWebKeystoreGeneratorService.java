@@ -4,8 +4,13 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OidcJsonWebKeystoreGeneratorService}.
@@ -13,8 +18,30 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@FunctionalInterface
 public interface OidcJsonWebKeystoreGeneratorService {
+
+    /**
+     * To resource.
+     *
+     * @param jsonWebKeySet the json web key set
+     * @return the resource
+     */
+    static Resource toResource(final JsonWebKeySet jsonWebKeySet) {
+        val result = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+        return new ByteArrayResource(result.getBytes(StandardCharsets.UTF_8), "OIDC JWKS");
+    }
+
+    /**
+     * To json web key store.
+     *
+     * @param resource the resource
+     * @return the json web key set
+     * @throws Exception the exception
+     */
+    static JsonWebKeySet toJsonWebKeyStore(final Resource resource) throws Exception {
+        val result = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        return new JsonWebKeySet(result);
+    }
 
     /**
      * Generate json web key json web key.
@@ -49,4 +76,14 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * @return the resource
      */
     Resource generate();
+
+    /**
+     * Store json web key set.
+     *
+     * @param jsonWebKeySet the json web key set
+     * @return the json web key set
+     * @throws Exception the exception
+     */
+    JsonWebKeySet store(JsonWebKeySet jsonWebKeySet) throws Exception;
+
 }
