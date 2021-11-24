@@ -3,8 +3,6 @@ package org.apereo.cas.oidc.jwks.rotation;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,9 +86,6 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     }
 
     private Optional<Resource> whenKeystoreResourceExists() throws Exception {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
-        val resource = ResourceUtils.getRawResourceFrom(resolve);
-        return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
+        return generatorService.find();
     }
 }

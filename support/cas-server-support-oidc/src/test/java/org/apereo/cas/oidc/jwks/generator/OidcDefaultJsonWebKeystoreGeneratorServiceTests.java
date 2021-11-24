@@ -46,6 +46,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
         Thread.sleep(2000);
         oidcJsonWebKeystoreGeneratorService.store(
             OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource));
+        assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
         ((DisposableBean) oidcJsonWebKeystoreGeneratorService).destroy();
     }
 

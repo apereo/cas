@@ -44,5 +44,7 @@ public class OidcJpaJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTes
 
         val set1 = oidcJsonWebKeystoreGeneratorService.store(OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource1));
         assertNotNull(set1);
+
+        assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
     }
 }

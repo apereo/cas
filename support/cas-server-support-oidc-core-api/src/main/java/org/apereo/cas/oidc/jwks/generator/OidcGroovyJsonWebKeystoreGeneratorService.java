@@ -10,6 +10,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcGroovyJsonWebKeystoreGeneratorService}.
@@ -23,6 +24,14 @@ public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKey
 
     public OidcGroovyJsonWebKeystoreGeneratorService(final Resource watchableScript) {
         this.watchableScript = new WatchableGroovyScriptResource(watchableScript);
+    }
+
+    @Override
+    public Optional<Resource> find() {
+        val args = new Object[]{LOGGER};
+        val result = watchableScript.execute("find", JsonWebKeySet.class, args);
+        LOGGER.debug("Received JWKS resource from [{}] as [{}]", watchableScript, result);
+        return result != null ? Optional.of(OidcJsonWebKeystoreGeneratorService.toResource(result)) : Optional.empty();
     }
 
     @Override
