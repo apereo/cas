@@ -13,14 +13,14 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.ByteArrayInputStream;
@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepositoryTests}.
@@ -89,5 +90,24 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));
+    }
+
+    @Nested
+    @Getter
+    @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-omit-if-attribute-missing=true")
+    public class LdapOmitIfMissingStatusAttributeTests {
+
+        @Autowired
+        @Qualifier("acceptableUsagePolicyRepository")
+        protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
+
+        @Test
+        public void verifyMissingUserAccepted() {
+            val actualPrincipalId = UUID.randomUUID().toString();
+            val c = getCredential(actualPrincipalId);
+            val context = getRequestContext(actualPrincipalId, Map.of(), c);
+            assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
+        }
+
     }
 }
