@@ -48,7 +48,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.jpa", name = "idp-metadata-enabled", havingValue = "true")
-@Configuration(value = "samlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPJpaIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaIdPMetadataEntityConfiguration", proxyBeanMethods = false)
@@ -58,7 +58,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlMetadataIdPVendorAdapter")
         public JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("jpaBeanFactory")
+                                                                @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                                 final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -80,7 +80,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             final DataSource dataSourceSamlMetadataIdP,
             @Qualifier("jpaSamlMetadataIdPPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter)

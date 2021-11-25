@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "surrogateLdapAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateLdapAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.surrogate.ldap", name = "ldap-url")

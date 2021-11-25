@@ -52,7 +52,7 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPWebflowConfiguration", proxyBeanMethods = false)
 public class SamlIdPWebflowConfiguration {
 
     @Configuration(value = "SamlIdPWebflowCoreConfiguration", proxyBeanMethods = false)

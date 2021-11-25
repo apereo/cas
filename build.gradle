@@ -507,7 +507,6 @@ subprojects {
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
-        api libraries.bytebuddy
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
@@ -538,7 +537,7 @@ subprojects {
         if (!ci) {
             testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:$junitPlatformVersion"
         }
-        compileOnlyApi libraries.spotbugsannotations
+        compileOnly libraries.spotbugsannotations
     }
 }
 

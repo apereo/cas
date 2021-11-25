@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "acceptUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AcceptUsersAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
@@ -35,7 +35,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer acceptUsersAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("acceptUsersAuthenticationHandler")
         final AuthenticationHandler acceptUsersAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver,
         final CasConfigurationProperties casProperties) {
         return plan -> {

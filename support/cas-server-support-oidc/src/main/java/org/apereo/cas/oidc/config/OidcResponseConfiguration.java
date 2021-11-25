@@ -37,7 +37,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "oidcResponseConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcResponseConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcResponseConfiguration {
 

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Jérôme Rautureau
  * @since 6.5.0
  */
-@Configuration(value = "smsModeSmsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SmsModeSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SmsModeSmsConfiguration {
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.Ordered;
 
 import java.util.List;
 import java.util.Map;
@@ -43,5 +45,17 @@ public class MultifactorAuthenticationPrincipalResolverTests {
         assertTrue(surrogateMultifactorAuthenticationPrincipalResolver.supports(principal));
         val resolved = surrogateMultifactorAuthenticationPrincipalResolver.resolve(principal);
         assertEquals(primary, resolved);
+    }
+
+    @Test
+    public void verifyDefaultOperation() {
+        val resolver = MultifactorAuthenticationPrincipalResolver.identical();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, resolver.getOrder());
+
+        val principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("casuser");
+        when(principal.getAttributes()).thenReturn(Map.of());
+        assertTrue(resolver.supports(principal));
+        assertEquals(principal, resolver.resolve(principal));
     }
 }

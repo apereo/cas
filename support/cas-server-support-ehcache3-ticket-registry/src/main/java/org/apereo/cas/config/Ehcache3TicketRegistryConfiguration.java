@@ -56,7 +56,7 @@ import java.util.HashMap;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@Configuration(value = "ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "Ehcache3TicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.ticket.registry.ehcache3", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j

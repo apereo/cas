@@ -12,6 +12,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
 import org.pac4j.core.profile.CommonProfile;
@@ -41,7 +42,9 @@ public class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
         val response = new MockHttpServletResponse();
         request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
 
-        val logic = new OAuth20AccessTokenSecurityLogic();
+        val logic = new DefaultSecurityLogic();
+        logic.setLoadProfilesFromSession(false);
+        
         val mockClient = mock(DirectClient.class);
         when(mockClient.getName()).thenReturn("MockIndirectClient");
         when(mockClient.isInitialized()).thenReturn(true);

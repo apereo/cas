@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casConsentMongoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentMongoDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasConsentMongoDbConfiguration {
 

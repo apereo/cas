@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "fortressAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "FortressAuthenticationConfiguration", proxyBeanMethods = false)
 public class FortressAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "fortressPrincipalFactory")

@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "digestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DigestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class DigestAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
@@ -53,7 +53,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("digestAuthenticationHandler")
         final AuthenticationHandler digestAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler, defaultPrincipalResolver);
     }

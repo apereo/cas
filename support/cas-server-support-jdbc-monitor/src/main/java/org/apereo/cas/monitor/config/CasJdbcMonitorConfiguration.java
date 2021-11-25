@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutorService;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casJdbcMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasJdbcMonitorConfiguration", proxyBeanMethods = false)
 public class CasJdbcMonitorConfiguration {
 
     @Bean

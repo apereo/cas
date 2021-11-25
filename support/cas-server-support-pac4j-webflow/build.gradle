@@ -32,7 +32,7 @@ dependencies {
     implementation libraries.apachevelocity
     implementation libraries.dropwizard
 
-    compileOnlyApi libraries.hazelcast
+    compileOnly libraries.hazelcast
 
     testImplementation libraries.hazelcast
     

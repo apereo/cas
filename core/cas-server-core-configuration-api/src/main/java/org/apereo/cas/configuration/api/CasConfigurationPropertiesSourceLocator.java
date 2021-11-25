@@ -21,6 +21,13 @@ public interface CasConfigurationPropertiesSourceLocator {
     String PROFILE_STANDALONE = "standalone";
 
     /**
+     * Embedded configuration profile.
+     * This is mainly an alias for {@link #PROFILE_STANDALONE}
+     * and functionality should be identical.
+     */
+    String PROFILE_EMBEDDED = "embedded";
+
+    /**
      * Locate property sources for CAS via the given environment and other resources.
      *
      * @param environment    the environment

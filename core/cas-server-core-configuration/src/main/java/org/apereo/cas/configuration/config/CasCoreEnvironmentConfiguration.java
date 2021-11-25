@@ -36,9 +36,8 @@ public class CasCoreEnvironmentConfiguration {
         @ConditionalOnMissingBean(name = "configurationPropertiesEnvironmentManager")
         @Bean
         public CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager(
-            final ConfigurationPropertiesBindingPostProcessor binder,
-            final Environment environment) {
-            return new CasConfigurationPropertiesEnvironmentManager(binder, environment);
+            final ConfigurationPropertiesBindingPostProcessor binder) {
+            return new CasConfigurationPropertiesEnvironmentManager(binder);
         }
     }
 

@@ -32,7 +32,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "yamlServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "YamlServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YamlServiceRegistryConfiguration {
 

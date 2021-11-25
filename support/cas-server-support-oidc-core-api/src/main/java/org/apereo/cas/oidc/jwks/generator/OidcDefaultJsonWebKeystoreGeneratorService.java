@@ -17,9 +17,11 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreGeneratorService}.
@@ -44,12 +46,30 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         }
     }
 
+    @Override
+    public Optional<Resource> find() throws Exception {
+        val resolve = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
+        val resource = ResourceUtils.getRawResourceFrom(resolve);
+        return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
+    }
+
+    @Override
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+        val resource = determineJsonWebKeystoreResource();
+        if (ResourceUtils.isFile(resource)) {
+            val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            val location = resource.getFile();
+            FileUtils.write(location, data, StandardCharsets.UTF_8);
+            LOGGER.debug("Generated JSON web keystore at [{}]", location);
+        }
+        return jsonWebKeySet;
+    }
+
     @SneakyThrows
     @Override
     public Resource generate() {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getJwksFile());
-        val resource = ResourceUtils.getRawResourceFrom(resolve);
+        val resource = determineJsonWebKeystoreResource();
         if (ResourceUtils.isFile(resource)) {
             resourceWatcherService = new FileWatcherService(resource.getFile(),
                 file -> {
@@ -58,7 +78,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
                 });
             resourceWatcherService.start(resource.getFilename());
         }
-        return generate(resource);
+        val resultingResource = generate(resource);
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource));
+        return resultingResource;
     }
 
     /**
@@ -73,20 +95,19 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
-        val currentKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT);
-        val futureKey = generateKeyWithState(OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE);
+        val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
+        val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
         val jsonWebKeySet = new JsonWebKeySet(currentKey, futureKey);
-        
-        val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-        val location = file.getFile();
-        FileUtils.write(location, data, StandardCharsets.UTF_8);
-        LOGGER.debug("Generated JSON web keystore at [{}]", location);
+
+        store(jsonWebKeySet);
         return file;
     }
 
-    private JsonWebKey generateKeyWithState(final OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates state) {
-        val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
-        OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(key, state);
-        return key;
+    private AbstractResource determineJsonWebKeystoreResource() throws Exception {
+        val resolve = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
+        return ResourceUtils.getRawResourceFrom(resolve);
     }
 }

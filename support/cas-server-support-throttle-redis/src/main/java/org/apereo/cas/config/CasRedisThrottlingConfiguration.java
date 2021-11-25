@@ -27,7 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casRedisThrottlingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasRedisThrottlingConfiguration", proxyBeanMethods = false)
 public class CasRedisThrottlingConfiguration {
 
     @Bean

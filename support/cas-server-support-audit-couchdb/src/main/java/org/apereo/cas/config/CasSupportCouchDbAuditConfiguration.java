@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "casSupportCouchDbAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportCouchDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportCouchDbAuditConfiguration {
 

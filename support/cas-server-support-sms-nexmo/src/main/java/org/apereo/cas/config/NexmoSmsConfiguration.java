@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "nexmoSmsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "NexmoSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class NexmoSmsConfiguration {
 

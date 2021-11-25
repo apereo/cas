@@ -67,7 +67,7 @@ import java.util.concurrent.TimeUnit;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "googleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlaHandlerConfiguration", proxyBeanMethods = false)

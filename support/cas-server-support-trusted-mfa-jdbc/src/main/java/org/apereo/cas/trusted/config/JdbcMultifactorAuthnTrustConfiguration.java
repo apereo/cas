@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jdbcMultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JdbcMultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
 public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Configuration(value = "JdbcMultifactorAuthnTrustEngineConfiguration", proxyBeanMethods = false)
@@ -63,7 +63,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
         public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("jpaBeanFactory")
+                                                                @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                                 final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -85,7 +85,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
             final BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan,
             @Qualifier("jpaMfaTrustedAuthnVendorAdapter")
             final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn)
                 .packagesToScan(jpaMfaTrustedAuthnPackagesToScan.toSet())

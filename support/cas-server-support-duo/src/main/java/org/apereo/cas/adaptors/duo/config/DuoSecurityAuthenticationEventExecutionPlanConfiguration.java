@@ -66,7 +66,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
-@Configuration(value = "duoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlUniqueTicketIdGeneratorConfiguration", proxyBeanMethods = false)
 public class SamlUniqueTicketIdGeneratorConfiguration {
 
     @Bean

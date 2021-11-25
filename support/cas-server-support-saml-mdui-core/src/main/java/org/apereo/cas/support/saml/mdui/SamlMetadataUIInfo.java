@@ -40,23 +40,11 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     private String locale;
 
-    /**
-     * Instantiates a new Simple metadata uI info.
-     *
-     * @param registeredService the registered service
-     * @param locale            browser preferred language
-     */
     public SamlMetadataUIInfo(final RegisteredService registeredService, final String locale) {
         this(null, registeredService);
         this.locale = locale;
     }
 
-    /**
-     * Instantiates a new Simple mdui info.
-     *
-     * @param uiInfo            the ui info
-     * @param registeredService the registered service
-     */
     public SamlMetadataUIInfo(final UIInfo uiInfo, final RegisteredService registeredService) {
         super(registeredService);
         this.uiInfo = uiInfo;

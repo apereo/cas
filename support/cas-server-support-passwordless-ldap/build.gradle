@@ -16,6 +16,7 @@ dependencies {
     
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-passwordless")
 
     testImplementation project(":core:cas-server-core-cookie")

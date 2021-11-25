@@ -15,7 +15,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casEmbeddedContainerUndertowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasEmbeddedContainerUndertowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "redisAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RedisAuthenticationConfiguration", proxyBeanMethods = false)
 public class RedisAuthenticationConfiguration {
 
     @Bean
@@ -95,7 +95,7 @@ public class RedisAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer redisAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("redisAuthenticationHandler")
         final AuthenticationHandler redisAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(redisAuthenticationHandler, defaultPrincipalResolver);
     }

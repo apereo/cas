@@ -40,7 +40,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casJdbcAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasJdbcAuditConfiguration", proxyBeanMethods = false)
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
@@ -54,7 +54,7 @@ public class CasSupportJdbcAuditConfiguration {
         public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))

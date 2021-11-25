@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casSupportMongoDbAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportMongoDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportMongoDbAuditConfiguration {
 

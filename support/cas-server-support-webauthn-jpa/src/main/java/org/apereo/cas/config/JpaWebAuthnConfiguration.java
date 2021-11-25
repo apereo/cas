@@ -74,7 +74,7 @@ public class JpaWebAuthnConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaWebAuthnVendorAdapter(
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
@@ -94,7 +94,7 @@ public class JpaWebAuthnConfiguration {
             final DataSource dataSourceWebAuthn,
             final BeanContainer<String> jpaWebAuthnPackagesToScan,
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceWebAuthn)

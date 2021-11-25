@@ -22,13 +22,17 @@ import java.util.stream.Stream;
 public interface JpaBeanFactory {
 
     /**
+     * Default implementation bean.
+     */
+    String DEFAULT_BEAN_NAME = "jpaBeanFactory";
+
+    /**
      * New jpa vendor adapter jpa vendor adapter.
      *
      * @param properties the properties
      * @return the jpa vendor adapter
      */
     JpaVendorAdapter newJpaVendorAdapter(DatabaseProperties properties);
-
 
     /**
      * New jpa vendor adapter.

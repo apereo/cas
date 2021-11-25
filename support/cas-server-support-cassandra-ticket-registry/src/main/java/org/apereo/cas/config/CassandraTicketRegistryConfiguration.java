@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "cassandraTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CassandraTicketRegistryConfiguration", proxyBeanMethods = false)
 public class CassandraTicketRegistryConfiguration {
 
     @Bean
