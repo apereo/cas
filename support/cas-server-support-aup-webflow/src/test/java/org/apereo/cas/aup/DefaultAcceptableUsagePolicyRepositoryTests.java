@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Authentication;
+import lombok.Getter;
+import lombok.val;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
@@ -8,10 +9,6 @@ import org.apereo.cas.configuration.model.support.aup.InMemoryAcceptableUsagePol
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
-import lombok.Getter;
-import lombok.val;
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
