@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "inweboMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "InweboMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class InweboAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboBypassEvaluator")

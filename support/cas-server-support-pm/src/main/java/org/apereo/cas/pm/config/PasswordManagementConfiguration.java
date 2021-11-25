@@ -46,7 +46,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "passwordManagementConfiguration", proxyBeanMethods = false)
+@Configuration(value = "PasswordManagementConfiguration", proxyBeanMethods = false)
 public class PasswordManagementConfiguration {
 
     @Configuration(value = "PasswordManagementValidationConfiguration", proxyBeanMethods = false)

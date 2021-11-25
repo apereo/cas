@@ -41,7 +41,7 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreUtilConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreUtilConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreAuthenticationPolicyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationPolicyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
 

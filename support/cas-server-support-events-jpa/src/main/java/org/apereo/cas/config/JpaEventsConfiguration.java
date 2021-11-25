@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jpaEventsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
 public class JpaEventsConfiguration {
 
     @Configuration(value = "JpaEventsDataConfiguration", proxyBeanMethods = false)
@@ -60,7 +60,7 @@ public class JpaEventsConfiguration {
         @Bean
         public JpaVendorAdapter jpaEventVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -81,7 +81,7 @@ public class JpaEventsConfiguration {
             final DataSource dataSourceEvent,
             @Qualifier("jpaEventPackagesToScan")
             final BeanContainer<String> jpaEventPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaEventVendorAdapter)
@@ -118,7 +118,7 @@ public class JpaEventsConfiguration {
 
         @Bean
         public CasEventRepository casEventRepository(
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties,
             @Qualifier("transactionManagerEvents")

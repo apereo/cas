@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "samlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataResolverConfiguration", proxyBeanMethods = false)
@@ -75,7 +75,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaSamlMetadataVendorAdapter(final CasConfigurationProperties casProperties,
-                                                             @Qualifier("jpaBeanFactory")
+                                                             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
                                                              final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -96,7 +96,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
             final DataSource dataSourceSamlMetadata,
             @Qualifier("jpaSamlMetadataPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataPackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter)

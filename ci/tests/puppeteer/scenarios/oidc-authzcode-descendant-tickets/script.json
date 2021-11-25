@@ -1,0 +1,24 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.logout.remove-descendant-tickets=true",
+
+    "--cas.authn.oauth.code.time-to-kill-in-seconds=60",
+    "--cas.authn.oauth.code.number-of-uses=10",
+
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

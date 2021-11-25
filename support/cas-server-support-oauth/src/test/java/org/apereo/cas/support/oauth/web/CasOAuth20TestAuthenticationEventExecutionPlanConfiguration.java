@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Lazy;
 @Lazy(false)
 public class CasOAuth20TestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
-    @Qualifier("defaultPrincipalResolver")
+    @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
     private PrincipalResolver defaultPrincipalResolver;
 
     @Override

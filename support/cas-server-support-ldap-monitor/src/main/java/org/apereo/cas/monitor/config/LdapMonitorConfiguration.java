@@ -32,7 +32,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapMonitorConfiguration", proxyBeanMethods = false)
+@Configuration(value = "LdapMonitorConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
     @Bean

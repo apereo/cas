@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
@@ -12,8 +11,7 @@ import org.apereo.cas.authentication.SurrogateMultifactorAuthenticationPrincipal
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
-import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
-import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
+import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -55,7 +53,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "surrogateAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateAuthenticationConfiguration {
@@ -117,18 +115,7 @@ public class SurrogateAuthenticationConfiguration {
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager,
             final CasConfigurationProperties casProperties) {
-            return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
-        }
-
-    }
-
-    @Configuration(value = "SurrogateAuthenticationAuditConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class SurrogateAuthenticationAuditConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
-        public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
-            return new SurrogateAuditPrincipalIdProvider();
+            return new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
         }
 
     }

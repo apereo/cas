@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.google-recaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casCaptchaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCaptchaConfiguration", proxyBeanMethods = false)
 public class CasCaptchaConfiguration {
 
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")

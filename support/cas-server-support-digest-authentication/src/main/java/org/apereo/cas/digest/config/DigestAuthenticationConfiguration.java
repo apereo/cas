@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "digestAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DigestAuthenticationConfiguration", proxyBeanMethods = false)
 public class DigestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")

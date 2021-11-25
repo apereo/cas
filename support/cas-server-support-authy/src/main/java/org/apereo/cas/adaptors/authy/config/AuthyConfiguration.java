@@ -18,6 +18,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -37,8 +38,9 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "authyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AuthyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "api-key")
 public class AuthyConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
@@ -123,7 +125,7 @@ public class AuthyConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
-    @Configuration(value = "authyMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "AuthyMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("authyMultifactorWebflowConfigurer")
     public static class AuthyMultifactorTrustConfiguration {
 

@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @SuppressWarnings("JavaUtilDate")
-@TestPropertySource(properties = "cas.authn.oidc.jwks.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
+@TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/something.jwks")
 public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     private static File KEYSTORE;
 
@@ -43,14 +44,17 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
         assertTrue(resource.exists());
         assertTrue(KEYSTORE.setLastModified(new Date().getTime()));
         Thread.sleep(2000);
+        oidcJsonWebKeystoreGeneratorService.store(
+            OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource));
+        assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
         ((DisposableBean) oidcJsonWebKeystoreGeneratorService).destroy();
     }
 
     @Test
     public void verifyCurve256() {
         val properties = new OidcProperties();
-        properties.getJwks().setJwksType("ec");
-        properties.getJwks().setJwksKeySize(256);
+        properties.getJwks().getCore().setJwksType("ec");
+        properties.getJwks().getCore().setJwksKeySize(256);
         val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);
         service.generate(new FileSystemResource(KEYSTORE));
         assertTrue(KEYSTORE.exists());
@@ -60,8 +64,8 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     @Test
     public void verifyCurve384() {
         val properties = new OidcProperties();
-        properties.getJwks().setJwksType("ec");
-        properties.getJwks().setJwksKeySize(384);
+        properties.getJwks().getCore().setJwksType("ec");
+        properties.getJwks().getCore().setJwksKeySize(384);
         val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);
         service.generate(new FileSystemResource(KEYSTORE));
         assertTrue(KEYSTORE.exists());
@@ -71,8 +75,8 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     public void verifyCurve521() {
         val properties = new OidcProperties();
 
-        properties.getJwks().setJwksType("ec");
-        properties.getJwks().setJwksKeySize(521);
+        properties.getJwks().getCore().setJwksType("ec");
+        properties.getJwks().getCore().setJwksKeySize(521);
         val service = new OidcDefaultJsonWebKeystoreGeneratorService(properties, applicationContext);
         service.generate(new FileSystemResource(KEYSTORE));
         assertTrue(KEYSTORE.exists());

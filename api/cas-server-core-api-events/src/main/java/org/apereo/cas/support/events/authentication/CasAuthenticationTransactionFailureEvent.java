@@ -23,13 +23,6 @@ public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
 
     private final Collection<Credential> credential;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source     the source
-     * @param failures   the failures
-     * @param credential the credential
-     */
     public CasAuthenticationTransactionFailureEvent(final Object source, final Map<String, Throwable> failures,
                                                     final Collection<Credential> credential) {
         super(source);

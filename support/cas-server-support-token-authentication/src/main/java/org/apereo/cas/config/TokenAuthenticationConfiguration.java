@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "tokenAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TokenAuthenticationConfiguration", proxyBeanMethods = false)
 public class TokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
@@ -54,7 +54,7 @@ public class TokenAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("tokenAuthenticationHandler")
         final AuthenticationHandler tokenAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(tokenAuthenticationHandler, defaultPrincipalResolver);
     }

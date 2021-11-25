@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasEmbeddedContainerTomcatFiltersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
 public class CasEmbeddedContainerTomcatFiltersConfiguration {

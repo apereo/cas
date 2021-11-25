@@ -14,6 +14,11 @@ import org.springframework.scheduling.annotation.Async;
  */
 @FunctionalInterface
 public interface SamlIdPCasEventListener extends CasEventListener {
+    /**
+     * Handle application ready event.
+     *
+     * @param event the event
+     */
     @EventListener
     @Async
     void handleApplicationReadyEvent(ApplicationReadyEvent event);

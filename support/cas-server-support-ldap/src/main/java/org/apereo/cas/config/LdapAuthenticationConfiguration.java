@@ -35,7 +35,7 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "ldapAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "LdapAuthenticationConfiguration", proxyBeanMethods = false)
 public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
@@ -86,7 +86,7 @@ public class LdapAuthenticationConfiguration {
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")
             final BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) throws Exception {
             return plan -> ldapAuthenticationHandlers.toList().forEach(handler -> {
                 LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());

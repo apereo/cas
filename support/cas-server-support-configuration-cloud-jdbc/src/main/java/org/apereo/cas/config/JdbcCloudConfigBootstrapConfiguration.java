@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "jdbcCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JdbcCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 

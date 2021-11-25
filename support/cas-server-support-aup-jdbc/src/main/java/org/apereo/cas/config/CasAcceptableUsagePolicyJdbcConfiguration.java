@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casAcceptableUsagePolicyJdbcConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyJdbcConfiguration {

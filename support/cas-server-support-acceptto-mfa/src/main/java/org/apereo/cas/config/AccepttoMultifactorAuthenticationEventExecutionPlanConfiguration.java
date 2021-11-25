@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "accepttoMultifactorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "AccepttoMultifactorAuthenticationEventExecutionPlanHandlerConfiguration", proxyBeanMethods = false)

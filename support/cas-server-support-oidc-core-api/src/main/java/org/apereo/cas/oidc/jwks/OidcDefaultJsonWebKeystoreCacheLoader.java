@@ -1,17 +1,17 @@
 package org.apereo.cas.oidc.jwks;
 
+import org.apereo.cas.util.LoggingUtils;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.springframework.core.io.Resource;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -90,20 +90,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      * @throws Exception the exception
      */
     protected JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
-        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
-        return buildJsonWebKeySet(json);
-    }
-
-    /**
-     * Build json web key set.
-     *
-     * @param json the json
-     * @return the json web key set
-     * @throws Exception the exception
-     */
-    protected JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
-        val jsonWebKeySet = new JsonWebKeySet(json);
+        val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
         val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
         if (webKey == null || webKey.getPrivateKey() == null) {
             LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
@@ -119,12 +106,13 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      */
     protected Optional<JsonWebKeySet> buildJsonWebKeySet() {
         try {
-            val jwksFile = generateJwksResource();
-            if (jwksFile == null) {
+            val resource = generateJwksResource();
+            if (resource == null) {
+                LOGGER.warn("Unable to load or generate a JWKS resource");
                 return Optional.empty();
             }
-            LOGGER.trace("Retrieving default JSON web key from [{}]", jwksFile);
-            val jsonWebKeySet = buildJsonWebKeySet(jwksFile);
+            LOGGER.trace("Retrieving default JSON web key from [{}]", resource);
+            val jsonWebKeySet = buildJsonWebKeySet(resource);
 
             if (jsonWebKeySet == null || jsonWebKeySet.getJsonWebKeys().isEmpty()) {
                 LOGGER.warn("No JSON web keys could be found");
@@ -136,19 +124,20 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
                 && StringUtils.isBlank(k.getKeyType())).count();
 
             if (badKeysCount == jsonWebKeySet.getJsonWebKeys().size()) {
-                LOGGER.warn("No valid JSON web keys could be found");
+                LOGGER.warn("No valid JSON web keys could be found. The keys that are found in the keystore "
+                            + "do not define an algorithm, key id or key type and cannot be used for JWKS operations.");
                 return Optional.empty();
             }
 
             val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
             if (webKey != null && webKey.getPrivateKey() == null) {
-                LOGGER.warn("JSON web key retrieved [{}] has no associated private key", webKey.getKeyId());
+                LOGGER.warn("JSON web key retrieved [{}] has no associated private key.", webKey.getKeyId());
                 return Optional.empty();
             }
             LOGGER.trace("Loaded JSON web key set as [{}]", jsonWebKeySet.toJson());
             return Optional.of(jsonWebKeySet);
         } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
+            LoggingUtils.warn(LOGGER, e);
         }
         return Optional.empty();
     }
@@ -157,10 +146,11 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
      * Generate jwks resource.
      *
      * @return the resource
+     * @throws Exception the exception
      */
-    protected Resource generateJwksResource() {
-        val jwksFile = getOidcJsonWebKeystoreGeneratorService().generate();
-        LOGGER.debug("Loading default JSON web key from [{}]", jwksFile);
-        return jwksFile;
+    protected Resource generateJwksResource() throws Exception {
+        val resource = getOidcJsonWebKeystoreGeneratorService().generate();
+        LOGGER.debug("Loading default JSON web key from [{}]", resource);
+        return resource;
     }
 }

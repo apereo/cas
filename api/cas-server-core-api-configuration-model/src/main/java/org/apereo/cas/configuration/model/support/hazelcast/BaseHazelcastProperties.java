@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("BaseHazelcastProperties")
-public class BaseHazelcastProperties implements Serializable {
+public class BaseHazelcastProperties implements Serializable, CasFeatureModule {
 
     /**
      * Whether shut down hook is enabled.

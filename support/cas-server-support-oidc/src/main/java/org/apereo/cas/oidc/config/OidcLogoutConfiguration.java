@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "oidcLogoutConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcLogoutConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcLogoutConfiguration {
 

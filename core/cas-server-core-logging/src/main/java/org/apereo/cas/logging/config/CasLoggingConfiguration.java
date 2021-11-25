@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casLoggingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasLoggingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasLoggingConfiguration {
 
@@ -62,7 +62,7 @@ public class CasLoggingConfiguration {
      * Log4j configuration.
      */
     @ConditionalOnClass(value = LoggerContext.class)
-    @Configuration(value = "casLog4jConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasLog4jConfiguration", proxyBeanMethods = false)
     public static class CasLog4jConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint

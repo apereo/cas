@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
-@Configuration(value = "openIdAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OpenIdAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "x509AuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "X509AuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationWebflowConfiguration {
 

@@ -15,6 +15,7 @@ import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
 import org.apereo.cas.services.DefaultChainingServicesManager;
+import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
@@ -24,7 +25,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
-import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreServicesConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreServicesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @EnableAsync
@@ -111,7 +111,7 @@ public class CasCoreServicesConfiguration {
             final ServicesManager servicesManager,
             @Qualifier("communicationsManager")
             final CommunicationsManager communicationsManager) {
-            return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
+            return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
         }
     }
 

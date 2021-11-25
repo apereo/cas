@@ -25,7 +25,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "amazonSecretsManagerCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AmazonSecretsManagerCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 @Slf4j
 @Getter
 public class AmazonSimpleSystemsManagementCloudConfigBootstrapConfiguration implements PropertySourceLocator {

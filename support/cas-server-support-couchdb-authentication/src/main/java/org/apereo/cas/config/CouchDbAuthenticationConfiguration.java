@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration(value = "couchDbAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CouchDbAuthenticationConfiguration {
@@ -61,7 +61,7 @@ public class CouchDbAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler")
         final AuthenticationHandler authenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, defaultPrincipalResolver);
     }

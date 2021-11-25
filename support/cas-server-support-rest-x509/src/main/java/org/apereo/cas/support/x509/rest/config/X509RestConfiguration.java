@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@Configuration(value = "x509RestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "X509RestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class X509RestConfiguration {

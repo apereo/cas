@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "radiusTokenAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RadiusTokenAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
 public class RadiusTokenAuthenticationComponentSerializationConfiguration {

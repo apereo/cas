@@ -32,7 +32,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "ldapServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "LdapServiceRegistryConfiguration", proxyBeanMethods = false)
 @ConditionalOnProperty(prefix = "cas.service-registry.ldap", name = "ldap-url")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j

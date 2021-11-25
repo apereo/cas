@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "googleAuthenticatorMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GoogleAuthenticatorMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorBypassEvaluator")

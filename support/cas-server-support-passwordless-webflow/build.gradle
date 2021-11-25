@@ -17,11 +17,12 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-passwordless")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
 
-    compileOnlyApi  project(":support:cas-server-support-pac4j-webflow")
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")

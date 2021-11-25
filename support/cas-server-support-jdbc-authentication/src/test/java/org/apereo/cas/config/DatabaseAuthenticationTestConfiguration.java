@@ -53,7 +53,7 @@ public class DatabaseAuthenticationTestConfiguration {
     private String hbm2ddl;
 
     @Autowired
-    @Qualifier("jpaBeanFactory")
+    @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
     private JpaBeanFactory jpaBeanFactory;
 
     @Autowired

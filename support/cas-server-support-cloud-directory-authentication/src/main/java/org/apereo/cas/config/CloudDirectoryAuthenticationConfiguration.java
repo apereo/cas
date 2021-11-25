@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.clouddirectory.CloudDirectoryClient;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "cloudDirectoryAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CloudDirectoryAuthenticationConfiguration", proxyBeanMethods = false)
 public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryPrincipalFactory")
@@ -86,7 +86,7 @@ public class CloudDirectoryAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer cloudDirectoryAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("cloudDirectoryAuthenticationHandler")
         final AuthenticationHandler cloudDirectoryAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cloudDirectoryAuthenticationHandler, defaultPrincipalResolver);
     }
