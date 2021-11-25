@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
@@ -10,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.val;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -72,6 +75,21 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         val properties = new AcceptableUsagePolicyProperties();
         properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
         verifyAction(properties);
+    }
+
+    @Test
+    public void verifyActionAcceptedGlobal() {
+        val properties = new AcceptableUsagePolicyProperties();
+        properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
+        val context = getRequestContext();
+        val repo = getRepositoryInstance(properties);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication();
+        authentication.getPrincipal().getAttributes().put(
+                properties.getCore().getAupAttributeName(),
+                Collections.singletonList("true"));
+        WebUtils.putAuthentication(authentication, context);
+        WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
+        assertTrue(repo.verify(context).isAccepted());
     }
 
     @Test
