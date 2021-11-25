@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -49,7 +50,11 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
 
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
-        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
+            throw new AuthenticationException("Unable to determine authentication from the request context");
+        }
+        val principal = authentication.getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
             LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());

@@ -1,19 +1,19 @@
 package org.apereo.cas.aup;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.Cleanup;
-import lombok.Getter;
-import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
+import lombok.Getter;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,24 +89,5 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
         assertNotNull(acceptableUsagePolicyRepository);
         verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));
-    }
-
-    @Nested
-    @Getter
-    @TestPropertySource(properties = "cas.acceptable-usage-policy.core.aup-omit-if-attribute-missing=true")
-    public class LdapOmitIfMissingStatusAttributeTests {
-
-        @Autowired
-        @Qualifier("acceptableUsagePolicyRepository")
-        protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
-        @Test
-        public void verifyMissingUserAccepted() {
-            val actualPrincipalId = UUID.randomUUID().toString();
-            val c = getCredential(actualPrincipalId);
-            val context = getRequestContext(actualPrincipalId, Map.of(), c);
-            assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
-        }
-
     }
 }
