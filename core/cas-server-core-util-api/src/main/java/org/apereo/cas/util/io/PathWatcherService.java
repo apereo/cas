@@ -31,8 +31,6 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
-    private static final int DELAY_MILLI_SECONDS = 500;
-
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private final WatchService watcher;
@@ -123,8 +121,6 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             val parent = (Path) key.watchable();
             val fullPath = parent.resolve(filename);
             val file = fullPath.toFile();
-
-            FunctionUtils.doAndIgnore(o -> Thread.sleep(DELAY_MILLI_SECONDS));
 
             LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
             if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
