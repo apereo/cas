@@ -136,7 +136,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                val services = (List<RegisteredService>) MAPPER.readValue(result, List.class);
+                val services = MAPPER.readValue(result, TypeReference<ArrayList<RegisteredService>>() {});
                 services.stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
