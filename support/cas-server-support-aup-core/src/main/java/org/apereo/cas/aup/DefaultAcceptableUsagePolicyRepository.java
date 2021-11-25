@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
@@ -33,19 +32,20 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
-        val storageInfo = getKeyAndMap(requestContext);
-        val key = storageInfo.getLeft();
-        val map = storageInfo.getRight();
-        val authentication = WebUtils.getAuthentication(requestContext);
-        if (authentication == null) {
-            throw new AuthenticationException("No authentication could be found in the current context");
+        val status = super.verify(requestContext);
+        if (!status.isAccepted()) {
+            val storageInfo = getKeyAndMap(requestContext);
+            val key = storageInfo.getLeft();
+            val map = storageInfo.getRight();
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val principal = authentication.getPrincipal();
+            if (map.containsKey(key)) {
+                val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE) || isUsagePolicyAcceptedBy(principal);
+                return new AcceptableUsagePolicyStatus(accepted, principal);
+            }
+            return AcceptableUsagePolicyStatus.denied(principal);
         }
-        val principal = authentication.getPrincipal();
-        if (map.containsKey(key)) {
-            val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE) || isUsagePolicyAcceptedBy(principal);
-            return new AcceptableUsagePolicyStatus(accepted, principal);
-        }
-        return AcceptableUsagePolicyStatus.denied(principal);
+        return status;
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-  "enabled": false,
+  "enabled": true,
   "dependencies": "oidc",
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
