@@ -1,4 +1,5 @@
 {
+  "enabled": false,
   "dependencies": "oidc",
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
@@ -6,15 +7,16 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
 
     "--cas.authn.oidc.core.issuer=${cas.server.name}/cas/oidc",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
     
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.id=STUB",
 
-    "--logging.level.org.apereo.cas=DEBUG",
-    "--logging.level.org.apereo.services.persondir=DEBUG",
+    "--logging.level.org.apereo.cas=INFO",
+    "--logging.level.org.apereo.services.persondir=INFO",
 
     "--cas.authn.oauth.core.user-profile-view-type=FLAT"
   ],

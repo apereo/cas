@@ -83,7 +83,25 @@ if [[ ! -d "${scenario}" ]]; then
   exit 1;
 fi
 
+echo -e "******************************************************"
+printgreen "Scenario: ${scenario}"
+echo -e "******************************************************\n"
+
+config="${scenario}/script.json"
+echo "Using scenario configuration file: ${config}"
+jq '.' "${config}" -e >/dev/null
+if [ $? -ne 0 ]; then
+ printred "\nFailed to parse scenario configuration file ${config}"
+ exit 1
+fi
+
 scenarioName=${scenario##*/}
+enabled=$(cat "${config}" | jq -j '.enabled')
+if [[ "${enabled}" == "false" ]]; then
+  printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and enable the test."
+  exit 0
+fi
+
 export SCENARIO="${scenarioName}"
 
 if [[ "${CI}" == "true" ]]; then
@@ -129,18 +147,6 @@ if [[ "${RERUN}" != "true" ]]; then
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
     -keystore "${keystore}" -dname "${dname}"
   [ -f "${keystore}" ] && echo "Created ${keystore}"
-fi
-
-echo -e "******************************************************"
-printgreen "Scenario: ${scenario}"
-echo -e "******************************************************\n"
-
-config="${scenario}/script.json"
-echo "Using scenario configuration file: ${config}"
-jq '.' "${config}" -e >/dev/null
-if [ $? -ne 0 ]; then
- printred "\nFailed to parse scenario configuration file ${config}"
- exit 1
 fi
 
 project=$(cat "${config}" | jq -j '.project // "tomcat"')

@@ -695,18 +695,6 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
 
         },
-        bytebuddy               : [
-                dependencies.create("net.bytebuddy:byte-buddy:$bytebuddyVersion") {
-                },
-                dependencies.create("de.cronn:reflection-util:$reflectionUtilVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
-                    exclude(group: "com.google.code.findbugs", module: "jsr305")
-                },
-                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
-                    exclude(group: "org.mockito", module: "mockito-all")
-                }
-        ],
         bvalidator      : [
                 dependencies.create("org.apache.bval:bval-jsr:$apacheBValVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -737,7 +725,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
                     exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
@@ -753,8 +740,6 @@ ext.libraries = [
                     exclude(group: "com.zaxxer", module: "HikariCP")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
-
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")
@@ -763,8 +748,6 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "net.bytebuddy", module: "byte-buddy")
-
                 }
         ],
         httpclient              : [
