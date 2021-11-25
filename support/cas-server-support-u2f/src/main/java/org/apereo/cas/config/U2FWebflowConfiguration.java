@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "u2FWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2FWebflowConfiguration", proxyBeanMethods = false)
 public class U2FWebflowConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -189,7 +189,7 @@ public class U2FWebflowConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.u2f")
-    @Configuration(value = "u2fMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "U2fMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("u2fMultifactorWebflowConfigurer")
     public static class U2FMultifactorTrustConfiguration {
 

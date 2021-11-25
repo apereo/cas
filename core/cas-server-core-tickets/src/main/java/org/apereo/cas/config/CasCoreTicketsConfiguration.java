@@ -74,7 +74,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreTicketsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreTicketsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @EnableAsync
@@ -378,7 +378,7 @@ public class CasCoreTicketsConfiguration {
     @Configuration(value = "CasCoreTicketPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketPlanConfiguration {
-        @ConditionalOnMissingBean(name = "defaultTicketFactory")
+        @ConditionalOnMissingBean(name = TicketFactory.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactory defaultTicketFactory(final List<TicketFactoryExecutionPlanConfigurer> configurers) {

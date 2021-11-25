@@ -23,7 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casOAuth20AuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20AuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @Bean

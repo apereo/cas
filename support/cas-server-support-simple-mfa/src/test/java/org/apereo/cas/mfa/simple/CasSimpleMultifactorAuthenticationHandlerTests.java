@@ -57,7 +57,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory defaultTicketFactory;
 
     @Autowired

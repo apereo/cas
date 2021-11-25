@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casAcceptableUsagePolicyRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyRestConfiguration {

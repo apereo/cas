@@ -18,7 +18,7 @@ import java.time.Instant;
  * @since 6.0.0
  */
 @Slf4j
-@Configuration(value = "casSpringBootAdminServerConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSpringBootAdminServerConfiguration", proxyBeanMethods = false)
 public class CasSpringBootAdminServerConfiguration {
     /**
      * Handle application ready event.

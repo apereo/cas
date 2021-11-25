@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @ConditionalOnProperty(prefix = "cas.authn.attribute-repository.couchbase", name = "username-attribute")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "couchbasePersonDirectoryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchbasePersonDirectoryConfiguration", proxyBeanMethods = false)
 public class CouchbasePersonDirectoryConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbasePersonAttributeDao")

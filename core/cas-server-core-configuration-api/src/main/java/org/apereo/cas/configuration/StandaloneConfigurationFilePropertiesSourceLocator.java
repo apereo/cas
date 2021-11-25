@@ -33,7 +33,7 @@ public class StandaloneConfigurationFilePropertiesSourceLocator implements CasCo
     @Override
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource(getClass().getSimpleName());
-        val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        val configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile(environment);
         if (configFile != null) {
             val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addPropertySource(sourceStandalone);

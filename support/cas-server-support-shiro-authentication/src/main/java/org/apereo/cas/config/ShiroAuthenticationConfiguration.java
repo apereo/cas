@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "shiroAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "ShiroAuthenticationConfiguration", proxyBeanMethods = false)
 public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroPrincipalFactory")
@@ -66,7 +66,7 @@ public class ShiroAuthenticationConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("shiroAuthenticationHandler")
         final AuthenticationHandler shiroAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val shiroConfigFile = casProperties.getAuthn()

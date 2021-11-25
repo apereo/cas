@@ -39,7 +39,7 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "u2fJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fJpaConfiguration", proxyBeanMethods = false)
 public class U2FJpaConfiguration {
 
     @Configuration(value = "U2FJpaTransactionConfiguration", proxyBeanMethods = false)
@@ -84,7 +84,7 @@ public class U2FJpaConfiguration {
         @Bean
         public JpaVendorAdapter jpaU2fVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -104,7 +104,7 @@ public class U2FJpaConfiguration {
             final BeanContainer<String> jpaU2fPackagesToScan,
             @Qualifier("jpaU2fVendorAdapter")
             final JpaVendorAdapter jpaU2fVendorAdapter,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f)
                 .packagesToScan(jpaU2fPackagesToScan.toSet()).persistenceUnitName("jpaU2fRegistryContext")

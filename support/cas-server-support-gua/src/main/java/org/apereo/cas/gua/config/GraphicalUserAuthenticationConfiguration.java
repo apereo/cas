@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "graphicalUserAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "GraphicalUserAuthenticationConfiguration", proxyBeanMethods = false)
 public class GraphicalUserAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")

@@ -53,7 +53,7 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Deprecated(since = "6.2.0")
-@Configuration(value = "openidConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OpenidConfiguration", proxyBeanMethods = false)
 public class OpenIdConfiguration {
 
     @Bean

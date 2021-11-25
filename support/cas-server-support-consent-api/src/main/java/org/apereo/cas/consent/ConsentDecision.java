@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,6 +32,7 @@ public class ConsentDecision implements Serializable {
 
     @Id
     @Transient
+    @JsonSerialize(using = ToStringSerializer.class)
     private long id;
 
     @Column(nullable = false)

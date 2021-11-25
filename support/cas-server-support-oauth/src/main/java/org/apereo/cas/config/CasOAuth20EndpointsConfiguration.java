@@ -34,7 +34,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "casOAuth20EndpointsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuth20EndpointsConfiguration {
 

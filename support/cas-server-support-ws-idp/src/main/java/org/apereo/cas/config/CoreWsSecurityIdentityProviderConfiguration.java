@@ -61,7 +61,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = "classpath:META-INF/cxf/cxf.xml")
 @Slf4j
-@Configuration(value = "coreWsSecurityIdentityProviderConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecurityIdentityProviderConfiguration", proxyBeanMethods = false)
 public class CoreWsSecurityIdentityProviderConfiguration {
 
     @Configuration(value = "CoreWsSecurityIdentityProviderWebConfiguration", proxyBeanMethods = false)

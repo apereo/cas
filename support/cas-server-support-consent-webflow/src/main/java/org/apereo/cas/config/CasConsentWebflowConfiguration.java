@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(name = "consentRepository")
 @ConditionalOnProperty(prefix = "cas.consent.core", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casConsentWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentWebflowConfiguration", proxyBeanMethods = false)
 public class CasConsentWebflowConfiguration {
 
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)

@@ -128,7 +128,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "oidcConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration {
@@ -208,7 +208,6 @@ public class OidcConfiguration {
             return new OidcUserProfileDataCreator(servicesManager, profileScopeToAttributesFilter);
         }
     }
-
 
     @Configuration(value = "OidcClaimsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

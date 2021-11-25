@@ -83,7 +83,7 @@ import java.time.Duration;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPConfiguration", proxyBeanMethods = false)
 public class SamlIdPConfiguration {
 
     @Configuration(value = "SamlIdPProfileBuilderConfiguration", proxyBeanMethods = false)

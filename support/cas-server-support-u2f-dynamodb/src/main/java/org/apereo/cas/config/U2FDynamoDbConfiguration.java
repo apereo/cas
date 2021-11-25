@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "u2fDynamoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fDynamoDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FDynamoDbConfiguration {
 

@@ -33,7 +33,7 @@ public class CasConfigurationWatchServiceTests {
     @Test
     public void verifyOperationByDirectory() {
         val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
-        when(manager.getStandaloneProfileConfigurationDirectory()).thenReturn(FileUtils.getTempDirectory());
+        when(manager.getStandaloneProfileConfigurationDirectory(any())).thenReturn(FileUtils.getTempDirectory());
         val service = new CasConfigurationWatchService(manager, applicationContext);
         service.initialize();
         service.close();
@@ -44,7 +44,7 @@ public class CasConfigurationWatchServiceTests {
         val manager = mock(CasConfigurationPropertiesEnvironmentManager.class);
         val cas = File.createTempFile("cas", ".properties");
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
-        when(manager.getStandaloneProfileConfigurationFile()).thenReturn(cas);
+        when(manager.getStandaloneProfileConfigurationFile(any())).thenReturn(cas);
         val service = new CasConfigurationWatchService(manager, applicationContext);
         service.initialize();
 

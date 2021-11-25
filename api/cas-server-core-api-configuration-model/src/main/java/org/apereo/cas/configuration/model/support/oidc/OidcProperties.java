@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import org.apereo.cas.configuration.model.support.oidc.jwks.OidcJsonWebKeystoreProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;

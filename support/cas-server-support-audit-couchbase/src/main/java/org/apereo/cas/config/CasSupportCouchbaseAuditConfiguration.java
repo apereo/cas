@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "casSupportCouchbaseAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportCouchbaseAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportCouchbaseAuditConfiguration {
 

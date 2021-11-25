@@ -43,7 +43,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "trustedAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TrustedAuthenticationConfiguration", proxyBeanMethods = false)
 public class TrustedAuthenticationConfiguration {
 
     @Configuration(value = "TrustedAuthenticationHandlerConfiguration", proxyBeanMethods = false)
@@ -85,7 +85,7 @@ public class TrustedAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
         public PrincipalResolver trustedPrincipalResolver(
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy,
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")

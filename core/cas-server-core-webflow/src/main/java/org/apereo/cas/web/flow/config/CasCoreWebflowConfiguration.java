@@ -81,7 +81,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casCoreWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)

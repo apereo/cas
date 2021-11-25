@@ -13,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")

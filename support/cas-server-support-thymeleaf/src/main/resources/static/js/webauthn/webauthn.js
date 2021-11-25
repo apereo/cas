@@ -360,6 +360,9 @@ function submitResponse(url, request, response) {
 
     return fetch(url, {
         method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN": csrfToken
+        },
         body: JSON.stringify(body),
     })
         .then(response => response.json())
@@ -495,6 +498,9 @@ function register(username, displayName, credentialNickname, csrfToken,
 function getAuthenticateRequest(urls, username) {
     return fetch(urls.authenticate, {
         body: new URLSearchParams(username ? {username} : {}),
+        headers: {
+            "X-CSRF-TOKEN": csrfToken
+        },
         method: 'POST',
     })
         .then(response => response.json())

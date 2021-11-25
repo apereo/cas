@@ -25,6 +25,11 @@ import java.util.Optional;
 public interface PrincipalResolver extends Ordered {
 
     /**
+     * Default principal resolver bean name.
+     */
+    String BEAN_NAME_PRINCIPAL_RESOLVER = "defaultPrincipalResolver";
+
+    /**
      * Attribute repository implementation bean name.
      */
     String BEAN_NAME_ATTRIBUTE_REPOSITORY = "attributeRepository";

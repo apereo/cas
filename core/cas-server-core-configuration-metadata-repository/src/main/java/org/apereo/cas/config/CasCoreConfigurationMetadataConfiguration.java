@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreConfigurationMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreConfigurationMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfigurationMetadataConfiguration {
     @Bean

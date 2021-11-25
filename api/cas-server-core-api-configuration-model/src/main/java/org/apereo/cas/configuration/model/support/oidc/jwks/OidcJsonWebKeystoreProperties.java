@@ -1,9 +1,6 @@
-package org.apereo.cas.configuration.model.support.oidc;
+package org.apereo.cas.configuration.model.support.oidc.jwks;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
-import org.apereo.cas.configuration.support.DurationCapable;
-import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -29,38 +26,16 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     private static final long serialVersionUID = -1696060572027445151L;
 
     /**
-     * Timeout that indicates how long should the JWKS file be kept in cache.
+     * Core JWKS settings and properties.
      */
-    @DurationCapable
-    private String jwksCacheExpiration = "PT60M";
+    @NestedConfigurationProperty
+    private OidcJsonWebKeystoreCoreProperties core = new OidcJsonWebKeystoreCoreProperties();
 
     /**
-     * Path to the JWKS file resource used to handle signing/encryption of authentication tokens.
+     * Fetch JWKS via the file system.
      */
-    @RequiredProperty
-    @ExpressionLanguageCapable
-    private String jwksFile = "file:/etc/cas/config/keystore.jwks";
-
-    /**
-     * The key size for the generated jwks. This is an algorithm-specific metric,
-     * such as modulus length, specified in number of bits.
-     * <p>
-     * If the keystore type is {@code EC}, the key size defined here
-     * should switch to one of {@code 256}, {@code 384} or {@code 521}.
-     * If using  {@code EC}, then the size should match the number of bits required.
-     */
-    private int jwksKeySize = 2048;
-
-    /**
-     * The type of the JWKS used to handle signing/encryption of authentication tokens.
-     * Accepted values are {@code RSA} or {@code EC}.
-     */
-    private String jwksType = "RSA";
-
-    /**
-     * The key identifier to set for the generated key in the keystore.
-     */
-    private String jwksKeyId = "cas";
+    @NestedConfigurationProperty
+    private FileSystemOidcJsonWebKeystoreProperties fileSystem = new FileSystemOidcJsonWebKeystoreProperties();
 
     /**
      * Fetch JWKS via a REST endpoint.
@@ -73,6 +48,12 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovy = new SpringResourceProperties();
+
+    /**
+     * Fetch JWKS via a relational database and JPA.
+     */
+    @NestedConfigurationProperty
+    private JpaOidcJsonWebKeystoreProperties jpa = new JpaOidcJsonWebKeystoreProperties();
 
     /**
      * OIDC key rotation properties.

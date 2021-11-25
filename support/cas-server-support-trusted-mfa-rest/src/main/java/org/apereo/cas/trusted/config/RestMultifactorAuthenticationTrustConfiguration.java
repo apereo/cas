@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "restMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RestMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestMultifactorAuthenticationTrustConfiguration {
 

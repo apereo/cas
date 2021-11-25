@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebSecurityExpressionHandler;
 import org.apereo.cas.web.security.CasWebSecurityJdbcConfigurerAdapter;
-import org.apereo.cas.web.security.flow.PopulateSpringSecurityContextAction;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -27,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.webflow.execution.Action;
 
 import java.util.List;
 
@@ -37,7 +35,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "casWebAppSecurityConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWebAppSecurityConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class CasWebAppSecurityConfiguration {
@@ -50,12 +48,6 @@ public class CasWebAppSecurityConfiguration {
     @Bean
     public InitializingBean securityContextHolderInitialization() {
         return () -> SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
-    public Action populateSpringSecurityContextAction() {
-        return new PopulateSpringSecurityContextAction();
     }
 
     @Configuration(value = "CasWebappCoreSecurityConfiguration", proxyBeanMethods = false)
@@ -84,6 +76,7 @@ public class CasWebAppSecurityConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "casWebAppSecurityWebMvcConfigurer")
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer() {
             return new WebMvcConfigurer() {
                 @Override

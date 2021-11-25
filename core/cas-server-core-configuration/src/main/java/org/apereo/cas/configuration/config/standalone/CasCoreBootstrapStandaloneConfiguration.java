@@ -30,19 +30,19 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
+@ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false", matchIfMissing = true)
 @Configuration(value = "CasCoreBootstrapStandaloneConfiguration", proxyBeanMethods = false)
 public class CasCoreBootstrapStandaloneConfiguration {
 
     @Configuration(value = "CasCoreBootstrapStandaloneSourcesConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
+
         @Bean
         public PropertySourceLocator casCoreBootstrapPropertySourceLocator(
             final List<CasConfigurationPropertiesSourceLocator> locatorList,
             final ResourceLoader resourceLoader) {
             AnnotationAwareOrderComparator.sortIfNecessary(locatorList);
-
             return environment -> {
                 val composite = new CompositePropertySource("casCoreBootstrapPropertySourceLocator");
                 locatorList
@@ -63,7 +63,10 @@ public class CasCoreBootstrapStandaloneConfiguration {
 
     @Configuration(value = "CasCoreBootstrapStandaloneLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @Profile(CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE)
+    @Profile({
+        CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE,
+        CasConfigurationPropertiesSourceLocator.PROFILE_EMBEDDED
+    })
     public static class CasCoreBootstrapStandaloneLocatorConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean

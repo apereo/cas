@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "mongoDbPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbPasswordlessAuthenticationConfiguration {
 

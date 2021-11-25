@@ -3,8 +3,6 @@ package org.apereo.cas.web.support;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Throttles access attempts for failed logins by IP Address. This stores the attempts in memory.
@@ -15,8 +13,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                                           final ConcurrentMap<String, ZonedDateTime> ipMap) {
+    public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final ThrottledSubmissionsStore ipMap) {
         super(configurationContext, ipMap);
     }
 

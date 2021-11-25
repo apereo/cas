@@ -116,11 +116,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         private final Object[] values;
         private int currentIndex;
 
-        /**
-         * Instantiates a new attribute context.
-         *
-         * @param values the values
-         */
         AttributeContext(final String[] values) {
             this.values = ArrayUtils.clone(values);
         }

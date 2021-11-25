@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "u2fMongoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fMongoDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class U2FMongoDbConfiguration {
 

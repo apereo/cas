@@ -33,7 +33,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "redisServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RedisServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class RedisServiceRegistryConfiguration {

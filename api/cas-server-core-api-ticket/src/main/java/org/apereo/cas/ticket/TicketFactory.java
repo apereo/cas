@@ -11,6 +11,11 @@ package org.apereo.cas.ticket;
 public interface TicketFactory {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "defaultTicketFactory";
+
+    /**
      * Gets name.
      *
      * @return the name

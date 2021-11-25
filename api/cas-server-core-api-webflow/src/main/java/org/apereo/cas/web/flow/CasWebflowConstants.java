@@ -885,6 +885,16 @@ public interface CasWebflowConstants {
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
 
     /**
+     * State id 'viewRegistrationWebAuthn'.
+     */
+    String STATE_ID_WEBAUTHN_VIEW_REGISTRATION = "viewRegistrationWebAuthn";
+
+    /**
+     * State id 'validateWebAuthnToken'.
+     */
+    String STATE_ID_WEBAUTHN_VALIDATE = "validateWebAuthnToken";
+
+    /**
      * State id 'saveRegistration'.
      */
     String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
@@ -1390,20 +1400,55 @@ public interface CasWebflowConstants {
      * Action id 'displayBeforePasswordlessAuthenticationAction .
      */
     String ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN = "displayBeforePasswordlessAuthenticationAction";
+
     /**
      * Action id 'verifyPasswordlessAccountAuthenticationAction .
      */
     String ACTION_ID_VERIFY_PASSWORDLESS_ACCOUNT_AUTHN = "verifyPasswordlessAccountAuthenticationAction";
+
     /**
      * Action id 'verifyPasswordlessAccountAuthenticationAction .
      */
     String ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN = "determineDelegatedAuthenticationAction";
+
     /**
      * Action id 'determineMultifactorPasswordlessAuthenticationAction .
      */
     String ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN = "determineMultifactorPasswordlessAuthenticationAction";
+
     /**
      * Action id 'determineMultifactorPasswordlessAuthenticationAction .
      */
     String ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN = "acceptPasswordlessAuthenticationAction";
+
+    /**
+     * Action id 'webAuthnStartAuthenticationAction .
+     */
+    String ACTION_ID_WEBAUTHN_START_AUTHENTICATION = "webAuthnStartAuthenticationAction";
+
+    /**
+     * Action id 'webAuthnAuthenticationWebflowAction .
+     */
+    String ACTION_ID_WEBAUTHN_AUTHENTICATION_WEBFLOW = "webAuthnAuthenticationWebflowAction";
+
+    /**
+     * Action id 'webAuthnSaveAccountRegistrationAction .
+     */
+    String ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION = "webAuthnSaveAccountRegistrationAction";
+
+    /**
+     * Action id 'webAuthnCheckAccountRegistrationAction .
+     */
+    String ACTION_ID_WEBAUTHN_CHECK_ACCOUNT_REGISTRATION = "webAuthnCheckAccountRegistrationAction";
+
+    /**
+     * Action id 'webAuthnStartRegistrationAction .
+     */
+    String ACTION_ID_WEB_AUTHN_START_REGISTRATION = "webAuthnStartRegistrationAction";
+
+    /**
+     * Action id 'webAuthnValidateSessionCredentialTokenAction .
+     */
+    String ACTION_ID_WEBAUTHN_VALIDATE_SESSION_CREDENTIAL_TOKEN = "webAuthnValidateSessionCredentialTokenAction";
+
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStore;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +19,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "ldapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "LdapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(name = "cas.authn.passwordless.accounts.ldap.ldap-url")
 public class LdapPasswordlessAuthenticationConfiguration {
 
     @Bean

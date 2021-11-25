@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "surrogateJdbcAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateJdbcAuthenticationConfiguration", proxyBeanMethods = false)
 public class SurrogateJdbcAuthenticationConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

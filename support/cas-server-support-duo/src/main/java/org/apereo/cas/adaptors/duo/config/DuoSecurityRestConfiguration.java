@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "duoSecurityRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)

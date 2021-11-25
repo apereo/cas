@@ -44,7 +44,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration(value = "surrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SurrogateAuthenticationWebflowConfiguration {
 

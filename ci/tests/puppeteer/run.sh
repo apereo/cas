@@ -34,11 +34,11 @@ while (( "$#" )); do
     scenario="$2"
     shift 2
     ;;
-  --install-puppeteer|--install)
+  --install-puppeteer|--install|--i)
       INSTALL_PUPPETEER="true"
       shift 1
       ;;
-  --debug)
+  --debug|--d)
     DEBUG="true"
     shift 1
     ;;
@@ -46,24 +46,24 @@ while (( "$#" )); do
     DEBUG_PORT="$2"
     shift 2
     ;;
-  --debug-suspend|--suspend)
+  --debug-suspend|--suspend|--s)
     DEBUG_SUSPEND="y"
     shift 1
     ;;
-  --rebuild)
+  --rebuild|--r)
     REBUILD="true"
     shift 1
     ;;
-  --dry-run)
+  --dry-run|--y)
     DRYRUN="true"
     shift 1
     printyellow "Skipping execution of test scenario while in dry-run mode."
     ;;
-  --headless)
+  --headless|--h)
     export HEADLESS="true"
     shift 1;
     ;;
-  --rerun|--resume)
+  --rerun|--resume|--z)
     RERUN="true"
     shift 1;
     ;;
@@ -83,7 +83,25 @@ if [[ ! -d "${scenario}" ]]; then
   exit 1;
 fi
 
+echo -e "******************************************************"
+printgreen "Scenario: ${scenario}"
+echo -e "******************************************************\n"
+
+config="${scenario}/script.json"
+echo "Using scenario configuration file: ${config}"
+jq '.' "${config}" -e >/dev/null
+if [ $? -ne 0 ]; then
+ printred "\nFailed to parse scenario configuration file ${config}"
+ exit 1
+fi
+
 scenarioName=${scenario##*/}
+enabled=$(cat "${config}" | jq -j '.enabled')
+if [[ "${enabled}" == "false" ]]; then
+  printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and enable the test."
+  exit 0
+fi
+
 export SCENARIO="${scenarioName}"
 
 if [[ "${CI}" == "true" ]]; then
@@ -129,18 +147,6 @@ if [[ "${RERUN}" != "true" ]]; then
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
     -keystore "${keystore}" -dname "${dname}"
   [ -f "${keystore}" ] && echo "Created ${keystore}"
-fi
-
-echo -e "******************************************************"
-printgreen "Scenario: ${scenario}"
-echo -e "******************************************************\n"
-
-config="${scenario}/script.json"
-echo "Using scenario configuration file: ${config}"
-jq '.' "${config}" -e >/dev/null
-if [ $? -ne 0 ]; then
- printred "\nFailed to parse scenario configuration file ${config}"
- exit 1
 fi
 
 project=$(cat "${config}" | jq -j '.project // "tomcat"')

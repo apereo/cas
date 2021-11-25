@@ -20,12 +20,6 @@ public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
 
     private final Credential credential;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source the source
-     * @param c      the c
-     */
     public CasAuthenticationTransactionStartedEvent(final Object source, final Credential c) {
         super(source);
         this.credential = c;

@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "duoSecurityConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
 public class DuoSecurityConfiguration {
@@ -58,7 +58,7 @@ public class DuoSecurityConfiguration {
     public Action duoUniversalPromptPrepareLoginAction(
         @Qualifier("duoProviderBean")
         final MultifactorAuthenticationProviderBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderBean,
-        @Qualifier("defaultTicketFactory")
+        @Qualifier(TicketFactory.BEAN_NAME)
         final TicketFactory ticketFactory,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {

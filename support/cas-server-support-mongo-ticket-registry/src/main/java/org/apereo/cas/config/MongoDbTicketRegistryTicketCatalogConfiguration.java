@@ -19,7 +19,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "mongoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbTicketRegistryTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbTicketRegistryTicketCatalogConfiguration extends BaseTicketDefinitionBuilderSupportConfiguration {
 

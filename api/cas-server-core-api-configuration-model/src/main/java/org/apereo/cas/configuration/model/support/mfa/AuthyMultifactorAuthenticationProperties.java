@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -19,7 +20,9 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AuthyMultifactorProperties")
-public class AuthyMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
+public class AuthyMultifactorAuthenticationProperties
+    extends BaseMultifactorAuthenticationProviderProperties
+    implements CasFeatureModule {
 
     /**
      * Provider id by default.

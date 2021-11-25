@@ -75,7 +75,7 @@ import java.util.stream.Stream;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casOAuthUmaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuthUmaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaConfiguration {
 
 

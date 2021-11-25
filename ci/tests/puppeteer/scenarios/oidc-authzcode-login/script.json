@@ -12,7 +12,7 @@
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone,MyCustomScope",
     "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name",
     "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=cn,given:name",
-    "--cas.authn.oidc.jwks.jwks-file=file:/tmp/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

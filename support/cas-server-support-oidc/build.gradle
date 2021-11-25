@@ -4,9 +4,11 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-jpa-hibernate")
 
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
@@ -61,6 +63,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-jpa-util")
+    testImplementation project(":support:cas-server-support-jpa-hibernate")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

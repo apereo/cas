@@ -15,7 +15,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")

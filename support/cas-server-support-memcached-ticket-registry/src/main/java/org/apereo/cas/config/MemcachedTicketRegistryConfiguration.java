@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "memcachedConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MemcachedConfiguration", proxyBeanMethods = false)
 public class MemcachedTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "memcachedTicketRegistryTranscoder")

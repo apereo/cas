@@ -16,13 +16,13 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcJsonWebKeyStoreListenerTests}.
+ * This is {@link OidcDefaultJsonWebKeyStoreListenerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcJsonWebKeyStoreListenerTests extends AbstractOidcTests {
+public class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJsonWebKeyStoreListener")
     private CasEventListener oidcJsonWebKeyStoreListener;

@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
+import org.apereo.cas.services.DefaultCasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.publisher.DefaultCasRegisteredServiceStreamPublisher;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casServicesStreamingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasServicesStreamingConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingConfiguration {
 
     @Bean
@@ -39,7 +39,7 @@ public class CasServicesStreamingConfiguration {
         final CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
-        return new CasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher,
+        return new DefaultCasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher,
             casRegisteredServiceStreamPublisherIdentifier);
     }
 

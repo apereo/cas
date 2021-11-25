@@ -15,7 +15,7 @@ import org.springframework.shell.jline.PromptProvider;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCommandLineShellConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCommandLineShellConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCommandLineShellConfiguration {
 

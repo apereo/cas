@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "swivelAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SwivelAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

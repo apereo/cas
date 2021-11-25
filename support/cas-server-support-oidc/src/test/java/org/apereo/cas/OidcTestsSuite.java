@@ -19,14 +19,16 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryServiceTest
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepositoryTests;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponseTests;
 import org.apereo.cas.oidc.issuer.OidcDefaultIssuerServiceTests;
+import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeyStoreListenerTests;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializerTests;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListenerTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtilsTests;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicyTests;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.generator.OidcJpaJsonWebKeystoreGeneratorServiceTests;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratedEventTests;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorServiceTests;
 import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationServiceTests;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilterTests;
@@ -150,12 +152,15 @@ import org.junit.platform.suite.api.Suite;
     OidcRegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     OidcClientConfigurationAccessTokenAuthenticatorTests.class,
     OidcDefaultIssuerServiceTests.class,
+    OidcJpaJsonWebKeystoreGeneratorServiceTests.class,
+    OidcJsonWebKeystoreGeneratedEventTests.class,
     OidcAuthorizationModelAndViewBuilderTests.class,
     OidcLocaleChangeInterceptorTests.class,
     OidcJwksRotationEndpointTests.class,
+    OidcDefaultJsonWebKeyStoreListenerTests.class,
     OidcCasWebflowLoginContextProviderTests.class,
     OidcCasCallbackUrlResolverTests.class,
-    OidcJsonWebKeyStoreListenerTests.class,
+    OidcDefaultJsonWebKeyStoreListenerTests.class,
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,

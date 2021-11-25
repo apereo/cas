@@ -159,7 +159,7 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Configuration(value = "casOAuth20Configuration", proxyBeanMethods = false)
+@Configuration(value = "CasOAuth20Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasOAuth20Configuration {
@@ -617,7 +617,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthDistributedSessionStore")
         @Bean
         public SessionStore oauthDistributedSessionStore(
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -1204,7 +1204,7 @@ public class CasOAuth20Configuration {
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor) {
@@ -1228,7 +1228,7 @@ public class CasOAuth20Configuration {
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor) {
@@ -1252,7 +1252,7 @@ public class CasOAuth20Configuration {
             final ServicesManager servicesManager,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("defaultPrincipalResolver")
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("oauthRegisteredServiceCipherExecutor")
             final CipherExecutor oauthRegisteredServiceCipherExecutor) {

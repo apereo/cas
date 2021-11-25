@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "amazonS3SamlMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AmazonS3SamlMetadataConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AmazonS3SamlMetadataConfiguration {
 

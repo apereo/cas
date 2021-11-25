@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "mongoDbServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
 

@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Deprecated(since = "6.2.0")
-@Configuration(value = "samlGoogleAppsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlGoogleAppsConfiguration", proxyBeanMethods = false)
 public class SamlGoogleAppsConfiguration implements InitializingBean {
 
     @Bean

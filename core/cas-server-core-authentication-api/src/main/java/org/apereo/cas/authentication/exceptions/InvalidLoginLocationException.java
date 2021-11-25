@@ -16,11 +16,6 @@ public class InvalidLoginLocationException extends AccountException {
 
     private static final long serialVersionUID = 5745711263227480194L;
 
-    /**
-     * Instantiates a new invalid login location exception.
-     *
-     * @param message the message
-     */
     public InvalidLoginLocationException(final String message) {
         super(message);
     }

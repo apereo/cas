@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "surrogateRestAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateRestAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateRestAuthenticationConfiguration {

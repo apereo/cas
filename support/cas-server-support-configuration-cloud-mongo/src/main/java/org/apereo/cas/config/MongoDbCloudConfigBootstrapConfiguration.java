@@ -18,7 +18,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "mongoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**
      * MongoDb CAS configuration key prefix.

@@ -215,7 +215,7 @@ public class CasAccountManagementWebflowConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("accountMgmtRegistrationService")
             final AccountRegistrationService accountMgmtRegistrationService,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory defaultTicketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -260,7 +260,7 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @ConditionalOnProperty(prefix = "cas.account-registration.google-recaptcha", name = "enabled", havingValue = "true")
-    @Configuration(value = "casAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "CasAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     public static class CasAccountManagementRegistrationCaptchaConfiguration {
 
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationCaptchaWebflowConfigurer")

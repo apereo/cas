@@ -79,7 +79,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "samlIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPMetadataConfiguration {
 
     @Configuration(value = "SamlIdPMetadataEndpointConfiguration", proxyBeanMethods = false)

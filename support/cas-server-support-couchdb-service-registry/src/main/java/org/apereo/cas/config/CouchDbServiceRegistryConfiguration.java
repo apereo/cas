@@ -33,7 +33,7 @@ import java.util.Optional;
  */
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "couchDbServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CouchDbServiceRegistryConfiguration", proxyBeanMethods = false)
 public class CouchDbServiceRegistryConfiguration {
 
     @Bean

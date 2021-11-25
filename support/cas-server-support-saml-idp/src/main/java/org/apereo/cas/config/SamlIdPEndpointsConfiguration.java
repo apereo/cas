@@ -96,7 +96,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "samlIdPEndpointsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
 public class SamlIdPEndpointsConfiguration {
 
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
@@ -465,7 +465,7 @@ public class SamlIdPEndpointsConfiguration {
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             if (type == SamlIdPCoreProperties.SessionStorageTypes.TICKET_REGISTRY) {
@@ -531,7 +531,7 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory defaultTicketFactory,
             @Qualifier("attributeRepository")
             final IPersonAttributeDao attributeRepository,

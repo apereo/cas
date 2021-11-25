@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
@@ -27,11 +29,19 @@ public class JsonConsentRepository extends BaseConsentRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final transient Resource jsonResource;
+    private final Resource jsonResource;
 
-    public JsonConsentRepository(final Resource jsonResource) {
-        this.jsonResource = jsonResource;
+    private FileWatcherService watcherService;
+
+    
+    public JsonConsentRepository(final Resource resource) throws Exception {
+        this.jsonResource = resource;
         setConsentDecisions(readDecisionsFromJsonResource());
+        if (ResourceUtils.isFile(this.jsonResource)) {
+            this.watcherService = new FileWatcherService(resource.getFile(),
+                Unchecked.consumer(file -> setConsentDecisions(readDecisionsFromJsonResource())));
+            this.watcherService.start(getClass().getSimpleName());
+        }
     }
 
     @Override

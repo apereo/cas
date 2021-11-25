@@ -20,6 +20,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheckAction;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
+import org.apereo.cas.web.flow.PopulateSpringSecurityContextAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
@@ -64,7 +65,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casSupportActionsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportActionsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasSupportActionsConfiguration {
@@ -78,7 +79,6 @@ public class CasSupportActionsConfiguration {
             return new FlowExecutionExceptionResolver();
         }
     }
-
 
     @Configuration(value = "CasSupportActionsExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -134,17 +134,18 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINISH_LOGOUT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action finishLogoutAction(final CasConfigurationProperties casProperties,
-                                         @Qualifier(ServicesManager.BEAN_NAME)
-                                         final ServicesManager servicesManager,
-                                         @Qualifier("ticketGrantingTicketCookieGenerator")
-                                         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                         @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                         final CentralAuthenticationService centralAuthenticationService,
-                                         @Qualifier("argumentExtractor")
-                                         final ArgumentExtractor argumentExtractor,
-                                         @Qualifier("logoutExecutionPlan")
-                                         final LogoutExecutionPlan logoutExecutionPlan) {
+        public Action finishLogoutAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan) {
             return new FinishLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                 argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
         }
@@ -152,17 +153,18 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT)
-        public Action logoutAction(final CasConfigurationProperties casProperties,
-                                   @Qualifier(ServicesManager.BEAN_NAME)
-                                   final ServicesManager servicesManager,
-                                   @Qualifier("ticketGrantingTicketCookieGenerator")
-                                   final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                   @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                   final CentralAuthenticationService centralAuthenticationService,
-                                   @Qualifier("argumentExtractor")
-                                   final ArgumentExtractor argumentExtractor,
-                                   @Qualifier("logoutExecutionPlan")
-                                   final LogoutExecutionPlan logoutExecutionPlan) {
+        public Action logoutAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan) {
             return new LogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                 argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
         }
@@ -188,33 +190,35 @@ public class CasSupportActionsConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RENDER_LOGIN_FORM)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action renderLoginFormAction(final CasConfigurationProperties casProperties,
-                                            final ConfigurableApplicationContext applicationContext,
-                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                            final ServicesManager servicesManager) {
+        public Action renderLoginFormAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new RenderLoginAction(servicesManager, casProperties, applicationContext);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP)
-        public Action initialFlowSetupAction(final CasConfigurationProperties casProperties,
-                                             @Qualifier("authenticationEventExecutionPlan")
-                                             final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                             @Qualifier(ServicesManager.BEAN_NAME)
-                                             final ServicesManager servicesManager,
-                                             @Qualifier("ticketGrantingTicketCookieGenerator")
-                                             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                             @Qualifier("warnCookieGenerator")
-                                             final CasCookieBuilder warnCookieGenerator,
-                                             @Qualifier(TicketRegistrySupport.BEAN_NAME)
-                                             final TicketRegistrySupport ticketRegistrySupport,
-                                             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-                                             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                             @Qualifier("singleSignOnParticipationStrategy")
-                                             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-                                             @Qualifier("argumentExtractor")
-                                             final ArgumentExtractor argumentExtractor) {
+        public Action initialFlowSetupAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("authenticationEventExecutionPlan")
+            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("warnCookieGenerator")
+            final CasCookieBuilder warnCookieGenerator,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+            @Qualifier("singleSignOnParticipationStrategy")
+            final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor) {
             return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor), servicesManager,
                 authenticationRequestServiceSelectionStrategies, ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
@@ -224,14 +228,16 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_VERIFY_REQUIRED_SERVICE)
-        public Action verifyRequiredServiceAction(final CasConfigurationProperties casProperties,
-                                                  @Qualifier(ServicesManager.BEAN_NAME)
-                                                  final ServicesManager servicesManager,
-                                                  @Qualifier("ticketGrantingTicketCookieGenerator")
-                                                  final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                                  @Qualifier(TicketRegistrySupport.BEAN_NAME)
-                                                  final TicketRegistrySupport ticketRegistrySupport) {
-            return new VerifyRequiredServiceAction(servicesManager, ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport);
+        public Action verifyRequiredServiceAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport) {
+            return new VerifyRequiredServiceAction(servicesManager,
+                ticketGrantingTicketCookieGenerator, casProperties, ticketRegistrySupport);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -246,13 +252,14 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "genericSuccessViewAction")
-        public Action genericSuccessViewAction(final CasConfigurationProperties casProperties,
-                                               @Qualifier(ServicesManager.BEAN_NAME)
-                                               final ServicesManager servicesManager,
-                                               @Qualifier("webApplicationServiceFactory")
-                                               final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                               @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                               final CentralAuthenticationService centralAuthenticationService) {
+        public Action genericSuccessViewAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("webApplicationServiceFactory")
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
             return new GenericSuccessViewAction(centralAuthenticationService, servicesManager,
                 webApplicationServiceFactory, casProperties);
         }
@@ -260,9 +267,10 @@ public class CasSupportActionsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
-        public Action redirectUnauthorizedServiceUrlAction(final ConfigurableApplicationContext applicationContext,
-                                                           @Qualifier(ServicesManager.BEAN_NAME)
-                                                           final ServicesManager servicesManager) {
+        public Action redirectUnauthorizedServiceUrlAction(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext);
         }
 
@@ -280,7 +288,7 @@ public class CasSupportActionsConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
             return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                 ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
@@ -300,18 +308,21 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
-        public Action frontChannelLogoutAction(final CasConfigurationProperties casProperties,
-                                               @Qualifier(ServicesManager.BEAN_NAME)
-                                               final ServicesManager servicesManager,
-                                               @Qualifier("ticketGrantingTicketCookieGenerator")
-                                               final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                               @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                               final CentralAuthenticationService centralAuthenticationService,
-                                               @Qualifier("argumentExtractor")
-                                               final ArgumentExtractor argumentExtractor,
-                                               @Qualifier("logoutExecutionPlan")
-                                               final LogoutExecutionPlan logoutExecutionPlan) {
-            return new FrontChannelLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator, argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+        public Action frontChannelLogoutAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan) {
+            return new FrontChannelLogoutAction(centralAuthenticationService,
+                ticketGrantingTicketCookieGenerator, argumentExtractor,
+                servicesManager, logoutExecutionPlan, casProperties);
         }
 
         @Bean
@@ -325,18 +336,19 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action terminateSessionAction(final CasConfigurationProperties casProperties,
-                                             final ConfigurableApplicationContext applicationContext,
-                                             @Qualifier("logoutManager")
-                                             final LogoutManager logoutManager,
-                                             @Qualifier("ticketGrantingTicketCookieGenerator")
-                                             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                             @Qualifier("warnCookieGenerator")
-                                             final CasCookieBuilder warnCookieGenerator,
-                                             @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                             final CentralAuthenticationService centralAuthenticationService,
-                                             @Qualifier("defaultSingleLogoutRequestExecutor")
-                                             final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
+        public Action terminateSessionAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("logoutManager")
+            final LogoutManager logoutManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier("warnCookieGenerator")
+            final CasCookieBuilder warnCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("defaultSingleLogoutRequestExecutor")
+            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor) {
             return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties.getLogout(), logoutManager,
                 applicationContext, defaultSingleLogoutRequestExecutor);
@@ -345,17 +357,18 @@ public class CasSupportActionsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "confirmLogoutAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action confirmLogoutAction(final CasConfigurationProperties casProperties,
-                                          @Qualifier(ServicesManager.BEAN_NAME)
-                                          final ServicesManager servicesManager,
-                                          @Qualifier("ticketGrantingTicketCookieGenerator")
-                                          final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                          @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                          final CentralAuthenticationService centralAuthenticationService,
-                                          @Qualifier("argumentExtractor")
-                                          final ArgumentExtractor argumentExtractor,
-                                          @Qualifier("logoutExecutionPlan")
-                                          final LogoutExecutionPlan logoutExecutionPlan) {
+        public Action confirmLogoutAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan) {
             return new ConfirmLogoutAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                 argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
         }
@@ -363,19 +376,21 @@ public class CasSupportActionsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP)
-        public Action logoutViewSetupAction(final CasConfigurationProperties casProperties,
-                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                            final ServicesManager servicesManager,
-                                            @Qualifier("ticketGrantingTicketCookieGenerator")
-                                            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-                                            final CentralAuthenticationService centralAuthenticationService,
-                                            @Qualifier("argumentExtractor")
-                                            final ArgumentExtractor argumentExtractor,
-                                            @Qualifier("logoutExecutionPlan")
-                                            final LogoutExecutionPlan logoutExecutionPlan) {
+        public Action logoutViewSetupAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("ticketGrantingTicketCookieGenerator")
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("argumentExtractor")
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier("logoutExecutionPlan")
+            final LogoutExecutionPlan logoutExecutionPlan) {
             return new LogoutViewSetupAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, argumentExtractor, servicesManager, logoutExecutionPlan, casProperties);
+                ticketGrantingTicketCookieGenerator, argumentExtractor,
+                servicesManager, logoutExecutionPlan, casProperties);
         }
 
         @Bean
@@ -390,10 +405,16 @@ public class CasSupportActionsConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy) {
             return new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
                 ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
+        public Action populateSpringSecurityContextAction() {
+            return new PopulateSpringSecurityContextAction();
         }
     }
 }

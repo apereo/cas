@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "yubiKeyRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "YubiKeyRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class YubiKeyRestConfiguration {

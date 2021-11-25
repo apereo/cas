@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casSupportDynamoDbAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSupportDynamoDbAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportDynamoDbAuditConfiguration {
     @Bean

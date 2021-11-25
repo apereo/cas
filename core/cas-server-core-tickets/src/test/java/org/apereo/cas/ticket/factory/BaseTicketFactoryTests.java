@@ -48,7 +48,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 public abstract class BaseTicketFactoryTests {
 
     @Autowired
-    @Qualifier("defaultTicketFactory")
+    @Qualifier(TicketFactory.BEAN_NAME)
     protected TicketFactory ticketFactory;
 
     @Autowired

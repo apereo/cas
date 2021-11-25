@@ -3,7 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-throttle")
 
     implementation project(":support:cas-server-support-oauth-services")
-    compileOnlyApi  project(":core:cas-server-core-tickets")
+    compileOnly project(":core:cas-server-core-tickets")
 
     implementation libraries.nimbus
     implementation libraries.pac4jcore

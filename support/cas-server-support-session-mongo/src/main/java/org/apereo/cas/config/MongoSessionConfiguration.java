@@ -19,7 +19,7 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "mongoSessionConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MongoSessionConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportAutoConfiguration({MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableMongoHttpSession

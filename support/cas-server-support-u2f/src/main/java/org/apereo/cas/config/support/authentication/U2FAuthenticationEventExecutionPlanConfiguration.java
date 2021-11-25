@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "u2fAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @Bean

@@ -46,7 +46,7 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@Configuration(value = "jpaServiceRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "JpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
 
     @Configuration(value = "JpaServiceRegistryPlanConfiguration", proxyBeanMethods = false)
@@ -79,7 +79,7 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         public JpaVendorAdapter jpaServiceVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -88,7 +88,7 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         public PersistenceProvider jpaServicePersistenceProvider(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newPersistenceProvider(casProperties.getServiceRegistry().getJpa());
         }
@@ -110,7 +110,7 @@ public class JpaServiceRegistryConfiguration {
             final PersistenceProvider jpaServicePersistenceProvider,
             @Qualifier("jpaServicePackagesToScan")
             final BeanContainer<String> jpaServicePackagesToScan,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceService)

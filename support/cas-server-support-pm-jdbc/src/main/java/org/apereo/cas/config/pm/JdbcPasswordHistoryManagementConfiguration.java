@@ -45,7 +45,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
         @Bean
         public JpaVendorAdapter jpaPasswordHistoryVendorAdapter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
@@ -64,7 +64,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
             final BeanContainer<String> jpaPasswordHistoryPackagesToScan,
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource,
-            @Qualifier("jpaBeanFactory")
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
             val ctx =
                 JpaConfigurationContext.builder().jpaVendorAdapter(jpaPasswordHistoryVendorAdapter)

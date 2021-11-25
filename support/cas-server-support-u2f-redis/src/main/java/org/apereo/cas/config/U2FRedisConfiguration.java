@@ -30,7 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "u2fRedisConfiguration", proxyBeanMethods = false)
+@Configuration(value = "U2fRedisConfiguration", proxyBeanMethods = false)
 public class U2FRedisConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

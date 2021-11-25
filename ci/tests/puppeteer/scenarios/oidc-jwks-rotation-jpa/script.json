@@ -1,0 +1,27 @@
+{
+  "dependencies": "oidc,jpa-hibernate",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+
+    "--cas.authn.oidc.jwks.jpa.driver-class=org.postgresql.Driver",
+    "--cas.authn.oidc.jwks.jpa.ddl-auto=update",
+    "--cas.authn.oidc.jwks.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "--cas.authn.oidc.jwks.jpa.user=postgres",
+    "--cas.authn.oidc.jwks.jpa.password=password",
+    "--cas.authn.oidc.jwks.jpa.url=jdbc:postgresql://localhost:5432/oidc",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=oidcJwks",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
+}
+
+
+
+

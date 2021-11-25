@@ -12,7 +12,7 @@ import org.apereo.cas.util.spring.CasEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Closeable;
 import java.io.File;
@@ -34,7 +34,7 @@ public class CasConfigurationWatchService implements Closeable, CasEventListener
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final ConfigurableApplicationContext applicationContext;
 
     private PathWatcherService configurationDirectoryWatch;
 
@@ -54,29 +54,31 @@ public class CasConfigurationWatchService implements Closeable, CasEventListener
     }
 
     private void watchConfigurationFileIfNeeded() {
-        val configFile = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
+        val environment = applicationContext.getEnvironment();
+        val configFile = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile(environment);
         if (configFile != null && configFile.exists()) {
             LOGGER.debug("Starting to watch configuration file [{}]", configFile);
             this.configurationFileWatch = new FileWatcherService(configFile,
-                createConfigurationCreatedEvent.andNext(eventPublisher::publishEvent),
-                createConfigurationModifiedEvent.andNext(eventPublisher::publishEvent),
-                createConfigurationDeletedEvent.andNext(eventPublisher::publishEvent));
+                createConfigurationCreatedEvent.andNext(applicationContext::publishEvent),
+                createConfigurationModifiedEvent.andNext(applicationContext::publishEvent),
+                createConfigurationDeletedEvent.andNext(applicationContext::publishEvent));
             configurationFileWatch.start(configFile.getName());
         }
     }
 
     private void watchConfigurationDirectoryIfNeeded() {
-        val configDirectory = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+        val environment = applicationContext.getEnvironment();
+        val configDirectory = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory(environment);
         if (configDirectory != null && configDirectory.exists()) {
             LOGGER.debug("Starting to watch configuration directory [{}]", configDirectory);
             this.configurationDirectoryWatch = new PathWatcherService(configDirectory.toPath(),
-                createConfigurationCreatedEvent.andNext(eventPublisher::publishEvent),
-                createConfigurationModifiedEvent.andNext(eventPublisher::publishEvent),
-                createConfigurationDeletedEvent.andNext(eventPublisher::publishEvent));
+                createConfigurationCreatedEvent.andNext(applicationContext::publishEvent),
+                createConfigurationModifiedEvent.andNext(applicationContext::publishEvent),
+                createConfigurationDeletedEvent.andNext(applicationContext::publishEvent));
             configurationDirectoryWatch.start(configDirectory.getName());
         }
     }
-    
+
     private void closeWatchServices() {
         if (configurationDirectoryWatch != null) {
             configurationDirectoryWatch.close();

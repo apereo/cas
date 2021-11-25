@@ -32,14 +32,16 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
         registeredService.setCodeExpirationPolicy(
             new DefaultRegisteredServiceOAuthCodeExpirationPolicy(10, "PT10S"));
         servicesManager.save(registeredService);
+        val tgt = new MockTicketGrantingTicket("casuser");
         val token = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://code.oauth.org"),
             RegisteredServiceTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"),
+            tgt,
             Set.of("Scope1", "Scope2"), "code-challenge", "plain",
             "clientid-code", Map.of(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertTrue(token.isFromNewLogin());
+        assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
         assertThrows(UnsupportedOperationException.class,
             () -> token.grantProxyGrantingTicket("123456",
                 RegisteredServiceTestUtils.getAuthentication(),
@@ -50,13 +52,14 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
     public void verifyOperationWithoutExpPolicy() {
         val registeredService = getRegisteredService("https://noexp.oauth.org", "clientid-code-noexp", "secret-at");
         servicesManager.save(registeredService);
+        val tgt = new MockTicketGrantingTicket("casuser");
         val token = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService("https://noexp.oauth.org"),
             RegisteredServiceTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"),
-            Set.of("Scope1", "Scope2"), "code-challenge", "plain",
+            tgt, Set.of("Scope1", "Scope2"), "code-challenge", "plain",
             "clientid-code-noexp", Map.of(), OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
         assertNotNull(defaultAccessTokenFactory.get(OAuth20Code.class));
+        assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
     }
 
 }

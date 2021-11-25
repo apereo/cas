@@ -21,7 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration(value = "casMongoDbThrottlingConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasMongoDbThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMongoDbThrottlingConfiguration {
 

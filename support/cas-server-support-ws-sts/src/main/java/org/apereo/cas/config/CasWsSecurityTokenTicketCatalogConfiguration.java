@@ -18,7 +18,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casWsSecurityTokenTicketCatalogConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWsSecurityTokenTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasWsSecurityTokenTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {

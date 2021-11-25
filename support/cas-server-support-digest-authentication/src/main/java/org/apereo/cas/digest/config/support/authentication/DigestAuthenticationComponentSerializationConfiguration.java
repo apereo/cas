@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Configuration(value = "digestAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DigestAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DigestAuthenticationComponentSerializationConfiguration {
     @Bean

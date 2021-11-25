@@ -1,4 +1,4 @@
-package org.apereo.cas.web.security.flow;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.spring.ApplicationContextProvider;

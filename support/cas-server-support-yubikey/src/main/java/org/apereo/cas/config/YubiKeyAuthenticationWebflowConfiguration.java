@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.Action;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration(value = "yubiKeyAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "YubiKeyAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class YubiKeyAuthenticationWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -147,7 +147,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.yubikey")
-    @Configuration(value = "yubiMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "YubiMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("yubikeyMultifactorWebflowConfigurer")
     public static class YubiKeyMultifactorTrustConfiguration {
 

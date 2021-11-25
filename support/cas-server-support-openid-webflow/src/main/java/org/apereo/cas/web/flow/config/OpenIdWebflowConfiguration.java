@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Deprecated(since = "6.2.0")
-@Configuration(value = "openIdWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OpenIdWebflowConfiguration", proxyBeanMethods = false)
 public class OpenIdWebflowConfiguration {
 
     @Bean

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Travis Schmidt
  * @since 6.0.0
  */
-@Configuration(value = "casCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreMultifactorAuthenticationAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreMultifactorAuthenticationAuditConfiguration {
     @Bean

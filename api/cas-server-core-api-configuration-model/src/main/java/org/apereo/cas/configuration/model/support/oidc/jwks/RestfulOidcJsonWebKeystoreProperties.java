@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.oidc;
+package org.apereo.cas.configuration.model.support.oidc.jwks;
 
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;

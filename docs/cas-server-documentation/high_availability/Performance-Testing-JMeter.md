@@ -12,8 +12,7 @@ Apache JMeter is a great performance testing tool that is used heavily within th
 
 ## Install JMeter
 
-* Download the JMeter binary.
-  * [http://jmeter.apache.org/download_jmeter.cgi](http://jmeter.apache.org/download_jmeter.cgi)
+* Download the [JMeter binary](http://jmeter.apache.org/download_jmeter.cgi).
 * Unzip apache-jmeter-*.tgz to your preferred location
 * Run `bin/jmeter.sh|bat`
   * Note: Mac users can also use the popular HomeBrew package manager to install JMeter.
@@ -25,13 +24,13 @@ most popular CAS implementation flavors. Please feel free to edit and use for yo
 
 Although the scripts support different login methodologies, they do share some common traits.
 
-## Common Settings Tabs
+## Common Settings
 
 * _User Defined Variables_
   * _ThreadCount_ - Number of Threads (Kind of like Users).  Recommend starting with 100 users or so.
   * _Duration_ -  How long should the test run.  Usually, the more threads(users) the longer the duration should be
   * _RampUpPeriod_ - How long to take to ramp up to full set of thread count
-* _Thread Group_ (or Tests):
+* _Thread Group (or Tests)_:
   * _Loop Count_ - # of Loops, or more correctly the # of users to run through the test.  
     * Count will be associated to the total users that will run through the test
     * _Forever_ check box will loop through file and keep going till manually stopped or until reaches Duration 
@@ -40,7 +39,7 @@ Although the scripts support different login methodologies, they do share some c
   * Name and location of file containing test user credentials
   * Should be in the format of `User,Password`, with no spaces between “User", the “comma" and “Password”
 
-**Scripts**
+## Scripts
 
 The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/master/etc/loadtests/).
   
@@ -79,7 +78,7 @@ The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/mast
     * _GET - User Logout_ -- Logout user from CAS session via CAS logout
 * **_CAS_SAML2.jmx_**
   * CAS support for SAML2 Login process
-  * An active SP is required!
+  * An active SP is required.
     * For this test used SimpleSAMLphp
   * _User Defined Variables_:
     * _CasSP_ - Domain of registered CAS SP using SAML
@@ -93,8 +92,8 @@ The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/mast
 
 ## Run Test Scripts
 
-Once you have saved the test scripts to your system. You can either run within the JMeter
-GUI or via command line. It his highly recommended that the GUI be used for 
+Once you have saved the test scripts to your system, you can either run within the JMeter
+GUI or via command line. It is highly recommended that the GUI be used for 
 troubleshooting the scripts to work within your environment. Then, when you actually start
 load testing, you do that via the command line.
 
@@ -104,7 +103,7 @@ To activate the JMeter GUI, from the command line type:
 prompt$ /usr/local/bin/jmeter
 ```
 
-This path should correspond to the location you chose to install Jmeter.
+This path should correspond to the location you chose to install JMeter.
 
 A simple example of a JMeter startup via command line:
 
@@ -115,4 +114,4 @@ prompt$ /usr/local/bin/jmeter -n -t your_script.jmx
 `-n` run JMeter in non-GUI mode.
 `-t` path to .jmx test file.
 
-More examples can be found on the [Jmeter site](http://jmeter.apache.org/usermanual/get-started.html#non_gui).
+More examples can be found on the [JMeter site](http://jmeter.apache.org).

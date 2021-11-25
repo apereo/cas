@@ -39,7 +39,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casCoreAuthenticationSupportConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasCoreAuthenticationSupportConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreAuthenticationSupportConfiguration {
@@ -104,7 +104,7 @@ public class CasCoreAuthenticationSupportConfiguration {
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
             @Qualifier("authenticationTransactionManager")
             final AuthenticationTransactionManager authenticationTransactionManager,
-            @Qualifier("principalElectionStrategy")
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
             final PrincipalElectionStrategy principalElectionStrategy,
             @Qualifier("authenticationResultBuilderFactory")
             final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,

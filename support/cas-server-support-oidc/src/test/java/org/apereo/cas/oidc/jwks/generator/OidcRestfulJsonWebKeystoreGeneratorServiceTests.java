@@ -3,10 +3,12 @@ package org.apereo.cas.oidc.jwks.generator;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -50,13 +52,18 @@ public class OidcRestfulJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val resource = oidcJsonWebKeystoreGeneratorService.generate();
         assertTrue(resource.exists());
+
+        assertTrue(oidcJsonWebKeystoreGeneratorService.find().isPresent());
+
+        val jwks = new JsonWebKeySet(OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(casProperties.getAuthn().getOidc()));
+        assertNotNull(oidcJsonWebKeystoreGeneratorService.store(jwks));
     }
 
     @Test
-    public void verifyFailsOperation() {
+    public void verifyFailsOperation() throws Exception {
         var oidcProperties = new OidcProperties();
         oidcProperties.getJwks().getRest().setUrl("https://localhost:1234");
         oidcProperties.getJwks().getRest().setMethod("get");

@@ -43,7 +43,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "casConsentCoreConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasConsentCoreConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasConsentCoreConfiguration {
@@ -124,7 +124,7 @@ public class CasConsentCoreConfiguration {
         @ConditionalOnMissingBean(name = "consentRepository")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
+        public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Exception {
             val location = casProperties.getConsent().getJson().getLocation();
             if (location != null) {
                 LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "

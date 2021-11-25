@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(name = "cas.authn.radius.client.inet-address")
-@Configuration(value = "radiusConfiguration", proxyBeanMethods = false)
+@Configuration(value = "RadiusConfiguration", proxyBeanMethods = false)
 public class RadiusConfiguration {
 
     static Set<String> getClientIps(final RadiusClientProperties client) {
@@ -154,7 +154,7 @@ public class RadiusConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("radiusAuthenticationHandler")
         final AuthenticationHandler radiusAuthenticationHandler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());

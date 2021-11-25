@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "webAuthnWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnWebAuthnEnabled
 public class WebAuthnWebflowConfiguration {
@@ -64,7 +64,7 @@ public class WebAuthnWebflowConfiguration {
             final FlowBuilder flowBuilder,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
-            builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.MFA_WEB_AUTHN_EVENT_ID);
+            builder.addFlowBuilder(flowBuilder, WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN);
             return builder.build();
         }
     }
@@ -82,11 +82,14 @@ public class WebAuthnWebflowConfiguration {
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository) {
             val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, webAuthnFlowRegistry,
                 applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext),
+                webAuthnCsrfTokenRepository);
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
             return cfg;
         }
@@ -123,7 +126,7 @@ public class WebAuthnWebflowConfiguration {
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnWebAuthnEnabled
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
-    @Configuration(value = "webAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "WebAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("webAuthnMultifactorWebflowConfigurer")
     public static class WebAuthnMultifactorTrustConfiguration {
 
@@ -174,13 +177,8 @@ public class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartRegistrationAction(
-            @Qualifier("webAuthnCsrfTokenRepository")
-            final CsrfTokenRepository webAuthnCsrfTokenRepository,
-            @Qualifier("webAuthnCredentialRepository")
-            final RegistrationStorage webAuthnCredentialRepository,
             final CasConfigurationProperties casProperties) {
-            return new WebAuthnStartRegistrationAction(webAuthnCredentialRepository,
-                casProperties, webAuthnCsrfTokenRepository);
+            return new WebAuthnStartRegistrationAction(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "webAuthnCheckAccountRegistrationAction")

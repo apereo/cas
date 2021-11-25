@@ -3,11 +3,11 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryInitializer;
+import org.apereo.cas.services.DefaultServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryInitializer;
-import org.apereo.cas.services.ServiceRegistryInitializerEventListener;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
@@ -55,7 +55,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasServiceRegistryInitializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistry",
@@ -76,7 +76,7 @@ public class CasServiceRegistryInitializationConfiguration {
         public CasEventListener serviceRegistryInitializerConfigurationEventListener(
             @Qualifier("serviceRegistryInitializer")
             final ServiceRegistryInitializer serviceRegistryInitializer) {
-            return new ServiceRegistryInitializerEventListener(serviceRegistryInitializer);
+            return new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer);
         }
     }
 

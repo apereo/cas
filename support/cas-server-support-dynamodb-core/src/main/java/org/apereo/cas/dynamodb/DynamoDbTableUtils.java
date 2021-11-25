@@ -122,16 +122,19 @@ public class DynamoDbTableUtils {
                                    final boolean deleteTable,
                                    final List<AttributeDefinition> attributeDefinitions,
                                    final List<KeySchemaElement> keySchemaElements) throws Exception {
-        val throughput = ProvisionedThroughput.builder()
+
+        val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
+
+        val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
             .readCapacityUnits(dynamoDbProperties.getReadCapacity())
             .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build();
+            .build() : null;
         val request = CreateTableRequest.builder()
             .attributeDefinitions(attributeDefinitions)
             .keySchema(keySchemaElements)
             .provisionedThroughput(throughput)
             .tableName(tableName)
-            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
+            .billingMode(billingMode)
             .build();
 
         if (deleteTable) {

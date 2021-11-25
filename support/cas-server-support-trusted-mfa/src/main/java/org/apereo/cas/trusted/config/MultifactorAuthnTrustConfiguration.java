@@ -55,7 +55,7 @@ import java.time.temporal.ChronoUnit;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@Configuration(value = "multifactorAuthnTrustConfiguration", proxyBeanMethods = false)
+@Configuration(value = "MultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
 public class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;

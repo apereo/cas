@@ -26,7 +26,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "casSamlServiceProvidersConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSamlServiceProvidersConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSamlServiceProvidersConfiguration {

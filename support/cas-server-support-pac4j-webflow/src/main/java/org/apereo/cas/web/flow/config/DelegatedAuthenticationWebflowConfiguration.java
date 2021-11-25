@@ -301,7 +301,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
             final ArgumentExtractor argumentExtractor,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore,
-            @Qualifier("defaultTicketFactory")
+            @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,

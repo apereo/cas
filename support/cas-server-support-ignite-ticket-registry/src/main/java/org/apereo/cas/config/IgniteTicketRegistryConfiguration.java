@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "igniteTicketRegistryConfiguration", proxyBeanMethods = false)
+@Configuration(value = "IgniteTicketRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class IgniteTicketRegistryConfiguration {
 

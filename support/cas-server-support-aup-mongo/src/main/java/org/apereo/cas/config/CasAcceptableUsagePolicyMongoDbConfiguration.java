@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Configuration(value = "casAcceptableUsagePolicyMongoDbConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyMongoDbConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

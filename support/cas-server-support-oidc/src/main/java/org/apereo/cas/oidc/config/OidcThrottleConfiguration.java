@@ -28,7 +28,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "oidcThrottleConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @ConditionalOnBean(name = "authenticationThrottlingExecutionPlan")
 public class OidcThrottleConfiguration {

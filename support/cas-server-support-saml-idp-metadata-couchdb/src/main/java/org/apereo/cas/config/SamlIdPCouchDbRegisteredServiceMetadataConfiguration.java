@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "samlIdPCouchDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlIdPCouchDbRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
 public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")

@@ -5,19 +5,12 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
-import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
@@ -40,7 +33,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -54,15 +46,8 @@ import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurat
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.PublicJsonWebKey;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
@@ -74,7 +59,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -82,7 +66,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -263,144 +246,6 @@ public class OidcEndpointsConfiguration {
                                     @Qualifier("casProtocolViewFactory")
                                     final CasProtocolViewFactory casProtocolViewFactory) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oidc/confirm");
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksRotationConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksRotationConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationService")
-        public OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcDefaultJsonWebKeystoreRotationService(oidc, applicationContext);
-        }
-
-
-        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
-        @Bean
-        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.rotation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = true)
-        public Runnable oidcJsonWebKeystoreRotationScheduler(
-            @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
-            return new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService);
-        }
-
-        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
-        @Bean
-        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.revocation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = true)
-        public Runnable oidcJsonWebKeystoreRevocationScheduler(
-            @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
-            return new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService);
-        }
-
-        @RequiredArgsConstructor
-        @Slf4j
-        public static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
-            private final OidcJsonWebKeystoreRotationService rotationService;
-
-            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
-                fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
-            @Override
-            @SneakyThrows
-            public void run() {
-                LOGGER.info("Starting to rotate keys in the OIDC keystore...");
-                rotationService.rotate();
-            }
-        }
-
-        @RequiredArgsConstructor
-        @Slf4j
-        public static class OidcJsonWebKeystoreRevocationScheduler implements Runnable {
-            private final OidcJsonWebKeystoreRotationService rotationService;
-
-            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
-                fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
-            @Override
-            @SneakyThrows
-            public void run() {
-                LOGGER.info("Starting to revoke keys in the OIDC keystore...");
-                rotationService.revoke();
-            }
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksGeneratorConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksGeneratorConfiguration {
-        @Bean
-        @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader(
-            @Qualifier("oidcJsonWebKeystoreGeneratorService")
-            final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService) {
-            return new OidcDefaultJsonWebKeystoreCacheLoader(oidcJsonWebKeystoreGeneratorService);
-        }
-
-        @ConditionalOnMissingBean(name = "oidcJsonWebKeyStoreListener")
-        @Bean
-        public CasEventListener oidcJsonWebKeyStoreListener(
-            @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache) {
-            return new OidcJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache(
-            @Qualifier("oidcDefaultJsonWebKeystoreCacheLoader")
-            final CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader,
-            final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-
-            val expiration = Beans.newDuration(oidc.getJwks().getJwksCacheExpiration());
-            return Caffeine.newBuilder()
-                .maximumSize(100)
-                .expireAfterWrite(expiration)
-                .build(oidcDefaultJsonWebKeystoreCacheLoader);
-        }
-
-        @Bean(initMethod = "generate")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
-        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksRestConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(name = "cas.authn.oidc.jwks.rest.url")
-    public static class OidcEndpointsJwksRestConfiguration {
-        @Bean(initMethod = "generate")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
-            final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksGroovyConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(name = "cas.authn.oidc.jwks.groovy.location")
-    public static class OidcEndpointsJwksGroovyConfiguration {
-        @Bean(initMethod = "generate")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
-            final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcGroovyJsonWebKeystoreGeneratorService(oidc.getJwks().getGroovy().getLocation());
         }
     }
 

@@ -24,7 +24,7 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casGeoLocationMaxmindConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasGeoLocationMaxmindConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGeoLocationMaxmindConfiguration {
 

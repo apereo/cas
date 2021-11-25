@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casSwaggerConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasSwaggerConfiguration", proxyBeanMethods = false)
 public class CasSwaggerConfiguration {
 
     @Bean
