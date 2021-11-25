@@ -507,7 +507,6 @@ subprojects {
         api libraries.inspektr
         api libraries.persondirectory
         api libraries.spring
-        api libraries.bytebuddy
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz

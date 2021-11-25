@@ -51,6 +51,8 @@ and share an <strong>identical and exact copy</strong> of the keystore file. Key
 will lead to various validation failures and application integration issues.
 </p></div>
 
+{% include_cached casproperties.html properties="cas.authn.oidc.jwks.file-system" %}
+
 The keystore is automatically watched and monitored by CAS for changes. As changes are detected, CAS
 will invalidate the cache and will reload the keystore once again.
  

@@ -2,6 +2,7 @@
 set -e
 set -m
 
+SCENARIO="oidc-login-strapi"
 STRAPI_FOLDER=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/strapi
 PROJECT=getstarted
 if [[ ! -d $STRAPI_FOLDER/$PROJECT ]] ; then
