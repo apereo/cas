@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "casInterruptWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasInterruptWebflowConfiguration", proxyBeanMethods = false)
 public class CasInterruptWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")

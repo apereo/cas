@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "surrogateAuthenticationRestConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SurrogateAuthenticationRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class SurrogateAuthenticationRestConfiguration {

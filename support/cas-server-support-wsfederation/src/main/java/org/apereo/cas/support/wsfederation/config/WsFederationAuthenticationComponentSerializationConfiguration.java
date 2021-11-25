@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Configuration(value = "wsFederationAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "WsFederationAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class WsFederationAuthenticationComponentSerializationConfiguration {
     @Bean

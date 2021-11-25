@@ -165,7 +165,9 @@ public class CouchbaseClientFactory {
      */
     public long count(final String query, final Optional<JsonObject> parameters) {
         val formattedQuery = String.format("SELECT count(*) as count FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
+        val options = QueryOptions.queryOptions()
+            .readonly(true)
+            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
         parameters.ifPresent(options::parameters);
         val result = executeQuery(options, formattedQuery);
         return result.rowsAsObject().get(0).getLong("count");

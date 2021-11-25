@@ -72,7 +72,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casWebflowContextConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWebflowContextConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebflowContextConfiguration {
 

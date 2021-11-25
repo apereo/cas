@@ -36,7 +36,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "azureActiveDirectoryAuthenticationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AzureActiveDirectoryAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class AzureActiveDirectoryAuthenticationConfiguration {
 
@@ -46,7 +46,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer microsoftAzureActiveDirectoryAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("microsoftAzureActiveDirectoryAuthenticationHandler")
         final AuthenticationHandler handler,
-        @Qualifier("defaultPrincipalResolver")
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
     }

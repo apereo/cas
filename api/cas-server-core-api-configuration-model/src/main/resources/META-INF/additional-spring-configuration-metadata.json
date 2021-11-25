@@ -1,11 +1,29 @@
 {
   "properties": [
     {
+      "name": "cas.authn.oidc.jwks.jwks-file",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.file-system.jwks-file",
+        "reason": "This setting should is now moved into a file-system sub namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.oidc.jwks.jwks-cache-in-minutes",
       "type": "java.lang.Integer",
       "deprecation": {
         "replacement": "cas.authn.oidc.jwks.jwks-cache-expiration",
         "reason": "This setting should be defined as duration value, i.e. PT60M",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.jwks.jwks-cache-expiration",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.core.jwks-cache-expiratio",
+        "reason": "This setting is now moved into a core sub namespace.",
         "level": "error"
       }
     },

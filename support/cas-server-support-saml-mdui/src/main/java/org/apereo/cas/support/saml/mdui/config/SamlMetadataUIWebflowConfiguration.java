@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "samlMetadataUIWebflowConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SamlMetadataUIWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlMetadataUIWebflowConfiguration {
 

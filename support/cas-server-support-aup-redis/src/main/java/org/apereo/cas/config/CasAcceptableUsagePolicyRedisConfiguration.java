@@ -27,7 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnExpression(value = "${cas.acceptable-usage-policy.core.enabled:true} and ${cas.acceptable-usage-policy.redis.enabled:true}")
-@Configuration(value = "casAcceptableUsagePolicyRedisConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasAcceptableUsagePolicyRedisConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyRedisConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

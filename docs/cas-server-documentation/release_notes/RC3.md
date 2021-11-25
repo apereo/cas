@@ -82,7 +82,12 @@ CAS provides a modest workflow to
 handle [self-service account registration](../registration/Account-Registration-Overview.html).
 This capability was developed and first released in `6.5.0-RC1`, and it will be repeatedly refined
 and improved in the future to match and accommodate realistic workflows deployed today as much as possible. 
- 
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are
+approximately `210` test scenarios and we'll continue to add more in the coming releases.
+
 ### OpenID Connect Key Rotation
      
 CAS can now be configured to rotate keys in the [OpenID Connect](../authentication/OIDC-Authentication-JWKS.html) 
@@ -96,6 +101,12 @@ inactive keys that should be removed from the keystore.
 be chained and grouped together to deliver advanced conditions
 and grouping logic using multiple `AND` or `OR` rules.
   
+### OpenID Connect JWKS Storage
+
+The generation of the [JWKS resource for OpenID Connect](../authentication/OIDC-Authentication-JWKS.html) 
+can now be outsourced to external REST APIs, Groovy scripts or relational databases. Each storage service implementation
+should also be able to support key rotation and revocation as is handled by CAS itself.
+
 ### Audit Log Data Structure
 
 Audit log records and storage services are now modified to include user agent information using the `User-Agent` header.
@@ -104,12 +115,18 @@ If you are not allowing CAS to update database schemas automatically, you will n
 contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 512)`.
 
 ## Other Stuff
-                     
+            
+- Generation of [SAML2 IdP Metadata](../installation/Configuring-SAML2-DynamicMetadata.html) is now postponed until the application ready event.
 - Minor performance improvements to assist with locating SAML2 services in the service registry.
+- Possible X509 stack overflow errors when fetching X509 certificates from headers are now fixed. 
 - All Redis integrations are now able to support TLS options for encrypted connections and transports.
 - All Hazelcast integrations are now able to support TLS options for encrypted connections and transports.
 - DynamoDb tables names that affect OAuth and OpenID Connect functionality are now customizable via CAS settings.
-- Cache invalidation rules for static resources such as JSS/JS files using `ResourceUrlProviderExposingInterceptor` is now restored.
+- Cache invalidation rules for static resources such as CSS/JS files using `ResourceUrlProviderExposingInterceptor` is now restored.
+- When performing a logout after an OIDC login process, the OIDC session is now properly removed when it is distributed.
+- [Authy MFA](../mfa/AuthyAuthenticator-Authentication.html) configuration is now conditionally activated when Authy API keys are found in CAS configuration.
+- [Passwordless LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) configuration is activated when an LDAP url is found in configuration.
+- Identifiers of consent decisions are now fixed to be operable using the consent actuator endpoint. These IDs are now serialized as `String` to avoid rounding issues with long numbers during JSON serialization.
 
 ## Library Upgrades
 
@@ -125,3 +142,7 @@ contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 
 - MongoDb Driver
 - Azure CosmosDb
 - Spring Boot Admin
+- Pac4j
+- Bucket4j
+- Maxmind
+- Apache Tomcat

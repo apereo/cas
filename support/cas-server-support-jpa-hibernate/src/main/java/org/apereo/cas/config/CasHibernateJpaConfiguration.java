@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Configuration(value = "casHibernateJpaConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasHibernateJpaConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasHibernateJpaConfiguration {
 

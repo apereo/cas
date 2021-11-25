@@ -33,7 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnDuoSecurityConfigured
-@Configuration(value = "duoSecurityMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DuoSecurityMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityBypassEvaluator")

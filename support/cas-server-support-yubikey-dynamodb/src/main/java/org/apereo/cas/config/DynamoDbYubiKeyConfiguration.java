@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Configuration(value = "dynamoDbYubiKeyConfiguration", proxyBeanMethods = false)
+@Configuration(value = "DynamoDbYubiKeyConfiguration", proxyBeanMethods = false)
 public class DynamoDbYubiKeyConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

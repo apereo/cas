@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "swivelConfiguration", proxyBeanMethods = false)
+@Configuration(value = "SwivelConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SwivelConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -140,7 +140,7 @@ public class SwivelConfiguration {
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.swivel")
-    @Configuration(value = "swivelMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "SwivelMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("swivelMultifactorWebflowConfigurer")
     public static class SwivelMultifactorTrustConfiguration {
 

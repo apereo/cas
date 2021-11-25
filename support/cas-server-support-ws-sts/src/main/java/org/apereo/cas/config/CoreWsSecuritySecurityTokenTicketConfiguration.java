@@ -22,7 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Configuration(value = "coreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CoreWsSecuritySecurityTokenTicketConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CoreWsSecuritySecurityTokenTicketConfiguration {
 

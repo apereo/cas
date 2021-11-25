@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casWsSecurityTokenTicketComponentSerializationConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasWsSecurityTokenTicketComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWsSecurityTokenTicketComponentSerializationConfiguration {
 

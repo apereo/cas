@@ -134,5 +134,6 @@ The following options may be used to fetch attributes in CAS.
 | Redis          | [See this guide](Attribute-Resolution-Redis.html).   
 | JDBC           | [See this guide](Attribute-Resolution-JDBC.html).
 | OKTA           | [See this guide](Attribute-Resolution-Okta.html).
+| Custom         | [See this guide](Attribute-Resolution-Custom.html).
 | Python/Javascript/Groovy          | [See this guide](Attribute-Resolution-Scripted.html).   
 | Microsoft Azure Active Directory  | [See this guide](Attribute-Resolution-AzureAD.html).   

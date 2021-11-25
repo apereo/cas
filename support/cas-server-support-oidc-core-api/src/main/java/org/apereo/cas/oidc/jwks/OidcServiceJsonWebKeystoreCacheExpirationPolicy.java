@@ -60,7 +60,7 @@ public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
                 return expiration;
             }
             val jwks = casProperties.getAuthn().getOidc().getJwks();
-            val expiration = Beans.newDuration(jwks.getJwksCacheExpiration()).toNanos();
+            val expiration = Beans.newDuration(jwks.getCore().getJwksCacheExpiration()).toNanos();
             LOGGER.trace("CAS JWKS cache expiration value is set to [{}]", expiration);
             return expiration;
         }

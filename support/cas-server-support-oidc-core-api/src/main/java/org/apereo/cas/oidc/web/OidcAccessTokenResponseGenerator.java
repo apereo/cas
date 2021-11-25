@@ -26,7 +26,10 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator {
-    private final IdTokenGeneratorService idTokenGenerator;
+    /**
+     * The ID token generator service.
+     */
+    protected final IdTokenGeneratorService idTokenGenerator;
     private final OidcIssuerService oidcIssuerService;
 
     public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,

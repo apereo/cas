@@ -30,7 +30,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casInterruptConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasInterruptConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasInterruptConfiguration {

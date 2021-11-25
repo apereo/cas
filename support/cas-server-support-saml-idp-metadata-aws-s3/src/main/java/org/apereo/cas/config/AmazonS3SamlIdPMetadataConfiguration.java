@@ -35,7 +35,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.amazon-s3", name = "idp-metadata-bucket-name")
 @Slf4j
-@Configuration(value = "amazonS3SamlIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "AmazonS3SamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean

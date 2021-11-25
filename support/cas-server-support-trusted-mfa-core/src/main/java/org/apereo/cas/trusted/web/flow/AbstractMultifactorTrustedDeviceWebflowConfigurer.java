@@ -77,7 +77,6 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
         val verifyAction = createActionState(flow, CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE,
             CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION);
-
         val enableDeviceRegistration = casProperties.getAuthn().getMfa().getTrusted().getCore().isDeviceRegistrationEnabled();
         if (enableDeviceRegistration) {
             LOGGER.trace("Device registration is turned on for multifactor flow [{}]", flowId);

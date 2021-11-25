@@ -21,7 +21,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration(value = "textMagicSmsConfiguration", proxyBeanMethods = false)
+@Configuration(value = "TextMagicSmsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TextMagicSmsConfiguration {
 

@@ -20,12 +20,6 @@ public class CasRegisteredServicePreDeleteEvent extends BaseCasRegisteredService
 
     private final RegisteredService registeredService;
 
-    /**
-     * Instantiates a new cas sso event.
-     *
-     * @param source            the source
-     * @param registeredService the registered service
-     */
     public CasRegisteredServicePreDeleteEvent(final Object source, final RegisteredService registeredService) {
         super(source);
         this.registeredService = registeredService;

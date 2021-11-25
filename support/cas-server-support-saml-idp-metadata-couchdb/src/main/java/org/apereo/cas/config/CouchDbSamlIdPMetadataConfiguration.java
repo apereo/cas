@@ -38,7 +38,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnProperty(prefix = "cas.authn.saml-idp.metadata.couch-db", name = "idp-metadata-enabled", havingValue = "true")
-@Configuration(value = "ouchDbSamlIdPMetadataConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OuchDbSamlIdPMetadataConfiguration", proxyBeanMethods = false)
 public class CouchDbSamlIdPMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")

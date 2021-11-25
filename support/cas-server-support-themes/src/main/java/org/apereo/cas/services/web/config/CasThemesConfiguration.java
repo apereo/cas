@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration(value = "casThemesConfiguration", proxyBeanMethods = false)
+@Configuration(value = "CasThemesConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ThymeleafProperties.class, WebProperties.class})
 @Slf4j
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)

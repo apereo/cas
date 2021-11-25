@@ -12,6 +12,28 @@ you may need to also include the following module to account for various databas
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jdbc-drivers" %}
 
+## JPA Implementations
+                     
+The following JPA implementations are provided by CAS. In most cases, the indicated modules do not need
+to be included in a CAS build and the implementation would be automatically chosen by the feature module.
+The details below are listed for reference and may be of use in advanced scenarios where development may be required.
+
+### Hibernate
+
+[Hibernate ORM](https://hibernate.org/) is an object–relational mapping tool for the Java programming 
+language. It provides a framework for mapping an object-oriented domain model to a relational database.
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-hibernate" %}
+
+### EclipseLink
+
+[EclipseLink](https://www.eclipse.org/eclipselink/) is the open source Eclipse Persistence Services Project from the 
+Eclipse Foundation. The software provides an extensible framework that allows 
+Java developers to interact with various data services, including databases, 
+web services, Object XML mapping, and enterprise information systems.
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-eclipselink" %}
+
 ## Database Support
 
 Automatic support for drivers includes the following databases.
