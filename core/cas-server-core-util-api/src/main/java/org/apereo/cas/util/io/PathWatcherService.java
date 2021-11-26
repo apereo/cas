@@ -1,7 +1,5 @@
 package org.apereo.cas.util.io;
 
-import org.apereo.cas.util.function.FunctionUtils;
-
 import com.sun.nio.file.SensitivityWatchEventModifier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
