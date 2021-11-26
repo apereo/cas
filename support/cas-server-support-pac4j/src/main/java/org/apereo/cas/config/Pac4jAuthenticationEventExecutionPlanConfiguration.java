@@ -206,7 +206,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
             val rest = casProperties.getAuthn().getPac4j().getRest();
             if (StringUtils.isNotBlank(rest.getUrl())) {

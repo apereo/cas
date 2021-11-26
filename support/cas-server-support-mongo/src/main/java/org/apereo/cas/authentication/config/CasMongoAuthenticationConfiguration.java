@@ -50,7 +50,7 @@ public class CasMongoAuthenticationConfiguration {
         final PrincipalFactory mongoPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

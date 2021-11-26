@@ -31,7 +31,7 @@ public class CasMongoDbThrottlingConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("authenticationThrottlingConfigurationContext")
         final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAudit().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

@@ -36,7 +36,7 @@ public class MongoDbMonitoringConfiguration {
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
     public BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         return BeanContainer.of(casProperties.getMonitor().getMongo()
             .stream()

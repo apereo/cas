@@ -36,7 +36,7 @@ public class RedisTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisTicketConnectionFactory(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val redis = casProperties.getTicket().getRegistry().getRedis();
         return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);

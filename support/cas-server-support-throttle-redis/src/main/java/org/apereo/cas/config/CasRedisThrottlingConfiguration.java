@@ -33,7 +33,7 @@ public class CasRedisThrottlingConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisThrottleConnectionFactory")
     public RedisConnectionFactory redisThrottleConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();

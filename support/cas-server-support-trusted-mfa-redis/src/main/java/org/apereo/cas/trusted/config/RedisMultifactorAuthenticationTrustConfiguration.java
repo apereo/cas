@@ -38,7 +38,7 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
     @ConditionalOnMissingBean(name = "redisMfaTrustedConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisMfaTrustedConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getTrusted().getRedis();

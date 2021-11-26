@@ -34,7 +34,7 @@ public class U2FMongoDbConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("u2fRegistrationRecordCipherExecutor")
         final CipherExecutor u2fRegistrationRecordCipherExecutor,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

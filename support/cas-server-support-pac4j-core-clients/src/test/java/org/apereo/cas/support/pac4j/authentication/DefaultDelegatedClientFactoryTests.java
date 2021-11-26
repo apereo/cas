@@ -52,7 +52,7 @@ public class DefaultDelegatedClientFactoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("casSslContext")
+    @Qualifier(CasSSLContext.BEAN_NAME)
     private CasSSLContext casSslContext;
 
     private static Pac4jSamlClientProperties getPac4jSamlClientProperties(final String sessionFactory) throws Exception {

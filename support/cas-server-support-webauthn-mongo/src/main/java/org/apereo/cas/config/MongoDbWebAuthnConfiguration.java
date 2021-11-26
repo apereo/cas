@@ -37,7 +37,7 @@ public class MongoDbWebAuthnConfiguration {
     @Bean
     public MongoTemplate mongoWebAuthnTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getWebAuthn().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

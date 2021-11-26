@@ -1,6 +1,8 @@
-package org.apereo.cas.oidc.jwks;
+package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -69,6 +71,21 @@ public interface OidcJsonWebKeystoreGeneratorService {
         val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
         OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(key, state);
         return key;
+    }
+
+
+    /**
+     * Generate json web key set json web key set.
+     *
+     * @param oidcProperties the oidc properties
+     * @return the json web key set
+     */
+    static JsonWebKeySet generateJsonWebKeySet(final OidcProperties oidcProperties) {
+        val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
+        val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
+        return new JsonWebKeySet(currentKey, futureKey);
     }
 
     /**

@@ -50,6 +50,12 @@ public class OidcJsonWebKeystoreProperties implements Serializable {
     private SpringResourceProperties groovy = new SpringResourceProperties();
 
     /**
+     * Fetch JWKS via MongoDb instances.
+     */
+    @NestedConfigurationProperty
+    private MongoDbOidcJsonWebKeystoreProperties mongo = new MongoDbOidcJsonWebKeystoreProperties();
+
+    /**
      * Fetch JWKS via a relational database and JPA.
      */
     @NestedConfigurationProperty

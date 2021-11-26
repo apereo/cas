@@ -27,7 +27,7 @@ public class CasSupportMongoDbAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbAuditTrailManager")
     public AuditTrailManager mongoDbAuditTrailManager(final CasConfigurationProperties casProperties,
-                                                      @Qualifier("casSslContext")
+                                                      @Qualifier(CasSSLContext.BEAN_NAME)
                                                       final CasSSLContext casSslContext) {
         val mongo = casProperties.getAudit().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

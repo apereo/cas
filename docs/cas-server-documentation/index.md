@@ -5,11 +5,11 @@ title: CAS - Home
 
 {% include variables.html %}
 
-# CAS Enterprise Single Sign-On
+# Apereo CAS - Enterprise Identity Provider & Single Sign-On
 
-Welcome to the home of the Apereo Central Authentication Service project, more commonly referred to as CAS. CAS is an enterprise 
-multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication 
-and authorization needs.
+Welcome to the home of the Apereo Central Authentication Service project, more commonly 
+referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 
+and attempts to be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is 
 an open-source Java server component by the same name hosted here, with support for a plethora of 

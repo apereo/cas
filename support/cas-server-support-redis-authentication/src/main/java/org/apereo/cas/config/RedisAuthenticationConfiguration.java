@@ -56,7 +56,7 @@ public class RedisAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "redisAuthenticationConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAuthenticationConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getRedis();
@@ -104,7 +104,7 @@ public class RedisAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public List<IPersonAttributeDao> redisPersonAttributeDaos(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis();

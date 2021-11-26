@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import de.cronn.reflection.util.PropertyUtils;
-import de.cronn.reflection.util.TypedPropertyGetter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -26,7 +24,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.*;
 
 /**
  * This is {@link CasCoreConfigurationUtils}.
@@ -84,19 +82,6 @@ public final class CasCoreConfigurationUtils {
      */
     public static Map<String, Object> asMap(final Serializable withHolder) {
         return asMap(withHolder, new SimpleFilterProvider().setFailOnUnknownId(false));
-    }
-
-    /**
-     * Gets property name.
-     *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
-     * @param clazz    the clazz
-     * @param supplier the supplier
-     * @return the property name
-     */
-    public static <T, V> String getPropertyName(final Class<T> clazz, final TypedPropertyGetter<T, V> supplier) {
-        return PropertyUtils.getPropertyName(clazz, supplier);
     }
 
     private static class ResourceSerializer extends StdSerializer<Resource> {

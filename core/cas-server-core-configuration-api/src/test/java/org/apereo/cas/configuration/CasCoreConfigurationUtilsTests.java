@@ -54,10 +54,8 @@ public class CasCoreConfigurationUtilsTests {
 
         val filters = new SimpleFilterProvider()
             .setFailOnUnknownId(false)
-            .addFilter(CasConfigurationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
-                CasCoreConfigurationUtils.getPropertyName(CasConfigurationProperties.class, CasConfigurationProperties::getAuthn)))
-            .addFilter(AuthenticationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
-                CasCoreConfigurationUtils.getPropertyName(AuthenticationProperties.class, AuthenticationProperties::getSyncope)));
+            .addFilter(CasConfigurationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept("authn"))
+            .addFilter(AuthenticationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept("syncope"));
         val map = CasCoreConfigurationUtils.asMap(props.withHolder(), filters);
         assertTrue(map.keySet().stream().allMatch(key -> key.startsWith("cas.authn.syncope")));
     }
@@ -74,10 +72,8 @@ public class CasCoreConfigurationUtilsTests {
 
         val filters = new SimpleFilterProvider()
             .setFailOnUnknownId(false)
-            .addFilter(CasConfigurationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
-                CasCoreConfigurationUtils.getPropertyName(CasConfigurationProperties.class, CasConfigurationProperties::getAuthn)))
-            .addFilter(AuthenticationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
-                CasCoreConfigurationUtils.getPropertyName(AuthenticationProperties.class, AuthenticationProperties::getLdap)));
+            .addFilter(CasConfigurationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept("authn"))
+            .addFilter(AuthenticationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept("ldap"));
         val map = CasCoreConfigurationUtils.asMap(props.withHolder(), filters);
         assertTrue(map.keySet().stream().allMatch(key -> key.startsWith("cas.authn.ldap")));
     }

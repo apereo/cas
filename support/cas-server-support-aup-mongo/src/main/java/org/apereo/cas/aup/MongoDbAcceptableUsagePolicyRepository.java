@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class MongoDbAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final transient MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public MongoDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                   final AcceptableUsagePolicyProperties aupProperties,

@@ -44,7 +44,7 @@ public class RedisWebAuthnConfiguration {
     @ConditionalOnMissingBean(name = "webAuthnRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory webAuthnRedisConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getWebAuthn().getRedis();

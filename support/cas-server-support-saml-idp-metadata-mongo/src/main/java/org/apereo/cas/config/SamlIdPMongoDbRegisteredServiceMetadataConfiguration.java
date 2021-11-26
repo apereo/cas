@@ -43,7 +43,7 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbSamlMetadataResolverTemplate(final CasConfigurationProperties casProperties,
-                                                             @Qualifier("casSslContext")
+                                                             @Qualifier(CasSSLContext.BEAN_NAME)
                                                              final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

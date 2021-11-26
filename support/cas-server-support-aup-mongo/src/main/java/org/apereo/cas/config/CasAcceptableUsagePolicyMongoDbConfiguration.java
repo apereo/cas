@@ -32,7 +32,7 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @Bean
     public MongoTemplate mongoAcceptableUsagePolicyTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

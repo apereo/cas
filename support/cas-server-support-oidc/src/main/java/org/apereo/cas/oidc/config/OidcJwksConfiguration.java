@@ -1,19 +1,22 @@
 package org.apereo.cas.oidc.config;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.generator.jpa.OidcJpaJsonWebKeystore;
 import org.apereo.cas.oidc.jwks.generator.jpa.OidcJpaJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.generator.mongo.OidcMongoDbJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
@@ -37,6 +40,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -58,6 +62,36 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcJwksConfiguration {
+
+    @Configuration(value = "OidcEndpointsJwksMongoDbConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(MongoTemplate.class)
+    @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.mongo", name = { "host", "collection"})
+    public static class OidcEndpointsJwksMongoDbConfiguration {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public MongoTemplate mongoOidcJsonWebKeystoreTemplate(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext) {
+            val mongo = casProperties.getAuthn().getOidc().getJwks().getMongo();
+            val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
+            val mongoTemplate = factory.buildMongoTemplate(mongo);
+            MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+            return mongoTemplate;
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("mongoOidcJsonWebKeystoreTemplate")
+            final MongoTemplate mongoOidcJsonWebKeystoreTemplate) {
+            return new OidcMongoDbJsonWebKeystoreGeneratorService(mongoOidcJsonWebKeystoreTemplate,
+                casProperties.getAuthn().getOidc());
+        }
+    }
+    
     @Configuration(value = "OidcEndpointsJwksJpaConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(JpaBeanFactory.class)
@@ -104,7 +138,7 @@ public class OidcJwksConfiguration {
 
         @Bean
         public BeanContainer<String> jpaOidcJwksPackagesToScan() {
-            return BeanContainer.of(CollectionUtils.wrapSet(OidcJpaJsonWebKeystore.class.getPackage().getName()));
+            return BeanContainer.of(CollectionUtils.wrapSet(OidcJsonWebKeystoreEntity.class.getPackage().getName()));
         }
 
         @Bean

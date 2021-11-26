@@ -37,7 +37,7 @@ public class InweboServiceConfiguration {
     @ConditionalOnMissingBean(name = "inweboConsoleAdmin")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public InweboConsoleAdmin inweboConsoleAdmin(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final ObjectProvider<CasSSLContext> casSslContext,
         final CasConfigurationProperties casProperties) throws Exception {
         val inwebo = casProperties.getAuthn().getMfa().getInwebo();

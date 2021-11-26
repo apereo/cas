@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.jwks.generator;
 
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.extern.slf4j.Slf4j;

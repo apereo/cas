@@ -56,7 +56,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataConnectionFactory")
     public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getSamlIdp().getMetadata().getRedis();

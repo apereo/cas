@@ -29,6 +29,11 @@ import java.security.cert.X509Certificate;
  */
 public interface CasSSLContext {
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "casSslContext";
+
+    /**
      * System default ssl context, key and trust managers.
      *
      * @return the cas ssl context

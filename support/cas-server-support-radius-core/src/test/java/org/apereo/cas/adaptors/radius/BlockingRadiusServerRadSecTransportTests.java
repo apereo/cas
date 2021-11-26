@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
 public class BlockingRadiusServerRadSecTransportTests {
     @Autowired
-    @Qualifier("casSslContext")
+    @Qualifier(CasSSLContext.BEAN_NAME)
     private CasSSLContext casSslContext;
 
     @Test

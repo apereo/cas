@@ -52,7 +52,7 @@ public class CassandraServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cassandraServiceRegistrySessionFactory")
     public CassandraSessionFactory cassandraServiceRegistrySessionFactory(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val cassandra = casProperties.getServiceRegistry().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());

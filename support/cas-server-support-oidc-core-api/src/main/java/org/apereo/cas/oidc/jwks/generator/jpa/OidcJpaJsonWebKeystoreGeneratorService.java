@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.jwks.generator.jpa;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -38,21 +38,17 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
     @Override
     public Optional<Resource> find() {
         val issuer = oidcProperties.getCore().getIssuer();
-        return Optional.ofNullable(entityManager.find(OidcJpaJsonWebKeystore.class, issuer))
+        return Optional.ofNullable(entityManager.find(OidcJsonWebKeystoreEntity.class, issuer))
             .map(Unchecked.function(jwks -> OidcJsonWebKeystoreGeneratorService.toResource(new JsonWebKeySet(jwks.getData()))));
     }
 
     @Override
     public Resource generate() {
         val issuer = oidcProperties.getCore().getIssuer();
-        return Optional.ofNullable(entityManager.find(OidcJpaJsonWebKeystore.class, issuer))
+        return Optional.ofNullable(entityManager.find(OidcJsonWebKeystoreEntity.class, issuer))
             .map(Unchecked.function(jwks -> OidcJsonWebKeystoreGeneratorService.toResource(new JsonWebKeySet(jwks.getData()))))
             .orElseGet(Unchecked.supplier(() -> {
-                val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-                    OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
-                val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-                    OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
-                val jsonWebKeySet = new JsonWebKeySet(currentKey, futureKey);
+                val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);
                 return OidcJsonWebKeystoreGeneratorService.toResource(store(jsonWebKeySet));
             }));
     }
@@ -62,12 +58,12 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
         val issuer = oidcProperties.getCore().getIssuer();
         return transactionTemplate.execute(status -> {
             val result = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            Optional.ofNullable(entityManager.find(OidcJpaJsonWebKeystore.class, issuer))
+            Optional.ofNullable(entityManager.find(OidcJsonWebKeystoreEntity.class, issuer))
                 .ifPresentOrElse(entity -> {
                     entity.setData(result);
                     entityManager.merge(entity);
                 }, () -> {
-                    val entity = new OidcJpaJsonWebKeystore(issuer, result);
+                    val entity = new OidcJsonWebKeystoreEntity(issuer, result);
                     entityManager.persist(entity);
                 });
             return jsonWebKeySet;

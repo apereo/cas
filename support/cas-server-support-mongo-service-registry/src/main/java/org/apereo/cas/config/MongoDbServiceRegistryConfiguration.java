@@ -39,7 +39,7 @@ public class MongoDbServiceRegistryConfiguration {
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

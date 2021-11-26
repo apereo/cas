@@ -44,7 +44,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @Bean
     public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
