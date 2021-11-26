@@ -223,9 +223,10 @@ if [[ "${RERUN}" != "true" ]]; then
   springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
   [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
-  java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} ${properties} \
+  java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
     -Dcom.sun.net.ssl.checkRevocation=false \
-    --spring.profiles.active=none --server.ssl.key-store="$keystore" &
+    --spring.profiles.active=none --server.ssl.key-store="$keystore" \
+    ${properties} &
   pid=$!
   printgreen "\nWaiting for CAS under process id ${pid}"
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
