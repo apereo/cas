@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.mongo.user-id=root",
     "cas.authn.oidc.jwks.mongo.password=secret",
     "cas.authn.oidc.jwks.mongo.authentication-database-name=admin",
-    "cas.authn.oidc.jwks.mongo.drop-collection=true",
+    "cas.authn.oidc.jwks.mongo.drop-collection=true"
 })
 @EnabledIfPortOpen(port = 27017)
 public class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
