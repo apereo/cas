@@ -37,7 +37,7 @@ public class MongoDbYubiKeyConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public MongoTemplate mongoYubiKeyTemplate(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val mongo = casProperties.getAuthn().getMfa().getYubikey().getMongo();

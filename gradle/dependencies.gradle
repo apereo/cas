@@ -1483,9 +1483,6 @@ ext.libraries = [
                     exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
                 },
-                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
-                    exclude(group: "org.mockito", module: "mockito-all")
-                },
                 dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
                 },
                 dependencies.create("org.junit.jupiter:junit-jupiter-params:$junitVersion") {
@@ -1546,14 +1543,9 @@ ext.libraries = [
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
                     exclude(group: "net.spy", module: "spymemcached")
-                    exclude(group: "org.objenesis", module: "objenesis")
                 },
                 dependencies.create("de.javakaffee:kryo-serializers:$kryoSerializersVersion") {
                     exclude(group: "com.esotericsoftware", module: "kryo")
-                    exclude(group: "org.objenesis", module: "objenesis")
-                },
-                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
-                    exclude(group: "org.mockito", module: "mockito-all")
                 }
         ],
         memcached               : [

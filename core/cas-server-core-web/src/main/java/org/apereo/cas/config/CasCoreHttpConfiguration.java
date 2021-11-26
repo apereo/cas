@@ -46,7 +46,7 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
         @Bean
         public SSLConnectionSocketFactory trustStoreSslSocketFactory(
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier) {
@@ -71,7 +71,7 @@ public class CasCoreHttpConfiguration {
     @Configuration(value = "CasCoreHttpTlsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreHttpTlsConfiguration {
-        @ConditionalOnMissingBean(name = "casSslContext")
+        @ConditionalOnMissingBean(name = CasSSLContext.BEAN_NAME)
         @Bean
         public CasSSLContext casSslContext(
             @Qualifier("hostnameVerifier")
@@ -131,7 +131,7 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "httpClient")
         @Bean
         public FactoryBean<SimpleHttpClient> httpClient(
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
@@ -145,7 +145,7 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "noRedirectHttpClient")
         @Bean
         public SimpleHttpClient noRedirectHttpClient(
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
@@ -159,7 +159,7 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
         @Bean
         public SimpleHttpClient supportsTrustStoreSslSocketFactoryHttpClient(
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,

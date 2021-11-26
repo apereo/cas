@@ -37,7 +37,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
-                                                      @Qualifier("casSslContext")
+                                                      @Qualifier(CasSSLContext.BEAN_NAME)
                                                       final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

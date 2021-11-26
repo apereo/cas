@@ -225,7 +225,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
             return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
                 casProperties.getServer().getPrefix(), hostnameVerifier, casSslContext);

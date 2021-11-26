@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

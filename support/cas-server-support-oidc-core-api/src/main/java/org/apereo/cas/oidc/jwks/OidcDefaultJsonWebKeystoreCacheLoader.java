@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;

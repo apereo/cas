@@ -46,7 +46,7 @@ public class U2FRedisConfiguration {
     @ConditionalOnMissingBean(name = "u2fRedisConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory u2fRedisConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getU2f().getRedis();

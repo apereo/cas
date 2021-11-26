@@ -100,7 +100,7 @@ public class RadiusConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public AbstractRadiusServer radiusServer(final CasConfigurationProperties casProperties,
-                                             @Qualifier("casSslContext")
+                                             @Qualifier(CasSSLContext.BEAN_NAME)
                                              final CasSSLContext casSslContext) {
         val radius = casProperties.getAuthn().getRadius();
         val client = radius.getClient();
@@ -112,7 +112,7 @@ public class RadiusConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public BeanContainer<RadiusServer> radiusServers(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getRadius();

@@ -39,7 +39,7 @@ public class MongoDbEventsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
     public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
-                                             @Qualifier("casSslContext")
+                                             @Qualifier(CasSSLContext.BEAN_NAME)
                                              final CasSSLContext casSslContext) {
         val mongo = casProperties.getEvents().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

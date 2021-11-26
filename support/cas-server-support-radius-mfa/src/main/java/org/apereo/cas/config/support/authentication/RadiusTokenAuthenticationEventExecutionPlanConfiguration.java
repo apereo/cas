@@ -56,7 +56,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "radiusTokenServers")
         public BeanContainer<RadiusServer> radiusTokenServers(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casSslContext")
+            @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
             val radius = casProperties.getAuthn().getMfa().getRadius();
             val client = radius.getClient();

@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.jwks.generator.jpa;
+package org.apereo.cas.oidc.jwks.generator;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * This is {@link OidcJpaJsonWebKeystore}.
+ * This is {@link OidcJsonWebKeystoreEntity}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -28,10 +28,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public class OidcJpaJsonWebKeystore implements Serializable {
+public class OidcJsonWebKeystoreEntity implements Serializable {
     private static final long serialVersionUID = -6371242034035828803L;
 
     @Id
+    @org.springframework.data.annotation.Id
     @Column(nullable = false, length = 1024)
     private String issuer;
 

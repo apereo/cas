@@ -52,7 +52,7 @@ public class MongoDbTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbTicketRegistryTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongo = casProperties.getTicket().getRegistry().getMongo();

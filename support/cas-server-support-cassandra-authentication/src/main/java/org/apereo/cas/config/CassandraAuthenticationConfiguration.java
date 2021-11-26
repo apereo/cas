@@ -48,7 +48,7 @@ public class CassandraAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cassandraAuthnSessionFactory")
     public CassandraSessionFactory cassandraAuthnSessionFactory(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());

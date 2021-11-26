@@ -44,7 +44,7 @@ public class RedisYubiKeyConfiguration {
     @ConditionalOnMissingBean(name = "redisYubiKeyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisYubiKeyConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getYubikey().getRedis();

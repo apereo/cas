@@ -36,7 +36,7 @@ public class CosmosDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
     @Bean
     public CosmosDbObjectFactory cosmosDbObjectFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb(), casSslContext);

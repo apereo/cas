@@ -1,8 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
@@ -48,9 +46,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
 
     @Override
     public Optional<Resource> find() throws Exception {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
-        val resource = ResourceUtils.getRawResourceFrom(resolve);
+        val resource = determineJsonWebKeystoreResource();
         return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
     }
 
@@ -95,12 +91,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
-        val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
-        val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
-        val jsonWebKeySet = new JsonWebKeySet(currentKey, futureKey);
-
+        val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);
         store(jsonWebKeySet);
         return file;
     }

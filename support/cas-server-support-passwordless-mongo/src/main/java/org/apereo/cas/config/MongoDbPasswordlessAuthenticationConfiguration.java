@@ -31,7 +31,7 @@ public class MongoDbPasswordlessAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbPasswordlessAuthenticationTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getPasswordless().getAccounts().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());

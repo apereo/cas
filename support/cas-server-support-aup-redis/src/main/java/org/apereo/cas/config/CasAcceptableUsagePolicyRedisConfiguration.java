@@ -43,7 +43,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
     @ConditionalOnMissingBean(name = "redisAcceptableUsagePolicyConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAcceptableUsagePolicy().getRedis();

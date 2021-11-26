@@ -47,7 +47,7 @@ public class GoogleAuthenticatorRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorConnectionFactory")
     public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAuthn().getMfa().getGauth().getRedis();

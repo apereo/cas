@@ -37,7 +37,7 @@ public class CasConsentRedisConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisConsentConnectionFactory")
     public RedisConnectionFactory redisConsentConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getConsent().getRedis();

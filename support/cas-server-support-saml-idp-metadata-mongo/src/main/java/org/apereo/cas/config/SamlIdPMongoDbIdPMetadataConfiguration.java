@@ -56,7 +56,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbSamlIdPMetadataTemplate(final CasConfigurationProperties casProperties,
-                                                        @Qualifier("casSslContext")
+                                                        @Qualifier(CasSSLContext.BEAN_NAME)
                                                         final CasSSLContext casSslContext) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val mongo = idp.getMetadata().getMongo();

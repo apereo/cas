@@ -55,7 +55,7 @@ public class DefaultCasSSLContextTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class SystemSslContext {
         @Autowired
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         private CasSSLContext casSslContext;
 
         @Test
@@ -72,7 +72,7 @@ public class DefaultCasSSLContextTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class DefaultSslContext {
         @Autowired
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         private CasSSLContext casSslContext;
 
         @Test
@@ -88,7 +88,7 @@ public class DefaultCasSSLContextTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class DisabledSslContext {
         @Autowired
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         private CasSSLContext casSslContext;
 
         @Test

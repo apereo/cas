@@ -40,7 +40,7 @@ public class CasSupportRedisAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
     public RedisConnectionFactory redisAuditConnectionFactory(
-        @Qualifier("casSslContext")
+        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();

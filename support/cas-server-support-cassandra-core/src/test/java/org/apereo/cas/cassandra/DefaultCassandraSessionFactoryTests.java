@@ -41,7 +41,7 @@ public class DefaultCassandraSessionFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("casSslContext")
+    @Qualifier(CasSSLContext.BEAN_NAME)
     private CasSSLContext casSslContext;
 
     @Test
