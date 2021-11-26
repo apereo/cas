@@ -1,0 +1,13 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--spring.profiles.include=custom1,custom2,custom3,embedded",
+    
+    "--cas.custom.properties.direct=directValue",
+    "--cas.standalone.configuration-directory=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config"
+  ]
+}

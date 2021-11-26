@@ -43,8 +43,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
 
     /**
-     * Adding items to composite property source which contains property sources processed in order, first one wins.
-     * First Priority: Configuration files in config dir, profiles override non-profiles, last profile overrides first
+     * Adding items to composite property source which contains
+     * property sources processed in order, first one wins.
+     * First Priority: Configuration files in config dir,
+     * profiles override non-profiles, last profile overrides first
      * Second Priority: {@code classpath:/application.yml}
      *
      * @param environment    the environment

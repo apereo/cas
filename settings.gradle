@@ -60,10 +60,10 @@ dependencyResolutionManagement {
                 includeGroupByRegex "org.terracotta.*"
             }
         }
-//        maven {
-//            url "https://repo.spring.io/milestone"
-//            mavenContent { releasesOnly() }
-//        }
+        maven {
+            url "https://repo.spring.io/milestone"
+            mavenContent { releasesOnly() }
+        }
     }
 }
 
