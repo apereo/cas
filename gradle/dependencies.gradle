@@ -1205,11 +1205,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
-                dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion") {
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -1334,9 +1329,6 @@ ext.libraries = [
         ],
         jdom                    : dependencies.create("org.jdom:jdom2:$jdomVersion") {
             exclude(group: "xml-apis", module: "xml-apis")
-
-        },
-        jodatime                : dependencies.create("joda-time:joda-time:$jodaTimeVersion") {
 
         },
         jose4j                  : dependencies.create("org.bitbucket.b_c:jose4j:$jose4jVersion") {

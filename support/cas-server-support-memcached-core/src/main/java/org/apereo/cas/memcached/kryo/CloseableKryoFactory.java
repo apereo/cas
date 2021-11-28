@@ -33,8 +33,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -44,7 +42,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -211,9 +208,15 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(Date.class, new DateSerializer(Date.class));
         kryo.register(Calendar.class, new GregorianCalendarSerializer());
         kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
-        kryo.register(LocalDate.class, new JodaLocalDateSerializer());
-        kryo.register(DateTime.class, new JodaDateTimeSerializer());
-        kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
+
+        try {
+            kryo.register(Class.forName("org.joda.time.LocalDate"), new JodaLocalDateSerializer());
+            kryo.register(Class.forName("org.joda.time.DateTime"), new JodaDateTimeSerializer());
+            kryo.register(Class.forName("org.joda.time.LocalDateTime"), new JodaLocalDateTimeSerializer());
+        } catch (ClassNotFoundException e) {
+            LOGGER.trace("joda-time not found on classpath", e);
+        }
+
         kryo.register(Clock.systemUTC().getClass());
         kryo.register(ZoneOffset.class);
         kryo.register(EnumSet.class, new EnumSetSerializer());
