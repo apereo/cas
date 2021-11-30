@@ -231,7 +231,21 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         public Clients builtClients(final CasConfigurationProperties casProperties,
                                     @Qualifier("pac4jDelegatedClientFactory")
                                     final DelegatedClientFactory pac4jDelegatedClientFactory) {
-            return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(), pac4jDelegatedClientFactory);
+            if (casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
+                LOGGER.info("Delegated clients will be dynamically initialized");
+                return new RefreshableDelegatedClients(casProperties.getServer().getLoginUrl(),
+                                                       pac4jDelegatedClientFactory);
+            } else {
+                val clients = pac4jDelegatedClientFactory.build();
+                LOGGER.debug("Built the following delegated clients: [{}]", clients);
+                if (clients.isEmpty()) {
+                    LOGGER.debug("No delegated authentication clients are defined and/or configured");
+                } else {
+                    LOGGER.info("Located and prepared [{}] delegated authentication client(s)", clients.size());
+
+                }
+                return new Clients(casProperties.getServer().getLoginUrl(), new ArrayList<>(clients));
+            }
         }
     }
 

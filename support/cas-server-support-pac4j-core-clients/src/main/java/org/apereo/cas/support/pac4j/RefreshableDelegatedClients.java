@@ -12,7 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link RefreshableDelegatedClients}.
+ * This is {@link RefreshableDelegatedClients}, which shims {@link Clients}
+ * to rebuild any delegated clients when either {@link Clients#findClient(String) findClient}
+ * or {@link Clients#findAllClients() findAllClients} are called.
+ * In practice, this means that clients will be rebuilt for each request.
+ *
+ * @see org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties#lazyInit
  *
  * @author Misagh Moayyed
  * @since 6.4.0
