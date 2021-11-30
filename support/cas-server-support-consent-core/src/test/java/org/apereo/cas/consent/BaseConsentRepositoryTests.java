@@ -67,8 +67,6 @@ public abstract class BaseConsentRepositoryTests {
 
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
 
-    protected static final String CASUSER_2 = "casuser2";
-
     public abstract ConsentRepository getRepository();
 
     public ConsentRepository getRepository(final String testName) {
@@ -77,20 +75,22 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsNotFound() {
+        val user = UUID.randomUUID().toString();
         val repo = getRepository("verifyConsentDecisionIsNotFound");
-        val decision = BUILDER.build(SVC, REG_SVC, "casuser", ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
         assertNotNull(repo.storeConsentDecision(decision));
         assertFalse(repo.findConsentDecisions().isEmpty());
-        assertFalse(repo.findConsentDecisions("casuser").isEmpty());
+        assertFalse(repo.findConsentDecisions(user).isEmpty());
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication()));
         assertFalse(repo.deleteConsentDecision(decision.getId(), UUID.randomUUID().toString()));
     }
 
     @Test
     public void verifyConsentDecisionIsFound() {
+        val user = UUID.randomUUID().toString();
         val repo = getRepository("verifyConsentDecisionIsFound");
-        var decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
+        var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
@@ -100,23 +100,24 @@ public abstract class BaseConsentRepositoryTests {
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
 
-        val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2));
+        val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user));
         assertNotNull(d);
-        assertEquals(CASUSER_2, d.getPrincipal());
+        assertEquals(user, d.getPrincipal());
 
         assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
-        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
     }
 
     @Test
     public void verifyDeleteRecordsForPrincipal() {
+        val user = UUID.randomUUID().toString();
         val repo = getRepository("verifyDeleteRecordsForPrincipal");
-        var decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
+        var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(200);
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
         assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
-        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
     }
 
     @ImportAutoConfiguration({
