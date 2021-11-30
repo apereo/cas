@@ -69,10 +69,10 @@ endpoint in the following structure as the request body:
 The URL endpoint, defined in CAS settings is expected to be available at a path that ends in `/idp`, which is added onto the URL endpoint by CAS automatically.
 The API is expected to produce a successful `200 - OK` response status on all operations outlined below:
 
-| Method               | Description
-|----------------------|----------------------------------------------------------------------------
-| `GET`                | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys.
-| `POST`               | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.
+| Method | Description                                                                                                                                                                                                                                                                                |
+|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GET`  | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys. |
+| `POST` | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.                                                                                                                   |
 
 ## Per Service
 

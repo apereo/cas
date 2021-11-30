@@ -32,19 +32,19 @@ produced event will take over and route the authentication flow appropriately.
 
 The following triggers are available:
 
-| Trigger               | Description
-|-----------------------|--------------------------------------------------------------------------------------------------------
-| Global                | [See this page](Configuring-Multifactor-Authentication-Triggers-Global.html).
-| Per Application             | [See this page](Configuring-Multifactor-Authentication-Triggers-PerApplication.html).
-| Groovy Per Application      | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).
-| Global Principal Attribute  | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute.html).
-| Global Principal Attribute Predicate  | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute-Predicate.html).
-| Global Authentication Attribute       | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-AuthenticationAttribute.html).
-| Adaptive              | [See this page](Configuring-Multifactor-Authentication-Triggers-Adaptive.html).
-| Grouper               | [See this page](Configuring-Multifactor-Authentication-Triggers-Grouper.html).
-| Groovy                | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).
-| REST                  | [See this page](Configuring-Multifactor-Authentication-Triggers-Rest.html).
-| Opt-In Request Parameter/Header     | [See this page](Configuring-Multifactor-Authentication-Triggers-OptInRequest.html).
-| Principal Attribute Per Application | [See this page](Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html).
-| Entity Id Request Parameter | [See this page](Configuring-Multifactor-Authentication-Triggers-EntityId.html).
-| Custom                      | [See this page](Configuring-Multifactor-Authentication-Triggers-Custom.html).
+| Trigger                              | Description                                                                                                |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------|
+| Global                               | [See this page](Configuring-Multifactor-Authentication-Triggers-Global.html).                              |
+| Per Application                      | [See this page](Configuring-Multifactor-Authentication-Triggers-PerApplication.html).                      |
+| Groovy Per Application               | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).                              |
+| Global Principal Attribute           | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute.html).           |
+| Global Principal Attribute Predicate | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-PrincipalAttribute-Predicate.html). |
+| Global Authentication Attribute      | [See this page](Configuring-Multifactor-Authentication-Triggers-Global-AuthenticationAttribute.html).      |
+| Adaptive                             | [See this page](Configuring-Multifactor-Authentication-Triggers-Adaptive.html).                            |
+| Grouper                              | [See this page](Configuring-Multifactor-Authentication-Triggers-Grouper.html).                             |
+| Groovy                               | [See this page](Configuring-Multifactor-Authentication-Triggers-Groovy.html).                              |
+| REST                                 | [See this page](Configuring-Multifactor-Authentication-Triggers-Rest.html).                                |
+| Opt-In Request Parameter/Header      | [See this page](Configuring-Multifactor-Authentication-Triggers-OptInRequest.html).                        |
+| Principal Attribute Per Application  | [See this page](Configuring-Multifactor-Authentication-Triggers-PrincipalAttribute-PerApplication.html).   |
+| Entity Id Request Parameter          | [See this page](Configuring-Multifactor-Authentication-Triggers-EntityId.html).                            |
+| Custom                               | [See this page](Configuring-Multifactor-Authentication-Triggers-Custom.html).                              |

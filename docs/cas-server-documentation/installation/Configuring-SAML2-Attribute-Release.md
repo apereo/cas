@@ -35,11 +35,11 @@ prevent it from being released by other protocols.
 
 The following additional settings can be specified for a Saml IdP attribute definition:
 
-| Name                    | Description
-|-------------------------|--------------------------------------------------------------------------------------------------------
-| `friendlyName`          | (Optional) Friendly name of the attribute shared with the target application during attribute release.
-| `urn`                   | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`).
-              
+| Name           | Description                                                                                            |
+|----------------|--------------------------------------------------------------------------------------------------------|
+| `friendlyName` | (Optional) Friendly name of the attribute shared with the target application during attribute release. |
+| `urn`          | (Optional) Defined Universal Resource name for an attribute (i.e. `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`). |
+
 To learn more about attribute definitions, please [see this guide](../integration/Attribute-Definitions.html).
 
 ## Attribute Value Types
@@ -69,12 +69,12 @@ number of pre-defined formats, or a custom format of your own choosing.
 A given attribute that is to be encoded in the final SAML response
 may contain any of the following name formats:
 
-| Type                 | Description
-|----------------------|----------------------------------------------------------------------------
-| `basic`              | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
-| `uri`                | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.
-| `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
-| `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
+| Type                | Description                                                               |
+|---------------------|---------------------------------------------------------------------------|
+| `basic`             | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`. |
+| `uri`               | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`.   |
+| `unspecified`       | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`. |
+| `urn:my:own:format` | Map the attribute to `urn:my:own:format`.                                 |
 
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. 
@@ -227,15 +227,15 @@ Map<String, Object> run(final Object... args) {
 
 The following parameters are passed to the script:
 
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `attributes`     | Map of current attributes resolved and available for release.
-| `service`        | The SAML service definition matched in the service registry.
-| `resolver`       | The metadata resolver instance of this service provider.
-| `facade`         | A wrapper on top of the metadata resolver that allows access to utility functions.
-| `entityDescriptor`    | The `EntityDescriptor` object matched and linked to this service provider's metadata.
-| `applicationContext`  | CAS application context allowing direct access to beans, etc.
-| `logger`         | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter            | Description                                                                           |
+|----------------------|---------------------------------------------------------------------------------------|
+| `attributes`         | Map of current attributes resolved and available for release.                         |
+| `service`            | The SAML service definition matched in the service registry.                          |
+| `resolver`           | The metadata resolver instance of this service provider.                              |
+| `facade`             | A wrapper on top of the metadata resolver that allows access to utility functions.    |
+| `entityDescriptor`   | The `EntityDescriptor` object matched and linked to this service provider's metadata. |
+| `applicationContext` | CAS application context allowing direct access to beans, etc.                         |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.           |
 
 An example script follows:
 

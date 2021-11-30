@@ -28,8 +28,8 @@ List<MessageDescriptor> run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------------------
-| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
-| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter       | Description                                                                         |
+|-----------------|-------------------------------------------------------------------------------------|
+| `response`      | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse` |
+| `configuration` | The LDAP password policy configuration carrying the account state handler defined.  |
+| `logger`        | The object responsible for issuing log messages such as `logger.info(...)`.         |

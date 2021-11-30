@@ -39,11 +39,11 @@ may define a consent policy that indicates a criteria by which attribute selecti
 
 The policy assigned to each service includes the following features:
 
-| Field                      | Description
-|----------------------------|---------------------------------------------------------------------------------------
-| `excludedAttributes`       | Exclude the indicated attributes from consent.
-| `includeOnlyAttributes`    | Force-include the indicated attributes in consent, provided attributes are resolved.
-| `status`                   | Controls whether consent for this service should be activated. See below for activation rules.
+| Field                   | Description                                                                                    |
+|-------------------------|------------------------------------------------------------------------------------------------|
+| `excludedAttributes`    | Exclude the indicated attributes from consent.                                                 |
+| `includeOnlyAttributes` | Force-include the indicated attributes in consent, provided attributes are resolved.           |
+| `status`                | Controls whether consent for this service should be activated. See below for activation rules. |
 
 A sample definition follows:
 

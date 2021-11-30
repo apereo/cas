@@ -43,11 +43,11 @@ def run(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requestContext`      | The `RequestContext` that carries various types of scopes as data containers.
-| `applicationContext`  | The Spring application context.
-| `logger`              | Logger object used to issue log messages where needed.
+| Parameter            | Description                                                                   |
+|----------------------|-------------------------------------------------------------------------------|
+| `requestContext`     | The `RequestContext` that carries various types of scopes as data containers. |
+| `applicationContext` | The Spring application context.                                               |
+| `logger`             | Logger object used to issue log messages where needed.                        |
 
 {% include_cached casproperties.html properties="cas.webflow.login-decorator.groovy" %}
 

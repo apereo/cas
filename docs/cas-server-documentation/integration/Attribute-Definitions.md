@@ -50,16 +50,16 @@ resolve and create that attribute on the fly as an attribute definition that can
 
 The following settings can be specified by an attribute definition:
 
-| Name                    | Description
-|-------------------------|--------------------------------------------------------------------------------------------------------
-| `key`                   | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html)
-| `name`                  | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.
-| `scoped`                | (Optional) If `true`, the attribute value be scoped to the scope of the CAS server deployment defined in settings.
-| `encrypted`             | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key.
-| `attribute`             | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.
-| `patternFormat`         | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.
-| `script`                | (Optional) Groovy script, external or embedded to process and produce attributes values.
-| `canonicalizationMode`  | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.
+| Name                   | Description                                                                                                                           |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `key`                  | Attribute name, as resolved by the CAS [attribute resolution engine](Attribute-Resolution.html)                                       |
+| `name`                 | Comma-separated list of attribute name(s) to virtually rename/remap and share with the target application during attribute release.   |
+| `scoped`               | (Optional) If `true`, the attribute value be scoped to the scope of the CAS server deployment defined in settings.                    |
+| `encrypted`            | (Optional) If `true`, the attribute value will be encrypted and encoded in base-64 using the service definition's defined public key. |
+| `attribute`            | (Optional) The source attribute to provide values for the attribute definition itself, replacing that of the original source.         |
+| `patternFormat`        | (Optional) Template used in a `java.text.MessageFormat` to decorate the attribute values.                                             |
+| `script`               | (Optional) Groovy script, external or embedded to process and produce attributes values.                                              |
+| `canonicalizationMode` | (Optional) Control transformation of attribute values; allowed values are `UPPER`, `LOWER` or `NONE`.                                 |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 

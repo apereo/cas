@@ -174,12 +174,12 @@ def run(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `passwordlessUser`    | The object representing the `PasswordlessUserAccount`.
-| `clients`             | The object representing the collection of identity provider configurations.
-| `httpServletRequest`  | The object representing the http request.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter            | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| `passwordlessUser`   | The object representing the `PasswordlessUserAccount`.                      |
+| `clients`            | The object representing the collection of identity provider configurations. |
+| `httpServletRequest` | The object representing the http request.                                   |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 The outcome of the script can be `null` to skip delegated authentication for 
 the user, or it could a selection from the available identity providers

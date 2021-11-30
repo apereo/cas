@@ -25,10 +25,10 @@ You may also ook for a suitable and relevant ready-made Docker image via `docker
 
 When deployed the following URLs become available:
 
-| URL                | Description
-|--------------------|-----------------------------------------------
-| `/`                | Home page listing service registrations.
-| `/eureka/apps`     | Raw registration metadata.
+| URL            | Description                              |
+|----------------|------------------------------------------|
+| `/`            | Home page listing service registrations. |
+| `/eureka/apps` | Raw registration metadata.               |
 
 ### High Availability Mode
 

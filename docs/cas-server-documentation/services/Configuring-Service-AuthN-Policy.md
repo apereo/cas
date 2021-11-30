@@ -29,10 +29,10 @@ to enhance the authentication flow.
 
 The following fields may be assigned to the policy:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requiredAuthenticationHandlers`  | A set of identifiers/names for the required authentication handlers available and configured in CAS. These names can be used to enforce a service definition to only use the authentication strategy carrying that name when an authentication request is submitted to CAS. 
-| `excludedAuthenticationHandlers`  | A set of identifiers/names for excluded authentication handlers. These names can be used to enforce a service definition to *exclude* and disqualify certain authentication handlers when an authentication request is submitted to CAS.
+| Parameter                        | Description                                                                                                                                                                                                                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `requiredAuthenticationHandlers` | A set of identifiers/names for the required authentication handlers available and configured in CAS. These names can be used to enforce a service definition to only use the authentication strategy carrying that name when an authentication request is submitted to CAS. |
+| `excludedAuthenticationHandlers` | A set of identifiers/names for excluded authentication handlers. These names can be used to enforce a service definition to *exclude* and disqualify certain authentication handlers when an authentication request is submitted to CAS.                                    |
 
 Note that while authentication methods in CAS all are given a default name, most if not all methods can be assigned a name via CAS settings.
 

@@ -30,8 +30,8 @@ def run(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `registrationRequest` | The object representing the account registration request.
-| `applicationContext`  | The object representing the Spring `ApplicationContext`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter             | Description                                                                 |
+|-----------------------|-----------------------------------------------------------------------------|
+| `registrationRequest` | The object representing the account registration request.                   |
+| `applicationContext`  | The object representing the Spring `ApplicationContext`.                    |
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`. |

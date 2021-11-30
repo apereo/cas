@@ -81,10 +81,10 @@ def run(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `parameters`       | `Map<String, ?>` of parameters passed by CAS, depending on feature and/or context.
-| `logger`           | The object responsible for issuing log messages such as `logger.info(...)`.
-| `locale`           | The object representing the available `Locale`, if any and available.
+| Parameter    | Description                                                                        |
+|--------------|------------------------------------------------------------------------------------|
+| `parameters` | `Map<String, ?>` of parameters passed by CAS, depending on feature and/or context. |
+| `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.        |
+| `locale`     | The object representing the available `Locale`, if any and available.              |
 
 The outcome of the script should be message body text.

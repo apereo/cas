@@ -14,12 +14,12 @@ with more than a few bilateral SAML integrations. Metadata documents are stored 
 pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via
 settings and is automatically generated. The outline of the table is as follows:
 
-| Field        | Description
-|--------------|---------------------------------------------------
-| `id`         | The identifier of the record.
-| `name`       | Indexed field which describes and names the metadata briefly.
-| `value`      | The XML document representing the metadata for the service provider.
-| `signature`  | The contents of the signing certificate to validate metadata, if any.
+| Field       | Description                                                           |
+|-------------|-----------------------------------------------------------------------|
+| `id`        | The identifier of the record.                                         |
+| `name`      | Indexed field which describes and names the metadata briefly.         |
+| `value`     | The XML document representing the metadata for the service provider.  |
+| `signature` | The contents of the signing certificate to validate metadata, if any. |
 
 Support is enabled by including the following module in the overlay:
 
@@ -51,16 +51,15 @@ Metadata artifacts that belong to CAS as a SAML2 identity provider may also be m
 and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
 inside a database table that would have the following structure:
 
-| Field                     | Description
-|---------------------------|---------------------------------------------------
-| `id`                      | The identifier of the record.
-| `signingCertificate`      | The signing certificate.
-| `signingKey`              | The signing key.
-| `encryptionCertificate`   | The encryption certificate.
-| `encryptionKey`           | The encryption key.
-| `metadata`                | The SAML2 identity provider metadata.
-| `appliesTo`               | The owner of the SAML2 identity provider metadata (i.e. `CAS`).
-
+| Field                   | Description                                                     |
+|-------------------------|-----------------------------------------------------------------|
+| `id`                    | The identifier of the record.                                   |
+| `signingCertificate`    | The signing certificate.                                        |
+| `signingKey`            | The signing key.                                                |
+| `encryptionCertificate` | The encryption certificate.                                     |
+| `encryptionKey`         | The encryption key.                                             |
+| `metadata`              | The SAML2 identity provider metadata.                           |
+| `appliesTo`             | The owner of the SAML2 identity provider metadata (i.e. `CAS`). |
 
 ## Per Service
 
