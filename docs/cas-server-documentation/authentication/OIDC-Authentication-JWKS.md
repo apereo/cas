@@ -191,4 +191,4 @@ with CAS. [See this guide](../configuration/Configuration-Management-Extensions.
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="oidcJwks" %}
+{% include_cached actuators.html endpoints="oidcJwks" casModule="cas-server-support-oidc" %}
