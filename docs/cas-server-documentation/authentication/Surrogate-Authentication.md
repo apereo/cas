@@ -69,11 +69,11 @@ assigned to non-surrogate sessions. In other words, if the usual expiration poli
 Upon a successful surrogate authentication event, the following 
 attributes are communicated back to the application in order to detect an impersonation session:
 
-| Attribute             | Instructions
-|-----------------------|-------------------------------------------------------------------------------
-| `surrogateEnabled`    | Boolean to indicate whether session is impersonated.
-| `surrogatePrincipal`  | The admin user whose credentials are validated and acts as the impersonator.
-| `surrogateUser`       | The surrogate user that is impersonated.
+| Attribute            | Instructions                                                                 |
+|----------------------|------------------------------------------------------------------------------|
+| `surrogateEnabled`   | Boolean to indicate whether session is impersonated.                         |
+| `surrogatePrincipal` | The admin user whose credentials are validated and acts as the impersonator. |
+| `surrogateUser`      | The surrogate user that is impersonated.                                     |
 
 ## Surrogate Access Strategy
 

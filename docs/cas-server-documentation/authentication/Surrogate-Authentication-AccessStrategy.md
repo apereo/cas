@@ -85,8 +85,8 @@ def Object run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-------------------------------------------------------------------------------------------
-| `principal`             | Primary/Principal user id.
-| `principalAttributes`   | Principal attributes collected for the primary user.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter             | Description                                                                 |
+|-----------------------|-----------------------------------------------------------------------------|
+| `principal`           | Primary/Principal user id.                                                  |
+| `principalAttributes` | Principal attributes collected for the primary user.                        |
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`. |

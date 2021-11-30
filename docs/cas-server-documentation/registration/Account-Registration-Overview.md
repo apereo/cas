@@ -57,16 +57,16 @@ and fields can be described in *metadata* form using a JSON document that matche
     
 The following fields are supported:
 
-| Field          | Description                   
-|----------------|----------------------------------------------------------------------
-| `name`         | The name of the input field to display on the registration screen.
-| `required`     | Whether or not this input is required. Defaults to `false`. 
-| `label`        | Key to a message key in the CAS language bundles to describe the label text for this input.
-| `title`        | Key to a message key in the CAS language bundles to describe the title text for this input.
-| `pattern`      | Regular expression pattern to force and validate the acceptable pattern for the input value.  
-| `type`         | The type of this input field (i.e. `select`, `email`, `phone`, `text`, etc.).
-| `order`        | The display order of this input on the screen.
-| `values`       | List of values to display in order, when type is set to `select`.
+| Field      | Description                                                                                  |
+|------------|----------------------------------------------------------------------------------------------|
+| `name`     | The name of the input field to display on the registration screen.                           |
+| `required` | Whether or not this input is required. Defaults to `false`.                                  |
+| `label`    | Key to a message key in the CAS language bundles to describe the label text for this input.  |
+| `title`    | Key to a message key in the CAS language bundles to describe the title text for this input.  |
+| `pattern`  | Regular expression pattern to force and validate the acceptable pattern for the input value. |
+| `type`     | The type of this input field (i.e. `select`, `email`, `phone`, `text`, etc.).                |
+| `order`    | The display order of this input on the screen.                                               |
+| `values`   | List of values to display in order, when type is set to `select`.                            |
 
 <div class="alert alert-info"><strong>Is it possible to...?</strong><p>You must be wondering 
 by now whether it's possible to customize the screen and include other types of fields, forms and values. 

@@ -57,15 +57,15 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 The `status` returned in the SOAP response as interpreted as one of the following values:
 
-| Code           | Result
-|----------------|---------------------------------------------
-| `200`          | Successful authentication.
-| `403`          | Produces a `AccountDisabledException`
-| `404`          | Produces a `AccountNotFoundException`
-| `423`          | Produces a `AccountLockedException`
-| `412`          | Produces a `AccountExpiredException`
-| `428`          | Produces a `AccountPasswordMustChangeException`
-| Other          | Produces a `FailedLoginException`
+| Code  | Result                                          |
+|-------|-------------------------------------------------|
+| `200` | Successful authentication.                      |
+| `403` | Produces a `AccountDisabledException`           |
+| `404` | Produces a `AccountNotFoundException`           |
+| `423` | Produces a `AccountLockedException`             |
+| `412` | Produces a `AccountExpiredException`            |
+| `428` | Produces a `AccountPasswordMustChangeException` |
+| Other | Produces a `FailedLoginException`               |
 
 ## Troubleshooting
 

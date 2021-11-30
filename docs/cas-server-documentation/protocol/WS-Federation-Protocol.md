@@ -46,9 +46,9 @@ need compile-time access to the components within.</p></div>
 
 ### Endpoints
 
-| Endpoint               | Description
-|------------------------|---------------------------------------------------------------------------------------
-| `/ws/sts`          | Presents the list of available SOAP services and their WSDL configuration for each REALM defined in the configuration.
+| Endpoint  | Description                                                                                                            |
+|-----------|------------------------------------------------------------------------------------------------------------------------|
+| `/ws/sts` | Presents the list of available SOAP services and their WSDL configuration for each REALM defined in the configuration. |
 
 ### Security Tokens
 
@@ -75,10 +75,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ### Endpoints
 
-| Endpoint                        | Description
-|---------------------------------|----------------------------------------------------------------------------
-| `/ws/idp/metadata`          | Displays the current federation metadata based on the configuration realm for the identity provider.
-| `/ws/idp/federation`        | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`.
+| Endpoint             | Description                                                                                                   |
+|----------------------|---------------------------------------------------------------------------------------------------------------|
+| `/ws/idp/metadata`   | Displays the current federation metadata based on the configuration realm for the identity provider.          |
+| `/ws/idp/federation` | Endpoint to receive initial `GET` authentication requests from clients, typically identified as the `issuer`. |
 
 ## Realms
 
@@ -101,12 +101,12 @@ Please see [this guide](WS-Federation-Protocol-Claims.html).
 
 The following token types are supported by CAS:
 
-| Type                           
-|----------------------------------------------------------------------------
-| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1`
-| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0`
-| `urn:ietf:params:oauth:token-type:jwt`
-| `http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/sct`
+| Type                                                                       |
+|----------------------------------------------------------------------------|
+| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1` |
+| `http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0` |
+| `urn:ietf:params:oauth:token-type:jwt`                                     |
+| `http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/sct`        |
 
 Token type may be configured on a per-service basis:
 

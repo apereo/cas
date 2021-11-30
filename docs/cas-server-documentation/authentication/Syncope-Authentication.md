@@ -26,21 +26,21 @@ Support is enabled by including the following dependency in the WAR overlay:
 As part of a successful authentication attempt, the following attributes 
 provided by Apache Syncope are collected by CAS:
 
-| Attribute Name             
-|------------------------------------
-| `syncopeUserRoles`
-| `syncopeUserSecurityQuestion`
-| `syncopeUserStatus`
-| `syncopeUserRealm`
-| `syncopeUserCreator`
-| `syncopeUserCreationDate`
-| `syncopeUserChangePwdDate`
-| `syncopeUserLastLoginDate`
-| `syncopeUserDynRoles`
-| `syncopeUserDynRealms`
-| `syncopeUserMemberships`
-| `syncopeUserDynMemberships`
-| `syncopeUserDynRelationships`
-| `syncopeUserAttrs`
+| Attribute Name                |
+|-------------------------------|
+| `syncopeUserRoles`            |
+| `syncopeUserSecurityQuestion` |
+| `syncopeUserStatus`           |
+| `syncopeUserRealm`            |
+| `syncopeUserCreator`          |
+| `syncopeUserCreationDate`     |
+| `syncopeUserChangePwdDate`    |
+| `syncopeUserLastLoginDate`    |
+| `syncopeUserDynRoles`         |
+| `syncopeUserDynRealms`        |
+| `syncopeUserMemberships`      |
+| `syncopeUserDynMemberships`   |
+| `syncopeUserDynRelationships` |
+| `syncopeUserAttrs`            |
 
 Note that attributes are only collected if they contain a value.

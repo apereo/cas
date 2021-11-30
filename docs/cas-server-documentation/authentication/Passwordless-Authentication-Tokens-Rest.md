@@ -17,9 +17,9 @@ in an encrypted fashion.
 
 The following operations need to be supported by the endpoint:
 
-| HTTP Method | Description                               | Parameter(s)          | Response
-|-------------|-------------------------------------------|-----------------------|--------------------------------
-| `GET`       | Locate tokens for the user.               | `username`            | Token in the response body.
-| `DELETE`    | Delete all tokens for the user.           | `username`            | N/A
-| `DELETE`    | Delete a single token for the user.       | `username`, `token`   | N/A
-| `POST`      | Save a token for the user.                | `username`, `token`   | N/A
+| HTTP Method | Description                         | Parameter(s)        | Response                    |
+|-------------|-------------------------------------|---------------------|-----------------------------|
+| `GET`       | Locate tokens for the user.         | `username`          | Token in the response body. |
+| `DELETE`    | Delete all tokens for the user.     | `username`          | N/A                         |
+| `DELETE`    | Delete a single token for the user. | `username`, `token` | N/A                         |
+| `POST`      | Save a token for the user.          | `username`, `token` | N/A                         |

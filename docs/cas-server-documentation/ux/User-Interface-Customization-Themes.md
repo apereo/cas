@@ -31,17 +31,17 @@ To create a theme, please follow the below instructions:
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. 
 Contents of this file may contain the following settings:
 
-| Setting                    | Description               | Value
-|----------------------------|---------------------------|-----------------------------------------------------------
-| `cas.standard.css.file`    | Path to theme CSS file; Multiple files may be comma-separated.    | `/themes/[theme_name]/css/cas.css`
-| `cas.standard.js.file`     | Path to theme Javascript file; Multiple files may be comma-separated.   | `/themes/[theme_name]/js/js/css`
-| `cas.logo.file`            | Path to theme logo to display via the common layout | `/images/logo.png`
-| `cas.drawer-menu.enabled`  |  Decide whether drawer menu should be displayed   | `true`
-| `cas.theme.name`           | Theme name used in various titles/captions   | `Example Theme`
-| `cas.pm-links.enabled`     | Whether password management/reset links should be displayed.    | `true`
-| `cas.login-form.enabled`   | When the CAS login form should be displayed.  | `true`
-| `cas.notifications-menu.enabled`  | Enable and display the notifications menu. | `true`
-| `cas.favicon.file`                | Path to theme favicon file.  | `/themes/example/images/favicon.ico`
+| Setting                          | Description                                                           | Value                                |
+|----------------------------------|-----------------------------------------------------------------------|--------------------------------------|
+| `cas.standard.css.file`          | Path to theme CSS file; Multiple files may be comma-separated.        | `/themes/[theme_name]/css/cas.css`   |
+| `cas.standard.js.file`           | Path to theme Javascript file; Multiple files may be comma-separated. | `/themes/[theme_name]/js/js/css`     |
+| `cas.logo.file`                  | Path to theme logo to display via the common layout                   | `/images/logo.png`                   |
+| `cas.drawer-menu.enabled`        | Decide whether drawer menu should be displayed                        | `true`                               |
+| `cas.theme.name`                 | Theme name used in various titles/captions                            | `Example Theme`                      |
+| `cas.pm-links.enabled`           | Whether password management/reset links should be displayed.          | `true`                               |
+| `cas.login-form.enabled`         | When the CAS login form should be displayed.                          | `true`                               |
+| `cas.notifications-menu.enabled` | Enable and display the notifications menu.                            | `true`                               |
+| `cas.favicon.file`               | Path to theme favicon file.                                           | `/themes/example/images/favicon.ico` |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
@@ -99,10 +99,10 @@ Support is enabled by including the following module in the WAR overlay:
 
 The following themes are provided by this module and can be assigned to service definitions:
 
-| Theme              | Description    
-|--------------------|----------------------------------------------------------------------------
-| `example`          | A reference example theme that combines customized CSS, Javascript and views
-| `twbs`             | A basic theme utilizing [Bootstrap](http://getbootstrap.com "Bootstrap") for CSS and Javascript
+| Theme     | Description                                                                                     |
+|-----------|-------------------------------------------------------------------------------------------------|
+| `example` | A reference example theme that combines customized CSS, Javascript and views                    |
+| `twbs`    | A basic theme utilizing [Bootstrap](http://getbootstrap.com "Bootstrap") for CSS and Javascript |
 
 The collection of themes above can also serve as reference examples of how to define a theme with
 custom CSS, Javascript and associated views and fragments.
@@ -143,13 +143,13 @@ def String run(final Object... args) {
 
 Returning `null` or blank will have CAS switch to the default theme. The following parameters may be passed to a Groovy script:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `service`             | The object representing the requesting service.
-| `registeredService`   | The object representing the matching registered service in the registry.
-| `queryStrings`        | Textual representation of all query strings found in the request, if any.
-| `headers`             | `Map` of all request headers and their values found in the request, if any.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| `service`           | The object representing the requesting service.                             |
+| `registeredService` | The object representing the matching registered service in the registry.    |
+| `queryStrings`      | Textual representation of all query strings found in the request, if any.   |
+| `headers`           | `Map` of all request headers and their values found in the request, if any. |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 ## RESTful Themes
 
@@ -170,6 +170,6 @@ response to determine the theme name. Empty response bodies will have CAS switch
 
 The following parameters may be passed to a Groovy script:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `service`             | The requesting service identifier.
+| Parameter | Description                        |
+|-----------|------------------------------------|
+| `service` | The requesting service identifier. |

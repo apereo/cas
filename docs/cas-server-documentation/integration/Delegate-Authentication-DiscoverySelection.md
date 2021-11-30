@@ -48,11 +48,11 @@ By default, the selection rules and conditions can be specified in a JSON file w
 
 The following parameters are available to the JSON resource:
 
-| Parameter             | Description
-|-----------------------|----------------------------------------------------------------------------------------------
-| `<key-pattern>`       | Regular expression pattern matched against the user identifier to locate the provider. i.e. `.+@example.org`.
-| `clientName`          | The client name that should be used for this match, found and defined in CAS configuration.
-| `order`               | The selection sorting order, used to properly sequence and prioritize entries in case there is overlap.
+| Parameter       | Description                                                                                                   |
+|-----------------|---------------------------------------------------------------------------------------------------------------|
+| `<key-pattern>` | Regular expression pattern matched against the user identifier to locate the provider. i.e. `.+@example.org`. |
+| `clientName`    | The client name that should be used for this match, found and defined in CAS configuration.                   |
+| `order`         | The selection sorting order, used to properly sequence and prioritize entries in case there is overlap.       |
 
 ## Custom
 

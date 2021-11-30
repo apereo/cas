@@ -19,14 +19,14 @@ Default support for SMS notifications is automatically enabled/included by the r
 You need not explicitly include this module in WAR Overlay configurations, except when there is a need to access components and APIs at
 compile-time. See below on how to customize or override the default behavior with specific providers.
 
-| Provider          | Reference                                         
-|-------------------|---------------------------------------------
-| Custom     | [See this guide](SMS-Messaging-Configuration-Custom.html).
-| Groovy     | [See this guide](SMS-Messaging-Configuration-Groovy.html).
-| REST       | [See this guide](SMS-Messaging-Configuration-REST.html).
-| Twilio     | [See this guide](SMS-Messaging-Configuration-Twilio.html).
-| TextMagic  | [See this guide](SMS-Messaging-Configuration-TextMagic.html).
-| Clickatell | [See this guide](SMS-Messaging-Configuration-Clickatell.html).
-| SmsMode    | [See this guide](SMS-Messaging-Configuration-SmsMode.html).
-| Amazon SNS | [See this guide](SMS-Messaging-Configuration-AmazonSNS.html).
-| Nexmo      | [See this guide](SMS-Messaging-Configuration-Nexmo.html).
+| Provider   | Reference                                                      |
+|------------|----------------------------------------------------------------|
+| Custom     | [See this guide](SMS-Messaging-Configuration-Custom.html).     |
+| Groovy     | [See this guide](SMS-Messaging-Configuration-Groovy.html).     |
+| REST       | [See this guide](SMS-Messaging-Configuration-REST.html).       |
+| Twilio     | [See this guide](SMS-Messaging-Configuration-Twilio.html).     |
+| TextMagic  | [See this guide](SMS-Messaging-Configuration-TextMagic.html).  |
+| Clickatell | [See this guide](SMS-Messaging-Configuration-Clickatell.html). |
+| SmsMode    | [See this guide](SMS-Messaging-Configuration-SmsMode.html).    |
+| Amazon SNS | [See this guide](SMS-Messaging-Configuration-AmazonSNS.html).  |
+| Nexmo      | [See this guide](SMS-Messaging-Configuration-Nexmo.html).      |

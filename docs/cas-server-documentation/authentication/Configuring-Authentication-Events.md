@@ -30,18 +30,18 @@ To learn how to configure database drivers, [please see this guide](../installat
 
 The following metadata is captured and recorded by the event machinery when enabled:
 
-| Field                             | Description
-|-----------------------------------|-----------------------------------------------------------------
-| `principalId`                              | The principal id of the authenticated subject
-| `timestamp`                                | Timestamp of this event
-| `creationTime`                             | Timestamp of this authentication event
-| `clientIpAddress`                          | Client IP address
-| `serverIpAddress`                          | Server IP address
-| `agent`                                    | User-Agent of the browser
-| `geoLatitude`                              | Geo Latitude of authentication request's origin
-| `geoLongitude`                             | Geo Longitude of authentication request's origin
-| `geoAccuracy`                              | Accuracy measure of the location
-| `geoTimestamp`                             | Timestamp of the geo location request
+| Field             | Description                                      |
+|-------------------|--------------------------------------------------|
+| `principalId`     | The principal id of the authenticated subject    |
+| `timestamp`       | Timestamp of this event                          |
+| `creationTime`    | Timestamp of this authentication event           |
+| `clientIpAddress` | Client IP address                                |
+| `serverIpAddress` | Server IP address                                |
+| `agent`           | User-Agent of the browser                        |
+| `geoLatitude`     | Geo Latitude of authentication request's origin  |
+| `geoLongitude`    | Geo Longitude of authentication request's origin |
+| `geoAccuracy`     | Accuracy measure of the location                 |
+| `geoTimestamp`    | Timestamp of the geo location request            |
 
 ## GeoLocation
 

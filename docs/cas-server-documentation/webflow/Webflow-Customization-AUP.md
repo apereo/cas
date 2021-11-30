@@ -53,11 +53,11 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
 
 The policy assigned to each service includes the following features:
 
-| Field              | Description
-|--------------------|----------------------------------------------------------------------------------------------------------
-| `enabled`          | Control whether policy is active/inactive for this service. Default is `true`.
-| `messageCode`      | The policy language code that is linked to the CAS language bundles which carries the actual policy text.
-| `text`             | The policy text that should be displayed for this application.
+| Field         | Description                                                                                               |
+|---------------|-----------------------------------------------------------------------------------------------------------|
+| `enabled`     | Control whether policy is active/inactive for this service. Default is `true`.                            |
+| `messageCode` | The policy language code that is linked to the CAS language bundles which carries the actual policy text. |
+| `text`        | The policy text that should be displayed for this application.                                            |
 
 ## Storage Mechanism
 

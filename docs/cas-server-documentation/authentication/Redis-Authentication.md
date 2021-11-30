@@ -16,11 +16,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 User accounts are mapped to a `username` field as the key. The user account record would contain the following fields:
 
-| Field                     | Description    
-|---------------------------|----------------------------------------------------------------------------
-| `password`           | User password with applicable encoding, if any.
-| `status`             | One of `OK`, `LOCKED`, `DISABLED`, `EXPIRED`, `MUST_CHANGE_PASSWORD`.
-| `attributes`         | User attributes modeled as `Map<String, List<Object>>`.
+| Field        | Description                                                           |
+|--------------|-----------------------------------------------------------------------|
+| `password`   | User password with applicable encoding, if any.                       |
+| `status`     | One of `OK`, `LOCKED`, `DISABLED`, `EXPIRED`, `MUST_CHANGE_PASSWORD`. |
+| `attributes` | User attributes modeled as `Map<String, List<Object>>`.               |
 
 {% include_cached casproperties.html properties="cas.authn.redis" %}
 

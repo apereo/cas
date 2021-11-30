@@ -19,13 +19,13 @@ import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.HttpTransport;
-import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.NetRCCredentialsProvider;
-import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.transport.http.JDKHttpConnectionFactory;
 import org.eclipse.jgit.transport.http.apache.HttpClientConnectionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.JschConfigSessionFactory;
+import org.eclipse.jgit.transport.ssh.jsch.OpenSshConfig;
 import org.eclipse.jgit.util.FS;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
@@ -111,6 +111,27 @@ public class GitRepositoryBuilder {
     }
 
     /**
+     * Build git repository.
+     *
+     * @return the git repository
+     */
+    @SuppressWarnings("java:S2095")
+    public GitRepository build() {
+        try {
+            val transportCallback = buildTransportConfigCallback();
+            val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
+            if (this.repositoryDirectory.exists()) {
+                LOGGER.debug("Using existing repository at [{}]", this.repositoryDirectory);
+                return getExistingGitRepository(transportCallback);
+            }
+            return cloneGitRepository(transportCallback, providers);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Build transport config callback.
      *
      * @return the transport config callback
@@ -153,27 +174,6 @@ public class GitRepositoryBuilder {
                 }
             }
         };
-    }
-
-    /**
-     * Build git repository.
-     *
-     * @return the git repository
-     */
-    @SuppressWarnings("java:S2095")
-    public GitRepository build() {
-        try {
-            val transportCallback = buildTransportConfigCallback();
-            val providers = this.credentialsProviders.toArray(CredentialsProvider[]::new);
-            if (this.repositoryDirectory.exists()) {
-                LOGGER.debug("Using existing repository at [{}]", this.repositoryDirectory);
-                return getExistingGitRepository(transportCallback);
-            }
-            return cloneGitRepository(transportCallback, providers);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
     }
 
     private GitRepository cloneGitRepository(final TransportConfigCallback transportCallback,

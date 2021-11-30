@@ -33,13 +33,13 @@ class SampleGroovyEventResolver {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `service`             | The object representing the incoming service provided in the request, if any.
-| `registeredService`   | The object representing the corresponding service definition in the registry.
-| `authentication`      | The object representing the established authentication event, containing the principal.
-| `httpRequest`         | The object representing the `HttpServletRequest`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                             |
+|---------------------|-----------------------------------------------------------------------------------------|
+| `service`           | The object representing the incoming service provided in the request, if any.           |
+| `registeredService` | The object representing the corresponding service definition in the registry.           |
+| `authentication`    | The object representing the established authentication event, containing the principal. |
+| `httpRequest`       | The object representing the `HttpServletRequest`.                                       |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.             |
 
 As an example, the following script triggers multifactor authentication 
 via [Duo Security](../mfa/DuoSecurity-Authentication.html), if the requesting application is `https://www.example.com` and 

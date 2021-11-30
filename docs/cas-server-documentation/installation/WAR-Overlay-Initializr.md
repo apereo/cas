@@ -61,23 +61,23 @@ sure you have `curl`, `http` and/or [jq](https://stedolan.github.io/jq/) install
 The [CAS Initializr][initializr] can be invoked using curl to generate different types of overlay projects.
 The project selection is indicated using a `type` parameter. The following types are supported:
 
-| Type                                    | Description
-|-----------------------------------------|----------------------------------------------------------------------------------
-| `cas-overlay`                           | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).
-| `cas-bootadmin-server-overlay`          | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).
-| `cas-config-server-overlay`             | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html).
-| `cas-discovery-server-overlay`          | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).
-| `cas-management-overlay`                | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).
+| Type                           | Description                                                                                                                 |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `cas-overlay`                  | Default; generates a [CAS WAR overlay](../installation/WAR-Overlay-Installation.html).                                      |
+| `cas-bootadmin-server-overlay` | Generates a WAR Overlay for the [Spring Boot Admin Server](../monitoring/Configuring-Monitoring-Administration.html).       |
+| `cas-config-server-overlay`    | Generates a WAR Overlay for the [Spring Cloud Configuration Server](../configuration/Configuration-Server-Management.html). |
+| `cas-discovery-server-overlay` | Generates a WAR Overlay for the [Service Discovery Server](../installation/Service-Discovery-Guide-Eureka.html).            |
+| `cas-management-overlay`       | Generates a WAR Overlay for the [CAS Management Web Application](../services/Installing-ServicesMgmt-Webapp.html).          |
 
 ## Project Versions
 
 The [CAS Initializr][initializr] can be instructed to prepare an overlay project for a specific version.
 The following request parameters control the version selection:
 
-| Type                                    | Description
-|-----------------------------------------|-----------------------------------------------
-| `casVersion`                            | Specify the CAS version for the overlay.
-| `bootVersion`                           | Specify the Spring Boot version for the overlay.
+| Type          | Description                                      |
+|---------------|--------------------------------------------------|
+| `casVersion`  | Specify the CAS version for the overlay.         |
+| `bootVersion` | Specify the Spring Boot version for the overlay. |
 
 Note that mixing and matching different versions generally will lead to 
 unstable projects builds. Do so at your own risk! The specification
@@ -94,9 +94,9 @@ curl https://casinit.herokuapp.com/actuator/supportedVersions | jq
 
 [CAS Initializr][initializr] is available at:
 
-| Source Repository      | Location 
-|--------------------|-------------------------------------------------------------
-| `https://github.com/apereo/cas-initializr`   | [Link](https://casinit.herokuapp.com)
+| Source Repository                          | Location                              |
+|--------------------------------------------|---------------------------------------|
+| `https://github.com/apereo/cas-initializr` | [Link](https://casinit.herokuapp.com) |
 
 ## Project Generation
 

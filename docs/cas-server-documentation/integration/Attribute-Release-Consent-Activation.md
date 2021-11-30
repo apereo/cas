@@ -12,11 +12,11 @@ Attribute consent activation can be controlled both at a global and per-service 
 attribute consent are turned on and the consent policy rules for the service definition are disabled. The consent policy for
 the service definition may override the global rules using the `status` field which accepts the following values:
 
-| Value       | Description
-|-------------|---------------------------------------------------------------------------------------
-| `FALSE`     | Consent policy is disabled, overriding the global configuration.
-| `TRUE`      | Consent policy is enabled, overriding the global configuration.
-| `UNDEFINED` | Consent policy is undefined, delegating the decision to the global configuration.
+| Value       | Description                                                                       |
+|-------------|-----------------------------------------------------------------------------------|
+| `FALSE`     | Consent policy is disabled, overriding the global configuration.                  |
+| `TRUE`      | Consent policy is enabled, overriding the global configuration.                   |
+| `UNDEFINED` | Consent policy is undefined, delegating the decision to the global configuration. |
 
 Note that attribute consent policies may also be chained together to compose multiple policies. Each policy 
 can be individually disabled or enabled and the overall aggregate status

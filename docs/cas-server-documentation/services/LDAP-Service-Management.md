@@ -21,11 +21,11 @@ Support is enabled by adding the following module into the overlay:
 
 The default mapper has support for the following optional items:
 
-| Field                             | Default Value
-|-----------------------------------|---------------------------------------------------
-| `objectClass`                     | casRegisteredService
-| `serviceDefinitionAttribute`      | description
-| `idAttribute`                     | uid
+| Field                        | Default Value        |
+|------------------------------|----------------------|
+| `objectClass`                | casRegisteredService |
+| `serviceDefinitionAttribute` | description          |
+| `idAttribute`                | uid                  |
 
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as
 JSON objects. The format and syntax of the JSON is identical to that of

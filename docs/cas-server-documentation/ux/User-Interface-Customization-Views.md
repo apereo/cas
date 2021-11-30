@@ -43,13 +43,13 @@ default one that ships with CAS will be used as the fallback.
 Views may also be found using an external URL in CAS settings that is responsible to produce the full view body in 
 the response. This URL endpoint will receive the available request headers as well as the following headers in its request:
 
-| Header             
-|-------------------------------------
-| `owner`
-| `template`
-| `resource`
-| `theme`, if available
-| `locale`, if available
+| Header                 |
+|------------------------|
+| `owner`                |
+| `template`             |
+| `resource`             |
+| `theme`, if available  |
+| `locale`, if available |
 
 Upon a successful `200` status result, the response body is expected to contain the view that will be rendered by CAS.
 

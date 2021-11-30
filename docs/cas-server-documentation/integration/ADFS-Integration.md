@@ -88,10 +88,10 @@ def Map run(final Object... args) {
 
 The parameters passed to the script are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `attributes`          | A current `Map` of attributes provided from ADFS.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter    | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `attributes` | A current `Map` of attributes provided from ADFS.                           |
+| `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 Note that the execution result of the script *MUST* ensure that attributes are collected into a `Map`
 where the attribute name, the key, is a simple `String` and the attribute value is transformed into a collection.

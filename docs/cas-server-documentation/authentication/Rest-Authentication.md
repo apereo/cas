@@ -31,25 +31,25 @@ which represent the authenticated principal for CAS:
 
 Expected responses from the REST endpoint are mapped to CAS as such:
 
-| Code                   | Result
-|------------------------|---------------------------------------------
-| `200`          | Successful authentication.
-| `403`          | Produces a `AccountDisabledException`
-| `404`          | Produces a `AccountNotFoundException`
-| `423`          | Produces a `AccountLockedException`
-| `412`          | Produces a `AccountExpiredException`
-| `428`          | Produces a `AccountPasswordMustChangeException`
-| Other          | Produces a `FailedLoginException`
+| Code  | Result                                          |
+|-------|-------------------------------------------------|
+| `200` | Successful authentication.                      |
+| `403` | Produces a `AccountDisabledException`           |
+| `404` | Produces a `AccountNotFoundException`           |
+| `423` | Produces a `AccountLockedException`             |
+| `412` | Produces a `AccountExpiredException`            |
+| `428` | Produces a `AccountPasswordMustChangeException` |
+| Other | Produces a `FailedLoginException`               |
 
 ## Authentication Warnings
 
 The remote REST endpoint can send warnings back to the CAS server using custom headers.
 If the authentication is successful, these warnings will be shown to the user directly after the login.
 
-| Header                   | Description
-|--------------------------|---------------------------------------------
-| `X-CAS-Warning`          | For each `X-CAS-Warning` header present in the response, a corresponding message will be shown to the user. The header value can either be the key for a [localized message](../ux/User-Interface-Customization-Localization.html) or the message itself.
-| `X-CAS-PasswordExpirationDat`          | If this header is present in the response and contains a `RFC1123 date` a special message will be shown to warn the user about the expiring password. If a [password management provider](../password_management/Password-Management.html) is configured, the user will be able to directly change the password.
+| Header                        | Description                                                                                                                                                                                                                                                                                                      |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-CAS-Warning`               | For each `X-CAS-Warning` header present in the response, a corresponding message will be shown to the user. The header value can either be the key for a [localized message](../ux/User-Interface-Customization-Localization.html) or the message itself.                                                        |
+| `X-CAS-PasswordExpirationDat` | If this header is present in the response and contains a `RFC1123 date` a special message will be shown to warn the user about the expiring password. If a [password management provider](../password_management/Password-Management.html) is configured, the user will be able to directly change the password. |
 
 ## Configuration
 

@@ -26,8 +26,8 @@ A sample JSON file follows:
 
 Accepted response types are as follows:
 
-| Parameter             | Description
-|------------------|--------------------------------------------------------------------------------------
-| `REDIRECT` | This is the default option, where a browser `302` redirect navigates the user back to the calling application.
-| `POST`     | Same as above, except that parameters are `POST`ed back to the calling application.
-| `HEADER`   | Parameters constructed for this authentication request are inserted into the HTTP response as headers
+| Parameter  | Description                                                                                                    |
+|------------|----------------------------------------------------------------------------------------------------------------|
+| `REDIRECT` | This is the default option, where a browser `302` redirect navigates the user back to the calling application. |
+| `POST`     | Same as above, except that parameters are `POST`ed back to the calling application.                            |
+| `HEADER`   | Parameters constructed for this authentication request are inserted into the HTTP response as headers          |

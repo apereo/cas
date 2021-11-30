@@ -100,24 +100,24 @@ functionality that does not directly format the event for viewing. `Appender`s a
 
 The following `Appender` elements are only a partial collection of available options. 
 
-| Layout                   | Description
-|--------------------------|------------------------------------------------------------------------
-| `AsyncAppender`          | Accepts references to other Appenders and causes LogEvents to be written to them on a separate Thread.
-| `CassandraAppender`      | Writes its output to an Apache Cassandra database. A keyspace and table must be configured ahead of time, and the columns should be mapped in a configuration file. 
-| `ConsoleAppender`        | Writes its output to either `System.out` or `System.err` with `System.out` being the default target.
-| `FailoverAppender`       | Wraps a set of appenders. If the primary Appender fails the secondary appenders will be tried in order until one succeeds or there are no more secondaries to try.
-| `FileAppender`           | Writes to the File named in the `fileName` parameter.
-| `CsvParameterLayout`     | Converts an event's parameters into a CSV record, ignoring the message.
-| `JDBCAppender`           | Writes log events to a relational database table using standard JDBC.
-| `JPAAppender`            | Writes log events to a relational database table using the Java Persistence API `2.1`.
-| `HttpAppender`           | Sends log events over HTTP. A Layout must be provided to format the log event.
-| `KafkaAppender`          | Logs events to an Apache Kafka topic. Each log event is sent as a Kafka record.
-| `NoSQLAppender`          | Writes log events to a NoSQL database; Provider implementations currently exist for MongoDB and Apache CouchDB.
-| `RoutingAppender`        | Evaluates log events and then routes them to a subordinate `Appender`. 
-| `SMTPAppender`           | Sends an e-mail when a specific logging event occurs, typically on errors or fatal errors.
-| `JeroMQ`                 | The ZeroMQ appender uses the JeroMQ library to send log events to one or more ZeroMQ endpoints.
-| `RollingFileAppender`    | Writes to the File named in the fileName parameter and rolls the file over according the `TriggeringPolicy` and the `RolloverPolicy`.
-| `RewriteAppender`        | Allows the log event to be manipulated before it is processed by another `Appender`. This can be used to mask sensitive information such as passwords or to inject information into each event. 
+| Layout                | Description                                                                                                                                                                                     |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AsyncAppender`       | Accepts references to other Appenders and causes LogEvents to be written to them on a separate Thread.                                                                                          |
+| `CassandraAppender`   | Writes its output to an Apache Cassandra database. A keyspace and table must be configured ahead of time, and the columns should be mapped in a configuration file.                             |
+| `ConsoleAppender`     | Writes its output to either `System.out` or `System.err` with `System.out` being the default target.                                                                                            |
+| `FailoverAppender`    | Wraps a set of appenders. If the primary Appender fails the secondary appenders will be tried in order until one succeeds or there are no more secondaries to try.                              |
+| `FileAppender`        | Writes to the File named in the `fileName` parameter.                                                                                                                                           |
+| `CsvParameterLayout`  | Converts an event's parameters into a CSV record, ignoring the message.                                                                                                                         |
+| `JDBCAppender`        | Writes log events to a relational database table using standard JDBC.                                                                                                                           |
+| `JPAAppender`         | Writes log events to a relational database table using the Java Persistence API `2.1`.                                                                                                          |
+| `HttpAppender`        | Sends log events over HTTP. A Layout must be provided to format the log event.                                                                                                                  |
+| `KafkaAppender`       | Logs events to an Apache Kafka topic. Each log event is sent as a Kafka record.                                                                                                                 |
+| `NoSQLAppender`       | Writes log events to a NoSQL database; Provider implementations currently exist for MongoDB and Apache CouchDB.                                                                                 |
+| `RoutingAppender`     | Evaluates log events and then routes them to a subordinate `Appender`.                                                                                                                          |
+| `SMTPAppender`        | Sends an e-mail when a specific logging event occurs, typically on errors or fatal errors.                                                                                                      |
+| `JeroMQ`              | The ZeroMQ appender uses the JeroMQ library to send log events to one or more ZeroMQ endpoints.                                                                                                 |
+| `RollingFileAppender` | Writes to the File named in the fileName parameter and rolls the file over according the `TriggeringPolicy` and the `RolloverPolicy`.                                                           |
+| `RewriteAppender`     | Allows the log event to be manipulated before it is processed by another `Appender`. This can be used to mask sensitive information such as passwords or to inject information into each event. |
 
 For full details, please review the official [Log4j documentation](http://logging.apache.org)
 
@@ -126,18 +126,18 @@ For full details, please review the official [Log4j documentation](http://loggin
 By default most appenders that are provided via the `log4j2.xml` file use
 pattern-based layouts to format log messages. The following alternative layouts may also be used:
 
-| Layout                        | Description
-|-------------------------------|------------------------------------------------------------------------
-| `CsvParameterLayout`          | Converts an event's parameters into a CSV record, ignoring the message.
-| `GelfLayout`                  | Lays out events in the Graylog Extended Log Format (`GELF`).
-| `HTMLLayout`                  | Generates an HTML page and adds each LogEvent to a row in a table
-| `JSONLayout`                  | Creates log events in well-formed or fragmented JSON.
-| `PatternLayout`               | Formats the log even based on a conversion pattern.
-| `RFC5424Layout`               | Formats log events in accordance with [RFC 5424](https://tools.ietf.org/html/rfc5424), the enhanced Syslog specification.
-| `SerializedLayout`            | Log events are transformed into byte arrays useful in JMS or socket connections.
-| `SyslogLayout`                | Formats log events as BSD Syslog records.
-| `XMLLayout`                   | Creates log events in well-formed or fragmented XML.
-| `YamlLayout`                  | Creates log events in YAML.
+| Layout               | Description                                                                                                               |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------|
+| `CsvParameterLayout` | Converts an event's parameters into a CSV record, ignoring the message.                                                   |
+| `GelfLayout`         | Lays out events in the Graylog Extended Log Format (`GELF`).                                                              |
+| `HTMLLayout`         | Generates an HTML page and adds each LogEvent to a row in a table                                                         |
+| `JSONLayout`         | Creates log events in well-formed or fragmented JSON.                                                                     |
+| `PatternLayout`      | Formats the log even based on a conversion pattern.                                                                       |
+| `RFC5424Layout`      | Formats log events in accordance with [RFC 5424](https://tools.ietf.org/html/rfc5424), the enhanced Syslog specification. |
+| `SerializedLayout`   | Log events are transformed into byte arrays useful in JMS or socket connections.                                          |
+| `SyslogLayout`       | Formats log events as BSD Syslog records.                                                                                 |
+| `XMLLayout`          | Creates log events in well-formed or fragmented XML.                                                                      |
+| `YamlLayout`         | Creates log events in YAML.                                                                                               |
 
 To learn more about nuances and configuration settings for each, please refer to the [official Log4J guides](http://logging.apache.org).
 

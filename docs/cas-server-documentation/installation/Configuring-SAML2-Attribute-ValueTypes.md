@@ -21,18 +21,18 @@ An example of an attribute that is encoded with specific type information would 
 
 The following attribute value types are supported:
 
-| Type              | Description
-|-------------------|---------------------------------------------------------------------------------------
-| `XSString`        | Mark the attribute value type as `string`.
-| `XSURI`           | Mark the attribute value type as `uri`.
-| `XSBoolean`       | Mark the attribute value type as `boolean`.
-| `XSInteger`       | Mark the attribute value type as `integer`.
-| `XSDateTime`      | Mark the attribute value type as `datetime` .
-| `XSBase64Binary`  | Mark the attribute value type as `base64Binary`.
-| `XSObject`        | Skip the attribute value type and serialize the value as a complex XML object/POJO.
-| `XSObject`        | Skip the attribute value type and serialize the value as a complex XML object/POJO.
-| `NameIDType`      | Transform the attribute to contain an inline NameID element that matches the `Subject`'s NameID.
-| `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`  | Transform the attribute to contain an inline *persistent* NameID regardless of the `Subject` NameID.
+| Type                                                   | Description                                                                                          |
+|--------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `XSString`                                             | Mark the attribute value type as `string`.                                                           |
+| `XSURI`                                                | Mark the attribute value type as `uri`.                                                              |
+| `XSBoolean`                                            | Mark the attribute value type as `boolean`.                                                          |
+| `XSInteger`                                            | Mark the attribute value type as `integer`.                                                          |
+| `XSDateTime`                                           | Mark the attribute value type as `datetime` .                                                        |
+| `XSBase64Binary`                                       | Mark the attribute value type as `base64Binary`.                                                     |
+| `XSObject`                                             | Skip the attribute value type and serialize the value as a complex XML object/POJO.                  |
+| `XSObject`                                             | Skip the attribute value type and serialize the value as a complex XML object/POJO.                  |
+| `NameIDType`                                           | Transform the attribute to contain an inline NameID element that matches the `Subject`'s NameID.     |
+| `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent` | Transform the attribute to contain an inline *persistent* NameID regardless of the `Subject` NameID. |
 
 ...where the types for each attribute would be defined as such:
  

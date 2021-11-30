@@ -31,12 +31,12 @@ def run(Object[] args) {
 
 It is not expected for the script to return a value. The following parameters are passed to the script:
 
-| Parameter             | Description
-|-----------------------|----------------------------------------------------------------------------------------------
-| `principal`           | CAS authenticated `Principal` that contains all attributes and claims.
-| `userProfile`         | The original `UserProfile` extracted from the external identity provider. 
-| `client`              | The `Client` configuration responsible for the exchange between CAS and the identity provider. 
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter     | Description                                                                                    |
+|---------------|------------------------------------------------------------------------------------------------|
+| `principal`   | CAS authenticated `Principal` that contains all attributes and claims.                         |
+| `userProfile` | The original `UserProfile` extracted from the external identity provider.                      |
+| `client`      | The `Client` configuration responsible for the exchange between CAS and the identity provider. |
+| `logger`      | The object responsible for issuing log messages such as `logger.info(...)`.                    |
 
 ## REST Provisioner
 
@@ -44,15 +44,15 @@ It is not expected for the script to return a value. The following parameters ar
 
 Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
      
-| Header                  | Description
-|-------------------------|----------------------------------------------------------------------------------------------
-| `principalId`           | CAS authenticated principal identifier.
-| `principalAttributes`   | CAS authenticated principal attributes.
-| `profileId`             | The identifier of the user profile extracted from the identity provider. 
-| `profileTypedId`        | The *typed* identifier of the user profile extracted from the identity provider. 
-| `profileAttributes`     | Collection of attributes extracted from the identity provider's response.
-| `clientName`            | The client name responsible for the exchange between CAS and the identity provider.
-    
+| Header                | Description                                                                         |
+|-----------------------|-------------------------------------------------------------------------------------|
+| `principalId`         | CAS authenticated principal identifier.                                             |
+| `principalAttributes` | CAS authenticated principal attributes.                                             |
+| `profileId`           | The identifier of the user profile extracted from the identity provider.            |
+| `profileTypedId`      | The *typed* identifier of the user profile extracted from the identity provider.    |
+| `profileAttributes`   | Collection of attributes extracted from the identity provider's response.           |
+| `clientName`          | The client name responsible for the exchange between CAS and the identity provider. |
+
 ## Custom Provisioner
 
 If you wish to create your own provisioner for delegated authentication, you will need to

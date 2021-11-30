@@ -90,16 +90,16 @@ CAS is an HTTP[[2](<#2>)],[[3](<#3>)]-based protocol that requires each of its
 components to be accessible through specific URIs. This section will discuss
 each of the URIs:
 
-| URI                               | Description
-|-----------------------------------|-------------------------------------------
-| `/login`                          | credential requestor / acceptor
-| `/logout`                         | destroy CAS session (logout)
-| `/validate`                       | service ticket validation
-| `/serviceValidate`                | service ticket validation [CAS 2.0]
-| `/proxyValidate`                  | service/proxy ticket validation [CAS 2.0]
-| `/proxy`                          | proxy ticket service [CAS 2.0]
-| `/p3/serviceValidate`             | service ticket validation [CAS 3.0]
-| `/p3/proxyValidate`               | service/proxy ticket validation [CAS 3.0]
+| URI                   | Description                               |
+|-----------------------|-------------------------------------------|
+| `/login`              | credential requestor / acceptor           |
+| `/logout`             | destroy CAS session (logout)              |
+| `/validate`           | service ticket validation                 |
+| `/serviceValidate`    | service ticket validation [CAS 2.0]       |
+| `/proxyValidate`      | service/proxy ticket validation [CAS 2.0] |
+| `/proxy`              | proxy ticket service [CAS 2.0]            |
+| `/p3/serviceValidate` | service ticket validation [CAS 3.0]       |
+| `/p3/proxyValidate`   | service/proxy ticket validation [CAS 3.0] |
 
 <a name="head2.1"/>
 

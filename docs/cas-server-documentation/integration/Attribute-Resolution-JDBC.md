@@ -20,20 +20,20 @@ JDBC attribute sources can be defined based on the following mechanics:
 Designed to work against a table where there is a mapping of one row to one user.
 An example of this table format would be:
 
-| uid      | first_name | last_name | email
-|----------|------------|-----------|----------------------
-| `jsmith` | `John`     | `Smith`   | `jsmith@example.org`
+| uid      | first_name | last_name | email                |
+|----------|------------|-----------|----------------------|
+| `jsmith` | `John`     | `Smith`   | `jsmith@example.org` |
 
 ## Multi Row
 
 Designed to work against a table where there is a mapping of one row to one user.
 An example of this table format would be:
 
-| uid      | attr_name    | attr_value
-|----------|--------------|-----------------------------
-| `jsmith` | `first_name` | `John`
-| `jsmith` | `last_name`  | `Smith`
-| `jsmith` | `email`      | `jsmith@example.org`
+| uid      | attr_name    | attr_value           |
+|----------|--------------|----------------------|
+| `jsmith` | `first_name` | `John`               |
+| `jsmith` | `last_name`  | `Smith`              |
+| `jsmith` | `email`      | `jsmith@example.org` |
 
 You will need to define column mappings
 in your configuration to map the `attr_name` column to the `attr_value` column
@@ -43,10 +43,10 @@ in your configuration to map the `attr_name` column to the `attr_value` column
 Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
 authenticates via `sAMAccountName`.
 
-| Attribute            | Value
-|--------------------- |-----------------------
-| `sAMAccountName`     | `johnsmith`
-| `cn`                 | `John Smith`
+| Attribute        | Value        |
+|------------------|--------------|
+| `sAMAccountName` | `johnsmith`  |
+| `cn`             | `John Smith` |
 
 ## Example #1
 

@@ -53,11 +53,11 @@ matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
 
-| Name                                    | Value
-|-----------------------------------------|----------------------------------------------------------------
-| `uid`                                   | jsmith
-| `groupMembership`                       | std
-| `cn`                                    | JohnSmith
+| Name              | Value     |
+|-------------------|-----------|
+| `uid`             | jsmith    |
+| `groupMembership` | std       |
+| `cn`              | JohnSmith |
 
 The following configuration for instance considers the initial list of `uid`,
 `groupMembership` and then only allows and releases attributes whose value's length
@@ -114,12 +114,12 @@ For example, the below example only allows release of `memberOf` if it contains 
 
 The following fields are supported by this filter:
 
-| Name                 | Description
-|----------------------|--------------------------------------------------------------------------
-| `patterns`           | A map of attributes and their associated pattern tried against value(s).
-| `completeMatch`      | Indicates whether pattern-matching should execute over the entire value region.
-| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.
-| `caseInsensitive` | Indicates whether pattern matching should be done in a case-insensitive manner.
+| Name                        | Description                                                                     |
+|-----------------------------|---------------------------------------------------------------------------------|
+| `patterns`                  | A map of attributes and their associated pattern tried against value(s).        |
+| `completeMatch`             | Indicates whether pattern-matching should execute over the entire value region. |
+| `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.  |
+| `caseInsensitive`           | Indicates whether pattern matching should be done in a case-insensitive manner. |
 
 ## Reverse Mapped Regex
 
@@ -248,7 +248,7 @@ def run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `attributes`      | A `Map` of current  attributes resolved from sources.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter    | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `attributes` | A `Map` of current  attributes resolved from sources.                       |
+| `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |

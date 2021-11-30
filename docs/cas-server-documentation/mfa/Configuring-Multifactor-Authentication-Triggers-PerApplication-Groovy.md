@@ -58,14 +58,14 @@ def run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|------------------------------------------------------------------------------------
-| `registeredService`   | The object representing the corresponding service definition in the registry.
-| `authentication`      |  The object representing the `Authentication` object.
-| `httpRequest`         | The object representing the HTTP servlet request.
-| `service`             | The object representing the service request, associated with this http request.
-| `applicationContext`  | The object representing the Spring application context.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.               
+| Parameter            | Description                                                                     |
+|----------------------|---------------------------------------------------------------------------------|
+| `registeredService`  | The object representing the corresponding service definition in the registry.   |
+| `authentication`     | The object representing the `Authentication` object.                            |
+| `httpRequest`        | The object representing the HTTP servlet request.                               |
+| `service`            | The object representing the service request, associated with this http request. |
+| `applicationContext` | The object representing the Spring application context.                         |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.     |
 
 The expected outcome of the script is either `null` in case multifactor authentication should be skipped by this trigger,
 or the identifier of the multifactor provider that should be considered for activation.

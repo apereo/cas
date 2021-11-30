@@ -46,14 +46,14 @@ You may chain various attribute release policies that authorize claim release ba
 Standard scopes that internally catalog pre-defined claims all belong to 
 the namespace `org.apereo.cas.oidc.claims` and are described below:
 
-| Policy                                              | Description
-|-----------------------------------------------------|--------------------------------------------------------------------
-| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `profile` scope.
-| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `email` scope.
-| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `address` scope.
-| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`  | Release claims mapped to the spec-predefined `phone` scope.
-| `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`  | Release claims mapped to the CAS-defined `custom` scope.
- 
+| Policy                                             | Description                                                   |
+|----------------------------------------------------|---------------------------------------------------------------|
+| `o.a.c.o.c.OidcProfileScopeAttributeReleasePolicy` | Release claims mapped to the spec-predefined `profile` scope. |
+| `o.a.c.o.c.OidcEmailScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `email` scope.   |
+| `o.a.c.o.c.OidcAddressScopeAttributeReleasePolicy` | Release claims mapped to the spec-predefined `address` scope. |
+| `o.a.c.o.c.OidcPhoneScopeAttributeReleasePolicy`   | Release claims mapped to the spec-predefined `phone` scope.   |
+| `o.a.c.o.c.OidcCustomScopeAttributeReleasePolicy`  | Release claims mapped to the CAS-defined `custom` scope.      |
+
 ## Mapping Claims
 
 Claims associated with a scope (i.e. `given_name` for `profile`) are fixed in 

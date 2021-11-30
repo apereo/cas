@@ -118,11 +118,10 @@ the service definition in the registry to match the following:
 
 The following cipher strategy types are available:
 
-| Type                | Description
-|---------------------|---------------------------------------------------
-| `ENCRYPT_AND_SIGN`  | Default strategy; encrypt values, and then sign. 
-| `SIGN_AND_ENCRYPT`  | Sign values, and then encrypt.
-
+| Type               | Description                                      |
+|--------------------|--------------------------------------------------|
+| `ENCRYPT_AND_SIGN` | Default strategy; encrypt values, and then sign. |
+| `SIGN_AND_ENCRYPT` | Sign values, and then encrypt.                   |
 
 {% include_cached registeredserviceproperties.html groups="JWT_SERVICE_TICKETS" %}
 

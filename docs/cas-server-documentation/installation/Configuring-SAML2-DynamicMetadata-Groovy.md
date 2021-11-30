@@ -49,10 +49,10 @@ Collection<MetadataResolver> run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|--------------------------------------------------------------------------------------
-| `registeredService`   | The object representing the corresponding service definition in the registry.
-| `samlConfigBean`      | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
-| `samlProperties`      | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
-| `criteriaSet`         | The object responsible for capturing the criteria for metadata solution, if any.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter           | Description                                                                                                        |
+|---------------------|--------------------------------------------------------------------------------------------------------------------|
+| `registeredService` | The object representing the corresponding service definition in the registry.                                      |
+| `samlConfigBean`    | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances. |
+| `samlProperties`    | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.                     |
+| `criteriaSet`       | The object responsible for capturing the criteria for metadata solution, if any.                                   |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                                        |
