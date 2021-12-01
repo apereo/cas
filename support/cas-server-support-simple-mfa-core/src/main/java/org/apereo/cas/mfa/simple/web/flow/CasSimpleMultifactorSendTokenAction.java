@@ -49,7 +49,16 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
-    private static boolean isSmsSent(final CommunicationsManager communicationsManager,
+    /**
+     * Send a SMS.
+     *
+     * @param communicationsManager the communication manager
+     * @param properties the properties
+     * @param principal the principal
+     * @param token the token
+     * @return whether the SMS has been sent.
+     */
+    protected boolean isSmsSent(final CommunicationsManager communicationsManager,
                                      final CasSimpleMultifactorAuthenticationProperties properties,
                                      final Principal principal,
                                      final Ticket token) {
@@ -63,7 +72,17 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return false;
     }
 
-    private static boolean isMailSent(final CommunicationsManager communicationsManager,
+    /**
+     * Send an email.
+     *
+     * @param communicationsManager the communication manager
+     * @param properties the properties
+     * @param principal the principal
+     * @param token the token
+     * @param requestContext the request context
+     * @return whether the email has been sent.
+     */
+    protected boolean isMailSent(final CommunicationsManager communicationsManager,
                                       final CasSimpleMultifactorAuthenticationProperties properties,
                                       final Principal principal, final Ticket token,
                                       final RequestContext requestContext) {
@@ -78,7 +97,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return false;
     }
 
-    private static boolean isNotificationSent(final CommunicationsManager communicationsManager,
+    /**
+     * Send a notification.
+     *
+     * @param communicationsManager the communication manager
+     * @param principal the principal
+     * @param token the token
+     * @return whether the notification has been sent.
+     */
+    protected boolean isNotificationSent(final CommunicationsManager communicationsManager,
                                               final Principal principal,
                                               final Ticket token) {
         return communicationsManager.isNotificationSenderDefined()
@@ -115,7 +142,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return error();
     }
 
-    private CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
+    /**
+     * Get or create a token.
+     *
+     * @param requestContext the request context
+     * @param principal the principal
+     * @return the token
+     */
+    protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
         return Optional.ofNullable(WebUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class))
             .filter(token -> !token.isExpired())
             .orElseGet(() -> {
