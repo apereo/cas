@@ -82,8 +82,7 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
      * @param id       the id
      */
     @DeleteOperation
-    @Operation(summary = "Delete registered device for username and device",
-        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "id", required = true)})
+    @Operation(summary = "Delete registered device for username and device")
     public void delete(@Selector final String username, @Selector final Long id) {
         val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
         registeredDevices
