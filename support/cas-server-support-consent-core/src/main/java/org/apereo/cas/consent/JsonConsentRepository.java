@@ -33,7 +33,6 @@ public class JsonConsentRepository extends BaseConsentRepository {
 
     private FileWatcherService watcherService;
 
-    
     public JsonConsentRepository(final Resource resource) throws Exception {
         this.jsonResource = resource;
         setConsentDecisions(readDecisionsFromJsonResource());
@@ -63,6 +62,12 @@ public class JsonConsentRepository extends BaseConsentRepository {
         val result = super.deleteConsentDecisions(principal);
         writeAccountToJsonResource();
         return result;
+    }
+
+    @Override
+    public void deleteAll() {
+        super.deleteAll();
+        writeAccountToJsonResource();
     }
 
     @SneakyThrows

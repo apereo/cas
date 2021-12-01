@@ -182,6 +182,27 @@ public class RestfulConsentRepository implements ConsentRepository {
     }
 
     @Override
+    public void deleteAll() {
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, Object>();
+            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpUtils.HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(properties.getUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
     @SneakyThrows
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         HttpResponse response = null;

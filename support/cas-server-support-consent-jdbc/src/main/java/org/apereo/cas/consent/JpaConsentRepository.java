@@ -30,7 +30,9 @@ public class JpaConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 6599902742493270206L;
 
-    private static final String SELECT_QUERY = "SELECT r from JpaConsentDecision r ";
+    private static final String ENTITY_NAME = "JpaConsentDecision";
+
+    private static final String SELECT_QUERY = "SELECT r from " + ENTITY_NAME + " r ";
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private transient EntityManager entityManager;
@@ -52,7 +54,7 @@ public class JpaConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal"),
+        return this.entityManager.createQuery(SELECT_QUERY.concat("WHERE r.principal = :principal"),
             JpaConsentDecision.class).setParameter("principal", principal).getResultList();
     }
 
@@ -110,5 +112,11 @@ public class JpaConsentRepository implements ConsentRepository {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        val query = "DELETE FROM " + ENTITY_NAME;
+        entityManager.createQuery(query).executeUpdate();
     }
 }
