@@ -52,7 +52,10 @@ import java.util.stream.Stream;
 @Slf4j
 @Getter
 public class DelegatedClientAuthenticationAction extends AbstractAuthenticationAction {
-    private final DelegatedClientAuthenticationConfigurationContext configContext;
+    /**
+     * The configuration context.
+     */
+    protected final DelegatedClientAuthenticationConfigurationContext configContext;
 
     private final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
