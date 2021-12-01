@@ -134,26 +134,26 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     @Override
     public Collection<IndirectClient> build() {
-        this.clients.clear();
-
-        configureCasClient(clients);
-        configureFacebookClient(clients);
-        configureOidcClient(clients);
-        configureOAuth20Client(clients);
-        configureSamlClient(clients);
-        configureTwitterClient(clients);
-        configureDropBoxClient(clients);
-        configureFoursquareClient(clients);
-        configureGitHubClient(clients);
-        configureGoogleClient(clients);
-        configureWindowsLiveClient(clients);
-        configureYahooClient(clients);
-        configureLinkedInClient(clients);
-        configurePayPalClient(clients);
-        configureWordPressClient(clients);
-        configureBitBucketClient(clients);
-        configureHiOrgServerClient(clients);
-
+        if (this.clients.isEmpty() || !casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
+            this.clients.clear();
+            configureCasClient(clients);
+            configureFacebookClient(clients);
+            configureOidcClient(clients);
+            configureOAuth20Client(clients);
+            configureSamlClient(clients);
+            configureTwitterClient(clients);
+            configureDropBoxClient(clients);
+            configureFoursquareClient(clients);
+            configureGitHubClient(clients);
+            configureGoogleClient(clients);
+            configureWindowsLiveClient(clients);
+            configureYahooClient(clients);
+            configureLinkedInClient(clients);
+            configurePayPalClient(clients);
+            configureWordPressClient(clients);
+            configureBitBucketClient(clients);
+            configureHiOrgServerClient(clients);
+        }
         return clients;
     }
 
