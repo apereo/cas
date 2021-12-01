@@ -22,6 +22,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -262,12 +263,22 @@ public class PasswordManagementWebflowConfiguration {
             return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
         }
 
+        @Bean
+        @ConditionalOnMissingBean(name = "passwordResetCaptchaActivationStrategy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy() {
+            return new DefaultCaptchaActivationStrategy();
+        }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
-        public Action passwordResetInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
+        public Action passwordResetInitializeCaptchaAction(
+            @Qualifier("passwordResetCaptchaActivationStrategy")
+            final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy,
+            final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+            return new InitializeCaptchaAction(passwordResetCaptchaActivationStrategy,
                 requestContext -> WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha),
                 recaptcha);
         }

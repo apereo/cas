@@ -11,6 +11,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
+import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -138,11 +139,21 @@ public class PasswordManagementForgotUsernameConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
-        public Action forgotUsernameInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
+        public Action forgotUsernameInitializeCaptchaAction(
+            @Qualifier("forgotUsernameCaptchaActivationStrategy")
+            final CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy,
+            final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+            return new InitializeCaptchaAction(forgotUsernameCaptchaActivationStrategy,
                 requestContext -> WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha),
                 recaptcha);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "forgotUsernameCaptchaActivationStrategy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy() {
+            return new DefaultCaptchaActivationStrategy();
         }
 
         @Bean

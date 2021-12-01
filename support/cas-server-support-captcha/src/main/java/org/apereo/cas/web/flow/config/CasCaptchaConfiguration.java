@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
@@ -61,11 +62,20 @@ public class CasCaptchaConfiguration {
         return new ValidateCaptchaAction(captchaValidator);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "captchaActivationStrategy")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CaptchaActivationStrategy captchaActivationStrategy() {
+        return new DefaultCaptchaActivationStrategy();
+    }
+
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "initializeCaptchaAction")
-    public Action initializeCaptchaAction(final CasConfigurationProperties casProperties) {
-        return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+    public Action initializeCaptchaAction(final CasConfigurationProperties casProperties,
+                                          @Qualifier("captchaActivationStrategy")
+                                          final CaptchaActivationStrategy captchaActivationStrategy) {
+        return new InitializeCaptchaAction(captchaActivationStrategy,
             requestContext -> requestContext.getFlowScope().put("recaptchaLoginEnabled", casProperties.getGoogleRecaptcha().isEnabled()),
             casProperties.getGoogleRecaptcha());
     }
