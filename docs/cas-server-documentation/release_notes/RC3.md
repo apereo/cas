@@ -145,3 +145,5 @@ contains a `AUD_USERAGENT` database column, preferably set to `varchar(length = 
 - Maxmind
 - Apache Tomcat
 - Thymeleaf
+- Okta SDK
+- BouncyCastle

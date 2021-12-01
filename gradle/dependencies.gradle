@@ -527,7 +527,6 @@ ext.libraries = [
         userinfogeocoding       : [
                 dependencies.create("io.userinfo:userinfo-java:$userInfoVersion") {
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit", module: "retrofit")
                 },
@@ -541,7 +540,6 @@ ext.libraries = [
         googlegeocoding         : [
                 dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.okio", module: "okio")
                 },
