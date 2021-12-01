@@ -78,6 +78,7 @@ public abstract class BaseConsentRepositoryTests {
     public void verifyConsentDecisionIsNotFound() {
         val user = RandomUtils.randomAlphanumeric(8);
         val repo = getRepository("verifyConsentDecisionIsNotFound");
+        repo.deleteAll();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
         assertNotNull(repo.storeConsentDecision(decision));
@@ -91,6 +92,7 @@ public abstract class BaseConsentRepositoryTests {
     public void verifyConsentDecisionIsFound() {
         val user = RandomUtils.randomAlphanumeric(8);
         val repo = getRepository("verifyConsentDecisionIsFound");
+        repo.deleteAll();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);

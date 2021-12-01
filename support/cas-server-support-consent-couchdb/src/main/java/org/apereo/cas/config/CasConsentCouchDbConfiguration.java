@@ -29,11 +29,11 @@ public class CasConsentCouchDbConfiguration {
     @ConditionalOnMissingBean(name = "consentCouchDbFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public CouchDbConnectorFactory consentCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("defaultObjectMapperFactory")
-                                                         final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(),
-            objectMapperFactory);
+    public CouchDbConnectorFactory consentCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory objectMapperFactory) {
+        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
@@ -43,6 +43,7 @@ public class CasConsentCouchDbConfiguration {
         @Qualifier("consentCouchDbFactory")
         final CouchDbConnectorFactory consentCouchDbFactory, final CasConfigurationProperties casProperties) {
         val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
+            consentCouchDbFactory.getCouchDbInstance(),
             casProperties.getConsent().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;

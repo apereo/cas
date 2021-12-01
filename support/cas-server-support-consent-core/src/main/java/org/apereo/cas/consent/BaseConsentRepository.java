@@ -78,6 +78,11 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
+    public void deleteAll() {
+        consentDecisions.clear();
+    }
+
+    @Override
     public boolean deleteConsentDecisions(final String principal) {
         return consentDecisions.removeIf(consentDecision -> consentDecision.getPrincipal().equalsIgnoreCase(principal));
     }
