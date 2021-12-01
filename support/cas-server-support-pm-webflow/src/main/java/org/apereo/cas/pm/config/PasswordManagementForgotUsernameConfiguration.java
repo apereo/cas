@@ -11,6 +11,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -152,8 +153,9 @@ public class PasswordManagementForgotUsernameConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy() {
-            return new DefaultCaptchaActivationStrategy();
+        public CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy(@Qualifier(ServicesManager.BEAN_NAME)
+                                                                                 final ServicesManager servicesManager) {
+            return new DefaultCaptchaActivationStrategy(servicesManager);
         }
 
         @Bean
