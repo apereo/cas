@@ -52,7 +52,7 @@ public class DefaultDelegatedClientFactoryTests {
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class
     })
-    public abstract class BaseDelegatedClientFactoryTests {
+    public abstract static class BaseDelegatedClientFactoryTests {
         protected ConfigurableApplicationContext applicationContext;
 
         @Autowired
