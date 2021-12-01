@@ -76,9 +76,8 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsNotFound() {
-        val user = RandomUtils.randomAlphanumeric(8);
+        val user = getUser();
         val repo = getRepository("verifyConsentDecisionIsNotFound");
-        repo.deleteAll();
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
         assertNotNull(repo.storeConsentDecision(decision));
@@ -90,9 +89,8 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsFound() {
-        val user = RandomUtils.randomAlphanumeric(8);
+        val user = getUser();
         val repo = getRepository("verifyConsentDecisionIsFound");
-        repo.deleteAll();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
@@ -113,14 +111,19 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyDeleteRecordsForPrincipal() {
-        val user = RandomUtils.randomAlphanumeric(8);
+        val user = getUser();
         val repo = getRepository("verifyDeleteRecordsForPrincipal");
+        repo.deleteAll();
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(200);
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
         assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
+    }
+
+    protected String getUser() {
+        return RandomUtils.randomAlphanumeric(8);
     }
 
     @ImportAutoConfiguration({

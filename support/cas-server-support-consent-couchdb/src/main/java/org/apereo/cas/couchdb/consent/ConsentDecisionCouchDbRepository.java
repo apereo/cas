@@ -94,8 +94,10 @@ public class ConsentDecisionCouchDbRepository extends CouchDbRepositorySupport<C
      * Remove all.
      */
     public void removeAll() {
-        this.couchDbInstance.deleteDatabase(db.getDatabaseName());
-        this.couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
-        initStandardDesignDocument();
+        if (this.couchDbInstance.checkIfDbExists(db.getDatabaseName())) {
+            this.couchDbInstance.deleteDatabase(db.getDatabaseName());
+            this.couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
+            initStandardDesignDocument();
+        }
     }
 }

@@ -43,6 +43,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -156,6 +157,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
+    @Transactional(transactionManager = "ticketTransactionManager")
+    @Override
+    public Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate, final long from, final long count) {
+        return this.ticketRegistry.stream().filter(predicate).skip(from).limit(count);
+    }
 
     @Audit(
         action = AuditableActions.TICKET_DESTROYED,
