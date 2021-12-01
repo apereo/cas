@@ -13,6 +13,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -76,11 +77,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all single sign-on sessions with the given type. The functionality provided here requires that the underlying "
-        + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
-        + "You will not be able to collect and review sessions, if the ticket registry does not have this capability",
-        parameters = {@Parameter(name = "type"), @Parameter(name = "username")})
-    public Map<String, Object> getSsoSessions(@Nullable @RequestParam(name = "type", required = false) final String type,
-                                              @Nullable @RequestParam(name = "username", required = false) final String username) {
+                         + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
+                         + "You will not be able to collect and review sessions, if the ticket registry does not have this capability")
+    public Map<String, Object> getSsoSessions(
+        @Nullable
+        @RequestParam(name = "type", required = false)
+        final String type,
+        @Nullable
+        @RequestParam(name = "username", required = false)
+        final String username) {
         val sessionsMap = new HashMap<String, Object>();
         val option = Optional.ofNullable(type).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         val activeSsoSessions = getActiveSsoSessions(option, username);
@@ -124,11 +129,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @return result map
      */
     @DeleteMapping(path = "/{ticketGrantingTicket}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Remove single sign-on session for ticket id",
-        parameters = {@Parameter(name = "ticketGrantingTicket", required = true)})
-    public Map<String, Object> destroySsoSession(@PathVariable final String ticketGrantingTicket,
-                                                 final HttpServletRequest request,
-                                                 final HttpServletResponse response) {
+    @Operation(summary = "Remove single sign-on session for ticket id")
+    public Map<String, Object> destroySsoSession(
+        @PathVariable
+        final String ticketGrantingTicket,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         val sessionsMap = new HashMap<String, Object>(1);
         try {
             val sloRequests = singleLogoutRequestExecutor.execute(ticketGrantingTicket, request, response);
@@ -153,13 +159,17 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      * @param response the response
      * @return the map
      */
-    @Operation(summary = "Remove single sign-on session for type and user",
-        parameters = {@Parameter(name = "type"), @Parameter(name = "username")})
+    @Operation(summary = "Remove single sign-on session for type and user")
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> destroySsoSessions(@Nullable @RequestParam(name = "type", required = false) final String type,
-                                                  @Nullable @RequestParam(name = "username", required = false) final String username,
-                                                  final HttpServletRequest request,
-                                                  final HttpServletResponse response) {
+    public Map<String, Object> destroySsoSessions(
+        @Nullable
+        @RequestParam(name = "type", required = false)
+        final String type,
+        @Nullable
+        @RequestParam(name = "username", required = false)
+        final String username,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         if (StringUtils.isBlank(username) && StringUtils.isBlank(type)) {
             return Map.of(STATUS, HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -167,7 +177,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         if (StringUtils.isNotBlank(username)) {
             val sessionsMap = new HashMap<String, Object>(1);
             val tickets = centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket
-                && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
+                                                                            && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
             return sessionsMap;
         }
