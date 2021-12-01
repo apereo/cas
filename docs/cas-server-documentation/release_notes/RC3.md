@@ -84,7 +84,7 @@ and improved in the future to match and accommodate realistic workflows deployed
 ### Testing Strategy
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are
-approximately `210` test scenarios and we'll continue to add more in the coming releases.
+approximately `215` test scenarios and we'll continue to add more in the coming releases.
 
 ### OpenID Connect Key Rotation
      
