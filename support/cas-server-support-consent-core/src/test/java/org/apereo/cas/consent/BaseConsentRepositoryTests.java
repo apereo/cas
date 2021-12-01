@@ -27,6 +27,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -75,7 +76,7 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsNotFound() {
-        val user = UUID.randomUUID().toString();
+        val user = RandomUtils.randomAlphanumeric(8);
         val repo = getRepository("verifyConsentDecisionIsNotFound");
         val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(1);
@@ -88,7 +89,7 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsFound() {
-        val user = UUID.randomUUID().toString();
+        val user = RandomUtils.randomAlphanumeric(8);
         val repo = getRepository("verifyConsentDecisionIsFound");
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(100);
@@ -110,7 +111,7 @@ public abstract class BaseConsentRepositoryTests {
 
     @Test
     public void verifyDeleteRecordsForPrincipal() {
-        val user = UUID.randomUUID().toString();
+        val user = RandomUtils.randomAlphanumeric(8);
         val repo = getRepository("verifyDeleteRecordsForPrincipal");
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
         decision.setId(200);
