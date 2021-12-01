@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -65,8 +66,9 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "captchaActivationStrategy")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CaptchaActivationStrategy captchaActivationStrategy() {
-        return new DefaultCaptchaActivationStrategy();
+    public CaptchaActivationStrategy captchaActivationStrategy(@Qualifier(ServicesManager.BEAN_NAME)
+                                                               final ServicesManager servicesManager) {
+        return new DefaultCaptchaActivationStrategy(servicesManager);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

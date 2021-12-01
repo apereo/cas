@@ -27,6 +27,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -290,8 +291,10 @@ public class CasAccountManagementWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CaptchaActivationStrategy accountMgmtRegistrationCaptchaActivationStrategy() {
-            return new DefaultCaptchaActivationStrategy();
+        public CaptchaActivationStrategy accountMgmtRegistrationCaptchaActivationStrategy(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new DefaultCaptchaActivationStrategy(servicesManager);
         }
         
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

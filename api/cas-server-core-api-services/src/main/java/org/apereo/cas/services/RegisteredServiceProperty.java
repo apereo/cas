@@ -129,6 +129,10 @@ public interface RegisteredServiceProperty extends Serializable {
          */
         REGISTERED_SERVICES,
         /**
+         * Property group for reCAPTCHA settings.
+         */
+        RECAPTCHA,
+        /**
          * Property group for SCIM settings.
          */
         SCIM
@@ -489,6 +493,12 @@ public interface RegisteredServiceProperty extends Serializable {
         DELEGATED_AUTHN_OIDC_RESPONSE_MODE("response_mode", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.DELEGATED_AUTHN_OIDC, RegisteredServicePropertyTypes.STRING,
             "Indicate response_mode to use, when using delegated authentication to OIDC OP"),
+        /**
+         * Whether captcha is enabled.
+         */
+        CAPTCHA_ENABLED("captchaEnabled", "true",
+            RegisteredServicePropertyGroups.RECAPTCHA, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether reCAPTCHA should be enabled."),
         /**
          * Define SCIM oauth token.
          */

@@ -266,8 +266,9 @@ public class PasswordManagementWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "passwordResetCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy() {
-            return new DefaultCaptchaActivationStrategy();
+        public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy(@Qualifier(ServicesManager.BEAN_NAME)
+                                                                                final ServicesManager servicesManager) {
+            return new DefaultCaptchaActivationStrategy(servicesManager);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.web.CaptchaValidatorTests;
+import org.apereo.cas.web.DefaultCaptchaActivationStrategyTests;
 import org.apereo.cas.web.GoogleCaptchaV2ValidatorTests;
 import org.apereo.cas.web.GoogleCaptchaV3ValidatorTests;
 import org.apereo.cas.web.HCaptchaValidatorTests;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
+    DefaultCaptchaActivationStrategyTests.class,
     CaptchaValidatorTests.class,
     HCaptchaValidatorTests.class,
     GoogleCaptchaV2ValidatorTests.class,
