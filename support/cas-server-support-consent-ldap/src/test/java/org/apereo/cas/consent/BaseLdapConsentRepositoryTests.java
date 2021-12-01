@@ -70,6 +70,11 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     @Qualifier("consentRepository")
     protected ConsentRepository repository;
 
+    @Override
+    protected String getUser() {
+        return USER_CN;
+    }
+
     @AfterEach
     public void cleanDecisions() {
         try (val conn = getConnection()) {

@@ -60,9 +60,11 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     @Test
     public void verifyDelete() {
         var results = singleSignOnSessionsEndpoint.destroySsoSessions(StringUtils.EMPTY, StringUtils.EMPTY,
+            0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
         results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME,
+            0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
 
@@ -75,6 +77,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         centralAuthenticationService.createTicketGrantingTicket(authResult);
         results = singleSignOnSessionsEndpoint.destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null,
+            0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
         assertNotNull(singleSignOnSessionsEndpoint.toString());
@@ -83,7 +86,8 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     @Test
     public void verifyOperation() {
         var results = singleSignOnSessionsEndpoint.getSsoSessions(
-            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), StringUtils.EMPTY);
+            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), StringUtils.EMPTY,
+            0, 1_000);
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey("totalUsageCount"));
         assertTrue(results.containsKey("activeSsoSessions"));
@@ -103,7 +107,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
         results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(),
-            null, new MockHttpServletRequest(), new MockHttpServletResponse());
+            null, 0, 1_000, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(1, results.size());
         assertTrue(results.containsKey("status"));
     }
@@ -114,9 +118,9 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
         var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(),
-            StringUtils.EMPTY);
+            StringUtils.EMPTY, 0, 1_000);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null, 0, 1_000);
         assertFalse(results.isEmpty());
     }
 
@@ -126,9 +130,9 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
         var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(),
-            StringUtils.EMPTY);
+            StringUtils.EMPTY, 0, 1_000);
         assertFalse(results.isEmpty());
-        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null);
+        results = singleSignOnSessionsEndpoint.getSsoSessions(null, null, 0, 1_000);
         assertFalse(results.isEmpty());
     }
 
@@ -140,6 +144,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
 
         val results = new SingleSignOnSessionsEndpoint(cas, casProperties, defaultSingleLogoutRequestExecutor).destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null,
+            0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
     }

@@ -14,6 +14,7 @@ import org.apereo.cas.validation.Assertion;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -148,6 +149,16 @@ public interface CentralAuthenticationService {
      * @since 4.1.0
      */
     Collection<Ticket> getTickets(Predicate<Ticket> predicate);
+
+    /**
+     * Gets tickets as a stream.
+     *
+     * @param predicate the predicate
+     * @param from      the from
+     * @param count     the count
+     * @return the tickets
+     */
+    Stream<? extends Ticket> getTickets(Predicate<Ticket> predicate, long from, long count);
 
     /**
      * Grant a {@link ServiceTicket} that may be used to access the given service
