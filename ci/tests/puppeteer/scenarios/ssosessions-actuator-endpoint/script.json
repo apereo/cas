@@ -1,0 +1,12 @@
+{
+  "dependencies": "reports",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--cas.authn.accept.users=casuser1::Mellon,casuser2::Mellon,casuser3::Mellon,casuser4::Mellon",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}
