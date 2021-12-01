@@ -12,6 +12,7 @@ import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.web.CaptchaValidator;
+import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -35,8 +36,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link PasswordManagementForgotUsernameConfiguration}.
@@ -141,13 +140,9 @@ public class PasswordManagementForgotUsernameConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
         public Action forgotUsernameInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(recaptcha) {
-                @Override
-                protected Event doExecute(final RequestContext requestContext) {
-                    WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha);
-                    return super.doExecute(requestContext);
-                }
-            };
+            return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+                requestContext -> WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha),
+                recaptcha);
         }
 
         @Bean

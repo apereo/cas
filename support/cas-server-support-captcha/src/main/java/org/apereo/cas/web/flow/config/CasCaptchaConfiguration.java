@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.CaptchaValidator;
+import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasCaptchaWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -21,8 +22,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link CasCaptchaConfiguration}.
@@ -66,14 +65,9 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "initializeCaptchaAction")
     public Action initializeCaptchaAction(final CasConfigurationProperties casProperties) {
-        return new InitializeCaptchaAction(casProperties.getGoogleRecaptcha()) {
-
-            @Override
-            protected Event doExecute(final RequestContext requestContext) {
-                requestContext.getFlowScope().put("recaptchaLoginEnabled", googleRecaptchaProperties.isEnabled());
-                return super.doExecute(requestContext);
-            }
-        };
+        return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+            requestContext -> requestContext.getFlowScope().put("recaptchaLoginEnabled", casProperties.getGoogleRecaptcha().isEnabled()),
+            casProperties.getGoogleRecaptcha());
     }
 
     @Bean

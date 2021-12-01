@@ -52,14 +52,14 @@ public class DefaultDelegatedClientFactoryTests {
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class
     })
-    public abstract static class BaseDelegatedClientFactoryTests {
+    public static class BaseDelegatedClientFactoryTests {
         protected ConfigurableApplicationContext applicationContext;
 
         @Autowired
         @Qualifier(CasSSLContext.BEAN_NAME)
         protected CasSSLContext casSslContext;
 
-        protected void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+        protected static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
             props.setId("TestId");
             props.setSecret("TestSecret");
         }
