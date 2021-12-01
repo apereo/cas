@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.CaptchaValidator;
+import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -48,8 +49,6 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
@@ -268,13 +267,9 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
         public Action passwordResetInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(recaptcha) {
-                @Override
-                protected Event doExecute(final RequestContext requestContext) {
-                    WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha);
-                    return super.doExecute(requestContext);
-                }
-            };
+            return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+                requestContext -> WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha),
+                recaptcha);
         }
 
         @Bean

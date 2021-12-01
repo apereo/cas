@@ -33,6 +33,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.web.CaptchaValidator;
+import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -55,8 +56,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -292,14 +291,9 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)
         public Action accountMgmtRegistrationInitializeCaptchaAction(final CasConfigurationProperties casProperties) {
             val recaptcha = casProperties.getAccountRegistration().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(recaptcha) {
-
-                @Override
-                protected Event doExecute(final RequestContext requestContext) {
-                    AccountRegistrationUtils.putAccountRegistrationCaptchaEnabled(requestContext, recaptcha);
-                    return super.doExecute(requestContext);
-                }
-            };
+            return new InitializeCaptchaAction(new DefaultCaptchaActivationStrategy(),
+                requestContext -> AccountRegistrationUtils.putAccountRegistrationCaptchaEnabled(requestContext, recaptcha),
+                recaptcha);
         }
 
         @Bean

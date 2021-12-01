@@ -72,6 +72,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param type     the type
      * @param username the username
+     * @param from     the from
+     * @param count    the count
      * @return the sso sessions
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -158,6 +160,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param type     the type
      * @param username the username
+     * @param from     the from
+     * @param count    the count
      * @param request  the request
      * @param response the response
      * @return the map
