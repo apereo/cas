@@ -63,6 +63,7 @@ import org.springframework.beans.factory.DisposableBean;
 import java.security.interfaces.ECPrivateKey;
 import java.time.Period;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,7 +85,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     private final Collection<DelegatedClientFactoryCustomizer> customizers;
 
-    private final Set<IndirectClient> clients = new LinkedHashSet<>();
+    private final Set<IndirectClient> clients = Collections.synchronizedSet(new LinkedHashSet<>());
 
     @SneakyThrows
     private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc,
@@ -126,26 +127,26 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
 
     @Override
     public Collection<IndirectClient> build() {
-        this.clients.clear();
-
-        configureCasClient(clients);
-        configureFacebookClient(clients);
-        configureOidcClient(clients);
-        configureOAuth20Client(clients);
-        configureSamlClient(clients);
-        configureTwitterClient(clients);
-        configureDropBoxClient(clients);
-        configureFoursquareClient(clients);
-        configureGitHubClient(clients);
-        configureGoogleClient(clients);
-        configureWindowsLiveClient(clients);
-        configureYahooClient(clients);
-        configureLinkedInClient(clients);
-        configurePayPalClient(clients);
-        configureWordPressClient(clients);
-        configureBitBucketClient(clients);
-        configureHiOrgServerClient(clients);
-
+        if (this.clients.isEmpty() || !casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
+            this.clients.clear();
+            configureCasClient(clients);
+            configureFacebookClient(clients);
+            configureOidcClient(clients);
+            configureOAuth20Client(clients);
+            configureSamlClient(clients);
+            configureTwitterClient(clients);
+            configureDropBoxClient(clients);
+            configureFoursquareClient(clients);
+            configureGitHubClient(clients);
+            configureGoogleClient(clients);
+            configureWindowsLiveClient(clients);
+            configureYahooClient(clients);
+            configureLinkedInClient(clients);
+            configurePayPalClient(clients);
+            configureWordPressClient(clients);
+            configureBitBucketClient(clients);
+            configureHiOrgServerClient(clients);
+        }
         return clients;
     }
 
