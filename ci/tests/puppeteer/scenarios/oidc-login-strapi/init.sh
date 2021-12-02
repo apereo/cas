@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -e
 set -m
-
+STRAPI_VERSION=3.6.8
 SCENARIO="oidc-login-strapi"
 STRAPI_FOLDER=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/strapi
 PROJECT=getstarted
 if [[ ! -d $STRAPI_FOLDER/$PROJECT ]] ; then
   mkdir -p $STRAPI_FOLDER
   cd $STRAPI_FOLDER
-  yarn create strapi-app $PROJECT --quickstart --no-run
+  npx create-strapi-app@v$STRAPI_VERSION $PROJECT --quickstart --no-run
   cd -
 fi
 
