@@ -20,7 +20,7 @@ cp ${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/strapi-custom/bootstrap.js $S
 
 # install node modules for strapi app
 cd $STRAPI_FOLDER/$PROJECT
-yarn install
+yarn install --ignore-engines
 
 # copy over user-permissions-actions.js from installed app b/c bootstrap.js references it by relative path
 cp $STRAPI_FOLDER/$PROJECT/node_modules/strapi-plugin-users-permissions/config/users-permissions-actions.js $STRAPI_FOLDER/$PROJECT/extensions/users-permissions/config

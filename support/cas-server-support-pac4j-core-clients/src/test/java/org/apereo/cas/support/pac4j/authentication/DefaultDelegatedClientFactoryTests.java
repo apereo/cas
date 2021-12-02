@@ -1,11 +1,8 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
@@ -25,11 +22,6 @@ import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -48,31 +40,9 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 public class DefaultDelegatedClientFactoryTests {
 
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        CasCoreHttpConfiguration.class
-    })
-    public static class BaseDelegatedClientFactoryTests {
-        protected ConfigurableApplicationContext applicationContext;
-
-        @Autowired
-        @Qualifier(CasSSLContext.BEAN_NAME)
-        protected CasSSLContext casSslContext;
-
-        protected static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
-            props.setId("TestId");
-            props.setSecret("TestSecret");
-        }
-
-        protected DefaultDelegatedClientFactory getDefaultDelegatedClientFactory(final CasConfigurationProperties casSettings) {
-            return new DefaultDelegatedClientFactory(casSettings, List.of(), casSslContext, applicationContext);
-        }
-    }
-
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     public class EagerInitialization extends BaseDelegatedClientFactoryTests {
-
         @Test
         public void verifyEagerInit() {
             val props = new Pac4jDelegatedAuthenticationProperties();
