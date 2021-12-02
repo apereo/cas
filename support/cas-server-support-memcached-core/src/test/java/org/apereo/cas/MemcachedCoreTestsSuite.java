@@ -4,11 +4,11 @@ import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactoryTests;
 import org.apereo.cas.memcached.MemcachedUtilsTests;
 import org.apereo.cas.memcached.kryo.CasKryoPoolTests;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoderTests;
-import org.apereo.cas.memcached.kryo.ZonedDateTimeSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializerTests;
 import org.apereo.cas.memcached.kryo.serial.URLSerializerTests;
+import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializerTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
