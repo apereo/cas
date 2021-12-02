@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,11 +23,17 @@ import org.springframework.webflow.execution.RequestContext;
 public class ValidateCaptchaAction extends AbstractAction {
     private final CaptchaValidator captchaValidator;
 
+    private final CaptchaActivationStrategy captchaActivationStrategy;
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+        if (captchaActivationStrategy.shouldActivate(requestContext, captchaValidator.getRecaptchaProperties()).isEmpty()) {
+            LOGGER.debug("Recaptcha is not set to activate for the current request");
+            return null;
+        }
+
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val userAgent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
-
         val gRecaptchaResponse = captchaValidator.getRecaptchaResponse(request);
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response/token is missing from the request");

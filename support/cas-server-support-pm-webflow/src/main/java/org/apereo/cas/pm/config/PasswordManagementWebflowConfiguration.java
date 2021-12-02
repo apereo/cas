@@ -258,9 +258,11 @@ public class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "passwordResetValidateCaptchaAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public Action passwordResetValidateCaptchaAction(final CasConfigurationProperties casProperties) {
+        public Action passwordResetValidateCaptchaAction(final CasConfigurationProperties casProperties,
+                                                         @Qualifier("passwordResetCaptchaActivationStrategy")
+                                                         final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy) {
             val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
+            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), passwordResetCaptchaActivationStrategy);
         }
 
         @Bean

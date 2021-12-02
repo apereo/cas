@@ -58,9 +58,11 @@ public class CasCaptchaConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "validateCaptchaAction")
     public Action validateCaptchaAction(
+        @Qualifier("captchaActivationStrategy")
+        final CaptchaActivationStrategy captchaActivationStrategy,
         @Qualifier("captchaValidator")
         final CaptchaValidator captchaValidator) {
-        return new ValidateCaptchaAction(captchaValidator);
+        return new ValidateCaptchaAction(captchaValidator, captchaActivationStrategy);
     }
 
     @Bean

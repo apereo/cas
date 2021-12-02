@@ -283,9 +283,12 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public Action accountMgmtRegistrationValidateCaptchaAction(final CasConfigurationProperties casProperties) {
+        public Action accountMgmtRegistrationValidateCaptchaAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("accountMgmtRegistrationCaptchaActivationStrategy")
+            final CaptchaActivationStrategy accountMgmtRegistrationCaptchaActivationStrategy) {
             val recaptcha = casProperties.getAccountRegistration().getGoogleRecaptcha();
-            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha));
+            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), accountMgmtRegistrationCaptchaActivationStrategy);
         }
 
         @Bean
@@ -296,7 +299,7 @@ public class CasAccountManagementWebflowConfiguration {
             final ServicesManager servicesManager) {
             return new DefaultCaptchaActivationStrategy(servicesManager);
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA)

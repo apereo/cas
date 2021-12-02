@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 public abstract class BaseCaptchaValidator implements CaptchaValidator {
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
 
+    @Getter
     private final GoogleRecaptchaProperties recaptchaProperties;
 
     @Override

@@ -1,8 +1,14 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.GoogleCaptchaV2Validator;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +27,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,9 +42,38 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 @Tag("WebflowActions")
 public class ValidateCaptchaActionTests {
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)
     private Action validateCaptchaAction;
+
+    @Autowired
+    @Qualifier("captchaActivationStrategy")
+    private CaptchaActivationStrategy captchaActivationStrategy;
+
+    @Test
+    public void verifyCaptchaValidationSkipped() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+
+        val data = "{\"success\": true }";
+        request.addParameter(GoogleCaptchaV2Validator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        registeredService.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyName(),
+            new DefaultRegisteredServiceProperty("false"));
+
+        servicesManager.save(registeredService);
+        WebUtils.putServiceIntoFlowScope(context, service);
+        val result = validateCaptchaAction.execute(context);
+        assertNull(result);
+    }
 
     @Test
     public void verifyCaptchaValidated() throws Exception {
@@ -68,7 +104,7 @@ public class ValidateCaptchaActionTests {
             webServer.start();
 
             val props = new GoogleRecaptchaProperties().setVerifyUrl("http://localhost:9305");
-            val validateAction = new ValidateCaptchaAction(new GoogleCaptchaV2Validator(props));
+            val validateAction = new ValidateCaptchaAction(new GoogleCaptchaV2Validator(props), captchaActivationStrategy);
 
             val result = validateAction.execute(context);
             assertNotNull(result);
