@@ -3,11 +3,15 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
@@ -37,6 +41,14 @@ public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrate
             LOGGER.trace("Checking for activation of captcha defined for service [{}]", registeredService);
             val result = RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyBooleanValue(registeredService);
             return evaluateResult(result, properties);
+        }
+
+        if (StringUtils.isNotBlank(properties.getActivateForIpAddressPattern())) {
+            val ip = Optional.ofNullable(ClientInfoHolder.getClientInfo())
+                .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY);
+            LOGGER.debug("Remote IP address [{}] will be checked against [{}]", ip, properties.getActivateForIpAddressPattern());
+            val activate = RegexUtils.find(properties.getActivateForIpAddressPattern(), ip);
+            return evaluateResult(activate, properties);
         }
 
         LOGGER.trace("Checking for activation of captcha defined under site key [{}]", properties.getSiteKey());

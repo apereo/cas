@@ -98,4 +98,11 @@ public class GoogleRecaptchaProperties implements Serializable {
      */
     @RequiredProperty
     private double score = 0.5;
+
+    /**
+     * A regular expression pattern to indicate that
+     * captcha should be activated when the remote IP address
+     * matches this pattern, and otherwise skipped and disabled.
+     */
+    private String activateForIpAddressPattern;
 }
