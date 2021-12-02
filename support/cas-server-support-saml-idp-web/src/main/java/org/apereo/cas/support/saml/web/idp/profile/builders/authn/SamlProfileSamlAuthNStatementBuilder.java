@@ -12,12 +12,13 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -27,6 +28,7 @@ import org.opensaml.saml.saml2.core.SubjectLocality;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.
@@ -81,9 +83,10 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                    final SamlRegisteredService service) throws SamlException {
         val subjectLocality = SamlUtils.newSamlObject(SubjectLocality.class);
         val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
-        val hostAddress = StringUtils.defaultString(service.getSubjectLocality(),
-            InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName()));
-
+        val clientRemoteIpAddr = Optional.ofNullable(ClientInfoHolder.getClientInfo())
+            .map(ClientInfo::getClientIpAddress)
+            .orElse(StringUtils.EMPTY);
+        val hostAddress = StringUtils.defaultString(service.getSubjectLocality(), clientRemoteIpAddr);
         LOGGER.debug("Built SAML2 subject locality address [{}] for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;
@@ -125,7 +128,9 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
             statement.setSessionNotOnOrAfter(dt.plusSeconds(skewAllowance).toInstant());
         }
         val subjectLocality = buildSubjectLocality(assertion, authnRequest, adaptor, binding, service);
-        statement.setSubjectLocality(subjectLocality);
+        if (subjectLocality != null) {
+            statement.setSubjectLocality(subjectLocality);
+        }
         return statement;
     }
 }
