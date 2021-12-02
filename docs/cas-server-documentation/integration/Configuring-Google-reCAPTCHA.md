@@ -21,3 +21,9 @@ Support is enabled by including the following module in the WAR Overlay:
 
 Remember to disable Internet Explorer's "Compatibility View" mode. reCAPTCHA
 may not render correctly when that mode is turned on.
+
+## reCAPTCHA Per Service
+
+Certain reCAPTCHA settings can be defined on a per-service basis via dedicated properties:
+
+{% include_cached registeredserviceproperties.html groups="RECAPTCHA" %}

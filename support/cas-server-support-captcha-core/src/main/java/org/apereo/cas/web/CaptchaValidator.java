@@ -45,4 +45,10 @@ public interface CaptchaValidator {
      */
     String getRecaptchaResponse(HttpServletRequest request);
 
+    /**
+     * Gets recaptcha properties.
+     *
+     * @return the recaptcha properties
+     */
+    GoogleRecaptchaProperties getRecaptchaProperties();
 }

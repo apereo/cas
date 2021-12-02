@@ -67,8 +67,10 @@ in ADFS to use the `certificate.crt` file for encryption.
 
 ## Modifying ADFS Claims
 
-The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but before they are inserted into the CAS user principal.
-The manipulation of the attributes is carried out using an *attribute mutator* where its logic may be implemented inside a Groovy script and whose
+The WsFed configuration optionally may allow you to manipulate claims coming 
+from ADFS but before they are inserted into the CAS user principal.
+The manipulation of the attributes is carried out using an *attribute mutator* 
+where its logic may be implemented inside a Groovy script and whose
 path is taught to CAS via settings.
 
 The script may take on the following form:
@@ -78,7 +80,7 @@ import org.apereo.cas.*
 import java.util.*
 import org.apereo.cas.authentication.*
 
-def Map run(final Object... args) {
+Map run(final Object... args) {
     def attributes = args[0]
     def logger = args[1]
     logger.warn("Mutating attributes {}", attributes)

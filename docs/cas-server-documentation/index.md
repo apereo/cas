@@ -5,7 +5,7 @@ title: CAS - Home
 
 {% include variables.html %}
 
-# Apereo CAS - Enterprise Identity Provider & Single Sign-On
+# Apereo CAS - Identity Provider & Single Sign-On
 
 Welcome to the home of the Apereo Central Authentication Service project, more commonly 
 referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 
@@ -27,14 +27,15 @@ The following items include a summary of features and technologies presented by 
 * Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/FIDO-U2F-Authentication.html), 
 [YubiKey](mfa/YubiKey-Authentication.html), [FIDO2 WebAuthN](mfa/FIDO2-WebAuthn-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html), [Acceptto](mfa/Acceptto-Authentication.html), [Inwebo](mfa/Inwebo-Authentication.html), etc.)
-* Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
+* Support for [delegated authentication](integration/Delegate-Authentication.html) to external identity providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, OIDC OPs, etc.
 * Built-in support for [password management](password_management/Password-Management.html), [notifications](webflow/Webflow-Customization-Interrupt.html), [terms of use](webflow/Webflow-Customization-AUP.html) and [impersonation](authentication/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
 * [Monitor and track](monitoring/Monitoring-Statistics.html) application and system behavior, [statistics and metrics](monitoring/Configuring-Metrics.html) in real-time.
 * Manage and review [audits](audits/Audits.html) and [logs](logging/Logging.html) centrally, and publish data to a variety of downstream systems.  
 * Manage and register [client applications and services](services/Service-Management.html) with specific authentication policies.
-* [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc).
+* [Cross-platform client support](integration/CAS-Clients.html) (Java, .NET, PHP, Perl, Apache, etc).
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday, WebAdvisor](integration/Configuring-SAML-SP-Integrations.html), Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc.
+* Support for many other types of integrations, such as [SCIM](integration/SCIM-Integration.html), [reCAPTCHA](integration/Configuring-Google-reCAPTCHA.html), [Swagger](integration/Swagger-Integration.html), etc.
 
 ## Contribute
 
@@ -48,6 +49,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Installation](installation/WAR-Overlay-Installation.html)
+* [Maintenance Policy](developer/Maintenance-Policy.html)
 * [Blog](https://apereo.github.io)
 
 ## Powered By
