@@ -7,7 +7,7 @@ def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equals
 if (!dependencyUpdates) {
     ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
         def cfg = configurations.findByName(name)
-        cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"
+        cfg.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.70"
     })
 }
 
