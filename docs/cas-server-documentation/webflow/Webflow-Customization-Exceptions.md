@@ -59,12 +59,12 @@ def supports(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `exception`           | The object representing the error.
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `applicationContext`  | The object representing the Spring `ApplicationContext`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter            | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| `exception`          | The object representing the error.                                          |
+| `requestContext`     | The object representing the Spring Webflow `RequestContext`.                |
+| `applicationContext` | The object representing the Spring `ApplicationContext`.                    |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 ## Custom Error Handling
      

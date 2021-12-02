@@ -92,8 +92,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the registered service
      * @throws Exception the exception
      */
-    @Operation(summary = "Fetch service either by numeric id or service id pattern",
-        parameters = {@Parameter(name = "id", required = true)})
+    @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
@@ -112,8 +111,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the response entity
      * @throws Exception the exception
      */
-    @Operation(summary = "Fetch services by their type",
-        parameters = {@Parameter(name = "type", in = ParameterIn.PATH, required = true)})
+    @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> fetchServicesByType(@PathVariable final String type) throws Exception {
         val services = servicesManager.findServiceBy(registeredService -> registeredService.getClass().getSimpleName().equalsIgnoreCase(type));
@@ -127,8 +125,9 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @return the registered service
      * @throws Exception the exception
      */
-    @Operation(summary = "Delete registered service by id", parameters = {@Parameter(name = "id", required = true)})
-    @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Delete registered service by id")
+    @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
+        MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
             val svc = servicesManager.findServiceBy(Long.parseLong(id));

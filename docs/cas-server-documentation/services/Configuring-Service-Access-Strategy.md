@@ -19,15 +19,15 @@ validated when an authentication request from the application arrives.
 
 The default strategy allows one to configure a service with the following properties:
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`).
-| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes **MUST** be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
-| `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
-| `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
-| `caseInsensitive`                 | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`
-| `rejectedAttributes`              | A `Map` of rejected principal attribute names along with the set of values for each attribute. These attributes **MUST NOT** be available to the authenticated Principal so that access may be granted. If none is defined, the check is entirely ignored.
+| Field                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `enabled`                 | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.                                                                                                                                                                                                                                                                                                                                                              |
+| `ssoEnabled`              | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`).                                                                                                                                                                                                                                                                                                                                                                  |
+| `requiredAttributes`      | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes **MUST** be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.                                                                                                              |
+| `requireAllAttributes`    | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully. |
+| `unauthorizedRedirectUrl` | Optional url to redirect the flow in case service access is not allowed.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `caseInsensitive`         | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`                                                                                                                                                                                                                                                                                                                                                         |
+| `rejectedAttributes`      | A `Map` of rejected principal attribute names along with the set of values for each attribute. These attributes **MUST NOT** be available to the authenticated Principal so that access may be granted. If none is defined, the check is entirely ignored.                                                                                                                                                                                                                      |
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attribute <strong>names</strong> is
 case-sensitive. Exact matches are required for any individual attribute name.</p></div>
@@ -197,12 +197,12 @@ URI run(final Object... args) {
 
 The following parameters are provided to the script:
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `registeredService`   | The object representing the matching registered service in the registry.
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `applicationContext`  | The object representing the Spring `ApplicationContext`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Field                | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| `registeredService`  | The object representing the matching registered service in the registry.    |
+| `requestContext`     | The object representing the Spring Webflow `RequestContext`.                |
+| `applicationContext` | The object representing the Spring `ApplicationContext`.                    |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 #### Enforce Combined Attribute Conditions
 
@@ -290,21 +290,20 @@ def run(Object[] args) {
       
 The following parameters are passed to the script:
 
-| Parameter  | Description
-|-------------|---------------------------------------------------------------------------------
-| `context`   | An `AuditableContext` object that carries auditable data such as registered services, authentication, etc. 
-| `logger`    | The object responsible for issuing log messages such as `logger.info(...)`.
-  
+| Parameter | Description                                                                                                |
+|-----------|------------------------------------------------------------------------------------------------------------|
+| `context` | An `AuditableContext` object that carries auditable data such as registered services, authentication, etc. |
+| `logger`  | The object responsible for issuing log messages such as `logger.info(...)`.                                |
 
 ## Time-Based
 
 The time-based access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
-| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
+| Field              | Description                                                                                                    |
+|--------------------|----------------------------------------------------------------------------------------------------------------|
+| `startingDateTime` | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`) |
+| `endingDateTime`   | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)   |
 
 Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
@@ -334,10 +333,10 @@ The configuration of the public key component qualifies to use the [Spring Expre
 This strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
-| Field                             | Description
-|-----------------------------------|---------------------------------------------------------------------------------
-| `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
-| `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
+| Field                     | Description                                                                                |
+|---------------------------|--------------------------------------------------------------------------------------------|
+| `endpointUrl`             | Endpoint that receives the authorization request from CAS for the authenticated principal. |
+| `acceptableResponseCodes` | Comma-separated response codes that are considered accepted for service access.            |
 
 The objective of this policy is to ensure a remote endpoint can make service access decisions by
 receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
@@ -413,9 +412,9 @@ are collected as CAS attributes and examined against the list of required attrib
 
 The following properties are available:
 
-| Field        | Description                                                                       | Values
-|--------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------
-| `groupField` | Attribute of the Grouper group used when converting the group to a CAS attribute. | `NAME`, `EXTENSION`, `DISPLAY_NAME` or `DISPLAY_EXTENSION`.
+| Field        | Description                                                                       | Values                                                      |
+|--------------|-----------------------------------------------------------------------------------|-------------------------------------------------------------|
+| `groupField` | Attribute of the Grouper group used when converting the group to a CAS attribute. | `NAME`, `EXTENSION`, `DISPLAY_NAME` or `DISPLAY_EXTENSION`. |
 
 You will also need to ensure `grouper.client.properties` is available on the classpath (i.e. `src/main/resources`)
 with the following configured properties:

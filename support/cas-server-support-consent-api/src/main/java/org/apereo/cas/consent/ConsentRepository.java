@@ -66,4 +66,9 @@ public interface ConsentRepository extends Serializable {
      * @return the boolean
      */
     boolean deleteConsentDecisions(String principal);
+
+    /**
+     * Delete all.
+     */
+    void deleteAll();
 }

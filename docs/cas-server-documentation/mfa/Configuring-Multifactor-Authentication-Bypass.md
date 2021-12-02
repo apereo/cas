@@ -123,14 +123,14 @@ def boolean run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `authentication`      | The object representing the established authentication event.
-| `principal`           | The object representing the authenticated principal.
-| `service`             | The object representing the corresponding service definition in the registry.
-| `provider`            | The object representing the requested multifactor authentication provider.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-| `httpRequest`         | The object responsible for capturing the http request.
+| Parameter        | Description                                                                   |
+|------------------|-------------------------------------------------------------------------------|
+| `authentication` | The object representing the established authentication event.                 |
+| `principal`      | The object representing the authenticated principal.                          |
+| `service`        | The object representing the corresponding service definition in the registry. |
+| `provider`       | The object representing the requested multifactor authentication provider.    |
+| `logger`         | The object responsible for issuing log messages such as `logger.info(...)`.   |
+| `httpRequest`    | The object responsible for capturing the http request.                        |
 
 As an example, the following script skips multifactor authentication if the application 
 requesting it is registered in the CAS service registry under the name `MyApplication` and 
@@ -169,8 +169,8 @@ authentication for this provider should be skipped and bypassed.
 
 The following parameters are passed:
 
-| Parameter        | Description
-|------------------|------------------------------------------------------------
-| `principal`      | The identifier of the authenticated principal.
-| `provider`       | The identifier of the multifactor authentication provider.
-| `service`        | The identifier of the registered service in the registry, if any.
+| Parameter   | Description                                                       |
+|-------------|-------------------------------------------------------------------|
+| `principal` | The identifier of the authenticated principal.                    |
+| `provider`  | The identifier of the multifactor authentication provider.        |
+| `service`   | The identifier of the registered service in the registry, if any. |

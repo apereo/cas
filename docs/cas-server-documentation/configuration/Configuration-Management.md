@@ -34,11 +34,11 @@ for profiling purposes to have a better understanding of the application startup
 Startup event tracking can be controlled using a system property `-DCAS_APP_STARTUP`
 that can be assigned the following values:
 
-| Type                 | Description
-|----------------------|-------------------------------------------------------------------------------------------------------
-| `default`            | Default startup type which acts as a no-op.
-| `buffering`          | Record events into memory using a pre-defined capacity and expose them via the `startup` [actuator endpoint](../monitoring/Monitoring-Statistics.html).
-| `jfr`                | Add startup events to a Java Flight Recorder session for profiling applications and correlating their Spring context lifecycle.
+| Type        | Description                                                                                                                                             |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `default`   | Default startup type which acts as a no-op.                                                                                                             |
+| `buffering` | Record events into memory using a pre-defined capacity and expose them via the `startup` [actuator endpoint](../monitoring/Monitoring-Statistics.html). |
+| `jfr`       | Add startup events to a Java Flight Recorder session for profiling applications and correlating their Spring context lifecycle.                         |
 
 ## Overview
 

@@ -71,10 +71,12 @@ public abstract class BaseConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        val decisions = findConsentDecisions(principal);
-        val result = decisions.stream().filter(d -> d.getId() == decisionId).findFirst();
-        result.ifPresent(value -> this.consentDecisions.remove(value));
-        return result.isPresent();
+        return this.consentDecisions.removeIf(d -> d.getId() == decisionId && d.getPrincipal().equalsIgnoreCase(principal));
+    }
+
+    @Override
+    public void deleteAll() {
+        consentDecisions.clear();
     }
 
     @Override

@@ -45,35 +45,35 @@ Audits can be managed via the following strategies.
 
 The following events are tracked and recorded in the audit log:
 
-| Event                                 | Action
-|---------------------------------------|--------------------------------------
-| `TICKET_GRANTING_TICKET`              | `CREATED`, `NOT_CREATED`, `DESTROYED`
-| `PROXY_GRANTING_TICKET`               | `CREATED`, `NOT_CREATED`, `DESTROYED`
-| `SERVICE_TICKET`                      | `CREATED`, `NOT_CREATED`
-| `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED`
-| `AUTHENTICATION`                      | `SUCCESS`, `FAILED`
-| `AUTHENTICATION_EVENT`                | `TRIGGERED`
-| `AUP_VERIFY`                          | `TRIGGERED`
-| `AUP_SUBMIT`                          | `TRIGGERED`
-| `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
-| `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
-| `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
-| `PROTOCOL_SPECIFICATION_VALIDATE`     | `SUCCESS`, `FAILURE`
-| `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
-| `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
-| `SAML2_REQUEST`                       | `CREATED`, `FAILED`
-| `OAUTH2_USER_PROFILE`                 | `CREATED`, `FAILED`
-| `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
-| `OAUTH2_ACCESS_TOKEN_RESPONSE`        | `CREATED`, `FAILED`
-| `OAUTH2_CODE_RESPONSE`                | `CREATED`, `FAILED`
-| `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`
-| `REST_API_SERVICE_TICKET`             | `CREATED`, `FAILED`
-| `SERVICE_ACCESS_ENFORCEMENT`          | `TRIGGERED`
-| `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
-| `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`
-| `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`             | `TRIGGERED`
-| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
-| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
-| `MULTIFACTOR_AUTHENTICATION_BYPASS`   | N/A
-| `REQUEST_CHANGE_PASSWORD`             | N/A
-| `ACCOUNT_REGISTRATION`                | `TOKEN_VALIDATED`, `TOKEN_CREATED`, `PROVISIONING_SUCCESS`
+| Event                                               | Action                                                     |
+|-----------------------------------------------------|------------------------------------------------------------|
+| `TICKET_GRANTING_TICKET`                            | `CREATED`, `NOT_CREATED`, `DESTROYED`                      |
+| `PROXY_GRANTING_TICKET`                             | `CREATED`, `NOT_CREATED`, `DESTROYED`                      |
+| `SERVICE_TICKET`                                    | `CREATED`, `NOT_CREATED`                                   |
+| `PROXY_TICKET`                                      | `CREATED`, `NOT_CREATED`                                   |
+| `AUTHENTICATION`                                    | `SUCCESS`, `FAILED`                                        |
+| `AUTHENTICATION_EVENT`                              | `TRIGGERED`                                                |
+| `AUP_VERIFY`                                        | `TRIGGERED`                                                |
+| `AUP_SUBMIT`                                        | `TRIGGERED`                                                |
+| `SAVE_SERVICE`                                      | `SUCCESS`, `FAILURE`                                       |
+| `SAVE_CONSENT`                                      | `SUCCESS`, `FAILURE`                                       |
+| `CHANGE_PASSWORD`                                   | `SUCCESS`, `FAILURE`                                       |
+| `PROTOCOL_SPECIFICATION_VALIDATE`                   | `SUCCESS`, `FAILURE`                                       |
+| `DELETE_SERVICE`                                    | `SUCCESS`, `FAILURE`                                       |
+| `SAML2_RESPONSE`                                    | `CREATED`, `FAILED`                                        |
+| `SAML2_REQUEST`                                     | `CREATED`, `FAILED`                                        |
+| `OAUTH2_USER_PROFILE`                               | `CREATED`, `FAILED`                                        |
+| `OAUTH2_ACCESS_TOKEN_REQUEST`                       | `CREATED`, `FAILED`                                        |
+| `OAUTH2_ACCESS_TOKEN_RESPONSE`                      | `CREATED`, `FAILED`                                        |
+| `OAUTH2_CODE_RESPONSE`                              | `CREATED`, `FAILED`                                        |
+| `REST_API_TICKET_GRANTING_TICKET`                   | `CREATED`, `FAILED`                                        |
+| `REST_API_SERVICE_TICKET`                           | `CREATED`, `FAILED`                                        |
+| `SERVICE_ACCESS_ENFORCEMENT`                        | `TRIGGERED`                                                |
+| `DELEGATED_CLIENT`                                  | `SUCCESS`, `FAILURE`                                       |
+| `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION` | `TRIGGERED`                                                |
+| `SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION`    | `TRIGGERED`                                                |
+| `EVALUATE_RISKY_AUTHENTICATION`                     | N/A                                                        |
+| `MITIGATE_RISKY_AUTHENTICATION`                     | N/A                                                        |
+| `MULTIFACTOR_AUTHENTICATION_BYPASS`                 | N/A                                                        |
+| `REQUEST_CHANGE_PASSWORD`                           | N/A                                                        |
+| `ACCOUNT_REGISTRATION`                              | `TOKEN_VALIDATED`, `TOKEN_CREATED`, `PROVISIONING_SUCCESS` |

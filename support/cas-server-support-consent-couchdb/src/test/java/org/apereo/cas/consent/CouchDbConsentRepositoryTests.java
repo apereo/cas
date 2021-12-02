@@ -54,6 +54,8 @@ public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @BeforeEach
     public void setUp() {
+        repository.deleteAll();
+        
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }

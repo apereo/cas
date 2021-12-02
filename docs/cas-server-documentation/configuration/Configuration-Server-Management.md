@@ -116,14 +116,14 @@ Furthermore, by default it runs under a `native` profile described below.
 
 The following endpoints are secured and exposed by the configuration server:
 
-| Parameter                         | Description
-|-----------------------------------|------------------------------------------
-| `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
-| `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
-| `/actuator/refresh`               | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
-| `/actuator/cas/default`           | Describes what the configuration server knows about the `default` settings profile.
-| `/actuator/cas/native`            | Describes what the configuration server knows about the `native` settings profile.
+| Parameter               | Description                                                                          |
+|-------------------------|--------------------------------------------------------------------------------------|
+| `/encrypt`              | Accepts a `POST` to encrypt CAS configuration settings.                              |
+| `/decrypt`              | Accepts a `POST` to decrypt CAS configuration settings.                              |
+| `/actuator/refresh`     | Accepts a `POST` and attempts to refresh the internal state of configuration server. |
+| `/actuator/env`         | Accepts a `GET` and describes all configuration sources of the configuration server. |
+| `/actuator/cas/default` | Describes what the configuration server knows about the `default` settings profile.  |
+| `/actuator/cas/native`  | Describes what the configuration server knows about the `native` settings profile.   |
 
 Once you have the configuration server deployed and assuming the credentials used to secure 
 the configuration server match the example below, you can observe the collection of settings via:

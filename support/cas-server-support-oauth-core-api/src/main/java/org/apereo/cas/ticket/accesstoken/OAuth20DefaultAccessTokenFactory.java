@@ -88,7 +88,13 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         return OAuth20AccessToken.class;
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
+    /**
+     * Determine the expiration policy for the registered service.
+     *
+     * @param registeredService the registered service
+     * @return the expiration policy
+     */
+    protected ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessTokenExpirationPolicy() != null) {
             val policy = registeredService.getAccessTokenExpirationPolicy();
             val maxTime = policy.getMaxTimeToLive();

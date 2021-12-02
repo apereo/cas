@@ -30,10 +30,7 @@ public class CouchDbConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 5058836218210655958L;
 
-    /**
-     * CouchDb DAO.
-     */
-    private final transient ConsentDecisionCouchDbRepository couchDb;
+    private final ConsentDecisionCouchDbRepository couchDb;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
@@ -92,5 +89,10 @@ public class CouchDbConsentRepository implements ConsentRepository {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void deleteAll() {
+        couchDb.removeAll();
     }
 }

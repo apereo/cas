@@ -13,13 +13,13 @@ CAS response. Additionally, each policy has the ability to apply an optional fil
 
 The following settings are shared by all attribute release policies:
 
-| Name                                     | Value
-|------------------------------------------|----------------------------------------------------------------
-| `authorizedToReleaseCredentialPassword`  | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
-| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../authentication/Configuring-Proxy-Authentication.html).
-| `excludeDefaultAttributes`               | Boolean to define whether this policy should exclude the default global bundle of attributes for release.
-| `authorizedToReleaseAuthenticationAttributes`   | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date.
-| `principalIdAttribute`                   | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.
+| Name                                          | Value                                                                                                                                                                                                                                                                                                           |
+|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `authorizedToReleaseCredentialPassword`       | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).                                                                                                                                                                                                |
+| `authorizedToReleaseProxyGrantingTicket`      | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../authentication/Configuring-Proxy-Authentication.html).                                                                                                                                         |
+| `excludeDefaultAttributes`                    | Boolean to define whether this policy should exclude the default global bundle of attributes for release.                                                                                                                                                                                                       |
+| `authorizedToReleaseAuthenticationAttributes` | Boolean to define whether this policy should exclude the authentication/protocol attributes for release. Authentication attributes are considered those that are not tied to a specific principal and define extra supplementary metadata about the authentication event itself, such as the commencement date. |
+| `principalIdAttribute`                        | An attribute name of your own choosing that will be stuffed into the final bundle of attributes, carrying the CAS authenticated principal identifier. By default, the principal id is *NOT* released as an attribute.                                                                                           |
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think <strong>VERY CAREFULLY</strong> before turning on 
 the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
@@ -182,10 +182,10 @@ the response includes a `Map` of attributes linked to their values.
 
 The following parameters are passed to the endpoint:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `principal`           | The object representing the authenticated principal.
-| `service`             | The object representing the corresponding service definition in the registry.
+| Parameter   | Description                                                                   |
+|-------------|-------------------------------------------------------------------------------|
+| `principal` | The object representing the authenticated principal.                          |
+| `service`   | The object representing the corresponding service definition in the registry. |
 
 The body of the submitted request may also include a `Map` of currently resolved attributes. 
 
@@ -350,12 +350,12 @@ def Map<String, List<Object>> run(final Object... args) {
 
 The following parameters are passed to the script:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `currentAttributes`   | `Map` of attributes currently resolved and available for release.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-| `principal`           | The object representing the authenticated principal.
-| `service`             | The object representing the corresponding service definition in the registry.
+| Parameter           | Description                                                                   |
+|---------------------|-------------------------------------------------------------------------------|
+| `currentAttributes` | `Map` of attributes currently resolved and available for release.             |
+| `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.   |
+| `principal`         | The object representing the authenticated principal.                          |
+| `service`           | The object representing the corresponding service definition in the registry. |
 
 ### Script Engines
 

@@ -224,18 +224,18 @@ SAML service providers with CAS which would depend on your service registry of c
 
 The SAML2 service provider supports the following settings:
 
-| Name                  |  Description
-|-----------------------|---------------------------------------------------------------------------
-| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
-| `name`                | The name of the service provider registered in the service registry.
-| `description`         | The description of the service provider registered in the service registry.
-| `name-id-attribute`   | Attribute to use when generating name ids for this service provider.
-| `name-id-format`      | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
-| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
-| `signature-location`  | Signature location to verify metadata.
-| `entity-ids`          | List of entity ids allowed for this service provider.
-| `sign-responses`      | Indicate whether responses should be signed. Default is `true`.
-| `sign-assertions`     | Indicate whether assertions should be signed. Default is `false`.
+| Name                 | Description                                                                                          |
+|----------------------|------------------------------------------------------------------------------------------------------|
+| `metadata`           | Location of metadata for the service provider (i.e URL, path, etc)                                   |
+| `name`               | The name of the service provider registered in the service registry.                                 |
+| `description`        | The description of the service provider registered in the service registry.                          |
+| `name-id-attribute`  | Attribute to use when generating name ids for this service provider.                                 |
+| `name-id-format`     | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`). |
+| `attributes`         | Attributes to release to the service provider, which may virtually be mapped and renamed.            |
+| `signature-location` | Signature location to verify metadata.                                                               |
+| `entity-ids`         | List of entity ids allowed for this service provider.                                                |
+| `sign-responses`     | Indicate whether responses should be signed. Default is `true`.                                      |
+| `sign-assertions`    | Indicate whether assertions should be signed. Default is `false`.                                    |
 
 The only required setting that would activate the automatic configuration for a
 service provider is the presence and definition of metadata. All other settings are optional.

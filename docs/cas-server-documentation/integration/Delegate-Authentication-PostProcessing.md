@@ -39,9 +39,9 @@ def run(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requestContext`      | The object representing Spring Webflow's `RequestContext`. 
-| `providers`           | The set of delegated identity provider configurations.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter        | Description                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| `requestContext` | The object representing Spring Webflow's `RequestContext`.                  |
+| `providers`      | The set of delegated identity provider configurations.                      |
+| `logger`         | The object responsible for issuing log messages such as `logger.info(...)`. |
 

@@ -14,10 +14,10 @@ understand the internals of actions, states, decisions and scopes please [see th
 
 CAS by default operates on the following core webflow configuration files:
 
-| Flow                | Description
-|---------------------|-----------------------------------------------
-| `login`             | Authentication flow for login attempts.
-| `logout`            | Authentication flow for logout attempts.
+| Flow     | Description                              |
+|----------|------------------------------------------|
+| `login`  | Authentication flow for login attempts.  |
+| `logout` | Authentication flow for logout attempts. |
 
 The above flows present a minimal structure for what CAS needs at its core to handle login and logout flows. It is important to note that at
 runtime many other actions and states are injected into either of these flows dynamically depending on the CAS configuration and presence of
@@ -195,8 +195,8 @@ Object run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter               | Description
-|-------------------------|------------------------------------------------------------------------------
-| `webflow`                    | The object representing a facade on top of Spring Webflow APIs.
-| `springApplicationContext`   | The Spring application context.
-| `logger`                     | Logger object for issuing log messages such as `logger.info(...)`.
+| Parameter                  | Description                                                        |
+|----------------------------|--------------------------------------------------------------------|
+| `webflow`                  | The object representing a facade on top of Spring Webflow APIs.    |
+| `springApplicationContext` | The Spring application context.                                    |
+| `logger`                   | Logger object for issuing log messages such as `logger.info(...)`. |

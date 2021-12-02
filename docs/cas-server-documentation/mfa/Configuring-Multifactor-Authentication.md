@@ -25,22 +25,22 @@ At a minimum, you need answer the following questions:
 
 The following multifactor providers are supported by CAS.
 
-| Provider              | Id              | Instructions
-|-----------------------|-----------------|----------------------------------------------------------
-| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html).
-| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html).
-| Acceptto              | `mfa-acceptto`  | [See this guide](Acceptto-Authentication.html).
-| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html).
-| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
-| WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
-| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
-| FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
-| FIDO2 WebAuthN        | `mfa-webauthn`  | [See this guide](FIDO2-WebAuthn-Authentication.html).
-| CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
-| Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
-| Inwebo                | `mfa-inwebo`    | [See this guide](Inwebo-Authentication.html).
-| Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
-  
+| Provider             | Id             | Instructions                                               |
+|----------------------|----------------|------------------------------------------------------------|
+| Duo Security         | `mfa-duo`      | [See this guide](DuoSecurity-Authentication.html).         |
+| Authy Authenticator  | `mfa-authy`    | [See this guide](AuthyAuthenticator-Authentication.html).  |
+| Acceptto             | `mfa-acceptto` | [See this guide](Acceptto-Authentication.html).            |
+| YubiKey              | `mfa-yubikey`  | [See this guide](YubiKey-Authentication.html).             |
+| RSA/RADIUS           | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
+| WiKID                | `mfa-radius`   | [See this guide](RADIUS-Authentication.html).              |
+| Google Authenticator | `mfa-gauth`    | [See this guide](GoogleAuthenticator-Authentication.html). |
+| FIDO U2F             | `mfa-u2f`      | [See this guide](FIDO-U2F-Authentication.html).            |
+| FIDO2 WebAuthN       | `mfa-webauthn` | [See this guide](FIDO2-WebAuthn-Authentication.html).      |
+| CAS Simple           | `mfa-simple`   | [See this guide](Simple-Multifactor-Authentication.html).  |
+| Swivel Secure        | `mfa-swivel`   | [See this guide](SwivelSecure-Authentication.html).        |
+| Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |
+| Custom               | Custom         | [See this guide](../mfa/Custom-MFA-Authentication.html).   |
+
 ## Core Configuration
 
 {% include_cached casproperties.html properties="cas.authn.mfa.core" %}

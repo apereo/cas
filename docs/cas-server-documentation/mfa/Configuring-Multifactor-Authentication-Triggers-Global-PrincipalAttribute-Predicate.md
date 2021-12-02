@@ -42,13 +42,12 @@ class PredicateExample implements Predicate<MultifactorAuthenticationProvider> {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|------------------------------------------------------------------------------------
-| `service`             | The object representing the corresponding service definition in the registry.
-| `principal`           | The object representing the authenticated principal.
-| `providers`           | Collection of `MultifactorAuthenticationProvider`s from which a selection shall be made.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-
+| Parameter   | Description                                                                              |
+|-------------|------------------------------------------------------------------------------------------|
+| `service`   | The object representing the corresponding service definition in the registry.            |
+| `principal` | The object representing the authenticated principal.                                     |
+| `providers` | Collection of `MultifactorAuthenticationProvider`s from which a selection shall be made. |
+| `logger`    | The object responsible for issuing log messages such as `logger.info(...)`.              |
 
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.principal" %}
 

@@ -66,9 +66,9 @@ def fetch(Object[] args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requestContext`      | The object representing the Spring Webflow `RequestContext`.
-| `applicationContext`  | The object representing the Spring `ApplicationContext`.
-| `principal`           | The object representing the authenticated `Principal`.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter            | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| `requestContext`     | The object representing the Spring Webflow `RequestContext`.                |
+| `applicationContext` | The object representing the Spring `ApplicationContext`.                    |
+| `principal`          | The object representing the authenticated `Principal`.                      |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |

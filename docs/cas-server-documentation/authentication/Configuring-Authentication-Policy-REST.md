@@ -15,12 +15,12 @@ to examine account status and policy.
 
 Response codes from the REST endpoint are translated as such:
 
-| Code                   | Result
-|------------------------|---------------------------------------------
-| `200`          | Successful authentication.
-| `403`, `405`   | Produces a `AccountDisabledException`
-| `404`          | Produces a `AccountNotFoundException`
-| `423`          | Produces a `AccountLockedException`
-| `412`          | Produces a `AccountExpiredException`
-| `428`          | Produces a `AccountPasswordMustChangeException`
-| Other          | Produces a `FailedLoginException`
+| Code         | Result                                          |
+|--------------|-------------------------------------------------|
+| `200`        | Successful authentication.                      |
+| `403`, `405` | Produces a `AccountDisabledException`           |
+| `404`        | Produces a `AccountNotFoundException`           |
+| `423`        | Produces a `AccountLockedException`             |
+| `412`        | Produces a `AccountExpiredException`            |
+| `428`        | Produces a `AccountPasswordMustChangeException` |
+| Other        | Produces a `FailedLoginException`               |

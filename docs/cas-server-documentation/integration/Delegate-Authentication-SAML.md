@@ -11,12 +11,12 @@ category: Authentication
 In the event that CAS is configured to delegate authentication to an external identity provider, the service provider (CAS) 
 metadata as well as the identity provider metadata automatically become available at the following endpoints:
 
-| Endpoint                         | Description
-|----------------------------------|---------------------------------------------------------------------------
-| `/sp/metadata`                   | Displays the service provider (CAS) metadata. Works well if there is only one SAML2 IdP is defined.
-| `/sp/idp/metadata`               | Displays the identity provider metadata. Works well if there is only one SAML2 IdP is defined.
-| `/sp/{clientName}/metadata`      | Displays the service provider metadata for the requested client name.
-| `/sp/{clientName}/idp/metadata`  | Displays the identity provider metadata for the requested client name.
+| Endpoint                        | Description                                                                                         |
+|---------------------------------|-----------------------------------------------------------------------------------------------------|
+| `/sp/metadata`                  | Displays the service provider (CAS) metadata. Works well if there is only one SAML2 IdP is defined. |
+| `/sp/idp/metadata`              | Displays the identity provider metadata. Works well if there is only one SAML2 IdP is defined.      |
+| `/sp/{clientName}/metadata`     | Displays the service provider metadata for the requested client name.                               |
+| `/sp/{clientName}/idp/metadata` | Displays the identity provider metadata for the requested client name.                              |
 
 Note that you can use more than one external identity provider with CAS, where each integration may be done 
 with a different set of metadata and keys for CAS acting as the service provider. Each integration (referred to as a client, 
@@ -101,11 +101,11 @@ directly be consumed as a JSON file with the following structure:
 
 The following endpoints are available:
 
-| Endpoint                         | Description
-|----------------------------------|----------------------------------------------------------------
-| `/idp/discovery`                 | Identity provider discovery landing page.
-| `/idp/discovery/feed`            | Identity provider discovery JSON feed.
-| `/idp/discovery/redirect`        | Return endpoint to let CAS invoke the identity provider after selection. 
+| Endpoint                  | Description                                                              |
+|---------------------------|--------------------------------------------------------------------------|
+| `/idp/discovery`          | Identity provider discovery landing page.                                |
+| `/idp/discovery/feed`     | Identity provider discovery JSON feed.                                   |
+| `/idp/discovery/redirect` | Return endpoint to let CAS invoke the identity provider after selection. |
 
 Applications may directly invoke the discovery service via `[cas-server-prefix]/idp/discovery`. The discovery service may also 
 be invoked using the discovery protocol via `[cas-server-prefix]/idp/discovery?entityID=[service-provider-entity-id]&return=[cas-server-prefix]/idp/discovery/redirect`. 

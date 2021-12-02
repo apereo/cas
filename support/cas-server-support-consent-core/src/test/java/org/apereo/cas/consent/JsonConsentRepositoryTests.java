@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class,
-    properties = "cas.consent.json.location=classpath:/ConsentRepository.json")
+    properties = "cas.consent.json.location=file://${java.io.tmpdir}/ConsentRepository.json")
 @Getter
 @Tag("FileSystem")
 public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {

@@ -51,11 +51,11 @@ def supports(Object[] args) {
 
 The following parameters are passed to the script:
 
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `handlers`       | Collection of available and candidate `AuthenticationHandler`s.
-| `transaction`    | The authentication transaction currently in progress.
-| `servicesManager`  | The `ServicesManager` object responsible for locating service definitions attached to this transaction.
-| `logger`           | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter         | Description                                                                                             |
+|-------------------|---------------------------------------------------------------------------------------------------------|
+| `handlers`        | Collection of available and candidate `AuthenticationHandler`s.                                         |
+| `transaction`     | The authentication transaction currently in progress.                                                   |
+| `servicesManager` | The `ServicesManager` object responsible for locating service definitions attached to this transaction. |
+| `logger`          | The object responsible for issuing log messages such as `logger.info(...)`.                             |
 
 The outcome of the script should be the collection of selected handlers with the type `Set<AuthenticationHandler>`.

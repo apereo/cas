@@ -104,20 +104,20 @@ if explicit attribute mappings are defined, then *only mapped attributes* are re
 
 The following merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
 
-| Type                    | Description
-|-------------------------|--------------------------------------------------------------------------------------
-| `REPLACE`               | Overwrites existing attribute values, if any.
-| `ADD`                   | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain.
-| `MULTIVALUED`           | Combines all values into a single attribute, essentially creating a multi-valued attribute.
-| `NONE`                  | Do not merge attributes, only use attributes retrieved during authentication.
+| Type          | Description                                                                                                   |
+|---------------|---------------------------------------------------------------------------------------------------------------|
+| `REPLACE`     | Overwrites existing attribute values, if any.                                                                 |
+| `ADD`         | Retains existing attribute values if any, and ignores values from subsequent sources in the resolution chain. |
+| `MULTIVALUED` | Combines all values into a single attribute, essentially creating a multi-valued attribute.                   |
+| `NONE`        | Do not merge attributes, only use attributes retrieved during authentication.                                 |
 
 The following aggregation strategies can be used to resolve and merge attributes
 when multiple attribute repository sources are defined to fetch data:
 
-| Type            | Description
-|-----------------|-------------------------------------------------------------
-| `MERGE`         | Default. Query multiple repositories in order and merge the results into a single result set.
-| `CASCADE`       | Same as above; results from each query are passed down to the next attribute repository source. If the first repository queried has no results, no further attribute repositories will be queried.
+| Type      | Description                                                                                                                                                                                        |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `MERGE`   | Default. Query multiple repositories in order and merge the results into a single result set.                                                                                                      |
+| `CASCADE` | Same as above; results from each query are passed down to the next attribute repository source. If the first repository queried has no results, no further attribute repositories will be queried. |
 
 ### Sources
 

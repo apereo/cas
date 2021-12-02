@@ -31,11 +31,11 @@ by defining their own access strategy and authentication policy:
      
 The following fields are supported for the authentication policy:
 
-| Type                    | Description
-|-------------------------|--------------------------------------------------------------------------------------
-| `allowedProviders`      | The list of allowed providers should contain the external identity provider names (i.e. client names).
-| `permitUndefined`       | Decides whether access should be granted in the event that no allowed providers are defined explicitly.
-| `exclusive`             | Decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc.
+| Type               | Description                                                                                                                                |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `allowedProviders` | The list of allowed providers should contain the external identity provider names (i.e. client names).                                     |
+| `permitUndefined`  | Decides whether access should be granted in the event that no allowed providers are defined explicitly.                                    |
+| `exclusive`        | Decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc. |
 
 ## Configuration
 

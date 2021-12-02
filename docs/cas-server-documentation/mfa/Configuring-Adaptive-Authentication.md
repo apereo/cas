@@ -41,11 +41,11 @@ Banned IP address can either be defined as patterns in the CAS settings, or they
 The client IP address is submitted to a REST endpoint as the 
 header `clientIpAddress` under a `GET` request. The expected result status codes are the following:
 
-| Code                  | Description
-|-----------------------|------------------------------------------------------------------------------------------------------------
-| `401`, `403`          | IP address is banned and the request will be rejected.
-| `200`, `202`          | IP address is allowed and the request may proceed.
-| All Others            | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating a suspicious IP address.
+| Code         | Description                                                                                                                         |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `401`, `403` | IP address is banned and the request will be rejected.                                                                              |
+| `200`, `202` | IP address is allowed and the request may proceed.                                                                                  |
+| All Others   | Response body is expected to contain a score between `1` and `0`, (`1=Banned` and `0=Allowed`), indicating a suspicious IP address. |
 
 {% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.rest" %}
 
