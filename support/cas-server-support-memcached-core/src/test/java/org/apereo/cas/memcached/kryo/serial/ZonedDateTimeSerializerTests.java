@@ -1,5 +1,6 @@
-package org.apereo.cas.memcached.kryo;
+package org.apereo.cas.memcached.kryo.serial;
 
+import org.apereo.cas.memcached.kryo.CasKryoPool;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
