@@ -5,10 +5,10 @@ import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
-import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
@@ -34,7 +34,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -44,7 +43,11 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -207,15 +210,24 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(Pattern.class, new RegexSerializer());
         kryo.register(UUID.class, new UUIDSerializer());
 
-        kryo.register(ZonedDateTime.class, new ZonedDateTimeSerializer());
         kryo.register(Date.class, new DateSerializer(Date.class));
         kryo.register(Calendar.class, new GregorianCalendarSerializer());
         kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
-        kryo.register(LocalDate.class, new JodaLocalDateSerializer());
+
+        kryo.register(Duration.class, new TimeSerializers.DurationSerializer());
+        kryo.register(Period.class, new TimeSerializers.PeriodSerializer());
+        kryo.register(LocalDate.class, new TimeSerializers.LocalDateSerializer());
+        kryo.register(ZonedDateTime.class, new TimeSerializers.ZonedDateTimeSerializer());
+        kryo.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
+
+        kryo.register(org.joda.time.LocalDate.class, new JodaLocalDateSerializer());
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
-        kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
+        kryo.register(org.joda.time.LocalDateTime.class, new JodaLocalDateTimeSerializer());
+        
+        kryo.register(ZoneOffset.class, new TimeSerializers.ZoneOffsetSerializer());
+        kryo.register(ZoneId.class, new TimeSerializers.ZoneIdSerializer());
+        
         kryo.register(Clock.systemUTC().getClass());
-        kryo.register(ZoneOffset.class);
         kryo.register(EnumSet.class, new EnumSetSerializer());
     }
 }
