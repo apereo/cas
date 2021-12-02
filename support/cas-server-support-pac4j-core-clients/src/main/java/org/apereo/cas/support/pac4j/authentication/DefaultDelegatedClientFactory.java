@@ -19,6 +19,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
@@ -133,6 +134,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
     }
 
     @Override
+    @Synchronized
     public Collection<IndirectClient> build() {
         if (this.clients.isEmpty() || !casProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
             this.clients.clear();
