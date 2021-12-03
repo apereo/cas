@@ -12,12 +12,12 @@ if [[ $dockerPlatform =~ "windows" ]]; then
   exit 0
 fi
 
-if [[ "${CI}" == "true" ]]; then
-  echo "Azure CosmosDb emulator for Linux is not quite ready yet."
-  echo "There are intermittent out-of-service errors while running with CI."
-  echo "The emulator and test suite will be re-enabled once it exits public preview."
-  exit 0
-fi
+#if [[ "${CI}" == "true" ]]; then
+#  echo "Azure CosmosDb emulator for Linux is not quite ready yet."
+#  echo "There are intermittent out-of-service errors while running with CI."
+#  echo "The emulator and test suite will be re-enabled once it exits public preview."
+#  exit 0
+#fi
 
 ipaddr="$(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n 1)"
 echo "System IP address is $ipaddr"
@@ -30,7 +30,7 @@ docker run --rm -p 8081:8081 -p 10251:10251 -p 10252:10252 -p 10253:10253 -p 102
   -d mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
 docker logs -f cosmosdb &
 echo "Waiting for CosmosDb to come online..."
-sleep 30
+sleep 35
 docker ps | grep "cosmosdb"
 echo "Fetching CosmosDb certificate..."
 rm -Rf ./emulatorcert.crt

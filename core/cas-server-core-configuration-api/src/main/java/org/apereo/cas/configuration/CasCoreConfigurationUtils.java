@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.springframework.util.ResourceUtils.*;
 
