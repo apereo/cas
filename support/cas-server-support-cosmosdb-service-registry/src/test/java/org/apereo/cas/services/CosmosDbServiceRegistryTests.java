@@ -40,12 +40,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CosmosDbServiceRegistryConfiguration.class
 }, properties = {
     "cas.http-client.host-name-verifier=none",
-    "cas.service-registry.cosmosDb.uri=https://localhost:8081",
-    "cas.service-registry.cosmosDb.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-    "cas.service-registry.cosmosDb.database=RegisteredServicesDb",
-    "cas.service-registry.cosmosDb.max-retry-attempts-on-throttled-requests=5",
-    "cas.service-registry.cosmosDb.indexing-mode=CONSISTENT",
-    "cas.service-registry.cosmosDb.create-container=true"
+    "cas.service-registry.cosmos-db.uri=https://localhost:8081",
+    "cas.service-registry.cosmos-db.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+    "cas.service-registry.cosmos-db.database=RegisteredServicesDb",
+    "cas.service-registry.cosmos-db.max-retry-attempts-on-throttled-requests=5",
+    "cas.service-registry.cosmos-db.indexing-mode=CONSISTENT",
+    "cas.service-registry.cosmos-db.create-container=true"
 })
 @ResourceLock("cosmosdb-service")
 @Getter
