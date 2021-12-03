@@ -46,6 +46,23 @@ public class CasCoreConfigurationUtilsTests {
     }
 
     @Test
+    public void verifyMappingByPropertyRef() {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getSyncope().setName("SyncopeAuth");
+        props.getAuthn().getSyncope().setUrl("https://github.com/apereo/cas");
+        props.getAuthn().getSyncope().setDomain("Master");
+
+        val filters = new SimpleFilterProvider()
+            .setFailOnUnknownId(false)
+            .addFilter(CasConfigurationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
+                CasCoreConfigurationUtils.getPropertyName(CasConfigurationProperties.class, CasConfigurationProperties::getAuthn)))
+            .addFilter(AuthenticationProperties.class.getSimpleName(), SimpleBeanPropertyFilter.filterOutAllExcept(
+                CasCoreConfigurationUtils.getPropertyName(AuthenticationProperties.class, AuthenticationProperties::getSyncope)));
+        val map = CasCoreConfigurationUtils.asMap(props.withHolder(), filters);
+        assertTrue(map.keySet().stream().allMatch(key -> key.startsWith("cas.authn.syncope")));
+    }
+
+    @Test
     public void verifyMapping() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getSyncope().setName("SyncopeAuth");

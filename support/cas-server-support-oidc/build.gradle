@@ -39,8 +39,10 @@ dependencies {
 
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
-    implementation libraries.jose4j
-    implementation libraries.nimbus
+
+    api libraries.jose4j
+    api libraries.nimbus
+
     compileOnly libraries.mongo
 
     testImplementation project(":core:cas-server-core-util")
