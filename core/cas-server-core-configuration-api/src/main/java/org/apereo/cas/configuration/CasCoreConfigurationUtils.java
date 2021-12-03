@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import de.cronn.reflection.util.PropertyUtils;
+import de.cronn.reflection.util.TypedPropertyGetter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -23,6 +25,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.springframework.util.ResourceUtils.*;
 
@@ -34,6 +37,19 @@ import static org.springframework.util.ResourceUtils.*;
  */
 @UtilityClass
 public final class CasCoreConfigurationUtils {
+    
+    /**
+     * Gets property name.
+     *
+     * @param <T>      the type parameter
+     * @param <V>      the type parameter
+     * @param clazz    the clazz
+     * @param supplier the supplier
+     * @return the property name
+     */
+    public static <T, V> String getPropertyName(final Class<T> clazz, final TypedPropertyGetter<T, V> supplier) {
+        return PropertyUtils.getPropertyName(clazz, supplier);
+    }
 
     /**
      * Load yaml properties map.
