@@ -58,6 +58,7 @@ enum TestCategories {
     SAML,
     SAMLMetadata,
     SAMLServiceProvider,
+    SCIM,
     SHELL,
     Simple,
     SMS,

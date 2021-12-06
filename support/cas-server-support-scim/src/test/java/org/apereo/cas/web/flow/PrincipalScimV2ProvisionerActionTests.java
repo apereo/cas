@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.scim.password=Mellon",
     "cas.scim.oauth-token=mfh834bsd202usn10snf"
 })
-@Tag("WebflowActions")
+@Tag("SCIM")
 public class PrincipalScimV2ProvisionerActionTests extends BaseScimProvisionerActionTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();

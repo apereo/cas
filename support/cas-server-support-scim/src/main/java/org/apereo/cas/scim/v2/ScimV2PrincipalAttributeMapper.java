@@ -6,10 +6,17 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.unboundid.scim2.common.types.Email;
+import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
+import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
+import java.time.ZoneOffset;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * This is {@link ScimV2PrincipalAttributeMapper}.
@@ -22,12 +29,27 @@ public class ScimV2PrincipalAttributeMapper {
     /**
      * Gets principal attribute value.
      *
-     * @param p             the principal
+     * @param principal     the principal
+     * @param attributeName the attribute name
+     * @param defaultValue  the default value
+     * @return the principal attribute value
+     */
+    protected String getPrincipalAttributeValue(final Principal principal,
+                                                final String attributeName,
+                                                final String defaultValue) {
+        return StringUtils.defaultString(getPrincipalAttributeValue(principal, attributeName), defaultValue);
+    }
+
+    /**
+     * Gets principal attribute value.
+     *
+     * @param principal             the principal
      * @param attributeName the attribute name
      * @return the principal attribute value
      */
-    protected String getPrincipalAttributeValue(final Principal p, final String attributeName) {
-        val attributes = p.getAttributes();
+    protected String getPrincipalAttributeValue(final Principal principal,
+                                                final String attributeName) {
+        val attributes = principal.getAttributes();
         if (attributes.containsKey(attributeName)) {
             return CollectionUtils.toCollection(attributes.get(attributeName)).iterator().next().toString();
         }
@@ -38,35 +60,46 @@ public class ScimV2PrincipalAttributeMapper {
      * Map.
      *
      * @param user       the user
-     * @param p          the p
+     * @param principal          the p
      * @param credential the credential
      */
-    public void map(final UserResource user, final Principal p,
+    @SneakyThrows
+    public void map(final UserResource user,
+                    final Principal principal,
                     final Credential credential) {
-        user.setUserName(p.getId());
+        user.setUserName(principal.getId());
         if (credential instanceof UsernamePasswordCredential) {
             user.setPassword(UsernamePasswordCredential.class.cast(credential).getPassword());
         }
         user.setActive(Boolean.TRUE);
 
-        user.setNickName(getPrincipalAttributeValue(p, "nickName"));
-        user.setDisplayName(getPrincipalAttributeValue(p, "displayName"));
+        user.setNickName(getPrincipalAttributeValue(principal, "nickName"));
+        user.setDisplayName(getPrincipalAttributeValue(principal, "displayName"));
 
         val name = new Name();
-        name.setGivenName(getPrincipalAttributeValue(p, "givenName"));
-        name.setFamilyName(getPrincipalAttributeValue(p, "familyName"));
-        name.setMiddleName(getPrincipalAttributeValue(p, "middleName"));
+        name.setGivenName(getPrincipalAttributeValue(principal, "givenName"));
+        name.setFamilyName(getPrincipalAttributeValue(principal, "familyName"));
+        name.setMiddleName(getPrincipalAttributeValue(principal, "middleName"));
 
         user.setName(name);
 
         val email = new Email();
         email.setPrimary(Boolean.TRUE);
-        email.setValue(getPrincipalAttributeValue(p, "email"));
+        email.setValue(getPrincipalAttributeValue(principal, "email"));
         user.setEmails(CollectionUtils.wrap(email));
 
         val phone = new PhoneNumber();
         phone.setPrimary(Boolean.TRUE);
-        phone.setValue(getPrincipalAttributeValue(p, "phoneNumber"));
+        phone.setValue(getPrincipalAttributeValue(principal, "phoneNumber"));
         user.setPhoneNumbers(CollectionUtils.wrap(phone));
+
+        user.setExternalId(getPrincipalAttributeValue(principal, "externalId", principal.getId()));
+
+        if (user.getMeta() == null) {
+            val meta = new Meta();
+            meta.setCreated(Calendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC)));
+            meta.setResourceType(user.getUserType());
+            user.setMeta(meta);
+        }
     }
 }
