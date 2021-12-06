@@ -40,8 +40,8 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     @Override
     public boolean create(final Authentication auth, final Credential credential,
                           final RegisteredService registeredService) {
+        val principal = auth.getPrincipal();
         try {
-            val principal = auth.getPrincipal();
             val userList = getScimService(registeredService)
                 .search("Users", Filter.eq("userName", principal.getId()).toString(), UserResource.class);
             if (userList.getTotalResults() > 0) {
@@ -84,7 +84,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     protected boolean createUserResource(final Principal principal, final Credential credential,
                                          final RegisteredService registeredService) {
         val user = new UserResource();
-        this.mapper.map(user, principal, credential);
+        mapper.map(user, principal, credential);
         return getScimService(registeredService).create("Users", user) != null;
     }
 
@@ -97,7 +97,6 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     protected ScimService getScimService(final RegisteredService registeredService) {
         val config = new ClientConfig();
         val client = ClientBuilder.newClient(config);
-
         var token = scimProperties.getOauthToken();
         if (RegisteredServiceProperties.SCIM_OAUTH_TOKEN.isAssignedTo(registeredService)) {
             token = RegisteredServiceProperties.SCIM_OAUTH_TOKEN.getPropertyValue(registeredService).getValue();
@@ -123,7 +122,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
             target = RegisteredServiceProperties.SCIM_TARGET.getPropertyValue(registeredService).getValue();
         }
         val webTarget = client.target(target);
-
         return new ScimService(webTarget);
     }
+
 }

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
-@Tag("WebflowConfig")
+@Tag("SCIM")
 public class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

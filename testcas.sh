@@ -159,6 +159,10 @@ while (( "$#" )); do
             web)
                 task+="testWeb "
                 ;;
+            scim)
+                isDockerOnLinux && ./ci/tests/scim/run-scim-server.sh
+                task+="testSCIM "
+                ;;
             logout|slo)
                 task+="testLogout "
                 ;;

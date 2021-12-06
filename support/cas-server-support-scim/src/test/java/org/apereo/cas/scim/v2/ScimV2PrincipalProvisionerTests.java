@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Attributes")
+@Tag("SCIM")
 public class ScimV2PrincipalProvisionerTests {
     @Test
     public void verifyScimServicePerApp() {

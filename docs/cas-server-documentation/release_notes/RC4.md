@@ -56,8 +56,17 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+  
+### reCAPTCHA Activation Strategy
+  
+Integrations with [reCAPTCHA](../integration/Configuring-Google-reCAPTCHA.html) are now able to customize
+the activation strategy to determine reCAPTCHA initialization and validation behavior, globally and/or 
+on a per-service basis. 
 
 ## Other Stuff
+              
+- External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 
 ## Library Upgrades
 
+- Spring Cloud

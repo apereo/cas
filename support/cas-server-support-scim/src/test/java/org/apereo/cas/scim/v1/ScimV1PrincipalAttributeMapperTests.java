@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  * @deprecated Since 6.4.0
  */
-@Tag("Attributes")
+@Tag("SCIM")
 @SuppressWarnings("JavaUtilDate")
 @Deprecated(since = "6.4.0")
 public class ScimV1PrincipalAttributeMapperTests {
