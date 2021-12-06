@@ -5,7 +5,7 @@ name: Puppeteer
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_BUILDCACHE_USER: ${{ secrets.GRADLE_BUILDCACHE_USER }}
+  GRADLE_BUILDCACHE_USER: ci
   GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
   DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}

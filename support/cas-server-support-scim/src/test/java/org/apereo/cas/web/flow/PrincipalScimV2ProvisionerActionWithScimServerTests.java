@@ -5,6 +5,8 @@ import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -12,17 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link PrincipalScimV2ProvisionerActionWithScimServerTests}.
