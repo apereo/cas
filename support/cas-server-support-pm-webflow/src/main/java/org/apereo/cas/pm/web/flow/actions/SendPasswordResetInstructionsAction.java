@@ -12,6 +12,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketFactory;
@@ -69,7 +70,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     /**
      * The password management service.
      */
-    protected final PasswordManagementService passwordManagementService;
+    protected final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     /**
      * Ticket registry instance to hold onto the token.
@@ -97,12 +98,9 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
      * @return URL a user can use to start the password reset process
      */
     protected String buildPasswordResetUrl(final String username,
-                                           final PasswordManagementService passwordManagementService,
+                                           final String token,
                                            final CasConfigurationProperties casProperties,
                                            final WebApplicationService service) {
-
-        val query = PasswordManagementQuery.builder().username(username).build();
-        val token = passwordManagementService.createToken(query);
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(token)) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val pm = casProperties.getAuthn().getPm();
@@ -146,6 +144,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
+        val passwordManagementService = getPasswordManagementService(requestContext);
         val email = passwordManagementService.findEmail(query);
         val phone = passwordManagementService.findPhone(query);
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
@@ -154,11 +153,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
 
         val service = WebUtils.getService(requestContext);
-        val url = buildPasswordResetUrl(query.getUsername(), passwordManagementService, casProperties, service);
+        val token = createToken(query.getUsername(), passwordManagementService);
+        val url = buildPasswordResetUrl(query.getUsername(), token, casProperties, service);
         if (StringUtils.isNotBlank(url)) {
             val pm = casProperties.getAuthn().getPm();
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)",
-                url, pm.getReset().getExpirationMinutes());
+                    url, pm.getReset().getExpirationMinutes());
             val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail || sendSms) {
@@ -169,6 +169,16 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         LOGGER.error("Failed to notify account [{}]", email);
         return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
+    }
+
+    private String createToken(final String username, final PasswordManagementService passwordManagementService) {
+        val query = PasswordManagementQuery.builder().username(username).build();
+        return passwordManagementService.createToken(query);
+    }
+
+    private PasswordManagementService getPasswordManagementService(RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService);
     }
 
     /**

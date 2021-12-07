@@ -1,11 +1,12 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Slf4j
 public class ValidatePasswordResetTokenAction extends AbstractAction {
-    private final PasswordManagementService passwordManagementService;
+    private final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     private final CentralAuthenticationService centralAuthenticationService;
 
@@ -37,7 +38,7 @@ public class ValidatePasswordResetTokenAction extends AbstractAction {
             if (StringUtils.isNotBlank(transientTicket)) {
                 val tst = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
                 val token = tst.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
-                val username = passwordManagementService.parseToken(token);
+                val username = parseToken(token, requestContext);
                 if (StringUtils.isBlank(username)) {
                     throw new IllegalArgumentException("Password reset token could not be verified to determine username");
                 }
@@ -47,5 +48,10 @@ public class ValidatePasswordResetTokenAction extends AbstractAction {
             LoggingUtils.warn(LOGGER, e);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN);
         }
+    }
+
+    private String parseToken(final String token, final RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService).parseToken(token);
     }
 }

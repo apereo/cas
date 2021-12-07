@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class InitPasswordResetAction extends AbstractAction {
-    private final PasswordManagementService passwordManagementService;
+    private final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
@@ -33,7 +34,7 @@ public class InitPasswordResetAction extends AbstractAction {
             return error();
         }
 
-        val username = passwordManagementService.parseToken(token);
+        val username = getPasswordManagementService(requestContext).parseToken(token);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified to determine username");
             return error();
@@ -43,5 +44,10 @@ public class InitPasswordResetAction extends AbstractAction {
         c.setUsername(username);
         WebUtils.putCredential(requestContext, c);
         return success();
+    }
+
+    private PasswordManagementService getPasswordManagementService(RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService);
     }
 }

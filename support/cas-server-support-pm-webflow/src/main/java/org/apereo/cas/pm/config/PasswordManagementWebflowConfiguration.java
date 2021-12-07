@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
@@ -122,7 +123,7 @@ public class PasswordManagementWebflowConfiguration {
 
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-    private ObjectProvider<PasswordManagementService> passwordManagementService;
+    private PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     @Bean
     @RefreshScope
@@ -167,14 +168,14 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     @Bean
     public Action initPasswordResetAction() {
-        return new InitPasswordResetAction(passwordManagementService.getObject());
+        return new InitPasswordResetAction(passwordManagementServiceProvider);
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeAction")
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction(passwordManagementService.getObject(), passwordValidationService.getObject());
+        return new PasswordChangeAction(passwordManagementServiceProvider, passwordValidationService.getObject());
     }
 
     @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
@@ -182,8 +183,8 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(casProperties, communicationsManager.getObject(),
-            passwordManagementService.getObject(), ticketRegistry.getObject(),
-            ticketFactory.getObject(), defaultPrincipalResolver.getObject());
+                passwordManagementServiceProvider, ticketRegistry.getObject(),
+                ticketFactory.getObject(), defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")
@@ -191,7 +192,7 @@ public class PasswordManagementWebflowConfiguration {
     @RefreshScope
     public Action verifyPasswordResetRequestAction() {
         return new VerifyPasswordResetRequestAction(casProperties,
-            passwordManagementService.getObject(), centralAuthenticationService.getObject());
+                passwordManagementServiceProvider, centralAuthenticationService.getObject());
     }
 
     @ConditionalOnMissingBean(name = "handlePasswordExpirationWarningMessagesAction")
@@ -209,15 +210,15 @@ public class PasswordManagementWebflowConfiguration {
             LOGGER.debug("Functionality to handle security questions for password management is not enabled");
             return new StaticEventExecutionAction("success");
         }
-        return new VerifySecurityQuestionsAction(passwordManagementService.getObject());
+        return new VerifySecurityQuestionsAction(passwordManagementServiceProvider);
     }
 
     @ConditionalOnMissingBean(name = "validatePasswordResetTokenAction")
     @Bean
     @RefreshScope
     public Action validatePasswordResetTokenAction() {
-        return new ValidatePasswordResetTokenAction(passwordManagementService.getObject(),
-            centralAuthenticationService.getObject());
+        return new ValidatePasswordResetTokenAction(passwordManagementServiceProvider,
+                centralAuthenticationService.getObject());
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")

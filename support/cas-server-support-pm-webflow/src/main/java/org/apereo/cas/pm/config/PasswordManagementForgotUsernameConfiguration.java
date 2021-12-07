@@ -7,7 +7,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.ForgotUsernameWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
@@ -72,8 +72,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-    private ObjectProvider<PasswordManagementService> passwordManagementService;
+    private PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     @Autowired
     @Qualifier("defaultPrincipalResolver")
@@ -84,7 +83,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     @RefreshScope
     public Action sendForgotUsernameInstructionsAction() {
         return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager.getObject(),
-            passwordManagementService.getObject(), defaultPrincipalResolver.getObject());
+                passwordManagementServiceProvider, defaultPrincipalResolver.getObject());
     }
 
     @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")

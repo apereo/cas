@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.util.LoggingUtils;
@@ -38,7 +39,7 @@ public class PasswordChangeAction extends AbstractAction {
 
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
-    private final PasswordManagementService passwordManagementService;
+    private final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     private final PasswordValidationService passwordValidationService;
 
@@ -66,20 +67,25 @@ public class PasswordChangeAction extends AbstractAction {
                 LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
-            if (passwordManagementService.change(creds, bean)) {
+            if (getPasswordManagementService(requestContext).change(creds, bean)) {
                 WebUtils.putCredential(requestContext, new UsernamePasswordCredential(creds.getUsername(), bean.getPassword()));
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
                 return getSuccessEvent(requestContext, bean);
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
-                PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), StringUtils.EMPTY),
-                StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
-                e.getParams());
+                    PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), StringUtils.EMPTY),
+                    StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
+                    e.getParams());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
+    }
+
+    private PasswordManagementService getPasswordManagementService(RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService);
     }
 
     /**

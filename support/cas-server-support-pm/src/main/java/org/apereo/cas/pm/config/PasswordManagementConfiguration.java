@@ -10,8 +10,10 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.DefaultPasswordValidationService;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.impl.DefaultPasswordManagementServiceProvider;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
@@ -37,6 +39,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.stream.Collectors;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -93,6 +97,16 @@ public class PasswordManagementConfiguration implements InitializingBean {
             return new InMemoryPasswordHistoryService();
         }
         return new AmnesiacPasswordHistoryService();
+    }
+
+    @Bean
+    @Autowired
+    @ConditionalOnMissingBean(name = "passwordChangeServiceProvider")
+    public PasswordManagementServiceProvider passwordChangeServiceProvider(ObjectProvider<PasswordManagementService> passwordManagementServices) {
+        return new DefaultPasswordManagementServiceProvider(
+                passwordManagementServices.stream().collect(Collectors.toUnmodifiableList()),
+                casProperties,
+                passwordManagementCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = PasswordManagementService.DEFAULT_BEAN_NAME)

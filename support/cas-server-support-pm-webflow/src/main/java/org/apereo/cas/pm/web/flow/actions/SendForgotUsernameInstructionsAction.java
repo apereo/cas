@@ -13,6 +13,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -59,7 +60,7 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
     /**
      * The password management service.
      */
-    protected final PasswordManagementService passwordManagementService;
+    protected final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     /**
      * The principal resolver to resolve the user
@@ -88,12 +89,17 @@ public class SendForgotUsernameInstructionsAction extends AbstractAction {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
         var query = PasswordManagementQuery.builder().email(email).build();
-        val username = passwordManagementService.findUsername(query);
+        val username = getPasswordManagementService(requestContext).findUsername(query);
         if (StringUtils.isBlank(username)) {
             return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
         }
         query = PasswordManagementQuery.builder().username(username).email(email).build();
         return locateUserAndProcess(requestContext, query);
+    }
+
+    private PasswordManagementService getPasswordManagementService(RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService);
     }
 
     /**

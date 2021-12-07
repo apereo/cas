@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,12 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 @Slf4j
 public class VerifySecurityQuestionsAction extends BasePasswordManagementAction {
-    private final PasswordManagementService passwordManagementService;
+    private final PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);
+        var passwordManagementService = getPasswordManagementService(requestContext);
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val questions = passwordManagementService.getSecurityQuestions(query);
@@ -36,19 +38,24 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
 
         val index = new AtomicInteger(0);
         val count = canonicalQuestions
-            .stream()
-            .filter(question -> {
-                val answer = request.getParameter("q" + index.getAndIncrement());
-                val answerOnRecord = questions.get(question);
-                LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
-                    question, answerOnRecord, answer, username);
-                return passwordManagementService.isValidSecurityQuestionAnswer(query, question, answerOnRecord, answer);
-            })
-            .count();
+                .stream()
+                .filter(question -> {
+                    val answer = request.getParameter("q" + index.getAndIncrement());
+                    val answerOnRecord = questions.get(question);
+                    LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
+                            question, answerOnRecord, answer, username);
+                    return passwordManagementService.isValidSecurityQuestionAnswer(query, question, answerOnRecord, answer);
+                })
+                .count();
         if (count == questions.size()) {
             return success();
         }
         LOGGER.error("Unable to validate answers to all security questions; only validated [{}] question(s) successfully", count);
         return error();
+    }
+
+    private PasswordManagementService getPasswordManagementService(RequestContext requestContext) {
+        final var registeredService = WebUtils.getRegisteredService(requestContext);
+        return passwordManagementServiceProvider.getPasswordChangeService(registeredService);
     }
 }
