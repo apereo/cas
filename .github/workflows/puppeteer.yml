@@ -18,13 +18,16 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 11.0.13
+  NODE_CURRENT: '14'
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
+
 
 on:
   push:
     branches:
       - master
       - '!**.**.**'
+      - 'pr-*'
   pull_request:
     types: [ labeled ]
     branches:
@@ -94,6 +97,12 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Set up Nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_CURRENT }}
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh
 #      - name: Setup tmate session
