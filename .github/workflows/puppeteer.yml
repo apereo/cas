@@ -68,7 +68,8 @@ jobs:
       scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Set up Nodejs
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ env.NODE_CURRENT }}
           cache: 'npm'
