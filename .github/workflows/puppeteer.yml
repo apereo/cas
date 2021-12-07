@@ -18,7 +18,9 @@ env:
   IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
   TERM: xterm-256color
   JDK_CURRENT: 11.0.13
+  NODE_CURRENT: 14
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
+
 
 on:
   push:
@@ -65,6 +67,11 @@ jobs:
       scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_CURRENT }}
+          cache: 'npm'
+          cache-dependency-path: ci/tests/puppeteer/package-lock.json
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
