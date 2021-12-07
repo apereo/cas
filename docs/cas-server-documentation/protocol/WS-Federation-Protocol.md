@@ -124,7 +124,7 @@ Token type may be configured on a per-service basis:
 ## Configuration
 
 {% include casproperties.html 
-module="cas-server-support-ws-idp,cas-server-support-ws-sts"
+modules="cas-server-support-ws-idp,cas-server-support-ws-sts"
 properties="cas.client." %}
 
 You may also need to declare the following repository in
