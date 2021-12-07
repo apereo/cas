@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -25,4 +27,8 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
     private final OidcRequestSupport oidcRequestSupport;
 
     private final OidcIdTokenClaimCollector idTokenClaimCollector;
+
+    private final IdTokenGeneratorService idTokenGeneratorService;
+    
+    private final ExpirationPolicyBuilder idTokenExpirationPolicy;
 }

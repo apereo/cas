@@ -52,6 +52,7 @@ public class CasOAuth20EndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "introspectionEndpointController")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
@@ -60,17 +61,18 @@ public class CasOAuth20EndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "accessTokenController")
         @Bean
-        public OAuth20AccessTokenEndpointController accessTokenController(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20AccessTokenEndpointController<OAuth20ConfigurationContext> accessTokenController(
             @Qualifier("accessTokenGrantAuditableRequestExtractor")
             final AuditableExecution accessTokenGrantAuditableRequestExtractor,
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
             return new OAuth20AccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor);
         }
-
-
+        
         @ConditionalOnMissingBean(name = "deviceUserCodeApprovalEndpointController")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20DeviceUserCodeApprovalEndpointController deviceUserCodeApprovalEndpointController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
@@ -79,7 +81,8 @@ public class CasOAuth20EndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oauthProfileController")
         @Bean
-        public OAuth20UserProfileEndpointController oauthProfileController(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20UserProfileEndpointController<OAuth20ConfigurationContext> oauthProfileController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
             return new OAuth20UserProfileEndpointController(context);
@@ -87,7 +90,8 @@ public class CasOAuth20EndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oauthRevocationController")
         @Bean
-        public OAuth20RevocationEndpointController oauthRevocationController(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20RevocationEndpointController<OAuth20ConfigurationContext> oauthRevocationController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
             return new OAuth20RevocationEndpointController(context);
@@ -96,7 +100,7 @@ public class CasOAuth20EndpointsConfiguration {
         @ConditionalOnMissingBean(name = "authorizeController")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OAuth20AuthorizeEndpointController authorizeController(
+        public OAuth20AuthorizeEndpointController<OAuth20ConfigurationContext> authorizeController(
             @Qualifier("oauth20ConfigurationContext")
             final OAuth20ConfigurationContext context) {
             return new OAuth20AuthorizeEndpointController(context);
@@ -113,13 +117,13 @@ public class CasOAuth20EndpointsConfiguration {
             return new OAuth20TokenManagementEndpoint(casProperties,
                 centralAuthenticationService, accessTokenJwtBuilder);
         }
-
     }
 
     @Configuration(value = "CasOAuth20EndpointSecurityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20EndpointSecurityConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "oauth20ProtocolEndpointConfigurer")
         public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
                 @Override

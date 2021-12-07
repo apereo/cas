@@ -45,13 +45,14 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
 
     private final OidcIssuerService issuerService;
 
-    public OidcSingleLogoutServiceMessageHandler(final HttpClient httpClient,
-                                                 final SingleLogoutMessageCreator logoutMessageBuilder,
-                                                 final ServicesManager servicesManager,
-                                                 final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-                                                 final boolean asynchronous,
-                                                 final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                                 final OidcIssuerService issuerService) {
+    public OidcSingleLogoutServiceMessageHandler(
+        final HttpClient httpClient,
+        final SingleLogoutMessageCreator logoutMessageBuilder,
+        final ServicesManager servicesManager,
+        final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+        final boolean asynchronous,
+        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+        final OidcIssuerService issuerService) {
         super(httpClient, logoutMessageBuilder, servicesManager, singleLogoutServiceLogoutUrlBuilder,
             asynchronous, authenticationRequestServiceSelectionStrategies);
         this.issuerService = issuerService;

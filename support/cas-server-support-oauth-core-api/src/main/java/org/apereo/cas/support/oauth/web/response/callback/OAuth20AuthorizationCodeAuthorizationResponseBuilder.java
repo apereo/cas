@@ -4,15 +4,12 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.code.OAuth20Code;
-import org.apereo.cas.ticket.code.OAuth20CodeFactory;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,42 +27,27 @@ import java.util.LinkedHashMap;
  * @since 5.2.0
  */
 @Slf4j
-public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
-    /**
-     * The Ticket registry.
-     */
-    protected final TicketRegistry ticketRegistry;
-
-    /**
-     * The OAuth 2.0 code factory.
-     */
-    protected final OAuth20CodeFactory oAuthCodeFactory;
-
-    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final ServicesManager servicesManager,
-                                                                final CasConfigurationProperties casProperties,
-                                                                final TicketRegistry ticketRegistry,
-                                                                final OAuth20CodeFactory oAuthCodeFactory,
+public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder<OAuth20ConfigurationContext> {
+    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final OAuth20ConfigurationContext context,
                                                                 final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
-        super(servicesManager, casProperties, authorizationModelAndViewBuilder);
-        this.ticketRegistry = ticketRegistry;
-        this.oAuthCodeFactory = oAuthCodeFactory;
+        super(context, authorizationModelAndViewBuilder);
     }
 
     @Audit(action = AuditableActions.OAUTH2_CODE_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final WebContext context, final String clientId,
+    public ModelAndView build(final WebContext webContext, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val authentication = holder.getAuthentication();
-        val code = oAuthCodeFactory.create(holder.getService(), authentication,
+        val code = configurationContext.getOAuthCodeFactory().create(holder.getService(), authentication,
             holder.getTicketGrantingTicket(), holder.getScopes(),
             holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
             holder.getClientId(), holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        this.ticketRegistry.addTicket(code);
-        return buildCallbackViewViaRedirectUri(context, clientId, authentication, code);
+        configurationContext.getTicketRegistry().addTicket(code);
+        return buildCallbackViewViaRedirectUri(webContext, clientId, authentication, code);
     }
 
     @Override
@@ -106,7 +88,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             params.put(OAuth20Constants.NONCE, nonce);
         }
         LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
         return build(context, registeredService, redirectUri, params);
     }
 }

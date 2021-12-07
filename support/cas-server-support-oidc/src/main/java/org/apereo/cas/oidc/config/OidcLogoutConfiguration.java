@@ -49,7 +49,6 @@ public class OidcLogoutConfiguration {
             final UrlValidator urlValidator) {
             return () -> new OidcSingleLogoutServiceLogoutUrlBuilder(servicesManager, urlValidator);
         }
-
     }
 
     @Configuration(value = "OidcLogoutMessageConfiguration", proxyBeanMethods = false)
@@ -70,7 +69,6 @@ public class OidcLogoutConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcLogoutHandlerConfiguration {
 
-
         @ConditionalOnMissingBean(name = "oidcSingleLogoutServiceMessageHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -89,7 +87,7 @@ public class OidcLogoutConfiguration {
             @Qualifier("oidcIssuerService")
             final OidcIssuerService oidcIssuerService) {
             return new OidcSingleLogoutServiceMessageHandler(httpClient,
-                null,
+                oidcSingleLogoutMessageCreator,
                 servicesManager,
                 singleLogoutServiceLogoutUrlBuilder,
                 casProperties.getSlo().isAsynchronous(),
