@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_CURRENT }}
           cache: 'npm'
-          cache-dependency-path: ci/tests/puppeteer/package-lock.json
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
