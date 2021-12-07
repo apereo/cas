@@ -1,16 +1,13 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.token.JwtBuilder;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -34,19 +31,11 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder {
-    private final OAuth20TokenGenerator accessTokenGenerator;
-
-    private final JwtBuilder accessTokenJwtBuilder;
-
-    public OAuth20TokenAuthorizationResponseBuilder(final ServicesManager servicesManager,
-                                                    final CasConfigurationProperties casProperties,
-                                                    final OAuth20TokenGenerator accessTokenGenerator,
-                                                    final JwtBuilder accessTokenJwtBuilder,
-                                                    final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
-        super(servicesManager, casProperties, authorizationModelAndViewBuilder);
-        this.accessTokenGenerator = accessTokenGenerator;
-        this.accessTokenJwtBuilder = accessTokenJwtBuilder;
+public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20ConfigurationContext> extends BaseOAuth20AuthorizationResponseBuilder<T> {
+    public OAuth20TokenAuthorizationResponseBuilder(
+        final T configurationContext,
+        final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+        super(configurationContext, authorizationModelAndViewBuilder);
     }
 
     @Override
@@ -59,7 +48,7 @@ public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20Authori
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-        val result = accessTokenGenerator.generate(holder);
+        val result = configurationContext.getAccessTokenGenerator().generate(holder);
         val accessToken = result.getAccessToken().orElse(null);
         val refreshToken = result.getRefreshToken().orElse(null);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
@@ -102,8 +91,8 @@ public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20Authori
             .accessToken(accessToken)
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
+            .accessTokenJwtBuilder(configurationContext.getAccessTokenJwtBuilder())
+            .casProperties(configurationContext.getCasProperties())
             .build()
             .encode();
 
@@ -148,7 +137,8 @@ public class OAuth20TokenAuthorizationResponseBuilder extends BaseOAuth20Authori
         val url = builder.toString();
 
         LOGGER.debug("Redirecting to URL [{}]", url);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            configurationContext.getServicesManager(), accessToken.getClientId());
         return build(context, registeredService, url, new LinkedHashMap<>());
     }
 }

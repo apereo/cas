@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.RequiredArgsConstructor;
 import org.pac4j.core.context.WebContext;
@@ -17,18 +16,13 @@ import java.util.Map;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public abstract class BaseOAuth20AuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
+public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20ConfigurationContext> implements OAuth20AuthorizationResponseBuilder {
 
     /**
-     * Services manager.
+     * Configuration context.
      */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * CAS configuration properties.
-     */
-    protected final CasConfigurationProperties casProperties;
-
+    protected final T configurationContext;
+    
     /**
      * Response customizer.
      */

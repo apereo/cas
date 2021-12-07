@@ -26,9 +26,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -52,6 +54,7 @@ public class CasCoreConfiguration {
     public static class CasCorePolicyConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "authenticationPolicyFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory(
             final CasConfigurationProperties casProperties) {
             if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
@@ -64,6 +67,7 @@ public class CasCoreConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceMatchingStrategy serviceMatchingStrategy(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -77,6 +81,7 @@ public class CasCoreConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CentralAuthenticationService centralAuthenticationService(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
@@ -109,6 +114,7 @@ public class CasCoreConfiguration {
     public static class CasCoreAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
             final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
             val plan = new DefaultAuthenticationServiceSelectionPlan();

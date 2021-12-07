@@ -88,6 +88,7 @@ public class CasCoreTicketsConfiguration {
 
         @ConditionalOnMissingBean(name = TicketRegistrySupport.BEAN_NAME)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketRegistrySupport defaultTicketRegistrySupport(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
@@ -140,6 +141,7 @@ public class CasCoreTicketsConfiguration {
 
         @ConditionalOnMissingBean(name = "lockingStrategy")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockingStrategy lockingStrategy() {
             return new NoOpLockingStrategy();
         }
@@ -159,6 +161,7 @@ public class CasCoreTicketsConfiguration {
 
         @ConditionalOnMissingBean(name = "ticketCatalog")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketCatalog ticketCatalog(
             final CasConfigurationProperties casProperties,
             final List<TicketCatalogConfigurer> configurers) {
@@ -196,6 +199,7 @@ public class CasCoreTicketsConfiguration {
 
         @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator(
             final CasConfigurationProperties casProperties) {
             return new ProxyTicketIdGenerator(

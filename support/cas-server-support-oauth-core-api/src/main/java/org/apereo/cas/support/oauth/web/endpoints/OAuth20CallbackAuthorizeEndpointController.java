@@ -43,7 +43,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val callback = new OAuth20CallbackLogic();
         val context = new JEEContext(request, response);
-        val defaultUrl = context.getRequestParameter(OAuth20Constants.REDIRECT_URI).orElse(context.getFullRequestURL());
+        val defaultUrl = context.getRequestParameter(OAuth20Constants.REDIRECT_URI).orElseGet(context::getFullRequestURL);
         callback.perform(context, getConfigurationContext().getSessionStore(),
             getConfigurationContext().getOauthConfig(), (object, ctx) -> Boolean.FALSE,
                 defaultUrl, Boolean.FALSE, Authenticators.CAS_OAUTH_CLIENT);
