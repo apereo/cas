@@ -155,7 +155,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowClientConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderConfigurationPostProcessor")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor(
             final CasConfigurationProperties casProperties) {
             val resource = casProperties.getAuthn().getPac4j().getCore().getGroovyProviderPostProcessor().getLocation();
@@ -349,6 +349,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DelegatedAuthenticationWebflowEndpointsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController(
             @Qualifier("builtClients")
             final Clients builtClients,
@@ -359,6 +360,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "delegatedClientNavigationController")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DefaultDelegatedAuthenticationNavigationController delegatedClientNavigationController(
             @Qualifier("delegatedClientAuthenticationConfigurationContext")
             final DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext,
