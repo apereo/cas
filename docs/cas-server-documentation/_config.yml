@@ -4,6 +4,12 @@ exclude:
   - .history
   - .jekyll-cache
   - .jekyll-metadata
+  - 5.2.x
+  - 5.1.x
+  - 5.0.x
+  - 4.2.x
+  - 4.1.x
+  - 4.0.x
 markdown: kramdown
 plugins:
   - jekyll-sitemap
