@@ -37,6 +37,7 @@ public class MongoDbServiceRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoTemplate mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
@@ -53,6 +54,7 @@ public class MongoDbServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
         final MongoTemplate mongoDbServiceRegistryTemplate,

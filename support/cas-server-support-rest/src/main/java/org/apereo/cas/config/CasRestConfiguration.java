@@ -146,6 +146,7 @@ public class CasRestConfiguration {
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasRestControllerResourcesConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketStatusResource ticketStatusResource(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
@@ -153,6 +154,7 @@ public class CasRestConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceTicketResource serviceTicketResource(
             @Qualifier("serviceTicketResourceEntityResponseFactory")
             final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory,
@@ -170,6 +172,7 @@ public class CasRestConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketGrantingTicketResource ticketGrantingTicketResource(
             @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
             final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory,
@@ -186,6 +189,7 @@ public class CasRestConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UserAuthenticationResource userAuthenticationRestController(
             @Qualifier("userAuthenticationResourceEntityResponseFactory")
             final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory,

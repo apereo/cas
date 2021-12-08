@@ -47,6 +47,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter")
@@ -122,6 +123,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
         @ConditionalOnProperty(prefix = "cas.authn.passwordless.tokens.jpa.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "jpaPasswordlessAuthenticationTokenRepositoryCleaner")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JpaPasswordlessAuthenticationTokenRepositoryCleaner jpaPasswordlessAuthenticationTokenRepositoryCleaner(
             @Qualifier("passwordlessTokenRepository")
             final PasswordlessTokenRepository passwordlessTokenRepository) {

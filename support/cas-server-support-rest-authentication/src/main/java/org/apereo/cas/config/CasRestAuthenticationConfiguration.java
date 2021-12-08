@@ -67,6 +67,7 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restAuthenticationHandler")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler restAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
@@ -83,6 +84,7 @@ public class CasRestAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("restAuthenticationHandler")

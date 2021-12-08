@@ -150,6 +150,7 @@ public class MultifactorAuthnTrustConfiguration {
         @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine")
             final MultifactorAuthenticationTrustStorage mfaTrustEngine) {

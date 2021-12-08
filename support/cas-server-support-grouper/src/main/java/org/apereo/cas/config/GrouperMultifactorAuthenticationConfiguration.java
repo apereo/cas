@@ -36,6 +36,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "grouperFacade")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public GrouperFacade grouperFacade() {
         return new GrouperFacade();
     }

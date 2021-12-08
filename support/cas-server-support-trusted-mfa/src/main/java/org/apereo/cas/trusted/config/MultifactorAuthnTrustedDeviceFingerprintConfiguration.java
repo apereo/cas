@@ -125,12 +125,14 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieRandomStringGenerator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RandomStringGenerator deviceFingerprintCookieRandomStringGenerator() {
             return new Base64RandomStringGenerator();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager deviceFingerprintCookieValueManager(
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {

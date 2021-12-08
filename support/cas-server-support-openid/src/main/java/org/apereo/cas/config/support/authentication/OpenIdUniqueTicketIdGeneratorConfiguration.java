@@ -8,8 +8,10 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link OpenIdUniqueTicketIdGeneratorConfiguration}.
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenIdUniqueTicketIdGeneratorConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGeneratorConfigurer openIdUniqueTicketIdGeneratorConfigurer(final CasConfigurationProperties casProperties) {
         return () -> CollectionUtils.wrap(
             Pair.of(OpenIdService.class.getCanonicalName(), new ServiceTicketIdGenerator(casProperties.getTicket().getSt().getMaxLength(), casProperties.getHost().getName())));

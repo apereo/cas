@@ -105,6 +105,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPObjectSignatureValidator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlObjectSignatureValidator samlIdPObjectSignatureValidator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
@@ -117,6 +118,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlObjectSignatureValidator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlObjectSignatureValidator samlObjectSignatureValidator(final CasConfigurationProperties casProperties) {
             val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
             return new SamlObjectSignatureValidator(algs.getOverrideSignatureReferenceDigestMethods(),
@@ -233,12 +235,10 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostProfileHandlerDecoders")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
-            val props = casProperties.getAuthn()
-                .getSamlIdp()
-                .getProfile()
-                .getSso();
+            val props = casProperties.getAuthn().getSamlIdp().getProfile().getSso();
             val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
             decoders.put(HttpMethod.GET, new UrlDecodingHTTPRedirectDeflateDecoder(props.isUrlDecodeRedirectRequest()));
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
@@ -247,6 +247,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ssoPostSimpleSignProfileHandlerDecoders")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap ssoPostSimpleSignProfileHandlerDecoders(
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSsoPostSimpleSign();
@@ -258,6 +259,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "sloRedirectProfileHandlerDecoders")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloRedirectProfileHandlerDecoders(final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getSamlIdp().getProfile().getSlo();
             val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
@@ -268,6 +270,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "sloPostProfileHandlerDecoders")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HttpServletRequestXMLMessageDecodersMap sloPostProfileHandlerDecoders() {
             val decoders = new HttpServletRequestXMLMessageDecodersMap(HttpMethod.class);
             decoders.put(HttpMethod.POST, new HTTPPostDecoder());
@@ -312,6 +315,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlLogoutBuilder")
@@ -336,8 +340,8 @@ public class SamlIdPEndpointsConfiguration {
                 velocityEngineFactory, openSamlConfigBean);
         }
 
-
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder(
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
@@ -367,6 +371,7 @@ public class SamlIdPEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPServicesConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Service samlIdPCallbackService(
             @Qualifier("samlIdPServiceFactory")
             final ServiceFactory samlIdPServiceFactory,
@@ -379,18 +384,18 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServiceRegistryExecutionPlanConfigurer")
-        public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext,
-                                                                                                    @Qualifier("samlIdPCallbackService")
-                                                                                                    final Service samlIdPCallbackService) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceRegistryExecutionPlanConfigurer samlIdPServiceRegistryExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("samlIdPCallbackService")
+            final Service samlIdPCallbackService) {
             return plan -> {
-                val callbackService = samlIdPCallbackService.getId()
-                    .concat(".*");
+                val callbackService = samlIdPCallbackService.getId().concat(".*");
                 LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
                 val service = new RegexRegisteredService();
                 service.setId(RandomUtils.nextLong());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
-                service.setName(service.getClass()
-                    .getSimpleName());
+                service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML Authentication Request Callback");
                 service.setServiceId(callbackService);
                 plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
@@ -399,6 +404,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServicesManagerRegisteredServiceLocator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerRegisteredServiceLocator samlIdPServicesManagerRegisteredServiceLocator(
             @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver) {
@@ -413,6 +419,7 @@ public class SamlIdPEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "ssoSamlHttpRequestExtractor")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SSOSamlHttpRequestExtractor ssoSamlHttpRequestExtractor(
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
@@ -421,9 +428,9 @@ public class SamlIdPEndpointsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPTicketValidator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketValidator samlIdPTicketValidator(
             @Qualifier(ServicesManager.BEAN_NAME)
-
             final ServicesManager servicesManager,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -435,6 +442,7 @@ public class SamlIdPEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
 

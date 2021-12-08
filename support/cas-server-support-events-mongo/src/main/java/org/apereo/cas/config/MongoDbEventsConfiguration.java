@@ -50,16 +50,19 @@ public class MongoDbEventsConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter mongoEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }
 
     @Bean
-    public CasEventRepository casEventRepository(final CasConfigurationProperties casProperties,
-                                                 @Qualifier("mongoEventRepositoryFilter")
-                                                 final CasEventRepositoryFilter mongoEventRepositoryFilter,
-                                                 @Qualifier("mongoEventsTemplate")
-                                                 final MongoTemplate mongoEventsTemplate) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public CasEventRepository casEventRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoEventRepositoryFilter")
+        final CasEventRepositoryFilter mongoEventRepositoryFilter,
+        @Qualifier("mongoEventsTemplate")
+        final MongoTemplate mongoEventsTemplate) {
         val mongo = casProperties.getEvents().getMongo();
         return new MongoDbCasEventRepository(mongoEventRepositoryFilter, mongoEventsTemplate, mongo.getCollection());
     }

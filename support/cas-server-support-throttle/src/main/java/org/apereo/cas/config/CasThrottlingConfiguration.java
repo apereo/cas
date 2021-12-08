@@ -187,6 +187,7 @@ public class CasThrottlingConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasThrottlingSchedulerConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable throttleSubmissionCleaner(
             @Qualifier("authenticationThrottlingExecutionPlan")
             final AuthenticationThrottlingExecutionPlan plan) {
