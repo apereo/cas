@@ -11,7 +11,7 @@ category: Services
 This is an in-memory services management tool seeded from registration beans wired via Spring beans.
 
 ```java
-@Configuration("myConfiguration")
+@Configuration(value = "myConfiguration", proxyBeanMethods = false)
 public class MyConfiguration {
 
   @Bean

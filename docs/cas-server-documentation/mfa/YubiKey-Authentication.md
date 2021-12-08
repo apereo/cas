@@ -63,7 +63,7 @@ sources and databases for validity and authorization:
 ```java
 package org.apereo.cas.support.yubikey;
 
-@Configuration("myYubiKeyConfiguration")
+@Configuration(value = "myYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyYubiKeyConfiguration {
 

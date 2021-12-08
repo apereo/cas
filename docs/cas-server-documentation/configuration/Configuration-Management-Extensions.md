@@ -30,7 +30,7 @@ To design your own configuration class, take inspiration from the following samp
 ```java
 package org.apereo.cas.custom.config;
 
-@Configuration("SomethingConfiguration")
+@Configuration(value = "SomethingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
 

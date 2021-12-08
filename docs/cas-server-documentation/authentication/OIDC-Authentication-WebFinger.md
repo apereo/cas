@@ -103,7 +103,7 @@ It is possible to design and inject your own version of webfinger user repositor
 a `@Configuration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
 
 ```java
-@Configuration("customWebFingerUserInfoConfiguration")
+@Configuration(value = "customWebFingerUserInfoConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CustomWebFingerUserInfoConfiguration {
 

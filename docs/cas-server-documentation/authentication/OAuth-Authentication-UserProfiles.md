@@ -49,7 +49,7 @@ design a component and register it with CAS to handle the rendering of the user 
 ```java
 package org.apereo.cas.support.oauth;
 
-@Configuration("MyOAuthConfiguration")
+@Configuration(value = "MyOAuthConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyOAuthConfiguration {
 
