@@ -36,6 +36,7 @@ public class CasMongoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory mongoPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

@@ -41,6 +41,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager(
         @Qualifier("acceptableUsagePolicyDataSource")
         final DataSource acceptableUsagePolicyDataSource) {

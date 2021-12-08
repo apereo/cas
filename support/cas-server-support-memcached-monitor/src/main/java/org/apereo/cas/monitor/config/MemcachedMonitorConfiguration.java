@@ -44,6 +44,7 @@ public class MemcachedMonitorConfiguration {
     @Bean
     @ConditionalOnEnabledHealthIndicator("memcachedHealthIndicator")
     @ConditionalOnMissingBean(name = "memcachedHealthIndicator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator memcachedHealthIndicator(
         @Qualifier("memcachedHealthClientPool")
         final ObjectPool<MemcachedClientIF> memcachedHealthClientPool,

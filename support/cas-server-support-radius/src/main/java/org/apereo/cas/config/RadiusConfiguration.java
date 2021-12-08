@@ -93,6 +93,7 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory radiusPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -150,6 +151,7 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("radiusAuthenticationHandler")
@@ -168,6 +170,7 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusPasswordPolicyConfiguration")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext radiusPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

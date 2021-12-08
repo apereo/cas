@@ -49,6 +49,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationServiceSelectionStrategyConfigurer shibbolethIdPAuthenticationServiceSelectionStrategyConfigurer(
         @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy,

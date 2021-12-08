@@ -20,10 +20,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
@@ -49,7 +51,7 @@ public class CasCoreUtilConfiguration {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @Lazy(false)
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
     }
@@ -76,16 +78,19 @@ public class CasCoreUtilConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilConverterConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MessageInterpolator messageInterpolator() {
             return new SpringAwareMessageMessageInterpolator();
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
             return new Converters.ZonedDateTimeToStringConverter();
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ObjectMapper objectMapper() {
             return JacksonObjectMapperFactory.builder().build().toObjectMapper();
         }

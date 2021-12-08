@@ -7,8 +7,10 @@ import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasOAuthUmaTicketSerializationConfiguration}.
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasOAuthUmaTicketSerializationConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer());

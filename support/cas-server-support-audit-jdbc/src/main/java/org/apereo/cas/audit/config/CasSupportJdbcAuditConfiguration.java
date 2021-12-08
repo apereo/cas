@@ -51,6 +51,7 @@ public class CasSupportJdbcAuditConfiguration {
     public static class CasSupportJdbcAuditEntityConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
@@ -79,6 +80,7 @@ public class CasSupportJdbcAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionTemplate inspektrAuditTransactionTemplate(
             @Qualifier("inspektrAuditTransactionManager")
             final PlatformTransactionManager inspektrAuditTransactionManager, final CasConfigurationProperties casProperties) {
@@ -172,6 +174,7 @@ public class CasSupportJdbcAuditConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionManager")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager inspektrAuditTransactionManager(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource) {

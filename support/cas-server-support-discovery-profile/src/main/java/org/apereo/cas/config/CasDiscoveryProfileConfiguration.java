@@ -15,8 +15,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +41,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasServerProfileRegistrar casServerProfileRegistrar(
         final CasConfigurationProperties casProperties,
         @Qualifier("builtClients")
@@ -61,6 +64,7 @@ public class CasDiscoveryProfileConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<String> discoveryProfileAvailableAttributes(
         final CasConfigurationProperties casProperties,
         @Qualifier("attributeRepository")
