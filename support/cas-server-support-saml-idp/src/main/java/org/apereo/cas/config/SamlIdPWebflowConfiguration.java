@@ -189,7 +189,7 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPConsentSingleSignOnWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPConsentSingleSignOnParticipationStrategyConfigurer")
-        @RefreshScope
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnParticipationStrategyConfigurer samlIdPConsentSingleSignOnParticipationStrategyConfigurer(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
