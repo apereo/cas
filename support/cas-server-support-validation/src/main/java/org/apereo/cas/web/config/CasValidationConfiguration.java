@@ -157,6 +157,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification(
             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
@@ -168,6 +169,7 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateControllerValidationSpecification")
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification(
             @Qualifier("cas20ProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) {
@@ -178,6 +180,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "proxyValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification proxyValidateControllerValidationSpecification(
             @Qualifier("cas20ProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) {
@@ -188,6 +191,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "legacyValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification legacyValidateControllerValidationSpecification(
             @Qualifier("cas10ProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas10ProtocolValidationSpecification) {
@@ -198,6 +202,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidateControllerValidationSpecification")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification serviceValidateControllerValidationSpecification(
             @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
             final CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification) {
@@ -233,6 +238,7 @@ public class CasValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2SuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -244,6 +250,7 @@ public class CasValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ServiceFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -255,6 +262,7 @@ public class CasValidationConfiguration {
 
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxyFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -267,6 +275,7 @@ public class CasValidationConfiguration {
 
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxySuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -278,6 +287,7 @@ public class CasValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3SuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -288,6 +298,7 @@ public class CasValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas3ServiceFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -299,6 +310,7 @@ public class CasValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View casPostResponseView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -388,6 +400,7 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "proxyController")
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyController proxyController(
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -401,10 +414,10 @@ public class CasValidationConfiguration {
             return new ProxyController(cas2ProxySuccessView, cas2ProxyFailureView,
                 centralAuthenticationService, webApplicationServiceFactory, applicationContext);
         }
-
-
+        
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidateController")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceValidateController serviceValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -443,6 +456,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "legacyValidateController")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LegacyValidateController legacyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -481,6 +495,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "proxyValidateController")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyValidateController proxyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -521,6 +536,7 @@ public class CasValidationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateController")
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public V3ProxyValidateController v3ProxyValidateController(
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
@@ -559,6 +575,7 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ServiceValidateController")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public V3ServiceValidateController v3ServiceValidateController(
             @Qualifier("serviceValidationAuthorizers")
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,

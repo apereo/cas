@@ -61,7 +61,7 @@ be registered in a `@Configuration` class:
 ```java
 @Bean
 public CaptchaActivationStrategy captchaActivationStrategy() {
-    return new MyCaptchaActivationStrategy(servicesManager);
+    return new MyCaptchaActivationStrategy();
 }
 ```
 

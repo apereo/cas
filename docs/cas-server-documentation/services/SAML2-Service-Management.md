@@ -8,7 +8,8 @@ category: Services
 
 # SAML2 Services
 
-SAML relying parties and services must be registered within the CAS service registry similar to the following example:
+SAML relying parties and services must be registered within 
+the [CAS service registry](../services/Service-Management.html) similar to the following example:
 
 ```json
 {

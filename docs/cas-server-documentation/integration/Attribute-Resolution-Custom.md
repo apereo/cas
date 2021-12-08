@@ -15,7 +15,7 @@ to do this, you will need to design a configuration class that roughly matches t
 ```java
 package org.apereo.cas.custom;
 
-@Configuration("MyConfiguration")
+@Configuration(value = "MyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyConfiguration {
 

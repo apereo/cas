@@ -14,7 +14,7 @@ inquiries, you can design your component to make determinations:
 ```java
 package org.apereo.cas.support.interrupt;
 
-@Configuration("myInterruptConfiguration")
+@Configuration(value = "myInterruptConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyInterruptConfiguration {
     @Bean

@@ -64,7 +64,7 @@ whose job is to understand how to dynamically modify the application context.
 ```java
 package com.example.cas;
 
-@Configuration("MyAuthenticationEventExecutionPlanConfiguration")
+@Configuration(value = "MyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyAuthenticationEventExecutionPlanConfiguration
                     implements AuthenticationEventExecutionPlanConfigurer {
