@@ -39,6 +39,7 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action duoNonWebAuthenticationAction() {
         return new DuoSecurityDirectAuthenticationAction();
     }

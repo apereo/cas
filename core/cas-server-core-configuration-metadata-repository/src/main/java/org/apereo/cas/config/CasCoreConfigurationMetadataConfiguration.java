@@ -7,8 +7,10 @@ import org.apereo.cas.metadata.rest.CasConfigurationMetadataServerEndpoint;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreConfigurationMetadataConfiguration}.
@@ -29,6 +31,7 @@ public class CasCoreConfigurationMetadataConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasConfigurationMetadataRepository casConfigurationMetadataRepository() {
         return new CasConfigurationMetadataRepository();
     }

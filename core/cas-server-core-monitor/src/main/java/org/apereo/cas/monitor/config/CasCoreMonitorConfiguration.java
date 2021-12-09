@@ -17,8 +17,10 @@ import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreMonitorConfiguration}.
@@ -33,6 +35,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "memoryHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("memoryHealthIndicator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator memoryHealthIndicator(
         final CasConfigurationProperties casProperties) {
         val freeMemThreshold = casProperties.getMonitor().getMemory().getFreeMemThreshold();
@@ -46,6 +49,7 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
     @ConditionalOnEnabledHealthIndicator("sessionHealthIndicator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator sessionHealthIndicator(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
@@ -67,6 +71,7 @@ public class CasCoreMonitorConfiguration {
         @Bean
         @ConditionalOnEnabledHealthIndicator("systemHealthIndicator")
         @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HealthIndicator systemHealthIndicator(
             @Qualifier("metricsEndpoint")
             final MetricsEndpoint metricsEndpoint,

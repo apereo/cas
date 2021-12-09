@@ -48,6 +48,7 @@ public class DigestAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "digestAuthenticationAction")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action digestAuthenticationAction(
         @Qualifier("defaultDigestCredentialRetriever")
         final DigestHashedCredentialRetriever defaultDigestCredentialRetriever, final CasConfigurationProperties casProperties,

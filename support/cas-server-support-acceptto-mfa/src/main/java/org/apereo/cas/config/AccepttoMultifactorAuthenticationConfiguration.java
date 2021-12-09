@@ -263,6 +263,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "mfaAccepttoQRCodeValidateWebSocketChannelAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaAccepttoQRCodeValidateWebSocketChannelAction(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaAccepttoDistributedSessionStore")
@@ -273,6 +274,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaAccepttoMultifactorFinalizeAuthenticationWebflowAction(
             @Qualifier("mfaAccepttoMultifactorAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver mfaAccepttoMultifactorAuthenticationWebflowEventResolver) {

@@ -126,9 +126,11 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     }
 
     @Bean
-    public Action initializeLoginAction(final CasConfigurationProperties casProperties,
-                                        @Qualifier(ServicesManager.BEAN_NAME)
-                                        final ServicesManager servicesManager) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public Action initializeLoginAction(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         return new PrepareForPasswordlessAuthenticationAction(servicesManager, casProperties);
     }
 

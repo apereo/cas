@@ -92,6 +92,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesResponseLocatorConfiguration {
         @ConditionalOnMissingBean(name = "webApplicationResponseBuilderLocator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilderLocator webApplicationResponseBuilderLocator(final List<ResponseBuilder> responseBuilders) {
             AnnotationAwareOrderComparator.sortIfNecessary(responseBuilders);
             return new DefaultWebApplicationResponseBuilderLocator(responseBuilders);
@@ -246,6 +247,7 @@ public class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreServicesManagerExecutionPlanConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
             @Qualifier("serviceRegistry")
             final ChainingServiceRegistry serviceRegistry,

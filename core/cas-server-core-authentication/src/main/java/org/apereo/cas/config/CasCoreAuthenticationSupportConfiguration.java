@@ -50,6 +50,7 @@ public class CasCoreAuthenticationSupportConfiguration {
 
         @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
             return new DefaultPrincipalAttributesRepositoryCache();
         }

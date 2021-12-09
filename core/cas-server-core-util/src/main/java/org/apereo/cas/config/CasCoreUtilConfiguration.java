@@ -108,6 +108,7 @@ public class CasCoreUtilConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager() {
             return new GroovyScriptResourceCacheManager();
         }

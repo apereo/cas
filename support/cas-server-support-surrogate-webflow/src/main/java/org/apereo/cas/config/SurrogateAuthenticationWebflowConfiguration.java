@@ -52,6 +52,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationWebflowBaseConfiguration {
 
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnDuoSecurityConfigured
         public CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer() {
@@ -65,6 +66,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer surrogateWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
@@ -105,6 +107,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action authenticationViaFormAction(
             @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -143,13 +146,12 @@ public class SurrogateAuthenticationWebflowConfiguration {
     public static class SurrogateAuthenticationInitializerConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InitializingBean surrogateAuthenticationWebflowInitializer(
             @Qualifier("handledAuthenticationExceptions")
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return () -> handledAuthenticationExceptions.registerException(SurrogateAuthenticationException.class);
         }
-
-
     }
 
     @Configuration(value = "SurrogateAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
@@ -158,6 +160,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer(
             @Qualifier("surrogateWebflowConfigurer")
             final CasWebflowConfigurer surrogateWebflowConfigurer) {
@@ -171,6 +174,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
     public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer(
             @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
             final CasWebflowConfigurer surrogateWebflowConfigurer) {

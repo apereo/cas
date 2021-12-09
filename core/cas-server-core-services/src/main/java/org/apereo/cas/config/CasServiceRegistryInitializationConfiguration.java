@@ -137,6 +137,7 @@ public class CasServiceRegistryInitializationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
         public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
             @Qualifier("embeddedJsonServiceRegistry")

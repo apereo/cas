@@ -56,6 +56,7 @@ public class OpenIdWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action openIdSingleSignOnAction(
         @Qualifier("defaultOpenIdUserNameExtractor")
         final OpenIdUserNameExtractor defaultOpenIdUserNameExtractor,

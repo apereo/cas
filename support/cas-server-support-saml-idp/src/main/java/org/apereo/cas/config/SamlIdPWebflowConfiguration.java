@@ -84,6 +84,7 @@ public class SamlIdPWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPWebflowActionsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlIdPSessionStoreTicketGrantingTicketAction")
         public Action samlIdPSessionStoreTicketGrantingTicketAction(
             @Qualifier("samlIdPDistributedSessionStore")

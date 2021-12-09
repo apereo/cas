@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 public class CasCoreNotificationsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "communicationsManager")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
         @Qualifier("mailSender")
         final ObjectProvider<JavaMailSender> mailSender,

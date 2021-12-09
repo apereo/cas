@@ -38,6 +38,7 @@ public class CasBasicAuthenticationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "basicAuthenticationAction")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action basicAuthenticationAction(
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,

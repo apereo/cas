@@ -12,8 +12,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class CasCoreTicketsSerializationConfiguration {
     public static class CasCoreTicketsSerializationPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ticketSerializationExecutionPlan")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketSerializationExecutionPlan ticketSerializationExecutionPlan(
             final ObjectProvider<List<TicketSerializationExecutionPlanConfigurer>> providerList) {
             val providers = Optional.ofNullable(providerList.getIfAvailable()).orElseGet(ArrayList::new);
@@ -51,6 +54,7 @@ public class CasCoreTicketsSerializationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "ticketSerializationManager")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketSerializationManager ticketSerializationManager(
             @Qualifier("ticketSerializationExecutionPlan")
             final TicketSerializationExecutionPlan ticketSerializationExecutionPlan) {

@@ -7,8 +7,10 @@ import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Map;
 public class CasCoreTicketIdGeneratorsConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap(
         final ObjectProvider<List<UniqueTicketIdGeneratorConfigurer>> configurers) {
         val map = new HashMap<String, UniqueTicketIdGenerator>();

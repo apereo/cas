@@ -16,9 +16,11 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -39,6 +41,7 @@ public class CasOAuth20WebflowConfiguration {
     public static class CasOAuth20WebflowActionConfiguration {
         @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action oauth20RegisteredServiceUIAction(
             @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
@@ -48,6 +51,7 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauth20SessionStoreTicketGrantingTicketAction")
         public Action oauth20SessionStoreTicketGrantingTicketAction(
             @Qualifier("oauthDistributedSessionStore")
