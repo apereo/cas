@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>SAML2 Authentication Error</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-danger alert alert-danger mdc-card card p-4 m-auto w-lg-66 text-justify">
+        <h2>SAML2 Identity Provider Error</h2>
+        <p>
+            The service you are attempting to log into, has identified a problem
+            with your profile or request. Please contact your IT helpdesk for support.
+        </p>
+    </div>
+</main>
+</body>
+</html>
