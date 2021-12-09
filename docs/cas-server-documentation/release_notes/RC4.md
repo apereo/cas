@@ -67,6 +67,7 @@ on a per-service basis.
               
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 - Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
+- SAML2 metadata generation can now populate the `errorURL` attribute with an `idp/error` endpoint that can present a generic error page, available publicly.
 
 ## Library Upgrades
 
