@@ -66,7 +66,16 @@ on a per-service basis.
 ## Other Stuff
               
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
+- Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
 
 ## Library Upgrades
 
 - Spring Cloud
+- SpotBugs
+- Hibernate
+- Apache Tomcat
+- Thymeleaf
+- Pac4j
+- Grouper Client
+- Micrometer
+- Dropwizard
