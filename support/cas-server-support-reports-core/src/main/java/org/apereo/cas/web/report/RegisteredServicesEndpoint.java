@@ -62,9 +62,11 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
 
     private final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers;
 
-    public RegisteredServicesEndpoint(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
-                                      final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                      final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers) {
+    public RegisteredServicesEndpoint(
+        final CasConfigurationProperties casProperties,
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final Collection<StringSerializer<RegisteredService>> registeredServiceSerializers) {
         super(casProperties);
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
@@ -92,7 +94,9 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
+    public ResponseEntity<String> fetchService(
+        @PathVariable
+        final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
             ? servicesManager.findServiceBy(Long.parseLong(id))
             : servicesManager.findServiceBy(webApplicationServiceFactory.createService(id));
@@ -111,7 +115,9 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> fetchServicesByType(@PathVariable final String type) throws Exception {
+    public ResponseEntity<String> fetchServicesByType(
+        @PathVariable
+        final String type) throws Exception {
         val services = servicesManager.findServiceBy(registeredService -> registeredService.getClass().getSimpleName().equalsIgnoreCase(type));
         return ResponseEntity.ok(MAPPER.writeValueAsString(services));
     }
@@ -126,7 +132,9 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Delete registered service by id")
     @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
+    public ResponseEntity<String> deleteService(
+        @PathVariable
+        final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
             val svc = servicesManager.findServiceBy(Long.parseLong(id));
             if (svc != null) {
