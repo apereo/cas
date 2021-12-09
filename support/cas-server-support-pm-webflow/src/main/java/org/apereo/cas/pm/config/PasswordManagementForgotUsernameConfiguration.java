@@ -53,6 +53,7 @@ public class PasswordManagementForgotUsernameConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class PasswordManagementForgotUsernameAuditConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "forgotUsernameAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer forgotUsernameAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("returnValueResourceResolver")
@@ -88,6 +89,7 @@ public class PasswordManagementForgotUsernameConfiguration {
 
         @ConditionalOnMissingBean(name = "forgotUsernameWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -100,6 +102,7 @@ public class PasswordManagementForgotUsernameConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "forgotUsernameCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer forgotUsernameCasWebflowExecutionPlanConfigurer(
             @Qualifier("forgotUsernameWebflowConfigurer")
@@ -132,9 +135,10 @@ public class PasswordManagementForgotUsernameConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_VALIDATE_CAPTCHA)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public Action forgotUsernameValidateCaptchaAction(final CasConfigurationProperties casProperties,
-                                                          @Qualifier("forgotUsernameCaptchaActivationStrategy")
-                                                          final CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy) {
+        public Action forgotUsernameValidateCaptchaAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("forgotUsernameCaptchaActivationStrategy")
+            final CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy) {
             val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
             return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), forgotUsernameCaptchaActivationStrategy);
         }
@@ -155,13 +159,15 @@ public class PasswordManagementForgotUsernameConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy(@Qualifier(ServicesManager.BEAN_NAME)
-                                                                                 final ServicesManager servicesManager) {
+        public CaptchaActivationStrategy forgotUsernameCaptchaActivationStrategy(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new DefaultCaptchaActivationStrategy(servicesManager);
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "forgotUsernameCaptchaWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer forgotUsernameCaptchaWebflowExecutionPlanConfigurer(
             @Qualifier("forgotUsernameCaptchaWebflowConfigurer")
             final CasWebflowConfigurer cfg) {
