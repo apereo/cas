@@ -25,10 +25,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 
@@ -48,6 +50,7 @@ public class CasCoreValidationConfiguration {
     public static class CasCoreValidationProxyConfiguration {
         @ConditionalOnMissingBean(name = "proxy10Handler")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         public ProxyHandler proxy10Handler() {
             return new Cas10ProxyHandler();
@@ -55,6 +58,7 @@ public class CasCoreValidationConfiguration {
 
         @ConditionalOnMissingBean(name = "proxy20Handler")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         public ProxyHandler proxy20Handler(
             @Qualifier("proxy20TicketUniqueIdGenerator")
@@ -70,6 +74,7 @@ public class CasCoreValidationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationSpecificationConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "cas10ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas10ProtocolValidationSpecification(
@@ -79,6 +84,7 @@ public class CasCoreValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @ConditionalOnMissingBean(name = "cas20ProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas20ProtocolValidationSpecification(
@@ -89,6 +95,7 @@ public class CasCoreValidationConfiguration {
 
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "cas20WithoutProxyProtocolValidationSpecification")
         public CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification(
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -104,7 +111,9 @@ public class CasCoreValidationConfiguration {
     public static class CasCoreValidationExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidationAuthorizers")
-        public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(
+            final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
             val plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
             configurers.forEach(c -> {
                 LOGGER.trace("Configuring service ticket validation authorizer execution plan [{}]", c.getName());
@@ -119,6 +128,7 @@ public class CasCoreValidationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationAuthorizerConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casCoreServiceTicketValidationAuthorizerConfigurer")
         public ServiceTicketValidationAuthorizerConfigurer casCoreServiceTicketValidationAuthorizerConfigurer(
             @Qualifier("authenticationPolicyAwareServiceTicketValidationAuthorizer")
@@ -127,6 +137,7 @@ public class CasCoreValidationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authenticationPolicyAwareServiceTicketValidationAuthorizer")
         public ServiceTicketValidationAuthorizer authenticationPolicyAwareServiceTicketValidationAuthorizer(
             final ConfigurableApplicationContext applicationContext,

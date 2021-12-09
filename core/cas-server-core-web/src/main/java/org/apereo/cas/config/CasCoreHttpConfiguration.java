@@ -45,6 +45,7 @@ public class CasCoreHttpConfiguration {
     public static class CasCoreHttpSslFactoryConfiguration {
         @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SSLConnectionSocketFactory trustStoreSslSocketFactory(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
@@ -73,6 +74,7 @@ public class CasCoreHttpConfiguration {
     public static class CasCoreHttpTlsConfiguration {
         @ConditionalOnMissingBean(name = CasSSLContext.BEAN_NAME)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSSLContext casSslContext(
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
@@ -130,6 +132,7 @@ public class CasCoreHttpConfiguration {
 
         @ConditionalOnMissingBean(name = "httpClient")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<SimpleHttpClient> httpClient(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
@@ -144,6 +147,7 @@ public class CasCoreHttpConfiguration {
 
         @ConditionalOnMissingBean(name = "noRedirectHttpClient")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SimpleHttpClient noRedirectHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
@@ -158,6 +162,7 @@ public class CasCoreHttpConfiguration {
 
         @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SimpleHttpClient supportsTrustStoreSslSocketFactoryHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,

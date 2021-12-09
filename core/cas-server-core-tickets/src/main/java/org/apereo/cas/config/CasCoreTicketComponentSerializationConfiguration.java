@@ -20,8 +20,10 @@ import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreTicketComponentSerializationConfiguration}.
@@ -34,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasCoreTicketComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "coreTicketsComponentSerializationPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer coreTicketsComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);

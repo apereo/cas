@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class CasCoreUtilSerializationConfiguration {
 
     @ConditionalOnMissingBean(name = "componentSerializationPlan")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlan componentSerializationPlan(
         final ObjectProvider<List<ComponentSerializationPlanConfigurer>> configurers) {
         val plan = new DefaultComponentSerializationPlan();

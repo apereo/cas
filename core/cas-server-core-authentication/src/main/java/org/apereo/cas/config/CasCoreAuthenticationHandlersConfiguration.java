@@ -88,6 +88,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("proxyAuthenticationHandler")
             final AuthenticationHandler proxyAuthenticationHandler,

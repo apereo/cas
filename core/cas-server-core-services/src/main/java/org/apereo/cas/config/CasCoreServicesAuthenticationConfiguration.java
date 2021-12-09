@@ -31,6 +31,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class CasCoreServicesAuthenticationConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ProtocolAttributeEncoder noOpCasAttributeEncoder() {
         return new NoOpProtocolAttributeEncoder();
     }

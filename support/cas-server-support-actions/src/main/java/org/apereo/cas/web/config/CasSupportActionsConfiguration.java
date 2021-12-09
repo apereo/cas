@@ -308,6 +308,7 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action frontChannelLogoutAction(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -327,6 +328,7 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_TICKET_GRANTING_TICKET_CHECK)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action ticketGrantingTicketCheckAction(
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
@@ -413,6 +415,7 @@ public class CasSupportActionsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action populateSpringSecurityContextAction() {
             return new PopulateSpringSecurityContextAction();
         }

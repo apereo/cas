@@ -18,9 +18,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -43,6 +45,7 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action checkConsentRequiredAction(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier("attributeDefinitionStore")
@@ -62,15 +65,18 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "confirmConsentAction")
         @Bean
-        public Action confirmConsentAction(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                           @Qualifier("attributeDefinitionStore")
-                                           final AttributeDefinitionStore attributeDefinitionStore,
-                                           @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-                                           final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                           @Qualifier(ConsentEngine.BEAN_NAME)
-                                           final ConsentEngine consentEngine,
-                                           @Qualifier(ServicesManager.BEAN_NAME)
-                                           final ServicesManager servicesManager) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action confirmConsentAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("attributeDefinitionStore")
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+            @Qualifier(ConsentEngine.BEAN_NAME)
+            final ConsentEngine consentEngine,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext);
         }
     }

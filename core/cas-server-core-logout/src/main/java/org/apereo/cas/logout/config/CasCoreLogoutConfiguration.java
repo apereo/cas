@@ -220,6 +220,7 @@ public class CasCoreLogoutConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactoryConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactoryConfigurer logoutWebApplicationServiceFactoryConfigurer(
             @Qualifier("logoutWebApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> logoutWebApplicationServiceFactory) {

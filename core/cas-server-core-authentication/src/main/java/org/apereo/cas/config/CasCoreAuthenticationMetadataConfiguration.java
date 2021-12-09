@@ -64,36 +64,42 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public static class CasCoreAuthenticationMetadataPopulatorConfiguration {
         @ConditionalOnMissingBean(name = "authenticationCredentialTypeMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator() {
             return new AuthenticationCredentialTypeMetaDataPopulator();
         }
 
         @ConditionalOnMissingBean(name = "credentialCustomFieldsAttributeMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator credentialCustomFieldsAttributeMetaDataPopulator() {
             return new CredentialCustomFieldsAttributeMetaDataPopulator();
         }
 
         @ConditionalOnMissingBean(name = "authenticationDateMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator authenticationDateMetaDataPopulator() {
             return new AuthenticationDateAttributeMetaDataPopulator();
         }
 
         @ConditionalOnMissingBean(name = "clientInfoAuthenticationMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator clientInfoAuthenticationMetaDataPopulator() {
             return new ClientInfoAuthenticationMetaDataPopulator();
         }
 
         @ConditionalOnMissingBean(name = "successfulHandlerMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
             return new SuccessfulHandlerMetaDataPopulator();
         }
 
         @ConditionalOnMissingBean(name = "rememberMeAuthenticationMetaDataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties) {
             return new RememberMeAuthenticationMetaDataPopulator(casProperties.getTicket().getTgt().getRememberMe());
@@ -121,6 +127,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public static class CasCoreAuthenticationMetadataExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("authenticationCredentialTypeMetaDataPopulator")
             final AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator,

@@ -60,6 +60,7 @@ public class CasCoreWebConfiguration {
          * @return PropertiesFactoryBean containing all common (non-i18n) messages
          */
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PropertiesFactoryBean casCommonMessages(final CasConfigurationProperties casProperties) {
             val properties = new PropertiesFactoryBean();
             val resourceLoader = new DefaultResourceLoader();
@@ -99,6 +100,7 @@ public class CasCoreWebConfiguration {
     public static class CasCoreWebRequestsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "argumentExtractor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
             val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();
             configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
@@ -119,6 +121,7 @@ public class CasCoreWebConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yamlHttpMessageConverter")
         public HttpMessageConverter yamlHttpMessageConverter() {
             return new CasYamlHttpMessageConverter();
@@ -129,6 +132,7 @@ public class CasCoreWebConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebEndpointsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casProtocolEndpointConfigurer")
         public ProtocolEndpointWebSecurityConfigurer<Void> casProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {

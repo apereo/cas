@@ -56,9 +56,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -177,6 +179,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action testWebflowSerialization() {
             //CHECKSTYLE:OFF
             return new AbstractAction() {

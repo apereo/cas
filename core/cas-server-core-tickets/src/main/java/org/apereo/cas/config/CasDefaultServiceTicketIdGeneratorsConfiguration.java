@@ -34,6 +34,7 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGeneratorConfigurer casDefaultServiceTicketUniqueTicketIdGeneratorConfigurer(
         @Qualifier("serviceTicketUniqueIdGenerator")
         final UniqueTicketIdGenerator serviceTicketUniqueIdGenerator) {
