@@ -65,13 +65,14 @@ public class SamlGoogleAppsConfiguration implements InitializingBean {
     @ConditionalOnMissingBean(name = "googleAccountsServiceResponseBuilder")
     @Bean
     @Lazy
-    public ResponseBuilder googleAccountsServiceResponseBuilder(final CasConfigurationProperties casProperties,
-                                                                @Qualifier("googleSaml20ObjectBuilder")
-                                                                final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder,
-                                                                @Qualifier("urlValidator")
-                                                                final UrlValidator urlValidator,
-                                                                @Qualifier(ServicesManager.BEAN_NAME)
-                                                                final ServicesManager servicesManager) {
+    public ResponseBuilder googleAccountsServiceResponseBuilder(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("googleSaml20ObjectBuilder")
+        final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder,
+        @Qualifier("urlValidator")
+        final UrlValidator urlValidator,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val gApps = casProperties.getGoogleApps();
         return new GoogleAccountsServiceResponseBuilder(gApps.getPrivateKeyLocation(), gApps.getPublicKeyLocation(), gApps.getKeyAlgorithm(), servicesManager, googleSaml20ObjectBuilder,
             casProperties.getSamlCore().getSkewAllowance(), casProperties.getServer().getPrefix(), urlValidator);

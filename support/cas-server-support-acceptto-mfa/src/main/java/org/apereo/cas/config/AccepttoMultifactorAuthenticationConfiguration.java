@@ -91,6 +91,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casAccepttoQRCodePrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory casAccepttoQRCodePrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
@@ -102,6 +103,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "mfaAccepttoAuthenticatorFlowRegistry")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -144,6 +146,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     public static class AccepttoMultifactorAuthenticationWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "mfaAccepttoCasWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer mfaAccepttoCasWebflowExecutionPlanConfigurer(
             @Qualifier("mfaAccepttoMultifactorWebflowConfigurer")
             final CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer) {
@@ -158,6 +161,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaAccepttoDistributedSessionStore")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SessionStore mfaAccepttoDistributedSessionStore(
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -177,6 +181,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer(
             @Qualifier("casAccepttoQRCodeAuthenticationHandler")
             final AuthenticationHandler casAccepttoQRCodeAuthenticationHandler,

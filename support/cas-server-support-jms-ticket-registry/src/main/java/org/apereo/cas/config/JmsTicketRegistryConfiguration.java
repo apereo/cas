@@ -53,6 +53,7 @@ public class JmsTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public JmsTicketRegistryReceiver messageQueueTicketRegistryReceiver(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
@@ -92,6 +93,7 @@ public class JmsTicketRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public JmsListenerContainerFactory<?> messageQueueTicketRegistryFactory(
         @Qualifier("jacksonJmsMessageConverter")
         final MessageConverter jacksonJmsMessageConverter,

@@ -127,6 +127,7 @@ public class RadiusConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationHandler radiusAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,

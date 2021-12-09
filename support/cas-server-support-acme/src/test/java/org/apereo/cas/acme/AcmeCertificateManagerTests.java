@@ -15,8 +15,10 @@ import org.shredzone.acme4j.toolbox.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +60,7 @@ public class AcmeCertificateManagerTests extends BaseAcmeTests {
     @TestConfiguration("AcmeTestConfiguration")
     public static class AcmeTestConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AcmeAuthorizationExecutor acmeAuthorizationExecutor() throws Exception {
             val locator = mock(AcmeAuthorizationExecutor.class);
             val challenge = new MockHttp01Challenge();

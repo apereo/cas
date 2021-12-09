@@ -62,6 +62,7 @@ public class CasSupportDynamoDbAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbAuditTrailExecutionPlanConfigurer")
     public AuditTrailExecutionPlanConfigurer dynamoDbAuditTrailExecutionPlanConfigurer(
         @Qualifier("dynamoDbAuditTrailManager")

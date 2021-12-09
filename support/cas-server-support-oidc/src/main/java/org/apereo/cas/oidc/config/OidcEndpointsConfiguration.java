@@ -356,6 +356,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")

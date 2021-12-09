@@ -54,6 +54,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,

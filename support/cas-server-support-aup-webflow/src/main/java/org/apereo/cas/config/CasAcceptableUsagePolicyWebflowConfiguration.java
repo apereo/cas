@@ -55,6 +55,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -90,6 +91,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     public static class CasAcceptableUsagePolicyWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer casAcceptableUsagePolicyWebflowExecutionPlanConfigurer(
             @Qualifier("acceptableUsagePolicyWebflowConfigurer")
             final CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer) {
@@ -150,6 +152,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     public static class CasAcceptableUsagePolicyWebflowAuditConfiguration {
         @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("nullableReturnValueResourceResolver")
             final AuditResourceResolver nullableReturnValueResourceResolver) {

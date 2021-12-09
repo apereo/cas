@@ -19,8 +19,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
@@ -41,6 +43,7 @@ public class CasLoggingConfiguration {
     @ConditionalOnProperty(prefix = "cas.logging", name = "mdc-enabled", havingValue = "true", matchIfMissing = true)
     public static class CasMdcLoggingConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
@@ -66,9 +69,11 @@ public class CasLoggingConfiguration {
     public static class CasLog4jConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        public LoggingConfigurationEndpoint loggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
-                                                                         final Environment environment,
-                                                                         final ResourceLoader resourceLoader) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LoggingConfigurationEndpoint loggingConfigurationEndpoint(
+            final CasConfigurationProperties casProperties,
+            final Environment environment,
+            final ResourceLoader resourceLoader) {
             return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
         }
 

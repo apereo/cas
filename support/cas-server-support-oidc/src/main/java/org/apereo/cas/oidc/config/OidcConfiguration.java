@@ -630,6 +630,7 @@ public class OidcConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public static class OidcCoreConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcWebFingerUserInfoRepository")
         public OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository(
             final CasConfigurationProperties casProperties) {
@@ -696,6 +697,7 @@ public class OidcConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcServicesManagerRegisteredServiceLocator")
         public ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator() {
             return new OidcServicesManagerRegisteredServiceLocator();

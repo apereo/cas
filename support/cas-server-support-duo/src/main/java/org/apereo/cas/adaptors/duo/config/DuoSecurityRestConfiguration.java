@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link DuoSecurityRestConfiguration}.
@@ -34,6 +36,7 @@ public class DuoSecurityRestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactory")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory() {
         return new DuoSecurityRestHttpRequestCredentialFactory();
     }

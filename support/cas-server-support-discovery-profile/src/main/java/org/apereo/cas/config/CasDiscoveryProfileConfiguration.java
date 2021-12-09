@@ -56,6 +56,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
         final CasConfigurationProperties casProperties,
         @Qualifier("casServerProfileRegistrar")

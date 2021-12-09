@@ -68,6 +68,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory couchDbPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -91,6 +92,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticatorProfileService")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CouchProfileService couchDbAuthenticatorProfileService(
         @Qualifier("authenticationCouchDbFactory")
         final CouchDbConnectorFactory authenticationCouchDbFactory, final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {

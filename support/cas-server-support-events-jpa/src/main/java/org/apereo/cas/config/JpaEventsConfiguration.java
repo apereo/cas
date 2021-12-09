@@ -112,6 +112,7 @@ public class JpaEventsConfiguration {
 
         @ConditionalOnMissingBean(name = "jpaEventRepositoryFilter")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventRepositoryFilter jpaEventRepositoryFilter() {
             return CasEventRepositoryFilter.noOp();
         }

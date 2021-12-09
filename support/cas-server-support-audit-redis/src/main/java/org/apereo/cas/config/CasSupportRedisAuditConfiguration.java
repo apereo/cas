@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -29,6 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class CasSupportRedisAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditTrailManager")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailManager redisAuditTrailManager(
         @Qualifier("auditRedisTemplate")
         final RedisTemplate auditRedisTemplate,
@@ -39,6 +42,7 @@ public class CasSupportRedisAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAuditConnectionFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
@@ -49,6 +53,7 @@ public class CasSupportRedisAuditConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "auditRedisTemplate")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisTemplate auditRedisTemplate(
         @Qualifier("redisAuditConnectionFactory")
         final RedisConnectionFactory redisAuditConnectionFactory) {
@@ -56,6 +61,7 @@ public class CasSupportRedisAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailExecutionPlanConfigurer redisAuditTrailExecutionPlanConfigurer(
         @Qualifier("redisAuditTrailManager")
         final AuditTrailManager redisAuditTrailManager) {

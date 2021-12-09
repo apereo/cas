@@ -48,6 +48,7 @@ public class AuthyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AuthyWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authyAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry authyAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
@@ -67,6 +68,7 @@ public class AuthyConfiguration {
     public static class AuthyWebflowCoreConfiguration {
         @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer authyMultifactorWebflowConfigurer(
             @Qualifier("authyAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
@@ -131,6 +133,7 @@ public class AuthyConfiguration {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer(
             @Qualifier("authyAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry authyAuthenticatorFlowRegistry,
@@ -151,6 +154,7 @@ public class AuthyConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authyMultifactorTrustCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("authyMultifactorTrustWebflowConfigurer")

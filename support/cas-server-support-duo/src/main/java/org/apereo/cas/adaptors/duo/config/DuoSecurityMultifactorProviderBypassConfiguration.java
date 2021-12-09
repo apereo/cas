@@ -157,7 +157,9 @@ public class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityPrincipalMultifactorAuthenticationProviderBypass")
-    public MultifactorAuthenticationProviderBypassEvaluator duoSecurityPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public MultifactorAuthenticationProviderBypassEvaluator duoSecurityPrincipalMultifactorAuthenticationProviderBypass(
+        final CasConfigurationProperties casProperties) {
         val duoProps = casProperties.getAuthn().getMfa().getDuo();
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
         duoProps.stream()

@@ -106,6 +106,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("duoAuthenticationHandlers")
@@ -138,6 +139,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
         @ConditionalOnMissingBean(name = "duoPrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory duoPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
@@ -219,7 +221,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        public DuoSecurityPingEndpoint duoPingEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DuoSecurityPingEndpoint duoPingEndpoint(final CasConfigurationProperties casProperties,
+                                                       final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityPingEndpoint(casProperties, applicationContext);
         }
 
@@ -232,7 +236,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @ConditionalOnDuoSecurityAdminApiConfigured
-        public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties,
+                                                               final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityAdminApiEndpoint(casProperties, applicationContext);
         }
     }

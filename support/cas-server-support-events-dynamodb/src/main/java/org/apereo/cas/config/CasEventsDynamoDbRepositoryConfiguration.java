@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class CasEventsDynamoDbRepositoryConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepository casEventRepository(
         @Qualifier("dynamoDbEventRepositoryFilter")
         final CasEventRepositoryFilter dynamoDbEventRepositoryFilter,
@@ -38,6 +39,7 @@ public class CasEventsDynamoDbRepositoryConfiguration {
 
     @ConditionalOnMissingBean(name = "dynamoDbEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter dynamoDbEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

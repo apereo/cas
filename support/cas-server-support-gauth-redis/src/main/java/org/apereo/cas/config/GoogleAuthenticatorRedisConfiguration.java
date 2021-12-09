@@ -46,6 +46,7 @@ public class GoogleAuthenticatorRedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorConnectionFactory")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
@@ -64,6 +65,7 @@ public class GoogleAuthenticatorRedisConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
@@ -75,9 +77,12 @@ public class GoogleAuthenticatorRedisConfiguration {
     }
 
     @Bean
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties,
-                                                                           @Qualifier("redisGoogleAuthenticatorTemplate")
-                                                                           final RedisTemplate redisGoogleAuthenticatorTemplate) {
-        return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate, casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("redisGoogleAuthenticatorTemplate")
+        final RedisTemplate redisGoogleAuthenticatorTemplate) {
+        return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate,
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
     }
 }

@@ -113,6 +113,7 @@ public class CasCoreUtilConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasRuntimeModuleLoader casRuntimeModuleLoader() {
             return new DefaultCasRuntimeModuleLoader();
         }

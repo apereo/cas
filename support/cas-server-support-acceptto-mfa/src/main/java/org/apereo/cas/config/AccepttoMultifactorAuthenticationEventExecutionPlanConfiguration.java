@@ -111,6 +111,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     public static class AccepttoMultifactorAuthenticationEventExecutionPlanBaseConfiguration {
         @ConditionalOnMissingBean(name = "casAccepttoMultifactorAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer casAccepttoMultifactorAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("casAccepttoMultifactorAuthenticationHandler")
             final AuthenticationHandler casAccepttoMultifactorAuthenticationHandler,

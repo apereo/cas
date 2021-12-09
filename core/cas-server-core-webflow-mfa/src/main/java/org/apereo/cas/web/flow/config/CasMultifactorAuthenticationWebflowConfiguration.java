@@ -569,6 +569,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "compositeProviderSelectionMultifactorWebflowConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowRegistry,
@@ -582,6 +583,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "compositeProviderSelectionCasWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer compositeProviderSelectionCasWebflowExecutionPlanConfigurer(
             @Qualifier("compositeProviderSelectionMultifactorWebflowConfigurer")
             final CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer) {
