@@ -56,6 +56,7 @@ public class CasEventsInMemoryRepositoryConfiguration {
 
     @ConditionalOnMissingBean(name = "casEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter casEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

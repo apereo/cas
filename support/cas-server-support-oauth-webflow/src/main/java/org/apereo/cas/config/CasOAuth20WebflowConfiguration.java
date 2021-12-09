@@ -64,6 +64,7 @@ public class CasOAuth20WebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ViewsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthConfirmView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -72,6 +73,7 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovalView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -80,6 +82,7 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthDeviceCodeApprovedView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
@@ -88,6 +91,7 @@ public class CasOAuth20WebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View oauthSessionStaleMismatchErrorView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,

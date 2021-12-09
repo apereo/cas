@@ -111,6 +111,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "authyAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("authyAuthenticationHandler")
         final AuthenticationHandler authyAuthenticationHandler,

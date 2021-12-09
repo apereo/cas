@@ -42,6 +42,7 @@ public class CasConsentJdbcConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentJdbcRepositoryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentRepository consentRepository() {
             return new JpaConsentRepository();
         }

@@ -53,6 +53,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer microsoftAzureActiveDirectoryAttributeRepositoryPlanConfigurer(
         @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
         final List<IPersonAttributeDao> repositories) {

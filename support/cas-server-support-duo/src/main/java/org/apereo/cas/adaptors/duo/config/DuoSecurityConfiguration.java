@@ -84,6 +84,7 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver(
         @Qualifier("casWebflowConfigurationContext")
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {

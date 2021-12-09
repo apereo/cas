@@ -152,6 +152,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public static class GoogleAuthenticatorMultifactorAuthenticationWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")

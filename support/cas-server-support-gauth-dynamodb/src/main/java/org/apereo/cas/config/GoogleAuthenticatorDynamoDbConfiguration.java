@@ -32,6 +32,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class GoogleAuthenticatorDynamoDbConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
@@ -44,6 +45,7 @@ public class GoogleAuthenticatorDynamoDbConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("googleAuthenticatorDynamoDbTokenRepositoryFacilitator")

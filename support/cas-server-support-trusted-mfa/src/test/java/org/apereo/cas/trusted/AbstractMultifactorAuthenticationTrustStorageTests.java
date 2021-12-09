@@ -33,8 +33,10 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
 
 import java.time.ZoneOffset;
@@ -131,6 +133,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @TestConfiguration("GeoLocationServiceTestConfiguration")
     public static class GeoLocationServiceTestConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public GeoLocationService geoLocationService() {
             val service = mock(GeoLocationService.class);
             val response = new GeoLocationResponse();
