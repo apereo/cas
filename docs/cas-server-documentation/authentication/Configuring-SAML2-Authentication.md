@@ -26,6 +26,7 @@ is recommended that you view, evaluate and comment on functionality that is curr
 
 The following CAS endpoints respond to supported SAML2 profiles:
 
+- `/idp/error`
 - `/idp/profile/SAML2/Redirect/SSO`
 - `/idp/profile/SAML2/POST/SSO`
 - `/idp/profile/SAML2/POST-SimpleSign/SSO`

@@ -38,6 +38,7 @@ import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlRegisteredServiceCachedMetadataEndpoint;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
+import org.apereo.cas.support.saml.web.idp.web.SamlIdPErrorController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -85,6 +86,12 @@ public class SamlIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPMetadataEndpointConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPMetadataEndpointConfiguration {
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public SamlIdPErrorController samlIdPErrorController() {
+            return new SamlIdPErrorController();
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

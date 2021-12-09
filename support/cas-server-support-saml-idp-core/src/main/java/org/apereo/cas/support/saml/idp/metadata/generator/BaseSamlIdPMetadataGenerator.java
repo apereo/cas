@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.velocity.VelocityContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -145,6 +146,8 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
 
         private final String endpointUrl;
 
+        private final String errorUrl;
+
         private final String encryptionCertificate;
 
         private final String signingCertificate;
@@ -203,6 +206,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 .ssoServiceSoapBindingEnabled(metadataCore.isSsoServiceSoapBindingEnabled())
                 .sloServicePostBindingEnabled(metadataCore.isSloServicePostBindingEnabled())
                 .sloServiceRedirectBindingEnabled(metadataCore.isSloServiceRedirectBindingEnabled())
+                .errorUrl(StringUtils.appendIfMissing(getIdPEndpointUrl(), "/error"))
                 .build();
 
             val template = configurationContext.getVelocityEngine()

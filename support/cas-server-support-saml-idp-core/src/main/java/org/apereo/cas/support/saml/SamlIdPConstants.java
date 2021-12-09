@@ -8,6 +8,10 @@ package org.apereo.cas.support.saml;
  * @since 5.0.0
  */
 public interface SamlIdPConstants {
+    /**
+     * The IdP error endpoint.
+     */
+    String ENDPOINT_IDP_ERROR = "/idp/error";
 
     /**
      * The IdP metadata endpoint.
