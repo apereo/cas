@@ -5,6 +5,7 @@ import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.RegexUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -119,8 +121,7 @@ public class CasDocumentationApplication {
                     groups.put(property.getModule(), values);
                 }
             });
-
-
+        
         var dataPath = new File(dataDirectory, projectVersion);
         if (dataPath.exists()) {
             FileUtils.deleteQuietly(dataPath);
@@ -179,13 +180,12 @@ public class CasDocumentationApplication {
             var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
 
             var methods = findAnnotatedMethods(clazz, GetMapping.class);
-
+            LOGGER.info("Checking actuator endpoint for [{}]", clazz.getName());
             methods.forEach(Unchecked.consumer(method -> {
                 var get = method.getAnnotation(GetMapping.class);
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(get.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                                                                             + StringUtils.prependIfMissing(path, "/"))
+                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id() + StringUtils.prependIfMissing(path, "/"))
                     .findFirst()
                     .orElse(null);
                 map.put("method", RequestMethod.GET.name());
@@ -477,12 +477,48 @@ public class CasDocumentationApplication {
             var paramCount = Arrays.stream(method.getParameterTypes())
                 .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
 
+
             if (operation.parameters().length == 0 && paramCount > 0) {
-                throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
-                                           + " in declaring class " + clazz.getName());
+                for (var i = 0; i < method.getParameterTypes().length; i++) {
+                    var parameter = method.getParameters()[i];
+                    
+                    var pathAnn = parameter.getAnnotation(PathVariable.class);
+                    if (pathAnn != null) {
+                        var paramData = new LinkedHashMap<String, Object>();
+                        paramData.put("name", "path-variable" + RandomUtils.randomNumeric(4));
+                        paramData.put("description", "Path variable selector");
+                        paramData.put("required", pathAnn.required());
+                        paramData.put("defaultValue", pathAnn.value());
+                        parameters.add(paramData);
+                    }
+                    var requestParamAnn = parameter.getAnnotation(RequestParam.class);
+                    if (requestParamAnn != null) {
+                        var paramData = new LinkedHashMap<String, Object>();
+                        var name = StringUtils.defaultString(requestParamAnn.name(), requestParamAnn.value());
+                        name = StringUtils.defaultString(name, parameter.getName());
+                        paramData.put("name", name);
+                        paramData.put("description", "Request query parameter");
+                        paramData.put("required", requestParamAnn.required());
+                        paramData.put("defaultValue", requestParamAnn.defaultValue());
+                        parameters.add(paramData);
+                    }
+                    var selectorAnn = parameter.getAnnotation(Selector.class);
+                    if (selectorAnn != null) {
+                        var paramData = new LinkedHashMap<String, Object>();
+                        paramData.put("name", RandomUtils.randomNumeric(4));
+                        paramData.put("description", "Path variable selector");
+                        paramData.put("required", true);
+                        parameters.add(paramData);
+                    }
+                }
+
+                if (parameters.isEmpty()) {
+                    throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
+                                               + " in declaring class " + clazz.getName());
+                }
             }
 
-            for (int i = 0; i < operation.parameters().length; i++) {
+            for (var i = 0; i < operation.parameters().length; i++) {
                 var parameter = operation.parameters()[i];
                 var paramData = new LinkedHashMap<String, Object>();
                 paramData.put("name", parameter.name());
@@ -496,7 +532,7 @@ public class CasDocumentationApplication {
             var name = String.format("actuator.endpoint.%s.description", endpointId);
             var summary = actuatorProperties.getProperty(name);
             if (StringUtils.isBlank(summary)) {
-                throw new RuntimeException("Unable to locate undocumented endpoint summary " + endpointId);
+                throw new RuntimeException("Unable to locate undocumented endpoint summary for: " + endpointId);
             }
             map.put("summary", StringUtils.appendIfMissing(summary, "."));
         }
