@@ -139,7 +139,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
             final PrincipalFactory clientPrincipalFactory,
             @Qualifier("builtClients")
             final Clients builtClients,
-            @Qualifier("clientUserProfileProvisioner")
+            @Qualifier(DelegatedClientUserProfileProvisioner.BEAN_NAME)
             final DelegatedClientUserProfileProvisioner clientUserProfileProvisioner,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore,
@@ -187,7 +187,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "clientUserProfileProvisioner")
+        @ConditionalOnMissingBean(name = DelegatedClientUserProfileProvisioner.BEAN_NAME)
         public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(
             final ObjectProvider<List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
             val results = provisioners.getIfAvailable(() -> CollectionUtils.wrapList(DelegatedClientUserProfileProvisioner::noOp))

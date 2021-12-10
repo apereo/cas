@@ -11,11 +11,9 @@ import org.apereo.cas.util.LoggingUtils;
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.OAuthToken;
-import com.unboundid.scim.sdk.ResourceNotFoundException;
 import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -40,39 +38,27 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
     private final ScimV1PrincipalAttributeMapper mapper;
 
     @Override
+    public boolean create(final Principal principal, final Credential credential) {
+        return provision(credential, principal);
+    }
+
+    @Override
     public boolean create(final Authentication auth, final Credential credential, final RegisteredService registeredService) {
         val principal = auth.getPrincipal();
-        try {
-            val resources = getScimEndpoint().query("userName eq \"" + principal.getId() + '"');
-            if (resources.getTotalResults() <= 0) {
-                LOGGER.debug("User [{}] not found", principal.getId());
-                return false;
-            }
-
-            val user = resources.iterator().next();
-            if (user != null) {
-                return updateUserResource(user, principal, credential);
-            }
-            return createUserResource(principal, credential);
-        } catch (final ResourceNotFoundException e) {
-            LOGGER.debug("User [{}] not found", principal.getId());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+        return provision(credential, principal);
     }
 
     /**
      * Create user resource boolean.
      *
-     * @param p          the p
+     * @param principal  the p
      * @param credential the credential
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected boolean createUserResource(final Principal p, final Credential credential) {
+    protected boolean createUserResource(final Principal principal, final Credential credential) throws Exception {
         val user = new UserResource(CoreSchema.USER_DESCRIPTOR);
-        this.mapper.map(user, p, credential);
+        this.mapper.map(user, principal, credential);
         return getScimEndpoint().create(user) != null;
     }
 
@@ -82,10 +68,11 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
      * @param user       the user
      * @param p          the p
      * @param credential the credential
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected boolean updateUserResource(final UserResource user, final Principal p, final Credential credential) {
+    protected boolean updateUserResource(final UserResource user, final Principal p,
+                                         final Credential credential) throws Exception {
         this.mapper.map(user, p, credential);
         return getScimEndpoint().update(user) != null;
     }
@@ -103,5 +90,21 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
         scimService.setAcceptType(MediaType.APPLICATION_JSON_TYPE);
         return scimService.getUserEndpoint();
+    }
+
+    private boolean provision(final Credential credential, final Principal principal) {
+        try {
+            val resources = getScimEndpoint().query("userName eq \"" + principal.getId() + '"');
+            if (resources.getTotalResults() <= 0) {
+                LOGGER.debug("User [{}] not found", principal.getId());
+                return createUserResource(principal, credential);
+            }
+
+            val user = resources.iterator().next();
+            return updateUserResource(user, principal, credential);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
     }
 }
