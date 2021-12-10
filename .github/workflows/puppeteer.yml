@@ -19,7 +19,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 11.0.13
   NODE_CURRENT: '14'
-  SCENARIO_REGEX: ".*swagger.*" # Use this to limit which tests run
+  SCENARIO_REGEX: ".*" # Use this to limit which tests run
   
 on:
   push:
@@ -55,13 +55,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v2
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
