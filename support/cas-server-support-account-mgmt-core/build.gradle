@@ -25,6 +25,8 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
+    
+    implementation project(":support:cas-server-support-account-mgmt-api")
 
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-cookie")

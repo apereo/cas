@@ -63,6 +63,11 @@ Integrations with [reCAPTCHA](../integration/Configuring-Google-reCAPTCHA.html) 
 the activation strategy to determine reCAPTCHA initialization and validation behavior, globally and/or 
 on a per-service basis. 
 
+### Delegated Authentication SCIM Provisioning
+
+Delegated authentication to external identity providers is now able to provision established profiles
+and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.html).
+
 ## Other Stuff
               
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
@@ -80,3 +85,4 @@ on a per-service basis.
 - Grouper Client
 - Micrometer
 - Dropwizard
+- Log4j2

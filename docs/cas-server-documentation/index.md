@@ -5,7 +5,7 @@ title: CAS - Home
 
 {% include variables.html %}
 
-# Apereo CAS - Identity Provider & Single Sign-On
+# Apereo CAS - Identity & Single Sign-On
 
 Welcome to the home of the Apereo Central Authentication Service project, more commonly 
 referred to as CAS. CAS is an enterprise multilingual single sign-on solution and identity provider for the web 

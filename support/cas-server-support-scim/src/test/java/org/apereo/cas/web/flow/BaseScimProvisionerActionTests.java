@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -65,6 +66,10 @@ import org.springframework.webflow.execution.Action;
     CasScimConfiguration.class
 })
 public abstract class BaseScimProvisionerActionTests {
+    @Autowired
+    @Qualifier(PrincipalProvisioner.BEAN_NAME)
+    protected PrincipalProvisioner scimProvisioner;
+
     @Autowired
     @Qualifier("principalScimProvisionerAction")
     protected Action principalScimProvisionerAction;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import org.pac4j.core.client.BaseClient;
@@ -14,13 +15,20 @@ import org.pac4j.core.profile.UserProfile;
 public interface DelegatedClientUserProfileProvisioner {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "clientUserProfileProvisioner";
+
+    /**
      * Execute.
      *
-     * @param principal the principal
-     * @param profile   the profile
-     * @param client    the client
+     * @param principal  the principal
+     * @param profile    the profile
+     * @param client     the client
+     * @param credential the credential
      */
-    default void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
+    default void execute(final Principal principal, final UserProfile profile,
+                         final BaseClient client, final Credential credential) {
     }
 
     /**
