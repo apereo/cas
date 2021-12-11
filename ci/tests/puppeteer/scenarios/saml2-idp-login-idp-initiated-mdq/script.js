@@ -30,7 +30,7 @@ const path = require("path");
         console.log(`Request took ${duration} seconds.`)
 
         if (count > 1 && duration > 10) {
-            throw "Request took longer than expected";
+            throw `Request took longer than expected:${duration}`;
         }
         
         await page.waitForTimeout(1000);
