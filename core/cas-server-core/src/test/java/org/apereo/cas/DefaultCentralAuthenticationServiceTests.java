@@ -512,13 +512,13 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         cas.deleteTicket(tgt.getId());
     }
 
-    private static Service getService(final String name) {
+    static Service getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
         return new WebApplicationServiceFactory().createService(request);
     }
 
-    private static Service getService() {
+    static Service getService() {
         return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
     }
 }

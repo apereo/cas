@@ -113,7 +113,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.GRANT_SERVICE_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
+    public synchronized ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
 
         val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
