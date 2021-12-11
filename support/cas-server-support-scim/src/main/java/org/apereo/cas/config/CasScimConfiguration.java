@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.scim.v1.ScimV1PrincipalAttributeMapper;
 import org.apereo.cas.scim.v1.ScimV1PrincipalProvisioner;
+import org.apereo.cas.scim.v2.DefaultScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
 import org.apereo.cas.scim.v2.delegation.ScimDelegatedClientUserProfileProvisioner;
@@ -103,7 +104,7 @@ public class CasScimConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
         public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
-            return new ScimV2PrincipalAttributeMapper();
+            return new DefaultScimV2PrincipalAttributeMapper();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
