@@ -27,7 +27,7 @@ public class ScimV2PrincipalProvisionerTests {
     @Test
     public void verifyScimServicePerApp() {
         val provisioner = new ScimV2PrincipalProvisioner(new ScimProperties(),
-            new ScimV2PrincipalAttributeMapper());
+            new DefaultScimV2PrincipalAttributeMapper());
         assertFalse(provisioner.create(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 

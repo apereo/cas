@@ -35,7 +35,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
 
     private final ScimProperties scimProperties;
 
-    private final ScimV2PrincipalAttributeMapper mapper;
+    private final DefaultScimV2PrincipalAttributeMapper mapper;
 
     @Override
     public boolean create(final Principal principal, final Credential credential) {
