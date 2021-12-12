@@ -1,9 +1,8 @@
-package org.apereo.cas.scim.v2.delegation;
+package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.provision.BaseDelegatedClientUserProfileProvisioner;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
