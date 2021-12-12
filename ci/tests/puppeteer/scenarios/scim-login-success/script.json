@@ -1,0 +1,25 @@
+{
+  "dependencies": "scim",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.scim.enabled=true",
+    "--cas.scim.target=http://localhost:9666/scim/v2",
+    "--cas.scim.version=2",
+    "--cas.scim.username=scim-user",
+    "--cas.scim.password=changeit",
+
+    "--cas.authn.accept.users=casscimuser::Mellon",
+
+    "--logging.level.org.apereo.cas=info",
+    "--cas.http-client.host-name-verifier=none"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
