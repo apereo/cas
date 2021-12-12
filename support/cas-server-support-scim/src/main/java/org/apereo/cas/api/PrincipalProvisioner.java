@@ -2,6 +2,7 @@ package org.apereo.cas.api;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 
 /**
@@ -10,8 +11,11 @@ import org.apereo.cas.services.RegisteredService;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@FunctionalInterface
 public interface PrincipalProvisioner {
+    /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "scimProvisioner";
 
     /**
      * Create principal.
@@ -22,4 +26,13 @@ public interface PrincipalProvisioner {
      * @return true /false
      */
     boolean create(Authentication authentication, Credential credential, RegisteredService registeredService);
+
+    /**
+     * Create boolean.
+     *
+     * @param principal  the principal
+     * @param credential the credential
+     * @return the boolean
+     */
+    boolean create(Principal principal, Credential credential);
 }

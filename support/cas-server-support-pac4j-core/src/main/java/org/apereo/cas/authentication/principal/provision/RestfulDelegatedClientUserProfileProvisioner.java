@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.HttpUtils;
@@ -28,7 +29,8 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
     private final RestEndpointProperties restProperties;
 
     @Override
-    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final UserProfile profile,
+                        final BaseClient client, final Credential credential) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, Object>();
@@ -51,9 +53,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             response = HttpUtils.execute(exec);
             if (response != null) {
                 val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-                if (status.is2xxSuccessful()) {
-                    LOGGER.debug("Provisioned principal [{}] successfully", principal);
-                }
+                LOGGER.debug("Provisioned principal [{}] with status result [{}]", principal.getId(), status);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

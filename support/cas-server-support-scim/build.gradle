@@ -3,7 +3,8 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
 
     implementation libraries.unboundidscim
-
+    implementation libraries.pac4jcore
+    
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-web")
@@ -18,6 +19,9 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-mfa")
 
+    compileOnly project(":support:cas-server-support-pac4j-core")
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")
@@ -26,6 +30,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
+
+    testImplementation project(":support:cas-server-support-pac4j-core")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

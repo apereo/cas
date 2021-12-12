@@ -50,6 +50,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -65,6 +72,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -90,6 +104,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - id: print-categories
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q testCategories
       - id: get-categories
@@ -113,6 +134,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
         shell: bash

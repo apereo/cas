@@ -44,6 +44,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
@@ -58,6 +65,13 @@ jobs:
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
@@ -92,6 +106,13 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
@@ -126,6 +147,13 @@ jobs:
           distribution: 'temurin'
       - name: Initialize
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches

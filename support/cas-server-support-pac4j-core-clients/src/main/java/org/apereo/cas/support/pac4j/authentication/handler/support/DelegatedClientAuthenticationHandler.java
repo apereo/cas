@@ -92,6 +92,6 @@ public class DelegatedClientAuthenticationHandler extends AbstractPac4jAuthentic
     @Override
     protected void preFinalizeAuthenticationHandlerResult(final ClientCredential credentials, final Principal principal,
                                                           final UserProfile profile, final BaseClient client) {
-        profileProvisioner.execute(principal, profile, client);
+        profileProvisioner.execute(principal, profile, client, credentials);
     }
 }
