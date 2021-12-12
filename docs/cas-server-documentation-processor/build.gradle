@@ -1,4 +1,5 @@
 description = "Apereo CAS Documentation Generator"
+
 project.ext["mainClassName"] = "org.apereo.cas.documentation.CasDocumentationApplication"
 project.ext["forceBootifulArtifact"] = true
 project.ext["archiveFileName"] = "casdocsgen.jar"

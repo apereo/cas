@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -24,7 +25,8 @@ public class GroovyDelegatedClientUserProfileProvisioner extends BaseDelegatedCl
     }
 
     @Override
-    public void execute(final Principal principal, final UserProfile profile, final BaseClient client) {
+    public void execute(final Principal principal, final UserProfile profile,
+                        final BaseClient client, final Credential credential) {
         val args = new Object[]{principal, profile, client, LOGGER};
         watchableScript.execute(args, Void.class);
     }

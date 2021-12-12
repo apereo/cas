@@ -29,8 +29,9 @@ dependencies {
     
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-account-mgmt-core")
+    implementation project(":support:cas-server-support-account-mgmt-api")
     implementation project(":support:cas-server-support-captcha-core")
-    
+
     testImplementation project(":support:cas-server-support-actions")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

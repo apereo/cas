@@ -52,6 +52,17 @@ Provisioning tasks can be carried out using an external REST endpoint expected t
 | `profileTypedId`      | The *typed* identifier of the user profile extracted from the identity provider.    |
 | `profileAttributes`   | Collection of attributes extracted from the identity provider's response.           |
 | `clientName`          | The client name responsible for the exchange between CAS and the identity provider. |
+ 
+## SCIM Provisioner
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.scim" %}
+
+Provisioning tasks can be carried out using the CAS [SCIM integration](../integration/SCIM-Integration.html). 
+Once enabled and configured, authenticated profiles established from the external identity provider may be
+provisioned via SCIM to other systems.
+
+<div class="alert alert-info"><strong>Usage</strong><p>SCIM integration support for 
+delegated authentication is only handled via SCIM <code>v2</code>.</p></div>
 
 ## Custom Provisioner
 

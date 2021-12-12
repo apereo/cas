@@ -25,6 +25,7 @@ public class GroovyDelegatedClientUserProfileProvisionerTests {
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
         val client = new CasClient(new CasConfiguration("http://cas.example.org"));
-        p.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
+        p.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 }
