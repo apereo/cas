@@ -86,3 +86,6 @@ and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.ht
 - Micrometer
 - Dropwizard
 - Log4j2
+- Kryo
+- Java Melody
+- Splunk
