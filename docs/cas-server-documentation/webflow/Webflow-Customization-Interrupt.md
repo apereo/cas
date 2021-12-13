@@ -62,7 +62,7 @@ Each interrupt strategy is ultimately tasked to produce a response that contains
 Authentication interrupts and notifications are executed in the overall flow using one of the following strategies. The
 trigger strategy is defined globally via CAS settings.
 
-## After Authentication
+### After Authentication
 
 This is the default strategy that allows the interrupt query to execute after the
 primary authentication event and before the single sign-on event. This means an authenticated user has been 
@@ -80,7 +80,7 @@ specially if single sign-on isn't already established. Remember that
 interrupt notifications typically execute after the authentication step 
 and before any single sign-on session is created.</p></div>
 
-## After Single Sign-on
+### After Single Sign-on
 
 Alternatively, the interrupt query can execute once the single sign-on session has been established.
 In this mode, the authenticated user has been identified by CAS and linked to the single sign-on session. Note that
