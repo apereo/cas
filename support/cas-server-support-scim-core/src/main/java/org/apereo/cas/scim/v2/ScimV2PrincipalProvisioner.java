@@ -38,15 +38,33 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     private final ScimV2PrincipalAttributeMapper mapper;
 
     @Override
-    public boolean create(final Principal principal, final Credential credential) {
+    public boolean provision(final Principal principal, final Credential credential) {
         return provision(credential, Optional.empty(), principal);
     }
 
     @Override
-    public boolean create(final Authentication auth, final Credential credential,
-                          final RegisteredService registeredService) {
+    public boolean provision(final Authentication auth, final Credential credential,
+                             final RegisteredService registeredService) {
         val principal = auth.getPrincipal();
         return provision(credential, Optional.ofNullable(registeredService), principal);
+    }
+
+    private boolean provision(final Credential credential,
+                              final Optional<RegisteredService> registeredService,
+                              final Principal principal) {
+        try {
+            LOGGER.info("Attempting to execute provisioning ops for [{}]", principal.getId());
+            val userList = getScimService(registeredService)
+                .search("Users", Filter.eq("userName", principal.getId()).toString(), UserResource.class);
+            if (userList.getTotalResults() > 0) {
+                val user = userList.getResources().iterator().next();
+                return updateUserResource(user, principal, credential, registeredService);
+            }
+            return createUserResource(principal, credential, registeredService);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return false;
     }
 
     /**
@@ -133,23 +151,4 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         val webTarget = client.target(target);
         return new ScimService(webTarget);
     }
-
-    private boolean provision(final Credential credential,
-                              final Optional<RegisteredService> registeredService,
-                              final Principal principal) {
-        try {
-            LOGGER.info("Attempting to execute provisioning ops for [{}]", principal.getId());
-            val userList = getScimService(registeredService)
-                .search("Users", Filter.eq("userName", principal.getId()).toString(), UserResource.class);
-            if (userList.getTotalResults() > 0) {
-                val user = userList.getResources().iterator().next();
-                return updateUserResource(user, principal, credential, registeredService);
-            }
-            return createUserResource(principal, credential, registeredService);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
-    }
-
 }

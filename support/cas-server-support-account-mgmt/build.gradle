@@ -32,9 +32,13 @@ dependencies {
     implementation project(":support:cas-server-support-account-mgmt-api")
     implementation project(":support:cas-server-support-captcha-core")
 
+    compileOnly project(":support:cas-server-support-scim-core")
+
     testImplementation project(":support:cas-server-support-actions")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-scim-core")
+    testImplementation project(":support:cas-server-support-scim")
 
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-cookie")

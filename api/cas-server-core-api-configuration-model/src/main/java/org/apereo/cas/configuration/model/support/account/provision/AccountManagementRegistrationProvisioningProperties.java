@@ -36,4 +36,10 @@ public class AccountManagementRegistrationProvisioningProperties implements Seri
     @NestedConfigurationProperty
     private GroovyAccountManagementRegistrationProvisioningProperties groovy = new GroovyAccountManagementRegistrationProvisioningProperties();
 
+    /**
+     * Provision accounts via SCIM.
+     */
+    @NestedConfigurationProperty
+    private ScimAccountManagementRegistrationProvisioningProperties scim = new ScimAccountManagementRegistrationProvisioningProperties();
+
 }
