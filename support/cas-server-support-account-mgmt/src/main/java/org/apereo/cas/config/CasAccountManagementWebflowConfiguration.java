@@ -154,12 +154,16 @@ public class CasAccountManagementWebflowConfiguration {
                     new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
             };
         }
-
+    }
+    
+    @ConditionalOnClass(PrincipalProvisioner.class)
+    @ConditionalOnProperty(name = "cas.account-registration.provisioning.scim.enabled", havingValue = "true")
+    @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnClass(PrincipalProvisioner.class)
-        @ConditionalOnProperty(name = "cas.account-registration.provisioning.scim.enabled", havingValue = "true")
         public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
             final PrincipalProvisioner scimProvisioner) {
@@ -167,7 +171,7 @@ public class CasAccountManagementWebflowConfiguration {
                 PrincipalFactoryUtils.newPrincipalFactory());
         }
     }
-
+    
     @Configuration(value = "CasAccountManagementWebflowCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasAccountManagementWebflowCoreConfiguration {
