@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.account.provision;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
