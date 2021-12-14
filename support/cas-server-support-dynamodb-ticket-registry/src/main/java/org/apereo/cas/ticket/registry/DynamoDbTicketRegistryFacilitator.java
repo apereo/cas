@@ -210,6 +210,7 @@ public class DynamoDbTicketRegistryFacilitator {
      * Column names for tables holding tickets.
      */
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
 
         /**
@@ -242,9 +243,5 @@ public class DynamoDbTicketRegistryFacilitator {
         ENCODED("encoded");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 }
