@@ -6,6 +6,7 @@
     "jsonpath-plus": "^6.0.1",
     "jsonwebtoken": "^8.5.1",
     "perf_hooks": "^0.0.1",
+    "ps-node": "^0.1.6",
     "puppeteer": "^13.0.0",
     "puppeteer-loadtest": "^2.2.0",
     "puppeteer-screen-recorder": "^1.1.11",

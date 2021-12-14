@@ -10,6 +10,7 @@ const {ImgurClient} = require('imgur');
 const path = require("path");
 const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
+const ps = require("ps-node");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -426,6 +427,30 @@ exports.assertTextContentStartsWith = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header.startsWith(value));
+}
+
+exports.killProcess = async(command, arguments) => {
+    ps.lookup({
+        command: command,
+        arguments: arguments
+    }, function (err, resultList) {
+        if (err) {
+            throw new Error(err);
+        }
+        resultList.forEach(function (process) {
+            console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s',
+                process.pid, process.command, process.arguments);
+            if (process) {
+                ps.kill(process.pid, function (err) {
+                    if (err) {
+                        throw new Error(err);
+                    } else {
+                        console.log('Process %s has been killed!', process.pid);
+                    }
+                });
+            }
+        });
+    });
 }
 
 exports.loginDuoSecurityBypassCode = async (page, type) => {
