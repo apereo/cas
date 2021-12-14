@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
@@ -122,7 +121,7 @@ public class PasswordManagementWebflowConfiguration {
     private ObjectProvider<PasswordValidationService> passwordValidationService;
 
     @Autowired
-    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+    @Qualifier("passwordChangeServiceProvider")
     private PasswordManagementServiceProvider passwordManagementServiceProvider;
 
     @Bean
