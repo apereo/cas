@@ -6,7 +6,9 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.services.RegexRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -17,7 +19,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is {@link GroovyResourcePasswordManagementServiceTests}.
@@ -26,13 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    PasswordManagementConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreUtilConfiguration.class
+        RefreshAutoConfiguration.class,
+        PasswordManagementConfiguration.class,
+        CasCoreNotificationsConfiguration.class,
+        CasCoreUtilConfiguration.class
 }, properties = {
-    "cas.authn.pm.core.enabled=true",
-    "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
+        "cas.authn.pm.core.enabled=true",
+        "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")
 public class GroovyResourcePasswordManagementServiceTests {
@@ -40,6 +45,14 @@ public class GroovyResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
+
+    @Autowired
+    private PasswordManagementServiceProvider passwordManagementServiceProvider;
+
+    @Test
+    void verifyReturnService() {
+        assertNotNull(passwordManagementServiceProvider.getPasswordChangeService(new RegexRegisteredService()));
+    }
 
     @Test
     public void verifyFindEmail() {

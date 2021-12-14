@@ -24,8 +24,10 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementServiceProvider;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.services.RegexRegisteredService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +41,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is {@link JsonResourcePasswordManagementServiceTests}.
@@ -79,6 +86,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("FileSystem")
 public class JsonResourcePasswordManagementServiceTests {
+
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
@@ -86,6 +94,14 @@ public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordValidationService")
     private PasswordValidationService passwordValidationService;
+
+    @Autowired
+    private PasswordManagementServiceProvider passwordManagementServiceProvider;
+
+    @Test
+    void verifyReturnService() {
+        assertNotNull(passwordManagementServiceProvider.getPasswordChangeService(new RegexRegisteredService()));
+    }
 
     @Test
     public void verifyUserEmailCanBeFound() {
