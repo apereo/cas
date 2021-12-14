@@ -56,7 +56,11 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-  
+
+### Account Registration SCIM Provisioning
+
+Account registration requests may be [provisioned via SCIM](../registration/Account-Registration-Provisioning-SCIM.html).
+
 ### reCAPTCHA Activation Strategy
   
 Integrations with [reCAPTCHA](../integration/Configuring-Google-reCAPTCHA.html) are now able to customize
@@ -89,3 +93,5 @@ and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.ht
 - Kryo
 - Java Melody
 - Splunk
+- Logback
+- Spring WS

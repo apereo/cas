@@ -37,17 +37,6 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
     private final ScimV1PrincipalAttributeMapper mapper;
 
-    @Override
-    public boolean create(final Principal principal, final Credential credential) {
-        return provision(credential, principal);
-    }
-
-    @Override
-    public boolean create(final Authentication auth, final Credential credential, final RegisteredService registeredService) {
-        val principal = auth.getPrincipal();
-        return provision(credential, principal);
-    }
-
     /**
      * Create user resource boolean.
      *
@@ -90,6 +79,17 @@ public class ScimV1PrincipalProvisioner implements PrincipalProvisioner {
 
         scimService.setAcceptType(MediaType.APPLICATION_JSON_TYPE);
         return scimService.getUserEndpoint();
+    }
+
+    @Override
+    public boolean provision(final Authentication auth, final Credential credential, final RegisteredService registeredService) {
+        val principal = auth.getPrincipal();
+        return provision(credential, principal);
+    }
+
+    @Override
+    public boolean provision(final Principal principal, final Credential credential) {
+        return provision(credential, principal);
     }
 
     private boolean provision(final Credential credential, final Principal principal) {

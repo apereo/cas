@@ -25,7 +25,7 @@ public interface PrincipalProvisioner {
      * @param registeredService the registered service
      * @return true /false
      */
-    boolean create(Authentication authentication, Credential credential, RegisteredService registeredService);
+    boolean provision(Authentication authentication, Credential credential, RegisteredService registeredService);
 
     /**
      * Create boolean.
@@ -34,5 +34,5 @@ public interface PrincipalProvisioner {
      * @param credential the credential
      * @return the boolean
      */
-    boolean create(Principal principal, Credential credential);
+    boolean provision(Principal principal, Credential credential);
 }

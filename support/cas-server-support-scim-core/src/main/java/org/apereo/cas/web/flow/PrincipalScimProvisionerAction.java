@@ -38,7 +38,7 @@ public class PrincipalScimProvisionerAction extends AbstractAction {
         val principal = authentication.getPrincipal();
         val registeredService = WebUtils.getRegisteredService(requestContext);
         LOGGER.debug("Starting to provision principal [{}] with registered service [{}]", principal, registeredService);
-        val res = scimProvisioner.create(authentication, credential, registeredService);
+        val res = scimProvisioner.provision(authentication, credential, registeredService);
         val msg = String.format("Provisioning of principal %s is%s done successfully", principal,
             BooleanUtils.toString(res, StringUtils.EMPTY, " not"));
         LOGGER.debug(msg);

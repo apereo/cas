@@ -25,7 +25,7 @@ public class ScimDelegatedClientUserProfileProvisioner extends BaseDelegatedClie
     @Override
     public void execute(final Principal principal, final UserProfile profile,
                         final BaseClient client, final Credential credential) {
-        val result = provisioner.create(principal, credential);
+        val result = provisioner.provision(principal, credential);
         LOGGER.info("Provisioned principal [{}] from external identity provider [{}]: [{}]",
             principal.getId(), profile.getClientName(),
             BooleanUtils.toString(result, "success", "failure"));

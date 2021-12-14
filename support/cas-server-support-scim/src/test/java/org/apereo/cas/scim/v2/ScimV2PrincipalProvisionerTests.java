@@ -28,7 +28,7 @@ public class ScimV2PrincipalProvisionerTests {
     public void verifyScimServicePerApp() {
         val provisioner = new ScimV2PrincipalProvisioner(new ScimProperties(),
             new DefaultScimV2PrincipalAttributeMapper());
-        assertFalse(provisioner.create(CoreAuthenticationTestUtils.getPrincipal(),
+        assertFalse(provisioner.provision(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();

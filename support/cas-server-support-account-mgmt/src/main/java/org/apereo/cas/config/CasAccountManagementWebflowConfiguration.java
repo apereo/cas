@@ -14,17 +14,20 @@ import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
 import org.apereo.cas.acct.provision.ChainingAccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.GroovyAccountRegistrationProvisioner;
 import org.apereo.cas.acct.provision.RestfulAccountRegistrationProvisioner;
+import org.apereo.cas.acct.provision.ScimAccountRegistrationProvisioner;
 import org.apereo.cas.acct.webflow.AccountManagementRegistrationCaptchaWebflowConfigurer;
 import org.apereo.cas.acct.webflow.AccountManagementWebflowConfigurer;
 import org.apereo.cas.acct.webflow.FinalizeAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.LoadAccountRegistrationPropertiesAction;
 import org.apereo.cas.acct.webflow.SubmitAccountRegistrationAction;
 import org.apereo.cas.acct.webflow.ValidateAccountRegistrationTokenAction;
+import org.apereo.cas.api.PrincipalProvisioner;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
@@ -47,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -105,15 +109,6 @@ public class CasAccountManagementWebflowConfiguration {
     }
 
     @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
-    public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
-        final List<AccountRegistrationProvisionerConfigurer> beans) {
-        val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
-        return new ChainingAccountRegistrationProvisioner(configurers);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(name = "accountMgmtRegistrationPropertyLoader")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader(final CasConfigurationProperties casProperties) {
@@ -121,29 +116,56 @@ public class CasAccountManagementWebflowConfiguration {
         return new DefaultAccountRegistrationPropertyLoader(resource);
     }
 
-    @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
-    public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(
-        final CasConfigurationProperties casProperties) {
-        return () -> {
-            val props = casProperties.getAccountRegistration().getProvisioning().getRest();
-            return new RestfulAccountRegistrationProvisioner(props);
-        };
-    }
+    @Configuration(value = "CasAccountManagementProvisioningConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasAccountManagementProvisioningConfiguration {
 
-    @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
-    public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(
-        final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        return () -> {
-            val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
-            return new GroovyAccountRegistrationProvisioner(new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
-        };
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
+        public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
+            final List<AccountRegistrationProvisionerConfigurer> beans) {
+            val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
+            return new ChainingAccountRegistrationProvisioner(configurers);
+        }
+
+        @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
+        public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(
+            final CasConfigurationProperties casProperties) {
+            return () -> {
+                val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+                return new RestfulAccountRegistrationProvisioner(props);
+            };
+        }
+
+        @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
+        public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return () -> {
+                val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+                return new GroovyAccountRegistrationProvisioner(
+                    new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
+            };
+        }
+
+        @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnClass(PrincipalProvisioner.class)
+        @ConditionalOnProperty(name = "cas.account-registration.provisioning.scim.enabled", havingValue = "true")
+        public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
+            @Qualifier(PrincipalProvisioner.BEAN_NAME)
+            final PrincipalProvisioner scimProvisioner) {
+            return () -> new ScimAccountRegistrationProvisioner(scimProvisioner,
+                PrincipalFactoryUtils.newPrincipalFactory());
+        }
     }
 
     @Configuration(value = "CasAccountManagementWebflowCoreConfiguration", proxyBeanMethods = false)
