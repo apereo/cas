@@ -1,18 +1,18 @@
 echo "Starting CAS client application"
 
-if [[ ! -f ${TMPDIR}/bootiful-cas-client.jar ]] ; then
+if [[ ! -f /tmp/bootiful-cas-client.jar ]] ; then
   echo "Downloading Bootiful CAS client..."
-  (cd ${TMPDIR} && curl -OL https://github.com/apereo/bootiful-cas-client/releases/download/v1.4.0/bootiful-cas-client.jar)
+  (cd /tmp && curl -OL https://github.com/apereo/bootiful-cas-client/releases/download/v1.4.0/bootiful-cas-client.jar)
 fi
 
-cat > ${TMPDIR}/sslConfig.properties <<- EOM
+cat > /tmp/sslConfig.properties <<- EOM
 ignoreSslFailures=true
 EOM
 
-cat ${TMPDIR}/sslConfig.properties
-java -jar ${TMPDIR}/bootiful-cas-client.jar \
+cat /tmp/sslConfig.properties
+java -jar /tmp/bootiful-cas-client.jar \
   --server.ssl.key-store="${CAS_KEYSTORE}" \
-  --cas.ssl-config-file=${TMPDIR}/sslConfig.properties &
+  --cas.ssl-config-file=/tmp/sslConfig.properties &
 pid=$!
 echo "CAS client application process id $pid"
 sleep 5
