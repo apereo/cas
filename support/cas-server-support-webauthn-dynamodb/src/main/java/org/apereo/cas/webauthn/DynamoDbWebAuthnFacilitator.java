@@ -131,6 +131,7 @@ public class DynamoDbWebAuthnFacilitator {
      * Column names for tables holding records.
      */
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
         /**
          * principal column.
@@ -144,9 +145,6 @@ public class DynamoDbWebAuthnFacilitator {
 
         private final String columnName;
 
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 
     @SneakyThrows
