@@ -27,7 +27,7 @@ public class CasPullRequestListener implements PullRequestListener {
         val pr = this.repository.getPullRequest(givenPullRequest.getNumber());
         log.debug("Processing {}", pr);
 
-        if (processLabelSeeMaintenancePolicy(pr) || processInvalidPullRequest(pr)) {
+        if (processDependencyUpgradesPullRequests(pr) || processLabelSeeMaintenancePolicy(pr) || processInvalidPullRequest(pr)) {
             return;
         }
         processLabelReadyForContinuousIntegration(pr);
@@ -173,6 +173,22 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.removeLabelFrom(pr, CasLabels.LABEL_WIP);
             }
         }
+    }
+
+    @SneakyThrows
+    private boolean processDependencyUpgradesPullRequests(final PullRequest pr) {
+        if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
+            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isDraft()) {
+            var files = repository.getPullRequestFiles(pr);
+            if (files.size() == 1 && files.get(0).getFilename().endsWith("gradle.properties")) {
+                var template = IOUtils.toString(new ClassPathResource("template-security-policy.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.addComment(pr, template);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.close(pr);
+                return true;
+            }
+        }
+        return false;
     }
 
     @SneakyThrows
