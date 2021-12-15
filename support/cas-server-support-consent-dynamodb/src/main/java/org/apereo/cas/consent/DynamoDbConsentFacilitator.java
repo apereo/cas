@@ -184,7 +184,8 @@ public class DynamoDbConsentFacilitator {
                 .build());
 
         val results = getRecordsByKeys(keys);
-        val deleteCount = results.map(decision -> {
+        val deleteCount = results
+            .map(decision -> {
                 val del = DeleteItemRequest.builder()
                     .tableName(dynamoDbProperties.getTableName())
                     .key(CollectionUtils.wrap(ColumnNames.ID.getColumnName(),
