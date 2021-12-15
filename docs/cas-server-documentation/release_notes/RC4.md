@@ -70,7 +70,7 @@ on a per-service basis.
 ### Attribute Consent via DynamoDb
 
 Attribute consent decisions and records can now be managed and 
-stored via [DynamoDb](../integration/Attribute-Release-Consent-Storage-DynamoDb.html)
+stored via [DynamoDb](../integration/Attribute-Release-Consent-Storage-DynamoDb.html).
 
 ### Delegated Authentication SCIM Provisioning
 
