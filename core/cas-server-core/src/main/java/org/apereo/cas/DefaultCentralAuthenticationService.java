@@ -52,6 +52,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -78,16 +79,17 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private final transient Object serviceTicketValidationLock = new Object();
 
-    public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
-                                               final TicketRegistry ticketRegistry,
-                                               final ServicesManager servicesManager,
-                                               final TicketFactory ticketFactory,
-                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                               final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
-                                               final PrincipalFactory principalFactory,
-                                               final CipherExecutor<String, String> cipherExecutor,
-                                               final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                               final ServiceMatchingStrategy serviceMatchingStrategy) {
+    public DefaultCentralAuthenticationService(
+        final ApplicationEventPublisher applicationEventPublisher,
+        final TicketRegistry ticketRegistry,
+        final ServicesManager servicesManager,
+        final TicketFactory ticketFactory,
+        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+        final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
+        final PrincipalFactory principalFactory,
+        final CipherExecutor<String, String> cipherExecutor,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final ServiceMatchingStrategy serviceMatchingStrategy) {
         super(applicationEventPublisher, ticketRegistry, servicesManager, ticketFactory,
             authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
             principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer,
@@ -113,7 +115,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.GRANT_SERVICE_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public synchronized ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
+    @Synchronized
+    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service,
+                                            final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
 
         val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
@@ -159,6 +163,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.GRANT_PROXY_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.GRANT_PROXY_TICKET_RESOURCE_RESOLVER)
     @Override
+    @Synchronized
     public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
         throws AbstractTicketException {
 
