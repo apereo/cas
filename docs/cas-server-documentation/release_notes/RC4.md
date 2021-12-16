@@ -124,3 +124,5 @@ automatically translated by CAS to their `TRUE` or `FALSE` equivalent.
 - SnakeYAML
 - Bucket4j
 - Okta SDK
+- Spring
+- Spring Boot
