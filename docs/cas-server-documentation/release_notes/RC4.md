@@ -76,9 +76,28 @@ stored via [DynamoDb](../integration/Attribute-Release-Consent-Storage-DynamoDb.
 
 Delegated authentication to external identity providers is now able to provision established profiles
 and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.html).
+  
+### Signing SAML2 Assertions Per Service
+
+CAS is now able to provide more granular control over how SAML2 assertions in the final response are signed. The
+`signAssertions` flag in the CAS service definition for the SAML service provider 
+can now accept a *tri-state* boolean with the following values:
+
+- `TRUE`: Force sign the assertion.
+- `FALSE`: Never sign the assertion.
+- `UNDEFINED`: Evaluate the signing requirement based on the `WantAssertionsSigned` flag found in the service provider metadata.
+
+<div class="alert alert-warning"><strong>Breaking Change</strong><p>
+This <i>might</i> be a breaking change. Please review your service definitions to review. While the default being <code>false</code>
+has not changed, it might result in a change in behavior compared to previous releases and updates.
+</p></div>
+
+Previously-recorded boolean values for this flag as `true` or `false` should be 
+automatically translated by CAS to their `TRUE` or `FALSE` equivalent. 
 
 ## Other Stuff
-              
+         
+- Improvements to CAS ticket registry operations to handle concurrent ticket and token requests correctly.     
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 - Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
 - SAML2 metadata generation can now populate the `errorURL` attribute with an `idp/error` endpoint that can present a generic error page, available publicly.
