@@ -9,9 +9,11 @@ import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.io.WatcherService;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,9 +104,9 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         val chain = new ChainingAttributeReleasePolicy();
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
-        
+
         val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath()
-            + File.separator + "json-service-registry"), WatcherService.noOp(),
+                                                                 + File.separator + "json-service-registry"), WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -143,8 +145,43 @@ public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         serviceWritten.setName(SAML_SERVICE);
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation(METADATA_LOCATION);
+        serviceWritten.setSignAssertions(TriStateBoolean.UNDEFINED);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
+    }
+
+    @Test
+    public void verifySignAssertionTrueWithDeserialization() {
+        val json = "{\n"
+                   + "  \"@class\" : \"org.apereo.cas.support.saml.services.SamlRegisteredService\",\n"
+                   + "  \"serviceId\" : \"the-entity\",\n"
+                   + "  \"name\" : \"SAMLService\",\n"
+                   + "  \"id\" : 10000003,\n"
+                   + "  \"evaluationOrder\" : 10,\n"
+                   + "  \"signAssertions\" : true,\n"
+                   + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
+                   + '}';
+        val serializer = new RegisteredServiceJsonSerializer();
+        val service = (SamlRegisteredService) serializer.from(json);
+        assertNotNull(service);
+        assertTrue(service.getSignAssertions().isTrue());
+    }
+
+    @Test
+    public void verifySignAssertionFalseWithDeserialization() {
+        val json = "{\n"
+                   + "  \"@class\" : \"org.apereo.cas.support.saml.services.SamlRegisteredService\",\n"
+                   + "  \"serviceId\" : \"the-entity\",\n"
+                   + "  \"name\" : \"SAMLService\",\n"
+                   + "  \"id\" : 10000003,\n"
+                   + "  \"evaluationOrder\" : 10,\n"
+                   + "  \"signAssertions\" : false,\n"
+                   + "  \"metadataLocation\" : \"https://url/to/metadata.xml\"\n"
+                   + '}';
+        val serializer = new RegisteredServiceJsonSerializer();
+        val service = (SamlRegisteredService) serializer.from(json);
+        assertNotNull(service);
+        assertTrue(service.getSignAssertions().isFalse());
     }
 }
