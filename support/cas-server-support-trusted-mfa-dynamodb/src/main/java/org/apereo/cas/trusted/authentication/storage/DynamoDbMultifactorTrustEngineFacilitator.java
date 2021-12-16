@@ -217,6 +217,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
      * Column names for tables holding records.
      */
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
 
         /**
@@ -250,11 +251,7 @@ public class DynamoDbMultifactorTrustEngineFacilitator {
 
         private final String columnName;
 
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
-
 
     private void deleteMultifactorTrustRecords(final Stream<MultifactorAuthenticationTrustRecord> records) {
         records.forEach(record -> {

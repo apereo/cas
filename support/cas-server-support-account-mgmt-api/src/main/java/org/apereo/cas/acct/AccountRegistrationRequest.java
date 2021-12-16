@@ -28,6 +28,16 @@ public class AccountRegistrationRequest implements Serializable {
     }
 
     /**
+     * As map.
+     *
+     * @return the map
+     */
+    @JsonIgnore
+    public Map<String, Object> asMap() {
+        return Map.copyOf(this.properties);
+    }
+
+    /**
      * Gets username.
      *
      * @return the username
@@ -35,6 +45,16 @@ public class AccountRegistrationRequest implements Serializable {
     @JsonIgnore
     public String getUsername() {
         return getProperty("username", String.class);
+    }
+
+    /**
+     * Gets password.
+     *
+     * @return the password
+     */
+    @JsonIgnore
+    public String getPassword() {
+        return getProperty("password", String.class);
     }
 
     /**

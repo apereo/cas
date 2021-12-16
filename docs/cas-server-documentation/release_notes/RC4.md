@@ -56,12 +56,21 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-  
+
+### Account Registration SCIM Provisioning
+
+Account registration requests may be [provisioned via SCIM](../registration/Account-Registration-Provisioning-SCIM.html).
+
 ### reCAPTCHA Activation Strategy
   
 Integrations with [reCAPTCHA](../integration/Configuring-Google-reCAPTCHA.html) are now able to customize
 the activation strategy to determine reCAPTCHA initialization and validation behavior, globally and/or 
-on a per-service basis. 
+on a per-service basis.
+
+### Attribute Consent via DynamoDb
+
+Attribute consent decisions and records can now be managed and 
+stored via [DynamoDb](../integration/Attribute-Release-Consent-Storage-DynamoDb.html).
 
 ### Delegated Authentication SCIM Provisioning
 
@@ -86,3 +95,13 @@ and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.ht
 - Micrometer
 - Dropwizard
 - Log4j2
+- Kryo
+- Java Melody
+- Splunk
+- Logback
+- Spring WS
+- Oshi
+- DropWizard
+- SnakeYAML
+- Bucket4j
+- Okta SDK

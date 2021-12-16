@@ -10,10 +10,13 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-webflow-api")
+
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-authentication")
+    
+    compileOnly project(":support:cas-server-support-scim-core")
 
     implementation libraries.pac4joidcoauth
     implementation libraries.pac4jsaml
@@ -27,12 +30,17 @@ dependencies {
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-util")
-    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
+
+    testImplementation project(":support:cas-server-support-scim-core")
+    testImplementation project(":support:cas-server-support-scim")
 }

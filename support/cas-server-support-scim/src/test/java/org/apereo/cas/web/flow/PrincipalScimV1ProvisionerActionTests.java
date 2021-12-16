@@ -58,7 +58,7 @@ public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerAc
         try (val webServer = new MockWebServer(8215,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val results = scimProvisioner.create(RegisteredServiceTestUtils.getPrincipal(),
+            val results = scimProvisioner.provision(RegisteredServiceTestUtils.getPrincipal(),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
             assertFalse(results);
         }
