@@ -100,3 +100,8 @@ and identities via [SCIM](../integration/Delegate-Authentication-Provisioning.ht
 - Splunk
 - Logback
 - Spring WS
+- Oshi
+- DropWizard
+- SnakeYAML
+- Bucket4j
+- Okta SDK
