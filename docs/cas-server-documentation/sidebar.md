@@ -208,6 +208,7 @@ layout: null
                 * [JSON](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-JSON.html)
                 * [LDAP](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-LDAP.html)
                 * [MongoDb](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-MongoDb.html)
+                * [DynamoDb](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-DynamoDb.html)
                 * [Redis](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-Redis.html)
                 * [REST](/cas/{{ version }}/integration/Attribute-Release-Consent-Storage-REST.html)
         *   [Caching](/cas/{{ version }}/integration/Attribute-Release-Caching.html)
@@ -382,6 +383,7 @@ layout: null
     *   [Provisioning](#acctregprovisioning)
         *   [Groovy](/cas/{{ version }}/registration/Account-Registration-Provisioning-Groovy.html)
         *   [REST](/cas/{{ version }}/registration/Account-Registration-Provisioning-REST.html)
+        *   [SCIM](/cas/{{ version }}/registration/Account-Registration-Provisioning-SCIM.html)
         *   [Custom](/cas/{{ version }}/registration/Account-Registration-Provisioning-Custom.html)
 
 * [Logs & Audits](#logs_audits)

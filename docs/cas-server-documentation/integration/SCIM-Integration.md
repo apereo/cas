@@ -34,6 +34,35 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casproperties.html properties="cas.scim" %}
 
+## Mapping Attributes
+
+SCIM user resources are populated from CAS authenticated principals using one-to-one mapping rules. For example, the `givenName`
+attribute in the SCIM schema is mapped and populated from the `givenName` attributes found for the CAS principal.
+
+The set of attributes that are mapped are as follows:
+
+| Attribute         | Description                                         
+|------------------------------------------------------------------------------------
+| `userName`        | Set to the principal id. 
+| `password`        | Set to the credential password, if available.
+| `nickName`        | Set to the principal attribute `nickName`.
+| `displayName`     | Set to the principal attribute `displayName`.
+| `givenName`       | Set to the principal attribute `givenName`.
+| `familyName`      | Set to the principal attribute `familyName`.
+| `email`           | Set to the principal attribute `email`.
+| `phoneNumber`     | Set to the principal attribute `phoneNumber`.
+| `externalId`      | Set to the principal attribute `externalId`.
+
+If the default mapping rules are not suitable, the mapping rules can always be adjusted 
+and customized using the following bean:   
+
+```java
+@Bean
+public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
+    return new MyPrincipalAttributeMapper();
+}
+```
+
 ## Per Application
 
 SCIM relevant settings can be specified per application in form of service properties. 
@@ -47,7 +76,7 @@ A sample JSON file follows:
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
   "name" : "sample service",
-  "id" : 100,
+  "id" : 1,
   "properties" : {
     "@class" : "java.util.HashMap",
     "scimUsername" : {

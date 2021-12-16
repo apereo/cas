@@ -41,7 +41,7 @@ public class ScimV2PrincipalAttributeMapperTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                val mapper = new ScimV2PrincipalAttributeMapper();
+                val mapper = new DefaultScimV2PrincipalAttributeMapper();
                 mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
                     CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             }

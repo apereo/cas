@@ -30,7 +30,9 @@ const cas = require('../../cas.js');
         console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
-
+    const response = await page.goto("https://localhost:8443/cas/idp/error");
+    assert(response.ok())
+    await cas.assertInnerText(page, '#content h2', "SAML2 Identity Provider Error");
     await browser.close();
 })();
 

@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.saml.sps;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -80,7 +81,7 @@ public abstract class AbstractSamlSPProperties implements Serializable {
     /**
      * Indicate whether assertions should be signed.
      */
-    private boolean signAssertions;
+    private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
     /**
      * Add attributes.

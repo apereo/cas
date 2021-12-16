@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -140,7 +141,9 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final String binding,
                                  final RequestAbstractType authnRequest,
                                  final MessageContext messageContext) {
-        if (service.isSignAssertions() || adaptor.isWantAssertionsSigned()) {
+        var signAssertions = (service.getSignAssertions() == TriStateBoolean.UNDEFINED && adaptor.isWantAssertionsSigned())
+            || service.getSignAssertions().isTrue();
+        if (signAssertions) {
             LOGGER.debug("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());
             samlObjectSigner.encode(assertion, service, adaptor, response, request, binding, authnRequest, messageContext);
         } else {

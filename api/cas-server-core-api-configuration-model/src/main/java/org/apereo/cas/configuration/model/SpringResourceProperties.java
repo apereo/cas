@@ -40,5 +40,5 @@ public class SpringResourceProperties implements Serializable {
      * You can check the current value via {@code cat /proc/sys/fs/inotify/max_user_instances}.
      */
     @RequiredProperty
-    private Resource location;
+    private transient Resource location;
 }

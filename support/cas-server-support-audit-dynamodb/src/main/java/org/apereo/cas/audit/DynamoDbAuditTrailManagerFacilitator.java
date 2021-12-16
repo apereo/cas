@@ -139,6 +139,7 @@ public class DynamoDbAuditTrailManagerFacilitator {
      * Column names for tables holding records.
      */
     @Getter
+    @RequiredArgsConstructor
     public enum ColumnNames {
         /**
          * principal column.
@@ -174,9 +175,5 @@ public class DynamoDbAuditTrailManagerFacilitator {
         APPLICATION_CODE("applicationCode");
 
         private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
     }
 }

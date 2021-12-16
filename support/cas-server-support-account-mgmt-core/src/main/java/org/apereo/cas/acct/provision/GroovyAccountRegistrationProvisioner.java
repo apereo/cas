@@ -4,6 +4,7 @@ import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
@@ -15,16 +16,11 @@ import org.springframework.context.ApplicationContext;
  * @since 6.5.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class GroovyAccountRegistrationProvisioner implements AccountRegistrationProvisioner {
     private final WatchableGroovyScriptResource watchableScript;
 
     private final ApplicationContext applicationContext;
-
-    public GroovyAccountRegistrationProvisioner(final WatchableGroovyScriptResource watchableScript,
-                                                final ApplicationContext applicationContext) {
-        this.watchableScript = watchableScript;
-        this.applicationContext = applicationContext;
-    }
 
     @Override
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {

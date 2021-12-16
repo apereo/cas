@@ -1,7 +1,13 @@
 package org.apereo.cas.util.model;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -73,5 +79,21 @@ public enum TriStateBoolean implements Serializable {
      */
     public Boolean toBoolean() {
         return state;
+    }
+
+    public static class Deserializer extends JsonDeserializer<TriStateBoolean> {
+
+        @Override
+        public TriStateBoolean deserialize(final JsonParser jsonParser,
+                                  final DeserializationContext deserializationContext) throws IOException {
+            val value = jsonParser.getText();
+            if (StringUtils.equalsIgnoreCase(value, Boolean.TRUE.toString())) {
+                return TriStateBoolean.TRUE;
+            }
+            if (StringUtils.equalsIgnoreCase(value, Boolean.FALSE.toString())) {
+                return TriStateBoolean.FALSE;
+            }
+            return TriStateBoolean.valueOf(value);
+        }
     }
 }
