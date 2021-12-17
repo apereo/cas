@@ -216,4 +216,10 @@ public abstract class AbstractJpaProperties implements Serializable {
      * @see org.springframework.transaction.TransactionDefinition
      */
     private String propagationBehaviorName = "PROPAGATION_REQUIRED";
+
+    /**
+     * Whether the module is enabled or not, defaults to true.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
 }

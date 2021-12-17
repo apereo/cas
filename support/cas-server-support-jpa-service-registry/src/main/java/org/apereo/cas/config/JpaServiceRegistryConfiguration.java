@@ -46,6 +46,8 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@ConditionalOnProperty(prefix = "cas.service-registry.jpa", name = "enabled", 
+  havingValue = "true", matchIfMissing = true)
 @Configuration(value = "JpaServiceRegistryConfiguration", proxyBeanMethods = false)
 public class JpaServiceRegistryConfiguration {
 

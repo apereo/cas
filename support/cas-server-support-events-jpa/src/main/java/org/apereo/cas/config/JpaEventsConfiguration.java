@@ -38,6 +38,8 @@ import javax.sql.DataSource;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
+@ConditionalOnProperty(prefix = "cas.events.jpa", name = "enabled", 
+  havingValue = "true", matchIfMissing = true)
 @Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
 public class JpaEventsConfiguration {
 
