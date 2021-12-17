@@ -96,7 +96,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             serviceMatchingStrategy);
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket) {
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+                                                                       final TicketGrantingTicket ticketGrantingTicket) {
         if (context == null) {
             return null;
         }
