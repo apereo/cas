@@ -1,6 +1,7 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -63,7 +64,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     private Set<String> getAuditRedisKeys() {
-        return this.redisTemplate.keys(getPatternAuditRedisKey());
+        return RedisUtils.keys(this.redisTemplate, getPatternAuditRedisKey());
     }
 
     @SuppressWarnings("JavaUtilDate")

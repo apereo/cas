@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -45,7 +46,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+        val keys = (Set<String>) RedisUtils.keys(redisTemplate, getPatternRedisKey());
         if (keys != null) {
             return keys.stream()
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())

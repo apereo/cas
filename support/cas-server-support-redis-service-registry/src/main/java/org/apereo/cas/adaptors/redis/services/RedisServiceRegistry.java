@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -116,6 +117,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Set<String> getRegisteredServiceKeys() {
-        return this.template.keys(getPatternRegisteredServiceRedisKey());
+        return RedisUtils.keys(this.template, getPatternRegisteredServiceRedisKey());
     }
 }

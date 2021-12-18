@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -39,7 +40,7 @@ public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTes
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataGenerator.CAS_PREFIX + '*';
-        val keys = redisSamlIdPMetadataTemplate.keys(key);
+        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key);
         if (keys != null) {
             redisSamlIdPMetadataTemplate.delete(keys);
         }

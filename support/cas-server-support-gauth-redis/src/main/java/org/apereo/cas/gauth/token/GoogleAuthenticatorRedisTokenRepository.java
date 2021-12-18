@@ -6,6 +6,7 @@ import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
@@ -113,19 +114,19 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     private Set<String> getGoogleAuthenticatorTokenKeys() {
         val key = getPatternGoogleAuthenticatorTokenRedisKey();
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys(final String username) {
         val key = getGoogleAuthenticatorTokenRedisKey(username);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 
     @Override

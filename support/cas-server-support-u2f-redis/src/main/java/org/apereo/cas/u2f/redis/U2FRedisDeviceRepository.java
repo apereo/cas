@@ -2,6 +2,7 @@ package org.apereo.cas.u2f.redis;
 
 import org.apereo.cas.adaptors.u2f.storage.BaseU2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -54,7 +55,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         val expirationDate = LocalDate.now(ZoneId.systemDefault())
             .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
         if (keys != null) {
             return queryDeviceRegistrations(expirationDate, keys);
         }
@@ -65,7 +66,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val expirationDate = LocalDate.now(ZoneId.systemDefault())
             .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-        val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForUser(username));
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, buildRedisKeyForUser(username));
         if (keys != null) {
             return queryDeviceRegistrations(expirationDate, keys);
         }
@@ -134,6 +135,6 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     private Set<String> getRedisKeys() {
-        return this.redisTemplate.keys(getPatternRedisKey());
+        return RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
     }
 }

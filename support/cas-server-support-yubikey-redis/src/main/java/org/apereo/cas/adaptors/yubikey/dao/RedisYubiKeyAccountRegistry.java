@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
@@ -87,7 +88,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        val keys = (Set<String>) this.redisTemplate.keys(getPatternYubiKeyDevices());
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternYubiKeyDevices());
         if (keys != null) {
             this.redisTemplate.delete(keys);
         }

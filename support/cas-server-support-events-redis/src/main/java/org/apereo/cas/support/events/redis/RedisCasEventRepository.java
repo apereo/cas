@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.redis;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -131,6 +132,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     private Set<String> getKeys(final String type, final String principal, final String timestamp) {
         val key = getKey(type, principal, timestamp);
         LOGGER.trace("Fetching records based on key [{}]", key);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 }

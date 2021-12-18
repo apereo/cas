@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.config.RedisMultifactorAuthenticationTrustConfiguration;
@@ -49,7 +50,7 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = redisMfaTrustedAuthnTemplate.keys(key);
+        val keys = RedisUtils.keys(redisMfaTrustedAuthnTemplate, key);
         if (keys != null) {
             redisMfaTrustedAuthnTemplate.delete(keys);
         }

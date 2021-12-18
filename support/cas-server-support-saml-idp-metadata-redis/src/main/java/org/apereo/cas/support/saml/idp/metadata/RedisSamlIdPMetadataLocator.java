@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -36,7 +37,7 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
-        val keys = redisTemplate.keys(CAS_PREFIX + appliesTo + ":*");
+        val keys = RedisUtils.keys(redisTemplate, CAS_PREFIX + appliesTo + ":*");
         if (keys != null && !keys.isEmpty()) {
             val redisKey = keys.iterator().next();
             return redisTemplate.boundValueOps(redisKey).get();

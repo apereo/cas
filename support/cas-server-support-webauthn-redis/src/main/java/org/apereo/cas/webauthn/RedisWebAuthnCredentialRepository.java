@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
@@ -44,7 +45,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        val keys = (Set<String>) this.redisTemplate.keys(buildRedisKeyForRecord(username));
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(username));
         if (keys != null) {
             return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
         }
@@ -53,7 +54,7 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        val keys = (Set<String>) this.redisTemplate.keys(getPatternRedisKey());
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
         if (keys != null) {
             return toCredentialRegistrationsAsStream(keys);
         }
