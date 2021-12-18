@@ -95,12 +95,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public Stream<? extends Ticket> stream() {
         return getKeysStream()
             .map(redisKey -> {
-                val ticket = this.client.boundValueOps(redisKey).get();
-                if (ticket == null) {
-                    this.client.delete(redisKey);
+                try {
+                    val ticket = this.client.boundValueOps(redisKey).get();
+                    if (ticket == null) {
+                        this.client.delete(redisKey);
+                        return null;
+                    }
+                    return ticket;
+                } catch (final Exception e) {
+                    LOGGER.debug("Failed fetching [{}]. Message is: [{}]", redisKey, e.getMessage());
                     return null;
                 }
-                return ticket;
             })
             .filter(Objects::nonNull)
             .map(this::decodeTicket)

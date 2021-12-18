@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
+import org.apereo.cas.config.RedisTicketRegistryTestConfiguration;
 import org.apereo.cas.ticket.Ticket;
 
 import lombok.Getter;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootTest(classes = {
     RedisTicketRegistryConfiguration.class,
+    RedisTicketRegistryTestConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })
 @EnableTransactionManagement
@@ -28,6 +30,10 @@ public abstract class BaseRedisSentinelTicketRegistryTests extends BaseTicketReg
     @Autowired
     @Qualifier("ticketRedisTemplate")
     protected RedisTemplate<String, Ticket> ticketRedisTemplate;
+
+    @Autowired
+    @Qualifier("stringRedisTemplate")
+    private RedisTemplate<String, String> stringRedisTemplate;
 
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

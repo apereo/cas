@@ -1,10 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +38,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 6379)
 @Tag("Redis")
 public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegistryTests {
+
+    private static final int TICKET_GRANTING_TICKET_BATCH_SIZE = 10;
+
+    private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
@@ -69,4 +77,22 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         });
     }
 
+    @RepeatedTest(1)
+    public void verifyStreamWithFaultTicketInjection() {
+        for (var i = 0; i < TICKET_GRANTING_TICKET_BATCH_SIZE; i++) {
+            val ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+            TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                    originalAuthn,
+                    NeverExpiresExpirationPolicy.INSTANCE);
+            getNewTicketRegistry().addTicket(ticketGrantingTicket);
+        }
+        val faultTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+        val faultTicketKey = CAS_TICKET_PREFIX + ":" + faultTicketId;
+        getStringRedisTemplate().boundValueOps(faultTicketKey).set("FAULT_TICKET_CAUSE_DESERIALIZING_ERROR",
+                NeverExpiresExpirationPolicy.INSTANCE.getTimeToLive(), TimeUnit.SECONDS);
+        assertEquals(TICKET_GRANTING_TICKET_BATCH_SIZE, getNewTicketRegistry().stream().count());
+    }
 }
