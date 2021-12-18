@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -48,7 +49,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        val redisKeys = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*");
+        val redisKeys = RedisUtils.keys(this.redisTemplate, CAS_CONSENT_DECISION_PREFIX + principal + ":*");
         if (redisKeys != null) {
             return (Collection) redisKeys
                 .stream()
@@ -62,7 +63,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        val redisKeys = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*');
+        val redisKeys = RedisUtils.keys(this.redisTemplate, CAS_CONSENT_DECISION_PREFIX + '*');
         if (redisKeys != null) {
             return (Collection) redisKeys
                 .stream()
@@ -88,7 +89,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        val redisKey = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId);
+        val redisKey = RedisUtils.keys(this.redisTemplate, CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId);
         if (redisKey != null) {
             val count = this.redisTemplate.delete(redisKey);
             return count != null && count.intValue() > 0;
@@ -98,7 +99,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public void deleteAll() {
-        val redisKey = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + '*');
+        val redisKey = RedisUtils.keys(this.redisTemplate, CAS_CONSENT_DECISION_PREFIX + '*');
         if (redisKey != null) {
             this.redisTemplate.delete(redisKey);
         }
@@ -106,7 +107,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        val redisKey = this.redisTemplate.keys(CAS_CONSENT_DECISION_PREFIX + principal + ":*");
+        val redisKey = RedisUtils.keys(this.redisTemplate, CAS_CONSENT_DECISION_PREFIX + principal + ":*");
         if (redisKey != null) {
             val count = this.redisTemplate.delete(redisKey);
             return count != null && count.intValue() > 0;

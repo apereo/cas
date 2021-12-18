@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -145,12 +146,12 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     private Set<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
         val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 
     private Set<String> getGoogleAuthenticatorTokenKeys() {
         val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return this.template.keys(key);
+        return RedisUtils.keys(this.template, key);
     }
 }

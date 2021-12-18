@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -36,7 +37,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     @SuppressWarnings("java:S2583")
     public long deleteAll() {
-        val redisKeys = client.keys(getPatternTicketRedisKey());
+        val redisKeys = RedisUtils.keys(client, getPatternTicketRedisKey());
         val size = Objects.requireNonNull(redisKeys).size();
         this.client.delete(redisKeys);
         return size;

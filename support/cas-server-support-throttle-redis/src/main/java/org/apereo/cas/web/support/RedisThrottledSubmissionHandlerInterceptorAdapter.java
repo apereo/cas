@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.audit.RedisAuditTrailManager;
 
 import lombok.val;
+import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.redis.core.BoundValueOperations;
@@ -37,7 +38,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
-        val keys = (Set<String>) this.redisTemplate.keys(RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
+        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
         val failures = Objects.requireNonNull(keys)
             .stream()
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
