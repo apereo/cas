@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
+import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
@@ -119,4 +120,15 @@ public class CasCoreUtilConfiguration {
         }
     }
 
+    @Configuration(value = "CasCoreUtilLockingConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreUtilLockingConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LockRepository casLockRepository() {
+            return LockRepository.asDefault();
+        }
+    }
 }
