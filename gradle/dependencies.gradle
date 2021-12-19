@@ -2652,11 +2652,9 @@ ext.libraries = [
         springintegration       : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.springframework.integration:spring-integration-jmx:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 }
         ],
         springcloudbus          : [
