@@ -53,8 +53,7 @@ public interface LockRepository {
      * @param <T>      the type parameter
      * @param lockKey  the lock key
      * @param consumer the consumer
-     * @return the t
-     * @throws Exception the exception
+     * @return the optional type
      */
-    <T> Optional<T> execute(Object lockKey, Supplier<T> consumer) throws Exception;
+    <T> Optional<T> execute(Object lockKey, Supplier<T> consumer);
 }

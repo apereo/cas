@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.CentralAuthenticationServiceContext;
 import org.apereo.cas.DefaultCentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -18,6 +19,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.lock.LockRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -83,6 +85,14 @@ public class CasCoreConfiguration {
         @ConditionalOnMissingBean(name = CentralAuthenticationService.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CentralAuthenticationService centralAuthenticationService(
+            @Qualifier("centralAuthenticationServiceContext")
+            final CentralAuthenticationServiceContext centralAuthenticationServiceContext) {
+            return new DefaultCentralAuthenticationService(centralAuthenticationServiceContext);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CentralAuthenticationServiceContext centralAuthenticationServiceContext(
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,
             @Qualifier("protocolTicketCipherExecutor")
@@ -101,11 +111,22 @@ public class CasCoreConfiguration {
             final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
             @Qualifier("serviceMatchingStrategy")
             final ServiceMatchingStrategy serviceMatchingStrategy,
+            @Qualifier(LockRepository.BEAN_NAME)
+            final LockRepository casLockRepository,
             final ConfigurableApplicationContext applicationContext) {
-            return new DefaultCentralAuthenticationService(applicationContext,
-                ticketRegistry, servicesManager, ticketFactory,
-                authenticationServiceSelectionPlan, authenticationPolicyFactory, principalFactory,
-                cipherExecutor, registeredServiceAccessStrategyEnforcer, serviceMatchingStrategy);
+            return CentralAuthenticationServiceContext.builder()
+                .authenticationServiceSelectionPlan(authenticationServiceSelectionPlan)
+                .lockRepository(casLockRepository)
+                .cipherExecutor(cipherExecutor)
+                .principalFactory(principalFactory)
+                .ticketRegistry(ticketRegistry)
+                .ticketFactory(ticketFactory)
+                .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
+                .authenticationPolicyFactory(authenticationPolicyFactory)
+                .serviceMatchingStrategy(serviceMatchingStrategy)
+                .applicationContext(applicationContext)
+                .servicesManager(servicesManager)
+                .build();
         }
     }
 
