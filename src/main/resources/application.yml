@@ -11,3 +11,9 @@ casbot:
       name: cas
       url: https://github.com/apereo/cas
       committers: mmoayyed,leleuj,hdeadman
+
+spring:
+  security:
+    user:
+      name: apereocasbot
+      password: ${CASBOT_GITHUB_CREDENTIALS_TOKEN}

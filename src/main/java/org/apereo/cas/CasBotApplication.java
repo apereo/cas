@@ -16,24 +16,27 @@
 
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
@@ -67,7 +70,7 @@ public class CasBotApplication {
                                                final List<PullRequestListener> pullRequestListeners) {
         return new RepositoryMonitor(gitHub, repository, pullRequestListeners);
     }
-    
+
     @EventListener
     public void applicationReady(final ApplicationReadyEvent event) {
         log.info("CAS GitHub bot is now ready");
@@ -75,7 +78,7 @@ public class CasBotApplication {
         val repository = event.getApplicationContext().getBean(MonitoredRepository.class);
         log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());
         repository.getMilestoneForMaster().ifPresentOrElse(ms ->
-            log.info("Current milestone for master branch: {}", ms),
+                log.info("Current milestone for master branch: {}", ms),
             () -> log.warn("Unable to determine current milestone for master branch"));
 
     }
@@ -106,8 +109,10 @@ public class CasBotApplication {
         @Autowired
         private MonitoredRepository repository;
 
-        @PostMapping(value = "/repository/mergeWithBase/{pullRequestNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
-        public HttpStatus mergeWithMaster(@PathVariable final String pullRequestNumber) {
+        @GetMapping(value = "/repo/ci/{pullRequestNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+        public HttpStatus mergeWithMaster(
+            @PathVariable
+            final String pullRequestNumber) {
             try {
                 val pr = this.repository.getPullRequest(pullRequestNumber);
                 if (pr == null) {
@@ -117,12 +122,23 @@ public class CasBotApplication {
                 if (pr.isLocked()) {
                     return HttpStatus.LOCKED;
                 }
-                this.repository.mergePullRequestWithBase(pr);
+
+                if (pr.isLabeledAs(CasLabels.LABEL_CI)) {
+                    repository.removeLabelFrom(pr, CasLabels.LABEL_CI);
+                }
+                log.info("Assigning label {} to pr {}", CasLabels.LABEL_CI, pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_CI);
                 return HttpStatus.OK;
+
             } catch (final Exception e) {
                 log.error(e.getMessage());
             }
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    @Configuration
+    @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+    public static class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
     }
 }
