@@ -73,6 +73,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
                                                                        final TicketGrantingTicket ticketGrantingTicket) {
+        if (context == null) {
+            LOGGER.warn("Provided authentication result is undefined to evaluate for mixed principals");
+            return null;
+        }
         val currentAuthentication = context.getAuthentication();
         if (currentAuthentication != null) {
             val original = ticketGrantingTicket.getAuthentication();

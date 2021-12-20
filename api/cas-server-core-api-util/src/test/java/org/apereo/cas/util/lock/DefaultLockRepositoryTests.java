@@ -2,6 +2,7 @@ package org.apereo.cas.util.lock;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Tag("Utility")
 public class DefaultLockRepositoryTests {
     @Test
     public void verifyNoOp() throws Exception {
@@ -65,6 +67,6 @@ public class DefaultLockRepositoryTests {
     }
 
     private static class Container {
-        final Map<String, List<String>> values = new HashMap<>();
+        private final Map<String, List<String>> values = new HashMap<>();
     }
 }
