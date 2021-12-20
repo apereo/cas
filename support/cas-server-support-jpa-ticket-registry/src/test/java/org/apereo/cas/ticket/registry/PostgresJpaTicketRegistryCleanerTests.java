@@ -1,13 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * Unit test for {@link JpaLockingStrategy}.
+ * Unit test for {@link TicketRegistryCleaner} for postgres.
  *
  * @author Marvin S. Addison
  * @since 3.0.0

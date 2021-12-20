@@ -112,11 +112,11 @@ public class CasCoreConfiguration {
             @Qualifier("serviceMatchingStrategy")
             final ServiceMatchingStrategy serviceMatchingStrategy,
             @Qualifier(LockRepository.BEAN_NAME)
-            final LockRepository casLockRepository,
+            final LockRepository casTicketRegistryLockRepository,
             final ConfigurableApplicationContext applicationContext) {
             return CentralAuthenticationServiceContext.builder()
                 .authenticationServiceSelectionPlan(authenticationServiceSelectionPlan)
-                .lockRepository(casLockRepository)
+                .lockRepository(casTicketRegistryLockRepository)
                 .cipherExecutor(cipherExecutor)
                 .principalFactory(principalFactory)
                 .ticketRegistry(ticketRegistry)
