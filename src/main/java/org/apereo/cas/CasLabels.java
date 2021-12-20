@@ -106,6 +106,7 @@ public enum CasLabels {
     LABEL_SPNEGO("SPNEGO"),
     LABEL_SSO_COOKIES("SSO & Cookies", "sso sessions|sso session|tgc|cookie"),
     LABEL_SEE_MAINTENANCE_POLICY("See Maintenance Policy"),
+    LABEL_SEE_SECURITY_POLICY("See Security Policy"),
     LABEL_SERVICE_EXPIRATION_POLICY("Service Expiration Policy"),
     LABEL_SERVICES_REGISTRIES("Services & Registries", "\\bservice\\b|service registries|service registry|service files|\\bservices\\b|\\bRegisteredServices\\b|AbstractRegisteredService|RegisteredService|ServicesManager"),
     LABEL_SESSION_MANAGEMENT("Session Management", "sso sessions"),
