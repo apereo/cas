@@ -7,9 +7,6 @@ import org.apereo.cas.ticket.registry.MySQLJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.OracleJpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.PostgresJpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.PostgresJpaTicketRegistryTests;
-import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
-import org.apereo.cas.ticket.registry.support.OracleJpaLockingStrategyTests;
-import org.apereo.cas.ticket.registry.support.PostgresJpaLockingStrategyTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -23,14 +20,11 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     SessionHealthIndicatorJpaTests.class,
     PostgresJpaTicketRegistryTests.class,
-    PostgresJpaLockingStrategyTests.class,
     JpaTicketRegistryTests.class,
-    JpaLockingStrategyTests.class,
     MySQLJpaTicketRegistryTests.class,
     JpaTicketRegistryCleanerTests.class,
     PostgresJpaTicketRegistryCleanerTests.class,
-    OracleJpaTicketRegistryTests.class,
-    OracleJpaLockingStrategyTests.class
+    OracleJpaTicketRegistryTests.class
 })
 @Suite
 public class AllTestsSuite {

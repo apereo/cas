@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -37,6 +38,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
@@ -55,9 +58,13 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class,
-    properties = "cas.ticket.registry.jpa.ddl-auto=create-drop")
+    properties = {
+        "spring.integration.jdbc.initialize-schema=ALWAYS",
+        "cas.ticket.registry.jpa.ddl-auto=create-drop"
+    })
 @Tag("JDBC")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public class JpaTicketRegistryCleanerTests {
     @Autowired
     @Qualifier(TicketFactory.BEAN_NAME)
@@ -212,7 +219,7 @@ public class JpaTicketRegistryCleanerTests {
                     ticketRegistry.addTicket(tgt);
 
                     val st = tgt.grantServiceTicket(ServiceTicket.PREFIX + '-'
-                            + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
+                                                    + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
                         new HardTimeoutExpirationPolicy(1), true, false);
                     ticketRegistry.addTicket(st);
                     ticketRegistry.updateTicket(tgt);
@@ -240,7 +247,7 @@ public class JpaTicketRegistryCleanerTests {
     private OAuth20Code createOAuthCode() {
         val builder = mock(ExpirationPolicyBuilder.class);
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
-        
+
         return new OAuth20DefaultOAuthCodeFactory(builder, servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),

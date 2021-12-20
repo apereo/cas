@@ -17,7 +17,7 @@ public interface LockRepository {
     /**
      * Bean implementation name.
      */
-    String BEAN_NAME = "casLockRepository";
+    String BEAN_NAME = "casTicketRegistryLockRepository";
 
     /**
      * Length of the masked array,
