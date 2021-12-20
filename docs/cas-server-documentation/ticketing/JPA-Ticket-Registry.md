@@ -31,7 +31,10 @@ database periodically and remove expired records based on configured threshold p
 
 {% include_cached casproperties.html properties="cas.ticket.registry.cleaner" %}
 
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep the cleaner running on one designated CAS node only and turn it off on all others via CAS settings. Keeping the cleaner running on all nodes may likely lead to severe performance and locking issues.</p></div>
+<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is 
+best to keep the cleaner running on one designated CAS node only and turn it off on all others 
+via CAS settings. Keeping the cleaner running on all nodes may likely lead to 
+severe performance and locking issues.</p></div>
 
 ## Ticket-granting Ticket Locking
 
@@ -43,4 +46,9 @@ TGT is used concurrently by multiple requests.
 This reduces performance of the JPA Ticket Registry and may not be desirable or necessary for some deployments depending
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
+  
+## Ticket Registry Locking
 
+This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html). 
+
+{% include_cached casproperties.html thirdParty="spring.integration.jdbc" %}

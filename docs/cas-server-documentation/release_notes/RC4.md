@@ -88,8 +88,9 @@ can now accept a *tri-state* boolean with the following values:
 - `UNDEFINED`: Evaluate the signing requirement based on the `WantAssertionsSigned` flag found in the service provider metadata.
 
 <div class="alert alert-warning"><strong>Breaking Change</strong><p>
-This <i>might</i> be a breaking change. Please review your service definitions to review. While the default being <code>false</code>
-has not changed, it might result in a change in behavior compared to previous releases and updates.
+This <i>might</i> be a breaking change. Please examine your service definitions to review this setting. While 
+the default being <code>false</code> has not changed, it might result in a change in behavior 
+compared to previous releases and updates.
 </p></div>
 
 Previously-recorded boolean values for this flag as `true` or `false` should be 

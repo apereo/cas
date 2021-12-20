@@ -319,6 +319,7 @@ layout: null
     *   [Overview](/cas/{{ version }}/ticketing/Configuring-Ticketing-Components.html)
     *   [JWT Service Tickets](/cas/{{ version }}/installation/Configure-ServiceTicket-JWT.html)
     *   [Expiration Policies](/cas/{{ version }}/ticketing/Configuring-Ticket-Expiration-Policy.html)
+    *   [Locking](/cas/{{ version }}/ticketing/Ticket-Registry-Locking.html)
     *   [Storage](#ticketingstorage)
         *   [Default](/cas/{{ version }}/ticketing/Default-Ticket-Registry.html)
         *   [JMS](/cas/{{ version }}/ticketing/Messaging-JMS-Ticket-Registry.html)
