@@ -49,7 +49,8 @@ report contains enough diagnostics data to expedite reviews and feedback:
 - Include an overlay project that can duplicate the issue in practice.
 - If possible, prepare and share unit/integration tests to recreate the issue.
 
-Before posting a possible security issue, please make sure the affected CAS release line is still [under maintenance](Maintenance-Policy.html). Releases
+Before posting a possible security issue, please make sure the affected CAS release 
+line is still [under maintenance](/cas/developer/Maintenance-Policy.html). Releases
 that are considered EOL will not receive further updates and/or attention from designated project members.
 
 ### Time to Fix
@@ -86,7 +87,7 @@ Once the release is made available, the following procedure may be observed:
     - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
-<div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="Project-Commitee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
+<div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from <a href="/cas/developer/Project-Commitee.html">trusted project contacts</a> and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
 
 ### Trusted Contacts
 
