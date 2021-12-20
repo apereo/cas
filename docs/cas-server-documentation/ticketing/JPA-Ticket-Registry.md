@@ -36,7 +36,6 @@ best to keep the cleaner running on one designated CAS node only and turn it off
 via CAS settings. Keeping the cleaner running on all nodes may likely lead to 
 severe performance and locking issues.</p></div>
 
- 
 ## Ticket Registry Locking
 
 This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).

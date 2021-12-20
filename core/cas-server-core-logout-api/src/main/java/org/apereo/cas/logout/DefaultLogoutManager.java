@@ -83,7 +83,7 @@ public class DefaultLogoutManager implements LogoutManager {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()))
             .flatMap(Collection::stream)
-            .filter(distinctByKey(request -> request.getService()))
+            .filter(distinctByKey(SingleLogoutRequestContext::getService))
             .collect(Collectors.toList());
     }
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.hz.HazelcastZooKeeperDiscoveryStrategy;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.hazelcast.config.Config;
