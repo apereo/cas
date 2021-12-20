@@ -36,19 +36,11 @@ best to keep the cleaner running on one designated CAS node only and turn it off
 via CAS settings. Keeping the cleaner running on all nodes may likely lead to 
 severe performance and locking issues.</p></div>
 
-## Ticket-granting Ticket Locking
-
-TGTs are almost always updated within the same transaction they are loaded from the database in, but
-after some processing delays. Because of this, the JPA Ticket Registry utilizes write locks on all loads of
-TGTs from the database to prevent deadlocks and ensure usage meta-data consistency when a single
-TGT is used concurrently by multiple requests.
-
-This reduces performance of the JPA Ticket Registry and may not be desirable or necessary for some deployments depending
-the database in use, its configured transaction isolation level, and expected concurrency of a single
-TGT.
-  
+ 
 ## Ticket Registry Locking
 
-This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html). 
+This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).
+The database schemas and tables that track locking operations should be automatically created by CAS using
+[Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
 
 {% include_cached casproperties.html thirdParty="spring.integration.jdbc" %}
