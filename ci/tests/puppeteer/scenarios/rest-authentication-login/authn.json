@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.authentication.principal.SimplePrincipal",
+  "id": "casuser",
+  "attributes": {
+    "@class": "java.util.LinkedHashMap",
+    "names": [
+      "java.util.List", ["cas", "user"]
+    ]
+  }
+}
