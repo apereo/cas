@@ -95,6 +95,11 @@ compared to previous releases and updates.
 
 Previously-recorded boolean values for this flag as `true` or `false` should be 
 automatically translated by CAS to their `TRUE` or `FALSE` equivalent. 
+  
+## Ticket Registry Distributed Locks
+
+Ticket registry operations should now support [distributed locking](../ticketing/Ticket-Registry-Locking.html).
+Lock implementations are available for JVM memory (default), Redis, ZooKeeper and JDBC technologies.
 
 ## Other Stuff
          

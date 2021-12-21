@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
  *
@@ -46,14 +44,16 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Override
     public int cleanTicket(final Ticket ticket) {
-        if (ticket instanceof TicketGrantingTicket) {
-            LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-            logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
-                .ticketGrantingTicket((TicketGrantingTicket) ticket)
-                .build());
-        }
-        LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
-        return ticketRegistry.deleteTicket(ticket);
+        return this.lockRepository.execute(ticket.getId(), () -> {
+            if (ticket instanceof TicketGrantingTicket) {
+                LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
+                    .ticketGrantingTicket((TicketGrantingTicket) ticket)
+                    .build());
+            }
+            LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
+            return ticketRegistry.deleteTicket(ticket);
+        }).orElseThrow();
     }
 
     /**
@@ -62,16 +62,13 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      * @return the int
      */
     protected int cleanInternal() {
-        val lockKey = UUID.randomUUID().toString();
-        return this.lockRepository.execute(lockKey, () -> {
-            try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
-                val ticketsDeleted = expiredTickets
-                    .mapToInt(this::cleanTicket)
-                    .sum();
-                LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
-                return ticketsDeleted;
-            }
-        }).orElseThrow();
+        try (val expiredTickets = ticketRegistry.stream().filter(Ticket::isExpired)) {
+            val ticketsDeleted = expiredTickets
+                .mapToInt(this::cleanTicket)
+                .sum();
+            LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
+            return ticketsDeleted;
+        }
     }
 
     /**
