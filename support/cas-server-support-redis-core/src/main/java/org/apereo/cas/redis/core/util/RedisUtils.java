@@ -24,6 +24,9 @@ public class RedisUtils {
 
     /**
      * Get redis keys using scan command.
+     * <p>
+     * This method is similar to {@link RedisUtils#keys(RedisTemplate, String, long)},
+     * with a default COUNT value {@link RedisUtils#SCAN_COUNT}.
      *
      * @param redisTemplate the redisTemplate
      * @param pattern       the redis keys pattern
@@ -38,7 +41,7 @@ public class RedisUtils {
      *
      * @param redisTemplate the redisTemplate
      * @param pattern       the redis keys pattern
-     * @param count         the scan limit
+     * @param count         the scan count
      * @return the redis keys
      */
     public static Stream<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern, final long count) {
