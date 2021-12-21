@@ -101,6 +101,12 @@ automatically translated by CAS to their `TRUE` or `FALSE` equivalent.
 Ticket registry operations should now support [distributed locking](../ticketing/Ticket-Registry-Locking.html).
 Lock implementations are available for JVM memory (default), Redis, ZooKeeper and JDBC technologies.
 
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow 
+to add additional scenarios. At this point, there are
+approximately `220` test scenarios and we'll continue to add more in the coming releases.
+
 ## Other Stuff
          
 - Improvements to CAS ticket registry operations to handle concurrent ticket and token requests correctly.     
@@ -132,3 +138,4 @@ Lock implementations are available for JVM memory (default), Redis, ZooKeeper an
 - Okta SDK
 - Spring
 - Spring Boot
+- Spring Security
