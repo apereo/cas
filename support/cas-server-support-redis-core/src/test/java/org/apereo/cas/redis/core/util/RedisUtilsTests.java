@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,21 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("Redis")
 @EnabledIfPortOpen(port = 6379)
 public class RedisUtilsTests {
-    private static final int KEY_SIZE = 10;
-
     @Autowired
     @Qualifier("stringRedisTemplate")
     protected RedisTemplate<String, String> stringRedisTemplate;
 
     @Test
-    public void verifyGetKeys() {
+    public void verifyKeys() {
         val redisKeyPrefix = "CAS_TEST:";
-        IntStream.range(0, KEY_SIZE)
-            .forEach(i -> stringRedisTemplate.boundValueOps(redisKeyPrefix + i).set(String.valueOf(i)));
-        val keySet = RedisUtils.keys(stringRedisTemplate, redisKeyPrefix + "*").collect(Collectors.toSet());
-        assertEquals(KEY_SIZE, keySet.size());
-        stringRedisTemplate.delete(keySet);
-        val stream = RedisUtils.keys(stringRedisTemplate, redisKeyPrefix + "*");
-        assertEquals(0, stream.count());
+        val keySize = 10;
+        IntStream.range(0, keySize).forEach(i -> stringRedisTemplate.boundValueOps(redisKeyPrefix + i).set("TEST"));
+        val keys = RedisUtils.keys(stringRedisTemplate, redisKeyPrefix + "*");
+        assertEquals(keySize, keys.count());
     }
 }
