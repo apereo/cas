@@ -10,7 +10,8 @@ import org.apereo.cas.redis.core.util.RedisUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link GoogleAuthenticatorRedisTokenRepository}.
@@ -50,7 +51,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void removeAll() {
-        val redisKey = getGoogleAuthenticatorTokenKeys();
+        val redisKey = getGoogleAuthenticatorTokenKeys().collect(Collectors.toSet());
         LOGGER.trace("Deleting tokens using key [{}]", redisKey);
         this.template.delete(redisKey);
     }
@@ -65,7 +66,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void remove(final String uid) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(uid);
+        val redisKey = getGoogleAuthenticatorTokenKeys(uid).collect(Collectors.toSet());
         LOGGER.trace("Deleting tokens for [{}] using key [{}]", uid, redisKey);
         this.template.delete(redisKey);
         LOGGER.trace("Deleted tokens [{}]", redisKey);
@@ -73,7 +74,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
 
     @Override
     public void remove(final Integer otp) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(otp);
+        val redisKey = getGoogleAuthenticatorTokenKeys(otp).collect(Collectors.toSet());
         LOGGER.trace("Deleting token for [{}] using key [{}]", otp, redisKey);
         this.template.delete(redisKey);
         LOGGER.trace("Deleted tokens [{}]", redisKey);
@@ -82,13 +83,13 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     @Override
     public long count(final String uid) {
         val keys = getGoogleAuthenticatorTokenKeys(uid);
-        return keys.size();
+        return keys.count();
     }
 
     @Override
     public long count() {
         val keys = getGoogleAuthenticatorTokenKeys();
-        return keys.size();
+        return keys.count();
     }
 
     private static String getGoogleAuthenticatorTokenRedisKey(final GoogleAuthenticatorToken token) {
@@ -111,19 +112,19 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
         return CAS_PREFIX + KEY_SEPARATOR + '*';
     }
 
-    private Set<String> getGoogleAuthenticatorTokenKeys() {
+    private Stream<String> getGoogleAuthenticatorTokenKeys() {
         val key = getPatternGoogleAuthenticatorTokenRedisKey();
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
         return RedisUtils.keys(this.template, key);
     }
 
-    private Set<String> getGoogleAuthenticatorTokenKeys(final String username) {
+    private Stream<String> getGoogleAuthenticatorTokenKeys(final String username) {
         val key = getGoogleAuthenticatorTokenRedisKey(username);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, username);
         return RedisUtils.keys(this.template, key);
     }
 
-    private Set<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
+    private Stream<String> getGoogleAuthenticatorTokenKeys(final Integer otp) {
         val key = getGoogleAuthenticatorTokenRedisKey(otp);
         LOGGER.trace("Fetching Google Authenticator records based on key [{}] for [{}]", key, otp);
         return RedisUtils.keys(this.template, key);

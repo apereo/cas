@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,10 +41,8 @@ public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTes
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataGenerator.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key);
-        if (keys != null) {
-            redisSamlIdPMetadataTemplate.delete(keys);
-        }
+        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key).collect(Collectors.toSet());
+        redisSamlIdPMetadataTemplate.delete(keys);
     }
 
     @Test

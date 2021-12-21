@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.ScanOptions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -88,10 +87,8 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternYubiKeyDevices());
-        if (keys != null) {
-            this.redisTemplate.delete(keys);
-        }
+        val keys = RedisUtils.keys(this.redisTemplate, getPatternYubiKeyDevices()).collect(Collectors.toSet());
+        this.redisTemplate.delete(keys);
     }
 
     @Override

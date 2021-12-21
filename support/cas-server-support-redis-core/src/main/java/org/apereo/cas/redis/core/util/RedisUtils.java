@@ -7,10 +7,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
 import java.util.Objects;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -30,7 +29,7 @@ public class RedisUtils {
      * @param pattern       the redis keys pattern
      * @return the redis keys
      */
-    public static Set<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern) {
+    public static Stream<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern) {
         return keys(redisTemplate, pattern, SCAN_COUNT);
     }
 
@@ -42,14 +41,13 @@ public class RedisUtils {
      * @param count         the scan limit
      * @return the redis keys
      */
-    public static Set<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern, final long count) {
+    public static Stream<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern, final long count) {
         val cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory())
             .getConnection()
             .scan(ScanOptions.scanOptions().match(pattern).count(count).build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .onClose(() -> IOUtils.closeQuietly(cursor))
-            .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))
-            .collect(Collectors.toSet());
+            .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key));
     }
 }

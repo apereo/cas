@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -46,7 +45,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> load() {
         val keys = getKeys("*", "*", "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull);
     }
@@ -55,7 +53,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val keys = getKeys("*", "*", "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull)
             .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
@@ -65,7 +62,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val keys = getKeys(type, principal, "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull);
     }
@@ -76,7 +72,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
                                                                   final ZonedDateTime dateTime) {
         val keys = getKeys(type, principal, "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull)
             .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
@@ -86,7 +81,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> getEventsOfType(final String type) {
         val keys = getKeys(type, "*", "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull);
     }
@@ -95,7 +89,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val keys = getKeys(type, "*", "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull)
             .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
@@ -105,7 +98,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
         val keys = getKeys("*", id, "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull);
     }
@@ -114,7 +106,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> getEventsForPrincipal(final String principal, final ZonedDateTime dateTime) {
         val keys = getKeys("*", principal, "*");
         return keys
-            .stream()
             .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull)
             .filter(event -> event.getTimestamp() >= dateTime.toInstant().toEpochMilli());
@@ -129,7 +120,7 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
         return event;
     }
 
-    private Set<String> getKeys(final String type, final String principal, final String timestamp) {
+    private Stream<String> getKeys(final String type, final String principal, final String timestamp) {
         val key = getKey(type, principal, timestamp);
         LOGGER.trace("Fetching records based on key [{}]", key);
         return RedisUtils.keys(this.template, key);
