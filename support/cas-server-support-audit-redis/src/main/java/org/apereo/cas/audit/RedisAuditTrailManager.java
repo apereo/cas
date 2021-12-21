@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link RedisAuditTrailManager}.
@@ -44,7 +45,6 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}]", dt);
         return getAuditRedisKeys()
-            .stream()
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(AuditActionContext.class::cast)
@@ -63,7 +63,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         this.redisTemplate.boundValueOps(redisKey).set(audit);
     }
 
-    private Set<String> getAuditRedisKeys() {
+    private Stream<String> getAuditRedisKeys() {
         return RedisUtils.keys(this.redisTemplate, getPatternAuditRedisKey());
     }
 

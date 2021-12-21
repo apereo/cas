@@ -17,8 +17,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of the service registry interface which stores the services in a redis instance.
@@ -79,13 +79,12 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        return getRegisteredServiceKeys().size();
+        return getRegisteredServiceKeys().count();
     }
 
     @Override
     public Collection<RegisteredService> load() {
         val list = getRegisteredServiceKeys()
-            .stream()
             .map(redisKey -> this.template.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(this::invokeServiceRegistryListenerPostLoad)
@@ -116,7 +115,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         return CAS_SERVICE_PREFIX + '*';
     }
 
-    private Set<String> getRegisteredServiceKeys() {
+    private Stream<String> getRegisteredServiceKeys() {
         return RedisUtils.keys(this.template, getPatternRegisteredServiceRedisKey());
     }
 }

@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,10 +51,8 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisMfaTrustedAuthnTemplate, key);
-        if (keys != null) {
-            redisMfaTrustedAuthnTemplate.delete(keys);
-        }
+        val keys = RedisUtils.keys(redisMfaTrustedAuthnTemplate, key).collect(Collectors.toSet());
+        redisMfaTrustedAuthnTemplate.delete(keys);
     }
 
     @Test

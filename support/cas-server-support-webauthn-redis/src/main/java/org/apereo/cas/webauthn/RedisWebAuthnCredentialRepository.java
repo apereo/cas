@@ -45,20 +45,14 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(username));
-        if (keys != null) {
-            return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
-        }
-        return new ArrayList<>(0);
+        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(username));
+        return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
     }
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
-        if (keys != null) {
-            return toCredentialRegistrationsAsStream(keys);
-        }
-        return Stream.empty();
+        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
+        return toCredentialRegistrationsAsStream(keys);
     }
 
     @Override
@@ -85,9 +79,8 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
         }
     }
 
-    private Stream<CredentialRegistration> toCredentialRegistrationsAsStream(final Set<String> keys) {
+    private Stream<CredentialRegistration> toCredentialRegistrationsAsStream(final Stream<String> keys) {
         return keys
-            .stream()
             .map(redisKey -> this.redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(record -> getCipherExecutor().decode(record.getRecords()))

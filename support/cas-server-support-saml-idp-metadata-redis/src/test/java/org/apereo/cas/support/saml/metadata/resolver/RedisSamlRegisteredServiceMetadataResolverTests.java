@@ -17,6 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,10 +38,8 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlRegisteredServiceMetadataResolverTemplate, key);
-        if (keys != null) {
-            redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
-        }
+        val keys = RedisUtils.keys(redisSamlRegisteredServiceMetadataResolverTemplate, key).collect(Collectors.toSet());
+        redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
     }
 
     @Test

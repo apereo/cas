@@ -11,8 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,10 +23,10 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("JavaUtilDate")
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final transient RedisTemplate redisTemplate;
+    private final transient RedisTemplate<String, Object> redisTemplate;
 
     public RedisThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                             final RedisTemplate redisTemplate) {
+                                                             final RedisTemplate<String, Object> redisTemplate) {
         super(configurationContext);
         this.redisTemplate = redisTemplate;
     }
@@ -38,9 +36,8 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
-        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
-        val failures = Objects.requireNonNull(keys)
-            .stream()
+        val keys = RedisUtils.keys(this.redisTemplate, RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
+        val failures = keys
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
             .map(BoundValueOperations::get)
             .map(AuditActionContext.class::cast)

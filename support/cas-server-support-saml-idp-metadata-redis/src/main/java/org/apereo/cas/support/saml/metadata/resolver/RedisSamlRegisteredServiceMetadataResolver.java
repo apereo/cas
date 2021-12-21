@@ -14,9 +14,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,16 +44,12 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        val keys = (Set<String>) RedisUtils.keys(redisTemplate, getPatternRedisKey());
-        if (keys != null) {
-            return keys.stream()
-                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .map(doc -> buildMetadataResolverFrom(service, doc))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        }
-        return new HashSet<>(0);
+        return RedisUtils.keys(redisTemplate, getPatternRedisKey())
+            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .map(doc -> buildMetadataResolverFrom(service, doc))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     @Override

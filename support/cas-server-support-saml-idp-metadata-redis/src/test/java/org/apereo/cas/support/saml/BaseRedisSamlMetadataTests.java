@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public abstract class BaseRedisSamlMetadataTests {
 
     @Autowired
     @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
-    protected RedisTemplate redisSamlRegisteredServiceMetadataResolverTemplate;
+    protected RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate;
 
     @Autowired
     @Qualifier("redisSamlRegisteredServiceMetadataResolver")

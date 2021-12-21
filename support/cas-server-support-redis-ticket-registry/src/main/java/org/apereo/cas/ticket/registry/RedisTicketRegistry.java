@@ -37,7 +37,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     @SuppressWarnings("java:S2583")
     public long deleteAll() {
-        val redisKeys = RedisUtils.keys(client, getPatternTicketRedisKey());
+        val redisKeys = RedisUtils.keys(client, getPatternTicketRedisKey()).collect(Collectors.toSet());
         val size = Objects.requireNonNull(redisKeys).size();
         this.client.delete(redisKeys);
         return size;

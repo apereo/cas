@@ -14,12 +14,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustStorage}.
@@ -63,33 +62,28 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     @Override
     public void remove(final String key) {
         val principal = getKeyGenerationStrategy().getPrincipalFromRecordKey(getCipherExecutor().decode(key));
-        val keys = RedisUtils.keys(redisTemplate, buildRedisKeyForRecord(principal));
-        if (keys != null && !keys.isEmpty()) {
-            val redisKey = keys.iterator().next();
-            redisTemplate.delete(redisKey);
-        }
+        RedisUtils.keys(redisTemplate, buildRedisKeyForRecord(principal))
+            .findFirst()
+            .ifPresent(redisTemplate::delete);
     }
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
-        val keys = RedisUtils.keys(redisTemplate, getPatternRedisKey());
-        if (keys != null && !keys.isEmpty()) {
-            keys.stream()
-                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
-                .forEach(record -> {
-                    val recordKeys = RedisUtils.keys(redisTemplate, buildRedisKeyForRecord(record));
-                    redisTemplate.delete(Objects.requireNonNull(recordKeys));
-                });
-        }
+        RedisUtils.keys(redisTemplate, getPatternRedisKey())
+            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
+            .forEach(record -> {
+                val recordKeys = RedisUtils.keys(redisTemplate, buildRedisKeyForRecord(record)).collect(Collectors.toSet());
+                redisTemplate.delete(Objects.requireNonNull(recordKeys));
+            });
     }
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
         remove();
-        val keys = (Set<String>) RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
+        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
         return getFromRedisKeys(keys);
     }
 
@@ -112,15 +106,16 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
         remove();
-        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(id));
-        if (keys != null) {
-            val redisKey = keys.iterator().next();
-            val results = this.redisTemplate.boundValueOps(redisKey).get();
-            if (results != null && !results.isEmpty()) {
-                return results.get(0);
-            }
-        }
-        return null;
+        return RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(id))
+            .findFirst()
+            .map(redisKey -> {
+                val results = this.redisTemplate.boundValueOps(redisKey).get();
+                if (results != null && !results.isEmpty()) {
+                    return results.get(0);
+                }
+                return null;
+            })
+            .orElse(null);
     }
 
     @Override
@@ -133,13 +128,11 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
         return record;
     }
 
-    private Set<? extends MultifactorAuthenticationTrustRecord> getFromRedisKeys(final Set<String> keys) {
-        return Optional.ofNullable(keys)
-            .map(givenKeys -> givenKeys.stream()
-                .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toSet()))
-            .orElseGet(() -> new HashSet<>(0));
+    private Set<? extends MultifactorAuthenticationTrustRecord> getFromRedisKeys(final Stream<String> keys) {
+        return keys
+            .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toSet());
     }
 }

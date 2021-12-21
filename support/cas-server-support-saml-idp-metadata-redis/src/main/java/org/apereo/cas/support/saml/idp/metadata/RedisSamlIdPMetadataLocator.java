@@ -38,10 +38,8 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
         val keys = RedisUtils.keys(redisTemplate, CAS_PREFIX + appliesTo + ":*");
-        if (keys != null && !keys.isEmpty()) {
-            val redisKey = keys.iterator().next();
-            return redisTemplate.boundValueOps(redisKey).get();
-        }
-        return null;
+        return keys.findFirst()
+            .map(key -> redisTemplate.boundValueOps(key).get())
+            .orElse(null);
     }
 }
