@@ -80,7 +80,6 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         }
     }
 
-
     @Configuration(value = "Pac4jDelegatedAuthenticationSingleSignOnConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jDelegatedAuthenticationSingleSignOnConfiguration {

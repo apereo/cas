@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.model.TriStateBoolean;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -401,7 +402,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = 3484810792914261584L;
 
         public Workday() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(true);
         }
     }
@@ -466,7 +467,7 @@ public class SamlServiceProviderProperties implements Serializable {
             setNameIdAttribute("objectGUID");
             addAttributes("IDPEmail", CommonAttributeNames.IMMUTABLE_ID.getAttributeName());
             setSignResponses(false);
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
         }
     }
 
@@ -495,7 +496,7 @@ public class SamlServiceProviderProperties implements Serializable {
             setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
             addAttributes(CommonAttributeNames.FIRST_NAME.getAttributeName(), CommonAttributeNames.LAST_NAME.getAttributeName());
             setSignResponses(false);
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
         }
     }
 
@@ -827,7 +828,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public Amazon() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             addAttributes("awsRoles", "awsRoleSessionName");
         }
@@ -842,7 +843,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public PollEverywhere() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
         }
@@ -857,7 +858,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public ConcurSolutions() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             setNameIdAttribute(CommonAttributeNames.EMAIL.getAttributeName());
         }
@@ -872,7 +873,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public BlackBaud() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             addAttributes(CommonAttributeNames.EDU_PERSON_PRINCIPAL_NAME.getAttributeName(), CommonAttributeNames.EMAIL.getAttributeName());
         }
@@ -887,7 +888,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public GiveCampus() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),
@@ -905,7 +906,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public RocketChat() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.CN.getAttributeName(),
@@ -922,7 +923,7 @@ public class SamlServiceProviderProperties implements Serializable {
         private static final long serialVersionUID = -6141931806328699054L;
 
         public WarpWire() {
-            setSignAssertions(true);
+            setSignAssertions(TriStateBoolean.TRUE);
             setSignResponses(false);
             addAttributes(CommonAttributeNames.EMAIL.getAttributeName(),
                 CommonAttributeNames.SURNAME.getAttributeName(),

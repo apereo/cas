@@ -74,19 +74,21 @@ public class DynamoDbTableUtilsTests {
 
         val attributeName = "attr1";
         val props = new MinimalTestDynamoDbProperties()
-                .setBillingMode(AbstractDynamoDbProperties.BillingMode.PROVISIONED)
-                .setReadCapacity(readCapacity)
-                .setWriteCapacity(writeCapacity);
+            .setBillingMode(AbstractDynamoDbProperties.BillingMode.PROVISIONED)
+            .setReadCapacity(readCapacity)
+            .setWriteCapacity(writeCapacity);
         val attributeDefinitions = List.of(
-                AttributeDefinition.builder().attributeName(attributeName)
-                        .attributeType(ScalarAttributeType.S).build());
-        val keySchema = List.of(KeySchemaElement.builder().attributeName(attributeName)
-                .keyType(KeyType.HASH).build());
+            AttributeDefinition.builder()
+                .attributeName(attributeName)
+                .attributeType(ScalarAttributeType.S).build());
+        val keySchema = List.of(KeySchemaElement.builder()
+            .attributeName(attributeName)
+            .keyType(KeyType.HASH).build());
         try {
             DynamoDbTableUtils.createTable(client, props, "test-table",
-                    false, attributeDefinitions, keySchema);
+                false, attributeDefinitions, keySchema);
         } catch (final Exception ex) {
-           fail("Failed to create table");
+            fail("Failed to create table");
         }
 
         verify(client).createTable(argThat(createTableArgMatcher));
@@ -102,29 +104,21 @@ public class DynamoDbTableUtilsTests {
 
         val attributeName = "attr1";
         val props = new MinimalTestDynamoDbProperties()
-                .setBillingMode(AbstractDynamoDbProperties.BillingMode.PAY_PER_REQUEST);
+            .setBillingMode(AbstractDynamoDbProperties.BillingMode.PAY_PER_REQUEST);
         val attributeDefinitions = List.of(
-                AttributeDefinition.builder().attributeName(attributeName)
-                        .attributeType(ScalarAttributeType.S).build());
+            AttributeDefinition.builder().attributeName(attributeName)
+                .attributeType(ScalarAttributeType.S).build());
         val keySchema = List.of(KeySchemaElement.builder().attributeName(attributeName)
-                .keyType(KeyType.HASH).build());
+            .keyType(KeyType.HASH).build());
 
         try {
             DynamoDbTableUtils.createTable(client, props, "test-table",
-                    false, attributeDefinitions, keySchema);
+                false, attributeDefinitions, keySchema);
         } catch (final Exception ex) {
             fail("Failed to create table");
         }
 
         verify(client).createTable(argThat(createTableArgMatcher));
-    }
-
-    private void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
-        when(client.createTable(argThat(matcher)))
-                .thenReturn(CreateTableResponse.builder().build());
-        val description = TableDescription.builder().tableStatus(TableStatus.ACTIVE).build();
-        val table = DescribeTableResponse.builder().table(description).build();
-        when(client.describeTable(any(DescribeTableRequest.class))).thenReturn(table);
     }
 
     @SuppressWarnings("serial")
@@ -135,9 +129,11 @@ public class DynamoDbTableUtilsTests {
     static class CreateTableRequestArgumentMatcher implements ArgumentMatcher<CreateTableRequest> {
 
         private long readCapacity;
+
         private long writeCapacity;
 
-        CreateTableRequestArgumentMatcher() {}
+        CreateTableRequestArgumentMatcher() {
+        }
 
         CreateTableRequestArgumentMatcher(final long readCapacity, final long writeCapacity) {
             this.readCapacity = readCapacity;
@@ -151,10 +147,17 @@ public class DynamoDbTableUtilsTests {
             }
             val provisionedThroughput = createTableRequest.provisionedThroughput();
             return provisionedThroughput.readCapacityUnits() == readCapacity
-                    && provisionedThroughput.writeCapacityUnits() == writeCapacity;
+                   && provisionedThroughput.writeCapacityUnits() == writeCapacity;
         }
     }
 
+    private void expectCreateTable(final DynamoDbClient client, final CreateTableRequestArgumentMatcher matcher) {
+        when(client.createTable(argThat(matcher)))
+            .thenReturn(CreateTableResponse.builder().build());
+        val description = TableDescription.builder().tableStatus(TableStatus.ACTIVE).build();
+        val table = DescribeTableResponse.builder().table(description).build();
+        when(client.describeTable(any(DescribeTableRequest.class))).thenReturn(table);
+    }
 
 
 }

@@ -34,7 +34,8 @@ public class ChainingDelegatedClientUserProfileProvisionerTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() {
-                chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
+                chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
             }
         });
     }

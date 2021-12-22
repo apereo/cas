@@ -86,4 +86,10 @@ public class ConsentProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CouchDbConsentProperties couchDb = new CouchDbConsentProperties();
+
+    /**
+     * Keep consent decisions stored via a DynamoDb database resource.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbConsentProperties dynamoDb = new DynamoDbConsentProperties();
 }

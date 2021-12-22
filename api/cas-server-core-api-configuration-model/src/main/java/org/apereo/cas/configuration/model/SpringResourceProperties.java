@@ -31,6 +31,13 @@ public class SpringResourceProperties implements Serializable {
      * The location of the resource. Resources can be URLS, or
      * files found either on the classpath or outside somewhere
      * in the file system.
+     * <p>
+     * In the event the configured resource is a Groovy script, specially if the script set to reload on changes,
+     * you may need to adjust the total number of {@code inotify} instances.
+     * On Linux, you may need to add the following line to {@code /etc/sysctl.conf}:
+     * {@code fs.inotify.max_user_instances = 256}.
+     * <p>
+     * You can check the current value via {@code cat /proc/sys/fs/inotify/max_user_instances}.
      */
     @RequiredProperty
     private transient Resource location;

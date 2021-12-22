@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
@@ -47,6 +48,41 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("JavaUtilDate")
 @Deprecated(since = "6.4.0")
 public class PrincipalScimV1ProvisionerActionTests extends BaseScimProvisionerActionTests {
+
+    @Test
+    public void verifyOperation() throws Exception {
+        val resources = new Resources(CollectionUtils.wrapList());
+        val stream = new ByteArrayOutputStream();
+        resources.marshal(new JsonMarshaller(), stream);
+        val data = stream.toString(StandardCharsets.UTF_8);
+        try (val webServer = new MockWebServer(8215,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            val results = scimProvisioner.provision(RegisteredServiceTestUtils.getPrincipal(),
+                RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+            assertFalse(results);
+        }
+    }
+
+    @Test
+    public void verifyActionUserNotFound() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val resources = new Resources(CollectionUtils.wrapList());
+        val stream = new ByteArrayOutputStream();
+        resources.marshal(new JsonMarshaller(), stream);
+        val data = stream.toString(StandardCharsets.UTF_8);
+
+        try (val webServer = new MockWebServer(8215,
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+            webServer.start();
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, principalScimProvisionerAction.execute(context).getId());
+        }
+    }
+
     @Test
     public void verifyAction() throws Exception {
         val context = new MockRequestContext();
