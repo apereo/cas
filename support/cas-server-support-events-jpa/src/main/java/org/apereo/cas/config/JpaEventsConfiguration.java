@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.BeanContainer;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
+@ConditionalOnProperty(prefix = "cas.events.jpa", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class JpaEventsConfiguration {
 
     @Configuration(value = "JpaEventsDataConfiguration", proxyBeanMethods = false)

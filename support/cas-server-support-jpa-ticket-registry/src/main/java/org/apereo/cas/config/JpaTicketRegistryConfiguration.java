@@ -45,6 +45,7 @@ import javax.persistence.EntityManagerFactory;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "JpaTicketRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnProperty(prefix = "cas.ticket.registry.jpa", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class JpaTicketRegistryConfiguration {
 
     @Configuration(value = "JpaTicketRegistryDataConfiguration", proxyBeanMethods = false)

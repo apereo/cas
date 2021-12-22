@@ -17,6 +17,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -47,6 +48,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Configuration(value = "JpaServiceRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnProperty(prefix = "cas.service-registry.jpa", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class JpaServiceRegistryConfiguration {
 
     @Configuration(value = "JpaServiceRegistryPlanConfiguration", proxyBeanMethods = false)
