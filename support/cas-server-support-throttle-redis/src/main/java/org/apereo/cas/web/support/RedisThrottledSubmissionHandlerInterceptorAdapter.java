@@ -25,10 +25,14 @@ import java.util.stream.Collectors;
 public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
     private final transient RedisTemplate<String, Object> redisTemplate;
 
+    private final long scanCount;
+
     public RedisThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                             final RedisTemplate<String, Object> redisTemplate) {
+                                                             final RedisTemplate<String, Object> redisTemplate,
+                                                             final long scanCount) {
         super(configurationContext);
         this.redisTemplate = redisTemplate;
+        this.scanCount = scanCount;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class RedisThrottledSubmissionHandlerInterceptorAdapter extends AbstractI
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
 
-        val keys = RedisUtils.keys(this.redisTemplate, RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*');
+        val keys = RedisUtils.keys(this.redisTemplate, RedisAuditTrailManager.CAS_AUDIT_CONTEXT_PREFIX + '*', this.scanCount);
         val failures = keys
             .map((Function<String, BoundValueOperations>) this.redisTemplate::boundValueOps)
             .map(BoundValueOperations::get)

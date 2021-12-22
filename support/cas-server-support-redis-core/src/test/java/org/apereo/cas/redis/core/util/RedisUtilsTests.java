@@ -34,8 +34,9 @@ public class RedisUtilsTests {
     public void verifyKeys() {
         val redisKeyPrefix = "CAS_TEST:";
         val keySize = 10;
+        val scanCount = 1000;
         IntStream.range(0, keySize).forEach(i -> stringRedisTemplate.boundValueOps(redisKeyPrefix + i).set("TEST"));
-        val keys = RedisUtils.keys(stringRedisTemplate, redisKeyPrefix + "*");
+        val keys = RedisUtils.keys(stringRedisTemplate, redisKeyPrefix + "*", scanCount);
         assertEquals(keySize, keys.count());
     }
 }

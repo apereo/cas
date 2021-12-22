@@ -34,11 +34,15 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     private final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
 
+    private final long scanCount;
+
     public RedisGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                              final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
-                                                             final CipherExecutor<String, String> tokenCredentialCipher) {
+                                                             final CipherExecutor<String, String> tokenCredentialCipher,
+                                                             final long scanCount) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.template = template;
+        this.scanCount = scanCount;
     }
 
     @Override
@@ -145,12 +149,12 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
         val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key);
+        return RedisUtils.keys(this.template, key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys() {
         val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key);
+        return RedisUtils.keys(this.template, key, this.scanCount);
     }
 }

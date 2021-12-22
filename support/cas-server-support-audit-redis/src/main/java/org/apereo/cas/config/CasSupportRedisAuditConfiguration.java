@@ -37,7 +37,7 @@ public class CasSupportRedisAuditConfiguration {
         final RedisTemplate auditRedisTemplate,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
-        return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous());
+        return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous(), redis.getScanCount());
     }
 
     @Bean

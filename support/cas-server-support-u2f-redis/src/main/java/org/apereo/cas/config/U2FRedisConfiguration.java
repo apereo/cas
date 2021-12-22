@@ -65,6 +65,7 @@ public class U2FRedisConfiguration {
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
         return new U2FRedisDeviceRepository(requestStorage, u2fRedisTemplate, u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(),
-            u2fRegistrationRecordCipherExecutor);
+            u2fRegistrationRecordCipherExecutor,
+            casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
     }
 }

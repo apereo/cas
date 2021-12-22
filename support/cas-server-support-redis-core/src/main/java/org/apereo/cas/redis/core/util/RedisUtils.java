@@ -20,22 +20,6 @@ import java.util.stream.StreamSupport;
  */
 @UtilityClass
 public class RedisUtils {
-    private static final long SCAN_COUNT = 1000L;
-
-    /**
-     * Get redis keys using scan command.
-     * <p>
-     * This method is similar to {@link RedisUtils#keys(RedisTemplate, String, long)},
-     * with a default COUNT value {@link RedisUtils#SCAN_COUNT}.
-     *
-     * @param redisTemplate the redisTemplate
-     * @param pattern       the redis keys pattern
-     * @return the redis keys
-     */
-    public static Stream<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern) {
-        return keys(redisTemplate, pattern, SCAN_COUNT);
-    }
-
     /**
      * Get redis keys using scan command.
      *
@@ -45,9 +29,13 @@ public class RedisUtils {
      * @return the redis keys
      */
     public static Stream<String> keys(final RedisTemplate<String, ?> redisTemplate, final String pattern, final long count) {
+        var scanOptions = ScanOptions.scanOptions().match(pattern);
+        if (count > 0) {
+            scanOptions = scanOptions.count(count);
+        }
         val cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory())
             .getConnection()
-            .scan(ScanOptions.scanOptions().match(pattern).count(count).build());
+            .scan(scanOptions.build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .onClose(() -> IOUtils.closeQuietly(cursor))

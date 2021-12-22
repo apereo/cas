@@ -41,7 +41,7 @@ public class RedisSamlIdPMetadataGeneratorTests extends BaseRedisSamlMetadataTes
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataGenerator.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key).collect(Collectors.toSet());
+        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key, 0).collect(Collectors.toSet());
         redisSamlIdPMetadataTemplate.delete(keys);
     }
 

@@ -35,10 +35,14 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     private final RedisTemplate<String, YubiKeyAccount> redisTemplate;
 
+    private final long scanCount;
+
     public RedisYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
-                                       final RedisTemplate<String, YubiKeyAccount> mongoTemplate) {
+                                       final RedisTemplate<String, YubiKeyAccount> mongoTemplate,
+                                       final long scanCount) {
         super(accountValidator);
         this.redisTemplate = mongoTemplate;
+        this.scanCount = scanCount;
     }
 
     private static String getPatternYubiKeyDevices() {
@@ -87,7 +91,8 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public void deleteAll() {
-        val keys = RedisUtils.keys(this.redisTemplate, getPatternYubiKeyDevices()).collect(Collectors.toSet());
+        val keys = RedisUtils.keys(this.redisTemplate, getPatternYubiKeyDevices(), this.scanCount)
+            .collect(Collectors.toSet());
         this.redisTemplate.delete(keys);
     }
 

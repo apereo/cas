@@ -41,7 +41,9 @@ public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new RedisSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, redisSamlRegisteredServiceMetadataResolverTemplate);
+        return new RedisSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean,
+            redisSamlRegisteredServiceMetadataResolverTemplate,
+            casProperties.getAuthn().getSamlIdp().getMetadata().getRedis().getScanCount());
     }
 
     @Bean

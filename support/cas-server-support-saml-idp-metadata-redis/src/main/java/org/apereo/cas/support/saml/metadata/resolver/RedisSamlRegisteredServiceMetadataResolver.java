@@ -31,11 +31,15 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     private final transient RedisTemplate<String, SamlMetadataDocument> redisTemplate;
 
+    private final long scanCount;
+
     public RedisSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                                       final OpenSamlConfigBean configBean,
-                                                      final RedisTemplate<String, SamlMetadataDocument> redisTemplate) {
+                                                      final RedisTemplate<String, SamlMetadataDocument> redisTemplate,
+                                                      final long scanCount) {
         super(samlIdPProperties, configBean);
         this.redisTemplate = redisTemplate;
+        this.scanCount = scanCount;
     }
 
     private static String getPatternRedisKey() {
@@ -44,7 +48,7 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return RedisUtils.keys(redisTemplate, getPatternRedisKey())
+        return RedisUtils.keys(redisTemplate, getPatternRedisKey(), this.scanCount)
             .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(doc -> buildMetadataResolverFrom(service, doc))
