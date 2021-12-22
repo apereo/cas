@@ -90,8 +90,11 @@ public class SamlIdPRedisIdPMetadataConfiguration {
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         @Qualifier("redisSamlIdPMetadataTemplate")
-        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate) {
+        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
+        final CasConfigurationProperties casProperties) {
         return new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
-            samlIdPMetadataCache, redisSamlIdPMetadataTemplate);
+            samlIdPMetadataCache,
+            redisSamlIdPMetadataTemplate,
+            casProperties.getAuthn().getSamlIdp().getMetadata().getRedis().getScanCount());
     }
 }

@@ -79,6 +79,10 @@ public class BaseRedisProperties implements Serializable {
     @NestedConfigurationProperty
     private RedisClusterProperties cluster = new RedisClusterProperties();
 
+    /**
+     * Redis scan count option.
+     */
+    private long scanCount;
 
     /**
      * Whether or not to use SSL for connection factory.

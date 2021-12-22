@@ -39,22 +39,26 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
 
     private final TimeUnit expirationTimeUnit;
 
+    private final long scanCount;
+
     public U2FRedisDeviceRepository(final LoadingCache<String, String> requestStorage,
                                     final RedisTemplate<String, U2FDeviceRegistration> redisTemplate,
                                     final long expirationTime,
                                     final TimeUnit expirationTimeUnit,
-                                    final CipherExecutor<Serializable, String> cipherExecutor) {
+                                    final CipherExecutor<Serializable, String> cipherExecutor,
+                                    final long scanCount) {
         super(requestStorage, cipherExecutor);
         this.expirationTime = expirationTime;
         this.expirationTimeUnit = expirationTimeUnit;
         this.redisTemplate = redisTemplate;
+        this.scanCount = scanCount;
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         val expirationDate = LocalDate.now(ZoneId.systemDefault())
             .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
+        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey(), this.scanCount);
         return queryDeviceRegistrations(expirationDate, keys);
     }
 
@@ -62,7 +66,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val expirationDate = LocalDate.now(ZoneId.systemDefault())
             .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForUser(username));
+        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForUser(username), this.scanCount);
         return queryDeviceRegistrations(expirationDate, keys);
     }
 
@@ -126,6 +130,6 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     private Stream<String> getRedisKeys() {
-        return RedisUtils.keys(this.redisTemplate, getPatternRedisKey());
+        return RedisUtils.keys(this.redisTemplate, getPatternRedisKey(), this.scanCount);
     }
 }

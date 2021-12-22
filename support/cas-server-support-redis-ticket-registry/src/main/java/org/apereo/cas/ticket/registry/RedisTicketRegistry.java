@@ -34,10 +34,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     private final RedisTemplate<String, Ticket> client;
 
+    private final long scanCount;
+
     @Override
     @SuppressWarnings("java:S2583")
     public long deleteAll() {
-        val redisKeys = RedisUtils.keys(client, getPatternTicketRedisKey()).collect(Collectors.toSet());
+        val redisKeys = RedisUtils.keys(this.client, getPatternTicketRedisKey(), this.scanCount)
+            .collect(Collectors.toSet());
         val size = Objects.requireNonNull(redisKeys).size();
         this.client.delete(redisKeys);
         return size;

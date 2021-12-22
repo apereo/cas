@@ -33,8 +33,9 @@ public class CasConsentRedisConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConsentRepository consentRepository(
         @Qualifier("consentRedisTemplate")
-        final RedisTemplate consentRedisTemplate) {
-        return new RedisConsentRepository(consentRedisTemplate);
+        final RedisTemplate consentRedisTemplate,
+        final CasConfigurationProperties casProperties) {
+        return new RedisConsentRepository(consentRedisTemplate, casProperties.getConsent().getRedis().getScanCount());
     }
 
     @Bean

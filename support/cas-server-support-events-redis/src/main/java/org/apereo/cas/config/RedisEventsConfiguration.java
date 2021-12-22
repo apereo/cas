@@ -67,7 +67,9 @@ public class RedisEventsConfiguration {
         @Qualifier("redisEventTemplate")
         final RedisTemplate redisEventTemplate,
         @Qualifier("redisEventRepositoryFilter")
-        final CasEventRepositoryFilter redisEventRepositoryFilter) {
-        return new RedisCasEventRepository(redisEventRepositoryFilter, redisEventTemplate);
+        final CasEventRepositoryFilter redisEventRepositoryFilter,
+        final CasConfigurationProperties casProperties) {
+        return new RedisCasEventRepository(redisEventRepositoryFilter, redisEventTemplate,
+            casProperties.getEvents().getRedis().getScanCount());
     }
 }

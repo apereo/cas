@@ -59,8 +59,10 @@ public class RedisYubiKeyConfiguration {
         @Qualifier("yubiKeyAccountValidator")
         final YubiKeyAccountValidator yubiKeyAccountValidator,
         @Qualifier("yubikeyAccountCipherExecutor")
-        final CipherExecutor yubikeyAccountCipherExecutor) {
-        val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator, redisYubiKeyTemplate);
+        final CipherExecutor yubikeyAccountCipherExecutor,
+        final CasConfigurationProperties casProperties) {
+        val registry = new RedisYubiKeyAccountRegistry(yubiKeyAccountValidator, redisYubiKeyTemplate,
+            casProperties.getAuthn().getMfa().getYubikey().getRedis().getScanCount());
         registry.setCipherExecutor(yubikeyAccountCipherExecutor);
         return registry;
     }

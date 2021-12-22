@@ -27,17 +27,21 @@ public class RedisSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator 
 
     private final transient RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
+    private final long scanCount;
+
     public RedisSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                        final Cache<String, SamlIdPMetadataDocument> metadataCache,
-                                       final RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {
+                                       final RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate,
+                                       final long scanCount) {
         super(metadataCipherExecutor, metadataCache);
         this.redisTemplate = redisTemplate;
+        this.scanCount = scanCount;
     }
 
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
-        val keys = RedisUtils.keys(redisTemplate, CAS_PREFIX + appliesTo + ":*");
+        val keys = RedisUtils.keys(redisTemplate, CAS_PREFIX + appliesTo + ":*", this.scanCount);
         return keys.findFirst()
             .map(key -> redisTemplate.boundValueOps(key).get())
             .orElse(null);

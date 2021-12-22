@@ -65,6 +65,7 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
         @Qualifier("mfaTrustCipherExecutor")
         final CipherExecutor mfaTrustCipherExecutor) {
         return new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy);
+            mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy,
+            casProperties.getAuthn().getMfa().getTrusted().getRedis().getScanCount());
     }
 }

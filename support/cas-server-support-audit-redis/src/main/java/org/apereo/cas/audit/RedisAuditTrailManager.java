@@ -34,9 +34,14 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     private final RedisTemplate redisTemplate;
 
-    public RedisAuditTrailManager(final RedisTemplate redisTemplate, final boolean asynchronous) {
+    private final long scanCount;
+
+    public RedisAuditTrailManager(final RedisTemplate redisTemplate,
+                                  final boolean asynchronous,
+                                  final long scanCount) {
         super(asynchronous);
         this.redisTemplate = Objects.requireNonNull(redisTemplate);
+        this.scanCount = scanCount;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     private Stream<String> getAuditRedisKeys() {
-        return RedisUtils.keys(this.redisTemplate, getPatternAuditRedisKey());
+        return RedisUtils.keys(this.redisTemplate, getPatternAuditRedisKey(), this.scanCount);
     }
 
     @SuppressWarnings("JavaUtilDate")

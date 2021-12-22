@@ -34,11 +34,15 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final RedisTemplate<String, RegisteredService> template;
 
+    private final long scanCount;
+
     public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                 final RedisTemplate<String, RegisteredService> template,
-                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
+                                final Collection<ServiceRegistryListener> serviceRegistryListeners,
+                                final long scanCount) {
         super(applicationContext, serviceRegistryListeners);
         this.template = template;
+        this.scanCount = scanCount;
     }
                           
     @Override
@@ -116,6 +120,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Stream<String> getRegisteredServiceKeys() {
-        return RedisUtils.keys(this.template, getPatternRegisteredServiceRedisKey());
+        return RedisUtils.keys(this.template, getPatternRegisteredServiceRedisKey(), this.scanCount);
     }
 }

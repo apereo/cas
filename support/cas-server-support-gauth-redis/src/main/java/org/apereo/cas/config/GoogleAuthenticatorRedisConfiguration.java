@@ -72,8 +72,12 @@ public class GoogleAuthenticatorRedisConfiguration {
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("redisGoogleAuthenticatorTemplate")
-        final RedisTemplate redisGoogleAuthenticatorTemplate) {
-        return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, redisGoogleAuthenticatorTemplate, googleAuthenticatorAccountCipherExecutor);
+        final RedisTemplate redisGoogleAuthenticatorTemplate,
+        final CasConfigurationProperties casProperties) {
+        return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            redisGoogleAuthenticatorTemplate,
+            googleAuthenticatorAccountCipherExecutor,
+            casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());
     }
 
     @Bean
@@ -83,6 +87,7 @@ public class GoogleAuthenticatorRedisConfiguration {
         @Qualifier("redisGoogleAuthenticatorTemplate")
         final RedisTemplate redisGoogleAuthenticatorTemplate) {
         return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate,
-            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
+            casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize(),
+            casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());
     }
 }

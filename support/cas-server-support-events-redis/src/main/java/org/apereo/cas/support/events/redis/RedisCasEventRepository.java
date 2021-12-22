@@ -31,10 +31,14 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
 
     private final RedisTemplate<String, CasEvent> template;
 
+    private final long scanCount;
+
     public RedisCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
-                                   final RedisTemplate<String, CasEvent> redisTemplate) {
+                                   final RedisTemplate<String, CasEvent> redisTemplate,
+                                   final long scanCount) {
         super(eventRepositoryFilter);
         this.template = redisTemplate;
+        this.scanCount = scanCount;
     }
 
     private static String getKey(final String type, final String principal, final String timestamp) {
@@ -123,6 +127,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     private Stream<String> getKeys(final String type, final String principal, final String timestamp) {
         val key = getKey(type, principal, timestamp);
         LOGGER.trace("Fetching records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key);
+        return RedisUtils.keys(this.template, key, this.scanCount);
     }
 }

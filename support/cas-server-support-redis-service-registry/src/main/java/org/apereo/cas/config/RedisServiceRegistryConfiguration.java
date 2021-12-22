@@ -63,9 +63,12 @@ public class RedisServiceRegistryConfiguration {
     public ServiceRegistry redisServiceRegistry(
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("registeredServiceRedisTemplate")
-        final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate, final ConfigurableApplicationContext applicationContext) {
+        final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
-            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
+            Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
+            casProperties.getServiceRegistry().getRedis().getScanCount());
     }
 
     @Bean

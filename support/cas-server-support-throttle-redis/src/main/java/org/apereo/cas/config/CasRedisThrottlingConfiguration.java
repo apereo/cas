@@ -54,7 +54,10 @@ public class CasRedisThrottlingConfiguration {
         @Qualifier("throttleRedisTemplate")
         final RedisTemplate throttleRedisTemplate,
         @Qualifier("authenticationThrottlingConfigurationContext")
-        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext) {
-        return new RedisThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext, throttleRedisTemplate);
+        final ThrottledSubmissionHandlerConfigurationContext authenticationThrottlingConfigurationContext,
+        final CasConfigurationProperties casProperties) {
+        return new RedisThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext,
+            throttleRedisTemplate,
+            casProperties.getAudit().getRedis().getScanCount());
     }
 }
