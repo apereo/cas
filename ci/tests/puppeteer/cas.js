@@ -11,6 +11,7 @@ const path = require("path");
 const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
+const NodeStaticAuth = require("node-static-auth");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -427,6 +428,31 @@ exports.assertTextContentStartsWith = async (page, selector, value) => {
     await page.waitForSelector(selector, {visible: true});
     let header = await this.textContent(page, selector);
     assert(header.startsWith(value));
+}
+
+exports.httpServer = async(root, port = 5432) => {
+    const config = {
+        nodeStatic: {
+            root: root
+        },
+        server: {
+            port: port,
+            ssl: {
+                enabled: false
+            }
+        },
+        auth: {
+            enabled: true,
+            name: "restapi",
+            pass: "YdCP05HvuhOH^*Z"
+        },
+        logger: {
+            use: true,
+            filename: 'restapi.log',
+            folder: root
+        }
+    };
+    new NodeStaticAuth(config);
 }
 
 exports.killProcess = async(command, arguments) => {

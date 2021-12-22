@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -18,6 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -68,10 +70,12 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val resource = determineJsonWebKeystoreResource();
         if (ResourceUtils.isFile(resource)) {
             resourceWatcherService = new FileWatcherService(resource.getFile(),
-                file -> {
-                    LOGGER.info("Publishing event to broadcast change in [{}]", file);
-                    applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
-                });
+                file -> FunctionUtils.doAndIgnore(f -> {
+                    if (applicationContext.isActive()) {
+                        LOGGER.info("Publishing event to broadcast change in [{}]", f);
+                        applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, (File) f));
+                    }
+                }));
             resourceWatcherService.start(resource.getFilename());
         }
         val resultingResource = generate(resource);

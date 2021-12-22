@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfi
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.OAuth20ProtocolTicketCatalogConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -37,6 +38,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -63,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 @Getter
 @DirtiesContext
+@EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 500;
 

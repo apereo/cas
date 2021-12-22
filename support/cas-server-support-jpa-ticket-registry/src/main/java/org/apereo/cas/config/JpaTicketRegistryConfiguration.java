@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
@@ -10,25 +9,27 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.generic.JpaLockEntity;
-import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.lock.DefaultLockRepository;
+import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.integration.IntegrationDataSourceScriptDatabaseInitializer;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
+import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -67,8 +68,7 @@ public class JpaTicketRegistryConfiguration {
         public BeanContainer<String> ticketPackagesToScan(final CasConfigurationProperties casProperties) {
             val jpa = casProperties.getTicket().getRegistry().getJpa();
             val type = new JpaTicketEntityFactory(jpa.getDialect()).getType();
-            return BeanContainer.of(CollectionUtils.wrapSet(type.getPackage().getName(),
-                JpaLockEntity.class.getPackage().getName()));
+            return BeanContainer.of(CollectionUtils.wrapSet(type.getPackage().getName()));
         }
 
         @Bean
@@ -135,13 +135,43 @@ public class JpaTicketRegistryConfiguration {
             bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
             return bean;
         }
+    }
+
+    @Configuration(value = "JpaTicketRegistryLockingConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "true", matchIfMissing = true)
+    public static class JpaTicketRegistryLockingConfiguration {
 
         @Bean
-        public LockingStrategy lockingStrategy(final CasConfigurationProperties casProperties) {
-            val registry = casProperties.getTicket().getRegistry();
-            val uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
-            return new JpaLockingStrategy("cas-ticket-registry-cleaner",
-                uniqueId, Beans.newDuration(registry.getJpa().getJpaLockingTimeout()).getSeconds());
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
+            @Qualifier("dataSourceTicket")
+            final CloseableDataSource dataSourceTicket) {
+            return new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LockRegistry jdbcLockRegistry(
+            @Qualifier("jdbcLockRepository")
+            final org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository) {
+            return new JdbcLockRegistry(jdbcLockRepository);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public LockRepository casTicketRegistryLockRepository(
+            @Qualifier("jdbcLockRegistry")
+            final LockRegistry jdbcLockRegistry) {
+            return new DefaultLockRepository(jdbcLockRegistry);
+        }
+
+        @Bean
+        IntegrationDataSourceScriptDatabaseInitializer casTicketRegistryLockDataSourceScriptDatabaseInitializer(
+            @Qualifier("dataSourceTicket")
+            final CloseableDataSource dataSourceTicket,
+            final IntegrationProperties properties) {
+            return new IntegrationDataSourceScriptDatabaseInitializer(dataSourceTicket, properties.getJdbc());
         }
     }
 }

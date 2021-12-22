@@ -79,8 +79,7 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Ehcache3Properties ehcache3 = new Ehcache3Properties();
-
-
+    
     /**
      * Hazelcast registry settings.
      */
@@ -134,5 +133,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+
+    /**
+     * Ticket registry core settings.
+     */
+    @NestedConfigurationProperty
+    private TicketRegistryCoreProperties core = new TicketRegistryCoreProperties();
+
 
 }

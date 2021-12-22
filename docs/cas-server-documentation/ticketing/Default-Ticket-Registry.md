@@ -24,7 +24,7 @@ up after the registry and remove expired tickets. The cleaner will periodically 
 the state of the registry to identify expired tickets, remove them from 
 the registry and then execute relevant logout operations.
 
-In the event that the ticket registry is configured to use caching engine, CAS configured 
+In the event that the ticket registry is configured to use caching engine, CAS configures 
 the cache store automatically such that each ticket put into the cache is given the 
 ability to automatically expire based on the expiration policies defined for each 
 ticket. The cache is constantly on its own monitoring for eviction events and once 

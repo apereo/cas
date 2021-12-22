@@ -118,5 +118,4 @@ public class CasCoreUtilConfiguration {
             return new DefaultCasRuntimeModuleLoader();
         }
     }
-
 }

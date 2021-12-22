@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = JpaTicketRegistryTests.SharedTestConfiguration.class)
 @Tag("JDBC")
+@EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 public class SessionHealthIndicatorJpaTests {
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
 

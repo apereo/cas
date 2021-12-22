@@ -3,6 +3,8 @@ ext {
     maxParallelForksForTests = 1
 }
 dependencies {
+    implementation libraries.springintegrationjdbc
+    
     api project(":api:cas-server-core-api")
 
     implementation project(":core:cas-server-core-tickets-api")
