@@ -50,6 +50,7 @@ public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @ConditionalOnMissingBean(name = "jdbcAcceptableUsagePolicyTransactionTemplate")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate(
         @Qualifier("jdbcAcceptableUsagePolicyTransactionManager")
         final PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager,

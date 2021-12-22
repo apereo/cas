@@ -71,6 +71,7 @@ public class CasConsentCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreBuilderConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultConsentableAttributeBuilder")
         public ConsentableAttributeBuilder defaultConsentableAttributeBuilder() {
             return ConsentableAttributeBuilder.noOp();
@@ -146,6 +147,7 @@ public class CasConsentCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreAuditConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casConsentAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer casConsentAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("authenticationActionResolver")

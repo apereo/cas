@@ -131,6 +131,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTokenCommunicationStrategy")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy() {
             return CasSimpleMultifactorTokenCommunicationStrategy.all();
         }

@@ -90,6 +90,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory casSimpleMultifactorPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

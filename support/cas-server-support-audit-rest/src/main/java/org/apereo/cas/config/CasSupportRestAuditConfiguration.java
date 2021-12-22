@@ -33,6 +33,7 @@ public class CasSupportRestAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "restAuditTrailExecutionPlanConfigurer")
     public AuditTrailExecutionPlanConfigurer restAuditTrailExecutionPlanConfigurer(
         @Qualifier("restAuditTrailManager")

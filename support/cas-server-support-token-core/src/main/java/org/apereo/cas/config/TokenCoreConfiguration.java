@@ -49,6 +49,7 @@ public class TokenCoreConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TokenCoreValidatorConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenTicketValidator")
         public TicketValidator tokenTicketValidator(
             @Qualifier("webApplicationServiceFactory")

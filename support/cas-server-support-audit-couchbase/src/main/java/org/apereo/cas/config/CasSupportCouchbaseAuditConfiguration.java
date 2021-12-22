@@ -33,6 +33,7 @@ public class CasSupportCouchbaseAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailManager couchbaseAuditTrailManager(
         @Qualifier("auditsCouchbaseClientFactory")
         final CouchbaseClientFactory auditsCouchbaseClientFactory,
@@ -43,6 +44,7 @@ public class CasSupportCouchbaseAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailExecutionPlanConfigurer couchbaseAuditTrailExecutionPlanConfigurer(
         @Qualifier("couchbaseAuditTrailManager")
         final AuditTrailManager couchbaseAuditTrailManager) {

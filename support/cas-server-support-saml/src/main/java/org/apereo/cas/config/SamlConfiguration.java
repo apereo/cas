@@ -64,6 +64,7 @@ public class SamlConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlViewFactoryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "samlServiceValidationViewFactoryConfigurer")
         public ServiceValidationViewFactoryConfigurer samlServiceValidationViewFactoryConfigurer(
             @Qualifier("casSamlServiceSuccessView")
@@ -97,6 +98,7 @@ public class SamlConfiguration {
 
         @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilder samlServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

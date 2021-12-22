@@ -356,6 +356,7 @@ public class WebAuthnConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CsrfTokenRepository webAuthnCsrfTokenRepository() {
             return new HttpSessionCsrfTokenRepository();
         }

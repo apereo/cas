@@ -44,6 +44,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcMultifactorAuthnTrustEngineConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
             final CasConfigurationProperties casProperties,
             @Qualifier("mfaTrustCipherExecutor")
@@ -62,9 +63,10 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnVendorAdapter")
-        public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(final CasConfigurationProperties casProperties,
-                                                                @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-                                                                final JpaBeanFactory jpaBeanFactory) {
+        public JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
+            final JpaBeanFactory jpaBeanFactory) {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
 

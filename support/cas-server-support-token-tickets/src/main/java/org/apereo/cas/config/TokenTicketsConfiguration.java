@@ -9,8 +9,10 @@ import org.apereo.cas.web.UrlValidator;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link TokenTicketsConfiguration}.
@@ -26,6 +28,7 @@ public class TokenTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TokenTicketsBuilderConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ResponseBuilder webApplicationServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

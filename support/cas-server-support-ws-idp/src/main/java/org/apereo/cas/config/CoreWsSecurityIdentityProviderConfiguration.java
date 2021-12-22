@@ -180,6 +180,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CoreWsSecurityIdentityProviderContextConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
             @Qualifier("wsFederationRelyingPartyTokenProducer")
             final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer,

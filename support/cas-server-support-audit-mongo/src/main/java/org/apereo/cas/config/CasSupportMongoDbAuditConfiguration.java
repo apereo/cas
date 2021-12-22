@@ -11,8 +11,10 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasSupportMongoDbAuditConfiguration}.
@@ -25,10 +27,12 @@ import org.springframework.context.annotation.Configuration;
 public class CasSupportMongoDbAuditConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoDbAuditTrailManager")
-    public AuditTrailManager mongoDbAuditTrailManager(final CasConfigurationProperties casProperties,
-                                                      @Qualifier(CasSSLContext.BEAN_NAME)
-                                                      final CasSSLContext casSslContext) {
+    public AuditTrailManager mongoDbAuditTrailManager(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext) {
         val mongo = casProperties.getAudit().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
@@ -37,6 +41,7 @@ public class CasSupportMongoDbAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailExecutionPlanConfigurer mongoDbAuditTrailExecutionPlanConfigurer(
         @Qualifier("mongoDbAuditTrailManager")
         final AuditTrailManager mongoDbAuditTrailManager) {

@@ -64,13 +64,15 @@ public class CassandraAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationHandler cassandraAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                @Qualifier("cassandraPrincipalFactory")
-                                                                final PrincipalFactory cassandraPrincipalFactory,
-                                                                @Qualifier("cassandraRepository")
-                                                                final CassandraRepository cassandraRepository,
-                                                                @Qualifier(ServicesManager.BEAN_NAME)
-                                                                final ServicesManager servicesManager) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationHandler cassandraAuthenticationHandler(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("cassandraPrincipalFactory")
+        final PrincipalFactory cassandraPrincipalFactory,
+        @Qualifier("cassandraRepository")
+        final CassandraRepository cassandraRepository,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val cassandra = casProperties.getAuthn().getCassandra();
         val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager, cassandraPrincipalFactory, cassandra.getOrder(), cassandra, cassandraRepository);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
@@ -80,6 +82,7 @@ public class CassandraAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cassandraAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("cassandraAuthenticationHandler")
         final AuthenticationHandler cassandraAuthenticationHandler,

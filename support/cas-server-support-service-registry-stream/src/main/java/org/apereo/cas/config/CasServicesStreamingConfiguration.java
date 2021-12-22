@@ -65,6 +65,7 @@ public class CasServicesStreamingConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "registeredServiceDistributedCacheManager")
     public DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager() {
         return DistributedCacheManager.noOp();
@@ -72,6 +73,7 @@ public class CasServicesStreamingConfiguration {
 
     @ConditionalOnMissingBean(name = "casRegisteredServiceStreamPublisherIdentifier")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier() {
         return new PublisherIdentifier();
     }

@@ -55,13 +55,14 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AuthenticationHandler authyAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("authyPrincipalFactory")
-                                                            final PrincipalFactory authyPrincipalFactory,
-                                                            @Qualifier("authyClientInstance")
-                                                            final AuthyClientInstance authyClientInstance,
-                                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                                            final ServicesManager servicesManager) {
+    public AuthenticationHandler authyAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authyPrincipalFactory")
+        final PrincipalFactory authyPrincipalFactory,
+        @Qualifier("authyClientInstance")
+        final AuthyClientInstance authyClientInstance,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val authy = casProperties.getAuthn().getMfa().getAuthy();
         val forceVerification = authy.isForceVerification();
         return new AuthyAuthenticationHandler(authy.getName(), servicesManager, authyPrincipalFactory, authyClientInstance, forceVerification, authy.getOrder());
@@ -69,17 +70,19 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "authyPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory authyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                                 @Qualifier("authyBypassEvaluator")
-                                                                                                 final MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator,
-                                                                                                 @Qualifier("failureModeEvaluator")
-                                                                                                 final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authyBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator authyBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator);
         val authy = casProperties.getAuthn().getMfa().getAuthy();
@@ -92,11 +95,12 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                @Qualifier("authyAuthenticationHandler")
-                                                                                final AuthenticationHandler authyAuthenticationHandler,
-                                                                                @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
-                                                                                final MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider) {
+    public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authyAuthenticationHandler")
+        final AuthenticationHandler authyAuthenticationHandler,
+        @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider) {
         return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), authyAuthenticationHandler,
             authyAuthenticatorMultifactorAuthenticationProvider.getId());
     }
