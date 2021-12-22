@@ -154,7 +154,6 @@ public class CasCoreAuditConfiguration {
             return new ServiceAuditResourceResolver();
         }
 
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "returnValueResourceResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
