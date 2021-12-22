@@ -13,6 +13,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-pac4j-api")
 
+    compileOnly project(":support:cas-server-support-scim-core")
+
     implementation libraries.pac4joidcoauth
     implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
@@ -34,4 +36,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":support:cas-server-support-scim-core")
 }

@@ -16,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
+    DefaultCentralAuthenticationServiceCryptoTests.class,
     DefaultPrincipalAttributesRepositoryTests.class,
     CachingPrincipalAttributesRepositoryTests.class
 })

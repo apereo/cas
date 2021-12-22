@@ -55,6 +55,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -265,7 +266,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         service.setName("TestShib");
         service.setServiceId(entityId);
         service.setId(RandomUtils.nextInt());
-        service.setSignAssertions(signAssertion);
+        service.setSignAssertions(TriStateBoolean.fromBoolean(signAssertion));
         service.setSignResponses(signResponses);
         service.setEncryptAssertions(encryptAssertions);
         service.setDescription("SAML Service");

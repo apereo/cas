@@ -25,17 +25,27 @@ public class Pac4jDelegatedAuthenticationProvisioningProperties implements Seria
     private static final long serialVersionUID = 3478567744591488495L;
 
     /**
-     * Hand off the provisioning task to an external rest api
-     * to create and manage establish profiles.
+     * Hand off the provisioning task to an external scim server
+     * to create and manage profiles.
      */
     @NestedConfigurationProperty
-    private Pac4jDelegatedAuthenticationRestfulProvisioningProperties rest = new Pac4jDelegatedAuthenticationRestfulProvisioningProperties();
+    private Pac4jDelegatedAuthenticationScimProvisioningProperties scim =
+        new Pac4jDelegatedAuthenticationScimProvisioningProperties();
+
+    /**
+     * Hand off the provisioning task to an external rest api
+     * to create and manage profiles.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationRestfulProvisioningProperties rest =
+        new Pac4jDelegatedAuthenticationRestfulProvisioningProperties();
 
     /**
      * Hand off the provisioning task to an external groovy script
-     * to create and manage establish profiles.
+     * to create and manage profiles.
      */
     @NestedConfigurationProperty
-    private Pac4jDelegatedAuthenticationGroovyProvisioningProperties groovy = new Pac4jDelegatedAuthenticationGroovyProvisioningProperties();
+    private Pac4jDelegatedAuthenticationGroovyProvisioningProperties groovy =
+        new Pac4jDelegatedAuthenticationGroovyProvisioningProperties();
 
 }

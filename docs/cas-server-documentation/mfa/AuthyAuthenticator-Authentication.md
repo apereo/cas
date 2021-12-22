@@ -8,10 +8,8 @@ category: Multifactor Authentication
 
 # Authy Authentication
 
-CAS provides support for Authy's [TOTP API](http://docs.authy.com/totp.html). This is done
+CAS provides support for Authy's [TOTP API](https://www.twilio.com/docs/authy/api). This is done
 via Authy's REST API that does all the heavy lifting.
-
-Start by visiting the [Authy documentation](https://www.authy.com/developers/).
 
 Support is enabled by including the following module in the overlay:
 
