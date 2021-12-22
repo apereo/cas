@@ -7,19 +7,14 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Key-value ticket registry implementation that stores tickets in redis keyed on the ticket ID.
@@ -39,8 +34,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     @SuppressWarnings("java:S2583")
     public long deleteAll() {
-        val redisKeys = RedisUtils.keys(this.client, getPatternTicketRedisKey(), this.scanCount)
-            .collect(Collectors.toSet());
+        val redisKeys = getKeysStream().collect(Collectors.toSet());
         val size = Objects.requireNonNull(redisKeys).size();
         this.client.delete(redisKeys);
         return size;
@@ -159,13 +153,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        val cursor = Objects.requireNonNull(client.getConnectionFactory()).getConnection()
-            .scan(ScanOptions.scanOptions().match(getPatternTicketRedisKey()).build());
-        return StreamSupport
-            .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-            .map(key -> (String) client.getKeySerializer().deserialize(key))
-            .collect(Collectors.toSet())
-            .stream()
-        .onClose(() -> IOUtils.closeQuietly(cursor));
+        return RedisUtils.keys(this.client, getPatternTicketRedisKey(), this.scanCount);
     }
 }
