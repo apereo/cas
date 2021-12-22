@@ -30,7 +30,7 @@ its behavior can be controlled via CAS settings.
 
 The default lock implementation, generally suitable for single-node deployments, is one 
 where the *lock registry* uses *Masked Hashcode* algorithm to obtain and store locks in JVM memory. The default mask is `0xFF` which 
-will create and array consisting of `1024 ReentrantLock` instances. When the lock repository attempts to obtain a lock
+will create an array consisting of `1024 ReentrantLock` instances. When the lock repository attempts to obtain a lock
 for a given lock key, (i.e. ticket id), the index of the `Lock` is determined by masking the object's 
 hash code and the `Lock` is returned.
 
