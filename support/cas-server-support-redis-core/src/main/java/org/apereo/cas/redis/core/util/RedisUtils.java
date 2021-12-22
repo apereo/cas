@@ -39,6 +39,7 @@ public class RedisUtils {
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .onClose(() -> IOUtils.closeQuietly(cursor))
-            .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key));
+            .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))
+            .distinct();
     }
 }
