@@ -15,8 +15,10 @@ import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link TokenAuthenticationConfiguration}.
@@ -31,17 +33,20 @@ public class TokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory tokenPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationHandler")
     @Bean
-    public AuthenticationHandler tokenAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("tokenPrincipalFactory")
-                                                            final PrincipalFactory tokenPrincipalFactory,
-                                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                                            final ServicesManager servicesManager) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationHandler tokenAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("tokenPrincipalFactory")
+        final PrincipalFactory tokenPrincipalFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val token = casProperties.getAuthn().getToken();
         val principalNameTransformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation());
         val handler = new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory, principalNameTransformer, JEESessionStore.INSTANCE);

@@ -19,8 +19,10 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateAuthenticationAuditConfiguration}.
@@ -46,6 +48,7 @@ public class SurrogateAuthenticationAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationAuditExecutionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateEligibilityAuditableExecution")
         public AuditableExecution surrogateEligibilityAuditableExecution() {
             return new SurrogateAuthenticationEligibilityAuditableExecution();
@@ -56,6 +59,7 @@ public class SurrogateAuthenticationAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationAuditResourcesConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateEligibilityVerificationAuditResourceResolver")
         public AuditResourceResolver surrogateEligibilityVerificationAuditResourceResolver() {
             return new SurrogateEligibilityVerificationAuditResourceResolver();

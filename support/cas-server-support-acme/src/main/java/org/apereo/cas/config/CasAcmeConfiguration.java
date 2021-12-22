@@ -14,8 +14,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.event.EventListener;
 
 import java.security.Security;
@@ -44,23 +46,27 @@ public class CasAcmeConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AcmeChallengeRepository acmeChallengeRepository() {
         return new AcmeChallengeRepository();
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "acmeAuthorizationExecutor")
     public AcmeAuthorizationExecutor acmeAuthorizationExecutor() {
         return AcmeAuthorizationExecutor.defaultChallenge();
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnProperty(prefix = "cas.acme", name = "terms-of-use-accepted", havingValue = "true")
-    public AcmeCertificateManager acmeCertificateManager(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("acmeChallengeRepository")
-                                                         final AcmeChallengeRepository acmeChallengeRepository,
-                                                         @Qualifier("acmeAuthorizationExecutor")
-                                                         final AcmeAuthorizationExecutor acmeAuthorizationExecutor) {
+    public AcmeCertificateManager acmeCertificateManager(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("acmeChallengeRepository")
+        final AcmeChallengeRepository acmeChallengeRepository,
+        @Qualifier("acmeAuthorizationExecutor")
+        final AcmeAuthorizationExecutor acmeAuthorizationExecutor) {
         return new AcmeCertificateManager(acmeChallengeRepository, casProperties, acmeAuthorizationExecutor);
     }
 

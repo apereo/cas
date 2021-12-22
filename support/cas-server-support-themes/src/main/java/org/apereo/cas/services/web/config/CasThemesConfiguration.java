@@ -20,8 +20,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.ThemeResolver;
@@ -62,6 +64,7 @@ public class CasThemesConfiguration {
 
     @ConditionalOnMissingBean(name = "casThemeResolver")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeResolver themeResolver(
         @Qualifier("serviceThemeResolverSupportedBrowsers")
         final Supplier<Map<String, String>> serviceThemeResolverSupportedBrowsers,

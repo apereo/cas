@@ -48,6 +48,7 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "tokenRequestExtractor")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenRequestExtractor tokenRequestExtractor() {
         return new DefaultTokenRequestExtractor();
     }
@@ -72,6 +73,7 @@ public class TokenAuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "tokenCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer tokenCasWebflowExecutionPlanConfigurer(
         @Qualifier("tokenWebflowConfigurer")

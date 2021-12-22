@@ -93,6 +93,7 @@ public class AzureActiveDirectoryAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "microsoftAzureActiveDirectoryPrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory microsoftAzureActiveDirectoryPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }

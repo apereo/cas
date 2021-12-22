@@ -137,6 +137,7 @@ public class CasCoreAuditConfiguration {
 
         @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver messageBundleAwareResourceResolver(
             final ConfigurableApplicationContext applicationContext) {
             val resolver = new MessageBundleAwareResourceResolver(applicationContext);
@@ -156,12 +157,14 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "returnValueResourceResolver")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver returnValueResourceResolver() {
             return new ShortenedReturnValueAsStringAuditResourceResolver();
         }
 
         @ConditionalOnMissingBean(name = "nullableReturnValueResourceResolver")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver nullableReturnValueResourceResolver() {
             val resolver = new NullableReturnValueAuditResourceResolver(new ShortenedReturnValueAsStringAuditResourceResolver());
             resolver.setResourcePostProcessor(inputs -> Arrays.stream(inputs)

@@ -9,8 +9,10 @@ import org.apereo.cas.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlServiceFactoryConfiguration}.
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlServiceFactoryConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceFactoryConfigurer samlServiceFactoryConfigurer(
         @Qualifier("samlServiceFactory")
         final ServiceFactory<SamlService> samlServiceFactory) {
@@ -30,6 +33,7 @@ public class SamlServiceFactoryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceFactory<SamlService> samlServiceFactory() {
         return new SamlServiceFactory();
     }

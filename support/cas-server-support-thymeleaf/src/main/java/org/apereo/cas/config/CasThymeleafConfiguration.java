@@ -99,6 +99,7 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "chainingTemplateViewResolver")
     public AbstractTemplateResolver chainingTemplateViewResolver(
         final ThymeleafProperties thymeleafProperties,
@@ -174,6 +175,7 @@ public class CasThymeleafConfiguration {
 
         @ConditionalOnMissingBean(name = "casThymeleafLoginFormDirector")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasThymeleafLoginFormDirector casThymeleafLoginFormDirector(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
             final CasWebflowExecutionPlan webflowExecutionPlan) {
@@ -193,6 +195,7 @@ public class CasThymeleafConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties,
                                                    final ObjectProvider<ITemplateResolver> templateResolvers,
                                                    final ObjectProvider<IDialect> dialects) {
