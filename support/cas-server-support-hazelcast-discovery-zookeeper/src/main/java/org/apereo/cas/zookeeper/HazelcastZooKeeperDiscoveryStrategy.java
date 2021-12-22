@@ -1,6 +1,7 @@
-package org.apereo.cas.hz;
+package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.hz.HazelcastDiscoveryStrategy;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;

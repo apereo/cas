@@ -3,6 +3,7 @@
   "properties": [
     "--cas.jdbc.show-sql=false",
     "--cas.audit.engine.enabled=false",
+    "--cas.ticket.registry.core.enable-locking=true",
     "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
     "--cas.ticket.registry.jpa.ddl-auto=update",
     "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect",

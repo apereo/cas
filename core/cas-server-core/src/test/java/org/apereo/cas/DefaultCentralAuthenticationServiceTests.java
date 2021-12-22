@@ -25,13 +25,14 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -48,6 +49,16 @@ import static org.mockito.Mockito.*;
 @Tag("CAS")
 @TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
 public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
+
+    private static Service getService(final String name) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
+        return new WebApplicationServiceFactory().createService(request);
+    }
+
+    private static Service getService() {
+        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
+    }
 
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() {
@@ -171,7 +182,6 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
             () -> getCentralAuthenticationService().grantProxyTicket(pgt.getId(), RegisteredServiceTestUtils.getService("unknown-service")));
     }
 
-
     @Test
     public void verifyGrantServiceTicketWithInvalidTicketGrantingTicket() {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
@@ -258,7 +268,6 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         assertNotNull(getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), operativeService));
     }
 
-
     @Test
     public void verifyValidateServiceTicketFailsTicket() {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
@@ -267,7 +276,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val id = UUID.randomUUID().toString();
         assertThrows(InvalidTicketException.class,
             () -> getCentralAuthenticationService().validateServiceTicket(id, getService()));
-        
+
         assertThrows(UnrecognizableServiceForServiceTicketValidationException.class,
             () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
                 RegisteredServiceTestUtils.getService(id)));
@@ -498,27 +507,20 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class), expirationPolicy);
         registry.addTicket(tgt);
         val servicesManager = mock(ServicesManager.class);
-        val cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class),
-            registry,
-            servicesManager,
-            null,
-            null,
-            null,
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            CipherExecutor.noOpOfStringToString(),
-            mock(AuditableExecution.class),
-            new DefaultServiceMatchingStrategy(servicesManager));
+
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val context = CentralAuthenticationServiceContext.builder()
+            .applicationContext(applicationContext)
+            .ticketRegistry(registry)
+            .servicesManager(servicesManager)
+            .principalFactory(PrincipalFactoryUtils.newPrincipalFactory())
+            .cipherExecutor(CipherExecutor.noOpOfStringToString())
+            .registeredServiceAccessStrategyEnforcer(mock(AuditableExecution.class))
+            .serviceMatchingStrategy(new DefaultServiceMatchingStrategy(servicesManager))
+            .lockRepository(LockRepository.asDefault())
+            .build();
+        val cas = new DefaultCentralAuthenticationService(context);
         cas.deleteTicket(tgt.getId());
-    }
-
-    private static Service getService(final String name) {
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return new WebApplicationServiceFactory().createService(request);
-    }
-
-    private static Service getService() {
-        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
     }
 }

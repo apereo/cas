@@ -73,9 +73,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword) throws GeneralSecurityException {
 
         var response = (HttpResponse) null;
         try {

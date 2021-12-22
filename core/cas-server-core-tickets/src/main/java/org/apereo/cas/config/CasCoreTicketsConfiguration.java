@@ -33,10 +33,8 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.CachingTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
-import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
@@ -44,6 +42,7 @@ import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.lock.LockRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -51,6 +50,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -137,13 +137,6 @@ public class CasCoreTicketsConfiguration {
             }
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
             return new DefaultTicketRegistry(storageMap, cipher);
-        }
-
-        @ConditionalOnMissingBean(name = "lockingStrategy")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LockingStrategy lockingStrategy() {
-            return new NoOpLockingStrategy();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -456,6 +449,27 @@ public class CasCoreTicketsConfiguration {
         @Bean
         public PlatformTransactionManager ticketTransactionManager() {
             return new PseudoPlatformTransactionManager();
+        }
+    }
+
+    @Configuration(value = "CasCoreTicketLockingConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasCoreTicketLockingConfiguration {
+
+        @Bean(LockRepository.BEAN_NAME)
+        @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "false")
+        public LockRepository casTicketRegistryLockRepositoryNoOp() {
+            return LockRepository.noOp();
+        }
+
+        @Bean(LockRepository.BEAN_NAME)
+        @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "true", matchIfMissing = true)
+        public LockRepository casTicketRegistryLockRepositoryDefault() {
+            return LockRepository.asDefault();
         }
     }
 }

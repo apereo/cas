@@ -6,8 +6,8 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
-import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import lombok.RequiredArgsConstructor;
@@ -45,17 +45,18 @@ public class CasCoreTicketsSchedulingConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketRegistryCleaner ticketRegistryCleaner(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("lockingStrategy")
-                                                       final LockingStrategy lockingStrategy,
-                                                       @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-                                                       final LogoutManager logoutManager,
-                                                       @Qualifier(TicketRegistry.BEAN_NAME)
-                                                       final TicketRegistry ticketRegistry) {
+    public TicketRegistryCleaner ticketRegistryCleaner(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(LockRepository.BEAN_NAME)
+        final LockRepository lockRepository,
+        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+        final LogoutManager logoutManager,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry) {
         val isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().getSchedule().isEnabled();
         if (isCleanerEnabled) {
             LOGGER.debug("Ticket registry cleaner is enabled.");
-            return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
+            return new DefaultTicketRegistryCleaner(lockRepository, logoutManager, ticketRegistry);
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
                      + "Expired tickets are not forcefully cleaned by CAS. It is up to the ticket registry itself to "

@@ -72,6 +72,12 @@ A number of cache-based ticket registries support secure replication of ticket d
 so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
 [See this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
 
+### Ticket Registry Locking
+
+A number of ticket registries support advanced distributed locking operations for highly concurrent requests,
+to assist with synchronization of data and atomicity of operations. [See this guide](Ticket-Registry-Locking.html) 
+for more info.
+
 ## Ticket Expiration Policies
 
 CAS supports a pluggable and extensible policy framework to control the expiration policy of

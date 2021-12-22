@@ -900,6 +900,8 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                },
+                dependencies.create("com.amazonaws:dynamodb-lock-client:$amazonSdkDynamoDbLockVersion") {
                 }
         ],
         awssqs         : [
@@ -2647,16 +2649,25 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
+                dependencies.create("org.springframework.integration:spring-integration-redis:$springIntegrationVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                    exclude(group: "org.springframework.data", module: "spring-data-redis")
+                },
                 dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion")
         ],
         springintegration       : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.springframework.integration:spring-integration-jmx:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
+                }
+        ],
+        springintegrationjdbc       : [
+                dependencies.create("org.springframework.integration:spring-integration-jdbc:$springIntegrationVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 }
         ],
         springcloudbus          : [
@@ -2832,19 +2843,21 @@ ext.libraries = [
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.curator:curator-framework:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                 },
                 dependencies.create("org.apache.curator:curator-client:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
+                },
+                dependencies.create("org.springframework.integration:spring-integration-zookeeper:$springIntegrationVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                    exclude(group: "org.apache.curator", module: "curator-recipes")
                 }
         ],
         springcloudconsul       : [
@@ -3673,17 +3686,6 @@ ext.libraries = [
                 dependencies.create("com.authy:authy-java:$authyVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
-                }
-        ],
-        onelogin               : [
-                dependencies.create("com.onelogin:onelogin-java-sdk:$oneLoginVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.json", module: "json")
-                    exclude(group: "joda-time", module: "joda-time")
-                    exclude(group: "javax.servlet", module: "servlet-api")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
                 }
         ],
         bucket4j                : [

@@ -88,12 +88,24 @@ can now accept a *tri-state* boolean with the following values:
 - `UNDEFINED`: Evaluate the signing requirement based on the `WantAssertionsSigned` flag found in the service provider metadata.
 
 <div class="alert alert-warning"><strong>Breaking Change</strong><p>
-This <i>might</i> be a breaking change. Please review your service definitions to review. While the default being <code>false</code>
-has not changed, it might result in a change in behavior compared to previous releases and updates.
+This <i>might</i> be a breaking change. Please examine your service definitions to review this setting. While 
+the default being <code>false</code> has not changed, it might result in a change in behavior 
+compared to previous releases and updates.
 </p></div>
 
 Previously-recorded boolean values for this flag as `true` or `false` should be 
 automatically translated by CAS to their `TRUE` or `FALSE` equivalent. 
+  
+## Ticket Registry Distributed Locks
+
+Ticket registry operations should now support [distributed locking](../ticketing/Ticket-Registry-Locking.html).
+Lock implementations are available for JVM memory (default), Redis, ZooKeeper and JDBC technologies.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow 
+to add additional scenarios. At this point, there are
+approximately `220` test scenarios and we'll continue to add more in the coming releases.
 
 ## Other Stuff
          
@@ -126,3 +138,4 @@ automatically translated by CAS to their `TRUE` or `FALSE` equivalent.
 - Okta SDK
 - Spring
 - Spring Boot
+- Spring Security
