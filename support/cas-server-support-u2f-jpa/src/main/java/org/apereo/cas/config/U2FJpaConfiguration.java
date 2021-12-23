@@ -71,8 +71,7 @@ public class U2FJpaConfiguration {
             final LoadingCache<String, String> requestStorage =
                 Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(),
                     u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
-            return new U2FJpaDeviceRepository(requestStorage, u2f.getCore().getExpireDevices(),
-                u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
+            return new U2FJpaDeviceRepository(requestStorage, casProperties, u2fRegistrationRecordCipherExecutor);
         }
 
     }

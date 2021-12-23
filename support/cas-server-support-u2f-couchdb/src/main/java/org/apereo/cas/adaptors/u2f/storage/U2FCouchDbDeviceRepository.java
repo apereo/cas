@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.u2f.CouchDbU2FDeviceRegistration;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -13,13 +13,10 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,25 +32,15 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
 
     private final U2FDeviceRegistrationCouchDbRepository couchDb;
 
-    private final long expirationTime;
-
-    private final TimeUnit expirationTimeUnit;
-
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(
         r -> new Thread(r, "U2FCouchDbDeviceRepositoryThread"));
 
-    private boolean asynchronous;
-
     public U2FCouchDbDeviceRepository(final LoadingCache<String, String> requestStorage,
                                       final U2FDeviceRegistrationCouchDbRepository couchDb,
-                                      final long expirationTime, final TimeUnit expirationTimeUnit,
-                                      final boolean asynchronous,
+                                      final CasConfigurationProperties casProperties,
                                       final CipherExecutor<Serializable, String> cipherExecutor) {
-        super(requestStorage, cipherExecutor);
+        super(casProperties, requestStorage, cipherExecutor);
         this.couchDb = couchDb;
-        this.expirationTime = expirationTime;
-        this.expirationTimeUnit = expirationTimeUnit;
-        this.asynchronous = asynchronous;
     }
 
     @Override
@@ -73,7 +60,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     @Override
     public U2FDeviceRegistration registerDevice(final U2FDeviceRegistration registration) {
         val couchDbDevice = new CouchDbU2FDeviceRegistration(registration);
-        if (asynchronous) {
+        if (casProperties.getAuthn().getMfa().getU2f().getCouchDb().isAsynchronous()) {
             this.executorService.execute(() -> couchDb.add(couchDbDevice));
         } else {
             couchDb.add(couchDbDevice);
@@ -88,10 +75,9 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
 
     @Override
     public void clean() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault())
-            .minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
-        if (asynchronous) {
+        if (casProperties.getAuthn().getMfa().getU2f().getCouchDb().isAsynchronous()) {
             executorService.execute(() -> couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord));
         } else {
             couchDb.findByDateBefore(expirationDate).forEach(couchDb::deleteRecord);
@@ -100,7 +86,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
 
     @Override
     public void removeAll() {
-        if (asynchronous) {
+        if (casProperties.getAuthn().getMfa().getU2f().getCouchDb().isAsynchronous()) {
             this.executorService.execute(couchDb::deleteAll);
         } else {
             couchDb.deleteAll();
@@ -110,7 +96,7 @@ public class U2FCouchDbDeviceRepository extends BaseU2FDeviceRepository implemen
     @Override
     public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
         val couchDbDevice = CouchDbU2FDeviceRegistration.class.cast(registration);
-        if (asynchronous) {
+        if (casProperties.getAuthn().getMfa().getU2f().getCouchDb().isAsynchronous()) {
             this.executorService.execute(() -> couchDb.deleteRecord(couchDbDevice));
         } else {
             couchDb.deleteRecord(couchDbDevice);

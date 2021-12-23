@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FRestfulMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link U2FRestResourceDeviceRepository}.
@@ -36,15 +35,10 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private final U2FRestfulMultifactorAuthenticationProperties restProperties;
-
     public U2FRestResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                           final long expirationTime,
-                                           final TimeUnit expirationTimeUnit,
-                                           final U2FRestfulMultifactorAuthenticationProperties restProperties,
+                                           final CasConfigurationProperties casProperties,
                                            final CipherExecutor<Serializable, String> cipherExecutor) {
-        super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
-        this.restProperties = restProperties;
+        super(requestStorage, casProperties, cipherExecutor);
     }
 
     @Override
@@ -52,11 +46,12 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
         HttpResponse response = null;
         try {
+            val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
-                .url(restProperties.getUrl())
+                .url(rest.getUrl())
                 .build();
 
             response = HttpUtils.execute(exec);
@@ -81,12 +76,13 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
 
             val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-            headers.putAll(restProperties.getHeaders());
+            val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
+            headers.putAll(rest.getHeaders());
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.POST)
-                .url(restProperties.getUrl())
+                .url(rest.getUrl())
                 .headers(headers)
                 .entity(writer.toString())
                 .build();
@@ -101,10 +97,11 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public void deleteRegisteredDevice(final U2FDeviceRegistration registration) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/") + registration.getId();
+            val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
+            val url = StringUtils.appendIfMissing(rest.getUrl(), "/") + registration.getId();
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(url)
                 .build();
@@ -118,11 +115,12 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
     public void removeAll() {
         HttpResponse response = null;
         try {
+            val rest = casProperties.getAuthn().getMfa().getU2f().getRest();
             val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(restProperties.getUrl())
+                .url(rest.getUrl())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {

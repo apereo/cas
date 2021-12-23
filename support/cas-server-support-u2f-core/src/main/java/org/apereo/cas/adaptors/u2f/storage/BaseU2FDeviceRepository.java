@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 /**
  * This is {@link BaseU2FDeviceRepository}.
@@ -22,6 +26,10 @@ import java.io.Serializable;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
+    /**
+     * CAS configuration settings.
+     */
+    protected final CasConfigurationProperties casProperties;
 
     private final LoadingCache<String, String> requestStorage;
 
@@ -66,5 +74,16 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
                 + "no matching record was found. Is the device registered?");
         }
         return registration;
+    }
+
+    /**
+     * Gets device expiration starting from now.
+     *
+     * @return the device expiration
+     */
+    protected LocalDate getDeviceExpiration() {
+        val expiration = casProperties.getAuthn().getMfa().getU2f().getCore().getExpireDevices();
+        val expirationTimeUnit = casProperties.getAuthn().getMfa().getU2f().getCore().getExpireDevicesTimeUnit();
+        return LocalDate.now(ZoneId.systemDefault()).minus(expiration, DateTimeUtils.toChronoUnit(expirationTimeUnit));
     }
 }

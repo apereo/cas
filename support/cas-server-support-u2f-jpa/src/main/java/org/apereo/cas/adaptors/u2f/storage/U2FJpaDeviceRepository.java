@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -13,11 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -34,25 +31,18 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     private static final String SELECT_QUERY = "SELECT r from U2FJpaDeviceRegistration r ";
 
-    private final long expirationTime;
-
-    private final TimeUnit expirationTimeUnit;
-
     @PersistenceContext(unitName = "u2fEntityManagerFactory")
     private transient EntityManager entityManager;
 
     public U2FJpaDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                  final long expirationTime, final TimeUnit expirationTimeUnit,
+                                  final CasConfigurationProperties casProperties,
                                   final CipherExecutor<Serializable, String> cipherExecutor) {
-        super(requestStorage, cipherExecutor);
-        this.expirationTime = expirationTime;
-        this.expirationTimeUnit = expirationTimeUnit;
+        super(casProperties, requestStorage, cipherExecutor);
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault())
-            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         return entityManager.createQuery(SELECT_QUERY.concat("WHERE r.createdDate >= :expdate"), U2FJpaDeviceRegistration.class)
             .setParameter("expdate", expirationDate)
             .getResultList()
@@ -63,11 +53,10 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault())
-            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         return this.entityManager.createQuery(
-            SELECT_QUERY.concat("WHERE r.username = :username AND r.createdDate >= :expdate"),
-            U2FJpaDeviceRegistration.class)
+                SELECT_QUERY.concat("WHERE r.username = :username AND r.createdDate >= :expdate"),
+                U2FJpaDeviceRegistration.class)
             .setParameter("username", username)
             .setParameter("expdate", expirationDate)
             .getResultList()
@@ -93,7 +82,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(expirationTime, DateTimeUtils.toChronoUnit(expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
         val query = entityManager.createQuery(DELETE_QUERY.concat("WHERE r.createdDate <= :expdate"))
             .setParameter("expdate", expirationDate);

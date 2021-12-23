@@ -69,28 +69,24 @@ public class U2FConfiguration {
 
             if (u2f.getJson().getLocation() != null) {
                 return new U2FJsonResourceDeviceRepository(requestStorage,
-                    u2f.getJson().getLocation(),
-                    u2f.getCore().getExpireDevices(),
-                    u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
+                    casProperties, u2fRegistrationRecordCipherExecutor);
             }
 
             if (u2f.getGroovy().getLocation() != null) {
                 return new U2FGroovyResourceDeviceRepository(requestStorage,
-                    u2f.getGroovy().getLocation(),
-                    u2f.getCore().getExpireDevices(),
-                    u2f.getCore().getExpireDevicesTimeUnit(), u2fRegistrationRecordCipherExecutor);
+                    casProperties, u2fRegistrationRecordCipherExecutor);
             }
 
             if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
                 return new U2FRestResourceDeviceRepository(requestStorage,
-                    u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(),
-                    u2f.getRest(), u2fRegistrationRecordCipherExecutor);
+                    casProperties, u2fRegistrationRecordCipherExecutor);
             }
 
             val userStorage = Caffeine.newBuilder()
                 .expireAfterWrite(u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit())
                 .<String, List<U2FDeviceRegistration>>build(key -> new ArrayList<>(0));
-            return new U2FInMemoryDeviceRepository(userStorage, requestStorage, u2fRegistrationRecordCipherExecutor);
+            return new U2FInMemoryDeviceRepository(userStorage, requestStorage,
+                u2fRegistrationRecordCipherExecutor, casProperties);
         }
     }
 
