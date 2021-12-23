@@ -14,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;

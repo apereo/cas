@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link U2FDynamoDbDeviceRepository}.
@@ -21,33 +18,25 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FDynamoDbDeviceRepository extends BaseU2FDeviceRepository {
-    private final long expirationTime;
-
-    private final TimeUnit expirationTimeUnit;
-
     private final U2FDynamoDbFacilitator facilitator;
 
     public U2FDynamoDbDeviceRepository(final LoadingCache<String, String> requestStorage,
-        final CipherExecutor<Serializable, String> cipherExecutor,
-        final long expirationTime, final TimeUnit expirationTimeUnit,
-        final U2FDynamoDbFacilitator facilitator) {
-        super(requestStorage, cipherExecutor);
-        this.expirationTime = expirationTime;
-        this.expirationTimeUnit = expirationTimeUnit;
+                                       final CipherExecutor<Serializable, String> cipherExecutor,
+                                       final CasConfigurationProperties casProperties,
+                                       final U2FDynamoDbFacilitator facilitator) {
+        super(casProperties, requestStorage, cipherExecutor);
         this.facilitator = facilitator;
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault())
-            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         return facilitator.fetchDevicesFrom(expirationDate, username);
     }
 
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault())
-            .minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         return facilitator.fetchDevicesFrom(expirationDate);
     }
 
@@ -68,8 +57,7 @@ public class U2FDynamoDbDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void clean() {
-        val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime,
-            DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+        val expirationDate = getDeviceExpiration();
         LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
         facilitator.removeDevicesBefore(expirationDate);
     }

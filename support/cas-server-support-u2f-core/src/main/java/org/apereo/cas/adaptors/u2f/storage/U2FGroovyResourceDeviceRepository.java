@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
@@ -7,12 +8,10 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link U2FGroovyResourceDeviceRepository}.
@@ -25,11 +24,10 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
     private final transient WatchableGroovyScriptResource watchableScript;
 
     public U2FGroovyResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                             final Resource groovyScript, final long expirationTime,
-                                             final TimeUnit expirationTimeUnit,
+                                             final CasConfigurationProperties casProperties,
                                              final CipherExecutor<Serializable, String> cipherExecutor) {
-        super(requestStorage, expirationTime, expirationTimeUnit, cipherExecutor);
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        super(requestStorage, casProperties, cipherExecutor);
+        this.watchableScript = new WatchableGroovyScriptResource(casProperties.getAuthn().getMfa().getU2f().getGroovy().getLocation());
     }
 
     @Override

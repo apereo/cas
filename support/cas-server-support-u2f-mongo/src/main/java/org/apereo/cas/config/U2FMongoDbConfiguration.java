@@ -43,7 +43,7 @@ public class U2FMongoDbConfiguration {
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(), u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);
-        return new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getCore().getExpireDevices(), u2f.getCore().getExpireDevicesTimeUnit(), mongoProps.getCollection(),
-            u2fRegistrationRecordCipherExecutor);
+        return new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate,
+            u2fRegistrationRecordCipherExecutor, casProperties);
     }
 }

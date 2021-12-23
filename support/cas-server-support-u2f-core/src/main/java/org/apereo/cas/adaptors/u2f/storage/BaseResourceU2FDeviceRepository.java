@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -9,13 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -31,17 +28,10 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
      */
     public static final String MAP_KEY_DEVICES = "devices";
 
-    private final long expirationTime;
-
-    private final TimeUnit expirationTimeUnit;
-
     protected BaseResourceU2FDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                              final long expirationTime,
-                                              final TimeUnit expirationTimeUnit,
+                                              final CasConfigurationProperties casProperties,
                                               final CipherExecutor<Serializable, String> cipherExecutor) {
-        super(requestStorage, cipherExecutor);
-        this.expirationTime = expirationTime;
-        this.expirationTimeUnit = expirationTimeUnit;
+        super(casProperties, requestStorage, cipherExecutor);
     }
 
     @Override
@@ -50,8 +40,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             val devices = readDevicesFromResource();
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);
-                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime,
-                    DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = getDeviceExpiration();
                 LOGGER.debug("Filtering devices for based on device expiration date [{}]", expirationDate);
                 val list = devs
                     .stream()
@@ -72,8 +61,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             val devices = readDevicesFromResource();
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);
-                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime,
-                    DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = getDeviceExpiration();
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 val list = devs
                     .stream()
@@ -139,7 +127,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
 
-                val expirationDate = LocalDate.now(ZoneId.systemDefault()).minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                val expirationDate = getDeviceExpiration();
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 val list = devs.stream()
                     .filter(d -> d.getCreatedDate().isAfter(expirationDate))
