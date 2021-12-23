@@ -49,6 +49,7 @@ public class U2FConfiguration {
 
         @ConditionalOnMissingBean(name = "u2fService")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public U2F u2fService() {
             return new U2F();
         }

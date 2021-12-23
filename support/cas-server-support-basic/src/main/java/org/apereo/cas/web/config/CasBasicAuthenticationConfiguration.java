@@ -62,6 +62,7 @@ public class CasBasicAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "basicPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory basicPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

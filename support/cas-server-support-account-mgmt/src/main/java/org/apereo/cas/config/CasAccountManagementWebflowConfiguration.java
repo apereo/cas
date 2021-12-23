@@ -177,6 +177,7 @@ public class CasAccountManagementWebflowConfiguration {
     public static class CasAccountManagementWebflowCoreConfiguration {
         @ConditionalOnMissingBean(name = "accountMgmtWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer accountMgmtWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -194,6 +195,7 @@ public class CasAccountManagementWebflowConfiguration {
     public static class CasAccountManagementWebflowPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "accountMgmtCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer accountMgmtCasWebflowExecutionPlanConfigurer(
             @Qualifier("accountMgmtWebflowConfigurer")
@@ -268,6 +270,7 @@ public class CasAccountManagementWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "accountRegistrationAuditTrailRecordResolutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer accountRegistrationAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("returnValueResourceResolver")
             final AuditResourceResolver returnValueResourceResolver) {

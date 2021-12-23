@@ -117,6 +117,7 @@ public class AuthyConfiguration {
     public static class AuthyWebflowExecutionPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authyCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer authyCasWebflowExecutionPlanConfigurer(
             @Qualifier("authyMultifactorWebflowConfigurer")

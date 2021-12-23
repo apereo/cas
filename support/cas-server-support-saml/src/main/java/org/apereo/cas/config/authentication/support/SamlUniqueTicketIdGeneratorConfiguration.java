@@ -11,8 +11,10 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlUniqueTicketIdGeneratorConfiguration}.
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlUniqueTicketIdGeneratorConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator(final CasConfigurationProperties casProperties) {
         val gen = new SamlCompliantUniqueTicketIdGenerator(casProperties.getServer().getName());
         gen.setSaml2compliant(casProperties.getSamlCore().isTicketidSaml2());
@@ -32,6 +35,7 @@ public class SamlUniqueTicketIdGeneratorConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public UniqueTicketIdGeneratorConfigurer samlServiceTicketUniqueTicketIdGeneratorConfigurer(
         @Qualifier("samlServiceTicketUniqueIdGenerator")
         final UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator) {
