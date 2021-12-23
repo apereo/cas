@@ -58,6 +58,7 @@ public class AmazonCognitoAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "amazonCognitoPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory amazonCognitoPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -65,15 +66,16 @@ public class AmazonCognitoAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "amazonCognitoAuthenticationHandler")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AuthenticationHandler amazonCognitoAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                    @Qualifier("amazonCognitoPrincipalFactory")
-                                                                    final PrincipalFactory amazonCognitoPrincipalFactory,
-                                                                    @Qualifier("amazonCognitoIdentityProvider")
-                                                                    final CognitoIdentityProviderClient amazonCognitoIdentityProvider,
-                                                                    @Qualifier("amazonCognitoAuthenticationJwtProcessor")
-                                                                    final ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor,
-                                                                    @Qualifier(ServicesManager.BEAN_NAME)
-                                                                    final ServicesManager servicesManager) throws Exception {
+    public AuthenticationHandler amazonCognitoAuthenticationHandler(
+        final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+        @Qualifier("amazonCognitoPrincipalFactory")
+        final PrincipalFactory amazonCognitoPrincipalFactory,
+        @Qualifier("amazonCognitoIdentityProvider")
+        final CognitoIdentityProviderClient amazonCognitoIdentityProvider,
+        @Qualifier("amazonCognitoAuthenticationJwtProcessor")
+        final ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
         val handler = new AmazonCognitoAuthenticationAuthenticationHandler(cognito.getName(), servicesManager, amazonCognitoPrincipalFactory, amazonCognitoIdentityProvider, cognito,
             amazonCognitoAuthenticationJwtProcessor);
@@ -99,8 +101,8 @@ public class AmazonCognitoAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConfigurableJWTProcessor amazonCognitoAuthenticationJwtProcessor(final CasConfigurationProperties casProperties) throws Exception {
         val cognito = casProperties.getAuthn().getCognito();
-        val resourceRetriever =
-            new DefaultResourceRetriever((int) Beans.newDuration(cognito.getConnectionTimeout()).toMillis(), (int) Beans.newDuration(cognito.getSocketTimeout()).toMillis());
+        val resourceRetriever = new DefaultResourceRetriever((int) Beans.newDuration(cognito.getConnectionTimeout()).toMillis(),
+            (int) Beans.newDuration(cognito.getSocketTimeout()).toMillis());
         val region = StringUtils.defaultIfBlank(cognito.getRegion(), Region.AWS_GLOBAL.id());
         val url = String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", region, cognito.getUserPoolId());
         val jwkSetURL = new URL(url);

@@ -22,6 +22,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreGeneratorService}.
@@ -70,12 +71,17 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val resource = determineJsonWebKeystoreResource();
         if (ResourceUtils.isFile(resource)) {
             resourceWatcherService = new FileWatcherService(resource.getFile(),
-                file -> FunctionUtils.doAndIgnore(f -> {
-                    if (applicationContext.isActive()) {
-                        LOGGER.info("Publishing event to broadcast change in [{}]", f);
-                        applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, (File) f));
+                file -> new Consumer<File>() {
+                    @Override
+                    public void accept(final File file) {
+                        FunctionUtils.doAndIgnore(f -> {
+                            if (applicationContext.isActive()) {
+                                LOGGER.info("Publishing event to broadcast change in [{}]", file);
+                                applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file));
+                            }
+                        });
                     }
-                }));
+                });
             resourceWatcherService.start(resource.getFilename());
         }
         val resultingResource = generate(resource);

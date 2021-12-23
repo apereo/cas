@@ -99,6 +99,7 @@ public class JpaYubiKeyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaYubiKeyRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public YubiKeyAccountRegistry yubiKeyAccountRegistry(
             @Qualifier("yubiKeyAccountValidator")
             final YubiKeyAccountValidator yubiKeyAccountValidator,

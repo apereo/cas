@@ -85,6 +85,7 @@ public class CasCaptchaConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "captchaCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer(
         @Qualifier("captchaWebflowConfigurer")
