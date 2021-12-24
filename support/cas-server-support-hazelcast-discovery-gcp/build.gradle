@@ -1,0 +1,11 @@
+description = "Apereo CAS Hazelcast Discovery Google Cloud Platform (GCP) Support"
+dependencies {
+    implementation libraries.hazelcast
+
+    implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+}

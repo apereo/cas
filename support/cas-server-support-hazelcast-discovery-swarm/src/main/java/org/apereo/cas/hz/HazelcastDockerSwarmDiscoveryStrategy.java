@@ -19,6 +19,7 @@ import org.bitsofinfo.hazelcast.spi.docker.swarm.dnsrr.DockerDNSRRMemberAddressP
 import org.bitsofinfo.hazelcast.spi.docker.swarm.dnsrr.discovery.DockerDNSRRDiscoveryStrategyFactory;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -31,8 +32,8 @@ import java.util.Properties;
 public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
-                                       final Config configuration, final NetworkConfig networkConfig) {
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                                 final Config configuration, final NetworkConfig networkConfig) {
         val dockerSwarm = cluster.getDiscovery().getDockerSwarm();
         val memberProvider = dockerSwarm.getMemberProvider();
         val dnsProvider = dockerSwarm.getDnsProvider();
@@ -47,7 +48,7 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
     }
 
     @SneakyThrows
-    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
+    private static Optional<DiscoveryStrategyConfig> getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
                                                                                     final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
         networkConfig.setPortAutoIncrement(false);
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();
@@ -62,10 +63,10 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         if (StringUtils.isNotBlank(dnsProvider.getPeerServices())) {
             properties.put("peerServicesCsv", dnsProvider.getPeerServices());
         }
-        return new DiscoveryStrategyConfig(new DockerDNSRRDiscoveryStrategyFactory(), properties);
+        return Optional.of(new DiscoveryStrategyConfig(new DockerDNSRRDiscoveryStrategyFactory(), properties));
     }
 
-    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaMemberAddressProvider(final Config configuration,
+    private static Optional<DiscoveryStrategyConfig> getDiscoveryStrategyConfigViaMemberAddressProvider(final Config configuration,
                                                        final NetworkConfig networkConfig,
                                                        final HazelcastDockerSwarmDiscoveryProperties.MemberAddressProvider memberProvider) {
 
@@ -98,7 +99,7 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return cfg;
+        return Optional.of(cfg);
     }
 
 }

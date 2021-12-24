@@ -61,7 +61,6 @@ public class U2FCouchDbConfiguration {
         final U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository,
         final CasConfigurationProperties casProperties) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
-        val couchDb = u2f.getCouchDb();
         final LoadingCache<String, String> requestStorage =
             Caffeine.newBuilder().expireAfterWrite(u2f.getCore().getExpireRegistrations(),
                 u2f.getCore().getExpireRegistrationsTimeUnit()).build(key -> StringUtils.EMPTY);

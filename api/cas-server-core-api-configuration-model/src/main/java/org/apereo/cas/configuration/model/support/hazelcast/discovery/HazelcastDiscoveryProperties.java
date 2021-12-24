@@ -78,6 +78,12 @@ public class HazelcastDiscoveryProperties implements Serializable {
     private HazelcastDockerSwarmDiscoveryProperties dockerSwarm = new HazelcastDockerSwarmDiscoveryProperties();
 
     /**
+     * Describe discovery strategy based on google cloud platform.
+     */
+    @NestedConfigurationProperty
+    private HazelcastGoogleCloudPlatformDiscoveryProperties gcp = new HazelcastGoogleCloudPlatformDiscoveryProperties();
+
+    /**
      * Multicast discovery settings.
      */
     @NestedConfigurationProperty

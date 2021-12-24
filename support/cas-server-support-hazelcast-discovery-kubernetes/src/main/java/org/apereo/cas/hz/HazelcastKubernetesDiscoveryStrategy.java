@@ -12,6 +12,7 @@ import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * This is {@link HazelcastKubernetesDiscoveryStrategy}.
@@ -22,8 +23,8 @@ import java.util.HashMap;
 public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
-                                       final Config configuration, final NetworkConfig networkConfig) {
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                                 final Config configuration, final NetworkConfig networkConfig) {
         val kube = cluster.getDiscovery().getKubernetes();
         val properties = new HashMap<String, Comparable>();
 
@@ -69,7 +70,7 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
         if (kube.getServicePort() > 0) {
             properties.put(KubernetesProperties.SERVICE_PORT.key(), kube.getServicePort());
         }
-        return new DiscoveryStrategyConfig(new HazelcastKubernetesDiscoveryStrategyFactory(), properties);
+        return Optional.of(new DiscoveryStrategyConfig(new HazelcastKubernetesDiscoveryStrategyFactory(), properties));
     }
 
 }
