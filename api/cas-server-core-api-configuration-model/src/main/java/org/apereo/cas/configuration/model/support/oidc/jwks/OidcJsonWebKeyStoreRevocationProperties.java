@@ -29,5 +29,5 @@ public class OidcJsonWebKeyStoreRevocationProperties implements Serializable {
      * Scheduler settings to indicate how often keys are revoked.
      */
     @NestedConfigurationProperty
-    private SchedulingProperties schedule = new SchedulingProperties().setRepeatInterval("P14D");
+    private SchedulingProperties schedule = new SchedulingProperties().setEnabled(false).setRepeatInterval("P14D");
 }

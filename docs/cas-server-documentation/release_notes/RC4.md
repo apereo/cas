@@ -103,7 +103,7 @@ Lock implementations are available for JVM memory (default), Redis, ZooKeeper an
 
 ## Hazelcast Discovery w/ Google Cloud Platform
 
-
+[Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html) member discovery is now extended to support [Google Cloud Platform](../ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Docker-GCP.html) deployments.
 
 ### Testing Strategy
 
@@ -112,7 +112,8 @@ to add additional scenarios. At this point, there are
 approximately `220` test scenarios and we'll continue to add more in the coming releases.
 
 ## Other Stuff
-         
+                   
+- The schedulers responsible for OpenID Connect key rotation and revocation are disabled by default to prevent changes to the keystore on startup.
 - Improvements to CAS ticket registry operations to handle concurrent ticket and token requests correctly.     
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 - Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
@@ -144,3 +145,4 @@ approximately `220` test scenarios and we'll continue to add more in the coming 
 - Spring
 - Spring Boot
 - Spring Security
+- Hazelcast

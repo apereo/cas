@@ -29,5 +29,5 @@ public class OidcJsonWebKeyStoreRotationProperties implements Serializable {
      * Scheduler settings to indicate how often keys are rotated.
      */
     @NestedConfigurationProperty
-    private SchedulingProperties schedule = new SchedulingProperties().setRepeatInterval("P90D");
+    private SchedulingProperties schedule = new SchedulingProperties().setEnabled(false).setRepeatInterval("P90D");
 }

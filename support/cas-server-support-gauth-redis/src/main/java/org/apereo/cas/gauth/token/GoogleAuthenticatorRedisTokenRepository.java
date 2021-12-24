@@ -2,11 +2,11 @@ package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.redis.core.util.RedisUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.redis.core.util.RedisUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
