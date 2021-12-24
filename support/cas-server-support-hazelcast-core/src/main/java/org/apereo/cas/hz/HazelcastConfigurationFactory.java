@@ -102,7 +102,7 @@ public class HazelcastConfigurationFactory {
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getNetwork().getPort())
             .setPortAutoIncrement(cluster.getNetwork().isPortAutoIncrement());
-
+        
         buildNetworkSslConfig(networkConfig, hz);
 
         if (StringUtils.hasText(cluster.getNetwork().getNetworkInterfaces())) {
@@ -231,7 +231,8 @@ public class HazelcastConfigurationFactory {
         val it = serviceLoader.iterator();
         if (it.hasNext()) {
             val strategy = it.next();
-            return strategy.get(cluster, joinConfig, config, networkConfig);
+            return strategy.get(cluster, joinConfig, config, networkConfig)
+                .orElseThrow(() -> new IllegalArgumentException("Could not create discovery strategy configuration."));
         }
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined");
     }

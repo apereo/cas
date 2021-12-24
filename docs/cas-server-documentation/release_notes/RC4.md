@@ -96,10 +96,14 @@ compared to previous releases and updates.
 Previously-recorded boolean values for this flag as `true` or `false` should be 
 automatically translated by CAS to their `TRUE` or `FALSE` equivalent. 
   
-## Ticket Registry Distributed Locks
+### Ticket Registry Distributed Locks
 
 Ticket registry operations should now support [distributed locking](../ticketing/Ticket-Registry-Locking.html).
 Lock implementations are available for JVM memory (default), Redis, ZooKeeper and JDBC technologies.
+
+## Hazelcast Discovery w/ Google Cloud Platform
+
+
 
 ### Testing Strategy
 
@@ -112,7 +116,8 @@ approximately `220` test scenarios and we'll continue to add more in the coming 
 - Improvements to CAS ticket registry operations to handle concurrent ticket and token requests correctly.     
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 - Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
-- SAML2 metadata generation can now populate the `errorURL` attribute with an `idp/error` endpoint that can present a generic error page, available publicly.
+- SAML2 metadata generation can populate the `errorURL` attribute with an `idp/error` public endpoint to show a generic error page.
+- Performance improvements to all Redis integrations to `SCAN` operations work correctly and do not exhaust the system.
 
 ## Library Upgrades
 
