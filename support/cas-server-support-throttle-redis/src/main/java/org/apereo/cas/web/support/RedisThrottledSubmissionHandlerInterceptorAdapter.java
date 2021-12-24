@@ -1,9 +1,9 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.RedisAuditTrailManager;
+import org.apereo.cas.redis.core.util.RedisUtils;
 
 import lombok.val;
-import org.apereo.cas.redis.core.util.RedisUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.redis.core.BoundValueOperations;

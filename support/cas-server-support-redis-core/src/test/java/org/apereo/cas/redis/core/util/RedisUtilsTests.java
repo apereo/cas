@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class,
     properties = {
         "cas.audit.redis.host=localhost",
-        "cas.audit.redis.port=6379",
+        "cas.audit.redis.port=6379"
     })
 @Tag("Redis")
 @EnabledIfPortOpen(port = 6379)
