@@ -34,6 +34,8 @@ A framework for resolving persons and attributes from a variety of underlying so
 It consists of a collection of components that retrieve, cache, resolve, aggregate,
 merge person attributes from JDBC, LDAP and more.
 
+{% include_cached casproperties.html properties="cas.person-directory" %}
+
 Attribute sources are defined and configured to describe the global set of attributes to be fetched
 for each authenticated principal. That global set of attributes is then filtered by the
 service manager according to service-specific attribute release rules.
