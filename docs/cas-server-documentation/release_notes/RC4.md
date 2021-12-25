@@ -101,7 +101,7 @@ automatically translated by CAS to their `TRUE` or `FALSE` equivalent.
 Ticket registry operations should now support [distributed locking](../ticketing/Ticket-Registry-Locking.html).
 Lock implementations are available for JVM memory (default), Redis, ZooKeeper and JDBC technologies.
 
-## Hazelcast Discovery w/ Google Cloud Platform
+### Hazelcast Discovery w/ Google Cloud Platform
 
 [Hazelcast Ticket Registry](../ticketing/Hazelcast-Ticket-Registry.html) member discovery is now extended to support [Google Cloud Platform](../ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Docker-GCP.html) deployments.
 
@@ -118,7 +118,7 @@ approximately `220` test scenarios and we'll continue to add more in the coming 
 - External integration tests are now available for [SCIM](../integration/SCIM-Integration.html).
 - Several CAS components internally are now marked with `@RefreshScope` to participate in application context refresh attempts.
 - SAML2 metadata generation can populate the `errorURL` attribute with an `idp/error` public endpoint to show a generic error page.
-- Performance improvements to all Redis integrations to `SCAN` operations work correctly and do not exhaust the system.
+- Performance improvements to all Redis integrations so `SCAN` operations work correctly and do not exhaust the system.
 
 ## Library Upgrades
 
