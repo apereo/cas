@@ -1,0 +1,40 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://spring.io/security/saml-sp",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "http://localhost:8076/sp/saml/metadata",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "jwtSigningSecret" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "V2x4dPVYmPT3v1YBf976B0dpFMYrfSwMiFUioYu69W6WyjdmqAkV6LgtpAhuhE3x7k3hKGsecnQFtgseOpvk7x5sCE6jUt1d9fUfuiUCp6r2dvbiGmZedsQebd3daktu7x1MUGOxeTRgbv3XHK4eRlbfgsakg5cryHqUjaWR99yyBU3mHfnm30aC77z5pKpxnfQbhGy5pX9zITcgu27wWiTCcTNHxzEkTBvsJek9Apz9wjRnEn65q9rLrps9MzYd" ] ]
+    },
+    "jwtEncryptionSecret" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "oY233692DZea4fUfJxUhGJOp96rpCi0Tna7xl9vFxr4bZ60D" ] ]
+    },
+    "jwtSigningSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "HS256" ] ]
+    },
+    "jwtEncryptionSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "dir" ] ]
+    },
+    "jwtEncryptionSecretMethod" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "A192CBC-HS384" ] ]
+    },
+    "jwtSecretsAreBase64Encoded" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    }
+  }
+}
+
+
