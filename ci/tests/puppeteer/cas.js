@@ -300,7 +300,7 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     return exec;
 }
 
-exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts) => {
+exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
     let args = ['-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',
         `-DidpMetadata=${idpMetadataPath}`,
