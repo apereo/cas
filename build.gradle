@@ -339,30 +339,33 @@ subprojects {
                     }
                 }
 
-                repositories {
-                    if (rootProject.publishReleases) {
-                        maven {
-                            name "CAS-Releases"
-                            url "${releaseRepositoryUrl}"
-                            mavenContent {
-                                releasesOnly()
-                            }
-                            credentials {
-                                username "${repositoryUsername}"
-                                password "${repositoryPassword}"
+
+                if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
+                    repositories {
+                        if (rootProject.publishReleases) {
+                            maven {
+                                name "CAS-Releases"
+                                url "${releaseRepositoryUrl}"
+                                mavenContent {
+                                    releasesOnly()
+                                }
+                                credentials {
+                                    username "${repositoryUsername}"
+                                    password "${repositoryPassword}"
+                                }
                             }
                         }
-                    }
-                    if (rootProject.publishSnapshots) {
-                        maven {
-                            name "CAS-Snapshots"
-                            url "${snapshotsRepositoryUrl}"
-                            mavenContent {
-                                snapshotsOnly()
-                            }
-                            credentials {
-                                username "${repositoryUsername}"
-                                password "${repositoryPassword}"
+                        if (rootProject.publishSnapshots) {
+                            maven {
+                                name "CAS-Snapshots"
+                                url "${snapshotsRepositoryUrl}"
+                                mavenContent {
+                                    snapshotsOnly()
+                                }
+                                credentials {
+                                    username "${repositoryUsername}"
+                                    password "${repositoryPassword}"
+                                }
                             }
                         }
                     }
