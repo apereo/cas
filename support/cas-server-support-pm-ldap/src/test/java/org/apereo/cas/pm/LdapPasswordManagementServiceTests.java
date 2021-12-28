@@ -75,6 +75,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
         val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("caspm@example.org", email);
         assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("unknown").build()));
+        assertNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("invalid").build()));
     }
 
     @Test
@@ -89,6 +90,7 @@ public class LdapPasswordManagementServiceTests extends BaseLdapPasswordManageme
         val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("caspm").build());
         assertEquals("1234567890", ph);
         assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("unknown").build()));
+        assertNull(passwordChangeService.findPhone(PasswordManagementQuery.builder().username("invalid").build()));
     }
 
     @Test
