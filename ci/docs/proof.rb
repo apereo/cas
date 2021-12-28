@@ -21,7 +21,7 @@ options = {
   :allow_hash_href => true,
   # :only_4xx => true,
   :empty_alt_ignore => true,
-  :http_status_ignore => [401,429,301,302],
+  :http_status_ignore => [0,401,429,301,302],
   :parallel => { :in_processes => 3},
   :url_swap => {
     %r{^/cas/} => '/'
