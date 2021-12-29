@@ -45,6 +45,10 @@ basis via [dedicated properties](../services/Configuring-Service-Custom-Properti
     "captchaEnabled" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "false" ] ]
+    },
+    "captchaIPAddressPattern" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "pattern1", "pattern2" ] ]
     }
   }
 }

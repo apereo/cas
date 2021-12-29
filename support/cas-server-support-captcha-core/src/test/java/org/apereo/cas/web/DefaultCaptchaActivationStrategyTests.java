@@ -73,6 +73,31 @@ public class DefaultCaptchaActivationStrategyTests {
     }
 
     @Test
+    public void verifyByIpPatternPerService() {
+        val servicesManager = mock(ServicesManager.class);
+
+        val strategy = new DefaultCaptchaActivationStrategy(servicesManager);
+        val request = new MockHttpServletRequest();
+        val context = getRequestContext(request);
+        request.setRemoteAddr("185.86.151.99");
+        request.setLocalAddr("195.88.151.11");
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
+        registeredService.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyName(),
+            new DefaultRegisteredServiceProperty("true"));
+        registeredService.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.getPropertyName(),
+            new DefaultRegisteredServiceProperty("no-match1", "no-match2", "\\d\\d\\.8.+\\.99"));
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        WebUtils.putServiceIntoFlowScope(context, service);
+        val properties = new GoogleRecaptchaProperties().setEnabled(false);
+
+        assertTrue(strategy.shouldActivate(context, properties).isPresent());
+    }
+
+    @Test
     public void verifyByService() {
         val servicesManager = mock(ServicesManager.class);
 
