@@ -91,10 +91,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     @SneakyThrows
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                                                    final SamlRegisteredService registeredService,
-                                                                                    final String entityID,
-                                                                                    final CriteriaSet criterions) {
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(
+        final SamlRegisteredServiceCachingMetadataResolver resolver,
+        final SamlRegisteredService registeredService,
+        final String entityID,
+        final CriteriaSet criterions) {
         try {
             LOGGER.trace("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
             criterions.add(new EntityIdCriterion(entityID), true);
@@ -102,7 +103,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
             val chainingMetadataResolver = resolver.resolve(registeredService, criterions);
             LOGGER.debug("Resolved metadata chain from [{}] using [{}]. Filtering the chain by entity ID [{}]",
                 registeredService.getMetadataLocation(), chainingMetadataResolver.getId(), entityID);
-            
+
             val entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 LOGGER.warn("Cannot find entity [{}] in metadata provider for criteria [{}]", entityID, criterions);
@@ -124,7 +125,30 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         }
         return Optional.empty();
     }
-    
+
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(
+        final String entityID,
+        final MetadataResolver chainingMetadataResolver,
+        final EntityDescriptor entityDescriptor) {
+        val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+        if (ssoDescriptor != null) {
+            LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
+                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
+            if (ssoDescriptor.getValidUntil() != null) {
+                val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
+                val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+                if (expired) {
+                    LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
+                    return Optional.empty();
+                }
+            }
+            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
+                chainingMetadataResolver));
+        }
+        LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
+        return Optional.empty();
+    }
+
     public ZonedDateTime getValidUntil() {
         return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
     }
@@ -225,7 +249,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      */
     public AssertionConsumerService getAssertionConsumerService(final String binding) {
         val acsList = getAssertionConsumerServices().stream()
-                .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
+            .filter(acs -> acs.getBinding().equalsIgnoreCase(binding)).collect(Collectors.toList());
         return SAML2MetadataSupport.getDefaultIndexedEndpoint(acsList);
     }
 
@@ -313,28 +337,6 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
      */
     public int assertionConsumerServicesSize() {
         return getAssertionConsumerServices().size();
-    }
-
-    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
-                                                                                                                final MetadataResolver chainingMetadataResolver,
-                                                                                                                final EntityDescriptor entityDescriptor) {
-        val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-        if (ssoDescriptor != null) {
-            LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
-                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
-            if (ssoDescriptor.getValidUntil() != null) {
-                val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
-                val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
-                if (expired) {
-                    LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
-                    return Optional.empty();
-                }
-            }
-            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
-                chainingMetadataResolver));
-        }
-        LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
-        return Optional.empty();
     }
 
     private List<AssertionConsumerService> getAssertionConsumerServices() {

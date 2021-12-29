@@ -14,6 +14,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,6 +44,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
         assertNotNull(adaptor.getExtensions());
         assertNotNull(adaptor.getSupportedProtocols());
         assertNotNull(adaptor.getSingleLogoutService());
+        assertNotNull(adaptor.getAssertionConsumerServiceLocations());
+        assertNull(adaptor.getAssertionConsumerServiceForPaosBinding());
         val acs = adaptor.getAssertionConsumerServiceForPostBinding();
         assertNotNull(acs);
         assertEquals(7, acs.getIndex());
@@ -59,6 +62,19 @@ public class SamlRegisteredServiceServiceProviderMetadataFacadeTests extends Bas
     public void verifyResolverNoEntityDesc() throws Exception {
         val mdr = mock(MetadataResolver.class);
         when(mdr.resolve(any())).thenReturn(null);
+        val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
+        when(resolver.resolve(any(SamlRegisteredService.class), any())).thenReturn(mdr);
+        val service = getSamlRegisteredServiceForTestShib();
+        val authnRequest = getAuthnRequestFor(service);
+        assertTrue(SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, service, authnRequest).isEmpty());
+    }
+
+    @Test
+    public void verifyNoSsoDescriptor() throws Exception {
+        val mdr = mock(MetadataResolver.class);
+        val entityDesc = mock(EntityDescriptor.class);
+        when(mdr.resolve(any())).thenReturn(List.of(entityDesc));
+        when(mdr.resolveSingle(any())).thenReturn(entityDesc);
         val resolver = mock(SamlRegisteredServiceCachingMetadataResolver.class);
         when(resolver.resolve(any(SamlRegisteredService.class), any())).thenReturn(mdr);
         val service = getSamlRegisteredServiceForTestShib();

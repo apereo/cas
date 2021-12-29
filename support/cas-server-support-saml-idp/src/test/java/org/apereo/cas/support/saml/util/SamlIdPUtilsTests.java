@@ -18,10 +18,13 @@ import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 
 import java.util.UUID;
 
@@ -40,6 +43,25 @@ public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
     @BeforeEach
     public void before() {
         servicesManager.deleteAll();
+    }
+
+    @Test
+    public void verifyServiceNameQualifier() {
+        val service = getSamlRegisteredServiceForTestShib();
+        val nameIdQualifier = UUID.randomUUID().toString();
+        service.setNameIdQualifier(nameIdQualifier);
+        servicesManager.save(service);
+        assertEquals(nameIdQualifier, SamlIdPUtils.determineNameIdNameQualifier(service, mock(MetadataResolver.class)));
+    }
+
+    @Test
+    public void verifyEndpointWithoutLocation() {
+        val logoutRequest = mock(LogoutRequest.class);
+        val endpoint = mock(SingleLogoutService.class);
+        val adaptor = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+        when(adaptor.getSingleLogoutService(anyString())).thenReturn(endpoint);
+        assertThrows(SamlException.class, () -> SamlIdPUtils.determineEndpointForRequest(Pair.of(logoutRequest, new MessageContext()),
+            adaptor, SAMLConstants.SAML2_POST_BINDING_URI));
     }
 
     @Test

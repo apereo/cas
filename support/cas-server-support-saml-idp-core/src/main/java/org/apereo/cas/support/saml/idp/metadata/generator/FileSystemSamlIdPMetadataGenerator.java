@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.tool.xmlsectool.XMLSecTool;
@@ -28,8 +27,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         val encCert = getConfigurationContext().getSamlIdPMetadataLocator()
             .getEncryptionCertificate(registeredService).getFile();
         val encKey = getConfigurationContext().getSamlIdPMetadataLocator()
@@ -40,8 +38,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         val signingCert = getConfigurationContext().getSamlIdPMetadataLocator()
             .resolveSigningCertificate(registeredService).getFile();
         val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
@@ -52,8 +49,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    @SneakyThrows
-    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
+    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
         FileUtils.write(metadataFile, metadata, StandardCharsets.UTF_8);
 
@@ -81,10 +77,10 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
      * @param certificate       the certificate
      * @param key               the key
      * @param registeredService the registered service
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected void writeCertificateAndKey(final File certificate, final File key,
-                                          final Optional<SamlRegisteredService> registeredService) {
+                                          final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (certificate.exists()) {
             LOGGER.info("Certificate file [{}] already exists, and will be deleted", certificate.getCanonicalPath());
             FileUtils.forceDelete(certificate);
@@ -101,15 +97,16 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    public void afterPropertiesSet() {
+    public void afterPropertiesSet() throws Exception {
         generate(Optional.empty());
     }
 
     /**
      * Initializes a new Generate saml metadata.
+     *
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         getConfigurationContext().getSamlIdPMetadataLocator().initialize();
         generate(Optional.empty());
     }

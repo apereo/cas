@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -234,7 +235,7 @@ public class FunctionUtils {
             }
         };
     }
-
+    
     /**
      * Do and handle supplier.
      *
@@ -243,7 +244,7 @@ public class FunctionUtils {
      * @param errorHandler the error handler
      * @return the supplier
      */
-    public static <R> Supplier<R> doAndHandle(final Supplier<R> function, final CheckedFunction<Throwable, R> errorHandler) {
+    public static <R> Supplier<R> doAndHandle(final CheckedSupplier<R> function, final CheckedFunction<Throwable, R> errorHandler) {
         return () -> {
             try {
                 return function.get();

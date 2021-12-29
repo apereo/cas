@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfPortOpen(port = 27017)
 public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -43,7 +43,7 @@ public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadat
     }
 
     @Test
-    public void verifyService() {
+    public void verifyService() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

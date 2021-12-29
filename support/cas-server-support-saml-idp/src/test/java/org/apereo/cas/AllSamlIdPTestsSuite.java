@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttri
 import org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.MetadataRegistrationAuthorityAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
@@ -155,6 +156,7 @@ import org.junit.platform.suite.api.Suite;
     SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests.class,
     SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests.class,
     SamlIdPProfileHandlerControllerTests.class,
+    MetadataEntityAttributesAttributeReleasePolicyTests.class,
     DefaultSamlIdPCasEventListenerTests.class,
     AttributeQueryAttributeReleasePolicyTests.class,
     SamlIdPMultifactorAuthenticationTriggerTests.class,

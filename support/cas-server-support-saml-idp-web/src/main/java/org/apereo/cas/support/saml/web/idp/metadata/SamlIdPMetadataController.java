@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -50,12 +49,12 @@ public class SamlIdPMetadataController {
      *
      * @param service  the service
      * @param response servlet response
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(
         @RequestParam(value = "service", required = false) final String service,
-        final HttpServletResponse response) throws IOException {
+        final HttpServletResponse response) throws Exception {
 
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);

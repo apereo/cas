@@ -80,7 +80,7 @@ public class RestfulSamlIdPMetadataGeneratorWithArtifactsTests extends BaseRestf
 
     @Test
     @Order(1)
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -91,7 +91,7 @@ public class RestfulSamlIdPMetadataGeneratorWithArtifactsTests extends BaseRestf
 
     @Test
     @Order(2)
-    public void verifyService() {
+    public void verifyService() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

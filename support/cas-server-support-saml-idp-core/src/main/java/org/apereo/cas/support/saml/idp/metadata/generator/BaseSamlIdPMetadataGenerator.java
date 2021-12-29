@@ -8,7 +8,6 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,8 +36,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     private final SamlIdPMetadataGeneratorConfigurationContext configurationContext;
 
     @Override
-    @SneakyThrows
-    public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) {
+    public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Exception {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         LOGGER.debug("Preparing to generate metadata for entity id [{}]", idp.getCore().getEntityId());
         val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
@@ -78,16 +76,18 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      *
      * @param registeredService registered service
      * @return the pair
+     * @throws Exception the exception
      */
-    public abstract Pair<String, String> buildSelfSignedEncryptionCert(Optional<SamlRegisteredService> registeredService);
+    public abstract Pair<String, String> buildSelfSignedEncryptionCert(Optional<SamlRegisteredService> registeredService) throws Exception;
 
     /**
      * Build self signed signing cert.
      *
      * @param registeredService registered service
      * @return the pair
+     * @throws Exception the exception
      */
-    public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService);
+    public abstract Pair<String, String> buildSelfSignedSigningCert(Optional<SamlRegisteredService> registeredService) throws Exception;
 
     /**
      * New saml id p metadata document.
@@ -104,9 +104,10 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @param doc               the doc
      * @param registeredService the registered service
      * @return the saml id p metadata document
+     * @throws Exception the exception
      */
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) {
+                                                               final Optional<SamlRegisteredService> registeredService) throws Exception {
         return doc;
     }
 
@@ -116,8 +117,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * @param metadata          the metadata
      * @param registeredService registered service
      * @return the string
+     * @throws Exception the exception
      */
-    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) {
+    protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Exception {
         return metadata;
     }
 
@@ -125,9 +127,9 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
      * Generate certificate and key pair.
      *
      * @return the pair where key/left is the certificate and value is the key
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected Pair<String, String> generateCertificateAndKey() {
+    protected Pair<String, String> generateCertificateAndKey() throws Exception {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
             configurationContext.getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
             val encryptionKey = configurationContext.getMetadataCipherExecutor().encode(keyWriter.toString());

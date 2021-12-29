@@ -53,7 +53,7 @@ public class FileSystemSamlIdPMetadataGeneratorTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyService() {
+    public void verifyService() throws Exception {
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
 
         val service = new SamlRegisteredService();

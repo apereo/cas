@@ -32,9 +32,25 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 public class MetadataRequestedAttributesAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "MetadataRequestedAttributesAttributeReleasePolicyTests.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Test
+    public void verifyNoServiceOrEntityId() {
+        val filter = new MetadataRequestedAttributesAttributeReleasePolicy();
+        filter.setUseFriendlyName(true);
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        registeredService.setAttributeReleasePolicy(filter);
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user"));
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .principal(principal)
+            .build();
+        val attributes = filter.getAttributes(context);
+        assertTrue(attributes.isEmpty());
+    }
 
     @Test
     public void verifyMatch() {
