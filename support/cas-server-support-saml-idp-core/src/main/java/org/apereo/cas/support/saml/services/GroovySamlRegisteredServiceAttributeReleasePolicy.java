@@ -56,7 +56,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                     .map(sc -> {
                         val args = new Object[]{attributes, context.getRegisteredService(), resolver,
                             facade, entityDescriptor, applicationContext, LOGGER};
-                        return script.execute(args, Map.class, true);
+                        return (Map<String, List<Object>>) script.execute(args, Map.class, true);
                     })
                     .orElseGet(() -> {
                         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);

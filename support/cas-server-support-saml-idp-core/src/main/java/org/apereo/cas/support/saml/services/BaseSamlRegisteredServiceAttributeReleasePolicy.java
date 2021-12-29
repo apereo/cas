@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -87,8 +88,8 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             return entityId;
         }
         val svcParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        if (StringUtils.isNotBlank(svcParam)) {
-            try {
+        return FunctionUtils.doIf(StringUtils.isNotBlank(svcParam),
+            () -> FunctionUtils.doAndHandle(o -> {
                 val builder = new URIBuilder(svcParam);
                 return builder.getQueryParams()
                     .stream()
@@ -96,11 +97,12 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                     .map(NameValuePair::getValue)
                     .findFirst()
                     .orElse(StringUtils.EMPTY);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
-        }
-        return null;
+            }, throwable -> {
+                LoggingUtils.error(LOGGER, throwable);
+                return null;
+            })
+                .apply(svcParam),
+            () -> null).get();
     }
 
     /**
@@ -148,7 +150,9 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             val resolver = applicationContext.getBean(SamlRegisteredServiceCachingMetadataResolver.DEFAULT_BEAN_NAME,
                 SamlRegisteredServiceCachingMetadataResolver.class);
             val entityId = getEntityIdFromRequest(context.getService());
-            val facade = determineServiceProviderMetadataFacade(samlRegisteredService, entityId);
+            val facade = StringUtils.isBlank(entityId)
+                ? Optional.<SamlRegisteredServiceServiceProviderMetadataFacade>empty()
+                : determineServiceProviderMetadataFacade(samlRegisteredService, entityId);
 
             if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);

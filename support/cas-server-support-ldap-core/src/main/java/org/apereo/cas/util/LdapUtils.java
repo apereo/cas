@@ -1331,7 +1331,7 @@ public class LdapUtils {
         public String resolve(final User user) {
             return resolvers.stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
-                    Unchecked.supplier(() -> resolver.resolve(user)),
+                    () -> resolver.resolve(user),
                     throwable -> {
                         LoggingUtils.warn(LOGGER, throwable);
                         return null;
@@ -1351,7 +1351,7 @@ public class LdapUtils {
         public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
             return resolvers.stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
-                    Unchecked.supplier(() -> resolver.resolve(criteria, response)),
+                    () -> resolver.resolve(criteria, response),
                     throwable -> {
                         LoggingUtils.warn(LOGGER, throwable);
                         return null;

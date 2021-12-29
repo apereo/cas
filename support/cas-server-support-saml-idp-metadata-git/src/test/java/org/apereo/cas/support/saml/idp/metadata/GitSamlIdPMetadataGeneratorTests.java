@@ -66,7 +66,7 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -76,7 +76,7 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     }
 
     @Test
-    public void verifyService() {
+    public void verifyService() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

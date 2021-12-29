@@ -35,7 +35,7 @@ public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurat
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         samlIdPMetadataLocator.initialize();
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
@@ -47,7 +47,7 @@ public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurat
     }
 
     @Test
-    public void verifyService() {
+    public void verifyService() throws Exception {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

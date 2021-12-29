@@ -93,7 +93,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
         @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
         @Qualifier("samlIdPMetadataCouchDbRepository")
-        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) {
+        final SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository) throws Exception {
         val generator = new CouchDbSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, samlIdPMetadataRepository);
         generator.generate(Optional.empty());
         return generator;

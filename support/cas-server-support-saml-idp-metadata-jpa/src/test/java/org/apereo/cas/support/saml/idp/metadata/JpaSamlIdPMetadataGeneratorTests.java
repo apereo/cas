@@ -32,7 +32,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class NoCipherJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
-        public void verifyOperation() {
+        public void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -51,7 +51,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
     @SuppressWarnings("ClassCanBeStatic")
     public class DefaultJpaSamlIdPMetadataGeneratorTests extends BaseJpaSamlMetadataTests {
         @Test
-        public void verifyOperation() {
+        public void verifyOperation() throws Exception {
             this.samlIdPMetadataGenerator.generate(Optional.empty());
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -61,7 +61,7 @@ public class JpaSamlIdPMetadataGeneratorTests {
         }
 
         @Test
-        public void verifyService() {
+        public void verifyService() throws Exception {
             val service = new SamlRegisteredService();
             service.setName("TestShib");
             service.setId(1000);

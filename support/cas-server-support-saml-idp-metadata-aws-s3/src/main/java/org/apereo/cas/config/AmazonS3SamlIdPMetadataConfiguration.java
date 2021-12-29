@@ -54,11 +54,12 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(final CasConfigurationProperties casProperties,
-                                                             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-                                                             final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
-                                                             @Qualifier("amazonS3Client")
-                                                             final S3Client amazonS3Client) {
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
+        final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
+        @Qualifier("amazonS3Client")
+        final S3Client amazonS3Client) throws Exception {
         val idp = casProperties.getAuthn().getSamlIdp();
         val generator = new AmazonS3SamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, amazonS3Client, idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
         generator.generate(Optional.empty());

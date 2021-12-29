@@ -45,12 +45,12 @@ public class CouchDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
-    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return generateCertificateAndKey();
     }
 
     @Override
-    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return generateCertificateAndKey();
     }
 }

@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,7 +34,7 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
     }
 
     @Override
-    public void afterPropertiesSet() {
+    public void afterPropertiesSet() throws Exception{
         generate(Optional.empty());
     }
 
@@ -49,14 +48,12 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
     }
 
     @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return generateCertificateAndKey();
     }
 
     @Override
-    @SneakyThrows
-    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) {
+    public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return generateCertificateAndKey();
     }
 }

@@ -110,21 +110,15 @@ public class FunctionUtilsTests {
     @Test
     public void verifyDoAndHandle2() {
         var supplier = FunctionUtils.doAndHandle(
-            new Supplier<>() {
-                @Override
-                public Object get() {
-                    throw new IllegalArgumentException();
-                }
+            () -> {
+                throw new IllegalArgumentException();
             }, o -> {
                 throw new IllegalArgumentException();
             });
         assertThrows(IllegalArgumentException.class, supplier::get);
         supplier = FunctionUtils.doAndHandle(
-            new Supplier<>() {
-                @Override
-                public Object get() {
-                    throw new IllegalArgumentException();
-                }
+            () -> {
+                throw new IllegalArgumentException();
             }, o -> false);
         assertFalse((Boolean) supplier.get());
     }
