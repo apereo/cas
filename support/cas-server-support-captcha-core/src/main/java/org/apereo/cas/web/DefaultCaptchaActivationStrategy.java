@@ -15,6 +15,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link DefaultCaptchaActivationStrategy}.
@@ -37,8 +38,19 @@ public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrate
                                                               final GoogleRecaptchaProperties properties) {
         val service = WebUtils.getService(requestContext);
         val registeredService = servicesManager.findServiceBy(service);
+
         if (RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_ENABLED.isAssignedTo(registeredService)) {
             LOGGER.trace("Checking for activation of captcha defined for service [{}]", registeredService);
+
+            if (RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.isAssignedTo(registeredService)) {
+                val ip = Optional.ofNullable(ClientInfoHolder.getClientInfo())
+                    .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY).trim();
+                LOGGER.trace("Checking for activation of captcha defined for service [{}] based on IP address [{}]", registeredService, ip);
+                val ipPattern = RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.getPropertyValues(registeredService, Set.class);
+                val result = ipPattern.stream().anyMatch(pattern -> RegexUtils.find(pattern.toString().trim(), ip));
+                return evaluateResult(result, properties);
+            }
+
             val result = RegisteredServiceProperty.RegisteredServiceProperties.CAPTCHA_ENABLED.getPropertyBooleanValue(registeredService);
             return evaluateResult(result, properties);
         }

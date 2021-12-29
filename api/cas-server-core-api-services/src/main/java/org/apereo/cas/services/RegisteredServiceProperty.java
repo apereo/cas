@@ -496,6 +496,12 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Whether captcha is enabled.
          */
+        CAPTCHA_IP_ADDRESS_PATTERN("captchaIPAddressPattern", "true",
+            RegisteredServicePropertyGroups.RECAPTCHA, RegisteredServicePropertyTypes.SET,
+            "Whether reCAPTCHA should be activated when the remote-ip address matches any of the defined pattern(s)."),
+        /**
+         * Whether captcha is enabled.
+         */
         CAPTCHA_ENABLED("captchaEnabled", "true",
             RegisteredServicePropertyGroups.RECAPTCHA, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether reCAPTCHA should be enabled."),
