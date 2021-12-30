@@ -85,9 +85,6 @@ configuration, please [review this guide](Configuration-Management-Extensions.ht
 
 ## Auto Configuration Strategy
 
-To see the relevant list of CAS properties for this
-feature, please [review this guide](Configuration-Storage.html).
-
 Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer
 from manually massaging the application context via XML configuration files.
