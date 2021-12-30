@@ -78,7 +78,8 @@ The following commandline boolean flags are supported by the build and can be pa
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
-| `casModules`                      | Comma separated list of modules without the `cas-server-[support|core]` prefix.
+| `casModules`                      | Build property; Comma separated list of modules without the `cas-server-[support|core]` prefix.
+| `buildScript`                     | Build fragment to include when building the project. Typically used by and during integration tests.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -322,7 +323,7 @@ function bc() {
     --parallel -x test -x javadoc -x check -DenableRemoteDebugging=true \
     --stacktrace -DskipNestedConfigMetadataGen=true \
     -DremoteDebuggingSuspend=false \
-    -PcasModules=${casmodules}
+    -DcasModules=${casmodules}
 }
 
 # Install JARs/WARs for use with a CAS overlay project

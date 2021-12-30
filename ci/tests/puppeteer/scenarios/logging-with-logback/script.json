@@ -1,0 +1,14 @@
+{
+  "dependencies": "logback",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--logging.config=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/logback.xml"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
+}

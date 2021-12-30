@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Paths passed as arguments on command line get converted
+# by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
+# so this converts path to windows format
+PORTABLE_PWD=${PWD}
+command -v cygpath > /dev/null && test ! -z "$MSYSTEM"
+if [[ $? -eq 0 ]]; then
+  PORTABLE_PWD=$(cygpath -w "$PWD")
+fi
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -163,15 +172,21 @@ fi
 
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 
-if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
+buildScript=$(cat "${config}" | jq -j '.buildScript // empty')
+buildScript="${buildScript//\$\{PWD\}/${PORTABLE_PWD}}"
+buildScript="${buildScript//\$\{SCENARIO\}/${scenarioName}}"
+buildScript="${buildScript//\%\{random\}/${random}}"
+printgreen "Including build script [${buildScript}]"
 
+if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
   ./gradlew :webapp:cas-server-webapp-${project}:build \
     -DskipNestedConfigMetadataGen=true -x check -x javadoc \
+    -DbuildScript=${buildScript} \
     ${DAEMON} --build-cache --configure-on-demand --parallel \
-    -PcasModules="${dependencies}" -q ${BUILDFLAGS}
+    -DcasModules="${dependencies}" -q ${BUILDFLAGS}
 
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
@@ -189,15 +204,6 @@ fi
 
 
 if [[ "${RERUN}" != "true" ]]; then
-  # Paths passed as arguments on command line get converted
-  # by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
-  # so this converts path to windows format
-  PORTABLE_PWD=${PWD}
-  command -v cygpath > /dev/null && test ! -z "$MSYSTEM"
-  if [[ $? -eq 0 ]]; then
-    PORTABLE_PWD=$(cygpath -w $PWD)
-  fi
-
   initScript=$(cat "${config}" | jq -j '.initScript // empty')
   initScript="${initScript//\$\{PWD\}/${PWD}}"
   initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
