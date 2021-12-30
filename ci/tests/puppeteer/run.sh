@@ -173,20 +173,22 @@ fi
 dependencies=$(cat "${config}" | jq -j '.dependencies')
 
 buildScript=$(cat "${config}" | jq -j '.buildScript // empty')
-buildScript="${buildScript//\$\{PWD\}/${PORTABLE_PWD}}"
-buildScript="${buildScript//\$\{SCENARIO\}/${scenarioName}}"
-buildScript="${buildScript//\%\{random\}/${random}}"
-printgreen "Including build script [${buildScript}]"
+BUILD_SCRIPT=""
+if [[ -n "${buildScript}" ]]; then
+  buildScript="${buildScript//\$\{PWD\}/${PORTABLE_PWD}}"
+  buildScript="${buildScript//\$\{SCENARIO\}/${scenarioName}}"
+  buildScript="${buildScript//\%\{random\}/${random}}"
+  printgreen "Including build script [${buildScript}]"
+  BUILD_SCRIPT="-DbuildScript=${buildScript}"
+fi
 
 if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
   ./gradlew :webapp:cas-server-webapp-${project}:build \
-    -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-    -DbuildScript=${buildScript} \
-    ${DAEMON} --build-cache --configure-on-demand --parallel \
-    -DcasModules="${dependencies}" -q ${BUILDFLAGS}
+    -DskipNestedConfigMetadataGen=true -x check -x javadoc --build-cache --configure-on-demand --parallel \
+    ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" -q ${BUILDFLAGS}
 
   if [ $? -eq 1 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
