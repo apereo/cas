@@ -1,4 +1,3 @@
-
 dependencies {
     implementation project(":core:cas-server-core")
     implementation project(":core:cas-server-core-audit")
@@ -28,9 +27,9 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
 
-    // Add modules in format compatible with overlay casModules property
-    if (project.hasProperty("casModules")) {
-        def dependencies = project.getProperty("casModules").split(",")
+    def casModules = providers.systemProperty("casModules").forUseAtConfigurationTime().getOrNull()
+    if (casModules != null) {
+        def dependencies = casModules.split(",")
         dependencies.each {
             def projectsToAdd = rootProject.subprojects.findAll {project ->
                 def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
@@ -51,3 +50,5 @@ dependencies {
     }
 
 }
+
+

@@ -35,7 +35,7 @@ configurations.all {
 
 <div class="alert alert-warning"><strong>YMMV</strong><p>
 Logback support for Java 9 and above is still not quite finalized and released. In the WAR overlay, you may need to strictly <i>force</i>
-the Logback and Slf4j module versions to <code>1.2.3</code> and <code>1.7.5</code> respectively to get around JDK compatibility issues.
+the Logback and Slf4j module versions to <code>1.2.10</code> and <code>1.7.32</code> respectively to get around JDK compatibility issues.
 This is expected to be fixed in future CAS releases once Logback is officially released and you should keep an eye out for related changes and fixes in the CAS release notes.
 </p></div>
 

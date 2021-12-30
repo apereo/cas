@@ -124,7 +124,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         if (rootProject.enableRemoteDebugging) {
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
-                ansi.green "Listening on port ${port} for remote debugging requests with suspend=${rootProject.remoteDebuggingSuspend}"
+                ansi.green "Port ${port} will be available for remote debugging requests with suspend=${rootProject.remoteDebuggingSuspend}"
                 list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
             }
         }

@@ -16,7 +16,7 @@ keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass ch
 
 echo -e "\Building CAS with support for OpenID Connect..."
 ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel -PcasModules="oidc,reports"
+  --no-daemon --build-cache --configure-on-demand --parallel -DcasModules="oidc,reports"
 mv "$PWD"/webapp/cas-server-webapp-tomcat/build/libs/cas-server-webapp-tomcat-*-SNAPSHOT.war "$PWD"/cas.war
 
 if [ $? -eq 1 ]; then

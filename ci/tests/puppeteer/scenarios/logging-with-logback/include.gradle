@@ -1,0 +1,8 @@
+configurations.all {
+    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+    exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+
+    exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+}
