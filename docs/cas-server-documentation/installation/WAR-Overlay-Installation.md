@@ -80,8 +80,8 @@ The CAS WAR overlay template project can be bootstrapped and generated via the [
 The WAR overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
 
-Note: Do **NOT** ever make changes in the above-noted build directory. The changeset will be cleaned out and 
-set back to defaults every time you do a build. Put overlaid components inside the source directory
+Note: Do **NOT** ever make changes in the `build` directory. The changeset will be cleaned out and 
+set back to defaults every time you do a build. Put overlaid components inside the `src` directory
 and/or other instructed locations to avoid surprises.
 
 ## Dockerized Deployment
