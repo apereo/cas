@@ -2665,6 +2665,20 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 }
         ],
+        springcloudkubernetesconfig : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config:$springCloudKubernetesConfig") {
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                }
+        ],
         springcloudbus          : [
                 dependencies.create("org.springframework.cloud:spring-cloud-bus:$springCloudBusVersion") {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")

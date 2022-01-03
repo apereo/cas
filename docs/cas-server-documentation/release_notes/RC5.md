@@ -57,6 +57,18 @@ minimum system/platform requirements for this release.
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+ 
+### Spring Cloud Kubernetes
+
+Support for [Spring Cloud Kubernetes](../configuration/Configuration-Server-Management-SpringCloud-Kubernetes.html), 
+particularly when it comes to configuration management via `ConfigMap`
+or `Secret` concepts in Kubernetes is now *baked* into CAS.
+
+### Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer continue to grow
+to add additional scenarios. At this point, there are
+approximately `230` test scenarios and we'll continue to add more in the coming releases.
 
 ## Other Stuff
 

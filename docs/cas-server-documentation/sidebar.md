@@ -55,6 +55,7 @@ layout: null
             *   [MongoDb](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
             *   [HashiCorp Consul](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-HashiCorpConsul.html)
             *   [HashiCorp Vault](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-HashiCorpVault.html)
+            *   [Kubernetes](/cas/{{ version }}/configuration/Configuration-Server-Management-SpringCloud-Kubernetes.html)
     *   [Configuration Security](/cas/{{ version }}/configuration/Configuration-Properties-Security.html)
     *   [Configuration Metadata](/cas/{{ version }}/configuration/Configuration-Metadata-Repository.html)
     *   [Configuration Extensions](/cas/{{ version }}/configuration/Configuration-Management-Extensions.html)
