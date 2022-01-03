@@ -27,6 +27,11 @@ public class ForgotUsernamePasswordManagementProperties implements Serializable 
     private static final long serialVersionUID = 4850199066765183587L;
 
     /**
+     * Whether forgot/reset username functionality should be enabled.
+     */
+    private boolean enabled = true;
+
+    /**
      * Email settings for notifications.
      */
     @NestedConfigurationProperty

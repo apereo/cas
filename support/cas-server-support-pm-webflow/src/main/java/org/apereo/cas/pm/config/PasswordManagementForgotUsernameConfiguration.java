@@ -47,6 +47,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "PasswordManagementForgotUsernameConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.pm.forgot-username", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class PasswordManagementForgotUsernameConfiguration {
 
     @Configuration(value = "PasswordManagementForgotUsernameAuditConfiguration", proxyBeanMethods = false)
