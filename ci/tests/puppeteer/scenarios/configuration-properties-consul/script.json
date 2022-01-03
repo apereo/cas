@@ -1,0 +1,18 @@
+{
+  "dependencies": "consul-client",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+
+    "--spring.profiles.include=consul",
+    
+    "--spring.cloud.consul.enabled=true",
+    "--spring.cloud.consul.port=8500",
+    "--spring.cloud.consul.host=localhost",
+
+    "--spring.cloud.consul.config.enabled=true",
+    "--spring.cloud.consul.config.profile-separator=-"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
