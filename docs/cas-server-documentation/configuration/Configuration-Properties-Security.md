@@ -38,7 +38,7 @@ Securing CAS settings and decrypting them is entirely handled by
 the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project
 as [described in this guide](Configuration-Server-Management.html).
 
-The CAS configuration server exposes `/encrypt` and `/decrypt` endpoints to support encrypting and decrypting values.
+The Spring Cloud configuration server exposes `/encrypt` and `/decrypt` endpoints to support encrypting and decrypting values.
 Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and 
 encrypt settings and place them inside your CAS configuration.
 CAS will auto-decrypt at the appropriate moment.
@@ -72,7 +72,7 @@ echo $ENCRYPTED
 curl -u casuser:Mellon https://config.server.endpoint/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```
 
-Properties that are prefixed with `{cipher}` are automatically decrypted by the CAS configuration server at runtime, such as:
+Properties that are prefixed with `{cipher}` are automatically decrypted by the Spring Cloud configuration server at runtime, such as:
 
 ```yml
 cas
