@@ -1,0 +1,14 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
+    "--cas.standalone.configuration-security.iteration=1000",
+    "--cas.standalone.configuration-security.psw=x6Fcw2H&@RWHfi",
+    
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
+  ]
+}

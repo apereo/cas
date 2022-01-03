@@ -1,0 +1,4 @@
+cas:
+  authn:
+    accept:
+      users: "{cas-cipher}E4PZgO/Io4ou9dV2q+vpEwpvO0aMy4VcEkwY2sQ9I3w="
