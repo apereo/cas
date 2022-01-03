@@ -1,0 +1,21 @@
+{
+  "dependencies": "configuration-cloud-vault",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+
+    "--logging.level.org.springframework.cloud.vault=debug",
+    "--spring.profiles.include=vault",
+
+    "--spring.cloud.vault.enabled=true",
+    "--spring.cloud.vault.port=8200",
+    "--spring.cloud.vault.host=localhost",
+    "--spring.cloud.vault.scheme=http",
+    "--spring.cloud.vault.fail-fast=true",
+
+    "--spring.cloud.vault.authentication=TOKEN",
+    "--spring.cloud.vault.token=TorGUGeNTATePrE"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
