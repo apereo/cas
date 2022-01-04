@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
@@ -37,26 +38,29 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
-        val context = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class);
-        val authnRequest = (AuthnRequest) context
-            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
-            .getLeft();
-        LOGGER.debug("Retrieved the SAML2 authentication request from [{}]", SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
-        if (authnRequest.isForceAuthn()) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
-        }
-        if (authnRequest.isPassive()) {
-            webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
-        }
-        val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
-        if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
-            && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
-            val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
-                .map(XSURI::getURI)
-                .collect(Collectors.toList());
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
-            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE, requestedAuthnContext.getComparison().name());
-        }
+        val authnRequestResult = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class)
+            .map(Pair::getLeft)
+            .map(AuthnRequest.class::cast);
+
+        authnRequestResult.ifPresent(authnRequest -> {
+            LOGGER.debug("Retrieved the SAML2 authentication request from [{}]", SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
+            if (authnRequest.isForceAuthn()) {
+                webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+            }
+            if (authnRequest.isPassive()) {
+                webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+            }
+            val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
+            if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
+                && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
+                val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
+                    .map(XSURI::getURI)
+                    .collect(Collectors.toList());
+                webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
+                webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE,
+                    requestedAuthnContext.getComparison().name());
+            }
+        });
     }
 
     @Override
