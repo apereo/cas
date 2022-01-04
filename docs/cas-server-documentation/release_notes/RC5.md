@@ -69,6 +69,11 @@ or `Secret` concepts in Kubernetes is now *baked* into CAS.
 The collection of end-to-end browser tests based on Puppeteer continue to grow
 to add additional scenarios. At this point, there are
 approximately `230` test scenarios and we'll continue to add more in the coming releases.
+   
+### OpenID Connect JMeter Script
+   
+A new [JMeter test script](../high_availability/Performance-Testing-JMeter.html) is now 
+available to support running load tests for a CAS server acting as an OpenID Connect provider.
 
 ## Other Stuff
 
