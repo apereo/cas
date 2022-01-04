@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -55,6 +56,13 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends 
         val webContext = new JEEContext(request, response);
         val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService();
 
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                customizer.customize(saml2Client, webContext);
+            }
+        });
+        
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
 
         setAuthnRequestFor(webContext);
