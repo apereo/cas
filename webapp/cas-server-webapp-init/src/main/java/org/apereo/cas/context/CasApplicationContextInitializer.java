@@ -2,7 +2,6 @@ package org.apereo.cas.context;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
 
-import lombok.Getter;
 import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
