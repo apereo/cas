@@ -274,10 +274,10 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         timeout: 120000
     };
     await waitOn(opts)
-        .then(function () {
+        .then(() => {
             successHandler("good")
         })
-        .catch(function (err) {
+        .catch(err => {
             failureHandler(err);
         });
 }
@@ -459,15 +459,15 @@ exports.killProcess = async(command, arguments) => {
     ps.lookup({
         command: command,
         arguments: arguments
-    }, function (err, resultList) {
+    }, (err, resultList) => {
         if (err) {
             throw new Error(err);
         }
-        resultList.forEach(function (process) {
+        resultList.forEach(process => {
             console.log('PID: %s, COMMAND: %s, ARGUMENTS: %s',
                 process.pid, process.command, process.arguments);
             if (process) {
-                ps.kill(process.pid, function (err) {
+                ps.kill(process.pid, err => {
                     if (err) {
                         throw new Error(err);
                     } else {

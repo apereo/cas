@@ -34,7 +34,7 @@ const assert = require('assert');
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -49,7 +49,7 @@ const assert = require('assert');
         assert(decoded.nonce !== null)
         assert(decoded.client_id !== null)
         assert(decoded["preferred_username"] == null)
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 

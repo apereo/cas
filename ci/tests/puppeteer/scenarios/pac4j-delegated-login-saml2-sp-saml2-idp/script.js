@@ -10,15 +10,15 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
-    await cas.doGet('https://localhost:8443/cas/sp/metadata', function(res) {
+    await cas.doGet('https://localhost:8443/cas/sp/metadata', res => {
         assert(res.status === 200)
-    }, function() {
+    }, () => {
         throw 'Operation failed to capture metadata';
     });
 
-    await cas.doGet('https://localhost:8443/cas/sp/idp/metadata', function(res) {
+    await cas.doGet('https://localhost:8443/cas/sp/idp/metadata', res => {
         assert(res.status === 200)
-    }, function() {
+    }, () => {
         throw 'Operation failed to capture metadata';
     });
     

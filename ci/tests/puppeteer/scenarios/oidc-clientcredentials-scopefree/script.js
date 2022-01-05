@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
 
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
 
         console.log(res.data);
         assert(res.data.access_token !== null);
@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
         assert(decoded.name !== null)
         assert(decoded["preferred_username"] !== null)
         assert(decoded["given-name"] !== null)
-    }, function (error) {
+    }, error => {
         throw `Operation failed: ${error}`;
     });
 })();

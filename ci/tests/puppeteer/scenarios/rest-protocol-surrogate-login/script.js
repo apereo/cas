@@ -10,13 +10,13 @@ const cas = require('../../cas.js');
             'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        function (res) {
+        res => {
             console.log(res.data.authentication.attributes);
             assert(res.data.authentication.attributes.surrogateUser != null);
             assert(res.data.authentication.attributes.surrogateEnabled != null);
             assert(res.data.authentication.attributes.surrogatePrincipal != null);
         },
-        function (error) {
+        error => {
             throw error;
         });
 
@@ -26,13 +26,13 @@ const cas = require('../../cas.js');
             'X-Surrogate-Principal': 'user1',
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        function (res) {
+        res => {
             console.log(res.data.authentication.attributes);
             assert(res.data.authentication.attributes.surrogateUser != null);
             assert(res.data.authentication.attributes.surrogateEnabled != null);
             assert(res.data.authentication.attributes.surrogatePrincipal != null);
         },
-        function (error) {
+        error => {
             throw error;
         });
 })();

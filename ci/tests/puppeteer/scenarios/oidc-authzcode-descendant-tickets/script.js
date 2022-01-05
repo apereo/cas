@@ -34,7 +34,7 @@ async function exchangeCode(page, code, clientId) {
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
-        function (res) {
+        res => {
             console.log(res.data);
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
@@ -45,7 +45,7 @@ async function exchangeCode(page, code, clientId) {
             cas.logg(`Received access token ${accessToken}`);
             cas.logg(`Received refresh token ${refreshToken}`);
         },
-        function (error) {
+        error => {
             throw `Operation failed to obtain access token: ${error}`;
         })
 
@@ -62,11 +62,11 @@ async function fetchProfile(accessToken) {
     params.append('access_token', accessToken);
 
     await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
-        function (res) {
+        res => {
             let result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
-        }, function (error) {
+        }, error => {
             throw error;
         });
 }
@@ -97,9 +97,9 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     let tokens = await exchangeCode(page, code, "client");
     await fetchProfile(tokens.accessToken);
     await refreshTokens(tokens.refreshToken, "client",
-        function (res) {
+        res => {
             assert(res.status === 200);
-        }, function (error) {
+        }, error => {
             throw `Operation should fail but instead produced: ${error}`;
         });
 
@@ -121,9 +121,9 @@ async function refreshTokens(refreshToken, clientId, successHandler, errorHandle
     }
 
     await refreshTokens(tokens.refreshToken, "client",
-        function (res) {
+        res => {
             throw `Refresh Token request should not pass; ${tokens.accessToken} is expired`
-        }, function (error) {
+        }, error => {
             cas.logg("Refresh Token request has failed, correctly.")
         });
 

@@ -3,7 +3,7 @@ const cas = require('../../cas.js');
 
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/discoveryProfile",
-        function(res) {
+        res => {
             assert(res.status === 200)
             assert(res.data.profile.registeredServiceTypesSupported !== null);
             assert(res.data.profile.availableAuthenticationHandlers !== null);
@@ -12,7 +12,7 @@ const cas = require('../../cas.js');
             assert(res.data.profile.userDefinedScopes !== null);
             assert(res.data.profile.multifactorAuthenticationProviderTypesSupported !== null);
         },
-        function(error) {
+        error => {
             throw error;
         })
 })();

@@ -22,12 +22,12 @@ const assert = require("assert");
     console.log(`Session cookie value ${cookieValue}`);
     await page.waitForTimeout(1000)
     await cas.doGet(`https://localhost:8443/cas/actuator/sessions/${cookieValue}`,
-        function (res) {
+        res => {
         assert(res.data.id !== null);
         assert(res.data.creationTime !== null);
         assert(res.data.lastAccessedTime !== null);
         assert(res.data.attributeNames[0] === 'webflowConversationContainer');
-        }, function (error) {
+        }, error => {
             throw error;
         }, { 'Content-Type': "application/json" })
 

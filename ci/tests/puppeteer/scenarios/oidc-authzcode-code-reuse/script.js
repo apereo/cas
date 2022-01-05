@@ -31,7 +31,7 @@ const assert = require('assert');
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -43,7 +43,7 @@ const assert = require('assert');
 
         assert(decoded.sub !== null)
         assert(decoded["preferred_username"] == null)
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -53,22 +53,22 @@ const assert = require('assert');
     console.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, res => {
         console.log(res.data);
         assert(res.data.email != null)
         assert(res.data.gender != null)
         assert(res.data.name != null)
         assert(res.data["preferred_username"] != null)
-    }, function (error) {
+    }, error => {
         throw `Operation failed: ${error}`;
     });
 
     console.log(`Trying to re-use OAuth code ${accessTokenUrl}`);
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function () {
+    }, () => {
         throw `OAuth code ${code} cannot be used again`;
-    }, function (error) {
+    }, error => {
         console.log(error.response.data)
         assert(error.response.data.error === 'invalid_grant')
     });
@@ -78,9 +78,9 @@ const assert = require('assert');
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
-    }, function () {
+    }, () => {
         throw `Access token ${accessToken} should have been removed and rejected with code reused`;
-    }, function (error) {
+    }, error => {
         assert(error.response.status === 401)
         console.log(error.response.data);
         assert(error.response.data.error === "expired_accessToken");

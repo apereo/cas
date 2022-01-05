@@ -13,7 +13,7 @@ async function cleanUp(exec) {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
     let exec = await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DacsUrl=https://httpbin.org/post']);
-    await cas.waitFor('https://localhost:9876/sp/saml/status', async function () {
+    await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
@@ -39,7 +39,7 @@ async function cleanUp(exec) {
 
         await browser.close();
         await cleanUp(exec);
-    }, async function (error) {
+    }, async error => {
         await cleanUp(exec);
         console.log(error);
         throw error;

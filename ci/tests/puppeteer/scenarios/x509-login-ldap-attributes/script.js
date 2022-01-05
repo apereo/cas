@@ -41,7 +41,7 @@ const request = require('request');
             key: key
         };
 
-        request(options, function (err, resp, body) {
+        request(options, (err, resp, body) => {
             if (err) {
                 console.error(`Unable to call ${options.uri}`, err);
                 return interceptedRequest.abort('connectionrefused');

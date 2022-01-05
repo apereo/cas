@@ -13,7 +13,7 @@ async function cleanUp(exec) {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
     let exec = await cas.launchSamlSp(idpMetadataPath, samlSpDir, ['-DauthnContext=https://refeds.org/profile/mfa']);
-    await cas.waitFor('https://localhost:9876/sp/saml/status', async function () {
+    await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
         page.goto("https://localhost:9876/sp")
@@ -37,7 +37,7 @@ async function cleanUp(exec) {
         await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa")
         await browser.close();
         await cleanUp(exec);
-    }, async function (error) {
+    }, async error => {
         await cleanUp(exec);
         console.log(error);
         throw error;

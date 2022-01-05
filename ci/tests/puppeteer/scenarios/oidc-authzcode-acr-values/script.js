@@ -44,7 +44,7 @@ async function exchangeCode(page, code, successHandler) {
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -55,7 +55,7 @@ async function exchangeCode(page, code, successHandler) {
         let decoded = await cas.decodeJwt(res.data.id_token);
 
         successHandler(decoded);
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 }
@@ -66,7 +66,7 @@ async function exchangeCode(page, code, successHandler) {
 
     console.log("Fetching code for MFA based on ACR mfa-gauth")
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
-    await exchangeCode(page, code, function (idToken) {
+    await exchangeCode(page, code, idToken => {
         assert(idToken.sub !== null)
         assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
@@ -76,7 +76,7 @@ async function exchangeCode(page, code, successHandler) {
 
     console.log("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth")
     code = await fetchCode(page, "https://refeds.org/profile/mfa%20something-else", "login=prompt");
-    await exchangeCode(page, code, function (idToken) {
+    await exchangeCode(page, code, idToken => {
         assert(idToken.sub !== null)
         assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
@@ -88,7 +88,7 @@ async function exchangeCode(page, code, successHandler) {
     await cas.loginWith(page, "casuser", "Mellon");
 
     code = await fetchCode(page, "mfa-gauth");
-    await exchangeCode(page, code, function (idToken) {
+    await exchangeCode(page, code, idToken => {
         assert(idToken.sub !== null)
         assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))

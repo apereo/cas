@@ -42,14 +42,14 @@ const cas = require('../../cas.js');
     assert(page.url().startsWith("https://oidcdebugger.com/debug"))
 
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
-        function (res) {
+        res => {
             assert(res.status === 200)
             let length = res.data.Resources.length;
             console.log(`Found ${length} record`);
             assert(length === 1)
             assert(res.data.Resources[0].userName === "casuser")
         },
-        function (error) {
+        error => {
             throw error;
         }, { 'Authorization': "Basic c2NpbS11c2VyOmNoYW5nZWl0" })
 

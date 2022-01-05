@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/actuator/health");
     await page.waitForTimeout(1000)
     await cas.doGet("https://localhost:8443/cas/actuator/health",
-        function (res) {
+        res => {
             assert(res.data.components.mongo !== null);
             assert(res.data.components.memory !== null);
             assert(res.data.components.ping !== null);
@@ -29,7 +29,7 @@ const cas = require('../../cas.js');
             details = res.data.components.mongo.details["MongoDbHealthIndicator-service-registry"]
             assert(details.name === "MongoDbHealthIndicator-service-registry");
 
-        }, function (error) {
+        }, error => {
             throw error;
         }, { 'Content-Type': "application/json" })
     await browser.close();

@@ -14,7 +14,7 @@ const assert = require("assert");
 async function sendRequest(key, value) {
     await cas.logg(`Asking for property ${key}`)
     await cas.doGet(`https://localhost:8443/cas/actuator/env/${key}`,
-        function(res) {
+        res => {
             assert(res.status === 200)
             let casSource = res.data.propertySources[2];
             assert(casSource !== null);
@@ -22,7 +22,7 @@ async function sendRequest(key, value) {
             cas.logg(`Comparing ${casSource.property.value} with ${value}`);
             assert(casSource.property.value === value)
         },
-        function(error) {
+        error => {
             throw error;
         })
 }

@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
         "username=casuser&password=Mellon", {
             'Content-Type': "application/x-www-form-urlencoded"
         },
-        function (res) {
+        res => {
             assert(res.status === 200)
 
             let data = res.data.toString();
@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
             assert(data.includes("aws_secret_access_key"));
             assert(data.includes("aws_session_token"));
         },
-        function () {
+        () => {
             throw 'Unable to fetch credentials';
         });
 })();

@@ -11,28 +11,28 @@ const cas = require('../../cas.js');
     await login();
     
     await cas.logg("Checking for SSO sessions for all users")
-    await cas.doGet(`${baseUrl}?type=ALL`, function (res) {
+    await cas.doGet(`${baseUrl}?type=ALL`, res => {
         assert(res.status === 200)
         assert(Object.keys(res.data.activeSsoSessions).length === 4)
-    }, function (err) {
+    }, err => {
         throw err;
     })
 
     await cas.logg("Checking for SSO sessions for a single user")
-    await cas.doGet(`${baseUrl}?type=ALL&username=casuser3`, function (res) {
+    await cas.doGet(`${baseUrl}?type=ALL&username=casuser3`, res => {
         assert(res.status === 200)
         assert(Object.keys(res.data.activeSsoSessions).length === 1)
-    }, function (err) {
+    }, err => {
         throw err;
     })
 
     await cas.logg("Checking for SSO sessions via paging filters")
-    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, function (res) {
+    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, res => {
         assert(res.status === 200)
         assert(res.data.totalTicketGrantingTickets === 2)
         assert(res.data.totalPrincipals === 2)
         assert(res.data.totalTickets === 2)
-    }, function (err) {
+    }, err => {
         throw err;
     })
 

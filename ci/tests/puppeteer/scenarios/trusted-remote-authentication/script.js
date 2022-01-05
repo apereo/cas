@@ -3,7 +3,7 @@ const cas = require('../../cas.js');
 (async () => {
     await cas.doPost("https://localhost:8443/cas/login", "", {
         'CustomPrincipal': "casuser"
-    }, function (res) {
+    }, res => {
         console.log(res.headers['set-cookie']);
         let cookies = res.headers['set-cookie'][0].split(",");
         let found = false;
@@ -17,7 +17,7 @@ const cas = require('../../cas.js');
         if (!found) {
             throw "Unable to locate ticket-granting cookie";
         }
-    }, function (error) {
+    }, error => {
         throw error;
     })
 })();
