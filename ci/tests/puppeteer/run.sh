@@ -68,6 +68,12 @@ while (( "$#" )); do
     shift 1
     printyellow "Skipping execution of test scenario while in dry-run mode."
     ;;
+  --hbo)
+    export HEADLESS="true"
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
   --headless|--h)
     export HEADLESS="true"
     shift 1;

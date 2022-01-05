@@ -1,0 +1,15 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    
+    "--spring.cloud.config.uri=http://casuser:Mellon@localhost:8888/casconfigserver",
+    "--spring.cloud.config.profile=dev",
+    "--spring.cloud.config.enabled=true",
+    "--spring.cloud.config.fail-fast=false"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+}
