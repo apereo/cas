@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.context.CasApplicationContextInitializerTests;
+
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
@@ -9,7 +11,10 @@ import org.junit.platform.suite.api.Suite;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SelectClasses(CasEmbeddedContainerUtilsTests.class)
+@SelectClasses({
+    CasApplicationContextInitializerTests.class,
+    CasEmbeddedContainerUtilsTests.class
+})
 @Suite
 public class AllCasWebApplicationTestsSuite {
 }

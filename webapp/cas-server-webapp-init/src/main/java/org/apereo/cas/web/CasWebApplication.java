@@ -53,14 +53,12 @@ public class CasWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        CasEmbeddedContainerUtils.getLoggingInitialization()
-            .ifPresent(init -> init.setMainArguments(args));
+        CasEmbeddedContainerUtils.getLoggingInitialization().ifPresent(init -> init.setMainArguments(args));
         val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
         new SpringApplicationBuilder(CasWebApplication.class)
             .banner(banner)
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
-            .contextFactory(webApplicationType -> new CasWebApplicationContext())
             .applicationStartup(CasEmbeddedContainerUtils.getApplicationStartup())
             .run(args);
     }
