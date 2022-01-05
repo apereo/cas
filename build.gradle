@@ -168,6 +168,10 @@ dependencyCheck {
 }
 
 allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.fork = true
+    }
+
     apply plugin: "idea"
     apply plugin: "eclipse"
     apply plugin: "java-library"
