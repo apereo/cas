@@ -11,7 +11,7 @@ for a `GA` release is only going to set you up for unpleasant surprises. A `GA`
 is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS
 releases are *strictly* time-based releases; they are not scheduled or based on
 specific benchmarks, statistics or completion of features. To gain confidence in
-a particular release, it is strongly recommended that you start early by
+a particular release, we recommended that you start early by
 experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
@@ -74,11 +74,19 @@ approximately `230` test scenarios and we'll continue to add more in the coming 
    
 A new [JMeter test script](../high_availability/Performance-Testing-JMeter.html) is now 
 available to support running load tests for a CAS server acting as an OpenID Connect provider.
+ 
+### CAS Initializer Configuration Metadata
+
+The collection of reference configuration properties produced by the [CAS Initializr](../installation/WAR-Overlay-Initializr.html)
+are now removed and the functionality is now moved to the produced overlay itself using dedicated Gradle tasks. This is done so
+that the collection of properties are produced based on CAS configuration metadata accurately reflect the CAS version used by
+the overlay itself, and not one that is statically compiled and made available to the CAS Initializer itself. 
 
 ## Other Stuff
 
-- TBD
+- Validation of configuration properties is now moved into a proper `ApplicationInitializer` component.
+- Minor improvements to the construction of SAML2 authentication requests sent to an external identity provider, when CAS itself is acting as a SAML2 identity provider.
 
 ## Library Upgrades
 
-- TBD
+- Nimbus SDK
