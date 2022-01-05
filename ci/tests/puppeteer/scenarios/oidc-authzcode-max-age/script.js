@@ -32,7 +32,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
@@ -42,7 +42,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
         console.log("Decoding ID token...");
         let decoded = await cas.decodeJwt(res.data.id_token);
         successHandler(decoded);
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 }
@@ -54,11 +54,11 @@ async function fetchIdToken(page, maxAge, successHandler) {
     let time1 = null;
     let time2 = null;
 
-    await fetchIdToken(page, -1, function (idToken) {
+    await fetchIdToken(page, -1, idToken => {
         time1 = idToken.auth_time
     });
     await page.waitForTimeout(2000)
-    await fetchIdToken(page, 1, function (idToken) {
+    await fetchIdToken(page, 1, idToken => {
         time2 = idToken.auth_time;
     });
 

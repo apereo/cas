@@ -38,9 +38,9 @@ async function submitRequest(url, status) {
     console.log(`Calling ${url}`);
     await cas.doPost(url, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, res => {
         throw `Operation should not have passed: ${res}`
-    }, function (error) {
+    }, error => {
         console.log(`Expecting ${status}, Current status: ${error.response.status}`);
         assert(status === error.response.status)
     });

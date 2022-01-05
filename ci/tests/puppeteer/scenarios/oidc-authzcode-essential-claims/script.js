@@ -30,14 +30,14 @@ const assert = require('assert');
 
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, async function (res) {
+    }, async res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
         console.log(`Received access token ${accessToken}`);
         await cas.decodeJwt(res.data.id_token);
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -48,11 +48,11 @@ const assert = require('assert');
 
     await cas.doPost(profileUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, res => {
         console.log(res.data);
         assert(res.data.name != null)
         assert(res.data.sub != null)
-    }, function (error) {
+    }, error => {
         throw `Operation failed: ${error}`;
     });
 

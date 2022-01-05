@@ -30,12 +30,12 @@ const cas = require('../../cas.js');
     let accessToken = null;
     await cas.doPost(accessTokenUrl, "", {
         'Content-Type': "application/json"
-    }, function (res) {
+    }, res => {
         console.log(res.data);
         assert(res.data.access_token !== null);
 
         accessToken = res.data.access_token;
-    }, function (error) {
+    }, error => {
         throw `Operation failed to obtain access token: ${error}`;
     });
 
@@ -45,12 +45,12 @@ const cas = require('../../cas.js');
     params.append('access_token', accessToken);
     
     await cas.doPost('https://localhost:8443/cas/oauth2.0/profile', params, {},
-        function (res) {
+        res => {
             let result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
             assert(result.service === "https://apereo.github.io");
-        }, function (error) {
+        }, error => {
             throw error;
         });
 

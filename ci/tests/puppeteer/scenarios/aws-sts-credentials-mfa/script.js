@@ -10,10 +10,10 @@ const cas = require('../../cas.js');
     await cas.doPost("https://localhost:8443/cas/actuator/awsSts?duration=PT15S",
         params, {
             'Content-Type': "application/x-www-form-urlencoded"
-        }, function (res) {
+        }, res => {
             console.log(res.data);
             throw 'Operation must fail to fetch credentials without mfa';
-        }, function (error) {
+        }, error => {
             assert(error.response.status === 401)
             assert(error.response.data.toString().includes("Authentication failed"));
         });

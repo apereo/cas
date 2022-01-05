@@ -11,7 +11,7 @@ async function cleanUp(exec) {
 (async () => {
     let spDir = path.join(__dirname, '/wsfed-sp');
     let exec = await cas.launchWsFedSp(spDir);
-    await cas.waitFor('https://localhost:9876/fediz', async function () {
+    await cas.waitFor('https://localhost:9876/fediz', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
 
@@ -53,7 +53,7 @@ async function cleanUp(exec) {
 
         await browser.close();
         await cleanUp(exec);
-    }, async function (error) {
+    }, async error => {
         await cleanUp(exec);
         console.log(error);
         throw error;

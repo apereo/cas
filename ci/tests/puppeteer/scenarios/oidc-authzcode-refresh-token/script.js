@@ -29,7 +29,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 
     let accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.doPost(accessTokenUrl, "", {'Content-Type': "application/json"},
-        function (res) {
+        res => {
             console.log(res.data);
             assert(res.data.access_token !== null);
             assert(res.data.refresh_token !== null);
@@ -40,7 +40,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
             console.log(`Received access token ${accessToken}`);
             console.log(`Received refresh token ${refreshToken}`);
         },
-        function () {
+        () => {
             throw `Operation failed to obtain access token: ${error}`;
         })
 
@@ -81,9 +81,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
     console.log(`Refresh Token 2: ${refreshToken2}`);
 
     await exchangeToken(refreshToken2, "client",
-        function (res) {
+        res => {
             throw `Operation should fail but instead produced: ${res.data}`;
-        }, function (error) {
+        }, error => {
             console.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400)
             console.log(error.response.data);
@@ -91,9 +91,9 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await exchangeToken(refreshToken1, "client2",
-        function (res) {
+        res => {
             throw `Operation should fail but instead produced: ${res.data}`;
-        }, function (error) {
+        }, error => {
             console.log(`Status: ${error.response.status}`);
             assert(error.response.status === 400)
             console.log(error.response.data);
@@ -101,10 +101,10 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
         });
 
     await exchangeToken(refreshToken1, "client",
-        function (res) {
+        res => {
             console.log(res.data);
             assert(res.status === 200);
-        }, function (error) {
+        }, error => {
             throw `Operation should fail but instead produced: ${error}`;
         });
 

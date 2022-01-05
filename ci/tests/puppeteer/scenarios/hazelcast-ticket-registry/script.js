@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/actuator/health");
     await page.waitForTimeout(1000)
     await cas.doGet("https://localhost:8443/cas/actuator/health",
-        function (res) {
+        res => {
             assert(res.data.components.hazelcast !== null);
             assert(res.data.components.memory !== null);
             assert(res.data.components.ping !== null);
@@ -25,7 +25,7 @@ const cas = require('../../cas.js');
             assert(details.proxyTicketsCache !== null);
             assert(details.serviceTicketsCache !== null);
             assert(details.transientSessionTicketsCache !== null);
-        }, function (error) {
+        }, error => {
             throw error;
         }, { 'Content-Type': "application/json" })
     await browser.close();

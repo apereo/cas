@@ -14,19 +14,19 @@ const assert = require("assert");
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices/type";
     await cas.doGet(`${baseUrl}/RegexRegisteredService`,
-        function (res) {
+        res => {
             assert(res.status === 200)
             assert(res.data[1].length === 1)
         },
-        function (error) {
+        error => {
             throw error;
         }, {'Content-Type': "application/json"});
     await cas.doGet(`${baseUrl}/OidcRegisteredService`,
-        function (res) {
+        res => {
             assert(res.status === 200)
             assert(res.data[1].length === 0)
         },
-        function (error) {
+        error => {
             throw error;
         }, {'Content-Type': "application/json"});
 

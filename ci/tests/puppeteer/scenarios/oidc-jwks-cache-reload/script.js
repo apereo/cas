@@ -8,11 +8,11 @@ const fs = require('fs');
     let configFilePath = "/tmp/keystore.jwks";
     let config = JSON.parse(fs.readFileSync(configFilePath));
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
-        function (res) {
+        res => {
             assert(res.status === 200)
             assert(res.data.keys[0]["kid"] !== kid)
         },
-        function (error) {
+        error => {
             throw error;
         })
 
@@ -21,11 +21,11 @@ const fs = require('fs');
     await fs.writeFileSync(configFilePath, JSON.stringify(config));
     await cas.sleep(1000)
     await cas.doGet("https://localhost:8443/cas/oidc/jwks",
-        function (res) {
+        res => {
             assert(res.status === 200)
             assert(res.data.keys[0]["kid"] === kid)
         },
-        function (error) {
+        error => {
             throw error;
         })
 
