@@ -25,5 +25,15 @@ const assert = require("assert");
     }, error => {
         throw(error);
     })
-    
+
+    await cas.doGet("https://localhost:8443/cas/actuator/auditevents",
+        res => {
+            assert(res.data.events.length === 4);
+            assert(res.data.events[0].principal !== null)
+            assert(res.data.events[0].timestamp !== null)
+            assert(res.data.events[0].type !== null)
+            assert(res.data.events[0].data.source !== null)
+        }, err => {
+            throw(err);
+        })
 })();
