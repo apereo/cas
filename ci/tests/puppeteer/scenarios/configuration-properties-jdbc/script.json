@@ -1,0 +1,14 @@
+{
+  "dependencies": "configuration-cloud-jdbc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    
+    "--cas.spring.cloud.jdbc.user=postgres",
+    "--cas.spring.cloud.jdbc.password=password",
+    "--cas.spring.cloud.jdbc.driver-class=org.postgresql.Driver",
+    "--cas.spring.cloud.jdbc.url=jdbc:postgresql://localhost:5432/casconfig"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
