@@ -68,6 +68,7 @@ public interface OidcJsonWebKeystoreGeneratorService {
      *
      * @param state          the state
      * @param oidcProperties the oidc properties
+     * @param usage          the usage
      * @return the json web key
      */
     static JsonWebKey generateJsonWebKey(final OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates state,

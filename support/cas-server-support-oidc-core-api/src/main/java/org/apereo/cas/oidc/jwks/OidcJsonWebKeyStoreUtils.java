@@ -49,6 +49,7 @@ public class OidcJsonWebKeyStoreUtils {
      *
      * @param service        the service
      * @param resourceLoader the resource loader
+     * @param usage          the usage
      * @return the json web key set
      */
     public static Optional<JsonWebKeySet> getJsonWebKeySet(final OidcRegisteredService service,
@@ -164,7 +165,7 @@ public class OidcJsonWebKeyStoreUtils {
     }
 
     /**
-     * Parse json web key set json web key set.
+     * Parse json web key set.
      *
      * @param json the json
      * @return the json web key set
@@ -175,10 +176,11 @@ public class OidcJsonWebKeyStoreUtils {
     }
 
     /**
-     * Generate json web key public.
+     * Generate json web key.
      *
      * @param jwksType    the jwks type
      * @param jwksKeySize the jwks key size
+     * @param usage       the usage
      * @return the public json web key
      */
     @SneakyThrows
