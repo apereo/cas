@@ -1,0 +1,10 @@
+{
+  "dependencies": "configuration-cloud-mongo",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.spring.cloud.mongo.uri=mongodb://root:secret@localhost:27017/cas?authSource=admin"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
