@@ -10,7 +10,6 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -112,10 +111,11 @@ public class WebAuthnController {
      *
      * @param responseJson the response json
      * @return the response entity
+     * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) {
+    public ResponseEntity<Object> finishRegistration(@RequestBody final String responseJson) throws Exception {
         val result = server.finishRegistration(responseJson);
         return finishResponse(result, responseJson);
     }
@@ -125,9 +125,11 @@ public class WebAuthnController {
      *
      * @param username the username
      * @return the response entity
+     * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> startAuthentication(@RequestParam(value = "username", required = false) final String username) {
+    public ResponseEntity<Object> startAuthentication(@RequestParam(value = "username", required = false)
+                                                      final String username) throws Exception {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
@@ -140,24 +142,25 @@ public class WebAuthnController {
      *
      * @param responseJson the response json
      * @return the response entity
+     * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> finishAuthentication(@RequestBody final String responseJson) {
+    public ResponseEntity<Object> finishAuthentication(@RequestBody final String responseJson) throws Exception {
         val result = server.finishAuthentication(responseJson);
         return finishResponse(result, responseJson);
     }
 
-    private static ResponseEntity<Object> startResponse(final Object request) {
+    private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
         LOGGER.trace("Response: [{}]", request);
         return ResponseEntity.ok(writeJson(request));
     }
 
-    @SneakyThrows
-    private static String writeJson(final Object o) {
+    private static String writeJson(final Object o) throws Exception {
         return MAPPER.writeValueAsString(o);
     }
 
-    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result, final String responseJson) {
+    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
+                                                         final String responseJson) throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Response: [{}]", responseJson);
             return ResponseEntity.ok(writeJson(result.right().get()));

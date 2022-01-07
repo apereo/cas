@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.authn;
 
-import org.apereo.cas.configuration.model.support.oidc.jwks.OidcJsonWebKeystoreCoreProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;

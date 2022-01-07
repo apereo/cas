@@ -13,7 +13,6 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -51,11 +50,11 @@ public abstract class BaseWSFederationRequestController {
      * @param response     the response
      * @param wsfedRequest the ws federation request
      * @return the service url
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
-                                         final WSFederationRequest wsfedRequest) {
+                                         final WSFederationRequest wsfedRequest) throws Exception {
         val builder = new URIBuilder(configContext.getCallbackService().getId());
 
         builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());

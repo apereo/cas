@@ -11,7 +11,6 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
@@ -91,9 +90,10 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param webContext        the web context
      * @param properties        the properties
      */
-    protected void configureWebContextForRegisteredServiceProperties(final RegisteredService registeredService,
-                                                                     final WebContext webContext,
-                                                                     final List<RegisteredServiceProperties> properties) {
+    protected void configureWebContextForRegisteredServiceProperties(
+        final RegisteredService registeredService,
+        final WebContext webContext,
+        final List<RegisteredServiceProperties> properties) {
         properties.stream()
             .filter(prop -> prop.isAssignedTo(registeredService))
             .forEach(prop -> webContext.setRequestAttribute(prop.getPropertyName(), prop.getTypedPropertyValue(registeredService)));
@@ -105,9 +105,9 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param clientName the client name
      * @param request    the request
      * @return the view
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
+    protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) throws Exception {
         val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
         request.getParameterMap().forEach((k, v) -> {
             val value = request.getParameter(k);
@@ -126,10 +126,10 @@ public abstract class BaseDelegatedAuthenticationController {
      * @param webContext the web context
      * @param ticket     the ticket
      * @return the resulting view
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected View getResultingView(final IndirectClient client, final WebContext webContext,
-                                    final TransientSessionTicket ticket) {
+                                    final TransientSessionTicket ticket) throws Exception {
         client.init();
         val actionResult = getRedirectionAction(client, webContext, ticket);
         if (actionResult.isPresent()) {

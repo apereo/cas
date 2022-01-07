@@ -18,7 +18,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -156,11 +155,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @param context           the context
      * @param clientId          the client id
      * @return the model and view
+     * @throws Exception the exception
      */
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final JEEContext context,
-                                                         final String clientId) {
+                                                         final String clientId) throws Exception {
         val profile = manager.getProfile().orElseThrow(() -> new IllegalArgumentException("Unable to locate authentication profile"));
         val service = getConfigurationContext().getAuthenticationBuilder()
             .buildService(registeredService, context, false);
@@ -201,13 +201,13 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @param service           the service
      * @param authentication    the authentication
      * @return the string
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected ModelAndView buildAuthorizationForRequest(final OAuthRegisteredService registeredService,
                                                         final JEEContext context,
                                                         final String clientId,
                                                         final Service service,
-                                                        final Authentication authentication) {
+                                                        final Authentication authentication) throws Exception {
         val builder = getConfigurationContext().getOauthAuthorizationResponseBuilders().getObject()
             .stream()
             .filter(b -> b.supports(context))
