@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -24,6 +25,8 @@ import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Optional;
+
 /**
  * This is {@link OidcPrivateKeyJwtAuthenticator}.
  *
@@ -33,12 +36,13 @@ import org.springframework.context.ApplicationContext;
 @Slf4j
 public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
-    public OidcPrivateKeyJwtAuthenticator(final ServicesManager servicesManager,
-                                          final AuditableExecution registeredServiceAccessStrategyEnforcer,
-                                          final TicketRegistry ticketRegistry,
-                                          final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                          final CasConfigurationProperties casProperties,
-                                          final ApplicationContext applicationContext) {
+    public OidcPrivateKeyJwtAuthenticator(
+        final ServicesManager servicesManager,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final TicketRegistry ticketRegistry,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final ApplicationContext applicationContext) {
         super(servicesManager, registeredServiceAccessStrategyEnforcer,
             ticketRegistry, webApplicationServiceServiceFactory, casProperties, applicationContext);
     }
@@ -67,8 +71,9 @@ public class OidcPrivateKeyJwtAuthenticator extends BaseOidcJwtAuthenticator {
 
         val clientId = registeredService.getClientId();
         val audience = casProperties.getServer().getPrefix().concat('/'
-            + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
-        val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService, this.applicationContext);
+                                                                    + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        val keys = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(registeredService,
+            applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING));
         keys.ifPresent(Unchecked.consumer(jwks ->
             jwks.getJsonWebKeys().forEach(jsonWebKey -> {
                 val consumer = new JwtConsumerBuilder()

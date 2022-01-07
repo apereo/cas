@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -67,28 +66,28 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
         @Test
         public void verifyOperation() throws Exception {
             var jwks = oidcJsonWebKeystoreRotationService.rotate();
-            assertEquals(3, jwks.getJsonWebKeys().size());
+            assertEquals(6, jwks.getJsonWebKeys().size());
 
-            assertEquals(1, countCurrentKeys(jwks));
-            assertEquals(1, countFutureKeys(jwks));
-            assertEquals(1, countPreviousKeys(jwks));
-
-            jwks = oidcJsonWebKeystoreRotationService.rotate();
-            assertEquals(4, jwks.getJsonWebKeys().size());
-            assertEquals(1, countCurrentKeys(jwks));
-            assertEquals(1, countFutureKeys(jwks));
+            assertEquals(2, countCurrentKeys(jwks));
+            assertEquals(2, countFutureKeys(jwks));
             assertEquals(2, countPreviousKeys(jwks));
 
             jwks = oidcJsonWebKeystoreRotationService.rotate();
-            assertEquals(5, jwks.getJsonWebKeys().size());
-            assertEquals(1, countCurrentKeys(jwks));
-            assertEquals(1, countFutureKeys(jwks));
-            assertEquals(3, countPreviousKeys(jwks));
+            assertEquals(8, jwks.getJsonWebKeys().size());
+            assertEquals(2, countCurrentKeys(jwks));
+            assertEquals(2, countFutureKeys(jwks));
+            assertEquals(4, countPreviousKeys(jwks));
+
+            jwks = oidcJsonWebKeystoreRotationService.rotate();
+            assertEquals(10, jwks.getJsonWebKeys().size());
+            assertEquals(2, countCurrentKeys(jwks));
+            assertEquals(2, countFutureKeys(jwks));
+            assertEquals(6, countPreviousKeys(jwks));
 
             jwks = oidcJsonWebKeystoreRotationService.revoke();
-            assertEquals(2, jwks.getJsonWebKeys().size());
-            assertEquals(1, countCurrentKeys(jwks));
-            assertEquals(1, countFutureKeys(jwks));
+            assertEquals(4, jwks.getJsonWebKeys().size());
+            assertEquals(2, countCurrentKeys(jwks));
+            assertEquals(2, countFutureKeys(jwks));
             assertEquals(0, countPreviousKeys(jwks));
         }
     }
@@ -100,8 +99,8 @@ public class OidcDefaultJsonWebKeystoreRotationServiceTests {
 
         @Test
         public void verifyOperation() throws Exception {
-            var jwks = oidcJsonWebKeystoreRotationService.rotate();
-            assertEquals(3, jwks.getJsonWebKeys().size());
+            val jwks = oidcJsonWebKeystoreRotationService.rotate();
+            assertEquals(5, jwks.getJsonWebKeys().size());
         }
     }
 }

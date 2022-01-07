@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;

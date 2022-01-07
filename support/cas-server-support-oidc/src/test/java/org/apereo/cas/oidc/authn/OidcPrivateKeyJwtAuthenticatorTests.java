@@ -1,9 +1,12 @@
 package org.apereo.cas.oidc.authn;
 
+import org.apereo.cas.configuration.model.support.oidc.jwks.OidcJsonWebKeystoreCoreProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -15,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
@@ -63,9 +67,9 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
         registeredService.setClientId(UUID.randomUUID().toString());
         
         val file = File.createTempFile("jwks-service", ".jwks");
+        val core = casProperties.getAuthn().getOidc().getJwks().getCore();
         val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
-            casProperties.getAuthn().getOidc().getJwks().getCore().getJwksType(),
-            casProperties.getAuthn().getOidc().getJwks().getCore().getJwksKeySize());
+            core.getJwksType(), core.getJwksKeySize(), OidcJsonWebKeyUsage.SIGNING);
         jsonWebKey.setKeyId("cas-kid");
         
         val jsonWebKeySet = new JsonWebKeySet(jsonWebKey);
@@ -76,8 +80,10 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
 
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
             registeredService.getClientId(), audience);
-        val webKey = oidcServiceJsonWebKeystoreCache.get(registeredService).get();
-        val jwt = EncodingUtils.signJwsRSASha512(webKey.getPrivateKey(),
+        val webKeys = oidcServiceJsonWebKeystoreCache.get(
+            new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING)).get();
+        val key = (PublicJsonWebKey) webKeys.getJsonWebKeys().get(0);
+        val jwt = EncodingUtils.signJwsRSASha512(key.getPrivateKey(),
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());

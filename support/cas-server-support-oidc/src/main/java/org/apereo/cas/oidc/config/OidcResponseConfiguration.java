@@ -49,7 +49,7 @@ public class OidcResponseConfiguration {
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties,
-            @Qualifier("oidcIssuerService")
+            @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService) {
             return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
                 casProperties, oidcIssuerService);

@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.jwks;
+package org.apereo.cas.oidc.jwks.rotation;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -102,5 +102,6 @@ public interface OidcJsonWebKeystoreRotationService {
         public boolean isFuture() {
             return getState() == FUTURE.getState();
         }
+
     }
 }

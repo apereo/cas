@@ -32,14 +32,15 @@ public class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
 
     @Test
     public void verifyOperation() throws Exception {
-        val keys = oidcDefaultJsonWebKeystoreCache.get(casProperties.getAuthn().getOidc().getCore().getIssuer());
+        val cacheKey = new OidcJsonWebKeyCacheKey(
+            casProperties.getAuthn().getOidc().getCore().getIssuer(), OidcJsonWebKeyUsage.SIGNING);
+        val keys = oidcDefaultJsonWebKeystoreCache.get(cacheKey);
         assertNotNull(keys);
-        assertEquals(oidcDefaultJsonWebKeystoreCache.estimatedSize(), 1);
         assertNotNull(oidcJsonWebKeyStoreListener);
         realApplicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this,
             File.createTempFile("prefix", "postfix")));
         Thread.sleep(2000);
-        val newKeys = oidcDefaultJsonWebKeystoreCache.getIfPresent(casProperties.getAuthn().getOidc().getCore().getIssuer());
+        val newKeys = oidcDefaultJsonWebKeystoreCache.getIfPresent(cacheKey);
         assertNull(newKeys);
     }
 }

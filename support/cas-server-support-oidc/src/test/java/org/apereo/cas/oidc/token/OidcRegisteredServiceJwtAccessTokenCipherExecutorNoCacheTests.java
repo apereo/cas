@@ -8,6 +8,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -47,8 +48,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
             new DefaultRegisteredServiceProperty("true"));
         assertTrue(cipher.getEncryptionKey(service).isEmpty());
 
-        val key = mock(PublicJsonWebKey.class);
-        when(serviceCache.get(any())).thenReturn(Optional.of(key));
+        when(serviceCache.get(any())).thenReturn(Optional.of(new JsonWebKeySet(mock(PublicJsonWebKey.class))));
         assertTrue(cipher.getEncryptionKey(service).isEmpty());
     }
 
@@ -70,8 +70,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
             BaseStringCipherExecutor.CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
         assertEquals("value", exec.decode("value", new Object[]{service}));
 
-        val key = mock(PublicJsonWebKey.class);
-        when(serviceCache.get(any())).thenReturn(Optional.of(key));
+        when(serviceCache.get(any())).thenReturn(Optional.of(new JsonWebKeySet(mock(PublicJsonWebKey.class))));
         assertEquals("value", exec.decode("value", new Object[]{service}));
     }
 }
