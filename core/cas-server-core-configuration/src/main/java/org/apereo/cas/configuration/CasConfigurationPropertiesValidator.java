@@ -48,10 +48,11 @@ public class CasConfigurationPropertiesValidator {
             LOGGER.info("Validated CAS property sources and configuration successfully.");
         } else {
             var message = String.join("\n", validationResults);
-            message += "\n\nListed settings above are no longer recognized by CAS " + CasVersion.getVersion() + ". They may have been renamed, removed, or relocated "
-                + "to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. "
-                + "Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the "
-                + "definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.\n";
+            message += "\n\nListed settings above are no longer recognized by CAS "
+                       + CasVersion.getVersion() + ". They may have been renamed, removed, or relocated "
+                       + "to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. "
+                       + "Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the "
+                       + "definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.\n";
             LOGGER.error(message);
         }
         return validationResults;
