@@ -16,7 +16,6 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -58,12 +57,16 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @param request  the request
      * @param response the response
      * @return the response entity
+     * @throws Exception the exception
      */
     @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity handleAuthorizationRequest(@RequestBody final String body,
-                                                     final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity handleAuthorizationRequest(
+        @RequestBody
+        final String body,
+        final HttpServletRequest request,
+        final HttpServletResponse response) throws Exception {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaAuthorizationRequest.class);
@@ -73,7 +76,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             }
             if (!umaRequest.getGrantType().equalsIgnoreCase(OAuth20GrantTypes.UMA_TICKET.getType())) {
                 return new ResponseEntity("Unable to accept authorization request; need grant type "
-                    + OAuth20GrantTypes.UMA_TICKET.getType(), HttpStatus.BAD_REQUEST);
+                                          + OAuth20GrantTypes.UMA_TICKET.getType(), HttpStatus.BAD_REQUEST);
             }
 
             if (StringUtils.isBlank(umaRequest.getTicket())) {
@@ -108,14 +111,15 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @param analysisResult   the analysis result
      * @param permissionTicket the permission ticket
      * @return the response entity
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected ResponseEntity handleMismatchedClaims(final HttpServletRequest request,
-                                                    final HttpServletResponse response,
-                                                    final ResourceSet resourceSet,
-                                                    final UserProfile profileResult,
-                                                    final UmaResourceSetClaimPermissionResult analysisResult,
-                                                    final UmaPermissionTicket permissionTicket) {
+    protected ResponseEntity handleMismatchedClaims(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final ResourceSet resourceSet,
+        final UserProfile profileResult,
+        final UmaResourceSetClaimPermissionResult analysisResult,
+        final UmaPermissionTicket permissionTicket) throws Exception {
 
         val model = new LinkedHashMap<String, Object>();
         model.put(OAuth20Constants.ERROR, OAuth20Constants.NEED_INFO);

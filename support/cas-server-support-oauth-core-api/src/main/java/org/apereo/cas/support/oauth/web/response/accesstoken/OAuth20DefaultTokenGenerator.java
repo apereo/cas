@@ -77,6 +77,17 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final CasConfigurationProperties casProperties;
 
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
+                                                                         final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
+        return OAuth20TokenGeneratedResult.builder()
+            .registeredService(holder.getRegisteredService())
+            .accessToken(pair.getKey())
+            .refreshToken(pair.getValue())
+            .grantType(holder.getGrantType())
+            .responseType(holder.getResponseType())
+            .build();
+    }
+
     @Override
     public OAuth20TokenGeneratedResult generate(final AccessTokenRequestDataHolder holder) {
         if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
@@ -170,7 +181,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
             clientId, holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
-        
+
         LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, ticketGrantingTicket);
         LOGGER.debug("Added access token [{}] to registry", accessToken);
@@ -263,22 +274,23 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {
-        try {
-            return centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class);
-        } catch (final Exception e) {
-            LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
-                deviceCodeTicket.getUserCode());
-            throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
-        }
+        return FunctionUtils.doAndHandle(
+                () -> centralAuthenticationService.getTicket(deviceCodeTicket.getUserCode(), OAuth20DeviceUserCode.class),
+                throwable -> {
+                    LOGGER.error("Provided user code [{}] is invalid or expired and cannot be found in the ticket registry",
+                        deviceCodeTicket.getUserCode());
+                    throw new InvalidOAuth20DeviceTokenException(deviceCodeTicket.getUserCode());
+                })
+            .get();
     }
 
     private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        try {
-            return centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new InvalidOAuth20DeviceTokenException(deviceCode);
-        }
+        return FunctionUtils.doAndHandle(() -> centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class),
+                throwable -> {
+                    LoggingUtils.error(LOGGER, throwable);
+                    throw new InvalidOAuth20DeviceTokenException(deviceCode);
+                })
+            .get();
     }
 
     private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(final AccessTokenRequestDataHolder holder) {
@@ -302,16 +314,5 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
         oldRefreshToken.markTicketExpired();
         centralAuthenticationService.deleteTicket(oldRefreshToken);
-    }
-
-    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
-        final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
-        return OAuth20TokenGeneratedResult.builder()
-            .registeredService(holder.getRegisteredService())
-            .accessToken(pair.getKey())
-            .refreshToken(pair.getValue())
-            .grantType(holder.getGrantType())
-            .responseType(holder.getResponseType())
-            .build();
     }
 }

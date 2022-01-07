@@ -81,13 +81,14 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
      * @param request    the request
      * @param response   the response
      * @return the view
+     * @throws Exception the exception
      */
     @GetMapping(value = ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(
         @PathVariable("clientName")
         final String clientName,
         final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final HttpServletResponse response) throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
@@ -99,13 +100,14 @@ public class DefaultDelegatedAuthenticationNavigationController extends BaseDele
      * @param request    the request
      * @param response   the response
      * @return the view
+     * @throws Exception the exception
      */
     @PostMapping(value = ENDPOINT_RESPONSE)
     public View postResponseToFlow(
         @PathVariable("clientName")
         final String clientName,
         final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final HttpServletResponse response) throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 }

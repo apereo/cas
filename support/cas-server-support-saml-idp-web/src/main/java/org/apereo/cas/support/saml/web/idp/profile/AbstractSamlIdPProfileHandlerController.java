@@ -31,7 +31,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -238,11 +237,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param request  the request
      * @param response the response
      * @return the model and view
+     * @throws Exception the exception
      */
     protected ModelAndView issueAuthenticationRequestRedirect(
         final Pair<? extends SignableSAMLObject, MessageContext> pair,
         final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final HttpServletResponse response) throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val serviceUrl = constructServiceUrl(request, response, pair);
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
@@ -276,12 +276,12 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param response the response
      * @param pair     the pair
      * @return the string
-     * @throws SamlException the saml exception
+     * @throws Exception the exception
      */
-    @SneakyThrows
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
-                                         final Pair<? extends SignableSAMLObject, MessageContext> pair) throws SamlException {
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
+        throws Exception {
         val authnRequest = (AuthnRequest) pair.getLeft();
         val builder = new URLBuilder(configurationContext.getCallbackService().getId());
 

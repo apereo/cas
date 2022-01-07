@@ -23,7 +23,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -64,9 +63,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         super(configurationContext);
     }
 
-    @SneakyThrows
     private static void validate(final OidcClientRegistrationRequest registrationRequest,
-                                 final OidcRegisteredService registeredService) {
+                                 final OidcRegisteredService registeredService) throws Exception {
         if (StringUtils.isNotBlank(registeredService.getSectorIdentifierUri())) {
             HttpResponse sectorResponse = null;
             try {
@@ -95,14 +93,17 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
      * @param request   the request
      * @param response  the response
      * @return the model and view
+     * @throws Exception the exception
      */
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL,
         "/**/" + OidcConstants.REGISTRATION_URL
     }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity handleRequestInternal(@RequestBody final String jsonInput,
-                                                final HttpServletRequest request,
-                                                final HttpServletResponse response) {
+    public ResponseEntity handleRequestInternal(
+        @RequestBody
+        final String jsonInput,
+        final HttpServletRequest request,
+        final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.REGISTRATION_URL)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -267,12 +268,13 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
      * @param registeredService   the registered service
      * @param registrationRequest the registration request
      * @return the access token
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected OAuth20AccessToken generateRegistrationAccessToken(final HttpServletRequest request,
-                                                                 final HttpServletResponse response,
-                                                                 final OidcRegisteredService registeredService,
-                                                                 final OidcClientRegistrationRequest registrationRequest) {
+    protected OAuth20AccessToken generateRegistrationAccessToken(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final OidcRegisteredService registeredService,
+        final OidcClientRegistrationRequest registrationRequest) throws Exception {
         val authn = DefaultAuthenticationBuilder.newInstance()
             .setPrincipal(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(registeredService.getClientId()))
             .build();

@@ -19,6 +19,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.google.common.base.Supplier;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * This controller returns an access token according to the given
@@ -43,12 +46,37 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OAuth20AccessTokenEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
+    private static final Map<String, AccessTokenExceptionResponses> ACCESS_TOKEN_RESPONSE_EXCEPTIONS = Map.of(
+        InvalidOAuth20DeviceTokenException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.ACCESS_DENIED,
+            "Could not identify and extract device token request for device token"),
+
+        UnapprovedOAuth20DeviceUserCodeException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.AUTHORIZATION_PENDING,
+            "User code is not yet approved for the device token request"),
+
+        ThrottledOAuth20DeviceUserCodeApprovalException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.SLOW_DOWN,
+            "Device user code approval is too quick and is throttled. Requests must slow down"),
+
+        OAuth20UnauthorizedScopeRequestException.class.getName(),
+        new AccessTokenExceptionResponses(OAuth20Constants.INVALID_SCOPE,
+            "Invalid or unauthorized scope")
+    );
+
     private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
     public OAuth20AccessTokenEndpointController(final T oauthConfigurationContext,
                                                 final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
         super(oauthConfigurationContext);
         this.accessTokenGrantAuditableRequestExtractor = accessTokenGrantAuditableRequestExtractor;
+    }
+
+    private static ModelAndView handleAccessTokenException(final Exception exception, final HttpServletResponse response) {
+        val data = ACCESS_TOKEN_RESPONSE_EXCEPTIONS.getOrDefault(exception.getClass().getName(),
+            new AccessTokenExceptionResponses(OAuth20Constants.INVALID_GRANT, "Invalid or unauthorized grant"));
+        LoggingUtils.error(LOGGER, data.getMessage(), exception);
+        return OAuth20Utils.writeError(response, data.getCode());
     }
 
     /**
@@ -82,21 +110,8 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
             return generateAccessTokenResponse(context, requestHolder, tokenResult);
-        } catch (final InvalidOAuth20DeviceTokenException e) {
-            LOGGER.error("Could not identify and extract device token request for device token [{}]", e.getTicketId());
-            return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
-        } catch (final UnapprovedOAuth20DeviceUserCodeException e) {
-            LOGGER.error("User code [{}] is not yet approved for the device token request", e.getTicketId());
-            return OAuth20Utils.writeError(response, OAuth20Constants.AUTHORIZATION_PENDING);
-        } catch (final ThrottledOAuth20DeviceUserCodeApprovalException e) {
-            LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
-            return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
-        } catch (final OAuth20UnauthorizedScopeRequestException e) {
-            LoggingUtils.error(LOGGER, e);
-            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_SCOPE);
         } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, "Could not identify and extract access token request", e);
-            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
+            return handleAccessTokenException(e, response);
         }
     }
 
@@ -143,17 +158,24 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(context, tokenResult);
     }
 
-    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request, final HttpServletResponse response) {
+    @RequiredArgsConstructor
+    @Getter
+    private static class AccessTokenExceptionResponses {
+        private final String code;
+
+        private final String message;
+    }
+
+    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
+                                                                                  final HttpServletResponse response) {
         val audit = AuditableContext.builder()
             .httpRequest(request)
             .httpResponse(response)
             .build();
         val accessResult = accessTokenGrantAuditableRequestExtractor.execute(audit);
         val execResult = accessResult.getExecutionResult();
-        if (execResult.isPresent()) {
-            return (AccessTokenRequestDataHolder) execResult.get();
-        }
-        throw new UnsupportedOperationException("Access token request is not supported");
+        return (AccessTokenRequestDataHolder) execResult.orElseThrow(
+            () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 
     /**

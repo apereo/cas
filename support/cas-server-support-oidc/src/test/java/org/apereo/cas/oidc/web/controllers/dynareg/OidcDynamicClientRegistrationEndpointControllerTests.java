@@ -37,7 +37,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
     protected OidcDynamicClientRegistrationEndpointController controller;
 
     @Test
-    public void verifyBadEndpointRequest() {
+    public void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -46,14 +46,14 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyBadInput() {
+    public void verifyBadInput() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
         assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCodeValue());
     }
 
     @Test
-    public void verifyBadRedirect() {
+    public void verifyBadRedirect() throws Exception {
         val registrationReq = '{'
             + "   \"redirect_uris\":"
             + "     [\"https://client.example.org/callback#something\","

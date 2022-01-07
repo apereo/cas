@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.swivel.web.flow.rest;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorAuthenticationProperties;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +43,7 @@ public class SwivelTuringImageGeneratorController {
         generateImage(response.getOutputStream(), principal);
     }
 
-    @SneakyThrows
-    private void generateImage(final OutputStream stream, final String principal) {
+    private void generateImage(final OutputStream stream, final String principal) throws Exception {
         val params = String.format("?username=%s&random=%s", principal, RandomUtils.nextLong(1, Long.MAX_VALUE));
         val url = new URL(swivel.getSwivelTuringImageUrl().concat(params));
         val image = ImageIO.read(url);

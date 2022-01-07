@@ -8,7 +8,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +40,8 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
-    public void handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    public void handleFederationRequest(final HttpServletResponse response,
+                                        final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.getWa();
         if (StringUtils.isBlank(wa)) {
@@ -65,25 +65,26 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                                      final HttpServletResponse response) throws Exception {
 
         val logoutUrl = FunctionUtils.doIf(StringUtils.isNotBlank(fedRequest.getWreply()),
-            () -> {
-                val service = createService(fedRequest);
-                val registeredService = getWsFederationRegisteredService(service);
-                LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
-                    fedRequest, fedRequest.getWreply(), registeredService);
-                val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
-                return getConfigContext().getCasProperties()
-                    .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
-            },
-            () -> getConfigContext().getCasProperties().getServer().getLogoutUrl())
+                () -> {
+                    val service = createService(fedRequest);
+                    val registeredService = getWsFederationRegisteredService(service);
+                    LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
+                        fedRequest, fedRequest.getWreply(), registeredService);
+                    val logoutParam = getConfigContext().getCasProperties().getLogout().getRedirectParameter();
+                    return getConfigContext().getCasProperties()
+                        .getServer().getLogoutUrl().concat("?").concat(logoutParam).concat("=").concat(service.getId());
+                },
+                () -> getConfigContext().getCasProperties().getServer().getLogoutUrl())
             .get();
 
         val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, logoutUrl);
     }
 
-    private void handleInitialAuthenticationRequest(final WSFederationRequest fedRequest,
-                                                    final HttpServletResponse response,
-                                                    final HttpServletRequest request) {
+    private void handleInitialAuthenticationRequest(
+        final WSFederationRequest fedRequest,
+        final HttpServletResponse response,
+        final HttpServletRequest request) throws Exception {
 
         val targetService = createService(fedRequest);
         val registeredService = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
@@ -99,12 +100,12 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         return targetService;
     }
 
-    @SneakyThrows
-    private void redirectToIdentityProvider(final WSFederationRequest fedRequest,
-                                            final HttpServletResponse response,
-                                            final HttpServletRequest request,
-                                            final WebApplicationService service,
-                                            final WSFederationRegisteredService registeredService) {
+    private void redirectToIdentityProvider(
+        final WSFederationRequest fedRequest,
+        final HttpServletResponse response,
+        final HttpServletRequest request,
+        final WebApplicationService service,
+        final WSFederationRegisteredService registeredService) throws Exception {
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, registeredService);
         val renew = shouldRenewAuthentication(fedRequest, request);
