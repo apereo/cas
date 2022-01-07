@@ -9,7 +9,7 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
@@ -18,6 +18,7 @@ import org.apereo.cas.oidc.jwks.generator.OidcRestfulJsonWebKeystoreGeneratorSer
 import org.apereo.cas.oidc.jwks.generator.jpa.OidcJpaJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.mongo.OidcMongoDbJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.CasEventListener;
@@ -29,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -258,7 +259,7 @@ public class OidcJwksConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader(
+        public CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCacheLoader(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService) {
             return new OidcDefaultJsonWebKeystoreCacheLoader(oidcJsonWebKeystoreGeneratorService);
@@ -268,16 +269,16 @@ public class OidcJwksConfiguration {
         @Bean
         public CasEventListener oidcJsonWebKeyStoreListener(
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
             return new OidcDefaultJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LoadingCache<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCache(
+        public LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache(
             @Qualifier("oidcDefaultJsonWebKeystoreCacheLoader")
-            final CacheLoader<String, Optional<PublicJsonWebKey>> oidcDefaultJsonWebKeystoreCacheLoader,
+            final CacheLoader<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCacheLoader,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
 
@@ -298,6 +299,5 @@ public class OidcJwksConfiguration {
             return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
         }
     }
-
 
 }

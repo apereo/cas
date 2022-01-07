@@ -91,14 +91,15 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     /**
      * Sign the array by first turning it into a base64 encoded string.
      *
-     * @param value the value
+     * @param value      the value
+     * @param signingKey the signing key
      * @return the byte [ ]
      */
-    protected byte[] sign(final byte[] value) {
-        if (this.signingKey == null) {
+    protected byte[] sign(final byte[] value, final Key signingKey) {
+        if (signingKey == null) {
             return value;
         }
-        return signWith(value, getSigningAlgorithmFor(this.signingKey));
+        return signWith(value, getSigningAlgorithmFor(signingKey));
     }
 
     /**
@@ -109,7 +110,19 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] signWith(final byte[] value, final String algHeaderValue) {
-        return EncodingUtils.signJws(this.signingKey, value, algHeaderValue, this.customHeaders);
+        return signWith(value, algHeaderValue, this.signingKey);
+    }
+
+    /**
+     * Sign with byte [ ].
+     *
+     * @param value          the value
+     * @param algHeaderValue the alg header value
+     * @param key            the key
+     * @return the byte [ ]
+     */
+    protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key) {
+        return EncodingUtils.signJws(key, value, algHeaderValue, this.customHeaders);
     }
 
     /**
@@ -146,22 +159,22 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     /**
      * Verify signature.
      *
-     * @param value the value
-     * @return the value associated with the signature, which may have to
-     * be decoded, or null.
+     * @param value            the value
+     * @param activeSigningKey the active signing key
+     * @return the value associated with the signature, which may have to be decoded, or null.
      */
-    protected byte[] verifySignature(final byte[] value) {
-        if (this.signingKey == null) {
+    protected byte[] verifySignature(final byte[] value, final Key activeSigningKey) {
+        if (activeSigningKey == null) {
             return value;
         }
         try {
-            if (this.signingKey instanceof RSAPrivateKey) {
-                val privKey = RSAPrivateKey.class.cast(this.signingKey);
+            if (activeSigningKey instanceof RSAPrivateKey) {
+                val privKey = RSAPrivateKey.class.cast(activeSigningKey);
                 val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
                 val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
                 return EncodingUtils.verifyJwsSignature(pubKey, value);
             }
-            return EncodingUtils.verifyJwsSignature(this.signingKey, value);
+            return EncodingUtils.verifyJwsSignature(activeSigningKey, value);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }

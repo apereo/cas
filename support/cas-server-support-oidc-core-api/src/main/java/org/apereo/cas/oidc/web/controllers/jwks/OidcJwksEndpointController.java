@@ -3,8 +3,8 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * This is {@link OidcJwksEndpointController}.
@@ -78,7 +79,8 @@ public class OidcJwksEndpointController extends BaseOidcController {
                 .stream()
                 .filter(s -> StringUtils.isNotBlank(s.getJwks()))
                 .forEach(service -> {
-                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, getConfigurationContext().getApplicationContext());
+                    val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service,
+                        getConfigurationContext().getApplicationContext(), Optional.empty());
                     set.ifPresent(keys -> keys.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey));
                 });
 

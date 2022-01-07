@@ -96,13 +96,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
         aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey, this.parameterSpec);
         val result = aesCipher.doFinal(value);
-        return sign(result);
+        return sign(result, getSigningKey());
     }
 
     @Override
     public byte[] decode(final byte[] value, final Object[] parameters) {
         try {
-            val verifiedValue = verifySignature(value);
+            val verifiedValue = verifySignature(value, getSigningKey());
             val aesCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, this.parameterSpec);
             return aesCipher.doFinal(verifiedValue);

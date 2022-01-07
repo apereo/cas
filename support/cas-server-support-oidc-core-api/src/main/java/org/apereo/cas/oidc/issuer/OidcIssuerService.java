@@ -14,6 +14,11 @@ import java.util.Optional;
 public interface OidcIssuerService {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oidcIssuerService";
+
+    /**
      * Immutable issuer service that always returns a static issuer.
      *
      * @param issuer the issuer

@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;

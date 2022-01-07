@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.io.Serializable;
@@ -29,7 +32,7 @@ public class OidcJwtAccessTokenCipherExecutor extends BaseStringCipherExecutor {
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<String, Optional<PublicJsonWebKey>> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> defaultJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.
@@ -43,31 +46,41 @@ public class OidcJwtAccessTokenCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
-        getPublicJsonWebKey().ifPresent(jwks -> {
-            setSigningKey(jwks.getPrivateKey());
+        getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
+            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(PublicJsonWebKey.class::cast)
+            .ifPresent(key -> setSigningKey(key.getPrivateKey()));
 
-            setEncryptionKey(jwks.getPublicKey());
-            setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-            setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-        });
+        getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
+            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .ifPresent(key -> {
+                setEncryptionKey(key.getKey());
+                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+            });
         return super.encode(value, parameters);
     }
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
-        getPublicJsonWebKey().ifPresent(jwks -> {
-            setEncryptionKey(jwks.getPrivateKey());
-            setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-            setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-
-            setSigningKey(jwks.getPublicKey());
-        });
+        getJsonWebKeyFor(OidcJsonWebKeyUsage.ENCRYPTION)
+            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(PublicJsonWebKey.class::cast)
+            .ifPresent(key -> {
+                setEncryptionKey(key.getPrivateKey());
+                setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+                setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+            });
+        getJsonWebKeyFor(OidcJsonWebKeyUsage.SIGNING)
+            .map(jwks -> jwks.getJsonWebKeys().get(0))
+            .map(PublicJsonWebKey.class::cast)
+            .ifPresent(key -> setSigningKey(key.getPublicKey()));
         return super.decode(value, parameters);
     }
 
-    private Optional<PublicJsonWebKey> getPublicJsonWebKey() {
+    private Optional<JsonWebKeySet> getJsonWebKeyFor(final OidcJsonWebKeyUsage usage) {
         val issuer = oidcIssuerService.determineIssuer(Optional.empty());
-        LOGGER.trace("Determined issuer [{}] to fetch the public JSON web key", issuer);
-        return Objects.requireNonNull(defaultJsonWebKeystoreCache.get(issuer));
+        LOGGER.trace("Determined issuer [{}] to fetch the JSON web key", issuer);
+        return Objects.requireNonNull(defaultJsonWebKeystoreCache.get(new OidcJsonWebKeyCacheKey(issuer, usage)));
     }
 }

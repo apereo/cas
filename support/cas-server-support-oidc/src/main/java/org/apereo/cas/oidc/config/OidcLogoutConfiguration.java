@@ -84,7 +84,7 @@ public class OidcLogoutConfiguration {
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
             @Qualifier("noRedirectHttpClient")
             final HttpClient httpClient,
-            @Qualifier("oidcIssuerService")
+            @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService) {
             return new OidcSingleLogoutServiceMessageHandler(httpClient,
                 oidcSingleLogoutMessageCreator,

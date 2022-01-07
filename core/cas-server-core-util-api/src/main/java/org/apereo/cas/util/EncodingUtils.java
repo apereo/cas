@@ -310,7 +310,7 @@ public class EncodingUtils {
      */
     public boolean isJsonWebKey(final String key) {
         try {
-            val results = JsonUtil.parseJson(key);
+            val results = parseJsonWebKey(key);
             return !results.isEmpty();
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage());
@@ -573,5 +573,16 @@ public class EncodingUtils {
             }
             throw new DecryptionException();
         }
+    }
+
+    /**
+     * Parse json web key map.
+     *
+     * @param key the key
+     * @return the map
+     * @throws Exception the exception
+     */
+    public static Map<String, Object> parseJsonWebKey(final String key) throws Exception {
+        return JsonUtil.parseJson(key);
     }
 }

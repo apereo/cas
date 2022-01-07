@@ -20,9 +20,11 @@ of the keystore file is similar to the following:
     {
       "d": "...",
       "e": "AQAB",
+      "use": "sig",
       "n": "...",
       "kty": "RSA",
-      "kid": "cas"
+      "kid": "cas",
+      "state": 0
     }
   ]
 }

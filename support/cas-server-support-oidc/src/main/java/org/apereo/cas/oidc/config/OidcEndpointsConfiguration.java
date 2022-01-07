@@ -9,8 +9,8 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
@@ -194,7 +194,7 @@ public class OidcEndpointsConfiguration {
 
         @Bean
         public WebMvcConfigurer oidcWebMvcConfigurer(
-            @Qualifier("oidcIssuerService")
+            @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oauthInterceptor")
             final ObjectProvider<HandlerInterceptor> oauthInterceptor,
@@ -214,7 +214,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer(
-            @Qualifier("oidcIssuerService")
+            @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             final CasConfigurationProperties casProperties) {
             val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);

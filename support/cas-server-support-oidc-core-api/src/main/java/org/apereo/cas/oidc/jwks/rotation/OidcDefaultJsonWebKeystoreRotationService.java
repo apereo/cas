@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,23 +49,40 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
                         LOGGER.trace("Rotating state for future key [{}] to current", key.getKeyId());
                     }
                 });
-                val generatedKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
-                JsonWebKeyLifecycleStates.setJsonWebKeyState(generatedKey, JsonWebKeyLifecycleStates.FUTURE);
-                LOGGER.trace("Generated future key with id [{}]", generatedKey.getKeyId());
+                generateFutureKeys(jsonWebKeySet);
+                generateCurrentKeys(jsonWebKeySet);
 
-                val foundCurrent = jsonWebKeySet.getJsonWebKeys()
-                    .stream().anyMatch(key -> JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent());
-                if (!foundCurrent) {
-                    val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
-                    JsonWebKeyLifecycleStates.setJsonWebKeyState(currentKey, JsonWebKeyLifecycleStates.CURRENT);
-                    LOGGER.trace("Generated current key with id [{}]", currentKey.getKeyId());
-                    jsonWebKeySet.addJsonWebKey(currentKey);
-                }
-
-                jsonWebKeySet.addJsonWebKey(generatedKey);
                 return generatorService.store(jsonWebKeySet);
             }))
             .orElse(null);
+    }
+
+    private void generateCurrentKeys(final JsonWebKeySet jsonWebKeySet) {
+        val foundCurrent = jsonWebKeySet.getJsonWebKeys()
+            .stream().anyMatch(key -> JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent());
+        if (!foundCurrent) {
+            val currentKeySigning = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties, OidcJsonWebKeyUsage.SIGNING);
+            JsonWebKeyLifecycleStates.setJsonWebKeyState(currentKeySigning, JsonWebKeyLifecycleStates.CURRENT);
+            LOGGER.trace("Generated current signing key with id [{}]", currentKeySigning.getKeyId());
+            jsonWebKeySet.addJsonWebKey(currentKeySigning);
+
+            val currentKeyEncryption = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties, OidcJsonWebKeyUsage.ENCRYPTION);
+            JsonWebKeyLifecycleStates.setJsonWebKeyState(currentKeyEncryption, JsonWebKeyLifecycleStates.CURRENT);
+            LOGGER.trace("Generated current encryption key with id [{}]", currentKeyEncryption.getKeyId());
+            jsonWebKeySet.addJsonWebKey(currentKeyEncryption);
+        }
+    }
+
+    private void generateFutureKeys(final JsonWebKeySet jsonWebKeySet) {
+        val futureKeySigning = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties, OidcJsonWebKeyUsage.SIGNING);
+        JsonWebKeyLifecycleStates.setJsonWebKeyState(futureKeySigning, JsonWebKeyLifecycleStates.FUTURE);
+        LOGGER.trace("Generated future signing key with id [{}]", futureKeySigning.getKeyId());
+        jsonWebKeySet.addJsonWebKey(futureKeySigning);
+
+        val futureKeyEncryption = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties, OidcJsonWebKeyUsage.ENCRYPTION);
+        JsonWebKeyLifecycleStates.setJsonWebKeyState(futureKeyEncryption, JsonWebKeyLifecycleStates.FUTURE);
+        LOGGER.trace("Generated future encryption key with id [{}]", futureKeyEncryption.getKeyId());
+        jsonWebKeySet.addJsonWebKey(futureKeyEncryption);
     }
 
     @Override

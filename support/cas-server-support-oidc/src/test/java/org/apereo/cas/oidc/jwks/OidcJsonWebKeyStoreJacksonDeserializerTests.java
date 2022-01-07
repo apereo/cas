@@ -26,7 +26,7 @@ public class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTes
 
     @Test
     public void verifyOperation() throws Exception {
-        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
 
         val module = new SimpleModule();

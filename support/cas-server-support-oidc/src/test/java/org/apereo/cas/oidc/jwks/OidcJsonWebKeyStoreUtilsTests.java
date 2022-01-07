@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,30 +27,31 @@ public class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
     public void verifyKeySet() {
         val service = getOidcRegisteredService();
         service.setJwks(StringUtils.EMPTY);
-        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader).isEmpty());
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
     public void verifyBadSvc() {
-        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(null, resourceLoader).isEmpty());
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(
+            null, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
     public void verifyEmptyKeySet() {
         val service = getOidcRegisteredService();
         service.setJwks(new JsonWebKeySet(List.of()).toJson());
-        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader).isEmpty());
+        assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, resourceLoader, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
-    
+
     @Test
     public void verifyEc() {
-        assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512));
-        assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 256));
+        assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512, OidcJsonWebKeyUsage.SIGNING));
+        assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 256, OidcJsonWebKeyUsage.SIGNING));
     }
 
     @Test
     public void verifyParsing() {
-        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512);
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512, OidcJsonWebKeyUsage.SIGNING);
         val keyset = new JsonWebKeySet(key);
         assertNotNull(OidcJsonWebKeyStoreUtils.parseJsonWebKeySet(
             keyset.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)));

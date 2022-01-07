@@ -112,17 +112,31 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return encryptAndSign(value);
+            return encryptAndSign(value, getEncryptionKey(), getSigningKey());
         }
-        return signAndEncrypt(value);
+        return signAndEncrypt(value, getEncryptionKey(), getSigningKey());
     }
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
+        return decode(value, parameters, getEncryptionKey(), getSigningKey());
+    }
+
+    /**
+     * Decode value.
+     *
+     * @param value         the value
+     * @param parameters    the parameters
+     * @param encryptionKey the encryption key
+     * @param signingKey    the signing key
+     * @return the string
+     */
+    protected String decode(final Serializable value, final Object[] parameters,
+                            final Key encryptionKey, final Key signingKey) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return verifyAndDecrypt(value);
+            return verifyAndDecrypt(value, encryptionKey, signingKey);
         }
-        return decryptAndVerify(value);
+        return decryptAndVerify(value, encryptionKey, signingKey);
     }
 
     /**
@@ -140,10 +154,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     /**
      * Is encryption possible?
      *
-     * @return true/false
+     * @param key the key
+     * @return true /false
      */
-    protected boolean isEncryptionPossible() {
-        return this.encryptionEnabled && this.encryptionKey != null;
+    protected boolean isEncryptionPossible(final Key key) {
+        return this.encryptionEnabled && key != null;
     }
 
     /**
@@ -241,70 +256,70 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         }
     }
 
-    private String decryptAndVerify(final Serializable value) {
+    private String decryptAndVerify(final Serializable value, final Key encryptionKey, final Key signingKey) {
         var encodedObj = value.toString();
-        if (isEncryptionPossible()) {
+        if (isEncryptionPossible(encryptionKey)) {
             LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-            encodedObj = EncodingUtils.decryptJwtValue(this.encryptionKey, encodedObj);
+            encodedObj = EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
         }
         val currentValue = encodedObj.getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue);
+            return verifySignature(currentValue, signingKey);
         }, () -> currentValue).get();
         return new String(encoded, StandardCharsets.UTF_8);
     }
 
-    private String verifyAndDecrypt(final Serializable value) {
+    private String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue);
+            return verifySignature(currentValue, signingKey);
         }, () -> currentValue).get();
 
         if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
-            if (isEncryptionPossible()) {
+            if (isEncryptionPossible(encryptionKey)) {
                 LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.decryptJwtValue(this.encryptionKey, encodedObj);
+                return EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
             }
             return encodedObj;
         }
         return null;
     }
 
-    private String encryptAndSign(final Serializable value) {
-        val encoded = FunctionUtils.doIf(isEncryptionPossible(),
+    private String encryptAndSign(final Serializable value, final Key encryptionKey, final Key signingKey) {
+        val encoded = FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(this.encryptionKey, value,
+                return EncodingUtils.encryptValueAsJwt(encryptionKey, value,
                     this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
             },
             value::toString).get();
 
         if (this.signingEnabled) {
             LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
-            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8), signingKey);
             return new String(signed, StandardCharsets.UTF_8);
         }
         return encoded;
     }
 
-    private String signAndEncrypt(final Serializable value) {
+    private String signAndEncrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
         val encoded = FunctionUtils.doIf(this.signingEnabled,
             () -> {
                 LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
-                val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8));
+                val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8), signingKey);
                 return new String(signed, StandardCharsets.UTF_8);
             },
             value::toString
         ).get();
 
-        return FunctionUtils.doIf(isEncryptionPossible(),
+        return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(this.encryptionKey, value,
+                return EncodingUtils.encryptValueAsJwt(encryptionKey, value,
                     this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
             },
             () -> encoded).get();

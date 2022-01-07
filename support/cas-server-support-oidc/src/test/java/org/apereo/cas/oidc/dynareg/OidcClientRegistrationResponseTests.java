@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationUtils;
 
 import lombok.val;
@@ -24,7 +25,7 @@ public class OidcClientRegistrationResponseTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
         val service = getOidcRegisteredService();
-        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         service.setJwks(new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY));
         val input = OidcClientRegistrationUtils.getClientRegistrationResponse(service, "https://example.com/cas");
         assertNotNull(input.getGrantTypes());

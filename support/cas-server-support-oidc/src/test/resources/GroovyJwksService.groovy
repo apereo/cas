@@ -1,11 +1,10 @@
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils
-import org.jose4j.jwk.JsonWebKey
-import org.jose4j.jwk.JsonWebKeySet
+import org.apereo.cas.oidc.jwks.*
+import org.jose4j.jwk.*
 
 def run(Object[] args) {
     def logger = args[0]
     logger.info("Generating JWKS for CAS...")
-    def jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("RSA", 2048)
+    def jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("RSA", 2048, OidcJsonWebKeyUsage.SIGNING)
     jsonWebKey.setKeyId("caskid")
 
     def json = jsonWebKey.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
@@ -23,6 +22,6 @@ def store(Object[] args) {
 def find(Object[] args) {
     def logger = args[0]
     logger.info("Looking up keystore...")
-    def jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("RSA", 2048)
+    def jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey("RSA", 2048, OidcJsonWebKeyUsage.SIGNING)
     return new JsonWebKeySet(jsonWebKey)
 }

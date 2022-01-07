@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 
 import lombok.val;
 import org.apache.commons.compress.utils.IOUtils;
@@ -39,7 +40,8 @@ public class OidcGroovyJsonWebKeystoreGeneratorServiceTests extends AbstractOidc
 
     @Test
     public void verifyStoreOperation() throws Exception {
-        val jwks = new JsonWebKeySet(OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(casProperties.getAuthn().getOidc()));
+        val jwks = new JsonWebKeySet(OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            casProperties.getAuthn().getOidc(), OidcJsonWebKeyUsage.ENCRYPTION));
         assertNotNull(oidcJsonWebKeystoreGeneratorService.store(jwks));
     }
 }

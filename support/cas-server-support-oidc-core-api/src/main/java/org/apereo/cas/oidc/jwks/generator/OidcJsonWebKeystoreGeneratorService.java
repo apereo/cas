@@ -2,7 +2,8 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
@@ -50,11 +51,14 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * Generate json web key json web key.
      *
      * @param oidcProperties the oidc properties
+     * @param usage          the usage
      * @return the json web key
      */
-    static JsonWebKey generateJsonWebKey(final OidcProperties oidcProperties) {
+    static JsonWebKey generateJsonWebKey(final OidcProperties oidcProperties,
+                                         final OidcJsonWebKeyUsage usage) {
         val properties = oidcProperties.getJwks().getCore();
-        val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(properties.getJwksType(), properties.getJwksKeySize());
+        val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(properties.getJwksType(),
+            properties.getJwksKeySize(), usage);
         jsonWebKey.setKeyId(properties.getJwksKeyId().concat("-").concat(RandomUtils.randomAlphabetic(8)));
         return jsonWebKey;
     }
@@ -67,12 +71,12 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * @return the json web key
      */
     static JsonWebKey generateJsonWebKey(final OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates state,
-                                         final OidcProperties oidcProperties) {
-        val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties);
+                                         final OidcProperties oidcProperties,
+                                         final OidcJsonWebKeyUsage usage) {
+        val key = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(oidcProperties, usage);
         OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.setJsonWebKeyState(key, state);
         return key;
     }
-
 
     /**
      * Generate json web key set json web key set.
@@ -81,11 +85,17 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * @return the json web key set
      */
     static JsonWebKeySet generateJsonWebKeySet(final OidcProperties oidcProperties) {
-        val currentKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties);
-        val futureKey = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties);
-        return new JsonWebKeySet(currentKey, futureKey);
+        val currentKeySigning = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties, OidcJsonWebKeyUsage.SIGNING);
+        val currentKeyEncryption = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT, oidcProperties, OidcJsonWebKeyUsage.ENCRYPTION);
+
+        val futureKeySigning = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties, OidcJsonWebKeyUsage.SIGNING);
+        val futureKeyEncryption = OidcJsonWebKeystoreGeneratorService.generateJsonWebKey(
+            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.FUTURE, oidcProperties, OidcJsonWebKeyUsage.ENCRYPTION);
+
+        return new JsonWebKeySet(currentKeySigning, currentKeyEncryption, futureKeySigning, futureKeyEncryption);
     }
 
     /**
