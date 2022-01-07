@@ -53,6 +53,6 @@ public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
 }

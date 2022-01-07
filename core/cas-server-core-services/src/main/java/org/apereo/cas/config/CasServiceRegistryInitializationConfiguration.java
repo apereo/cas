@@ -90,7 +90,7 @@ public class CasServiceRegistryInitializationConfiguration {
             final ServiceRegistry embeddedJsonServiceRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("serviceRegistry")
+            @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry) {
             return new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
         }

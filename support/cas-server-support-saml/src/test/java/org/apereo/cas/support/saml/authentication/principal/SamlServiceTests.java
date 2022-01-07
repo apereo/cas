@@ -58,7 +58,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
 
     @Autowired
-    @Qualifier("urlValidator")
+    @Qualifier(UrlValidator.BEAN_NAME)
     private UrlValidator urlValidator;
 
     @Autowired

@@ -85,7 +85,7 @@ public class CasCoreLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutServiceLogoutUrlBuilderConfigurer defaultSingleLogoutServiceLogoutUrlBuilderConfigurer(
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {

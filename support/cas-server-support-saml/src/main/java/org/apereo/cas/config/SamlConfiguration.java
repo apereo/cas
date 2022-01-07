@@ -102,7 +102,7 @@ public class SamlConfiguration {
         public ResponseBuilder samlServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
             return new SamlServiceResponseBuilder(servicesManager, urlValidator);
         }

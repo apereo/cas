@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 @EnabledIfPortOpen(port = 25000)
 public class CommunicationsManagerTests {
     @Autowired
-    @Qualifier("communicationsManager")
+    @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     @Test

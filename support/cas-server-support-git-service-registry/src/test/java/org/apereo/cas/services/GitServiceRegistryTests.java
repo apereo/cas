@@ -80,7 +80,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     private GitRepository gitRepositoryInstance;
 
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
 
     @BeforeAll

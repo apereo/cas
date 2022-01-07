@@ -145,7 +145,7 @@ public class ElectronicFenceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
             final CasConfigurationProperties casProperties,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager);
         }
@@ -155,7 +155,7 @@ public class ElectronicFenceConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
             final CasConfigurationProperties casProperties,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager);
         }

@@ -671,7 +671,7 @@ public class SamlIdPConfiguration {
             final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
             return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver, urlValidator);
         }

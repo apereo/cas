@@ -60,7 +60,7 @@ public class SurrogateAuthenticationEventListenerTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("communicationsManager")
+    @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     @Test

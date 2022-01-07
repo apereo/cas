@@ -115,7 +115,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action displayBeforePasswordlessAuthenticationAction(
         final CasConfigurationProperties casProperties,
-        @Qualifier("communicationsManager")
+        @Qualifier(CommunicationsManager.BEAN_NAME)
         final CommunicationsManager communicationsManager,
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,

@@ -287,7 +287,7 @@ public class OidcEndpointsConfiguration {
         public OidcLogoutEndpointController oidcLogoutEndpointController(
             @Qualifier(OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
             final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator,
             @Qualifier("oidcConfigurationContext")
             final OidcConfigurationContext oidcConfigurationContext) {

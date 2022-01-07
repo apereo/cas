@@ -20,6 +20,12 @@ import java.util.stream.Stream;
  * @since 3.1
  */
 public interface ServiceRegistry {
+
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "serviceRegistry";
+
     /**
      * Persist the service in the data store.
      *

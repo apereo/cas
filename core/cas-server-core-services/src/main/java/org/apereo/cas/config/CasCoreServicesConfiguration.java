@@ -25,6 +25,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -110,7 +111,7 @@ public class CasCoreServicesConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
         }
@@ -125,7 +126,7 @@ public class CasCoreServicesConfiguration {
         public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
             return new WebApplicationServiceResponseBuilder(servicesManager, urlValidator);
         }
@@ -219,7 +220,7 @@ public class CasCoreServicesConfiguration {
             return Optional.empty();
         }
 
-        @ConditionalOnMissingBean(name = "serviceRegistry")
+        @ConditionalOnMissingBean(name = ServiceRegistry.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ChainingServiceRegistry serviceRegistry(
@@ -249,7 +250,7 @@ public class CasCoreServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
-            @Qualifier("serviceRegistry")
+            @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
             @Qualifier("servicesManagerCache")
             final Cache<Long, RegisteredService> servicesManagerCache,

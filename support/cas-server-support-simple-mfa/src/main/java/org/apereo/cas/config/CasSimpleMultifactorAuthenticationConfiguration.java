@@ -68,7 +68,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
             return new CasSimpleMultifactorSendTokenAction(ticketRegistry,

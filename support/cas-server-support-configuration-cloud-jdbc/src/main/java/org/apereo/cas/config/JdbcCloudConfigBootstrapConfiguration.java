@@ -82,7 +82,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
 
         @Override
         public String getDriverClass() {
-            return StringUtils.defaultIfBlank(getSetting(environment, "driverClass"), super.getDriverClass());
+            return StringUtils.defaultIfBlank(getSetting(environment, "driver-class"), super.getDriverClass());
         }
     }
 }

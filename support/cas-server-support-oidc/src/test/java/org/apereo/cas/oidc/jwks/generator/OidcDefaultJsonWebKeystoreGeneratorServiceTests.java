@@ -50,7 +50,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyCurve256() {
+    public void verifyCurve256() throws Exception {
         val properties = new OidcProperties();
         properties.getJwks().getCore().setJwksType("ec");
         properties.getJwks().getCore().setJwksKeySize(256);
@@ -61,7 +61,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyCurve384() {
+    public void verifyCurve384() throws Exception {
         val properties = new OidcProperties();
         properties.getJwks().getCore().setJwksType("ec");
         properties.getJwks().getCore().setJwksKeySize(384);
@@ -71,7 +71,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
-    public void verifyCurve521() {
+    public void verifyCurve521() throws Exception {
         val properties = new OidcProperties();
 
         properties.getJwks().getCore().setJwksType("ec");

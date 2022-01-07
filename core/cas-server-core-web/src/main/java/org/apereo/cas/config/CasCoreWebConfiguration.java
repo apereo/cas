@@ -110,7 +110,7 @@ public class CasCoreWebConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "urlValidator")
+        @ConditionalOnMissingBean(name = UrlValidator.BEAN_NAME)
         public FactoryBean<UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {
             val httpClient = casProperties.getHttpClient();
             val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();

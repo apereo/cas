@@ -78,7 +78,7 @@ public class PasswordManagementForgotUsernameConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action sendForgotUsernameInstructionsAction(
             final CasConfigurationProperties casProperties,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
