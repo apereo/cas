@@ -4,6 +4,7 @@ import org.apereo.cas.MongoDbPropertySourceLocator;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -21,12 +22,12 @@ import java.util.Objects;
 @Configuration(value = "MongoDbCloudConfigBootstrapConfiguration", proxyBeanMethods = false)
 public class MongoDbCloudConfigBootstrapConfiguration {
     /**
-     * MongoDb CAS configuration key prefix.
+     * MongoDb CAS configuration key URI.
      */
     public static final String CAS_CONFIGURATION_MONGODB_URI = "cas.spring.cloud.mongo.uri";
 
     @Bean
-    public MongoDbPropertySourceLocator mongoDbPropertySourceLocator(
+    public PropertySourceLocator mongoDbPropertySourceLocator(
         @Qualifier("mongoDbCloudConfigurationTemplate")
         final MongoTemplate mongoDbCloudConfigurationTemplate) {
         return new MongoDbPropertySourceLocator(mongoDbCloudConfigurationTemplate);
