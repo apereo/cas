@@ -112,7 +112,7 @@ public class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
         public CasEventListener surrogateAuthenticationEventListener(
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             final CasConfigurationProperties casProperties) {
             return new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);

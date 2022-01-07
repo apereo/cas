@@ -248,7 +248,7 @@ public class CasAccountManagementWebflowConfiguration {
             final TicketFactory defaultTicketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new SubmitAccountRegistrationAction(accountMgmtRegistrationService, casProperties,
                 communicationsManager, defaultTicketFactory, ticketRegistry);

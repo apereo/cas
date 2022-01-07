@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier(ServiceRegistry.BEAN_NAME)
     private ServiceRegistry newServiceRegistry;
 
     @Autowired

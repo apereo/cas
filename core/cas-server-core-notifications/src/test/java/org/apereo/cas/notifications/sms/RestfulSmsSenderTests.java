@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RestfulApi")
 public class RestfulSmsSenderTests {
     @Autowired
-    @Qualifier("communicationsManager")
+    @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     private MockWebServer webServer;

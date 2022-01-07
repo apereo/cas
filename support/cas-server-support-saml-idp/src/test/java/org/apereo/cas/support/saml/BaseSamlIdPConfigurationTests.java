@@ -151,7 +151,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
-    @Qualifier("urlValidator")
+    @Qualifier(UrlValidator.BEAN_NAME)
     protected UrlValidator urlValidator;
 
     @Autowired

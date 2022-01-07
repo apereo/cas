@@ -181,7 +181,7 @@ public class PasswordManagementWebflowConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("communicationsManager")
+            @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {

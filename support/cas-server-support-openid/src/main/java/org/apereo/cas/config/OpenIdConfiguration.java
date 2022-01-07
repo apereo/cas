@@ -82,7 +82,7 @@ public class OpenIdConfiguration {
     public ResponseBuilder openIdServiceResponseBuilder(final CasConfigurationProperties casProperties,
                                                         @Qualifier("serverManager")
                                                         final ServerManager serverManager,
-                                                        @Qualifier("urlValidator")
+                                                        @Qualifier(UrlValidator.BEAN_NAME)
                                                         final UrlValidator urlValidator,
                                                         @Qualifier(CentralAuthenticationService.BEAN_NAME)
                                                         final CentralAuthenticationService centralAuthenticationService,

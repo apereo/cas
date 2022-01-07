@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Groovy")
 public class GroovySmsSenderTests {
     @Autowired
-    @Qualifier("communicationsManager")
+    @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     @Test

@@ -34,7 +34,7 @@ public class TokenTicketsConfiguration {
             final ServicesManager servicesManager,
             @Qualifier("tokenTicketBuilder")
             final TokenTicketBuilder tokenTicketBuilder,
-            @Qualifier("urlValidator")
+            @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator) {
             return new TokenWebApplicationServiceResponseBuilder(servicesManager, tokenTicketBuilder, urlValidator);
         }

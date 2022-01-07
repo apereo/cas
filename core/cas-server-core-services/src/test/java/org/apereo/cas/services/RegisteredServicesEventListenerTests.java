@@ -68,7 +68,7 @@ public class RegisteredServicesEventListenerTests {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("communicationsManager")
+    @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;
 
     @Autowired

@@ -79,14 +79,18 @@ available to support running load tests for a CAS server acting as an OpenID Con
 
 The collection of reference configuration properties produced by the [CAS Initializr](../installation/WAR-Overlay-Initializr.html)
 are now removed and the functionality is now moved to the produced overlay itself using dedicated Gradle tasks. This is done so
-that the collection of properties are produced based on CAS configuration metadata accurately reflect the CAS version used by
+that the collection of properties, produced based on CAS configuration metadata, accurately reflect the CAS version used by
 the overlay itself, and not one that is statically compiled and made available to the CAS Initializer itself. 
 
 ## Other Stuff
 
-- Validation of configuration properties is now moved into a proper `ApplicationInitializer` component.
-- Minor improvements to the construction of SAML2 authentication requests sent to an external identity provider, when CAS itself is acting as a SAML2 identity provider.
+- Validation of configuration properties is now moved into a proper `ApplicationContextInitializer` component.
+- Minor improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.md), when CAS itself is acting as a SAML2 identity provider.
 
 ## Library Upgrades
 
 - Nimbus SDK
+- MongoDb Driver
+- Twilio
+- Amazon SDK
+- SpotBugs

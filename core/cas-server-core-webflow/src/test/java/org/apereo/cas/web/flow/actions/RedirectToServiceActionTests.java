@@ -51,7 +51,7 @@ public class RedirectToServiceActionTests {
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("urlValidator")
+    @Qualifier(UrlValidator.BEAN_NAME)
     private UrlValidator urlValidator;
 
     @Test

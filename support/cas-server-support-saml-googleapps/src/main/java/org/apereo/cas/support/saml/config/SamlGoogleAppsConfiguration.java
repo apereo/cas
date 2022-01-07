@@ -69,7 +69,7 @@ public class SamlGoogleAppsConfiguration implements InitializingBean {
         final CasConfigurationProperties casProperties,
         @Qualifier("googleSaml20ObjectBuilder")
         final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder,
-        @Qualifier("urlValidator")
+        @Qualifier(UrlValidator.BEAN_NAME)
         final UrlValidator urlValidator,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.DefaultCommunicationsManager;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreNotificationsConfiguration {
     @Bean
-    @ConditionalOnMissingBean(name = "communicationsManager")
+    @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
         @Qualifier("mailSender")
@@ -50,7 +51,7 @@ public class CasCoreNotificationsConfiguration {
         final SmsSender smsSender,
         @Qualifier("notificationSender")
         final NotificationSender notificationSender) {
-        return new CommunicationsManager(smsSender, mailSender.getIfAvailable(), notificationSender);
+        return new DefaultCommunicationsManager(smsSender, mailSender.getIfAvailable(), notificationSender);
     }
 
     @Bean

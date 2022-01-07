@@ -7,6 +7,10 @@ package org.apereo.cas.web;
  * @since 5.2.0
  */
 public interface UrlValidator {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "urlValidator";
 
     /**
      * <p>Checks if a field has a valid url address.</p>

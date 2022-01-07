@@ -8,7 +8,6 @@ import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -65,11 +64,10 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         return jsonWebKeySet;
     }
 
-    @SneakyThrows
     @Override
-    public Resource generate() {
+    public Resource generate() throws Exception {
         val resource = determineJsonWebKeystoreResource();
-        if (ResourceUtils.isFile(resource)) {
+        if (ResourceUtils.isFile(resource) && isWatcherEnabled()) {
             resourceWatcherService = new FileWatcherService(resource.getFile(),
                 file -> new Consumer<File>() {
                     @Override
@@ -94,9 +92,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
      *
      * @param file the file
      * @return the resource
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected Resource generate(final Resource file) {
+    protected Resource generate(final Resource file) throws Exception {
         if (ResourceUtils.doesResourceExist(file)) {
             LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
@@ -104,6 +102,10 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
         val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);
         store(jsonWebKeySet);
         return file;
+    }
+
+    private boolean isWatcherEnabled() {
+        return oidcProperties.getJwks().getFileSystem().isWatcherEnabled();
     }
 
     private AbstractResource determineJsonWebKeystoreResource() throws Exception {

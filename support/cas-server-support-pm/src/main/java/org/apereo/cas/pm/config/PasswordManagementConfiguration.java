@@ -166,7 +166,7 @@ public class PasswordManagementConfiguration {
 
         @Bean
         public InitializingBean afterPropertiesSet(final CasConfigurationProperties casProperties,
-                                                   @Qualifier("communicationsManager")
+                                                   @Qualifier(CommunicationsManager.BEAN_NAME)
                                                    final CommunicationsManager communicationsManager) {
             return () -> {
                 val pm = casProperties.getAuthn().getPm();

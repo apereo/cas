@@ -31,4 +31,11 @@ public class FileSystemOidcJsonWebKeystoreProperties implements Serializable {
     @RequiredProperty
     @ExpressionLanguageCapable
     private String jwksFile = "file:/etc/cas/config/keystore.jwks";
+
+    /**
+     * Flag indicating whether a background watcher thread is enabled
+     * for the purposes of live reloading of keystore data file changes
+     * from disk.
+     */
+    private boolean watcherEnabled = true;
 }
