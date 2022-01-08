@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 public class OktaPersonAttributeDaoTests {
 
-    @TestConfiguration("OktaClientMockConfiguration")
+    @TestConfiguration(value = "OktaClientMockConfiguration", proxyBeanMethods = false)
     @SuppressWarnings("JavaUtilDate")
     public static class OktaClientMockTestConfiguration {
         @Bean

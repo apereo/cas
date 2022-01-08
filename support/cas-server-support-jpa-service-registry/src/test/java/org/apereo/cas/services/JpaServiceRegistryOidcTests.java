@@ -55,7 +55,7 @@ public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
         assertEquals(1, consentPolicy.size());
     }
 
-    @TestConfiguration("OidcJpaServiceRegistryTestConfiguration")
+    @TestConfiguration(value = "OidcJpaServiceRegistryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean

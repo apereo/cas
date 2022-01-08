@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestConfiguration("casPersonDirectoryTestConfiguration")
+@TestConfiguration(value = "casPersonDirectoryTestConfiguration", proxyBeanMethods = false)
 @Lazy(false)
 @ConditionalOnProperty(value = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled",
     havingValue = "true", matchIfMissing = true)

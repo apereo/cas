@@ -96,7 +96,7 @@ public class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabase
     }
 
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

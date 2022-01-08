@@ -120,7 +120,7 @@ public class RegisteredServicesEventListenerTests {
         listener.handleRegisteredServiceExpiredEvent(event);
     }
 
-    @TestConfiguration("RegisteredServicesEventListenerTestConfiguration")
+    @TestConfiguration(value = "RegisteredServicesEventListenerTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class RegisteredServicesEventListenerTestConfiguration {
 

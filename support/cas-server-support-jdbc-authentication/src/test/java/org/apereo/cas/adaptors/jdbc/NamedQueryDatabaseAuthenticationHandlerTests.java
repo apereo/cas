@@ -115,7 +115,7 @@ public class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAu
             () -> q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("whatever", "psw0")));
     }
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

@@ -91,7 +91,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("restfulServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
-    @TestConfiguration
+    @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class RestfulServiceRegistryTestConfiguration {
 

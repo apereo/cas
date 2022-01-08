@@ -682,7 +682,7 @@ public abstract class AbstractOAuth20Tests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
-    @TestConfiguration("OAuth20TestConfiguration")
+    @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired

@@ -89,7 +89,7 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
         }
     }
 
-    @TestConfiguration("CouchbaseServiceRegistryTestConfiguration")
+    @TestConfiguration(value = "CouchbaseServiceRegistryTestConfiguration", proxyBeanMethods = false)
     public static class CouchbaseServiceRegistryTestConfiguration {
 
         @SneakyThrows

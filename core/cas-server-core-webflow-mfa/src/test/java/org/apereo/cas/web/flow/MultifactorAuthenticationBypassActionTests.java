@@ -84,7 +84,7 @@ public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMu
     }
 
 
-    @TestConfiguration("MultifactorAuthenticationTestConfiguration")
+    @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

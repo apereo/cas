@@ -129,7 +129,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("Saml2ClientMetadataControllerTestConfiguration")
+    @TestConfiguration(value = "Saml2ClientMetadataControllerTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean

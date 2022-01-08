@@ -76,7 +76,7 @@ public class CasThymeleafViewResolverConfigurerTests {
         assertTrue(((ThymeleafView) view).getStaticVariables().containsKey("casProperties"));
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "CasThymeleafViewResolverConfigurerTestConfiguration", proxyBeanMethods = false)
     public static class CasThymeleafViewResolverConfigurerTestConfiguration {
         @Autowired
         @Qualifier("casProtocolViewFactory")

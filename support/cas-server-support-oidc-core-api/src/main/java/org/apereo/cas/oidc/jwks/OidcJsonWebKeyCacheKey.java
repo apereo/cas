@@ -35,7 +35,7 @@ public class OidcJsonWebKeyCacheKey implements Serializable {
         this.issuer = issuer;
         this.usage = usage;
         this.key = DigestUtils.sha512(this.issuer + '|' + this.usage.getValue());
-        LOGGER.trace("Hashed JSON web key cache key for [{}:{}] as [{}]",
+        LOGGER.trace("Hashed JSON web key cache key for [{}]:[{}] as [{}]",
             this.issuer, this.usage, this.key);
         LOGGER.trace("Calculated JSON web key cache key [{}]", key);
     }

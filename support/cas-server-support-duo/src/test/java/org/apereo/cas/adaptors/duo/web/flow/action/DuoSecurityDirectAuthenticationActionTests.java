@@ -68,7 +68,7 @@ public class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMu
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }
 
-    @TestConfiguration("DuoMultifactorTestConfiguration")
+    @TestConfiguration(value = "DuoMultifactorTestConfiguration", proxyBeanMethods = false)
     public static class DuoMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider duoProvider() {

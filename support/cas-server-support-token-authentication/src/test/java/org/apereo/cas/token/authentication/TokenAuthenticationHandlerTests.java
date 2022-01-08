@@ -148,7 +148,7 @@ public class TokenAuthenticationHandlerTests {
         assertNotNull(tokenAuthenticationHandler.authenticate(c));
     }
 
-    @TestConfiguration("TokenAuthenticationTests")
+    @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
     @Lazy(false)
     public static class TestTokenAuthenticationConfiguration {
         @Bean

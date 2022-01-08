@@ -64,7 +64,7 @@ public class OpenIdValidateControllerTests extends AbstractOpenIdTests {
         assertEquals(casOpenIdServiceFailureView.toString(), mv.getView().toString());
     }
 
-    @TestConfiguration("OpenIdValidateControllerTestConfiguration")
+    @TestConfiguration(value = "OpenIdValidateControllerTestConfiguration", proxyBeanMethods = false)
     public static class OpenIdValidateControllerTestConfiguration {
         @Bean
         public ServerManager serverManager() {

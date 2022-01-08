@@ -80,7 +80,7 @@ public class OidcAuthenticationContextWebflowEventResolverTests extends Abstract
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("OidcAuthenticationContextTestConfiguration")
+    @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
     public static class OidcAuthenticationContextTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

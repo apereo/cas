@@ -123,7 +123,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @Qualifier("serviceTicketResourceEntityResponseFactory")
     protected ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
-    @TestConfiguration("TicketResourceTestConfiguration")
+    @TestConfiguration(value = "TicketResourceTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class TicketResourceTestConfiguration implements InitializingBean {
 

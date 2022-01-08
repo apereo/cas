@@ -122,7 +122,7 @@ public class DefaultCasEventListenerTests {
         assertFalse(casEventRepository.load().findAny().isEmpty());
     }
 
-    @TestConfiguration("EventTestConfiguration")
+    @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class EventTestConfiguration {
         @Bean

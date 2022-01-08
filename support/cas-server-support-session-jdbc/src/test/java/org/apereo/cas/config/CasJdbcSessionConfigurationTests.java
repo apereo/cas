@@ -54,7 +54,7 @@ public class CasJdbcSessionConfigurationTests {
         assertNotNull(sessionRepository);
     }
 
-    @TestConfiguration("TransactionTestConfiguration")
+    @TestConfiguration(value = "TransactionTestConfiguration", proxyBeanMethods = false)
     public static class TransactionTestConfiguration {
         @Autowired
         @Bean

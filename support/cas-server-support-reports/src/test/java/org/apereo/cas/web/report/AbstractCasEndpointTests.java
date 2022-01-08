@@ -75,7 +75,7 @@ public abstract class AbstractCasEndpointTests {
     @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
-    @TestConfiguration
+    @TestConfiguration(value = "AuditTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override

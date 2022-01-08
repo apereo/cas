@@ -58,7 +58,7 @@ public class GrouperPersonAttributeDaoTests {
         assertTrue(attributes.containsKey("phone"));
     }
 
-    @TestConfiguration("GrouperPersonAttributeDaoTestConfiguration")
+    @TestConfiguration(value = "GrouperPersonAttributeDaoTestConfiguration", proxyBeanMethods = false)
     public static class GrouperPersonAttributeDaoTestConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
 
         @Override

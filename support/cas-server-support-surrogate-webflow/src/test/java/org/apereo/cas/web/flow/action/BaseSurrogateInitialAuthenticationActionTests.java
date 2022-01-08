@@ -83,7 +83,7 @@ import org.springframework.context.annotation.Lazy;
     "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"
 )
 public class BaseSurrogateInitialAuthenticationActionTests {
-    @TestConfiguration
+    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class TestAuthenticationConfiguration {
         @Bean

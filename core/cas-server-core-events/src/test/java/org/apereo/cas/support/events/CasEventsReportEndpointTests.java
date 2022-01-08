@@ -81,7 +81,7 @@ public class CasEventsReportEndpointTests {
         assertFalse(result.isEmpty());
     }
 
-    @TestConfiguration("CasEventsReportEndpointTestConfiguration")
+    @TestConfiguration(value = "CasEventsReportEndpointTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class CasEventsReportEndpointTestConfiguration {
         @Bean

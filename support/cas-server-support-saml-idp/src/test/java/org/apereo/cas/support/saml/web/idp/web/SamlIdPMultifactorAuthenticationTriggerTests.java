@@ -76,7 +76,7 @@ public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWeb
         assertTrue(result.isPresent());
     }
 
-    @TestConfiguration("MultifactorTestConfiguration")
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

@@ -169,7 +169,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     /**
      * The type Test webflow context configuration.
      */
-    @TestConfiguration("testWebflowContextConfiguration")
+    @TestConfiguration(value = "testWebflowContextConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class TestWebflowContextConfiguration {
         private static final String TEST = "test";

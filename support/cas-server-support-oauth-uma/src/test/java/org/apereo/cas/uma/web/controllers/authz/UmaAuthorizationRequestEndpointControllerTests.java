@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyPermTicketNoPolicy() {
+    public void verifyPermTicketNoPolicy() throws Exception {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));
 
         var results = authenticateUmaRequestWithAuthorizationScope();
@@ -46,7 +46,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyAuthorizationOperation() {
+    public void verifyAuthorizationOperation() throws Exception {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));
 
         var results = authenticateUmaRequestWithAuthorizationScope();
@@ -65,7 +65,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyMismatchedClaims() {
+    public void verifyMismatchedClaims() throws Exception {
         val permissionTicket = getPermissionTicketWith(List.of("delete", "open"));
         val results = authenticateUmaRequestWithAuthorizationScope();
 
@@ -88,7 +88,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyMissingGrant() {
+    public void verifyMissingGrant() throws Exception {
         var results = authenticateUmaRequestWithAuthorizationScope();
         var authzRequest = new UmaAuthorizationRequest().toJson();
         var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,

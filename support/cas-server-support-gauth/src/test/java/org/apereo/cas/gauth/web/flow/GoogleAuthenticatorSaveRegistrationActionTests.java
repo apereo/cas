@@ -139,7 +139,7 @@ public class GoogleAuthenticatorSaveRegistrationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, googleSaveAccountRegistrationAction.execute(context).getId());
     }
 
-    @TestConfiguration("GoogleAuthenticatorSaveRegistrationActionTests")
+    @TestConfiguration(value = "GoogleAuthenticatorSaveRegistrationActionTests", proxyBeanMethods = false)
     public static class GoogleAuthenticatorSaveRegistrationActionTestConfiguration {
         @Bean
         public IGoogleAuthenticator googleAuthenticatorInstance() {

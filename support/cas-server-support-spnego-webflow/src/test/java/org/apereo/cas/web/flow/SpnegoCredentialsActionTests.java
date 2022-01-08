@@ -81,7 +81,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, spnegoAction.execute(context).getId());
     }
     
-    @TestConfiguration("SpnegoAuthenticationTestConfiguration")
+    @TestConfiguration(value = "SpnegoAuthenticationTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SpnegoAuthenticationTestConfiguration {
         @Bean

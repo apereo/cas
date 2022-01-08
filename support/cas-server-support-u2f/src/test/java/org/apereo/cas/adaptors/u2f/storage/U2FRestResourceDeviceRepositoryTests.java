@@ -85,7 +85,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         return devices;
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)

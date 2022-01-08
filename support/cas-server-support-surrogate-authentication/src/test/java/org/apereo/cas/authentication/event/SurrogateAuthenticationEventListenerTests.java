@@ -94,7 +94,7 @@ public class SurrogateAuthenticationEventListenerTests {
         });
     }
 
-    @TestConfiguration("SurrogateAuthenticationEventListenerTestConfiguration")
+    @TestConfiguration(value = "SurrogateAuthenticationEventListenerTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SurrogateAuthenticationEventListenerTestConfiguration {
 

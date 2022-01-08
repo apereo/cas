@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 public class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
-    @TestConfiguration("MultifactorAuthenticationTestConfiguration")
+    @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {

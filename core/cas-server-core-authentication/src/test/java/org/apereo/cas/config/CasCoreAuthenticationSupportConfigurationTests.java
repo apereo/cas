@@ -90,7 +90,7 @@ public class CasCoreAuthenticationSupportConfigurationTests {
             .isEmpty());
     }
 
-    @TestConfiguration("CasCoreAuthenticationSupportConfigurationTestConfiguration")
+    @TestConfiguration(value = "CasCoreAuthenticationSupportConfigurationTestConfiguration", proxyBeanMethods = false)
     public static class CasCoreAuthenticationSupportConfigurationTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)

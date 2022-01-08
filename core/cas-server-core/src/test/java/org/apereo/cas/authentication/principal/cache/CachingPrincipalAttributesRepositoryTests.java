@@ -68,7 +68,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
 
-    @TestConfiguration("CachingPrincipalAttributeRepositoryTestConfiguration")
+    @TestConfiguration(value = "CachingPrincipalAttributeRepositoryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean

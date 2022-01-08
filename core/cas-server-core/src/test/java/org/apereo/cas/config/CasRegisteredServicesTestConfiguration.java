@@ -18,7 +18,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestConfiguration("CasRegisteredServicesTestConfiguration")
+@TestConfiguration(value = "CasRegisteredServicesTestConfiguration", proxyBeanMethods = false)
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean

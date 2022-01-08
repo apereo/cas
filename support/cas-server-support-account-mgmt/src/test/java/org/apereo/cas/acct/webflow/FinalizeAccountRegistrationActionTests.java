@@ -75,7 +75,7 @@ public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigure
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }
 
-    @TestConfiguration("FinalizeAccountRegistrationActionTestConfiguration")
+    @TestConfiguration(value = "FinalizeAccountRegistrationActionTestConfiguration", proxyBeanMethods = false)
     public static class FinalizeAccountRegistrationActionTestConfiguration {
         @Bean
         public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner() throws Exception {

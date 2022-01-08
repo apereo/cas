@@ -79,7 +79,7 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
     }
 
-    @TestConfiguration("AuthenticationAttributeTestConfiguration")
+    @TestConfiguration(value = "AuthenticationAttributeTestConfiguration", proxyBeanMethods = false)
     public static class AuthenticationAttributeTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

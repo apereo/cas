@@ -198,7 +198,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));
     }
 
-    @TestConfiguration("Cas20ResponseViewTestConfiguration")
+    @TestConfiguration(value = "Cas20ResponseViewTestConfiguration", proxyBeanMethods = false)
     public static class Cas20ResponseViewTestConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
         @Override
         public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {

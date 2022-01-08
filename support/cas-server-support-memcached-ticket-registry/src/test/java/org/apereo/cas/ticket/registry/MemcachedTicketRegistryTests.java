@@ -124,7 +124,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         });
     }
 
-    @TestConfiguration("MemcachedTicketRegistryTestConfiguration")
+    @TestConfiguration(value = "MemcachedTicketRegistryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class MemcachedTicketRegistryTestConfiguration implements ComponentSerializationPlanConfigurer {
         @Override

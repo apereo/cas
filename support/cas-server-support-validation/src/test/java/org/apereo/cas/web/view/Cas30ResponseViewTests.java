@@ -202,7 +202,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultCas30ProtocolAttributesRenderer());
     }
 
-    @TestConfiguration("AttributeRepositoryTestConfiguration")
+    @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class AttributeRepositoryTestConfiguration {
         @Bean

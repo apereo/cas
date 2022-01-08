@@ -92,7 +92,7 @@ the overlay itself, and not one that is statically compiled and made available t
 ## Other Stuff
 
 - Validation of configuration properties is now moved into a proper `ApplicationContextInitializer` component.
-- Minor improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.md), when CAS itself is acting as a SAML2 identity provider.
+- Minor improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.html), when CAS itself is acting as a SAML2 identity provider.
 
 ## Library Upgrades
 

@@ -83,7 +83,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests extends Base
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("TimedMultifactorTestConfiguration")
+    @TestConfiguration(value = "TimedMultifactorTestConfiguration", proxyBeanMethods = false)
     public static class TimedMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

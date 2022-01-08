@@ -123,7 +123,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests e
             initialAuthenticationAttemptWebflowEventResolver.resolve(context).iterator().next().getId());
     }
 
-    @TestConfiguration("MultifactorAuthenticationTestConfiguration")
+    @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

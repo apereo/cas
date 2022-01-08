@@ -212,7 +212,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
         assertEquals(TestMultifactorAuthenticationProvider.ID, resolver.resolveSingle(context).getId());
     }
 
-    @TestConfiguration("MultifactorTestConfiguration")
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

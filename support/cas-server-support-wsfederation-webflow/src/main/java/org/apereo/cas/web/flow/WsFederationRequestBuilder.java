@@ -8,10 +8,10 @@ import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,19 +35,12 @@ public class WsFederationRequestBuilder {
     public static final String PARAMETER_NAME_WSFED_CLIENTS = "wsfedUrls";
 
     private final Collection<WsFederationConfiguration> configurations;
+
     private final WsFederationHelper wsFederationHelper;
 
-    /**
-     * Gets redirect url for.
-     *
-     * @param config  the config
-     * @param service the service
-     * @param request the request
-     * @return the redirect url for
-     */
-    @SneakyThrows
-    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final WebApplicationService service,
-                                                    final HttpServletRequest request) {
+    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config,
+                                                    final WebApplicationService service,
+                                                    final HttpServletRequest request) throws Exception {
         val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
         builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
         if (service != null) {
@@ -70,7 +63,7 @@ public class WsFederationRequestBuilder {
         val clients = new ArrayList<WsFedClient>(this.configurations.size());
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val service = (WebApplicationService) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
-        this.configurations.forEach(cfg -> {
+        configurations.forEach(Unchecked.consumer(cfg -> {
             val c = new WsFedClient();
             c.setName(cfg.getName());
             val id = UUID.randomUUID().toString();
@@ -85,7 +78,7 @@ public class WsFederationRequestBuilder {
             if (cfg.isAutoRedirect()) {
                 WebUtils.putDelegatedAuthenticationProviderPrimary(context, cfg);
             }
-        });
+        }));
         context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }

@@ -278,7 +278,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         return getSamlRegisteredServiceFor(false, false, false, entityId);
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired

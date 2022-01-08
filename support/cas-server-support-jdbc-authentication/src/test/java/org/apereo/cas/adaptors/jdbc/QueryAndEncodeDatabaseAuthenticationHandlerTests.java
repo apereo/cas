@@ -221,7 +221,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
         assertEquals("user1", r.getPrincipal().getId());
     }
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

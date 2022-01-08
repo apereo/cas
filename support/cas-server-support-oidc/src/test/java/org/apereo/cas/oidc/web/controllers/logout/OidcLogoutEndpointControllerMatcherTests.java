@@ -33,7 +33,7 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
     protected OidcLogoutEndpointController oidcLogoutEndpointController;
 
     @Test
-    public void verifyBadEndpointRequest() {
+    public void verifyBadEndpointRequest() throws Exception {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -43,7 +43,7 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
     }
 
     @Test
-    public void verifyOidcLogoutWithIdTokenAndValidRegExMatchingPostLogoutRedirectUrlParams() {
+    public void verifyOidcLogoutWithIdTokenAndValidRegExMatchingPostLogoutRedirectUrlParams() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.LOGOUT_URL);
         val response = new MockHttpServletResponse();
 
@@ -67,7 +67,7 @@ public class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests 
         assertEquals("https://oauth.example.org/logout?state=abcd1234&client_id=clientid", redirectUrl);
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "OidcLogoutMatcherTestConfiguration", proxyBeanMethods = false)
     public static class OidcLogoutMatcherTestConfiguration {
         @Bean(name = OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
         public OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher() {
