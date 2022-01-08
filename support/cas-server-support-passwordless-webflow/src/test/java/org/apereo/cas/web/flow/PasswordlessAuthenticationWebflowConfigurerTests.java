@@ -70,7 +70,7 @@ public class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflo
         assertNotNull(state);
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "PasswordlessAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class PasswordlessAuthenticationTestConfiguration {
         @Bean
         public CasMultifactorWebflowConfigurer dummyCasMultifactorWebflowConfigurer() {

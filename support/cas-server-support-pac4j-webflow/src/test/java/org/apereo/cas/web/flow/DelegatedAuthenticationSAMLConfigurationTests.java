@@ -49,7 +49,7 @@ public class DelegatedAuthenticationSAMLConfigurationTests {
         assertNotNull(hazelcastSAMLMessageStoreFactory);
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SAMLTestConfiguration", proxyBeanMethods = false)
     public static class SAMLTestConfiguration {
         @Bean(destroyMethod = "shutdown")
         public HazelcastInstance casTicketRegistryHazelcastInstance() {

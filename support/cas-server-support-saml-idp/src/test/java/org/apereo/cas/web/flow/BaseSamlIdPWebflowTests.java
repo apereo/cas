@@ -67,7 +67,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
         return authnRequest;
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SamlIdPMetadataTestConfiguration {
         @Autowired

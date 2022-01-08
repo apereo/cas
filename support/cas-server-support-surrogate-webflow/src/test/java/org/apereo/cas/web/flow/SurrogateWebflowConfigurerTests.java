@@ -52,7 +52,7 @@ public class SurrogateWebflowConfigurerTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("DuoSecurityTestConfiguration")
+    @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     public static class DuoSecurityTestConfiguration {
 
         @Bean

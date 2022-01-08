@@ -142,7 +142,7 @@ public abstract class BaseU2FWebflowActionTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("U2FTestConfiguration")
+    @TestConfiguration(value = "U2FTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class U2FTestConfiguration {
         @Bean

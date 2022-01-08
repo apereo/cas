@@ -75,7 +75,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
         private final Map<String, List<ConsentDecision>> records = new HashMap<>();
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "RestConsentRepositoryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class RestConsentRepositoryTestConfiguration {
 

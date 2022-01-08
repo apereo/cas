@@ -123,7 +123,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
         assertEquals("<SecurityToken id=\"abcdefgh123456\"/>", result);
     }
 
-    @TestConfiguration("DefaultRelyingPartyTokenProducerTestConfiguration")
+    @TestConfiguration(value = "DefaultRelyingPartyTokenProducerTestConfiguration", proxyBeanMethods = false)
     public static class DefaultRelyingPartyTokenProducerTestConfiguration {
         @Bean
         public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() throws Exception {

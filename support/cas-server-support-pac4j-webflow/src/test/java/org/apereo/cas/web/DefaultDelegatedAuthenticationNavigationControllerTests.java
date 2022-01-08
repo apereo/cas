@@ -110,7 +110,7 @@ public class DefaultDelegatedAuthenticationNavigationControllerTests {
     }
 
     @Test
-    public void redirectResponseToFlow() {
+    public void redirectResponseToFlow() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://sso.example.org/cas/login/CasClient");
         request.addParameter("param1", "value1");

@@ -97,7 +97,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabas
         assertNotNull(SerializationUtils.serialize(result));
     }
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

@@ -52,7 +52,7 @@ public class DefaultNotificationSenderTests {
         assertFalse(smsSender.send("1", "2", "3"));
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "DefaultNotificationSenderTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Override

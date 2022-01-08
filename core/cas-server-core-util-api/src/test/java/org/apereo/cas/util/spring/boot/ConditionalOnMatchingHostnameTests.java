@@ -94,7 +94,7 @@ public class ConditionalOnMatchingHostnameTests {
     }
 
 
-    @TestConfiguration("ConfigurationBeansDependOnHost")
+    @TestConfiguration(value = "ConfigurationBeansDependOnHost", proxyBeanMethods = false)
     @ConditionalOnMatchingHostname(name = "hostname")
     static class ConfigurationBeansDependOnHost {
 
@@ -105,7 +105,7 @@ public class ConditionalOnMatchingHostnameTests {
 
     }
 
-    @TestConfiguration("ConfigurationBeansDependOnHostAndProperty")
+    @TestConfiguration(value = "ConfigurationBeansDependOnHostAndProperty", proxyBeanMethods = false)
     @ConditionalOnProperty(name = "someproperty", havingValue="true")
     @ConditionalOnMatchingHostname(name = "hostname")
     static class ConfigurationBeansDependOnHostAndProperty {

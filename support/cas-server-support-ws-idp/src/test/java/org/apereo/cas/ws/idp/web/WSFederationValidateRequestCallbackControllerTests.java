@@ -152,7 +152,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         return registeredService;
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
     public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() {

@@ -94,7 +94,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseData
         assertNotNull(this.handler.authenticate(c));
     }
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

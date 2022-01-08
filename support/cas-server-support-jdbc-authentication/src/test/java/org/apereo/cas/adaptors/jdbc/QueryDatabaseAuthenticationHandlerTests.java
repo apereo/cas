@@ -188,7 +188,7 @@ public class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthent
         assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
     }
 
-    @TestConfiguration("TestConfiguration")
+    @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {

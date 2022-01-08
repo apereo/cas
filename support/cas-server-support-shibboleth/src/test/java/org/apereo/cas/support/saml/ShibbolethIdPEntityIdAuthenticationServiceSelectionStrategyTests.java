@@ -124,7 +124,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
         assertEquals("_ _", result.getId());
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "ShibbolethServicesTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class ShibbolethServicesTestConfiguration {
         @Bean

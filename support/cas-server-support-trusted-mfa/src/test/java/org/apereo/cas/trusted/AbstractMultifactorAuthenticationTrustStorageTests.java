@@ -130,7 +130,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("GeoLocationServiceTestConfiguration")
+    @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -108,7 +108,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
         assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SamlIdPTestConfiguration {
 

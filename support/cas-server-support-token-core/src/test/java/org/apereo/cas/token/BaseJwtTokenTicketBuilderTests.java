@@ -83,7 +83,7 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
-    @TestConfiguration("TokenTicketBuilderTestConfiguration")
+    @TestConfiguration(value = "TokenTicketBuilderTestConfiguration", proxyBeanMethods = false)
     public static class TokenTicketBuilderTestConfiguration implements InitializingBean {
         @Autowired
         @Qualifier("servicesManager")

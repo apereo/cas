@@ -127,7 +127,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 
-    @TestConfiguration("TestAuthenticationConfiguration")
+    @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class TestAuthenticationConfiguration {
         @Bean
@@ -136,7 +136,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
         }
     }
 
-    @TestConfiguration("GeoLocationServiceTestConfiguration")
+    @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {

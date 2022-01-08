@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestConfiguration("databaseAuthenticationTestConfiguration")
+@TestConfiguration(value = "databaseAuthenticationTestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Lazy(false)
 public class DatabaseAuthenticationTestConfiguration {

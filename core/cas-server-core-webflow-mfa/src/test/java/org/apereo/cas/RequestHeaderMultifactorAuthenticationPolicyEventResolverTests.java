@@ -68,7 +68,7 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolverTests exte
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
     }
 
-    @TestConfiguration("RequestHeaderMultifactorTestConfiguration")
+    @TestConfiguration(value = "RequestHeaderMultifactorTestConfiguration", proxyBeanMethods = false)
     public static class RequestHeaderMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

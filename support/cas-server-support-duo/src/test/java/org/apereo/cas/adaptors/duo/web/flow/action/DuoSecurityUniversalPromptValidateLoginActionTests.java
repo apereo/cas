@@ -151,7 +151,7 @@ public class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasW
         assertNotNull(WebUtils.getAuthenticationResult(context));
     }
 
-    @TestConfiguration("DuoSecurityUniversalPromptValidateLoginActionTestConfiguration")
+    @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)
     public static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
         public MultifactorAuthenticationProviderBean

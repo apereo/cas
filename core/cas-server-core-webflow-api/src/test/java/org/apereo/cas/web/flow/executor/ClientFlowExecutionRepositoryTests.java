@@ -84,7 +84,7 @@ public class ClientFlowExecutionRepositoryTests {
         assertEquals("lasagnaDinner", resumeResult.getOutcome().getId());
     }
 
-    @TestConfiguration("WebflowTestConfiguration")
+    @TestConfiguration(value = "WebflowTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class WebflowTestConfiguration {
         @Autowired

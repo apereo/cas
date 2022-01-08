@@ -57,7 +57,7 @@ public class AcmeCertificateManagerTests extends BaseAcmeTests {
         acmeCertificateManager.fetchCertificate(casProperties.getAcme().getDomains());
     }
 
-    @TestConfiguration("AcmeTestConfiguration")
+    @TestConfiguration(value = "AcmeTestConfiguration", proxyBeanMethods = false)
     public static class AcmeTestConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

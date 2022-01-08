@@ -46,7 +46,7 @@ public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
         assertEquals(1, newTicketRegistry.deleteTicket(new MockTicketGrantingTicket("casuser")));
     }
 
-    @TestConfiguration("EhcacheTicketRegistryTestConfiguration")
+    @TestConfiguration(value = "EhcacheTicketRegistryTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean

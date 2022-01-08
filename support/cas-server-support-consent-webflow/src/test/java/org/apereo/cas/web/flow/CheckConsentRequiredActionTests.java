@@ -115,7 +115,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
         return registeredService;
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "ConsentTestConfiguration", proxyBeanMethods = false)
     static class ConsentTestConfiguration {
         @Bean
         public ConsentableAttributeBuilder testConsentableAttributeBuilder() {

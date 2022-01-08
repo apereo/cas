@@ -152,7 +152,7 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
             () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"), cred));
     }
 
-    @TestConfiguration("GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration")
+    @TestConfiguration(value = "GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration", proxyBeanMethods = false)
     public static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
         @Bean
         public IGoogleAuthenticator googleAuthenticatorInstance() {

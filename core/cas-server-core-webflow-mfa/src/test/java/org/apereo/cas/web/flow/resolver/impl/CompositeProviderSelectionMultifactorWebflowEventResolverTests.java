@@ -119,7 +119,7 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolverTests exte
         return result;
     }
 
-    @TestConfiguration("MultifactorTestConfiguration")
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

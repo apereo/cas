@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(OidcServerDiscoverySettingsFactoryTests.OidcAuthenticationContextTestConfiguration.class)
 public class OidcServerDiscoverySettingsFactoryTests extends AbstractOidcTests {
 
-    @TestConfiguration("OidcAuthenticationContextTestConfiguration")
+    @TestConfiguration(value = "OidcAuthenticationContextTestConfiguration", proxyBeanMethods = false)
     public static class OidcAuthenticationContextTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

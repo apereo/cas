@@ -129,7 +129,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
         assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class SamlIdPTestConfiguration {
         @Bean

@@ -103,7 +103,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("CasSimpleMultifactorTestConfiguration")
+    @TestConfiguration(value = "CasSimpleMultifactorTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean

@@ -98,7 +98,7 @@ public abstract class BaseYubiKeyTests {
     public static class SharedTestConfiguration {
     }
 
-    @TestConfiguration("YubiKeyTestConfiguration")
+    @TestConfiguration(value = "YubiKeyTestConfiguration", proxyBeanMethods = false)
     public static class YubiKeyTestConfiguration {
         private static final String BAD_TOKEN = "123456";
 

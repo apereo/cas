@@ -77,7 +77,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests exten
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("GroovyMultifactorTestConfiguration")
+    @TestConfiguration(value = "GroovyMultifactorTestConfiguration", proxyBeanMethods = false)
     public static class GroovyMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

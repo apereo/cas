@@ -97,7 +97,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "ElectronicFenceTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class ElectronicFenceTestConfiguration {
         @Bean

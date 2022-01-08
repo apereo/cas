@@ -92,7 +92,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 
-    @TestConfiguration("ProxyTestConfiguration")
+    @TestConfiguration(value = "ProxyTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class ProxyTestConfiguration {
         @Bean

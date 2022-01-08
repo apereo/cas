@@ -36,7 +36,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestConfiguration("SoapAuthenticationServerTestConfiguration")
+@TestConfiguration(value = "SoapAuthenticationServerTestConfiguration", proxyBeanMethods = false)
 @EnableWs
 @ComponentScan("org.apereo.cas")
 @Lazy(false)

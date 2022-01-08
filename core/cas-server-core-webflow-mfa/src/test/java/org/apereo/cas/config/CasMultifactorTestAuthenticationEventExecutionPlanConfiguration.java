@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestConfiguration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
+@TestConfiguration(value = "CasMultifactorTestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @Lazy(false)
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration {
     @Bean

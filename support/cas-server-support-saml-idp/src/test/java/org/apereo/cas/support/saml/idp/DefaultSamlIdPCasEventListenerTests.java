@@ -50,7 +50,7 @@ public class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfiguratio
         assertDoesNotThrow(() -> applicationContext.publishEvent(event));
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "SamlIdPLocatorFailsTestConfiguration", proxyBeanMethods = false)
     public static class SamlIdPLocatorFailsTestConfiguration {
         @Bean
         public SamlIdPMetadataLocator samlIdPMetadataLocator() throws Exception {

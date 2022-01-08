@@ -99,7 +99,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
         }
     }
 
-    @TestConfiguration("JaasAuthenticationHandlersConfigurationTestConfiguration")
+    @TestConfiguration(value = "JaasAuthenticationHandlersConfigurationTestConfiguration", proxyBeanMethods = false)
     public static class JaasAuthenticationHandlersConfigurationTestConfiguration {
 
         @Bean

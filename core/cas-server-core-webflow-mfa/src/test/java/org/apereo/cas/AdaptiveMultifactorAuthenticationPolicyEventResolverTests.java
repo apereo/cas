@@ -89,7 +89,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("AdaptiveMultifactorTestConfiguration")
+    @TestConfiguration(value = "AdaptiveMultifactorTestConfiguration", proxyBeanMethods = false)
     public static class AdaptiveMultifactorTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {

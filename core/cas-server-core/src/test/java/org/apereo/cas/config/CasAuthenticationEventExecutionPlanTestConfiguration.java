@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Lazy;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@TestConfiguration("casTestAuthenticationEventExecutionPlanConfiguration")
+@TestConfiguration(value = "casTestAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 @Lazy(false)
 public class CasAuthenticationEventExecutionPlanTestConfiguration {
     @Autowired

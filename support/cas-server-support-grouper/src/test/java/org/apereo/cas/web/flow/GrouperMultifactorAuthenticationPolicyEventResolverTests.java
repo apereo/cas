@@ -68,7 +68,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
         assertEquals(TestMultifactorAuthenticationProvider.ID, event.iterator().next().getId());
     }
 
-    @TestConfiguration("GrouperTestConfiguration")
+    @TestConfiguration(value = "GrouperTestConfiguration", proxyBeanMethods = false)
     @Lazy(false)
     public static class GrouperTestConfiguration {
         @Bean

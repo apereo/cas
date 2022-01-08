@@ -65,7 +65,7 @@ public class OAuth20LogoutReplicateSessionTests {
         verify(OAuthDistributedSessionTestConfiguration.SESSION_STORE).destroySession(any(JEEContext.class));
     }
 
-    @TestConfiguration("OAuthDistributedSessionTestConfiguration")
+    @TestConfiguration(value = "OAuthDistributedSessionTestConfiguration", proxyBeanMethods = false)
     public static class OAuthDistributedSessionTestConfiguration {
 
         private static final SessionStore SESSION_STORE = mock(SessionStore.class);

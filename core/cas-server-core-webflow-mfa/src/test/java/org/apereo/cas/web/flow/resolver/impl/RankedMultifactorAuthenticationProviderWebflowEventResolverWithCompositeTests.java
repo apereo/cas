@@ -88,7 +88,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverWithComp
         assertEquals(CasWebflowConstants.STATE_ID_MFA_COMPOSITE, resolver.resolveSingle(context).getId());
     }
 
-    @TestConfiguration("MultifactorTestConfiguration")
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorTestConfiguration {
 
         @Bean

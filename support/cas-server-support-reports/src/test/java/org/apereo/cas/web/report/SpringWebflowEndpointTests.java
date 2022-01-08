@@ -53,7 +53,7 @@ public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
         assertNotNull(all);
     }
 
-    @TestConfiguration("SpringWebflowEndpointTestConfiguration")
+    @TestConfiguration(value = "SpringWebflowEndpointTestConfiguration", proxyBeanMethods = false)
     public static class SpringWebflowEndpointTestConfiguration {
 
         @Autowired

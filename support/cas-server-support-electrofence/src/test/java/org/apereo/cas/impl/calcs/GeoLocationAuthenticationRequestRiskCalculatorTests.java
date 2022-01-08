@@ -75,7 +75,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
         assertTrue(score.isHighestRisk());
     }
 
-    @TestConfiguration("GeoLocationServiceTestConfiguration")
+    @TestConfiguration(value = "GeoLocationServiceTestConfiguration", proxyBeanMethods = false)
     public static class GeoLocationServiceTestConfiguration {
         @Bean
         public GeoLocationService geoLocationService() {
