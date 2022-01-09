@@ -45,7 +45,7 @@ versions can be detected via the <code>java -version</code> command.</p></div>
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS 
 signing certificate and made it available to CAS at a location that can be resolved at runtime.
 
-{% include_cached casproperties.html properties="cas.authn.wsfed[0]" %}
+{% include_cached casproperties.html properties="cas.authn.wsfed[]." %}
 
 ## Encrypted Assertions
 
