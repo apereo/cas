@@ -291,6 +291,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         val servicesMap = configurationContext.getServiceRegistry().load()
             .stream()
             .filter(this::supports)
+            .filter(this::validateAndFilterServiceByEnvironment)
             .peek(this::loadInternal)
             .collect(Collectors.toMap(r -> {
                 LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
