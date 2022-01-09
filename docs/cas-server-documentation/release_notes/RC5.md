@@ -101,3 +101,4 @@ the overlay itself, and not one that is statically compiled and made available t
 - Twilio
 - Amazon SDK
 - SpotBugs
+- DuoSecurity Client
