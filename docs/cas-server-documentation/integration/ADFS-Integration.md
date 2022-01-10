@@ -47,6 +47,14 @@ signing certificate and made it available to CAS at a location that can be resol
 
 {% include_cached casproperties.html properties="cas.authn.wsfed[]." %}
 
+## Signed Assertions
+
+CAS is able to ascertain the validity of assertion signatures using dedicated certificate files that are defined
+via CAS settings. Certificate files and resources may be defined statically as file-system resources that are
+available to CAS to load and use, or the signing resource may point to ADFS federation metadata (either as a URL or XML file). 
+When using the federation metadata, the signing certificate is extracted from the `IDPSSODescriptor` key descriptor 
+that is marked for signing.
+
 ## Encrypted Assertions
 
 CAS is able to automatically decrypt SAML assertions that are issued by ADFS. To do this,

@@ -16,7 +16,6 @@ import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class X509RestMultipartBodyCredentialFactory implements RestHttpRequestCr
         if (StringUtils.isBlank(cert)) {
             return new ArrayList<>(0);
         }
-        try (InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8))) {
+        try (val is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8))) {
             val iso = new InputStreamResource(is);
             val certificate = CertUtils.readCertificate(iso);
             val credential = new X509CertificateCredential(new X509Certificate[]{certificate});

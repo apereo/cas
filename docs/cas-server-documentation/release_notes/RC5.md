@@ -88,6 +88,11 @@ The collection of reference configuration properties produced by the [CAS Initia
 are now removed and the functionality is now moved to the produced overlay itself using dedicated Gradle tasks. This is done so
 that the collection of properties, produced based on CAS configuration metadata, accurately reflect the CAS version used by
 the overlay itself, and not one that is statically compiled and made available to the CAS Initializer itself. 
+ 
+### ADFS Integration
+
+The [CAS Integration with ADFS](../integration/ADFS-Integration.html) is now able to automatically determine the 
+signing certificates from the federation metadata file as an option.
 
 ## Other Stuff
 
