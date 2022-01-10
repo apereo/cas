@@ -107,3 +107,4 @@ signing certificates from the federation metadata file as an option.
 - Amazon SDK
 - SpotBugs
 - DuoSecurity Client
+- HikariCP
