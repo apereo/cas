@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCoo
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
@@ -36,7 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link WsFedAuthenticationEventExecutionPlanConfiguration}.
@@ -61,8 +62,10 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             return WsFederationAttributeMutator.noOp();
         }
 
-        private static WsFederationConfiguration getWsFederationConfiguration(final WsFederationDelegationProperties wsfed,
-                                                                              final ConfigurableApplicationContext applicationContext) {
+        private static WsFederationConfiguration getWsFederationConfiguration(
+            final WsFederationDelegationProperties wsfed,
+            final OpenSamlConfigBean openSamlConfigBean,
+            final ConfigurableApplicationContext applicationContext) {
             val config = new WsFederationConfiguration();
             config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
             config.setIdentityAttribute(wsfed.getIdentityAttribute());
@@ -70,8 +73,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
             config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
             config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
-            org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())
-                .forEach(s -> config.getSigningCertificateResources().add(applicationContext.getResource(s)));
+            config.setSigningCertificates(wsfed.getSigningCertificateResources());
             org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey()).forEach(
                 s -> config.setEncryptionPrivateKey(applicationContext.getResource(s)));
             org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate()).forEach(
@@ -82,7 +84,6 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             config.setName(wsfed.getName());
             config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
             FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
-            config.initialize();
             return config;
         }
 
@@ -93,27 +94,28 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         }
 
         private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
-            val crypto = cookie.getCrypto();
-            if (crypto.isEnabled()) {
-                return CipherExecutorUtils.newStringCipherExecutor(crypto, WsFederationCookieCipherExecutor.class);
-            }
-            LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
-                        + "MAY NOT be safe in a production environment. "
-                        + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
-            return CipherExecutor.noOp();
+            return FunctionUtils.doIf(cookie.getCrypto().isEnabled(),
+                () -> CipherExecutorUtils.newStringCipherExecutor(cookie.getCrypto(), WsFederationCookieCipherExecutor.class),
+                () -> {
+                    LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
+                                + "MAY NOT be safe in a production environment. "
+                                + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
+                    return CipherExecutor.noOp();
+                }).get();
         }
 
         @ConditionalOnMissingBean(name = "wsFederationConfigurations")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<WsFederationConfiguration> wsFederationConfigurations(
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean openSamlConfigBean,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            val col = new HashSet<WsFederationConfiguration>();
-            casProperties.getAuthn().getWsfed().forEach(wsfed -> {
-                val cfg = getWsFederationConfiguration(wsfed, applicationContext);
-                col.add(cfg);
-            });
+            val col = casProperties.getAuthn().getWsfed()
+                .stream()
+                .map(wsfed -> getWsFederationConfiguration(wsfed, openSamlConfigBean, applicationContext))
+                .collect(Collectors.toSet());
             return BeanContainer.of(col);
         }
 

@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutatorTests;
 import org.apereo.cas.support.wsfederation.WsFederationHelperTests;
 import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttributeMutatorTests;
+import org.apereo.cas.support.wsfederation.authentication.crypto.WsFederationMetadataCertificateProviderTests;
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandlerTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolverAllResolutionTests;
@@ -24,6 +25,7 @@ import org.junit.platform.suite.api.Suite;
     WsFederationCredentialsToPrincipalResolverAllResolutionTests.class,
     WsFederationCredentialsToPrincipalResolverCasResolutionTests.class,
     WsFederationHelperTests.class,
+    WsFederationMetadataCertificateProviderTests.class,
     WsFederationAuthenticationHandlerTests.class,
     WsFederationNavigationControllerTests.class,
     WsFederationCookieManagerTests.class,

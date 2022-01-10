@@ -56,7 +56,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
 
         LOGGER.debug("Loading keystore file...");
         val keystoreFile = File.createTempFile("key", "store");
-        try (OutputStream outputStream = new FileOutputStream(keystoreFile)) {
+        try (val outputStream = new FileOutputStream(keystoreFile)) {
             IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
         }
 
@@ -97,7 +97,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
 
         LOGGER.debug("Loading LDIF file...");
         val ldif = File.createTempFile("ldiff", "file");
-        try (OutputStream outputStream = new FileOutputStream(ldif)) {
+        try (val outputStream = new FileOutputStream(ldif)) {
             IOUtils.copy(ldifFile, outputStream);
         }
 

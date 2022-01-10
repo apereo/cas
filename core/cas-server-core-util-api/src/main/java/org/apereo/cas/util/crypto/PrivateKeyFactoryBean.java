@@ -14,7 +14,6 @@ import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -47,7 +46,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     private PrivateKey readPemPrivateKey() {
         LOGGER.trace("Attempting to read as PEM [{}]", this.location);
-        try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
+        try (val in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
              val br = new BufferedReader(in);
              val pp = new PEMParser(br)) {
 

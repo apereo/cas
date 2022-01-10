@@ -47,7 +47,6 @@ public class WsFederationAuthenticationConfiguration {
 
     }
 
-
     @Configuration(value = "WsFederationAuthenticationCookieConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WsFederationAuthenticationCookieConfiguration {
