@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCoo
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
@@ -64,7 +63,6 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
         private static WsFederationConfiguration getWsFederationConfiguration(
             final WsFederationDelegationProperties wsfed,
-            final OpenSamlConfigBean openSamlConfigBean,
             final ConfigurableApplicationContext applicationContext) {
             val config = new WsFederationConfiguration();
             config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
@@ -108,17 +106,14 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<WsFederationConfiguration> wsFederationConfigurations(
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val col = casProperties.getAuthn().getWsfed()
                 .stream()
-                .map(wsfed -> getWsFederationConfiguration(wsfed, openSamlConfigBean, applicationContext))
+                .map(wsfed -> getWsFederationConfiguration(wsfed, applicationContext))
                 .collect(Collectors.toSet());
             return BeanContainer.of(col);
         }
-
     }
 
     @Configuration(value = "WsFedAuthenticationEventExecutionPlanPrincipalConfiguration", proxyBeanMethods = false)

@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -84,6 +85,7 @@ public class WsFederationHelper {
 
     private final ServicesManager servicesManager;
 
+    @Setter
     private Clock clock = Clock.systemUTC();
 
     /**
