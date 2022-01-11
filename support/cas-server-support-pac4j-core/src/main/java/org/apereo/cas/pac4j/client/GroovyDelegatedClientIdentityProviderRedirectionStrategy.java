@@ -29,9 +29,10 @@ public class GroovyDelegatedClientIdentityProviderRedirectionStrategy implements
     private final WatchableGroovyScriptResource watchableScript;
 
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(final RequestContext context,
-                                                                                                            final WebApplicationService service,
-                                                                                                            final DelegatedClientIdentityProviderConfiguration provider) {
+    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+        final RequestContext context,
+        final WebApplicationService service,
+        final DelegatedClientIdentityProviderConfiguration provider) {
         val registeredService = servicesManager.findServiceBy(service);
         val args = new Object[]{context, service, registeredService, provider, LOGGER};
         return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));

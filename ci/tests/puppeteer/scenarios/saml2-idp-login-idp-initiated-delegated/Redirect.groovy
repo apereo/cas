@@ -1,5 +1,6 @@
 import org.apereo.cas.web.*
 import org.apereo.cas.web.support.*
+import org.apereo.cas.configuration.model.support.pac4j.*
 
 def run(Object[] args) {
     def requestContext = args[0]
@@ -12,7 +13,7 @@ def run(Object[] args) {
     def cname = request.getParameter("CName") as String
     logger.info("Checking ${provider.name} against CName=${cname}...")
     if ("CasClient".equalsIgnoreCase(cname)) {
-        provider.autoRedirect = true
+        provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
         logger.info("Auto-redirect set for ${provider.name}...")
     }
     provider

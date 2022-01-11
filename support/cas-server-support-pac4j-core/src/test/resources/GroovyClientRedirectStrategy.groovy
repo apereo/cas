@@ -1,4 +1,5 @@
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration
+import org.apereo.cas.configuration.model.support.delegation.*
+import org.apereo.cas.web.*
 
 def run(Object[] args) {
     def requestContext = args[0]
@@ -7,6 +8,6 @@ def run(Object[] args) {
     def provider = args[3] as DelegatedClientIdentityProviderConfiguration
     def logger = args[4]
     logger.info("Checking ${provider.name}...")
-    provider.autoRedirect = true
+    provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
     provider
 }

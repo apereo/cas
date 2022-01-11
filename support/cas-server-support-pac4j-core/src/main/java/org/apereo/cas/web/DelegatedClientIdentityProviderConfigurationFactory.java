@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -75,14 +76,14 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val redirectUrl = uriBuilder.build(queryParams).toString();
         LOGGER.debug("Final redirect url is [{}]", redirectUrl);
 
-        val autoRedirect = (Boolean) client.getCustomProperties()
-            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
+        val autoRedirect = (DelegationAutoRedirectTypes) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.NONE);
         val title = (String) client.getCustomProperties()
             .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_DISPLAY_NAME, name);
 
         val p = DelegatedClientIdentityProviderConfiguration.builder()
             .name(name)
-            .autoRedirect(autoRedirect)
+            .autoRedirectType(autoRedirect)
             .redirectUrl(redirectUrl)
             .type(type)
             .title(title)

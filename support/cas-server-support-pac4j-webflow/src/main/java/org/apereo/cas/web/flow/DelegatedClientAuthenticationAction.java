@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
@@ -189,6 +191,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             throw new UnauthorizedAuthenticationException("Authentication is not authorized: " + response.getStatus());
         }
         configContext.getDelegatedClientIdentityProviderConfigurationPostProcessor().process(context, providers);
+
+        providers
+            .stream()
+            .filter(provider -> provider.getAutoRedirectType() == DelegationAutoRedirectTypes.SERVER)
+            .findFirst()
+            .ifPresent(Unchecked.consumer(provider -> {
+                LOGGER.debug("Redirecting to [{}]", provider.getRedirectUrl());
+                response.sendRedirect(provider.getRedirectUrl());
+            }));
     }
 
     @Override

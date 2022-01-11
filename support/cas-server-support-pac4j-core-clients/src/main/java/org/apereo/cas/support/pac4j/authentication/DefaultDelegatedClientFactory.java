@@ -630,7 +630,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
                 + "Consider defining an explicit name for the delegated provider", className, genName);
         }
         val customProperties = client.getCustomProperties();
-        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
+        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, props.getAutoRedirectType());
         if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
             customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }

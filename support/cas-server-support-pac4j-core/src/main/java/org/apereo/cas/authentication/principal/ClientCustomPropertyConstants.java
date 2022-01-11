@@ -15,7 +15,7 @@ public interface ClientCustomPropertyConstants {
     /**
      * Property to indicate whether auto-redirect should execute for this client.
      */
-    String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT = "autoRedirect";
+    String CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE = "autoRedirectType";
 
     /**
      * Property to indicate the title or display name of the client

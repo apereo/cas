@@ -1,6 +1,9 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,7 +33,8 @@ public class DelegatedClientIdentityProviderConfiguration implements Serializabl
 
     private String cssClass;
 
-    private boolean autoRedirect;
+    @Builder.Default
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     private String title;
 }

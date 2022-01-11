@@ -26,6 +26,8 @@ import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -145,12 +147,13 @@ public abstract class BaseDelegatedAuthenticationTests {
             saml2Config.init();
 
             val saml2Client = new SAML2Client(saml2Config);
-            saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.TRUE);
+            saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);
             saml2Client.setCallbackUrl("http://callback.example.org");
             saml2Client.init();
 
             val casClient = new CasClient(new CasConfiguration("https://sso.example.org/cas/login"));
             casClient.setCallbackUrl("http://callback.example.org");
+            casClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.SERVER);
             casClient.init();
 
             val oidcCfg = new OidcConfiguration();
