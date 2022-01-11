@@ -148,7 +148,7 @@ jobs:
           - CheckMissingClassInTestsSuite
           - CheckMissingTestsSuiteClassAnnotation
           - CheckMissingUtilityClassAnnotation
-          - CheckRedundantTestConfigurationInheritance
+#          - CheckRedundantTestConfigurationInheritance
           - CheckSpringConfigurationBeanProxying
           - CheckSpringConfigurationFactories
           - CheckMissingTestTagAnnotation
