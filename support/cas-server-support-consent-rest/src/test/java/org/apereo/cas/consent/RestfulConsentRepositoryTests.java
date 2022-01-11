@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -76,8 +75,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @TestConfiguration(value = "RestConsentRepositoryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class RestConsentRepositoryTestConfiguration {
+        public static class RestConsentRepositoryTestConfiguration {
 
         @Bean
         public RestConsentRepositoryStorage restConsentRepositoryStorage() {

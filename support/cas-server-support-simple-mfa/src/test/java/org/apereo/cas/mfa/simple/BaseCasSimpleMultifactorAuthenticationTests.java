@@ -47,7 +47,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link BaseCasSimpleMultifactorAuthenticationTests}.
@@ -104,8 +103,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     }
 
     @TestConfiguration(value = "CasSimpleMultifactorTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
+        public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

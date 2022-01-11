@@ -278,13 +278,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectPrincipalResolver")
-    public PrincipalResolver x509SubjectPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                          @Qualifier("x509PrincipalFactory")
-                                                          final PrincipalFactory x509PrincipalFactory,
-                                                          @Qualifier("x509AttributeExtractor")
-                                                          final X509AttributeExtractor x509AttributeExtractor,
-                                                          @Qualifier("attributeRepository")
-                                                          final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val personDirectory = casProperties.getPersonDirectory();
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
@@ -299,13 +300,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectDNPrincipalResolver")
-    public PrincipalResolver x509SubjectDNPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                            @Qualifier("x509PrincipalFactory")
-                                                            final PrincipalFactory x509PrincipalFactory,
-                                                            @Qualifier("x509AttributeExtractor")
-                                                            final X509AttributeExtractor x509AttributeExtractor,
-                                                            @Qualifier("attributeRepository")
-                                                            final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectDNPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val subjectDn = x509.getSubjectDn();
         val personDirectory = casProperties.getPersonDirectory();
@@ -321,13 +323,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameUPNPrincipalResolver")
-    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                                            @Qualifier("x509PrincipalFactory")
-                                                                            final PrincipalFactory x509PrincipalFactory,
-                                                                            @Qualifier("x509AttributeExtractor")
-                                                                            final X509AttributeExtractor x509AttributeExtractor,
-                                                                            @Qualifier("attributeRepository")
-                                                                            final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val personDirectory = casProperties.getPersonDirectory();
         val subjectAltNameProperties = x509.getSubjectAltName();
@@ -343,13 +346,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SubjectAlternativeNameRFC822EmailPrincipalResolver")
-    public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                                                    @Qualifier("x509PrincipalFactory")
-                                                                                    final PrincipalFactory x509PrincipalFactory,
-                                                                                    @Qualifier("x509AttributeExtractor")
-                                                                                    final X509AttributeExtractor x509AttributeExtractor,
-                                                                                    @Qualifier("attributeRepository")
-                                                                                    final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SubjectAlternativeNameRFC822EmailPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val personDirectory = casProperties.getPersonDirectory();
         val rfc822EmailProperties = x509.getRfc822Email();
@@ -366,13 +370,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberPrincipalResolver")
-    public PrincipalResolver x509SerialNumberPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                               @Qualifier("x509PrincipalFactory")
-                                                               final PrincipalFactory x509PrincipalFactory,
-                                                               @Qualifier("x509AttributeExtractor")
-                                                               final X509AttributeExtractor x509AttributeExtractor,
-                                                               @Qualifier("attributeRepository")
-                                                               final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SerialNumberPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         return getX509SerialNumberPrincipalResolver(casProperties, attributeRepository, x509AttributeExtractor, x509PrincipalFactory);
     }
 
@@ -385,13 +390,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509SerialNumberAndIssuerDNPrincipalResolver")
-    public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                                          @Qualifier("x509PrincipalFactory")
-                                                                          final PrincipalFactory x509PrincipalFactory,
-                                                                          @Qualifier("x509AttributeExtractor")
-                                                                          final X509AttributeExtractor x509AttributeExtractor,
-                                                                          @Qualifier("attributeRepository")
-                                                                          final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val serialNoDnProperties = x509.getSerialNoDn();
         val principal = x509.getPrincipal();
@@ -408,13 +414,14 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CommonNameEDIPIPrincipalResolver")
-    public PrincipalResolver x509CommonNameEDIPIPrincipalResolver(final CasConfigurationProperties casProperties,
-                                                                  @Qualifier("x509PrincipalFactory")
-                                                                  final PrincipalFactory x509PrincipalFactory,
-                                                                  @Qualifier("x509AttributeExtractor")
-                                                                  final X509AttributeExtractor x509AttributeExtractor,
-                                                                  @Qualifier("attributeRepository")
-                                                                  final IPersonAttributeDao attributeRepository) {
+    public PrincipalResolver x509CommonNameEDIPIPrincipalResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("x509PrincipalFactory")
+        final PrincipalFactory x509PrincipalFactory,
+        @Qualifier("x509AttributeExtractor")
+        final X509AttributeExtractor x509AttributeExtractor,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         val x509 = casProperties.getAuthn().getX509();
         val cnEdipiProperties = x509.getCnEdipi();
         val principal = x509.getPrincipal();

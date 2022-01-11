@@ -70,8 +70,10 @@ public class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Bean
-        public CasWebflowExecutionPlanConfigurer testWebflowExecutionPlanConfigurer() {
-            return plan -> plan.registerWebflowConfigurer(testCasWebflowConfigurer());
+        public CasWebflowExecutionPlanConfigurer testWebflowExecutionPlanConfigurer(
+            @Qualifier("testCasWebflowConfigurer")
+            final CasWebflowConfigurer testCasWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(testCasWebflowConfigurer);
         }
 
         @Bean

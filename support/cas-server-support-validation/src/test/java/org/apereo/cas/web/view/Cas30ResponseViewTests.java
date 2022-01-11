@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -203,15 +202,13 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {
-            val attrs =
-                CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
-                    "eduPersonAffiliation", CollectionUtils.wrap("developer"),
-                    "groupMembership", CollectionUtils.wrap("adopters"),
-                    "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
+            val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
+                "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+                "groupMembership", CollectionUtils.wrap("adopters"),
+                "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
             return new StubPersonAttributeDao((Map) attrs);
         }
     }

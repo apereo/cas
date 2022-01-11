@@ -27,7 +27,6 @@ import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
 import org.apereo.cas.config.Pac4jDelegatedAuthenticationSerializationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -66,7 +65,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
@@ -132,8 +130,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     }
 
     @TestConfiguration(value = "Saml2ClientMetadataControllerTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class DelegatedAuthenticationWebflowTestConfiguration {
+        public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
         public Clients builtClients() throws Exception {
             val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();

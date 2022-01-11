@@ -93,7 +93,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -279,8 +278,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+        public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         private PrincipalResolver defaultPrincipalResolver;

@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -541,7 +542,7 @@ public class SamlIdPEndpointsConfiguration {
             final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory defaultTicketFactory,
-            @Qualifier("attributeRepository")
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier("ssoPostProfileHandlerDecoders")
             final HttpServletRequestXMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
