@@ -42,10 +42,11 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
     private static final long serialVersionUID = -6690808348975271382L;
 
-    public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-                                                 final HttpClient httpClient,
-                                                 final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-                                                 final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+    public BasicDuoSecurityAuthenticationService(
+        final DuoSecurityMultifactorAuthenticationProperties duoProperties,
+        final HttpClient httpClient,
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
         super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
     }
 

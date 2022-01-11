@@ -178,9 +178,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostAuthRequest() {
-        val request = new Http(HttpMethod.POST.name(),
+        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
             SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
-            String.format("/auth/v%s/auth", AUTH_API_VERSION));
+            String.format("/auth/v%s/auth", AUTH_API_VERSION)).build();
         configureHttpRequest(request);
         return request;
     }
@@ -192,9 +192,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        val request = new Http(HttpMethod.POST.name(),
+        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
             SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
-            String.format("/auth/v%s/preauth", AUTH_API_VERSION));
+            String.format("/auth/v%s/preauth", AUTH_API_VERSION)).build();
         request.addParam("username", username);
         configureHttpRequest(request);
         return request;

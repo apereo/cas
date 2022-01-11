@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -35,10 +36,11 @@ public class Pac4jBaseClientProperties implements Serializable {
     /**
      * Auto-redirect to this client.
      */
-    private boolean autoRedirect;
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     /**
-     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     * The attribute to use as the principal identifier built
+     * during and upon a successful authentication attempt.
      */
     private String principalAttributeId;
 

@@ -253,7 +253,7 @@ public class FunctionUtils {
                 try {
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
-                    throw new IllegalArgumentException(ex.getMessage());
+                    throw new IllegalArgumentException(ex);
                 }
             }
         };

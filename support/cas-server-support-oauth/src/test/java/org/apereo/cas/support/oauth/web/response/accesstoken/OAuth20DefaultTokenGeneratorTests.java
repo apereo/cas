@@ -23,6 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.LinkedHashSet;
 import java.util.UUID;
 
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,7 +61,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val at = ticketRegistry.getTicket(id, OAuth20AccessToken.class);
         assertTrue(at.getAuthentication().getAttributes().containsKey("given_name"));
     }
-    
+
     @Test
     public void verifyAccessTokenAsJwt() throws Exception {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
@@ -132,7 +133,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .deviceCode(token.getId())
             .build();
         userCode.markTicketExpired();
-        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrowsWithRootCause(IllegalArgumentException.class,
+            InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
     }
 
     @Test
@@ -150,7 +152,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
             .deviceCode(token.getId())
             .build();
         token.markTicketExpired();
-        assertThrows(InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
+        assertThrowsWithRootCause(IllegalArgumentException.class,
+            InvalidOAuth20DeviceTokenException.class, () -> generator.generate(holder));
     }
 
     @Test
@@ -172,7 +175,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotNull(jwt.getExpirationTime());
 
         Thread.sleep(2000);
-        
+
         mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         val refreshedAt = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();

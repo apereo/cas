@@ -1,3 +1,4 @@
+import org.apereo.cas.configuration.model.support.delegation.*
 import org.apereo.cas.web.*
 import org.apereo.cas.web.support.*
 import org.springframework.webflow.execution.*
@@ -8,7 +9,7 @@ def run(Object[] args) {
     def logger = args[2]
     logger.info("Checking ${provider.name}...")
     provider.setTitle("TestTitle")
-    provider.setAutoRedirect(true)
+    provider.setAutoRedirectType(DelegationAutoRedirectTypes.CLIENT)
 
     def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)
     response.setStatus(302)

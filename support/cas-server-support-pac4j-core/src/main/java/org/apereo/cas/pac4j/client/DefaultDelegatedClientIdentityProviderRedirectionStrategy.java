@@ -2,6 +2,7 @@ package org.apereo.cas.pac4j.client;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -40,21 +41,23 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(final RequestContext context,
-                                                                                                            final WebApplicationService service,
-                                                                                                            final DelegatedClientIdentityProviderConfiguration provider) {
+    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+        final RequestContext context,
+        final WebApplicationService service,
+        final DelegatedClientIdentityProviderConfiguration provider) {
         if (service != null) {
             val registeredService = servicesManager.findServiceBy(service);
             val delegatedPolicy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
             if (delegatedPolicy.isExclusive() && delegatedPolicy.getAllowedProviders().size() == 1
                 && provider.getName().equalsIgnoreCase(delegatedPolicy.getAllowedProviders().iterator().next())) {
                 LOGGER.trace("Registered service [{}] is exclusively allowed to use provider [{}]", registeredService, provider);
-                provider.setAutoRedirect(true);
+                provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
                 return Optional.of(provider);
             }
         }
 
-        if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null && provider.isAutoRedirect()) {
+        if (WebUtils.getDelegatedAuthenticationProviderPrimary(context) == null
+            && provider.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
             LOGGER.trace("Provider [{}] is configured to auto-redirect", provider);
             return Optional.of(provider);
         }
@@ -65,7 +68,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
             val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
             if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
                 LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
-                provider.setAutoRedirect(true);
+                provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
                 return Optional.of(provider);
             }
         }
