@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -130,8 +129,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class SamlIdPTestConfiguration {
+        public static class SamlIdPTestConfiguration {
         @Bean
         public TicketValidator samlIdPTicketValidator() throws Exception {
             val validator = mock(TicketValidator.class);

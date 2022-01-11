@@ -31,7 +31,6 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.Objects;
@@ -123,8 +122,7 @@ public class EhcacheTicketRegistryConfiguration {
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
-    @Lazy(false)
-    @Bean
+        @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager(final CasConfigurationProperties casProperties) {
         AsciiArtUtils.printAsciiArtWarning(LOGGER,
             "CAS Integration with ehcache 2.x will be discontinued after CAS 6.2.x. Consider migrating to another type of registry.");
@@ -160,8 +158,7 @@ public class EhcacheTicketRegistryConfiguration {
      */
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @Lazy(false)
-    public TicketRegistry ticketRegistry(
+        public TicketRegistry ticketRegistry(
         @Qualifier("ticketRMISynchronousCacheReplicator")
         final CacheReplicator ticketRMISynchronousCacheReplicator,
         @Qualifier("ticketCacheBootstrapCacheLoader")

@@ -30,7 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -125,8 +124,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     }
 
     @TestConfiguration(value = "ShibbolethServicesTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class ShibbolethServicesTestConfiguration {
+        public static class ShibbolethServicesTestConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             val l = new ArrayList<RegisteredService>();

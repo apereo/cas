@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link ClientFlowExecutionRepository}.
+ *
  * @author Misagh Moayyed
  * @since 6.1
  */
@@ -65,6 +65,7 @@ public class ClientFlowExecutionRepositoryTests {
         assertThrows(ClientFlowExecutionRepositoryException.class, () -> factory.getFlowExecution(key));
 
     }
+
     @Test
     public void verifyLaunchAndResumeFlow() {
         assertNotNull(flowExecutor);
@@ -85,22 +86,40 @@ public class ClientFlowExecutionRepositoryTests {
     }
 
     @TestConfiguration(value = "WebflowTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
     public static class WebflowTestConfiguration {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
-        @Bean
-        public FlowExecutor flowExecutor() {
-            val impl = new FlowExecutionImplFactory();
-            val repo = getFlowExecutionRepository(impl);
-            impl.setExecutionKeyFactory(repo);
-            return new FlowExecutorImpl(flowRegistry(), flowExecutionFactory(), repo);
+        private static ClientFlowExecutionRepository getFlowExecutionRepository(
+            final Transcoder transcoder,
+            final FlowDefinitionRegistry flowRegistry,
+            final FlowExecutionFactory impl) {
+            val repo = new ClientFlowExecutionRepository();
+            repo.setFlowExecutionFactory(impl);
+            repo.setFlowDefinitionLocator(flowRegistry);
+            repo.setTranscoder(transcoder);
+            return repo;
         }
 
         @Bean
-        public FlowDefinitionRegistry flowRegistry() {
-            val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilder());
+        public FlowExecutor flowExecutor(
+            @Qualifier("transcoder")
+            final Transcoder transcoder,
+            @Qualifier("flowExecutionFactory")
+            final FlowExecutionFactory flowExecutionFactory,
+            @Qualifier("flowRegistry")
+            final FlowDefinitionRegistry flowRegistry) {
+            val impl = new FlowExecutionImplFactory();
+            val repo = getFlowExecutionRepository(transcoder, flowRegistry, impl);
+            impl.setExecutionKeyFactory(repo);
+            return new FlowExecutorImpl(flowRegistry, flowExecutionFactory, repo);
+        }
+
+        @Bean
+        public FlowDefinitionRegistry flowRegistry(
+            @Qualifier("flowBuilder")
+            final FlowBuilderServices flowBuilder) {
+            val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilder);
             builder.setBasePath("classpath:");
             builder.addFlowLocationPattern("/test/*-flow.xml");
             return builder.build();
@@ -115,19 +134,15 @@ public class ClientFlowExecutionRepositoryTests {
         }
 
         @Bean
-        public FlowExecutionFactory flowExecutionFactory() {
+        public FlowExecutionFactory flowExecutionFactory(
+            @Qualifier("transcoder")
+            final Transcoder transcoder,
+            @Qualifier("flowRegistry")
+            final FlowDefinitionRegistry flowRegistry) {
             val impl = new FlowExecutionImplFactory();
-            val repo = getFlowExecutionRepository(impl);
+            val repo = getFlowExecutionRepository(transcoder, flowRegistry, impl);
             impl.setExecutionKeyFactory(repo);
             return impl;
-        }
-
-        private ClientFlowExecutionRepository getFlowExecutionRepository(final FlowExecutionFactory impl) {
-            val repo = new ClientFlowExecutionRepository();
-            repo.setFlowExecutionFactory(impl);
-            repo.setFlowDefinitionLocator(flowRegistry());
-            repo.setTranscoder(transcoder());
-            return repo;
         }
 
         @Bean

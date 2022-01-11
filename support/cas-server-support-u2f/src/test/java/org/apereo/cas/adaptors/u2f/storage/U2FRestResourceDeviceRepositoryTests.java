@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,8 +85,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     }
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class RestfulServiceRegistryTestConfiguration {
 

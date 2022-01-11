@@ -13,7 +13,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,8 +55,7 @@ public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
     }
 
     @TestConfiguration(value = "OidcJpaServiceRegistryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class OidcJpaServiceRegistryTestConfiguration {
+        public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {
             return new OidcServiceRegistryListener(new DefaultOidcAttributeReleasePolicyFactory(new CasConfigurationProperties()));

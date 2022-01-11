@@ -90,7 +90,7 @@ public class TrustedAuthenticationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")
             final PrincipalFactory trustedPrincipalFactory,
-            @Qualifier("attributeRepository")
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) {
             val resolver = new ChainingPrincipalResolver(principalElectionStrategy,
                 casProperties);

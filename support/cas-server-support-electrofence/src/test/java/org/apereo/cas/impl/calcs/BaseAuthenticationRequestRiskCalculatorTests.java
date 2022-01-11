@@ -54,7 +54,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -98,8 +97,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     }
 
     @TestConfiguration(value = "ElectronicFenceTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class ElectronicFenceTestConfiguration {
+        public static class ElectronicFenceTestConfiguration {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

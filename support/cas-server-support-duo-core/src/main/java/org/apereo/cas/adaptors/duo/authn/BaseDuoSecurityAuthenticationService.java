@@ -25,11 +25,14 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.ReflectionUtils;
 
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -176,11 +179,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * Build http post auth request http.
      *
      * @return the http
+     * @throws Exception the exception
      */
-    protected Http buildHttpPostAuthRequest() {
-        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
-            SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
-            String.format("/auth/v%s/auth", AUTH_API_VERSION)).build();
+    protected Http buildHttpPostAuthRequest() throws Exception {
+        val request = buildHttpRequest("/auth/v%s/auth");
         configureHttpRequest(request);
         return request;
     }
@@ -190,13 +192,24 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      *
      * @param username the username
      * @return the http
+     * @throws Exception the exception
      */
-    protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
-            SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost()),
-            String.format("/auth/v%s/preauth", AUTH_API_VERSION)).build();
+    protected Http buildHttpPostUserPreAuthRequest(final String username) throws Exception {
+        val request = buildHttpRequest("/auth/v%s/preauth");
         request.addParam("username", username);
         configureHttpRequest(request);
+        return request;
+    }
+
+    private Http buildHttpRequest(final String format) throws Exception {
+        val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
+        val request = new Http.HttpBuilder(HttpMethod.POST.name(),
+            new URI("https://" + originalHost).getHost(),
+            String.format(format, AUTH_API_VERSION)).build();
+        val hostField = ReflectionUtils.findField(request.getClass(), "host");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
+        ReflectionUtils.setField(hostField, request, originalHost);
+
         return request;
     }
 

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -53,8 +52,7 @@ public class DefaultNotificationSenderTests {
     }
 
     @TestConfiguration(value = "DefaultNotificationSenderTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
+        public static class DefaultNotificationSenderTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Override
         public NotificationSender configureNotificationSender() {
             return NotificationSender.noOp();

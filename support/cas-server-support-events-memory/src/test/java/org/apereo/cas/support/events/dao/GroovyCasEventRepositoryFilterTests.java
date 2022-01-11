@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -21,8 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 public class GroovyCasEventRepositoryFilterTests extends InMemoryCasEventRepositoryTests {
 
     @TestConfiguration(value = "GroovyCasEventRepositoryFilterTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class GroovyCasEventRepositoryFilterTestConfiguration {
+        public static class GroovyCasEventRepositoryFilterTestConfiguration {
 
         @Bean
         public CasEventRepositoryFilter casEventRepositoryFilter() {

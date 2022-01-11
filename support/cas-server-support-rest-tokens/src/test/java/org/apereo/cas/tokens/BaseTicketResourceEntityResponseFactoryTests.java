@@ -52,7 +52,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.net.URL;
 import java.util.List;
@@ -124,8 +123,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
     protected ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
 
     @TestConfiguration(value = "TicketResourceTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class TicketResourceTestConfiguration implements InitializingBean {
+        public static class TicketResourceTestConfiguration implements InitializingBean {
 
         @Autowired
         @Qualifier("inMemoryRegisteredServices")

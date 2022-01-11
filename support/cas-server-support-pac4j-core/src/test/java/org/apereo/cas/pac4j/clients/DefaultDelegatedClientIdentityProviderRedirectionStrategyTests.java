@@ -67,6 +67,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
             .name(client)
             .type("CasClient")
             .redirectUrl("https://localhost:8443/redirect")
+            .autoRedirectType(DelegationAutoRedirectTypes.SERVER)
             .build();
     }
 
@@ -108,7 +109,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
-        provider.setAutoRedirectType(DelegationAutoRedirectTypes.CLIENT);
+        provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
 
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         configureService(policy);

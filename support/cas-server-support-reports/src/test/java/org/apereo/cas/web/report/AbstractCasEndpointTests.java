@@ -52,7 +52,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -76,8 +75,7 @@ public abstract class AbstractCasEndpointTests {
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @TestConfiguration(value = "AuditTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
+        public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override
         public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {
             plan.registerAuditTrailManager(new MockAuditTrailManager());

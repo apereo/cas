@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
@@ -141,7 +142,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             final PrincipalFactory wsfedPrincipalFactory,
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-            @Qualifier("attributeRepository")
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
