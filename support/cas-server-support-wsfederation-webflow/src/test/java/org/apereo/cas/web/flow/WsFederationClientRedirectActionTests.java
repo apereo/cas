@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -45,15 +44,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WsFederationClientRedirectActionTests {
 
     @Autowired
-    private ServerProperties serverProperties;
-
-    @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)
     protected Action wsFederationRedirectAction;
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_WS_FEDERATION)
     protected Action wsFederationAction;
+
+    @Autowired
+    private ServerProperties serverProperties;
 
     @Test
     public void verifyRequestOperation() throws Exception {
