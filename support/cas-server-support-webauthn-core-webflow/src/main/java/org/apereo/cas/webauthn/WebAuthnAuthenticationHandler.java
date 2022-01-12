@@ -15,6 +15,7 @@ import lombok.val;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 /**
  * This is {@link WebAuthnAuthenticationHandler}.
@@ -50,10 +51,8 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val webAuthnCredential = (WebAuthnCredential) credential;
-        val authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
+        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
+            "CAS has no reference to an authentication event to locate a principal");
         val principal = authentication.getPrincipal();
         val uid = principal.getId();
         val credentials = webAuthnCredentialRepository.getCredentialIdsForUsername(principal.getId());

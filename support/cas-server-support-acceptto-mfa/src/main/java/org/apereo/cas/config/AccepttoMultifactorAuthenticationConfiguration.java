@@ -38,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.keys.RsaKeyUtil;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,6 +55,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.security.PublicKey;
+import java.util.Objects;
 
 /**
  * This is {@link AccepttoMultifactorAuthenticationConfiguration}.
@@ -79,10 +79,8 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "mfaAccepttoApiPublicKey")
         public PublicKey mfaAccepttoApiPublicKey(final CasConfigurationProperties casProperties) throws Exception {
             val props = casProperties.getAuthn().getMfa().getAcceptto();
-            val location = props.getRegistrationApiPublicKey().getLocation();
-            if (location == null) {
-                throw new BeanCreationException("No registration API public key is defined for the Acceptto integration.");
-            }
+            val location = Objects.requireNonNull(props.getRegistrationApiPublicKey().getLocation(),
+                () -> "No registration API public key is defined for the Acceptto integration.");
             val factory = new PublicKeyFactoryBean(location, RsaKeyUtil.RSA);
             LOGGER.debug("Locating Acceptto registration API public key from [{}]", location);
             factory.setSingleton(false);
