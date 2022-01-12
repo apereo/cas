@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -42,7 +43,7 @@ public class WsFederationConfiguration implements Serializable {
 
     private long tolerance;
 
-    private boolean autoRedirect;
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     private WsFedPrincipalResolutionAttributesType attributesType;
 

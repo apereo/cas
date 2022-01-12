@@ -142,7 +142,8 @@
                         <ul>
                             <li class="p-1 login-provider-item" th:each="entry: ${wsfedUrls}">
                                 <a class="mdc-button mdc-button--raised w-100"
-                                   th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
+                                   th:href="@{${entry.redirectUrl}}"
+                                   th:inline="text" onload=""
                                    th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
                                    th:title="${entry.name}">
 

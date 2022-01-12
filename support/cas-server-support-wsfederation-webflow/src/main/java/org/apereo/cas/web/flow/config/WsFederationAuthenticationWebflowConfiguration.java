@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.WsFederationAction;
+import org.apereo.cas.web.flow.WsFederationClientRedirectAction;
 import org.apereo.cas.web.flow.WsFederationRequestBuilder;
 import org.apereo.cas.web.flow.WsFederationResponseValidator;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
@@ -19,6 +20,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,7 +37,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Configuration(value = "WsFederationAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 public class WsFederationAuthenticationWebflowConfiguration {
 
@@ -54,7 +56,14 @@ public class WsFederationAuthenticationWebflowConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "wsFederationAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WS_FEDERATION_REDIRECT)
+    public Action wsFederationClientRedirectAction(final ServerProperties serverProperties) {
+        return new WsFederationClientRedirectAction(serverProperties);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WS_FEDERATION)
     public Action wsFederationAction(
         @Qualifier("wsFederationRequestBuilder")
         final WsFederationRequestBuilder wsFederationRequestBuilder,

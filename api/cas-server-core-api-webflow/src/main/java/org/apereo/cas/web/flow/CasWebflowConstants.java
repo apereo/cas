@@ -601,6 +601,16 @@ public interface CasWebflowConstants {
     String STATE_ID_WARN = "warn";
 
     /**
+     * The state id 'wsFederationStart'.
+     */
+    String STATE_ID_WS_FEDERATION_START = "wsFederationStart";
+
+    /**
+     * The state id 'wsFederationRedirect'.
+     */
+    String STATE_ID_WS_FEDERATION_REDIRECT = "wsFederationRedirect";
+
+    /**
      * The state id 'renewRequestCheck'.
      */
     String STATE_ID_RENEW_REQUEST_CHECK = "renewRequestCheck";
@@ -1450,5 +1460,15 @@ public interface CasWebflowConstants {
      * Action id 'webAuthnValidateSessionCredentialTokenAction .
      */
     String ACTION_ID_WEBAUTHN_VALIDATE_SESSION_CREDENTIAL_TOKEN = "webAuthnValidateSessionCredentialTokenAction";
+
+    /**
+     * Action id 'wsFederationAction'.
+     */
+    String ACTION_ID_WS_FEDERATION = "wsFederationAction";
+
+    /**
+     * Action id 'wsFederationClientRedirectAction'.
+     */
+    String ACTION_ID_WS_FEDERATION_REDIRECT = "wsFederationClientRedirectAction";
 
 }

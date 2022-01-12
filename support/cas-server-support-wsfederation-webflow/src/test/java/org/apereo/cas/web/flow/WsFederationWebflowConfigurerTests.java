@@ -46,7 +46,7 @@ public class WsFederationWebflowConfigurerTests extends BaseWebflowConfigurerTes
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
-        var state = (TransitionableState) flow.getState(WsFederationWebflowConfigurer.STATE_ID_WS_FEDERATION_ACTION);
+        var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_WS_FEDERATION_START);
         assertNotNull(state);
     }
 }
