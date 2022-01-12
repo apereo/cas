@@ -67,7 +67,7 @@ public class AuthyAuthenticationHandlerTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
 
-        assertThrows(IllegalArgumentException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
+        assertThrows(NullPointerException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
     }

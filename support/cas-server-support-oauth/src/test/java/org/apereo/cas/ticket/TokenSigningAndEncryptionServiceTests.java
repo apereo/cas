@@ -45,7 +45,7 @@ public class TokenSigningAndEncryptionServiceTests extends AbstractOAuth20Tests 
         when(service.decode(anyString(), any())).thenCallRealMethod();
         when(service.verifySignature(anyString(), any())).thenReturn(null);
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
             () -> service.decode(UUID.randomUUID().toString(), Optional.empty()));
     }
 
