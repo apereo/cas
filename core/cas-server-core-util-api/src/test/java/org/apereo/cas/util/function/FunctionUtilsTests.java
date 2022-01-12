@@ -96,15 +96,15 @@ public class FunctionUtilsTests {
     @Test
     public void verifyDoAndHandle() {
         assertThrows(IllegalArgumentException.class,
-            () -> FunctionUtils.doAndHandle(o -> {
+            () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
                 throw new IllegalArgumentException();
-            }, (CheckedFunction<Throwable, Boolean>) o -> {
+            }, o -> {
                 throw new IllegalArgumentException();
             }).apply(Void.class));
 
-        assertFalse(FunctionUtils.doAndHandle(o -> {
+        assertFalse(FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) o -> {
             throw new IllegalArgumentException();
-        }, (CheckedFunction<Throwable, Boolean>) o -> false).apply(Void.class));
+        }, o -> false).apply(Void.class));
     }
 
     @Test

@@ -40,7 +40,7 @@ public class CasCoreNotificationsConfigurationTests {
     private NotificationSender notificationSender;
 
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Autowired

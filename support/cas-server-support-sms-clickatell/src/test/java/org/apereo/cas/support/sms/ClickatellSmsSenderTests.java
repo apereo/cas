@@ -33,7 +33,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Tag("SMS")
 public class ClickatellSmsSenderTests {
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test

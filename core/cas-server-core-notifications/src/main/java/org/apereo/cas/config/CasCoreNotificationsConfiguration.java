@@ -47,7 +47,7 @@ public class CasCoreNotificationsConfiguration {
     public CommunicationsManager communicationsManager(
         @Qualifier("mailSender")
         final ObjectProvider<JavaMailSender> mailSender,
-        @Qualifier("smsSender")
+        @Qualifier(SmsSender.BEAN_NAME)
         final SmsSender smsSender,
         @Qualifier("notificationSender")
         final NotificationSender notificationSender) {
@@ -55,7 +55,7 @@ public class CasCoreNotificationsConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "smsSender")
+    @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SmsSender smsSender(final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();

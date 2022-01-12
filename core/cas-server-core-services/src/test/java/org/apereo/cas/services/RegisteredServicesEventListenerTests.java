@@ -122,7 +122,7 @@ public class RegisteredServicesEventListenerTests {
     @TestConfiguration(value = "RegisteredServicesEventListenerTestConfiguration", proxyBeanMethods = false)
         public static class RegisteredServicesEventListenerTestConfiguration {
 
-        @ConditionalOnMissingBean(name = "smsSender")
+        @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

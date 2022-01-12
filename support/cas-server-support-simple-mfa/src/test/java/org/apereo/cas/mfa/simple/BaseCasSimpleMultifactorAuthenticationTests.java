@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSerializationConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -73,7 +74,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration.class,
         CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class,
         CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
-        
+
         CasCoreLogoutConfiguration.class,
         CasWebflowContextConfiguration.class,
         CasCoreWebflowConfiguration.class,
@@ -82,6 +83,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreWebConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreTicketsSerializationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
@@ -103,7 +105,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     }
 
     @TestConfiguration(value = "CasSimpleMultifactorTestConfiguration", proxyBeanMethods = false)
-        public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
+    public static class CasSimpleMultifactorTestConfiguration implements NotificationSenderExecutionPlanConfigurer {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();
