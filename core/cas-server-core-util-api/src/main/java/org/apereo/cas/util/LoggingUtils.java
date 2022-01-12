@@ -70,13 +70,14 @@ public class LoggingUtils {
 
     /**
      * Get first non-null exception message, and return class name if all messages null.
+     *
      * @param throwable Top level throwable
      * @return String containing first non-null exception message, or Throwable simple class name
      */
     static String getMessage(final Throwable throwable) {
         if (StringUtils.isEmpty(throwable.getMessage())) {
             val message = ExceptionUtils.getThrowableList(throwable)
-                    .stream().map(Throwable::getMessage).filter(Objects::nonNull).findFirst();
+                .stream().map(Throwable::getMessage).filter(Objects::nonNull).findFirst();
             if (message.isPresent()) {
                 return message.get();
             }
