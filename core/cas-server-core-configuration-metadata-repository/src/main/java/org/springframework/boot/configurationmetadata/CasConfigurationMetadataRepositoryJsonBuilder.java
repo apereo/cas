@@ -56,9 +56,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      * @return this builder
      */
     public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
-        if (inputStream == null) {
-            throw new IllegalArgumentException("InputStream must not be null.");
-        }
+        Objects.requireNonNull(inputStream, "InputStream must not be null.");
         this.repositories.add(add(inputStream, charset));
         return this;
     }

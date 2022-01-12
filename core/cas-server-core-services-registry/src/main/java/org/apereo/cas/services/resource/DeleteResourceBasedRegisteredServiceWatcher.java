@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * This is {@link DeleteResourceBasedRegisteredServiceWatcher}.
@@ -24,17 +25,20 @@ public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBas
 
     @Override
     public void accept(final File file) {
-        LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
-        val service = serviceRegistryDao.getRegisteredServiceFromFile(file);
-        if (service != null) {
-            serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-            serviceRegistryDao.removeRegisteredService(service);
-            LOGGER.debug("Successfully deleted service definition [{}]", service.getName());
-            serviceRegistryDao.publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
-        } else {
-            LOGGER.warn("Unable to locate a matching service definition from file [{}]. Reloading cache...", file);
-            val results = serviceRegistryDao.load();
-            serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results));
+        val fileName = file.getName();
+        if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
+            LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
+            val service = serviceRegistryDao.getRegisteredServiceFromFile(file);
+            if (service != null) {
+                serviceRegistryDao.publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+                serviceRegistryDao.removeRegisteredService(service);
+                LOGGER.debug("Successfully deleted service definition [{}]", service.getName());
+                serviceRegistryDao.publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            } else {
+                LOGGER.warn("Unable to locate a matching service definition from file [{}]. Reloading cache...", file);
+                val results = serviceRegistryDao.load();
+                serviceRegistryDao.publishEvent(new CasRegisteredServicesLoadedEvent(this, results));
+            }
         }
     }
 }

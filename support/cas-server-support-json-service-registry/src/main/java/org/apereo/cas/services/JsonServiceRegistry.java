@@ -33,7 +33,8 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     private static final String FILE_EXTENSION = "json";
 
-    public JsonServiceRegistry(final Resource configDirectory, final WatcherService serviceRegistryConfigWatcher,
+    public JsonServiceRegistry(final Resource configDirectory,
+                               final WatcherService serviceRegistryConfigWatcher,
                                final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
