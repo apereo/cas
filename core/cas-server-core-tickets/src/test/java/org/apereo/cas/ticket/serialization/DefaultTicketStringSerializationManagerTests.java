@@ -77,6 +77,6 @@ public class DefaultTicketStringSerializationManagerTests {
         assertThrows(NullPointerException.class, () -> ticketSerializationManager.serializeTicket(mock(Ticket.class)));
         assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, StringUtils.EMPTY));
         assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, "something"));
-        assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, mock(Ticket.class).getClass()));
+        assertThrows(NullPointerException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, mock(Ticket.class).getClass()));
     }
 }
