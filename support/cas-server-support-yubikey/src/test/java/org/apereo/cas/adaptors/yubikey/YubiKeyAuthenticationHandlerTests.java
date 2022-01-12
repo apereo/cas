@@ -67,7 +67,7 @@ public class YubiKeyAuthenticationHandlerTests {
         ExternalContextHolder.setExternalContext(context.getExternalContext());
 
         val handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
-        assertThrows(IllegalArgumentException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
+        assertThrows(NullPointerException.class, () -> handler.authenticate(new YubiKeyCredential(OTP)));
     }
 
     @Test

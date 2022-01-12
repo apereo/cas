@@ -52,16 +52,16 @@ public class U2FAuthenticationHandlerTests {
     @Test
     public void verifyOperation() throws Exception {
         val token = '{'
-            + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\","
-            + "\"clientData\":\"eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiTkVuQUVaUE9vU1R2R"
-            + "DMzY3JUZWQ4WUVOaXp2V1o1bXVGWllmZllwM0FlVSIsIm9yaWdpbiI6Imh0dHBzOi8vbW1vYXl5ZWQudW5pY29uLm5ldDo4NDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9\","
-            + "\"signatureData\":\"AQAAABQwRgIhAJ_VcJ7WFDyaW2rf2fXVqpmh7nV9G8fULDiX9cHEdjZjAiEA0zJ2_dFS42wYi062yhEYyqDnA3mDX3PKvFzo7EorZs0\""
-            + '}';
+                    + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\","
+                    + "\"clientData\":\"eyJ0eXAiOiJuYXZpZ2F0b3IuaWQuZ2V0QXNzZXJ0aW9uIiwiY2hhbGxlbmdlIjoiTkVuQUVaUE9vU1R2R"
+                    + "DMzY3JUZWQ4WUVOaXp2V1o1bXVGWllmZllwM0FlVSIsIm9yaWdpbiI6Imh0dHBzOi8vbW1vYXl5ZWQudW5pY29uLm5ldDo4NDQzIiwiY2lkX3B1YmtleSI6InVudXNlZCJ9\","
+                    + "\"signatureData\":\"AQAAABQwRgIhAJ_VcJ7WFDyaW2rf2fXVqpmh7nV9G8fULDiX9cHEdjZjAiEA0zJ2_dFS42wYi062yhEYyqDnA3mDX3PKvFzo7EorZs0\""
+                    + '}';
 
         val authnData = "{\"appId\":\"https://mmoayyed.unicon.net:8443\","
-            + "\"challenge\":\"NEnAEZPOoSTvD33crTPasswordlessAuthenticationWebflowConfigurerTestsed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
-            + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"appId\":\"https://mmoayyed.unicon.net:8443\","
-            + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\"}]}";
+                        + "\"challenge\":\"NEnAEZPOoSTvD33crTPasswordlessAuthenticationWebflowConfigurerTestsed8YENizvWZ5muFZYffYp3AeU\",\"signRequests\":[{\"version\":\"U2F_V2\","
+                        + "\"challenge\":\"NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU\",\"appId\":\"https://mmoayyed.unicon.net:8443\","
+                        + "\"keyHandle\":\"2_QYgDSPYcOgYBGBe8c9PVCunjigbD-3o5HcliXhu-Up_GKckYMxxVF6AgSPWubqfWy8WmJNDYQEJ1QKZe343Q\"}]}";
         u2fDeviceRepository.requestDeviceAuthentication("NEnAEZPOoSTvD33crTed8YENizvWZ5muFZYffYp3AeU", "casuser", authnData);
 
         val credential = new U2FTokenCredential(token);
@@ -93,7 +93,7 @@ public class U2FAuthenticationHandlerTests {
         val response = new MockHttpServletResponse();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         RequestContextHolder.setRequestContext(context);
-        assertThrows(IllegalArgumentException.class, () -> u2fAuthenticationHandler.authenticate(credential));
+        assertThrows(NullPointerException.class, () -> u2fAuthenticationHandler.authenticate(credential));
     }
 
     @Test
