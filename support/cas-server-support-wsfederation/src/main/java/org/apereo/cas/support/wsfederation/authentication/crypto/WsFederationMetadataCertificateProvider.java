@@ -6,6 +6,7 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jooq.lambda.Unchecked;
@@ -24,11 +25,14 @@ import java.util.stream.Collectors;
 
 /**
  * This is {@link WsFederationMetadataCertificateProvider}.
- *
+ * OpenSAML does not yet support parsing out the WSFED metadata.
+ * So instead we rely on the presence of {@link IDPSSODescriptor} and
+ * its signing x509 certificate in the metadata to locate the certificate.
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class WsFederationMetadataCertificateProvider implements WsFederationCertificateProvider {
     private final Resource metadataResource;
 
@@ -38,26 +42,35 @@ public class WsFederationMetadataCertificateProvider implements WsFederationCert
 
     @Override
     public List<Credential> getSigningCredentials() throws Exception {
-        val resolver = new InMemoryResourceMetadataResolver(metadataResource, openSamlConfigBean);
-        resolver.setId(UUID.randomUUID().toString());
-        resolver.initialize();
-        val criteria = new CriteriaSet(new EntityIdCriterion(configuration.getIdentityProviderIdentifier()),
-            new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
-        val entityDescriptor = resolver.resolveSingle(criteria);
-        val roleDescriptors = entityDescriptor.getRoleDescriptors(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        val keyDescriptor = roleDescriptors.get(0)
-            .getKeyDescriptors()
-            .stream().filter(key -> key.getUse() == UsageType.SIGNING).findFirst().orElseThrow();
-        return keyDescriptor.getKeyInfo()
-            .getX509Datas()
-            .stream()
-            .map(X509Data::getX509Certificates)
-            .flatMap(List::stream)
-            .map(Unchecked.function(cert -> {
-                val decode = EncodingUtils.decodeBase64(cert.getValue());
-                return WsFederationCertificateProvider.readCredential(new ByteArrayInputStream(decode));
-            }))
-            .collect(Collectors.toList());
+        try (val is = metadataResource.getInputStream()) {
+            val resolver = new InMemoryResourceMetadataResolver(is, openSamlConfigBean);
+            resolver.setId(UUID.randomUUID().toString());
+            resolver.initialize();
+            val criteria = new CriteriaSet(new EntityIdCriterion(configuration.getIdentityProviderIdentifier()),
+                new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            LOGGER.debug("Locating entity descriptor in the metadata for [{}]", configuration.getIdentityProviderIdentifier());
+            val entityDescriptor = resolver.resolveSingle(criteria);
+            val roleDescriptors = entityDescriptor.getRoleDescriptors(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+            val keyDescriptors = roleDescriptors.get(0).getKeyDescriptors();
+            val keyDescriptor = keyDescriptors
+                .stream()
+                .filter(key -> key.getUse() == UsageType.SIGNING)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Unable to find key descriptor marked for signing usage"));
+            return keyDescriptor
+                .getKeyInfo()
+                .getX509Datas()
+                .stream()
+                .map(X509Data::getX509Certificates)
+                .flatMap(List::stream)
+                .map(Unchecked.function(cert -> {
+                    LOGGER.debug("Parsing signing certificate [{}]", cert.getValue());
+                    val decode = EncodingUtils.decodeBase64(cert.getValue());
+                    try (val value = new ByteArrayInputStream(decode)) {
+                        return WsFederationCertificateProvider.readCredential(value);
+                    }
+                }))
+                .collect(Collectors.toList());
+        }
     }
-
 }

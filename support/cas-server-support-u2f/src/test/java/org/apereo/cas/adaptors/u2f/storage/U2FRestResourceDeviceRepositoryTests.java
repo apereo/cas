@@ -85,7 +85,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     }
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
-        @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     public static class RestfulServiceRegistryTestConfiguration {
 

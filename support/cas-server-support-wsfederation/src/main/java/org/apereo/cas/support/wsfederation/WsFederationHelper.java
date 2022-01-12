@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WsFederationHelper {
 
-    private final OpenSamlConfigBean configBean;
+    private final OpenSamlConfigBean openSamlConfigBean;
 
     private final ServicesManager servicesManager;
 
@@ -200,9 +200,9 @@ public class WsFederationHelper {
         LOGGER.debug("Result token received from ADFS is [{}]", wresult);
         try (val in = new ByteArrayInputStream(wresult.getBytes(StandardCharsets.UTF_8))) {
             LOGGER.debug("Parsing token into a document");
-            val document = configBean.getParserPool().parse(in);
+            val document = openSamlConfigBean.getParserPool().parse(in);
             val metadataRoot = document.getDocumentElement();
-            val unmarshallerFactory = configBean.getUnmarshallerFactory();
+            val unmarshallerFactory = openSamlConfigBean.getUnmarshallerFactory();
             val unmarshaller = unmarshallerFactory.getUnmarshaller(metadataRoot);
             LOGGER.debug("Unmarshalling the document into a security token response");
             val rsToken = (RequestSecurityTokenResponse) unmarshaller.unmarshall(metadataRoot);
@@ -299,7 +299,7 @@ public class WsFederationHelper {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, "Failed to validate assertion signature", e);
         }
-        SamlUtils.logSamlObject(this.configBean, assertion);
+        SamlUtils.logSamlObject(this.openSamlConfigBean, assertion);
         LOGGER.error("Signature doesn't match any signing credential and cannot be validated.");
         return false;
     }
@@ -326,15 +326,8 @@ public class WsFederationHelper {
         return relyingPartyIdentifier;
     }
 
-    /**
-     * Build signature trust engine.
-     *
-     * @param wsFederationConfiguration the ws federation configuration
-     * @return the signature trust engine
-     */
-    @SneakyThrows
-    private SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
-        val providers = WsFederationCertificateProvider.getProvider(wsFederationConfiguration, configBean);
+    private SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) throws Exception {
+        val providers = WsFederationCertificateProvider.getProvider(wsFederationConfiguration, openSamlConfigBean);
         val signingWallet = providers.getSigningCredentials();
         LOGGER.debug("Building signature trust engine based on the following signing certificates:");
         signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));

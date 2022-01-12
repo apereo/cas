@@ -122,7 +122,8 @@ public class EhcacheTicketRegistryConfiguration {
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
 
-        @Bean
+    @Bean
+    @ConditionalOnMissingBean(name = "ehcacheTicketCacheManager")
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager(final CasConfigurationProperties casProperties) {
         AsciiArtUtils.printAsciiArtWarning(LOGGER,
             "CAS Integration with ehcache 2.x will be discontinued after CAS 6.2.x. Consider migrating to another type of registry.");
@@ -158,7 +159,7 @@ public class EhcacheTicketRegistryConfiguration {
      */
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TicketRegistry ticketRegistry(
+    public TicketRegistry ticketRegistry(
         @Qualifier("ticketRMISynchronousCacheReplicator")
         final CacheReplicator ticketRMISynchronousCacheReplicator,
         @Qualifier("ticketCacheBootstrapCacheLoader")

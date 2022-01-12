@@ -35,7 +35,7 @@ public interface WsFederationCertificateProvider {
         val chain = new ChainingWsFederationCertificateProvider();
         StringUtils.commaDelimitedListToSet(config.getSigningCertificates())
             .stream()
-            .map(Unchecked.function(ResourceUtils::getResourceFrom))
+            .map(Unchecked.function(ResourceUtils::getRawResourceFrom))
             .forEach(resource -> {
                 if (StringUtils.hasText(resource.getFilename()) && resource.getFilename().endsWith(".xml")) {
                     chain.addProvider(new WsFederationMetadataCertificateProvider(resource, config, openSamlConfigBean));

@@ -79,7 +79,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                 s -> config.setEncryptionCertificate(applicationContext.getResource(s)));
             config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
             config.setAttributeMutator(getAttributeMutatorForWsFederationConfig(wsfed));
-            config.setAutoRedirect(wsfed.isAutoRedirect());
+            config.setAutoRedirectType(wsfed.getAutoRedirectType());
             config.setName(wsfed.getName());
             config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
             FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);

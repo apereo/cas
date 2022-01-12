@@ -44,7 +44,6 @@ public class WsFederationAuthenticationConfiguration {
             final ServicesManager servicesManager) {
             return new WsFederationHelper(configBean, servicesManager);
         }
-
     }
 
     @Configuration(value = "WsFederationAuthenticationCookieConfiguration", proxyBeanMethods = false)

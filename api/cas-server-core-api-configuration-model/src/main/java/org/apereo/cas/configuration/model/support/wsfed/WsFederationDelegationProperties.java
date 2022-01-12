@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -84,7 +85,7 @@ public class WsFederationDelegationProperties implements Serializable {
     /**
      * Whether CAS should auto redirect to this wsfed instance.
      */
-    private boolean autoRedirect = true;
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.SERVER;
 
     /**
      * The path to the private key used to handle and verify encrypted assertions.
