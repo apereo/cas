@@ -92,7 +92,20 @@ the overlay itself, and not one that is statically compiled and made available t
 ### ADFS Integration
 
 The [CAS Integration with ADFS](../integration/ADFS-Integration.html) is now able to automatically determine the 
-signing certificates from the federation metadata file as an option.
+signing certificates from the federation metadata file as an option. Metadata must contain an `IDPSSODescriptor` element
+with a key descriptor tagged for `signing`.
+     
+### Delegation Auto-Redirect
+
+When [delegating authentication](../integration/Delegate-Authentication.html) to an external identity provider,
+CAS can be configured with automatically redirect to the identity provider. This releases enhances the auto-redirect options to
+handle the following types:
+
+- `NONE`: No automatic redirects take place and user might have to manually choose.
+- `CLIENT`: Automatic redirects are issued by the browser, and user might see a *Please wait...* message.
+- `SERVER`: Automatic redirects are issued by the CAS server, effectively making CAS invisible to the user.
+
+[CAS Integration with ADFS](../integration/ADFS-Integration.html) has also received the same capability.
 
 ## Other Stuff
 
