@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +32,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
+    @ExpressionLanguageCapable
     private String jwks;
 
     private String jwksKeyId;

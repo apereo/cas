@@ -7,5 +7,10 @@
   "description": "Sample Service",
   "evaluationOrder": 1,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone" ] ],
-  "supportedResponseTypes": [ "java.util.HashSet", [ "id_token" ] ]
+  "supportedResponseTypes": [ "java.util.HashSet", [ "id_token" ] ],
+  "signIdToken": true,
+  "encryptIdToken": true,
+  "jwks": "file://${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/services/Sample-1.jwks",
+  "idTokenEncryptionAlg": "RSA-OAEP-256",
+  "idTokenEncryptionEncoding": "A128CBC-HS256"
 }
