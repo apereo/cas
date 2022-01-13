@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import javax.annotation.Nonnull;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -63,10 +64,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     }
 
     @Override
-    public void check(final X509Certificate cert) throws GeneralSecurityException {
-        if (cert == null) {
-            throw new IllegalArgumentException("Certificate cannot be null.");
-        }
+    public void check(@Nonnull final X509Certificate cert) throws GeneralSecurityException {
         LOGGER.debug("Evaluating certificate revocation status for [{}]", CertUtils.toString(cert));
         val crls = getCRLs(cert);
 

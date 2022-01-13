@@ -47,7 +47,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
@@ -149,8 +148,7 @@ public class TokenAuthenticationHandlerTests {
     }
 
     @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class TestTokenAuthenticationConfiguration {
+        public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             var svc = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);

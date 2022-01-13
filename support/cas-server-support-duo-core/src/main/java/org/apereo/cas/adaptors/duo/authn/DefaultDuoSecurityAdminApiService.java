@@ -24,6 +24,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 
 import javax.net.ssl.X509TrustManager;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -154,12 +155,26 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         return codes;
     }
 
+    /**
+     * Prepare http request.
+     *
+     * @param request the request
+     */
+    protected void prepareHttpRequest(final Http request) {
+    }
+
     private JSONArray getEndpointResultFor(final Map<String, String> params) throws Exception {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());
-        val request = new Http(method, resolver.resolve(duoProperties.getDuoApiHost()), uri);
-        
+
+        val originalHost = resolver.resolve(duoProperties.getDuoApiHost());
+        val request = new Http.HttpBuilder(method, new URI("https://" + originalHost).getHost(), uri).build();
+
+        val hostField = ReflectionUtils.findField(request.getClass(), "host");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
+        ReflectionUtils.setField(hostField, request, originalHost);
+
         val factory = this.httpClient.getHttpClientFactory();
         val okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -180,9 +195,11 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
         ReflectionUtils.setField(httpClientField, request, okHttpClient);
 
+        prepareHttpRequest(request);
+
         val result = (JSONObject) request.executeJSONRequest();
         return result.length() > 0 && result.has(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
-            && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)
+               && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)
             ? result.getJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE)
             : null;
     }

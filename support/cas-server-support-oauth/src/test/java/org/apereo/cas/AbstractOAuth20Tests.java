@@ -120,7 +120,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -683,8 +682,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
+        public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
 

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -90,10 +91,8 @@ public class ServiceTicketResource {
                 throw new InvalidTicketException(tgtId);
             }
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
-            val service = this.argumentExtractor.extractService(httpServletRequest);
-            if (service == null) {
-                throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
-            }
+            val service = Objects.requireNonNull(this.argumentExtractor.extractService(httpServletRequest),
+                "Target service/application is unspecified or unrecognized in the request");
             if (BooleanUtils.toBoolean(httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_RENEW))) {
                 val credential = this.credentialFactory.fromRequest(httpServletRequest, requestBody);
                 if (credential == null || credential.isEmpty()) {

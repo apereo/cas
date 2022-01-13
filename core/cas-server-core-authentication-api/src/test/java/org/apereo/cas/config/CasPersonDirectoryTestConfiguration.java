@@ -13,11 +13,11 @@ import org.apereo.cas.util.ResourceUtils;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 import java.util.Map;
@@ -29,13 +29,14 @@ import java.util.Map;
  * @since 5.2.0
  */
 @TestConfiguration(value = "casPersonDirectoryTestConfiguration", proxyBeanMethods = false)
-@Lazy(false)
 @ConditionalOnProperty(value = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled",
     havingValue = "true", matchIfMissing = true)
 public class CasPersonDirectoryTestConfiguration {
     @Bean
-    public List<IPersonAttributeDao> attributeRepositories() {
-        return CollectionUtils.wrap(attributeRepository());
+    public List<IPersonAttributeDao> attributeRepositories(
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
+        return CollectionUtils.wrap(attributeRepository);
     }
 
     @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -62,11 +63,13 @@ public class CasPersonDirectoryTestConfiguration {
 
     @Bean
     public PrincipalResolutionExecutionPlanConfigurer testPersonDirectoryPrincipalResolutionExecutionPlanConfigurer(
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties,
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+        final IPersonAttributeDao attributeRepository) {
         return plan -> {
             val personDirectory = casProperties.getPersonDirectory();
             val resolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory(),
-                attributeRepository(),
+                attributeRepository,
                 CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger()),
                 personDirectory);
             plan.registerPrincipalResolver(resolver);

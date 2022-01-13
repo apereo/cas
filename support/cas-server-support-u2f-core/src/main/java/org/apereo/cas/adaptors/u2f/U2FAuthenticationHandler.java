@@ -48,10 +48,8 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
         val tokenCredential = (U2FTokenCredential) credential;
 
-        val authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
+        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
+            "CAS has no reference to an authentication event to locate a principal");
         val principal = this.principalFactory.createPrincipal(authentication.getPrincipal().getId());
         try {
             val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());

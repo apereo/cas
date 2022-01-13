@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 public class TwilioSmsConfigurationTests {
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test

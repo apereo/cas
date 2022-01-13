@@ -1,6 +1,7 @@
 package org.apereo.cas.pac4j.clients;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -66,6 +67,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
             .name(client)
             .type("CasClient")
             .redirectUrl("https://localhost:8443/redirect")
+            .autoRedirectType(DelegationAutoRedirectTypes.SERVER)
             .build();
     }
 
@@ -98,7 +100,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val service = RegisteredServiceTestUtils.getService();
         val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider);
         assertFalse(results.isEmpty());
-        assertTrue(results.get().isAutoRedirect());
+        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
         assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
     }
 
@@ -107,7 +109,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         val strategy = getStrategy();
         val context = getMockRequestContext();
         val provider = getProviderConfiguration("SomeClient");
-        provider.setAutoRedirect(true);
+        provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
 
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         configureService(policy);
@@ -115,7 +117,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         WebUtils.putDelegatedAuthenticationProviderPrimary(context, null);
         val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
         assertFalse(results.isEmpty());
-        assertTrue(results.get().isAutoRedirect());
+        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }
 
     @Test
@@ -130,7 +132,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategyTests {
         when(this.casCookieBuilder.retrieveCookieValue(any())).thenReturn("SomeClient");
         val results = strategy.getPrimaryDelegatedAuthenticationProvider(context, null, provider);
         assertFalse(results.isEmpty());
-        assertTrue(results.get().isAutoRedirect());
+        assertSame(results.get().getAutoRedirectType(), DelegationAutoRedirectTypes.SERVER);
     }
 
     private void configureService(final RegisteredServiceDelegatedAuthenticationPolicy policy) {

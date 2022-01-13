@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -53,10 +54,15 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential) throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
         val username = this.principalNameTransformer.transform(casCredential.getUsername());
-        if (username == null) {
+        if (StringUtils.isBlank(username)) {
             throw new AccountNotFoundException("Username is null.");
         }
         val password = this.passwordEncoder.encode(casCredential.getPassword());
@@ -68,11 +74,6 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     @Override
     protected Authenticator getAuthenticator(final Credential credential) {
         return this.authenticator;
-    }
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

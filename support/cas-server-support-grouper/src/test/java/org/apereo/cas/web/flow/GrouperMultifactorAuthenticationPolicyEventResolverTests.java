@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -69,8 +68,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     }
 
     @TestConfiguration(value = "GrouperTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class GrouperTestConfiguration {
+        public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {
             val group = new WsGroup();

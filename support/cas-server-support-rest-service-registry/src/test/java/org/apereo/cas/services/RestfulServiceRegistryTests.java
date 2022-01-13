@@ -35,7 +35,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -92,8 +91,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class RestfulServiceRegistryTestConfiguration {
+        public static class RestfulServiceRegistryTestConfiguration {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;

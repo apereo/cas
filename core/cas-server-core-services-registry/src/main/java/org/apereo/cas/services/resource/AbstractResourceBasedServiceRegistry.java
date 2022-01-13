@@ -56,7 +56,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @ToString
-public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry, DisposableBean {
+public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry
+    implements ResourceBasedServiceRegistry, DisposableBean {
     /**
      * The Service registry directory.
      */
@@ -138,10 +139,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         super(applicationContext, serviceRegistryListeners);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
         val pattern = String.join("|", getExtensions());
-        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
-        if (servicesDirectory == null) {
-            throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
-        }
+        val servicesDirectory = Objects.requireNonNull(ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern),
+            () -> "Could not determine the services configuration directory from " + configDirectory);
         val file = servicesDirectory.getFile();
         LOGGER.trace("Prepared service registry directory is specified at [{}]", file);
 

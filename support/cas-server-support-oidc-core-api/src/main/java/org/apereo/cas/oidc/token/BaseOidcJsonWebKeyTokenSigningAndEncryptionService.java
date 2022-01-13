@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
 import org.apereo.cas.token.JwtBuilder;
@@ -18,10 +19,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -118,11 +121,14 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
                 + " with client id " + svc.getClientId()
                 + " is configured to encrypt tokens, yet no JSON web key is available to handle encryption");
         }
-        val jsonWebKey = jwks.get().getJsonWebKeys().get(0);
+        val jsonWebKey = jwks.get()
+            .getJsonWebKeys()
+            .stream()
+            .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent())
+            .min(Comparator.comparing(JsonWebKey::getKeyId))
+            .orElseThrow(() -> new IllegalArgumentException("Unable to locate JSON web key for encryption that is marked as current"));
         LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
-        if (jsonWebKey.getKey() == null) {
-            throw new IllegalArgumentException("JSON web key used to encrypt the token has no associated public key");
-        }
+        Objects.requireNonNull(jsonWebKey.getKey(), "JSON web key used to encrypt the token has no associated public key");
         return (PublicJsonWebKey) jsonWebKey;
     }
 
@@ -131,9 +137,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", svc.getClientId());
             val jsonWebKey = getJsonWebKeySigningKey();
             LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
-            if (jsonWebKey.getPrivateKey() == null) {
-                throw new IllegalArgumentException("JSON web key used to sign the token has no associated private key");
-            }
+            Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
             return signToken(svc, claims, jsonWebKey);
         }
         val claimSet = JwtBuilder.parse(claims.toJson());

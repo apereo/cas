@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.*;
 @Tag("SMS")
 public class SmsModeSmsSenderTests {
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test

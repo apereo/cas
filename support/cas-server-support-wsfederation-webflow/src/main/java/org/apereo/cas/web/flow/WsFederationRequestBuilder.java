@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
@@ -29,11 +30,6 @@ import java.util.UUID;
  */
 @RequiredArgsConstructor
 public class WsFederationRequestBuilder {
-    /**
-     * Flow scope parameter pointing to client instances.
-     */
-    public static final String PARAMETER_NAME_WSFED_CLIENTS = "wsfedUrls";
-
     private final Collection<WsFederationConfiguration> configurations;
 
     private final WsFederationHelper wsFederationHelper;
@@ -72,14 +68,14 @@ public class WsFederationRequestBuilder {
             c.setReplyingPartyId(rpId);
             c.setId(id);
             c.setRedirectUrl(getRelativeRedirectUrlFor(cfg, service, request));
-            c.setAutoRedirect(cfg.isAutoRedirect());
+            c.setAutoRedirectType(cfg.getAutoRedirectType());
             clients.add(c);
 
-            if (cfg.isAutoRedirect()) {
+            if (cfg.getAutoRedirectType() != DelegationAutoRedirectTypes.NONE) {
                 WebUtils.putDelegatedAuthenticationProviderPrimary(context, cfg);
             }
         }));
-        context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
+        WebUtils.putWsFederationDelegatedClients(context, clients);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }
 }

@@ -226,11 +226,34 @@ public class FunctionUtils {
             try {
                 return function.apply(t);
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
                 try {
+                    LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex.getMessage());
+                }
+            }
+        };
+    }
+
+    /**
+     * Do and handle checked consumer.
+     *
+     * @param <R>          the type parameter
+     * @param function     the function
+     * @param errorHandler the error handler
+     * @return the checked consumer
+     */
+    public static <R> Consumer<R> doAndHandle(final CheckedConsumer<R> function,
+                                              final CheckedFunction<Throwable, R> errorHandler) {
+        return value -> {
+            try {
+                function.accept(value);
+            } catch (final Throwable e) {
+                try {
+                    errorHandler.apply(e);
+                } catch (final Throwable ex) {
+                    throw new IllegalArgumentException(ex);
                 }
             }
         };
@@ -249,11 +272,11 @@ public class FunctionUtils {
             try {
                 return function.get();
             } catch (final Throwable e) {
-                LoggingUtils.warn(LOGGER, e);
                 try {
+                    LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
-                    throw new IllegalArgumentException(ex.getMessage());
+                    throw new IllegalArgumentException(ex);
                 }
             }
         };

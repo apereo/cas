@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -82,8 +81,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
     
     @TestConfiguration(value = "SpnegoAuthenticationTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class SpnegoAuthenticationTestConfiguration {
+        public static class SpnegoAuthenticationTestConfiguration {
         @Bean
         public BeanContainer<Authentication> spnegoAuthentications() {
             return BeanContainer.of(CollectionUtils.wrapList(new MockJcifsAuthentication()));

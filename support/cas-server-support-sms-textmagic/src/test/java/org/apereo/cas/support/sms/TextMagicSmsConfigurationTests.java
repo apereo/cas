@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 public class TextMagicSmsConfigurationTests {
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test

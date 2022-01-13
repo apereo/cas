@@ -88,7 +88,7 @@ public abstract class BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsFound() {
+    public void verifyConsentDecisionIsFound() throws Exception {
         val user = getUser();
         val repo = getRepository("verifyConsentDecisionIsFound");
         var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
@@ -106,6 +106,7 @@ public abstract class BaseConsentRepositoryTests {
         assertEquals(user, d.getPrincipal());
 
         assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
+        Thread.sleep(1_000);
         assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
     }
 

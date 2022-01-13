@@ -22,7 +22,7 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Slf4j
-@ToString
+@ToString(of = {"id", "issuer"})
 @Setter
 @Getter
 @NoArgsConstructor

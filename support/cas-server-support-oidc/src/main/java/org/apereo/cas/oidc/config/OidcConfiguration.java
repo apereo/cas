@@ -250,7 +250,6 @@ public class OidcConfiguration {
                 .build(oidcServiceJsonWebKeystoreCacheLoader);
         }
 
-
         @Bean
         @ConditionalOnMissingBean(name = "oidcServiceJsonWebKeystoreCacheLoader")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

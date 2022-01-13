@@ -101,16 +101,16 @@ public class DelegatedClientAuthenticationActionTests {
 
     private static String getLogoutResponse() {
         return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
-            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
-            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-            + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
-            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
-            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
-            + "  <samlp:Status>%n"
-            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
-            + "  </samlp:Status>%n"
-            + "</samlp:LogoutResponse>";
+               + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
+               + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
+               + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
+               + "Destination=\"http://callback.example.org?client_name=SAML2Client&amp;logoutendpoint=true\" "
+               + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">%n"
+               + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>%n"
+               + "  <samlp:Status>%n"
+               + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>%n"
+               + "  </samlp:Status>%n"
+               + "</samlp:LogoutResponse>";
     }
 
     @Test
@@ -264,7 +264,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         val client = builtClients.findClient("FacebookClient").get();
         val webContext = new JEEContext(request, new MockHttpServletResponse());
-        
+
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
         val service = CoreAuthenticationTestUtils.getService("https://delegated2-authn-policy.example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
@@ -276,7 +276,7 @@ public class DelegatedClientAuthenticationActionTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val ticket = delegatedClientAuthenticationWebflowManager.store(webContext, client);
         request.addParameter(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-        
+
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         setRequestContext(context);
         setExternalContext(context.getExternalContext());
@@ -287,7 +287,7 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, delegatedAuthenticationAction.execute(context).getId());
         assertThrows(InvalidTicketException.class, () -> centralAuthenticationService.getTicket(tgt.getId()));
     }
-    
+
     @Test
     public void verifySsoAuthentication() throws Exception {
         val context = new MockRequestContext();
@@ -359,7 +359,27 @@ public class DelegatedClientAuthenticationActionTests {
         val event = delegatedAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
     }
-    
+
+    @Test
+    public void verifyServerSideRedirectAuthentication() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = CoreAuthenticationTestUtils.getService("https://delegated2.example.org");
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        setRequestContext(context);
+        setExternalContext(context.getExternalContext());
+
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, delegatedAuthenticationAction.execute(context).getId());
+        assertEquals(HttpStatus.FOUND.value(), response.getStatus());
+        assertEquals(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT + "?client_name=CasClient",
+            response.getHeader("Location"));
+    }
+
     @Test
     public void verifySsoAuthenticationUnauthz() {
         val context = new MockRequestContext();

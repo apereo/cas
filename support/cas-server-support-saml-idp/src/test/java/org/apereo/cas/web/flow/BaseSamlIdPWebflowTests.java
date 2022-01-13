@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.FileSystemResource;
 
 import java.util.UUID;
@@ -68,8 +67,7 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class SamlIdPMetadataTestConfiguration {
+        public static class SamlIdPMetadataTestConfiguration {
         @Autowired
         @Qualifier("samlIdPMetadataCache")
         private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;

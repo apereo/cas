@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -48,6 +49,10 @@ public class WsFederationDelegationProperties implements Serializable {
 
     /**
      * Locations of signing certificates used to verify assertions.
+     * Locations could be specified as static file-system resources(certificates)
+     * or they could also be federation XML metadata, either as a URL or an XML file.
+     * If federation metadata XML is provided, the signing certificate is extracted
+     * from the {@code IDPSSODescriptor}'s key descriptor that is marked for signing.
      */
     @RequiredProperty
     private String signingCertificateResources = "classpath:adfs-signing.crt";
@@ -80,7 +85,7 @@ public class WsFederationDelegationProperties implements Serializable {
     /**
      * Whether CAS should auto redirect to this wsfed instance.
      */
-    private boolean autoRedirect = true;
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.SERVER;
 
     /**
      * The path to the private key used to handle and verify encrypted assertions.

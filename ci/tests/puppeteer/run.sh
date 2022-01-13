@@ -59,7 +59,7 @@ while (( "$#" )); do
     DEBUG_SUSPEND="y"
     shift 1
     ;;
-  --rebuild|--r)
+  --rebuild|--r|--build)
     REBUILD="true"
     shift 1
     ;;

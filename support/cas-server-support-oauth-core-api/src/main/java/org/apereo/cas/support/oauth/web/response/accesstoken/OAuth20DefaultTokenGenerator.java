@@ -285,7 +285,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private OAuth20DeviceToken getDeviceTokenFromTicketRegistry(final String deviceCode) {
-        return FunctionUtils.doAndHandle(() -> centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class),
+        return FunctionUtils.doAndHandle(
+                () -> centralAuthenticationService.getTicket(deviceCode, OAuth20DeviceToken.class),
                 throwable -> {
                     LoggingUtils.error(LOGGER, throwable);
                     throw new InvalidOAuth20DeviceTokenException(deviceCode);

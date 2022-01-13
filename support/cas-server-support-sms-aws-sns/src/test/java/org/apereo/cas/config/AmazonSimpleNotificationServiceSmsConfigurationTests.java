@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AmazonSimpleNotificationServiceSmsConfigurationTests {
 
     @Autowired
-    @Qualifier("smsSender")
+    @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
 
     @Test

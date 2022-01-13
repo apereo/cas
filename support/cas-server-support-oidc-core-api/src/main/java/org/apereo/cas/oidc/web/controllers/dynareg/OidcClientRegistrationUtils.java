@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
@@ -73,7 +74,7 @@ public class OidcClientRegistrationUtils {
                 .collect(Collectors.toList()));
 
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
-        val keystore = registeredService.getJwks();
+        val keystore = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getJwks());
         if (Objects.requireNonNull(validator).isValid(keystore)) {
             clientResponse.setJwksUri(keystore);
         } else if (ResourceUtils.doesResourceExist(keystore)) {
