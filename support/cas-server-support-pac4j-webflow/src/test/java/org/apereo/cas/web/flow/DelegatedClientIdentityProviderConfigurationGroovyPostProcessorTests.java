@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 
@@ -56,6 +57,6 @@ public class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTest
         assertEquals("TestTitle", clientConfig.iterator().next().getTitle());
         delegatedClientIdentityProviderConfigurationPostProcessor.destroy();
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
-        assertTrue(provider.isAutoRedirect());
+        assertTrue(provider.getAutoRedirectType() == DelegationAutoRedirectTypes.CLIENT);
     }
 }

@@ -18,6 +18,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Authy authentication handler for CAS.
@@ -43,10 +44,8 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val tokenCredential = (AuthyTokenCredential) credential;
 
-        val authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
+        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
+            "CAS has no reference to an authentication event to locate a principal");
         val principal = authentication.getPrincipal();
 
         val user = instance.getOrCreateUser(principal);

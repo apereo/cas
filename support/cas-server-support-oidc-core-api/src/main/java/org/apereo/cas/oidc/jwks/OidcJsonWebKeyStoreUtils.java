@@ -4,6 +4,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -57,7 +58,8 @@ public class OidcJsonWebKeyStoreUtils {
                                                            final Optional<OidcJsonWebKeyUsage> usage) {
         return FunctionUtils.doAndHandle(
                 () -> {
-                    LOGGER.trace("Loading JSON web key from [{}]", service.getJwks());
+                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
+                    LOGGER.trace("Loading JSON web key from [{}]", serviceJwks);
                     val resource = getJsonWebKeySetResource(service, resourceLoader);
                     if (resource == null) {
                         LOGGER.warn("No JSON web keys or keystore resource could be found for [{}]", service);
@@ -91,7 +93,7 @@ public class OidcJsonWebKeyStoreUtils {
         val keyResult = getJsonWebKeyByKeyId(jwks, requestedKey, usage)
             .getJsonWebKeys()
             .stream()
-            .filter(key -> key.getPublicKey() != null)
+            .filter(key -> key.getKey() != null)
             .collect(Collectors.toList());
         if (keyResult.isEmpty()) {
             LOGGER.warn("Unable to locate JSON web key for [{}]", requestedKey.map(Object::toString));
@@ -155,11 +157,12 @@ public class OidcJsonWebKeyStoreUtils {
 
     private static Resource getJsonWebKeySetResource(final OidcRegisteredService service,
                                                      final ResourceLoader resourceLoader) {
-        if (StringUtils.isNotBlank(service.getJwks())) {
-            if (ResourceUtils.doesResourceExist(service.getJwks())) {
-                return resourceLoader.getResource(service.getJwks());
+        val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getJwks());
+        if (StringUtils.isNotBlank(serviceJwks)) {
+            if (ResourceUtils.doesResourceExist(serviceJwks)) {
+                return resourceLoader.getResource(serviceJwks);
             }
-            return new InputStreamResource(new ByteArrayInputStream(service.getJwks().getBytes(StandardCharsets.UTF_8)), "JWKS");
+            return new InputStreamResource(new ByteArrayInputStream(serviceJwks.getBytes(StandardCharsets.UTF_8)), "JWKS");
         }
         return null;
     }

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -29,7 +28,6 @@ import javax.sql.DataSource;
  */
 @TestConfiguration(value = "databaseAuthenticationTestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Lazy(false)
 public class DatabaseAuthenticationTestConfiguration {
     @Value("${database.user:sa}")
     private String databaseUser;
@@ -71,11 +69,15 @@ public class DatabaseAuthenticationTestConfiguration {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+        @Qualifier("jpaVendorAdapter")
+        final JpaVendorAdapter jpaVendorAdapter,
+        @Qualifier("dataSource")
+        final DataSource dataSource) {
         val ctx = JpaConfigurationContext.builder()
-            .jpaVendorAdapter(jpaVendorAdapter())
+            .jpaVendorAdapter(jpaVendorAdapter)
             .persistenceUnitName("databaseAuthnContext")
-            .dataSource(dataSource())
+            .dataSource(dataSource)
             .persistenceProvider(new CasHibernatePersistenceProvider(persistenceProviderContext))
             .packagesToScan(CollectionUtils.wrapSet("org.apereo.cas.adaptors.jdbc"))
             .build();

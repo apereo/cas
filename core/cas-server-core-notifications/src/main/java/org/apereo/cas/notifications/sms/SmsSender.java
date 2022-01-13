@@ -9,6 +9,11 @@ package org.apereo.cas.notifications.sms;
 public interface SmsSender {
 
     /**
+     * Bean name.
+     */
+    String BEAN_NAME = "smsSender";
+
+    /**
      * Send sms to phone number.
      *
      * @param from    the from

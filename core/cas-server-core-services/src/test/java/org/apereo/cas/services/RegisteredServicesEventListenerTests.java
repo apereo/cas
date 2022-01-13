@@ -28,7 +28,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.Set;
 
@@ -121,10 +120,9 @@ public class RegisteredServicesEventListenerTests {
     }
 
     @TestConfiguration(value = "RegisteredServicesEventListenerTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class RegisteredServicesEventListenerTestConfiguration {
+        public static class RegisteredServicesEventListenerTestConfiguration {
 
-        @ConditionalOnMissingBean(name = "smsSender")
+        @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

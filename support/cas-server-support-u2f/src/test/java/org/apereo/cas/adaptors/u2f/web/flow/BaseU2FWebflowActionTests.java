@@ -55,7 +55,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.execution.Action;
 
@@ -143,8 +142,7 @@ public abstract class BaseU2FWebflowActionTests {
     }
 
     @TestConfiguration(value = "U2FTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class U2FTestConfiguration {
+        public static class U2FTestConfiguration {
         @Bean
         public U2F u2fService() throws Exception {
             val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));

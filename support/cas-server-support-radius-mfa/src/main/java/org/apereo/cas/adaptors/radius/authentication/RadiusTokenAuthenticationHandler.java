@@ -21,6 +21,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -68,10 +69,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             val radiusCredential = (RadiusTokenCredential) credential;
             val password = radiusCredential.getToken();
 
-            val authentication = WebUtils.getInProgressAuthentication();
-            if (authentication == null) {
-                throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-            }
+            val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication(),
+                "CAS has no reference to an authentication event to locate a principal");
             val principal = authentication.getPrincipal();
             val username = principal.getId();
 

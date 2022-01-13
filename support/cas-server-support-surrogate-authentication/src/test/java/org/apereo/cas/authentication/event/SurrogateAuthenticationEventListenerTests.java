@@ -24,7 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 import java.util.Map;
@@ -95,8 +94,7 @@ public class SurrogateAuthenticationEventListenerTests {
     }
 
     @TestConfiguration(value = "SurrogateAuthenticationEventListenerTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class SurrogateAuthenticationEventListenerTestConfiguration {
+        public static class SurrogateAuthenticationEventListenerTestConfiguration {
 
         @Bean
         public SmsSender smsSender() {

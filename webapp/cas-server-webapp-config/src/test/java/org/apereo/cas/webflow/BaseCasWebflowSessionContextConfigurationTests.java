@@ -59,7 +59,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -170,8 +169,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
      * The type Test webflow context configuration.
      */
     @TestConfiguration(value = "testWebflowContextConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class TestWebflowContextConfiguration {
+        public static class TestWebflowContextConfiguration {
         private static final String TEST = "test";
 
         @Autowired

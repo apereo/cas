@@ -1,0 +1,34 @@
+{
+  "dependencies": "simple-mfa,trusted-mfa,jpa-ticket-registry",
+  "properties": [
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.trusted-device-enabled=true",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=%s",
+    
+    "--cas.audit.engine.enabled=false",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
+    "--cas.ticket.registry.jpa.ddl-auto=update",
+    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQL10Dialect",
+    "--cas.ticket.registry.jpa.user=postgres",
+    "--cas.ticket.registry.jpa.password=password",
+    "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets"
+
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+
+
+
+

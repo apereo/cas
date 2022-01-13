@@ -1915,4 +1915,26 @@ public class WebUtils {
     public static Credential getMultifactorAuthenticationParentCredential(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("parentCredential", Credential.class);
     }
+
+    /**
+     * Put ws federation delegated clients.
+     *
+     * @param context the context
+     * @param clients the clients
+     */
+    public static void putWsFederationDelegatedClients(final RequestContext context, final List<? extends Serializable> clients) {
+        context.getFlowScope().put("wsfedUrls", clients);
+    }
+
+    /**
+     * Get ws federation delegated clients as list.
+     *
+     * @param <T>     the type parameter
+     * @param context the context
+     * @param clazz   the clazz
+     * @return the list
+     */
+    public static <T extends Serializable> List<T> getWsFederationDelegatedClients(final RequestContext context, final Class<T> clazz) {
+        return (List<T>) context.getFlowScope().get("wsfedUrls", List.class);
+    }
 }

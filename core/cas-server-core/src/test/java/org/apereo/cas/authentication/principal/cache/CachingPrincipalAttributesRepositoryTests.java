@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -69,8 +68,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     }
 
     @TestConfiguration(value = "CachingPrincipalAttributeRepositoryTestConfiguration", proxyBeanMethods = false)
-    @Lazy(false)
-    public static class CachingPrincipalAttributeRepositoryTestConfiguration {
+        public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {

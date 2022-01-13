@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.wsfederation.authentication.crypto.WsFederationCertificateProvider;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
 import lombok.Setter;
@@ -15,7 +16,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,9 +74,10 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyGetSigningCredential() {
-        val result = wsFederationConfigurations.toList().get(0).getSigningWallet().iterator().next();
-        assertNotNull(result);
+    public void verifyGetSigningCredential() throws Exception {
+        val provider = WsFederationCertificateProvider.getProvider(wsFederationConfigurations.toList().get(0), configBean);
+        assertFalse(provider.getSigningCredentials().isEmpty());
+        assertNotNull(provider);
     }
 
     @Test
@@ -106,22 +107,6 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         val token = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
         val assertion = wsFederationHelper.buildAndVerifyAssertion(token,
             wsFederationConfigurations.toList(), RegisteredServiceTestUtils.getService());
-        val result = wsFederationHelper.validateSignature(assertion);
-        assertFalse(result);
-    }
-
-    @Test
-    public void verifyValidateSignatureBadKey() throws Exception {
-        val cfg = new WsFederationConfiguration();
-        cfg.setSigningCertificateResources(new ClassPathResource("bad-signing.crt"));
-        val signingWallet = new ArrayList<>(cfg.getSigningWallet());
-        val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);
-        val requestSecurityTokenFromResult = wsFederationHelper.getRequestSecurityTokenFromResult(wresult);
-        val assertion = wsFederationHelper.buildAndVerifyAssertion(requestSecurityTokenFromResult,
-            wsFederationConfigurations.toList(), RegisteredServiceTestUtils.getService());
-        val wallet = assertion.getValue().getSigningWallet();
-        wallet.clear();
-        wallet.addAll(signingWallet);
         val result = wsFederationHelper.validateSignature(assertion);
         assertFalse(result);
     }

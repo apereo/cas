@@ -50,6 +50,22 @@ public class CasSimpleMultifactorSendTokenActionTests {
         }
 
         @Test
+        public void verifyReusingExistingTokens() throws Exception {
+            val pair = createToken("casuser");
+
+            val theToken = pair.getKey();
+            assertNotNull(this.ticketRegistry.getTicket(theToken));
+
+            val event = mfaSimpleMultifactorSendTokenAction.execute(pair.getValue());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+
+            val token = new CasSimpleMultifactorTokenCredential(theToken);
+            val result = authenticationHandler.authenticate(token);
+            assertNotNull(result);
+            assertNull(this.ticketRegistry.getTicket(theToken));
+        }
+
+        @Test
         public void verifyFailsForUser() throws Exception {
             val theToken1 = createToken("casuser1");
             assertNotNull(theToken1);

@@ -99,7 +99,7 @@ def run(Object[] args) {
     logger.info("Checking ${provider.name}...")
     
     if (provider.name.equals("Twitter")) {
-        provider.autoRedirect = true
+        provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
         return provider
     }
     return null

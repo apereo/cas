@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
@@ -68,7 +69,7 @@ public class CasDiscoveryProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<String> discoveryProfileAvailableAttributes(
         final CasConfigurationProperties casProperties,
-        @Qualifier("attributeRepository")
+        @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         final IPersonAttributeDao attributeRepository) {
         val attributes = new LinkedHashSet<String>(0);
         val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames(IPersonAttributeDaoFilter.alwaysChoose());

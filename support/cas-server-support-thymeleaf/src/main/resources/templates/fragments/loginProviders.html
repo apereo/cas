@@ -58,7 +58,7 @@
                                th:id="${entry.name}"
                                th:classappend="'mdc-button-' + ${entry.type}"
                                th:href="@{${entry.redirectUrl}}"
-                               th:attr="autoredirect=${entry.autoRedirect}"
+                               th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
                                th:inline="text"
                                th:title="${entry.name + ' ' + entry.type}">
 
@@ -142,8 +142,10 @@
                         <ul>
                             <li class="p-1 login-provider-item" th:each="entry: ${wsfedUrls}">
                                 <a class="mdc-button mdc-button--raised w-100"
-                                   th:href="@{${entry.redirectUrl}}" th:inline="text" onload=""
-                                   th:attr="autoredirect=${entry.autoRedirect}" th:title="${entry.name}">
+                                   th:href="@{${entry.redirectUrl}}"
+                                   th:inline="text" onload=""
+                                   th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
+                                   th:title="${entry.name}">
 
                                     <i class="mdi mdi-microsoft-windows"></i>
                                     <span class="mdc-button__label">[[${entry.name}]]</span>
@@ -155,7 +157,7 @@
             </div>
 
             <script>
-                const redirectTo = $("a[autoRedirect=true]").attr("href");
+                const redirectTo = $("a[autoRedirectType=client]").attr("href");
                 if (redirectTo !== null && redirectTo !== undefined) {
                     window.location.href = redirectTo;
                 } else {

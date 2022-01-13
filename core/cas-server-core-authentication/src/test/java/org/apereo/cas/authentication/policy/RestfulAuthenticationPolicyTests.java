@@ -23,7 +23,7 @@ import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

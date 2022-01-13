@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -465,11 +466,9 @@ public class CasDocumentationApplication {
 
         var parameters = new ArrayList<Map<?, ?>>();
         if (isCasEndpoint(clazz)) {
-            var operation = method.getAnnotation(Operation.class);
-            if (operation == null) {
-                throw new RuntimeException("Unable to locate @Operation annotation for " + method.toGenericString()
-                                           + " in declaring class " + clazz.getName());
-            }
+            var operation = Objects.requireNonNull(method.getAnnotation(Operation.class),
+                () -> "Unable to locate @Operation annotation for " + method.toGenericString()
+                      + " in declaring class " + clazz.getName());
             if (!map.containsKey("deprecated") && operation.deprecated()) {
                 map.put("deprecated", true);
             }

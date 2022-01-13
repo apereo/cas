@@ -35,7 +35,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     @Override
     public void addTicketInternal(final Ticket ticket) {
         val encTicket = encodeTicket(ticket);
-        LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
+        LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
     }
 
@@ -80,6 +80,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
+        LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
         addTicket(ticket);
         return ticket;
     }

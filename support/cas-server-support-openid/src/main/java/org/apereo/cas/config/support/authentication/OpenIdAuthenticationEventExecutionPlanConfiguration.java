@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -48,7 +49,7 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     public OpenIdPrincipalResolver openIdPrincipalResolver(final CasConfigurationProperties casProperties,
                                                            @Qualifier("openidPrincipalFactory")
                                                            final PrincipalFactory openidPrincipalFactory,
-                                                           @Qualifier("attributeRepository")
+                                                           @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
                                                            final IPersonAttributeDao attributeRepository) {
         val personDirectory = casProperties.getPersonDirectory();
         val principal = casProperties.getAuthn().getOpenid().getPrincipal();

@@ -30,9 +30,10 @@ public class ChainingDelegatedClientIdentityProviderRedirectionStrategy implemen
     }
 
     @Override
-    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(final RequestContext context,
-                                                                                                            final WebApplicationService service,
-                                                                                                            final DelegatedClientIdentityProviderConfiguration provider) {
+    public Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+        final RequestContext context,
+        final WebApplicationService service,
+        final DelegatedClientIdentityProviderConfiguration provider) {
         return strategies
             .stream()
             .map(strategy -> strategy.getPrimaryDelegatedAuthenticationProvider(context, service, provider))

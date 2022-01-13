@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -77,7 +78,10 @@ public class OidcJwksEndpointController extends BaseOidcController {
             val servicesManager = getConfigurationContext().getServicesManager();
             servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()
-                .filter(s -> StringUtils.isNotBlank(s.getJwks()))
+                .filter(s -> {
+                    val serviceJwks = SpringExpressionLanguageValueResolver.getInstance().resolve(s.getJwks());
+                    return StringUtils.isNotBlank(serviceJwks);
+                })
                 .forEach(service -> {
                     val set = OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service,
                         getConfigurationContext().getApplicationContext(), Optional.empty());

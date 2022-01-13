@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -66,12 +67,12 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
-            return new CasSimpleMultifactorSendTokenAction(ticketRegistry,
+            return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
                 communicationsManager, casSimpleMultifactorAuthenticationTicketFactory, simple,
                 mfaSimpleMultifactorTokenCommunicationStrategy);
         }

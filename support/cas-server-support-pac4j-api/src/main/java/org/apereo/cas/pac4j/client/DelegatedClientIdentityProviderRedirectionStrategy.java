@@ -24,9 +24,10 @@ public interface DelegatedClientIdentityProviderRedirectionStrategy extends Orde
      * @param provider the provider
      * @return the primary delegated authentication provider
      */
-    Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(RequestContext context,
-                                                                                                     WebApplicationService service,
-                                                                                                     DelegatedClientIdentityProviderConfiguration provider);
+    Optional<DelegatedClientIdentityProviderConfiguration> getPrimaryDelegatedAuthenticationProvider(
+        RequestContext context,
+        WebApplicationService service,
+        DelegatedClientIdentityProviderConfiguration provider);
 
     @Override
     default int getOrder() {

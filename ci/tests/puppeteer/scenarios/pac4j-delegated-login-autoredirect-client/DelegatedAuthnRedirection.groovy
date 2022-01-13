@@ -1,4 +1,6 @@
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration
+import org.apereo.cas.web.*
+import org.apereo.cas.configuration.model.support.pac4j.*
+import org.apereo.cas.configuration.model.support.delegation.*
 
 def run(Object[] args) {
     def requestContext = args[0]
@@ -8,7 +10,7 @@ def run(Object[] args) {
     def logger = args[4]
     logger.info("Checking provider ${provider.name} for service ${service?.id}...")
      if (service != null && service.id.startsWith("https://github.com/apereo/cas")) {
-         provider.autoRedirect = true
+         provider.autoRedirectType = DelegationAutoRedirectTypes.CLIENT
          logger.info("Selected primary provider ${provider.name}")
          return provider
      }
