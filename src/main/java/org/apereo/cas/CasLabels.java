@@ -127,7 +127,7 @@ public enum CasLabels {
     LABEL_TICKETS_REGISTRIES("Tickets & Registries", "ticket registry|ticket id|ticketid|ticket catalog|TicketCatalog"),
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\\btest\\b|junit|coverage|tests|mockito|suite|\\bunit test\\b|junit5"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes",
-        "\\bUI\\b|\\bIE(11)*\\b|jquery|ux|thymeleaf|\\bhtml\\b|views|screen|page|gulp|javascript|\\bjs\\b|sass|css|themes|\\btheme\\b"),
+        "\\bUI\\b|\\bIE(11)*\\b|jquery|bootstrap|ux|thymeleaf|\\bhtml\\b|views|screen|page|gulp|javascript|\\bjs\\b|sass|css|themes|\\btheme\\b"),
     LABEL_WS_FED_PROTOCOL("WS-FED Protocol", "WSSecurity"),
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL|EDIPI|bouncycastle"),
     LABEL_WIP("Pending: Work in Progress", "WIP|\\[WIP\\]"),
