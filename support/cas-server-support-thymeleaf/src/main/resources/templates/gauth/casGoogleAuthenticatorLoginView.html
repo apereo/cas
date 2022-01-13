@@ -82,7 +82,7 @@
             <form method="post" id="fm3">
                 <input type="hidden" name="_eventId_select" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="selectDeviceButton" class="mdc-button mdc-button--raised mr-2" accesskey="s">
+                <button id="selectDeviceButton" class="mdc-button mdc-button--raised me-2" accesskey="s">
                     <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Select Device</span>
                 </button>
             </form>
@@ -94,7 +94,7 @@
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
             <input type="hidden" name="_eventId_register" value="register"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <button class="mdc-button mdc-button--raised mr-2" id="register" type="submit" name="register" accesskey="r" value="Register">
+            <button class="mdc-button mdc-button--raised me-2" id="register" type="submit" name="register" accesskey="r" value="Register">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
             </button>
         </form>
