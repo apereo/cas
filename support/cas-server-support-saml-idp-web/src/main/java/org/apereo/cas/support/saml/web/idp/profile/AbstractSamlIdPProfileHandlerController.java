@@ -125,6 +125,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      */
     @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
     public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
+        LOGGER.warn("Unauthorized service", ex);
         return WebUtils.produceUnauthorizedErrorView(ex);
     }
 
