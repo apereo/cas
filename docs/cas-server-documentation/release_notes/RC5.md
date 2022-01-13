@@ -68,7 +68,7 @@ or `Secret` concepts in Kubernetes is now *baked* into CAS.
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow
 to add additional scenarios. At this point, there are
-approximately `230` test scenarios and we'll continue to add more in the coming releases.
+approximately `236` test scenarios and we'll continue to add more in the coming releases.
    
 ### OpenID Connect JMeter Script
    
@@ -89,13 +89,13 @@ are now removed and the functionality is now moved to the produced overlay itsel
 that the collection of properties, produced based on CAS configuration metadata, accurately reflect the CAS version used by
 the overlay itself, and not one that is statically compiled and made available to the CAS Initializer itself. 
  
-### ADFS Integration
+### ADFS Federation Metadata
 
 The [CAS Integration with ADFS](../integration/ADFS-Integration.html) is now able to automatically determine the 
 signing certificates from the federation metadata file as an option. Metadata must contain an `IDPSSODescriptor` element
 with a key descriptor tagged for `signing`.
      
-### Delegation Auto-Redirect
+### Delegated Authentication Auto-Redirect
 
 When [delegating authentication](../integration/Delegate-Authentication.html) to an external identity provider,
 CAS can be configured with automatically redirect to the identity provider. This releases enhances the auto-redirect options to
@@ -110,6 +110,7 @@ handle the following types:
 ## Other Stuff
 
 - Validation of configuration properties is now moved into a proper `ApplicationContextInitializer` component.
+- Minor UI improvements to ensure required fields as well as CAPSLOCK warnings are correctly displayed as helper messages for input fields.
 - Minor improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.html), when CAS itself is acting as a SAML2 identity provider.
 
 ## Library Upgrades
@@ -119,6 +120,7 @@ handle the following types:
 - Twilio
 - Amazon SDK
 - SpotBugs
+- Micrometer
 - DuoSecurity Client
 - HikariCP
 - Spring Framework
