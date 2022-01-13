@@ -53,15 +53,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      * Send a SMS.
      *
      * @param communicationsManager the communication manager
-     * @param properties the properties
-     * @param principal the principal
-     * @param token the token
+     * @param properties            the properties
+     * @param principal             the principal
+     * @param token                 the token
      * @return whether the SMS has been sent.
      */
     protected boolean isSmsSent(final CommunicationsManager communicationsManager,
-                                     final CasSimpleMultifactorAuthenticationProperties properties,
-                                     final Principal principal,
-                                     final Ticket token) {
+                                final CasSimpleMultifactorAuthenticationProperties properties,
+                                final Principal principal,
+                                final Ticket token) {
         if (communicationsManager.isSmsSenderDefined()) {
             val smsProperties = properties.getSms();
             val smsText = StringUtils.isNotBlank(smsProperties.getText())
@@ -76,16 +76,16 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      * Send an email.
      *
      * @param communicationsManager the communication manager
-     * @param properties the properties
-     * @param principal the principal
-     * @param token the token
-     * @param requestContext the request context
+     * @param properties            the properties
+     * @param principal             the principal
+     * @param token                 the token
+     * @param requestContext        the request context
      * @return whether the email has been sent.
      */
     protected boolean isMailSent(final CommunicationsManager communicationsManager,
-                                      final CasSimpleMultifactorAuthenticationProperties properties,
-                                      final Principal principal, final Ticket token,
-                                      final RequestContext requestContext) {
+                                 final CasSimpleMultifactorAuthenticationProperties properties,
+                                 final Principal principal, final Ticket token,
+                                 final RequestContext requestContext) {
         if (communicationsManager.isMailSenderDefined()) {
             val mailProperties = properties.getMail();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -101,15 +101,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      * Send a notification.
      *
      * @param communicationsManager the communication manager
-     * @param principal the principal
-     * @param token the token
+     * @param principal             the principal
+     * @param token                 the token
      * @return whether the notification has been sent.
      */
     protected boolean isNotificationSent(final CommunicationsManager communicationsManager,
-                                              final Principal principal,
-                                              final Ticket token) {
+                                         final Principal principal,
+                                         final Ticket token) {
         return communicationsManager.isNotificationSenderDefined()
-            && communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
+               && communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
     }
 
     @Override
@@ -118,21 +118,20 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val principal = resolvePrincipal(authentication.getPrincipal());
         val token = getOrCreateToken(requestContext, principal);
         LOGGER.debug("Using token [{}] created at [{}]", token.getId(), token.getCreationTime());
-        
+
         val strategy = tokenCommunicationStrategy.determineStrategy(token);
         val smsSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.SMS)
-            && isSmsSent(communicationsManager, properties, principal, token);
+                      && isSmsSent(communicationsManager, properties, principal, token);
 
         val emailSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.EMAIL)
-            && isMailSent(communicationsManager, properties, principal, token, requestContext);
+                        && isMailSent(communicationsManager, properties, principal, token, requestContext);
 
         val notificationSent = strategy.contains(CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions.NOTIFICATION)
-            && isNotificationSent(communicationsManager, principal, token);
+                               && isNotificationSent(communicationsManager, principal, token);
 
         if (smsSent || emailSent || notificationSent) {
-            ticketRegistry.addTicket(token);
+            addOrUpdateToken(token);
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
-
             WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
             val attributes = new LocalAttributeMap<Object>("token", token.getId());
             WebUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
@@ -143,14 +142,28 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     /**
+     * Add or update token.
+     *
+     * @param token the token
+     */
+    protected void addOrUpdateToken(final CasSimpleMultifactorAuthenticationTicket token) {
+        if (ticketRegistry.getTicket(token.getId()) == null) {
+            ticketRegistry.addTicket(token);
+        } else {
+            ticketRegistry.updateTicket(token);
+        }
+    }
+
+    /**
      * Get or create a token.
      *
      * @param requestContext the request context
-     * @param principal the principal
+     * @param principal      the principal
      * @return the token
      */
     protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
-        return Optional.ofNullable(WebUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class))
+        val currentToken = WebUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class);
+        return Optional.ofNullable(currentToken)
             .filter(token -> !token.isExpired())
             .orElseGet(() -> {
                 WebUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
