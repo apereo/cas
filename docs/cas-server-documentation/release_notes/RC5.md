@@ -121,3 +121,5 @@ handle the following types:
 - SpotBugs
 - DuoSecurity Client
 - HikariCP
+- Spring Framework
+- Spring Boot

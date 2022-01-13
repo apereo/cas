@@ -40,7 +40,7 @@
 
             <div class="cas-field my-3 mdc-input-group">
                 <div class="mdc-input-group-field mdc-input-group-field-append">
-                    <div class="caps-check">
+                    <div class="d-flex caps-check">
                         <label for="password" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                             <input class="mdc-text-field__input pwd"
                                    autocapitalize="none"
@@ -56,23 +56,27 @@
                                       <span class="mdc-floating-label" th:utext="#{screen.pm.enterpsw}">Enter Password:</span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
-                                </span>
+                            </span>
                         </label>
-                        <div class="mdc-text-field-helper-line">
-                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
-                                 th:utext="#{cas.screen.acct.error.invalid-value}"
-                                 aria-hidden="true" />
-                        </div>
-                        
-                        <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
+                        <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
+                                tabindex="-1"
+                                type="button">
+                            <i class="mdi mdi-eye reveal-password-icon"></i>
+                            <span class="visually-hidden">Toggle Password</span>
+                        </button>
+                    </div>
+                    <div class="mdc-text-field-helper-line">
+                        <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                             th:utext="#{cas.screen.acct.error.invalid-value}"
+                             aria-hidden="true"/>
+                    </div>
+
+                    <div class="mdc-text-field-helper-line caps-warn">
+                        <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                            <span th:utext="#{screen.capslock.on}"/>
+                        </p>
                     </div>
                 </div>
-                <button class="reveal-password mdc-button mdc-button--raised mdc-input-group-append mdc-icon-button"
-                        tabindex="-1"
-                        type="button">
-                    <i class="mdi mdi-eye reveal-password-icon"></i>
-                    <span class="visually-hidden">Toggle Password</span>
-                </button>
             </div>
 
             <div class="cas-field my-3">
@@ -97,7 +101,7 @@
                     <div class="mdc-text-field-helper-line">
                         <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
                              th:utext="#{cas.screen.acct.error.invalid-value}"
-                             aria-hidden="true" />
+                             aria-hidden="true"/>
                     </div>
                     <i class="mdi mdi-alert mdc-text-field__icon text-danger caps-warn"></i>
                 </div>
@@ -113,11 +117,12 @@
                                    size="50"
                                    type="text"
                                    autocapitalize="none"
-                                   spellcheck="false" />
+                                   spellcheck="false"/>
                             <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <span class="mdc-notched-outline__notch">
-                                      <span class="mdc-floating-label" th:utext="#{${'screen.acct.label.security.question.' + count}}"></span>
+                                      <span class="mdc-floating-label"
+                                            th:utext="#{${'screen.acct.label.security.question.' + count}}"></span>
                                     </span>
                                     <span class="mdc-notched-outline__trailing"></span>
                                </span>
