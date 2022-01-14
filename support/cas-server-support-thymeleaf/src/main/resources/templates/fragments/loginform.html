@@ -81,7 +81,7 @@
 
                         <div class="mdc-text-field-helper-line">
                             <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
-                                <span th:utext="#{username.required}"></span>
+                                <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
                             </div>
                         </div>
 
@@ -130,7 +130,7 @@
                                     <div
                                             class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
                                             aria-hidden="true">
-                                        <span th:utext="#{password.required}"></span>
+                                        <span id="passwordValidationMessage" th:utext="#{password.required}"></span>
                                     </div>
                                 </div>
                                 <div class="mdc-text-field-helper-line caps-warn">
