@@ -125,3 +125,6 @@ handle the following types:
 - HikariCP
 - Spring Framework
 - Spring Boot
+- Apache Ignite
+- Pac4j
+- Spring Data
