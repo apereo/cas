@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesPr
 import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -132,4 +133,10 @@ public class PrincipalAttributesProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OktaPrincipalAttributesProperties okta = new OktaPrincipalAttributesProperties();
+
+    /**
+     * Fetch user attributes from Apache Syncope.
+     */
+    @NestedConfigurationProperty
+    private SyncopePrincipalAttributesProperties syncope = new SyncopePrincipalAttributesProperties();
 }
