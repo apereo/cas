@@ -25,7 +25,7 @@ const assert = require("assert");
     tgc = await cas.assertTicketGrantingCookie(page);
     date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
-    assert(now.getDay() + 1 === date.getDay())
+    assert(now.getDate() + 1 === date.getDate())
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 

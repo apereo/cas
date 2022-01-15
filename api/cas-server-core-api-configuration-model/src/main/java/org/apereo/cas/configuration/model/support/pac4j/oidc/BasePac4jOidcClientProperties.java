@@ -117,4 +117,9 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * syntax would be {@code claim->attribute}.
      */
     private List<String> mappedClaims = new ArrayList<>();
+
+    /**
+     * Whether unsigned id tokens issued as plain JWTs are accepted.
+     */
+    private boolean allowUnsignedIdTokens;
 }
