@@ -85,7 +85,7 @@ public class CookieUtils {
     }
 
     /**
-     * Build cookie generation context cookie.
+     * Build cookie generation context.
      *
      * @param cookie the cookie
      * @return the cookie generation context
@@ -96,7 +96,8 @@ public class CookieUtils {
         return builder.rememberMeMaxAge(rememberMeMaxAge).build();
     }
 
-    private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(final CookieProperties cookie) {
+    private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(
+        final CookieProperties cookie) {
         return CookieGenerationContext.builder()
             .name(cookie.getName())
             .path(StringUtils.defaultString(cookie.getPath(), "/"))
