@@ -94,7 +94,13 @@ public class CookieProperties implements Serializable {
      * {@code Secure} attribute is used so cross-site cookies can only be accessed over HTTPS
      * connections.
      * </p>
-     * <p>Accepted values are: {@code Lax}, {@code Strict},  {@code None}.</p>
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code Lax}</li>
+     *     <li>{@code Strict}</li>
+     *     <li>{@code None}</li>
+     *     <li>Fully qualified name of a class that implements {@code org.apereo.cas.web.cookie.CookieSameSitePolicy}</li>
+     * </ul>
      */
     private String sameSitePolicy = StringUtils.EMPTY;
 }

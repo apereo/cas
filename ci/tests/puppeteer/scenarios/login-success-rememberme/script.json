@@ -1,0 +1,16 @@
+{
+  "dependencies": "core,ehcache-ticket-registry",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.tgc.crypto.enabled=false",
+    "--cas.tgc.remember-me-max-age=P1D",
+
+    "--cas.ticket.tgt.remember-me.enabled=true",
+    "--cas.ticket.tgt.remember-me.time-to-kill-in-seconds=86400",
+    
+    "--cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=3"
+  ]
+}

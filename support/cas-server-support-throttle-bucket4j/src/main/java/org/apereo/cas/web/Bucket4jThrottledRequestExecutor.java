@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.BlockingStrategy;
+import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class Bucket4jThrottledRequestExecutor implements ThrottledRequestExecuto
             ? Bandwidth.classic(properties.getOverdraft(), Refill.greedy(properties.getCapacity(), duration))
             : Bandwidth.simple(properties.getCapacity(), duration);
 
-        this.bucket = (AbstractBucket) Bucket4j.builder()
+        this.bucket = (AbstractBucket) Bucket.builder()
             .addLimit(limit)
             .withMillisecondPrecision()
             .build();

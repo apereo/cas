@@ -1,10 +1,10 @@
-(function (material, $) {
+((material, $) => {
     let cas = {
-        init: function () {
+        init: () => {
             cas.attachFields();
             material.autoInit();
         },
-        attachFields: function () {
+        attachFields: () => {
             new material.textField.MDCTextFieldHelperText(document.querySelectorAll('.mdc-text-field-helper-text'));
 
             let divs = document.querySelectorAll('.mdc-text-field'),
@@ -20,31 +20,39 @@
             let selector = document.querySelector('.mdc-select');
             if (selector != null) {
                 const select = new material.select.MDCSelect(selector);
-                select.listen('MDCSelect:change', function () {
+                select.listen('MDCSelect:change', () => {
                     $('#source').val(select.value);
                 });
                 $('#source').val(select.value);
             }
         },
-        checkCaps: function (ev) {
+        checkCaps: ev => {
             let s = String.fromCharCode(ev.which);
-            if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                ev.target.parentElement.classList.add('caps-on');
+            let el = ev.target.parentElement.nextElementSibling.nextElementSibling;
+            if (el != null) {
+                if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                    console.log('CAPSLOCK is on');
+                    el.classList.remove("caps-warn");
+                    el.classList.add('caps-on');
+                } else {
+                    console.log('CAPSLOCK is off')
+                    el.classList.remove("caps-on");
+                    el.classList.add('caps-warn');
+                }
             } else {
-                console.log('caps off')
-                ev.target.parentElement.classList.remove('caps-on');
+                console.log("Unable to locate element for CAPSLOCK")
             }
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', () => {
         cas.init();
     });
 })(mdc, jQuery);
 
 function resourceLoadedSuccessfully() {
 
-    $(document).ready(function () {
+    $(document).ready(() => {
 
         if (trackGeoLocation) {
             requestGeoPosition();
@@ -59,7 +67,7 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        $('.reveal-password').click(function (ev) {
+        $('.reveal-password').click(ev => {
             if ($('.pwd').attr('type') != 'text') {
                 $('.pwd').attr('type', 'text');
                 $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
