@@ -184,6 +184,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     .findFirst()
                     .orElse(null);
             })
+            .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
     }

@@ -75,6 +75,7 @@ import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.AuthenticationCriteria;
 import org.ldaptive.auth.AuthenticationHandlerResponse;
+import org.ldaptive.auth.AuthenticationRequestHandler;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
@@ -90,8 +91,8 @@ import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordPolicyAuthenticationRequestHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
-import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
@@ -1072,7 +1073,6 @@ public class LdapUtils {
 
     private static SimpleBindAuthenticationHandler getBindAuthenticationHandler(final ConnectionFactory factory) {
         val handler = new SimpleBindAuthenticationHandler(factory);
-        handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
     }
 
@@ -1181,14 +1181,15 @@ public class LdapUtils {
                                                                                final Authenticator authenticator,
                                                                                final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyContext(passwordPolicy);
-        val handlers = new HashSet<>();
+        val requestHandlers = new HashSet<>();
+        val responseHandlers = new HashSet<>();
 
         val customPolicyClass = passwordPolicy.getCustomPolicyClass();
         if (StringUtils.isNotBlank(customPolicyClass)) {
             try {
                 LOGGER.debug("Configuration indicates use of a custom password policy handler [{}]", customPolicyClass);
                 val clazz = (Class<AuthenticationResponseHandler>) Class.forName(customPolicyClass);
-                handlers.add(clazz.getDeclaredConstructor().newInstance());
+                responseHandlers.add(clazz.getDeclaredConstructor().newInstance());
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER, "Unable to construct an instance of the password policy handler", e);
             }
@@ -1196,7 +1197,7 @@ public class LdapUtils {
         LOGGER.debug("Password policy authentication response handler is set to accommodate directory type: [{}]", passwordPolicy.getType());
         switch (passwordPolicy.getType()) {
             case AD:
-                handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                responseHandlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
                 Arrays.stream(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES).forEach(a -> {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
@@ -1207,7 +1208,7 @@ public class LdapUtils {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
                 });
-                handlers.add(new FreeIPAAuthenticationResponseHandler(
+                responseHandlers.add(new FreeIPAAuthenticationResponseHandler(
                     Period.ofDays(cfg.getPasswordWarningNumberOfDays()), cfg.getLoginFailures()));
                 break;
             case EDirectory:
@@ -1215,16 +1216,20 @@ public class LdapUtils {
                     LOGGER.debug("Configuring authentication to retrieve password policy attribute [{}]", a);
                     attributes.put(a, a);
                 });
-                handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+                responseHandlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
                 break;
             default:
-                handlers.add(new PasswordPolicyAuthenticationResponseHandler());
-                handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+                requestHandlers.add(new PasswordPolicyAuthenticationRequestHandler());
+                responseHandlers.add(new PasswordPolicyAuthenticationResponseHandler());
+                responseHandlers.add(new PasswordExpirationAuthenticationResponseHandler());
                 break;
         }
-        authenticator.setResponseHandlers(handlers.toArray(AuthenticationResponseHandler[]::new));
+        if (!requestHandlers.isEmpty()) {
+            authenticator.setRequestHandlers(requestHandlers.toArray(AuthenticationRequestHandler[]::new));
+        }
+        authenticator.setResponseHandlers(responseHandlers.toArray(AuthenticationResponseHandler[]::new));
 
-        LOGGER.debug("LDAP authentication response handlers configured are: [{}]", handlers);
+        LOGGER.debug("LDAP authentication response handlers configured are: [{}]", responseHandlers);
 
         if (!passwordPolicy.isAccountStateHandlingEnabled()) {
             cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));

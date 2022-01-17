@@ -18,7 +18,7 @@
                 <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
                     <form name="fm1" method="post" th:action="@{/login}">
                         <h4 class="d-flex align-items-center">
-                            <i class="mdi mdi-laptop mr-2"></i>
+                            <i class="mdi mdi-laptop me-2"></i>
                             <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name goes
                                 here</span>
                         </h4>

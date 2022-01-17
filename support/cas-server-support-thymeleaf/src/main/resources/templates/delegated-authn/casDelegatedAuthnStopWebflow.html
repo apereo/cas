@@ -19,9 +19,11 @@
                     cause of the issue.</p>
 
                 <p>
-                    <i class="mdi mdi-alert mr-2"></i>
-                    <span th:text="#{${'screen.pac4j.authn.' + rootCauseException.class.simpleName}}">
-                        Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
+                    <i class="mdi mdi-alert me-2"></i>
+                    <span th:if="${rootCauseException}" th:text="#{${'screen.pac4j.authn.' + rootCauseException.class.simpleName}}">
+                      Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
+                    <span th:unless="${rootCauseException}" th:text="#{screen.pac4j.authn.unknown}">
+                      Authentication response provided to CAS by the external identity provider cannot be accepted.</span>
                 </p>
                 
                 <div class="mdc-data-table">
@@ -54,16 +56,16 @@
             </div>
             <br/>
             <div class="d-flex">
-                <a id="loginLink" class="mdc-button mdc-button--raised mr-2" th:href="@{/login}">
+                <a id="loginLink" class="mdc-button mdc-button--raised me-2" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</span>
                 </a>
-                <a id="appLink" class="mdc-button mdc-button--raised mr-2" th:href="${service}">
+                <a id="appLink" class="mdc-button mdc-button--raised me-2" th:href="${service}">
                     <span class="mdc-button__label" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</span>
                 </a>
                 <form method="post" id="fm1">
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     <input type="hidden" name="_eventId" value="retry"/>
-                    <button id="retryButton" class="mdc-button mdc-button--raised mr-2" name="retry" accesskey="r">
+                    <button id="retryButton" class="mdc-button mdc-button--raised me-2" name="retry" accesskey="r">
                         <span class="mdc-button__label" th:text="#{screen.pac4j.button.retry}">Try Again</span>
                     </button>
                 </form>

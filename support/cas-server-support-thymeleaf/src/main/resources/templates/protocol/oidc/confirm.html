@@ -15,7 +15,7 @@
     </div>
 
     <div id="dynamic" th:if="${dynamic}" class="my-2 banner banner-warning d-flex align-items-center">
-        <i class="mdi mdi-alert mr-2"></i>
+        <i class="mdi mdi-alert me-2"></i>
         <strong th:utext="#{screen.oidc.confirm.dynamic(${dynamicTime})}"/>
     </div>
     <div id="scopes" th:unless="${#sets.isEmpty(scopes)}">
@@ -59,7 +59,7 @@
     <h3 class="strong border-bottom pb-2 mt-4"
         th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
     <div class="d-flex">
-        <a class="mdc-button mdc-button--raised mr-2"
+        <a class="mdc-button mdc-button--raised me-2"
            id="allow"
            name="allow"
            th:href="@{${callbackUrl}}">

@@ -80,18 +80,61 @@ public interface RegisteredServiceProperty extends Serializable {
     @Getter
     @RequiredArgsConstructor
     enum RegisteredServicePropertyGroups {
+        /**
+         * Property group for CORS settings.
+         */
         CORS,
+        /**
+         * Property group for delegated authn settings.
+         */
         DELEGATED_AUTHN,
+        /**
+         * Property group for SAML2 delegated authn settings.
+         */
         DELEGATED_AUTHN_SAML2,
+        /**
+         * Property group for WSFED authn settings.
+         */
         DELEGATED_AUTHN_WSFED,
+        /**
+         * Property group for OIDC delegated authn settings.
+         */
         DELEGATED_AUTHN_OIDC,
+        /**
+         * Property group for http headers settings.
+         */
         HTTP_HEADERS,
+        /**
+         * Property group for interrupt settings.
+         */
         INTERRUPTS,
+        /**
+         * Property group for JWT authn settings.
+         */
         JWT_AUTHENTICATION,
+        /**
+         * Property group for JWT access token settings.
+         */
         JWT_ACCESS_TOKENS,
+        /**
+         * Property group for JWT tokens settings.
+         */
         JWT_TOKENS,
+        /**
+         * Property group for JWT service ticket settings.
+         */
         JWT_SERVICE_TICKETS,
+        /**
+         * Property group for registered services settings.
+         */
         REGISTERED_SERVICES,
+        /**
+         * Property group for reCAPTCHA settings.
+         */
+        RECAPTCHA,
+        /**
+         * Property group for SCIM settings.
+         */
         SCIM
     }
 
@@ -102,10 +145,25 @@ public interface RegisteredServiceProperty extends Serializable {
     @Getter
     @RequiredArgsConstructor
     enum RegisteredServicePropertyTypes {
+        /**
+         * Property type indicates a set or collection.
+         */
         SET,
+        /**
+         * Property type indicates a string.
+         */
         STRING,
+        /**
+         * Property type indicates a integer.
+         */
         INTEGER,
+        /**
+         * Property type indicates a boolean.
+         */
         BOOLEAN,
+        /**
+         * Property type indicates a long value.
+         */
         LONG
     }
 
