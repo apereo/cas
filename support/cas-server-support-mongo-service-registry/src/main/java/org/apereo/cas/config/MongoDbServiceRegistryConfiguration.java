@@ -47,9 +47,7 @@ public class MongoDbServiceRegistryConfiguration {
     @Qualifier("sslContext")
     private ObjectProvider<SSLContext> sslContext;
 
-    @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
-    @Bean
-    public MongoTemplate mongoDbServiceRegistryTemplate() {
+    private MongoTemplate mongoDbServiceRegistryTemplate() {
         val mongo = casProperties.getServiceRegistry().getMongo();
         val factory = new MongoDbConnectionFactory(sslContext.getObject());
 

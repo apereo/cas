@@ -55,10 +55,7 @@ public class MongoDbTicketRegistryConfiguration {
         return registry;
     }
 
-    @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
-    @Bean
-    @RefreshScope
-    public MongoTemplate mongoDbTicketRegistryTemplate() {
+    private MongoTemplate mongoDbTicketRegistryTemplate() {
         val factory = new MongoDbConnectionFactory(sslContext.getObject());
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         return factory.buildMongoTemplate(mongo);
