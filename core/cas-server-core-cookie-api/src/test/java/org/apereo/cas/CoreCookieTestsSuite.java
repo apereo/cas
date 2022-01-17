@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.cookie.CookieSameSitePolicyTests;
 import org.apereo.cas.web.support.CookieRetrievingCookieGeneratorTests;
 import org.apereo.cas.web.support.DefaultCasCookieValueManagerTests;
 import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManagerTests;
@@ -14,6 +15,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.0.0
  */
 @SelectClasses({
+    CookieSameSitePolicyTests.class,
     CookieRetrievingCookieGeneratorTests.class,
     DefaultCasCookieValueManagerTests.class,
     EncryptedCookieValueManagerTests.class

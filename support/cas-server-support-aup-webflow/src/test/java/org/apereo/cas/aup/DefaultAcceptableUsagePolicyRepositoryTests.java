@@ -22,6 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +56,21 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
         }
 
         @Test
+        public void verifyActionAcceptedGlobal() {
+            val properties = new AcceptableUsagePolicyProperties();
+            properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
+            val context = getRequestContext();
+            val repo = getRepositoryInstance(properties);
+            val authentication = CoreAuthenticationTestUtils.getAuthentication();
+            authentication.getPrincipal().getAttributes().put(
+                properties.getCore().getAupAttributeName(),
+                Collections.singletonList("true"));
+            WebUtils.putAuthentication(authentication, context);
+            WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
+            assertTrue(repo.verify(context).isAccepted());
+        }
+        
+        @Test
         public void verifyActionDefaultAuthentication() {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
@@ -82,8 +98,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
             assertEquals(List.of("casuser"), status.getProperty("user"));
             assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", List.of()));
             assertEquals(Set.of("hello"), status.getPropertyOrDefault("nada", "hello"));
-
-
+            
             assertEquals(List.of("hello1", "hello2"), status.getPropertyOrDefault("nada", "hello1", "hello2"));
             assertEquals(List.of("cas", "system"), status.getPropertyOrDefault("example2", "hello1", "hello2"));
         }

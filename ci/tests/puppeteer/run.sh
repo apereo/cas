@@ -232,6 +232,7 @@ if [[ "${RERUN}" != "true" ]]; then
     printyellow "Enabling debugger on port $DEBUG_PORT"
     runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
   fi
+  runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
   echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 
   springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')

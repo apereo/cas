@@ -115,6 +115,7 @@ public class DefaultDelegatedClientFactory implements DelegatedClientFactory<Ind
         cfg.setDiscoveryURI(oidc.getDiscoveryUri());
         cfg.setCustomParams(oidc.getCustomParams());
         cfg.setLogoutUrl(oidc.getLogoutUrl());
+        cfg.setAllowUnsignedIdTokens(oidc.isAllowUnsignedIdTokens());
 
         cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
         if (StringUtils.isNotBlank(oidc.getTokenExpirationAdvance())) {

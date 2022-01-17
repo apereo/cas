@@ -72,7 +72,7 @@ function showGeoPosition(position) {
 
 
 function preserveAnchorTagOnForm() {
-    $('#fm1').submit(function () {
+    $('#fm1').submit(() => {
         let location = self.document.location;
         let hash = decodeURIComponent(location.hash);
 
@@ -97,7 +97,7 @@ function preserveAnchorTagOnForm() {
 }
 
 function preventFormResubmission() {
-    $('form').submit(function () {
+    $('form').submit(() => {
         $(':submit').attr('disabled', true);
         let altText = $(':submit').attr('data-processing-text');
         if (altText) {

@@ -6,6 +6,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
+import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
@@ -123,7 +124,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         cookie.setSecure(isCookieSecure());
         cookie.setHttpOnly(isCookieHttpOnly());
 
-        return addCookieHeaderToResponse(cookie, response);
+        return addCookieHeaderToResponse(cookie, request, response);
     }
 
     @Override
@@ -189,10 +190,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      * Add cookie header to response.
      *
      * @param cookie   the cookie
+     * @param request  the request
      * @param response the response
      * @return the cookie
      */
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,
+                                               final HttpServletRequest request,
                                                final HttpServletResponse response) {
         val builder = new StringBuilder();
         builder.append(String.format("%s=%s;", cookie.getName(), cookie.getValue()));
@@ -205,21 +208,10 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         }
         val path = cleanCookiePath(cookie.getPath());
         builder.append(String.format(" Path=%s;", path));
-
+        val sameSiteResult = CookieSameSitePolicy.of(cookieGenerationContext).build(request, response);
+        sameSiteResult.ifPresent(result -> builder.append(String.format(" %s", result)));
         val sameSitePolicy = cookieGenerationContext.getSameSitePolicy().toLowerCase();
-        switch (sameSitePolicy) {
-            case "strict":
-                builder.append(" SameSite=Strict;");
-                break;
-            case "lax":
-                builder.append(" SameSite=Lax;");
-                break;
-            case "none":
-            default:
-                builder.append(" SameSite=None;");
-                break;
-        }
-        if (cookie.getSecure() || StringUtils.equalsIgnoreCase(sameSitePolicy, "none")) {
+        if (cookie.getSecure() || (sameSiteResult.isPresent() && StringUtils.equalsIgnoreCase(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
             LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or "
                 + "the configured same-site policy set to [{}]", cookie.getName(), sameSitePolicy);
