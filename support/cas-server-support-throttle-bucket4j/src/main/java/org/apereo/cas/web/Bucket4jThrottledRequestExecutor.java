@@ -8,7 +8,6 @@ import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.BlockingStrategy;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
