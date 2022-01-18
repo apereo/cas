@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     Ehcache3TicketRegistryTicketCatalogConfiguration.class,
     BaseTicketRegistryTests.SharedTestConfiguration.class
 }, properties =
-    "cas.ticket.registry.ehcache3.terracotta-cluster-uri=terracotta://localhost:9410/cas-application")
+    "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri=terracotta://localhost:9410/cas-application")
 @EnabledIfPortOpen(port = 9410)
 @Tag("Ehcache")
 @Getter
