@@ -1,6 +1,15 @@
 {
   "properties": [
     {
+      "name": "cas.ticket.registry.ehcache3.terracotta-cluster-uri",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.ticket.registry.ehcache3.terracotta.terracotta-cluster-uri",
+        "reason": "This setting should is now moved into a terracotta sub namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.oidc.jwks.jwks-file",
       "type": "java.lang.String",
       "deprecation": {

@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.config.CasBucket4jThrottlingConfiguration;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 
@@ -37,6 +38,6 @@ public class Bucket4jThrottledRequestExecutorTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertFalse(this.throttledRequestExecutor.throttle(request, response));
-        assertTrue(response.containsHeader(Bucket4jThrottledRequestExecutor.HEADER_NAME_X_RATE_LIMIT_REMAINING));
+        assertTrue(response.containsHeader(BucketConsumer.HEADER_NAME_X_RATE_LIMIT_REMAINING));
     }
 }
