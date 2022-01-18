@@ -98,7 +98,8 @@ public class Ehcache3TicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "ehcache3TicketCacheManager")
     public CacheManager ehcache3TicketCacheManager(
         @Qualifier("ehcache3CacheManagerConfiguration")
-        final ServiceCreationConfiguration ehcache3CacheManagerConfiguration, final CasConfigurationProperties casProperties) {
+        final ServiceCreationConfiguration ehcache3CacheManagerConfiguration,
+        final CasConfigurationProperties casProperties) {
         val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
         val ehcacheProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
         val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
