@@ -33,7 +33,7 @@ public class CassandraTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketRegistrySessionFactory")
         final CassandraSessionFactory cassandraTicketRegistrySessionFactory,

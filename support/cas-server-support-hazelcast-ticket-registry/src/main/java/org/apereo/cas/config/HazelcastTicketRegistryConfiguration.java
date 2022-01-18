@@ -45,7 +45,7 @@ public class HazelcastTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance,
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
@@ -57,7 +57,7 @@ public class HazelcastTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
     @Bean(destroyMethod = "shutdown")
     public HazelcastInstance casTicketRegistryHazelcastInstance(
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();

@@ -11,6 +11,7 @@ const cas = require('../../cas.js');
             assert(res.data.profile.delegatedClientTypesSupported !== null);
             assert(res.data.profile.userDefinedScopes !== null);
             assert(res.data.profile.multifactorAuthenticationProviderTypesSupported !== null);
+            assert(res.data.profile.ticketTypesSupported !== null);
         },
         error => {
             throw error;

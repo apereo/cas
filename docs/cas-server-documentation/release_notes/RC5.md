@@ -115,6 +115,7 @@ handle the following types:
 - Minor UI improvements to ensure required fields as well as CAPSLOCK warnings are displayed as helper messages for input fields.
 - The construction of the `SameSite` cookie flag can now be controlled using a Java class that implements `CookieSameSitePolicy`.
 - Improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.html), when CAS itself is acting as a SAML2 identity provider.
+- [Configuration discovery](../configuration/Configuration-Discovery.html) endpoint is able to output a list of supported ticket types.
 
 ## Library Upgrades
 
