@@ -92,7 +92,7 @@ public class IgniteTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public IgniteConfiguration igniteConfiguration(
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties) {
         val ignite = casProperties.getTicket().getRegistry().getIgnite();
         val config = new IgniteConfiguration();
@@ -134,7 +134,7 @@ public class IgniteTicketRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("igniteConfiguration")
         final IgniteConfiguration igniteConfiguration) {

@@ -61,28 +61,6 @@ public class Ehcache3Properties implements Serializable {
     private boolean enableManagement = true;
 
     /**
-     * URI in format something like:
-     * {@code terracotta://host1.company.org:9410,host2.company.org:9410/cas-application}.
-     * Default port for terracotta (9410) is used if not specified in URI.
-     */
-    private String terracottaClusterUri;
-
-    /**
-     * Name of default server resource on Terracotta cluster.
-     */
-    private String defaultServerResource = "main";
-
-    /**
-     * Name of resource pool to use on Terracotta cluster.
-     */
-    private String resourcePoolName = "cas-ticket-pool";
-
-    /**
-     * Size of resource pool on terracotta cluster.
-     */
-    private String resourcePoolSize = "15MB";
-
-    /**
      * Root directory to store data if not using terracotta cluster.
      */
     private String rootDirectory = "/tmp/cas/ehcache3";
@@ -94,39 +72,17 @@ public class Ehcache3Properties implements Serializable {
     private boolean persistOnDisk = true;
 
     /**
-     * Timeout when reading or writing to/from Terracotta cluster.
-     */
-    private long clusterReadWriteTimeout = 5L;
-
-    /**
-     * Timeout when connecting to Terracotta cluster.
-     */
-    private long clusterConnectionTimeout = 150L;
-
-    /**
-     * Determine the cluster consistency.
-     */
-    private Consistency clusteredCacheConsistency = Consistency.STRONG;
-
-    /**
-     * Enumeration of the different consistency levels supported in clustered caches.
-     */
-    public enum Consistency {
-        /**
-         * Indicates that the visibility of mutative operations is not guaranteed on operation completion.
-         */
-        EVENTUAL,
-        /**
-         * Indicates that the visibility of mutative operations is guaranteed on operation completion.
-         */
-        STRONG
-    }
-
-    /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
-    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto =
+        new EncryptionRandomizedSigningJwtCryptographyProperties();
+
+    /**
+     * Terracotta settings to handle clustered tickets.
+     */
+    @NestedConfigurationProperty
+    private Ehcache3TerracottaProperties terracotta = new Ehcache3TerracottaProperties();
 
     public Ehcache3Properties() {
         this.crypto.setEnabled(false);
