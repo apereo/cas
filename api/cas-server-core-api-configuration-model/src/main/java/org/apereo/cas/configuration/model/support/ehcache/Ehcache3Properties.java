@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonFilter("Ehcache3Properties")
 public class Ehcache3Properties implements Serializable {
 
     private static final long serialVersionUID = 7772510035918976450L;
@@ -44,7 +46,7 @@ public class Ehcache3Properties implements Serializable {
     /**
      * Sets whether elements are eternal.
      * If eternal, timeouts are ignored and the element is never expired. False by default.
-     * Functionality brought over from Ehcache 2, document use case.
+     * When set to false then storage timeouts will be set based on the the individual caches timeouts.
      */
     private boolean eternal;
 
@@ -59,7 +61,8 @@ public class Ehcache3Properties implements Serializable {
     private boolean enableManagement = true;
 
     /**
-     * URI in format something like "terracotta://host1.company.org:9410,host2.company.org:9410/cas-application".
+     * URI in format something like:
+     * {@code terracotta://host1.company.org:9410,host2.company.org:9410/cas-application}.
      * Default port for terracotta (9410) is used if not specified in URI.
      */
     private String terracottaClusterUri;
@@ -86,6 +89,7 @@ public class Ehcache3Properties implements Serializable {
 
     /**
      * Persist data on disk when jvm is shut down if not using terracotta cluster.
+     * The caches will survive a restart.
      */
     private boolean persistOnDisk = true;
 
@@ -100,7 +104,7 @@ public class Ehcache3Properties implements Serializable {
     private long clusterConnectionTimeout = 150L;
 
     /**
-     * Cluster consistency may be STRONG or EVENTUAL.
+     * Determine the cluster consistency.
      */
     private Consistency clusteredCacheConsistency = Consistency.STRONG;
 
@@ -108,7 +112,6 @@ public class Ehcache3Properties implements Serializable {
      * Enumeration of the different consistency levels supported in clustered caches.
      */
     public enum Consistency {
-
         /**
          * Indicates that the visibility of mutative operations is not guaranteed on operation completion.
          */
@@ -117,7 +120,6 @@ public class Ehcache3Properties implements Serializable {
          * Indicates that the visibility of mutative operations is guaranteed on operation completion.
          */
         STRONG
-
     }
 
     /**
