@@ -8,10 +8,13 @@ import org.apereo.cas.web.Bucket4jThrottledRequestExecutor;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasBucket4jThrottlingConfiguration}.
@@ -32,6 +35,8 @@ public class CasBucket4jThrottlingConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "bucket4jThrottledRequestConsumer")
     public BucketConsumer bucket4jThrottledRequestConsumer(final CasConfigurationProperties casProperties) {
         val throttle = casProperties.getAuthn().getThrottle();
         return BucketProducer.builder().properties(throttle.getBucket4j()).build().produce();

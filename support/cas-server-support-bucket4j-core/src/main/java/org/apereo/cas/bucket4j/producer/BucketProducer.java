@@ -3,6 +3,7 @@ package org.apereo.cas.bucket4j.producer;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.configuration.model.support.bucket4j.BaseBucket4jProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
@@ -30,14 +31,17 @@ public class BucketProducer {
      * @return the abstract bucket
      */
     public BucketConsumer produce() {
-        val duration = Duration.ofSeconds(properties.getRangeInSeconds());
-        val limit = properties.getOverdraft() > 0
-            ? Bandwidth.classic(properties.getOverdraft(), Refill.greedy(properties.getCapacity(), duration))
-            : Bandwidth.simple(properties.getCapacity(), duration);
-        val bucket = (AbstractBucket) Bucket.builder()
-            .addLimit(limit)
-            .withMillisecondPrecision()
-            .build();
-        return new DefaultBucketConsumer(bucket, properties);
+        return FunctionUtils.doAndReturn(properties.isEnabled(),
+            () -> {
+                val duration = Duration.ofSeconds(properties.getRangeInSeconds());
+                val limit = properties.getOverdraft() > 0
+                    ? Bandwidth.classic(properties.getOverdraft(), Refill.greedy(properties.getCapacity(), duration))
+                    : Bandwidth.simple(properties.getCapacity(), duration);
+                val bucket = (AbstractBucket) Bucket.builder()
+                    .addLimit(limit)
+                    .withMillisecondPrecision()
+                    .build();
+                return new DefaultBucketConsumer(bucket, properties);
+            }, BucketConsumer::permitAll);
     }
 }
