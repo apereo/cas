@@ -63,6 +63,7 @@ enum TestCategories {
     Simple,
     SMS,
     Spnego,
+    Syncope,
     Tickets,
     UMA,
     Utility,
