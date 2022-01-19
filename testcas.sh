@@ -138,6 +138,10 @@ while (( "$#" )); do
             tickets|ticketing)
                 task+="testTickets "
                 ;;
+            syncope)
+                isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
+                task+="testSyncope "
+                ;;
             delegation)
                 task+="testDelegation "
                 ;;

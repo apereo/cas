@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: syncope-db
+    environment:
+      POSTGRES_DB: syncope
+      POSTGRES_USER: syncope
+      POSTGRES_PASSWORD: syncope
+
+  syncope:
+    depends_on:
+      - db
+    image: apache/syncope:2.1.10
+    container_name: syncope-core
+    ports:
+      - "18080:8080"
+    restart: always
+    environment:
+      DBMS: postgresql
+      DB_URL: jdbc:postgresql://db:5432/syncope
+      DB_USER: syncope
+      DB_PASSWORD: syncope
+      DB_POOL_MAX: 10
+      DB_POOL_MIN: 2
+      OPENJPA_REMOTE_COMMIT: sjvm
