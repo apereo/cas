@@ -6,6 +6,7 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -136,7 +137,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             response = HttpUtils.execute(exec);
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                val services = (List<RegisteredService>) MAPPER.readValue(result, List.class);
+                val services = MAPPER.readValue(result, new TypeReference<List<RegisteredService>>() {
+                });
                 services.stream()
                     .map(this::invokeServiceRegistryListenerPostLoad)
                     .filter(Objects::nonNull)
