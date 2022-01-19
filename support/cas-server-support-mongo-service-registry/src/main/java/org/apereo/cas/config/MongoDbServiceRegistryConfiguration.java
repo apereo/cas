@@ -35,34 +35,17 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoDbServiceRegistryConfiguration {
 
-    @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbServiceRegistryTemplate(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(CasSSLContext.BEAN_NAME)
-        final CasSSLContext casSslContext) {
-        val mongo = casProperties.getServiceRegistry().getMongo();
-        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
-        val mongoTemplate = factory.buildMongoTemplate(mongo);
-        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        val collection = mongoTemplate.getCollection(mongo.getCollection());
-        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id").onField("serviceId").onField("name").build();
-        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
-        return mongoTemplate;
-    }
-
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistry")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistry mongoDbServiceRegistry(
-        @Qualifier("mongoDbServiceRegistryTemplate")
-        final MongoTemplate mongoDbServiceRegistryTemplate,
-        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final CasConfigurationProperties casProperties,
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext) {
         val mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate, mongo.getCollection(),
+        return new MongoDbServiceRegistry(applicationContext, mongoDbServiceRegistryTemplate(casProperties, casSslContext), mongo.getCollection(),
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
 
@@ -74,4 +57,18 @@ public class MongoDbServiceRegistryConfiguration {
         final ServiceRegistry mongoDbServiceRegistry) {
         return plan -> plan.registerServiceRegistry(mongoDbServiceRegistry);
     }
+
+    private MongoTemplate mongoDbServiceRegistryTemplate(
+        final CasConfigurationProperties casProperties,
+        final CasSSLContext casSslContext) {
+        val mongo = casProperties.getServiceRegistry().getMongo();
+        val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
+        MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        val collection = mongoTemplate.getCollection(mongo.getCollection());
+        val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id").onField("serviceId").onField("name").build();
+        MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
+        return mongoTemplate;
+    }
+
 }

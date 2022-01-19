@@ -34,12 +34,14 @@ public class MongoDbTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(
         @Qualifier("ticketCatalog")
-        final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
-        @Qualifier("mongoDbTicketRegistryTemplate")
-        final MongoTemplate mongoDbTicketRegistryTemplate,
+        final TicketCatalog ticketCatalog, 
+        final CasConfigurationProperties casProperties,
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext,
         @Qualifier("ticketSerializationManager")
         final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
+        val mongoDbTicketRegistryTemplate = mongoDbTicketRegistryTemplate(casProperties, casSslContext);
         val registry = new MongoDbTicketRegistry(ticketCatalog, mongoDbTicketRegistryTemplate, ticketSerializationManager);
         registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo"));
         new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate,
@@ -47,12 +49,8 @@ public class MongoDbTicketRegistryConfiguration {
         return registry;
     }
 
-    @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbTicketRegistryTemplate(
+    private MongoTemplate mongoDbTicketRegistryTemplate(
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongo = casProperties.getTicket().getRegistry().getMongo();
