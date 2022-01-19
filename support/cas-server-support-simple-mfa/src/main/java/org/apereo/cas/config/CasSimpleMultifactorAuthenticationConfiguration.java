@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
+import org.apereo.cas.bucket4j.producer.BucketProducer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -69,11 +71,21 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CommunicationsManager.BEAN_NAME)
-            final CommunicationsManager communicationsManager) {
+            final CommunicationsManager communicationsManager,
+            @Qualifier("mfaSimpleMultifactorBucketConsumer")
+            final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
             return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
                 communicationsManager, casSimpleMultifactorAuthenticationTicketFactory, simple,
-                mfaSimpleMultifactorTokenCommunicationStrategy);
+                mfaSimpleMultifactorTokenCommunicationStrategy, mfaSimpleMultifactorBucketConsumer);
+        }
+
+        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BucketConsumer mfaSimpleMultifactorBucketConsumer(final CasConfigurationProperties casProperties) {
+            val simple = casProperties.getAuthn().getMfa().getSimple();
+            return BucketProducer.builder().properties(simple.getBucket4j()).build().produce();
         }
     }
 

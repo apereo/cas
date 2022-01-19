@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.NoArgsConstructor;

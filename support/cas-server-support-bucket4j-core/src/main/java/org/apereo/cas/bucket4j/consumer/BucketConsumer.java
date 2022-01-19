@@ -31,4 +31,13 @@ public interface BucketConsumer {
      * @return the bucket consumption result
      */
     BucketConsumptionResult consume();
+
+    /**
+     * Permit all bucket consumer.
+     *
+     * @return the bucket consumer
+     */
+    static BucketConsumer permitAll() {
+        return () -> BucketConsumptionResult.builder().consumed(true).build();
+    }
 }
