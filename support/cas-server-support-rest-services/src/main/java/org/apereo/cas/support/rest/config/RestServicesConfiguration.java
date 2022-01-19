@@ -43,8 +43,7 @@ public class RestServicesConfiguration {
         final ServicesManager servicesManager,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport) {
-        val rest = casProperties.getRest()
-            .getServices();
+        val rest = casProperties.getRest().getServices();
         if (StringUtils.isBlank(rest.getAttributeName()) || StringUtils.isBlank(rest.getAttributeValue())) {
             throw new BeanCreationException(
                 "No attribute name or value is defined to enforce authorization when adding services via CAS REST APIs. "
