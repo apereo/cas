@@ -134,3 +134,5 @@ handle the following types:
 - Spring Data
 - Gradle
 - Person Directory
+- Spring Integration
+- Google Maps
