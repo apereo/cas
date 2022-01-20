@@ -1,17 +1,12 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -24,15 +19,22 @@ import org.apache.cxf.jaxrs.ext.search.fiql.FiqlParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.HttpUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 import org.springframework.http.HttpMethod;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SyncopePersonAttributeDao}.
@@ -49,13 +51,6 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
             JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final FiqlParser<SearchBean> FIQL_PARSER = new FiqlParser<>(SearchBean.class);
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> map) {
-        return map.entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getKey,
-                entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
-    }
 
     private final String syncopeUrl;
 
@@ -88,6 +83,19 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         this.searchFilterProperties = visit(searchFilter);
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> map) {
+        return map.entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
+    }
+
+    /**
+     * Parse the given search filter as FIQL and extracts all property keys.
+     *
+     * @param searchFilter search filter
+     * @return search property keys
+     */
     protected Set<String> visit(final String searchFilter) {
         SearchCondition<SearchBean> sc = FIQL_PARSER.parse(searchFilter);
         Set<String> properties = new LinkedHashSet<>();
@@ -95,6 +103,12 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         return properties;
     }
 
+    /**
+     * Visit the given compound search condition, looking for property keys.
+     *
+     * @param sc compound search condition
+     * @param properties property keys
+     */
     protected void visitCompound(final SearchCondition<SearchBean> sc, final Set<String> properties) {
         sc.getSearchConditions().forEach(searchCond -> {
             if (searchCond.getStatement() == null) {
@@ -105,10 +119,22 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         });
     }
 
+    /**
+     * Visit the given primitive search condition and extracts the related property keys.
+     *
+     * @param sc primitive search condition
+     * @return property key
+     */
     protected String visitPrimitive(final SearchCondition<SearchBean> sc) {
         return sc.getStatement().getProperty();
     }
 
+    /**
+     * Perform actual search on Syncope via REST endpoint.
+     *
+     * @param value actual value to replace inside filter expression
+     * @return search result
+     */
     @SneakyThrows
     protected Optional<JsonNode> syncopeSearch(final String value) {
         HttpResponse response = null;

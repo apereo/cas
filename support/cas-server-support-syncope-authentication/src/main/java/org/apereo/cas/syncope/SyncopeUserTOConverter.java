@@ -1,19 +1,33 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.val;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-public final class SyncopeUserTOConverter {
+/**
+ * This is {@link SyncopeUserTOConverter}.
+ *
+ * @author Francesco Chicchiriccò
+ * @since 6.5.0
+ */
+public class SyncopeUserTOConverter {
 
     private static final ObjectMapper MAPPER =
             JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
 
+    /**
+     * Parse JSON object representing Syncope user into property map.
+     *
+     * @param user Syncope user as JSON object
+     * @return property map
+     */
     @SuppressWarnings("unchecked")
     public static Map<String, List<Object>> convert(final JsonNode user) {
         val attributes = new HashMap<String, List<Object>>();
@@ -101,9 +115,5 @@ public final class SyncopeUserTOConverter {
         }
 
         return attributes;
-    }
-
-    private SyncopeUserTOConverter() {
-        // private constructor for static utility class
     }
 }
