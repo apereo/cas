@@ -126,7 +126,7 @@ public class JpaTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaTicketRegistryTransactionTemplate")
             final TransactionTemplate jpaTicketRegistryTransactionTemplate,
-            @Qualifier("ticketCatalog")
+            @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {

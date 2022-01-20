@@ -62,10 +62,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class
 },
-properties = {
-    "cas.authn.attribute-repository.stub.attributes.uid=uid",
-    "cas.authn.ldap[0].principal-attribute-list=sn,cn"
-})
+    properties = {
+        "cas.authn.attribute-repository.stub.attributes.uid=uid",
+        "cas.authn.ldap[0].principal-attribute-list=sn,cn"
+    })
 @Tag("Simple")
 public class CasServerProfileRegistrarTests {
     @Autowired
@@ -86,5 +86,6 @@ public class CasServerProfileRegistrarTests {
         assertNotNull(profile.getRegisteredServiceTypesSupported());
         assertNotNull(profile.getUserDefinedScopes());
         assertNotNull(profile.getAvailableAuthenticationHandlers());
+        assertNotNull(profile.getTicketTypesSupported());
     }
 }

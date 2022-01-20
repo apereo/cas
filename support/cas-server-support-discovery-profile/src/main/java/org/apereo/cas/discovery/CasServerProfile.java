@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,4 +49,9 @@ public class CasServerProfile implements Serializable {
      * Collection of available authentication handlers.
      */
     private Set<String> availableAuthenticationHandlers;
+
+    /**
+     * Map of supported tickets from the catalog.
+     */
+    private Map<String, Map<String, Object>> ticketTypesSupported = new LinkedHashMap<>();
 }

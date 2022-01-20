@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.JmsTicketRegistry;
-import org.apereo.cas.ticket.registry.JmsTicketRegistryDefaultPublisher;
-import org.apereo.cas.ticket.registry.JmsTicketRegistryReceiver;
+import org.apereo.cas.ticket.registry.JmsTicketRegistryQueuePublisher;
+import org.apereo.cas.ticket.registry.JmsTicketRegistryQueueReceiver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.PublisherIdentifier;
@@ -43,7 +43,9 @@ import javax.jms.ConnectionFactory;
 public class JmsTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
     @Bean
-    public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public PublisherIdentifier messageQueueTicketRegistryIdentifier(
+        final CasConfigurationProperties casProperties) {
         val bean = new PublisherIdentifier();
         val jms = casProperties.getTicket().getRegistry().getJms();
         if (StringUtils.isNotBlank(jms.getQueueIdentifier())) {
@@ -54,17 +56,18 @@ public class JmsTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public JmsTicketRegistryReceiver messageQueueTicketRegistryReceiver(
+    @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
+    public JmsTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         final CasConfigurationProperties casProperties,
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
-        return new JmsTicketRegistryReceiver(ticketRegistry, messageQueueTicketRegistryIdentifier);
+        return new JmsTicketRegistryQueueReceiver(ticketRegistry, messageQueueTicketRegistryIdentifier);
     }
 
     @Bean
-    public MessageConverter jacksonJmsMessageConverter() {
+    public MessageConverter jacksonJmsMessageTicketRegistryConverter() {
         val converter = new MappingJackson2MessageConverter();
         val mapper = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true).defaultViewInclusion(false)
@@ -82,20 +85,20 @@ public class JmsTicketRegistryConfiguration {
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         final CasConfigurationProperties casProperties,
         final JmsTemplate jmsTemplate,
-        @Qualifier("jacksonJmsMessageConverter")
+        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
         final MessageConverter jacksonJmsMessageConverter) {
         jmsTemplate.setMessageConverter(jacksonJmsMessageConverter);
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        return new JmsTicketRegistry(new JmsTicketRegistryDefaultPublisher(jmsTemplate), messageQueueTicketRegistryIdentifier, cipher);
+        return new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate), messageQueueTicketRegistryIdentifier, cipher);
     }
 
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public JmsListenerContainerFactory<?> messageQueueTicketRegistryFactory(
-        @Qualifier("jacksonJmsMessageConverter")
+        @Qualifier("jacksonJmsMessageTicketRegistryConverter")
         final MessageConverter jacksonJmsMessageConverter,
         @Qualifier("jmsListenerContainerFactoryConfigurer")
         final DefaultJmsListenerContainerFactoryConfigurer jmsListenerContainerFactoryConfigurer,

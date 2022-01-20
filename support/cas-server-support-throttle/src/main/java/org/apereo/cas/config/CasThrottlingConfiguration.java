@@ -86,7 +86,7 @@ public class CasThrottlingConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("throttledRequestResponseHandler")
             final ThrottledRequestResponseHandler throttledRequestResponseHandler,
-            @Qualifier("throttledRequestExecutor")
+            @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
             final ThrottledRequestExecutor throttledRequestExecutor) {
             val throttle = casProperties.getAuthn().getThrottle();
             return ThrottledSubmissionHandlerConfigurationContext.builder()

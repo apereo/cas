@@ -167,7 +167,7 @@ public class EhcacheTicketRegistryConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("ehCacheCacheManager")
         final EhCacheCacheManager manager,
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog) {
 
         val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
