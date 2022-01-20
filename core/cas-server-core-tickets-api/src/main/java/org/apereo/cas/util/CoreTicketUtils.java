@@ -39,16 +39,17 @@ public class CoreTicketUtils {
      * @param registryName     the registry name
      * @return the cipher executor
      */
-    public static CipherExecutor newTicketRegistryCipherExecutor(final EncryptionRandomizedSigningJwtCryptographyProperties registry,
-                                                                 final boolean forceIfBlankKeys,
-                                                                 final String registryName) {
+    public static CipherExecutor newTicketRegistryCipherExecutor(
+        final EncryptionRandomizedSigningJwtCryptographyProperties registry,
+        final boolean forceIfBlankKeys,
+        final String registryName) {
 
         val enabled = FunctionUtils.doIf(
             !registry.isEnabled() && StringUtils.isNotBlank(registry.getEncryption().getKey()) && StringUtils.isNotBlank(registry.getSigning().getKey()),
             () -> {
                 LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
-                    + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
-                    + "If you intend to turn off this behavior, consider removing/disabling the signing/encryption keys defined in settings", registryName);
+                            + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
+                            + "If you intend to turn off this behavior, consider removing/disabling the signing/encryption keys defined in settings", registryName);
                 return Boolean.TRUE;
             },
             registry::isEnabled
@@ -66,8 +67,8 @@ public class CoreTicketUtils {
                 registryName);
         }
         LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
-            + "Consider using other choices to handle encryption, signing and verification of "
-            + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
+                    + "Consider using other choices to handle encryption, signing and verification of "
+                    + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
         return CipherExecutor.noOp();
     }
 

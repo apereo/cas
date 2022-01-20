@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configuration properties class for bucket4j.
@@ -29,23 +31,16 @@ public abstract class BaseBucket4jProperties implements Serializable {
     private boolean enabled = true;
 
     /**
-     * Number of tokens that can be used within the time window.
-     */
-    private int capacity = 120;
-
-    /**
-     * Indicate the overdraft used if requests are above the average capacity.
-     * A positive value activates a greedy strategy for producing tokens for capacity.
-     */
-    private int overdraft;
-
-    /**
-     * Time window in which capacity can be allowed.
-     */
-    private int rangeInSeconds = 60;
-
-    /**
      * Whether the request should block until capacity becomes available.
+     * Consume a token from the token bucket. If a token is not available this
+     * will block until the refill adds one to the bucket.
      */
     private boolean blocking = true;
+
+    /**
+     * Describe the available bandwidth and the overall limitations.
+     * Multiple bandwidths allow for different policies per unit of measure.
+     * (i.e. allows 1000 tokens per 1 minute, but not often then 50 tokens per 1 second).
+     */
+    private List<Bucket4jBandwidthLimitProperties> bandwidth = new ArrayList<>();
 }

@@ -29,27 +29,27 @@ public class DefaultBucketConsumer implements BucketConsumer {
     @Override
     public BucketConsumptionResult consume() {
         val availableTokens = this.bucket.getAvailableTokens();
-        val result = FunctionUtils.doAndHandle(() -> {
+        val canProceed = FunctionUtils.doAndHandle(() -> {
             if (properties.isBlocking()) {
                 LOGGER.trace("Attempting to consume a token for the authentication attempt");
-                return !bucket.tryConsume(1, MAX_WAIT_NANOS, BlockingStrategy.PARKING);
+                return bucket.tryConsume(1, MAX_WAIT_NANOS, BlockingStrategy.PARKING);
             }
-            return !bucket.tryConsume(1);
+            return bucket.tryConsume(1);
         }, e -> {
             LoggingUtils.error(LOGGER, e);
             Thread.currentThread().interrupt();
-            return true;
+            return false;
         }).get();
 
         val headers = new LinkedHashMap<String, String>();
-        if (result) {
+        if (!canProceed) {
             val probe = this.bucket.tryConsumeAndReturnRemaining(1);
             val seconds = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill());
             headers.put(HEADER_NAME_X_RATE_LIMIT_RETRY_AFTER_SECONDS, Long.toString(seconds));
             LOGGER.warn("The request is throttled as capacity is entirely consumed. Available tokens are [{}]", availableTokens);
-        } else {
-            headers.put(HEADER_NAME_X_RATE_LIMIT_REMAINING, Long.toString(availableTokens));
+            return BucketConsumptionResult.builder().consumed(false).headers(headers).build();
         }
-        return BucketConsumptionResult.builder().consumed(result).headers(headers).build();
+        headers.put(HEADER_NAME_X_RATE_LIMIT_REMAINING, Long.toString(availableTokens));
+        return BucketConsumptionResult.builder().consumed(true).headers(headers).build();
     }
 }
