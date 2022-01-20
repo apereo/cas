@@ -1,12 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.syncope.SyncopePersonAttributeDao;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,16 +33,10 @@ public class SyncopePersonDirectoryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos(
-            final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties) {
 
         val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
-        val dao = new SyncopePersonAttributeDao(
-                properties.getUrl(),
-                properties.getDomain(),
-                properties.getBasicAuthUsername(),
-                properties.getBasicAuthPassword(),
-                properties.getHeaders(),
-                properties.getSearchFilter());
+        val dao = new SyncopePersonAttributeDao(properties);
         dao.setOrder(properties.getOrder());
         FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
         return BeanContainer.of(CollectionUtils.wrapList(dao));
@@ -51,9 +46,8 @@ public class SyncopePersonDirectoryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PersonDirectoryAttributeRepositoryPlanConfigurer syncopeAttributeRepositoryPlanConfigurer(
-            @Qualifier("syncopePersonAttributeDaos")
-            final BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos) {
-
+        @Qualifier("syncopePersonAttributeDaos")
+        final BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos) {
         return plan -> syncopePersonAttributeDaos.toList().forEach(plan::registerAttributeRepository);
     }
 }

@@ -48,6 +48,9 @@ public class Bucket4jBandwidthLimitProperties implements Serializable {
     @DurationCapable
     private String duration = "PT60S";
 
+    /**
+     * Duration to use to refill the bucket.
+     */
     @DurationCapable
     private String refillDuration = "PT30S";
 
