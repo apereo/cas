@@ -63,7 +63,7 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     public void verifyBadTicketInCatalog() {
         val ticket = new MockTicketGrantingTicket("casuser");
-        
+
         val instance = mock(HazelcastInstance.class);
         when(instance.getMap(anyString())).thenThrow(new RuntimeException());
 
