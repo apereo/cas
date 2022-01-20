@@ -14,6 +14,17 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:18080); 
 done
 echo "Syncope Docker image is running."
 
+echo "Creating security question..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/securityQuestions' \
+  -H 'accept: */*' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "key": "b4089fe4-79f7-11ec-90d6-0242ac120003",
+  "content": "What is my favorite food?"
+}'
+
 echo "Creating sample user"
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
@@ -26,9 +37,7 @@ curl -X 'POST' \
   "@class": "org.apache.syncope.common.lib.to.UserTO",
   "realm": "/",
   "username": "syncopecas",
-  "password": "Mellon",
-  "securityQuestion": "What is our favorite food?",
-  "securityAnswer": "Pizza"
+  "password": "Mellon"
 }'
 clear
 echo -e "Ready!\n"

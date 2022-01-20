@@ -1,18 +1,20 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+
 /**
- * This is {@link AbstractLdapProperties}.
+ * This is {@link AbstractSyncopeProperties}.
  *
- * @author Misagh Moayyed
- * @since 5.0.0
+ * @author Francesco Chicchiriccò
+ * @since 6.5.0
  */
 @RequiresModule(name = "cas-server-support-syncope-authentication")
 @Getter

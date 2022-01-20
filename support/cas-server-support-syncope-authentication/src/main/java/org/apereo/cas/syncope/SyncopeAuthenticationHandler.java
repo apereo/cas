@@ -66,7 +66,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
                 throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
             }
-            val principal = this.principalFactory.createPrincipal(user.get("username").asText(), SyncopeUserTOConverter.convert(user));
+            val principal = this.principalFactory.createPrincipal(user.get("username").asText(), SyncopeUserTOConverterUtils.convert(user));
             return createHandlerResult(credential, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());

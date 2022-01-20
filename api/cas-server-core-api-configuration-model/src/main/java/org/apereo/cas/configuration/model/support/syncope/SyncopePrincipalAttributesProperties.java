@@ -1,14 +1,16 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import java.util.HashMap;
-import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link SyncopePrincipalAttributesProperties}.
@@ -26,16 +28,16 @@ public class SyncopePrincipalAttributesProperties extends AbstractSyncopePropert
     private static final long serialVersionUID = 98257222402164L;
 
     /**
-     * A value can be assigned to this field to uniquely identify this resolver.
-     */
-    private String id;
-
-    /**
      * User FIQL filter to use for searching.
      * Syntax is {@code username=={user}} or {@code username=={0}}.
      */
     @RequiredProperty
     protected String searchFilter;
+
+    /**
+     * A value can be assigned to this field to uniquely identify this resolver.
+     */
+    private String id;
 
     /**
      * The order of this attribute repository in the chain of repositories.

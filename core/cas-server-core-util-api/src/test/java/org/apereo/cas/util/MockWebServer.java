@@ -96,8 +96,12 @@ public class MockWebServer implements AutoCloseable {
     }
 
     public MockWebServer(final int port, final Resource resource, final String contentType) {
+        this(port, resource, contentType, HttpStatus.OK);
+    }
+
+    public MockWebServer(final int port, final Resource resource, final String contentType, final HttpStatus status) {
         try {
-            this.worker = new Worker(getServerSocket(port), resource, contentType, HttpStatus.OK);
+            this.worker = new Worker(getServerSocket(port), resource, contentType, status);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Cannot create Web server", e);
         }

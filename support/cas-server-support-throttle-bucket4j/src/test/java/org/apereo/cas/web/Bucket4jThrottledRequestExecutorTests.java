@@ -31,7 +31,7 @@ public class Bucket4jThrottledRequestExecutorTests {
         RefreshAutoConfiguration.class,
         CasBucket4jThrottlingConfiguration.class
     })
-    public abstract class BaseBucket4jTests {
+    public abstract static class BaseBucket4jTests {
         @Autowired
         @Qualifier(ThrottledRequestExecutor.DEFAULT_BEAN_NAME)
         protected ThrottledRequestExecutor throttledRequestExecutor;
