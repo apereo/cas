@@ -21,4 +21,8 @@ import lombok.experimental.Accessors;
 @JsonFilter("CasSimpleMultifactorAuthenticationBucket4jProperties")
 public class CasSimpleMultifactorAuthenticationBucket4jProperties extends BaseBucket4jProperties {
     private static final long serialVersionUID = -2432886337199727140L;
+
+    public CasSimpleMultifactorAuthenticationBucket4jProperties() {
+        setEnabled(false);
+    }
 }
