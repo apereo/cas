@@ -74,6 +74,11 @@ approximately `236` test scenarios and we'll continue to add more in the coming 
    
 A new [JMeter test script](../high_availability/Performance-Testing-JMeter.html) is now 
 available to support running load tests for a CAS server acting as an OpenID Connect provider.
+  
+### Simple Multifactor Authentication w/ Rate Limiting
+                            
+CAS, acting as a [simple multifactor authentication provider](../mfa/Simple-Multifactor-Authentication.html),
+is now able to support token request rate-limiting and throttling.
 
 ### OpenID Connect JSON Web Keystore
 
@@ -95,6 +100,10 @@ The [CAS Integration with ADFS](../integration/ADFS-Integration.html) is now abl
 signing certificates from the federation metadata file as an option. Metadata must contain an `IDPSSODescriptor` element
 with a key descriptor tagged for `signing`.
      
+### Apache Syncope Attribute Resolution
+
+CAS is now able to independently [fetch person attributes](../integration/Attribute-Resolution-Syncope.html) from Apache Syncope.
+
 ### Delegated Authentication Auto-Redirect
 
 When [delegating authentication](../integration/Delegate-Authentication.html) to an external identity provider,
@@ -136,3 +145,6 @@ handle the following types:
 - Person Directory
 - Spring Integration
 - Google Maps
+- Hibernate
+- MariaDb Driver
+- InfluxDb

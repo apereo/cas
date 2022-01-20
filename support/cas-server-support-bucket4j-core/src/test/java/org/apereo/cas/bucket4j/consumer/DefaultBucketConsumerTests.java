@@ -33,6 +33,6 @@ public class DefaultBucketConsumerTests {
         val producer = new DefaultBucketConsumer(bucket, new Bucket4jThrottleProperties());
         val result = producer.consume();
         assertNotNull(result);
-        assertTrue(result.isConsumed());
+        assertFalse(result.isConsumed());
     }
 }

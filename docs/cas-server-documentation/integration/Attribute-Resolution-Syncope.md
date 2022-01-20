@@ -6,7 +6,7 @@ category: Attributes
 
 {% include variables.html %}
 
-# Syncope Attribute Resolution
+# Apache Syncope Attribute Resolution
 
 The following configuration describes how to fetch and retrieve attributes from [Apache Syncope](https://syncope.apache.org/).
 
