@@ -11,6 +11,11 @@ import java.util.Collection;
 public interface TicketCatalog {
 
     /**
+     * Implementation bean name.
+     */
+    String BEAN_NAME = "ticketCatalog";
+
+    /**
      * Register ticket definition.
      *
      * @param definition the definition

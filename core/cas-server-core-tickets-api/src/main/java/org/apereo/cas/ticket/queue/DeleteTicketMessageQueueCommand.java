@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.queue;
+package org.apereo.cas.ticket.queue;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;

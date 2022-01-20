@@ -19,7 +19,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
+//        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
         classpath "org.gradle:test-retry-gradle-plugin:$gradleRetryVersion"
         classpath "com.github.jk1:gradle-license-report:$gradleLicenseVersion"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
@@ -451,19 +451,22 @@ subprojects {
     }
 
     jar {
+        def projectName = project.name
+        def projectGroup = project.group
+        def projectVersion = project.version
+        def projectSpecVersion = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
         manifest {
             attributes(
-                    "Automatic-Module-Name": project.name,
-                    "Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group)
+                    "Automatic-Module-Name": projectName,
+                    "Implementation-Title": projectName,
+                    "Implementation-Vendor": projectGroup,
+                    "Created-By": projectGroup)
             if (generateTimestamps) {
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(ZoneId.systemDefault()))
             }
-
             attributes(
-                    "Specification-Version": "${-> project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'}",
-                    "Implementation-Version": project.version)
+                    "Specification-Version": projectSpecVersion,
+                    "Implementation-Version": projectVersion)
         }
     }
 

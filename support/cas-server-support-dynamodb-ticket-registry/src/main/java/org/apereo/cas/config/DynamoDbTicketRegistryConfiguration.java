@@ -54,7 +54,7 @@ public class DynamoDbTicketRegistryConfiguration {
             @Qualifier("amazonDynamoDbTicketRegistryClient")
             final DynamoDbClient amazonDynamoDbTicketRegistryClient,
             final CasConfigurationProperties casProperties,
-            @Qualifier("ticketCatalog")
+            @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbTicketRegistryClient);

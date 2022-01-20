@@ -152,7 +152,7 @@ public class CasCoreTicketsConfiguration {
             return CipherExecutor.noOp();
         }
 
-        @ConditionalOnMissingBean(name = "ticketCatalog")
+        @ConditionalOnMissingBean(name = TicketCatalog.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketCatalog ticketCatalog(

@@ -108,11 +108,14 @@ handle the following types:
 [CAS Integration with ADFS](../integration/ADFS-Integration.html) has also received the same capability.
 
 ## Other Stuff
-
+   
+- Proper handling of recycled tokens for [Simple MFA](../mfa/Simple-Multifactor-Authentication.html), when used in combination with the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) to avoid errors related to duplicate entries. 
+- Minor build improvements to ensure the CAS Gradle build can work correctly with the Gradle configuration cache.
 - Validation of configuration properties is now moved into a proper `ApplicationContextInitializer` component.
 - Minor UI improvements to ensure required fields as well as CAPSLOCK warnings are displayed as helper messages for input fields.
 - The construction of the `SameSite` cookie flag can now be controlled using a Java class that implements `CookieSameSitePolicy`.
 - Improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.html), when CAS itself is acting as a SAML2 identity provider.
+- [Configuration discovery](../configuration/Configuration-Discovery.html) endpoint is able to output a list of supported ticket types.
 
 ## Library Upgrades
 
@@ -129,3 +132,7 @@ handle the following types:
 - Apache Ignite
 - Pac4j
 - Spring Data
+- Gradle
+- Person Directory
+- Spring Integration
+- Google Maps
