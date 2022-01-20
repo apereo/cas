@@ -11,7 +11,7 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   REPO_OWNER: ${{ github.repository_owner }}
-  JDK_CURRENT: 11.0.14
+  JDK_CURRENT: 11.0.13
   CODE_ARTIFACT_DOMAIN: ${{ secrets.CODE_ARTIFACT_DOMAIN }}
   CODE_ARTIFACT_URL: ${{ secrets.CODE_ARTIFACT_URL }}
 
