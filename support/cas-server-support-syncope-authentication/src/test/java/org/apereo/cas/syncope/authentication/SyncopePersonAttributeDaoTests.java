@@ -75,38 +75,37 @@ public class SyncopePersonAttributeDaoTests {
         public void verifyUserIsFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
-            @Cleanup("stop")
-            val webserver = startMockSever(result, HttpStatus.OK);
+            try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
+                assertFalse(syncopePersonAttributeDaos.toList().isEmpty());
+                assertFalse(attributeRepository.getPeople(Map.of("username", List.of("casuser"))).isEmpty());
 
-            assertFalse(syncopePersonAttributeDaos.toList().isEmpty());
-            assertFalse(attributeRepository.getPeople(Map.of("username", List.of("casuser"))).isEmpty());
-
-            val first = syncopePersonAttributeDaos.first();
-            val people = first.getPeople(Map.of("username", List.of("casuser")),
-                IPersonAttributeDaoFilter.alwaysChoose());
-            assertFalse(people.iterator().next().getAttributes().isEmpty());
+                val first = syncopePersonAttributeDaos.first();
+                val people = first.getPeople(Map.of("username", List.of("casuser")),
+                    IPersonAttributeDaoFilter.alwaysChoose());
+                assertFalse(people.iterator().next().getAttributes().isEmpty());
+            }
         }
 
         @Test
         public void verifyUserIsNotFound() {
             val result = MAPPER.createObjectNode();
             result.putArray("result");
-            @Cleanup("stop")
-            val webserver = startMockSever(result, HttpStatus.OK);
-            val people = attributeRepository.getPeopleWithMultivaluedAttributes(
-                Map.of("anotherProp", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
-            assertTrue(people.isEmpty());
+            try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
+                val people = attributeRepository.getPeopleWithMultivaluedAttributes(
+                    Map.of("anotherProp", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
+                assertTrue(people.isEmpty());
+            }
         }
 
         @Test
         public void verifySyncopeDown() {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
-            @Cleanup("stop")
-            val webserver = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR);
-            val first = syncopePersonAttributeDaos.first();
-            val results = first.getPeople(Map.of("username", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
-            assertTrue(results.iterator().next().getAttributes().isEmpty());
+            try (val webserver = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {
+                val first = syncopePersonAttributeDaos.first();
+                val results = first.getPeople(Map.of("username", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
+                assertTrue(results.iterator().next().getAttributes().isEmpty());
+            }
         }
     }
 }
