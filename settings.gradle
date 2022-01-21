@@ -22,7 +22,7 @@ dependencyResolutionManagement {
         mavenLocal()
         mavenCentral()
         maven {
-            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+            url "https://build.shibboleth.net/maven/releases/"
             content {
                 includeGroupByRegex "org\\.opensaml.*"
                 includeGroupByRegex "net\\.shibboleth.*"
