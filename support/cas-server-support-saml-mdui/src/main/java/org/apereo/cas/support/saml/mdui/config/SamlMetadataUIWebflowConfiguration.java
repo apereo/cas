@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -58,10 +59,13 @@ public class SamlMetadataUIWebflowConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
+        @Qualifier("argumentExtractor")
+        final ArgumentExtractor argumentExtractor,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> serviceFactory) {
         val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter, serviceFactory, servicesManager);
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter,
+            serviceFactory, servicesManager, argumentExtractor);
     }
 
     @Bean

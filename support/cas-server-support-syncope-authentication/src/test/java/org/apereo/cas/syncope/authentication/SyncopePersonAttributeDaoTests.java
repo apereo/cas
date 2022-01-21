@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.spring.BeanContainer;
 
-import lombok.Cleanup;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDaoFilter;

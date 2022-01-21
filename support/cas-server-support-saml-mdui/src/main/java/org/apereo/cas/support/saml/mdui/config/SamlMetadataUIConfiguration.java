@@ -46,10 +46,11 @@ public class SamlMetadataUIConfiguration {
 
     private static final String DEFAULT_SEPARATOR = "::";
 
-    private static MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter,
-                                                            final ConfigurableApplicationContext applicationContext,
-                                                            final CasConfigurationProperties casProperties,
-                                                            final OpenSamlConfigBean openSamlConfigBean) {
+    private static MetadataResolverAdapter configureAdapter(
+        final AbstractMetadataResolverAdapter adapter,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final OpenSamlConfigBean openSamlConfigBean) {
         val resources = new HashMap<Resource, MetadataFilterChain>();
         val chain = new MetadataFilterChain();
         casProperties.getSamlMetadataUi().getResources()
@@ -100,10 +101,11 @@ public class SamlMetadataUIConfiguration {
 
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
-    public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter(final CasConfigurationProperties casProperties,
-                                                                                 final ConfigurableApplicationContext applicationContext,
-                                                                                 @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                 final OpenSamlConfigBean openSamlConfigBean) {
+    public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
         val staticAdapter = new StaticMetadataResolverAdapter();
         configureAdapter(staticAdapter, applicationContext, casProperties, openSamlConfigBean);
         staticAdapter.buildMetadataResolverAggregate();

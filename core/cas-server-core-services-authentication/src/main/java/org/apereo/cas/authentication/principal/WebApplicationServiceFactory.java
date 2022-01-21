@@ -81,15 +81,9 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         service.setAttributes(new HashMap(attributes));
     }
 
-    /**
-     * Determine web application format boolean.
-     *
-     * @param request               the request
-     * @param webApplicationService the web application service
-     * @return the service itself.
-     */
-    private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
-                                                                               final AbstractWebApplicationService webApplicationService) {
+    private static AbstractWebApplicationService determineWebApplicationFormat(
+        final HttpServletRequest request,
+        final AbstractWebApplicationService webApplicationService) {
         val format = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
             .orElse(StringUtils.EMPTY);
