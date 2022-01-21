@@ -1,15 +1,20 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import lombok.Getter;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
@@ -23,7 +28,8 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class JsonConsentRepository extends BaseConsentRepository {
+@Getter
+public class JsonConsentRepository extends BaseConsentRepository implements DisposableBean {
     private static final long serialVersionUID = -402728417464783825L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -31,7 +37,7 @@ public class JsonConsentRepository extends BaseConsentRepository {
 
     private final Resource jsonResource;
 
-    private FileWatcherService watcherService;
+    private WatcherService watcherService;
 
     public JsonConsentRepository(final Resource resource) throws Exception {
         this.jsonResource = resource;
@@ -40,6 +46,13 @@ public class JsonConsentRepository extends BaseConsentRepository {
             this.watcherService = new FileWatcherService(resource.getFile(),
                 Unchecked.consumer(file -> setConsentDecisions(readDecisionsFromJsonResource())));
             this.watcherService.start(getClass().getSimpleName());
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (watcherService != null) {
+            watcherService.close();
         }
     }
 
@@ -70,22 +83,23 @@ public class JsonConsentRepository extends BaseConsentRepository {
         writeAccountToJsonResource();
     }
 
-    @SneakyThrows
     private Set<ConsentDecision> readDecisionsFromJsonResource() {
-        if (ResourceUtils.doesResourceExist(jsonResource)) {
-            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                val personList = new TypeReference<Set<ConsentDecision>>() {
-                };
-                return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        return FunctionUtils.doAndHandle((CheckedSupplier<Set<ConsentDecision>>) () -> {
+            if (ResourceUtils.doesResourceExist(jsonResource)) {
+                try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+                    val personList = new TypeReference<Set<ConsentDecision>>() {
+                    };
+                    return MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+                }
             }
-        }
-        return new LinkedHashSet<>(0);
+            return new LinkedHashSet<>(0);
+        }, throwable -> new LinkedHashSet<>(0)).get();
     }
 
-    @SneakyThrows
-    private boolean writeAccountToJsonResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), getConsentDecisions());
-        readDecisionsFromJsonResource();
-        return true;
+    private void writeAccountToJsonResource() {
+        Unchecked.consumer((CheckedConsumer<Resource>) resource -> {
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(resource.getFile(), getConsentDecisions());
+            readDecisionsFromJsonResource();
+        }).accept(this.jsonResource);
     }
 }
