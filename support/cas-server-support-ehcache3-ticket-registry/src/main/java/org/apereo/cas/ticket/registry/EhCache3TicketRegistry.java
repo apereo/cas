@@ -4,11 +4,13 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.cache.Cache;
@@ -29,38 +31,28 @@ import java.util.stream.Collectors;
  * @since 6.2
  */
 @Slf4j
+@RequiredArgsConstructor
 public class EhCache3TicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;
 
-    public EhCache3TicketRegistry(final TicketCatalog ticketCatalog,
-                                  final CacheManager cacheManager,
-                                  final CipherExecutor cipher) {
-        this.ticketCatalog = ticketCatalog;
-        this.cacheManager = cacheManager;
-        setCipherExecutor(cipher);
-        LOGGER.info("Setting up Ehcache Ticket Registry...");
-    }
-
     private static Map<String, Ticket> getAllUnexpired(final Cache<String, Ticket> map) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val returnMap = new HashMap<String, Ticket>();
             map.iterator().forEachRemaining(entry -> returnMap.put(entry.getKey(), entry.getValue()));
             return returnMap;
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
+        }, (CheckedFunction<Throwable, Map<String, Ticket>>) throwable -> {
+            LoggingUtils.warn(LOGGER, throwable);
             return new HashMap<>(0);
-        }
+        }).get();
     }
 
     @Override
     public void addTicketInternal(final Ticket ticketToAdd) {
         val metadata = this.ticketCatalog.find(ticketToAdd);
-
         val ticket = encodeTicket(ticketToAdd);
-
         val cache = getTicketCacheFor(metadata);
         LOGGER.debug("Adding ticket [{}] to the cache: [{}]",
             ticket.getId(), metadata.getProperties().getStorageName());

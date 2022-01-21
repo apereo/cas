@@ -7,9 +7,9 @@ import org.apereo.cas.ticket.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.queue.TicketRegistryQueuePublisher;
 import org.apereo.cas.ticket.queue.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,19 +20,12 @@ import lombok.val;
  * @since 5.2.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class JmsTicketRegistry extends DefaultTicketRegistry {
 
     private final TicketRegistryQueuePublisher ticketPublisher;
 
     private final PublisherIdentifier id;
-
-    public JmsTicketRegistry(final TicketRegistryQueuePublisher publisher,
-                             final PublisherIdentifier id,
-                             final CipherExecutor cipherExecutor) {
-        super(cipherExecutor);
-        this.ticketPublisher = publisher;
-        this.id = id;
-    }
 
     @Override
     public void addTicketInternal(final @NonNull Ticket ticket) {
