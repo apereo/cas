@@ -149,3 +149,4 @@ handle the following types:
 - Hibernate
 - MariaDb Driver
 - InfluxDb
+- Oshi
