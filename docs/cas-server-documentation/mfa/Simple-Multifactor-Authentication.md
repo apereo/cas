@@ -20,7 +20,7 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-simple-mfa" %}
 
-{% include_cached casproperties.html properties="cas.authn.mfa.simple" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.simple" excludes=".mail,.sms,.bucket4j" %}
 
 ## Registration
 
@@ -42,3 +42,17 @@ via notification strategies back by platforms such as Google Firebase, etc.
 
 To learn more about available options, please [see this guide](../notifications/SMS-Messaging-Configuration.html) 
 or [this guide](../notifications/Sending-Email-Configuration.html), or [this guide](../notifications/Notifications-Configuration.html).
+
+{% include_cached casproperties.html properties="cas.authn.mfa.simple.mail,cas.authn.mfa.simple.sms" %}
+
+## Rate Limiting
+
+CAS is able to support rate-limiting for token requests based on the token-bucket 
+algorithm, via the [Bucket4j](https://bucket4j.com/) project. This
+means that token requests that reach a certain configurable capacity within
+a time window may either be blocked or _throttled_ to slow down. This is done to
+protect the system from overloading, allowing you to introduce a scenario to allow
+CAS `120` token requests per minute with a refill rate of `10` requests per
+second that would continually increase in the capacity bucket.
+
+{% include_cached casproperties.html properties="cas.authn.mfa.simple.bucket4j" %}

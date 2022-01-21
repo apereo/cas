@@ -6,6 +6,7 @@ dependencies {
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-otp-mfa-core")
+    implementation project(":support:cas-server-support-bucket4j-core")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")

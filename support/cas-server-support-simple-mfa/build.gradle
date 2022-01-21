@@ -3,7 +3,8 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-mfa")
-    
+
+    implementation project(":support:cas-server-support-bucket4j-core")
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-simple-mfa-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")

@@ -1,6 +1,5 @@
 description = 'Apereo CAS SOAP Authentication'
 
-apply plugin: "com.ewerk.gradle.plugins.jaxb2"
 
 dependencies {
     api project(":api:cas-server-core-api")
@@ -44,13 +43,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
 
+/*
+apply plugin: "com.ewerk.gradle.plugins.jaxb2"
 dependencies {
     jaxb2 libraries.jaxb
     jaxb2 "javax.activation:activation:1.1.1"
     jaxb2 "commons-beanutils:commons-beanutils:$commonsBeansVersion"
 }
 
-/*
 jaxb2 {
     xjc {
         "classes" {

@@ -1,0 +1,61 @@
+[ "java.util.ArrayList", [
+  {
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://github.com/apereo/cas",
+    "name" : "CAS-GitHub",
+    "id" : 1,
+    "contacts": [
+      "java.util.ArrayList", [{
+        "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact",
+        "name": "John Smith",
+        "email": "jsmith@example.org",
+        "phone": "123-456-7890",
+        "department": "IT",
+        "type": "ADMIN"
+      }
+      ]
+    ]
+  },
+  {
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^https://apereo.github.io",
+    "name" : "CAS-Blog",
+    "id" : 2,
+    "accessStrategy" : {
+      "@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+      "strategies": [ "java.util.ArrayList",
+        [ {
+          "@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+          "strategies": [ "java.util.ArrayList",
+            [
+              {
+                "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+                "requiredAttributes": {
+                  "@class": "java.util.LinkedHashMap",
+                  "key1": [ "java.util.LinkedHashSet", [ "value1" ] ]
+                }
+              },
+              {
+                "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+                "requiredAttributes": {
+                  "@class": "java.util.LinkedHashMap",
+                  "key2": [ "java.util.LinkedHashSet", [ "value2" ] ]
+                }
+              }
+            ]
+          ],
+          "operator": "AND"
+        },
+          {
+            "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+            "requiredAttributes": {
+              "@class": "java.util.LinkedHashMap",
+              "key3": [ "java.util.LinkedHashSet", [ "value3" ] ]
+            }
+          }
+        ]
+      ],
+      "operator": "OR"
+    }
+  }
+]]

@@ -8,6 +8,9 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -62,7 +65,8 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             AbstractRegisteredService.class, o -> true, CentralAuthenticationService.NAMESPACE);
     }
 
-    private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
+    private static Object locateSubtypesByReflection(final Function<Class, Object> mapper,
+                                                     final Collector collector,
                                                      final Class parentType, final Predicate filter,
                                                      final String packageNamespace) {
         val reflections = new Reflections(new ConfigurationBuilder()
@@ -89,7 +93,18 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setAvailableAttributes(this.availableAttributes);
         profile.setUserDefinedScopes(casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes().keySet());
         profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
+        profile.setTicketTypesSupported(locateTicketTypesSupported());
         return profile;
+    }
+
+    private Map<String, Map<String, Object>> locateTicketTypesSupported() {
+        val catalog = applicationContext.getBean(TicketCatalog.BEAN_NAME, TicketCatalog.class);
+        return catalog
+            .findAll()
+            .stream()
+            .collect(Collectors.toMap(TicketDefinition::getPrefix,
+                value -> CollectionUtils.wrap("storageName", value.getProperties().getStorageName(),
+                "storageTimeout", value.getProperties().getStorageTimeout())));
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {

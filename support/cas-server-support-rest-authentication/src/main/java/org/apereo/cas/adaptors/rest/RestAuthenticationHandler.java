@@ -118,8 +118,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return the authentication handler execution result
      * @throws GeneralSecurityException the general security exception
      */
-    protected AuthenticationHandlerExecutionResult buildPrincipalFromResponse(final UsernamePasswordCredential credential,
-                                                                              final HttpResponse response) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult buildPrincipalFromResponse(
+        final UsernamePasswordCredential credential,
+        final HttpResponse response) throws GeneralSecurityException {
         try {
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("REST authentication response received: [{}]", result);

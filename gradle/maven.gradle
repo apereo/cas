@@ -175,7 +175,7 @@ ext.createPomRepositories = { node ->
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "shib-release")
-    repository.appendNode("url", "https://build.shibboleth.net/nexus/content/repositories/releases")
+    repository.appendNode("url", "https://build.shibboleth.net/maven/releases/")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")
 

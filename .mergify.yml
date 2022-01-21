@@ -1,0 +1,13 @@
+pull_request_rules:
+- name: automatic merge
+  conditions:
+    - status-success=build (ubuntu-latest)
+    - status-success=WIP
+    - "#changes-requested-reviews-by=0"
+    - base=master
+    - label=dependencies
+  actions:
+    merge:
+      method: merge
+    update:  
+    delete_head_branch:

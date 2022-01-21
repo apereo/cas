@@ -21,38 +21,33 @@ The following endpoints are provided:
 
 {% include_cached actuators.html endpoints="caches" %}
 
-## In-memory store with disk persistence
+## Clustering
 
-Ehcache 3.x doesn't support distributing caching without Terracotta so using it without pointing at a Terracotta 
-server or cluster doesn't support using more than one CAS server at a time. The location and size of the disk caches 
-can be configured using the root-directory and per-cache-size-on-disk properties. If the persist-on-disk property
-is set to true then the caches will survive a restart. 
-
-### Terracotta Clustering
+Ehcache 3.x doesn't support distributed caching without Terracotta so using it without pointing at a Terracotta 
+server or cluster doesn't support using more than one CAS server at a time.
 
 By pointing this Ehcache module at a Terracotta server then multiple CAS servers can share tickets. CAS uses `autocreate` 
-to create the Terracotta cluster configuration. An easy way to run a Terracotta server is to use the [docker container](https://github.com/Terracotta-OSS/docker).
+to create the Terracotta cluster configuration. An easy way to run a Terracotta 
+server is to use the [docker container](https://github.com/Terracotta-OSS/docker).
 
 ```bash
 docker run --rm --name tc-server -p 9410:9410 -d \
- --env OFFHEAP_RESOURCE1_NAME=main \
- --env OFFHEAP_RESOURCE2_NAME=extra \
- --env OFFHEAP_RESOURCE1_SIZE=256 \
- --env OFFHEAP_RESOURCE2_SIZE=16 \
-terracotta/terracotta-server-oss:5.6.4
+  --env OFFHEAP_RESOURCE1_NAME=main \
+  --env OFFHEAP_RESOURCE2_NAME=extra \
+  --env OFFHEAP_RESOURCE1_SIZE=256 \
+  --env OFFHEAP_RESOURCE2_SIZE=16 \
+ terracotta/terracotta-server-oss:5.6.4
 ```
 
 Running a Terracotta cluster on Kubernetes can be done easily using the 
 Terracotta [helm chart](https://github.com/helm/charts/tree/master/stable/terracotta).
 
-#### Configuration
+<div class="alert alert-warning"><strong>Version Compatibility</strong><p>At this time, it appears
+that the latest Terracotta server is not compatible with Ehcache <code>3.9.x</code> or higher.</p></div>
+
+## Configuration
 
 {% include_cached casproperties.html properties="cas.ticket.registry.ehcache3" %}
-
-### Eviction Policy
-
-Ehcache can be configured as "eternal" in which case CAS's regular cleaning process will remove expired tickets. If the 
-eternal property is set to false then storage timeouts will be set based on the metadata for the individual caches.
 
 # Ehcache v2 Ticket Registry
 

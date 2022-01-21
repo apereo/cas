@@ -55,7 +55,7 @@ your CAS overlay to be able to resolve dependencies:
 repositories {
     maven { 
         mavenContent { releasesOnly() }
-        url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+        url "https://build.shibboleth.net/maven/releases/" 
     }
 }
 ```
