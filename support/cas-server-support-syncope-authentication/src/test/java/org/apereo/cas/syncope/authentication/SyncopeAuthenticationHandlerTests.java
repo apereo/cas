@@ -2,13 +2,13 @@ package org.apereo.cas.syncope.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.spring.BeanContainer;
 
-import lombok.Cleanup;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Syncope")
 public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
+    private static final Credential CREDENTIAL =
+        CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password");
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
@@ -55,7 +57,7 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
     @SuppressWarnings("ClassCanBeStatic")
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
-        properties = "cas.authn.syncope.url=http://localhost:8095")
+        properties = "cas.authn.syncope.url=http://localhost:8096")
     public class SyncopeMockDataTests {
 
         @Autowired
@@ -65,11 +67,10 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         @Test
         public void verifyHandlerPasses() {
             val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
-            @Cleanup("stop")
-            val webserver = startMockSever(user(), HttpStatus.OK);
-            assertDoesNotThrow(() ->
-                syncopeAuthenticationHandler.authenticate(
-                    CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
+            try (val webserver = startMockSever(user(), HttpStatus.OK, 8096)) {
+                assertDoesNotThrow(() ->
+                    syncopeAuthenticationHandler.authenticate(CREDENTIAL));
+            }
         }
 
         @Test
@@ -77,13 +78,11 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("mustChangePassword", true);
-            @Cleanup("stop")
-            val webserver = startMockSever(user, HttpStatus.OK);
-
-            val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
-            assertThrows(AccountPasswordMustChangeException.class,
-                () -> syncopeAuthenticationHandler.authenticate(
-                    CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
+            try (val webserver = startMockSever(user, HttpStatus.OK, 8096)) {
+                val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
+                assertThrows(AccountPasswordMustChangeException.class,
+                    () -> syncopeAuthenticationHandler.authenticate(CREDENTIAL));
+            }
         }
 
         @Test
@@ -91,13 +90,11 @@ public class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("suspended", true);
-            @Cleanup("stop")
-            val webserver = startMockSever(user, HttpStatus.OK);
-
-            val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
-            assertThrows(AccountDisabledException.class,
-                () -> syncopeAuthenticationHandler.authenticate(
-                    CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password")));
+            try (val webserver = startMockSever(user, HttpStatus.OK, 8096)) {
+                val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
+                assertThrows(AccountDisabledException.class,
+                    () -> syncopeAuthenticationHandler.authenticate(CREDENTIAL));
+            }
         }
     }
 }

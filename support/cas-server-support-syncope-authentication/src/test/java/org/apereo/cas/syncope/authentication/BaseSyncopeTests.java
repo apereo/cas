@@ -54,9 +54,9 @@ public abstract class BaseSyncopeTests {
         JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
 
     @SneakyThrows
-    protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status) {
+    protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status, final int port) {
         val data = MAPPER.writeValueAsString(json);
-        val webServer = new MockWebServer(8095,
+        val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE, status);
         webServer.start();
