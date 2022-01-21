@@ -165,7 +165,7 @@ public class CasRestConfiguration {
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new ServiceTicketResource(authenticationSystemSupport, ticketRegistrySupport,
                 argumentExtractor, serviceTicketResourceEntityResponseFactory, restHttpRequestCredentialFactory, applicationContext);

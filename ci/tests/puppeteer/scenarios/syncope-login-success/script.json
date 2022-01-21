@@ -1,0 +1,16 @@
+{
+  "dependencies": "syncope-authentication",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.syncope.url=http://localhost:18080/syncope",
+    "--cas.authn.accept.users=casuser::paSSw0rd",
+
+    "--cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
+    "--cas.authn.attribute-repository.syncope.basic-auth-username=admin",
+    "--cas.authn.attribute-repository.syncope.basic-auth-password=password",
+    "--cas.authn.attribute-repository.syncope.search-filter=username=={user}"
+  ],
+  "initScript": "${PWD}/ci/tests/syncope/run-syncope-server.sh"
+}

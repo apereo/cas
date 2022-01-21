@@ -72,7 +72,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
         final ServicesManager servicesManager,
         @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
         final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-        @Qualifier("argumentExtractor")
+        @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor) {
         return new SamlIdentityProviderDiscoveryFeedController(casProperties, samlIdentityProviderEntityParser.get(), builtClients,
             new DelegatedAuthenticationAccessStrategyHelper(servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer), argumentExtractor);

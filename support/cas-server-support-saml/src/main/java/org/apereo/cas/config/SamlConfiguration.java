@@ -127,7 +127,7 @@ public class SamlConfiguration {
         public View casSamlServiceSuccessView(
             @Qualifier("samlResponseBuilder")
             final SamlResponseBuilder samlResponseBuilder,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -148,7 +148,7 @@ public class SamlConfiguration {
         public View casSamlServiceFailureView(
             @Qualifier("samlResponseBuilder")
             final SamlResponseBuilder samlResponseBuilder,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("casAttributeEncoder")
             final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -208,7 +208,7 @@ public class SamlConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,

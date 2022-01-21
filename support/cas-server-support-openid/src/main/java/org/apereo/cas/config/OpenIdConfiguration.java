@@ -115,7 +115,7 @@ public class OpenIdConfiguration {
         final ServiceValidationViewFactory serviceValidationViewFactory,
         @Qualifier("proxy20Handler")
         final ProxyHandler proxy20Handler,
-        @Qualifier("argumentExtractor")
+        @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor,
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,

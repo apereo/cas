@@ -99,7 +99,7 @@ public class CasCoreWebConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreWebRequestsConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "argumentExtractor")
+        @ConditionalOnMissingBean(name = ArgumentExtractor.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
             val serviceFactoryList = new ArrayList<ServiceFactory<? extends WebApplicationService>>();

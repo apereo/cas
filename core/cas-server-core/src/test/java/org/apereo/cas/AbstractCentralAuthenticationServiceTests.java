@@ -53,7 +53,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("argumentExtractor")
+    @Qualifier(ArgumentExtractor.BEAN_NAME)
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
