@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.queue;
+package org.apereo.cas.ticket.queue;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This is {@link UpdateTicketMessageQueueCommand}.
+ * This is {@link AddTicketMessageQueueCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -19,21 +19,22 @@ import lombok.extern.slf4j.Slf4j;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
-public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
-    private static final long serialVersionUID = -4179190682337040669L;
+public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand {
+    private static final long serialVersionUID = -7698722632898271240L;
 
     @JsonProperty
     private Ticket ticket;
 
     @JsonCreator
-    public UpdateTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id, @JsonProperty("ticket") final Ticket ticket) {
+    public AddTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id,
+                                        @JsonProperty("ticket") final Ticket ticket) {
         super(id);
         this.ticket = ticket;
     }
 
     @Override
     public void execute(final TicketRegistry registry) {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to update ticket [{}]", getId().getId(), ticket);
-        registry.updateTicket(ticket);
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to add ticket [{}]", getId().getId(), ticket);
+        registry.addTicket(ticket);
     }
 }

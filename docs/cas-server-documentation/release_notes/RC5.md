@@ -74,6 +74,11 @@ approximately `236` test scenarios and we'll continue to add more in the coming 
    
 A new [JMeter test script](../high_availability/Performance-Testing-JMeter.html) is now 
 available to support running load tests for a CAS server acting as an OpenID Connect provider.
+  
+### Simple Multifactor Authentication w/ Rate Limiting
+                            
+CAS, acting as a [simple multifactor authentication provider](../mfa/Simple-Multifactor-Authentication.html),
+is now able to support token request rate-limiting and throttling.
 
 ### OpenID Connect JSON Web Keystore
 
@@ -95,6 +100,10 @@ The [CAS Integration with ADFS](../integration/ADFS-Integration.html) is now abl
 signing certificates from the federation metadata file as an option. Metadata must contain an `IDPSSODescriptor` element
 with a key descriptor tagged for `signing`.
      
+### Apache Syncope Attribute Resolution
+
+CAS is now able to independently [fetch person attributes](../integration/Attribute-Resolution-Syncope.html) from Apache Syncope.
+
 ### Delegated Authentication Auto-Redirect
 
 When [delegating authentication](../integration/Delegate-Authentication.html) to an external identity provider,
@@ -108,11 +117,14 @@ handle the following types:
 [CAS Integration with ADFS](../integration/ADFS-Integration.html) has also received the same capability.
 
 ## Other Stuff
-
+   
+- Proper handling of recycled tokens for [Simple MFA](../mfa/Simple-Multifactor-Authentication.html), when used in combination with the [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) to avoid errors related to duplicate entries. 
+- Minor build improvements to ensure the CAS Gradle build can work correctly with the Gradle configuration cache.
 - Validation of configuration properties is now moved into a proper `ApplicationContextInitializer` component.
 - Minor UI improvements to ensure required fields as well as CAPSLOCK warnings are displayed as helper messages for input fields.
 - The construction of the `SameSite` cookie flag can now be controlled using a Java class that implements `CookieSameSitePolicy`.
 - Improvements to the construction of SAML2 authentication requests sent to [an external identity provider](../integration/Delegate-Authentication-SAML.html), when CAS itself is acting as a SAML2 identity provider.
+- [Configuration discovery](../configuration/Configuration-Discovery.html) endpoint is able to output a list of supported ticket types.
 
 ## Library Upgrades
 
@@ -129,3 +141,11 @@ handle the following types:
 - Apache Ignite
 - Pac4j
 - Spring Data
+- Gradle
+- Apache Tomcat
+- Person Directory
+- Spring Integration
+- Google Maps
+- Hibernate
+- MariaDb Driver
+- InfluxDb

@@ -1,0 +1,18 @@
+{
+  "dependencies": "rest-service-registry,reports",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.authn.accept.enabled=false",
+
+    "--cas.service-registry.rest.url=http://localhost:5432/service.json",
+    "--cas.service-registry.rest.basic-auth-username=restapi",
+    "--cas.service-registry.rest.basic-auth-password=YdCP05HvuhOH^*Z",
+    "--cas.service-registry.core.init-from-json=false",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+
+  ]
+}

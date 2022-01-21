@@ -43,14 +43,21 @@ public class CheckRedundantTestConfigurationInheritance {
     protected static void checkPattern(final String arg,
                                        final Pattern... patterns) throws IOException {
         var failBuild = new AtomicBoolean(false);
-        var abstractClazzPattern = Pattern.compile("public abstract class (\\w+)");
         var parentClasses = new TreeMap<String, File>();
 
+        var abstractClazzPattern1 = Pattern.compile("public abstract class (\\w+)");
+        var abstractClazzPattern2 = Pattern.compile("public abstract static class (\\w+)");
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
             .forEach(file -> {
                 var text = readFile(file);
-                var matcher = abstractClazzPattern.matcher(text);
+
+                var matcher = abstractClazzPattern1.matcher(text);
+                while (matcher.find()) {
+                    parentClasses.put(matcher.group(1), file.toFile());
+                }
+
+                matcher = abstractClazzPattern2.matcher(text);
                 while (matcher.find()) {
                     parentClasses.put(matcher.group(1), file.toFile());
                 }
@@ -95,15 +102,15 @@ public class CheckRedundantTestConfigurationInheritance {
                             while (it.hasNext()) {
                                 var claz = it.next().toString().trim();
                                 if (parentTestClasses.contains(claz)) {
-                                    print("Found duplicate configuration %s in %s inherited from %s", claz, file, parent);
+                                    print("\t-Found duplicate configuration %s in %s inherited from %s%n", claz, file, parent);
                                     it.remove();
                                     foundDups = true;
                                     failBuild.set(true);
                                 }
                             }
                             if (foundDups) {
-                                print("%nThe child class %s should be annotated as"
-                                        + "@SpringBootTest(classes = %s.SharedTestConfiguration.class)"
+                                print("%nThe child class %s should be annotated as "
+                                        + "@SpringBootTest(classes = %s.SharedTestConfiguration.class) "
                                         + "and must only contain required configuration for the test. Shared/duplicate test"
                                         + "configuration must be pushed to %s.SharedTestConfiguration"
                                         + "instead, if it's not already defined.",

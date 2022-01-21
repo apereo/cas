@@ -2,7 +2,8 @@ package org.apereo.cas.mfa.simple.web.flow;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
+import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
@@ -50,6 +51,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
+    private final BucketConsumer bucketConsumer;
+    
     /**
      * Send a SMS.
      *
@@ -111,6 +114,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                                          final Ticket token) {
         return communicationsManager.isNotificationSenderDefined()
                && communicationsManager.notify(principal, "Apereo CAS Token", String.format("Token: %s", token.getId()));
+    }
+
+    @Override
+    protected Event doPreExecute(final RequestContext requestContext) {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val result = bucketConsumer.consume();
+        result.getHeaders().forEach(response::addHeader);
+        return result.isConsumed() ? super.doPreExecute(requestContext) : error();
     }
 
     @Override

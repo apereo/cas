@@ -9,11 +9,11 @@ category: Authentication
 
 ## Capacity Throttling
 
-CAS is able to support request rate-limiting based on the token-bucket algorithm. This
+CAS is able to support request rate-limiting based on the token-bucket algorithm, via the [Bucket4j](https://bucket4j.com/) project. This
 means that authentication requests that reach a certain configurable capacity within 
 a time window may either be blocked or _throttled_ to slow down. This is done to 
 protect the system from overloading, allowing you to introduce a scenario to allow 
-CAS 120 authentication requests per minute with a refill rate of 10 requests per 
+CAS `120` authentication requests per minute with a refill rate of `10` requests per 
 second that would continually increase in the capacity bucket.
 
 Enable the following module in your configuration overlay:
