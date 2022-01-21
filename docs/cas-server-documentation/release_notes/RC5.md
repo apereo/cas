@@ -142,6 +142,7 @@ handle the following types:
 - Pac4j
 - Spring Data
 - Gradle
+- Apache Tomcat
 - Person Directory
 - Spring Integration
 - Google Maps
