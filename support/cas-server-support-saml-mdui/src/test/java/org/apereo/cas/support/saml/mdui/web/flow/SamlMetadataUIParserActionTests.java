@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
@@ -48,6 +49,10 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     @Qualifier("samlMetadataUIParserAction")
     private Action samlMetadataUIParserAction;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Test
     public void verifyEntityIdUIInfoExists() throws Exception {
         val ctx = new MockRequestContext();
@@ -57,6 +62,24 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         val sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
+        samlMetadataUIParserAction.execute(ctx);
+        assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
+    }
+
+    @Test
+    public void verifyEntityIdUIInfoExistsEmbedded() throws Exception {
+        val ctx = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+
+        val url = "https://google.com?entityId=https://carmenwiki.osu.edu/shibboleth";
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("^https://google.com\\?entityId=.+"));
+
+        val service = RegisteredServiceTestUtils.getService(url);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        val response = new MockHttpServletResponse();
+        val sCtx = new MockServletContext();
+        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        ctx.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));
     }
