@@ -59,7 +59,7 @@ public class SamlMetadataUIWebflowConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        @Qualifier("argumentExtractor")
+        @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor,
         @Qualifier("webApplicationServiceFactory")
         final ServiceFactory<WebApplicationService> serviceFactory) {
