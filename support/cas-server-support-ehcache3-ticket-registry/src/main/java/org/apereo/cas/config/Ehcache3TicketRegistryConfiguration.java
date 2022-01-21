@@ -136,8 +136,10 @@ public class Ehcache3TicketRegistryConfiguration {
                 ehcacheManager.createCache(cacheName, Eh107Configuration.fromEhcacheCacheConfiguration(ehcacheConfiguration));
             }
         });
-        return new EhCache3TicketRegistry(ticketCatalog, ehcacheManager,
-            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3"));
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache3");
+        val registry = new EhCache3TicketRegistry(ticketCatalog, ehcacheManager);
+        registry.setCipherExecutor(cipher);
+        return registry;
     }
 
     /**

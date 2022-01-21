@@ -60,7 +60,6 @@ public class JmsTicketRegistryConfiguration {
     public JmsTicketRegistryQueueReceiver messageQueueTicketRegistryReceiver(
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
-        final CasConfigurationProperties casProperties,
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
         return new JmsTicketRegistryQueueReceiver(ticketRegistry, messageQueueTicketRegistryIdentifier);
@@ -91,7 +90,9 @@ public class JmsTicketRegistryConfiguration {
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
         LOGGER.debug("Configuring JMS ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
-        return new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate), messageQueueTicketRegistryIdentifier, cipher);
+        val registry = new JmsTicketRegistry(new JmsTicketRegistryQueuePublisher(jmsTemplate), messageQueueTicketRegistryIdentifier);
+        registry.setCipherExecutor(cipher);
+        return registry;
     }
 
     @ConditionalOnMissingBean(name = "messageQueueTicketRegistryFactory")
