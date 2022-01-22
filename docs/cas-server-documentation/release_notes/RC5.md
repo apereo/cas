@@ -68,7 +68,7 @@ or `Secret` concepts in Kubernetes is now *baked* into CAS.
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow
 to add additional scenarios. At this point, there are
-approximately `236` test scenarios and we'll continue to add more in the coming releases.
+approximately `240` test scenarios and we'll continue to add more in the coming releases.
    
 ### OpenID Connect JMeter Script
    
@@ -107,7 +107,7 @@ CAS is now able to independently [fetch person attributes](../integration/Attrib
 ### Delegated Authentication Auto-Redirect
 
 When [delegating authentication](../integration/Delegate-Authentication.html) to an external identity provider,
-CAS can be configured with automatically redirect to the identity provider. This releases enhances the auto-redirect options to
+CAS can be configured to automatically redirect to the identity provider. This releases enhances the auto-redirect options to
 handle the following types:
 
 - `NONE`: No automatic redirects take place and user might have to manually choose.
