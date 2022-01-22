@@ -53,4 +53,20 @@ public class DefaultTicketCipherExecutorTests {
         val encoded = cipher.encode("ST-1234567890".getBytes(StandardCharsets.UTF_8));
         assertEquals("ST-1234567890", new String(cipher.decode(encoded), StandardCharsets.UTF_8));
     }
+
+    @Test
+    public void verifyParameterSpecIVConsistency() {
+        val signingKey = "GMj2k7oO-tv65hOfz5XPrzjKGtpqzvs9lDyLfhftfoNPjBQUPMwlmP3U6sPsz1NZB-Inc3YvL8rO1k9jYzqUwQ";
+        val encryptionKey = "oNNhN4m4hHBrayLpqt9gzA";
+        val cipher1 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
+            "AES", 512, 16, "webflow");
+        val cipher2 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
+            "AES", 512, 16, "webflow");
+        val encoded = cipher1.encode("ST-1234567890".getBytes(StandardCharsets.UTF_8));
+        assertEquals("ST-1234567890", new String(cipher2.decode(encoded), StandardCharsets.UTF_8));
+
+        val cipher3 = new DefaultTicketCipherExecutor(encryptionKey, signingKey,
+            "AES", 512, 16, "webflow");
+        assertEquals("ST-1234567890", new String(cipher3.decode(encoded), StandardCharsets.UTF_8));
+    }
 }
