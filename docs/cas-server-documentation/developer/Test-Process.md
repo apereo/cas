@@ -99,7 +99,7 @@ All unit and integration tests are executed by the [continuous integration syste
 Code coverage metrics are collected and reported by the following platforms:
 
 | System                            | Badge
-|-----------------------------------+---------------------------------------------------------------------------+
+|-----------------------------------+---------------------------------------------------------+
 | Codacy           | [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29973e19266547dab7ab73f1a511c826)](https://www.codacy.com/gh/apereo/cas/dashboard?utm_source=github.com&utm_medium=referral&utm_content=apereo/cas&utm_campaign=Badge_Coverage)
 | SonarCloud           | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=coverage)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
 | CodeCov           | [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
@@ -153,8 +153,66 @@ To see the list of available test scenarios:
 ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios
 ```
 
-Remote debugging is available on port `5000`. To successfully run tests, 
+Remote debugging may be available on port `5000`. To successfully run tests, 
 you need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+   
+The following command-line options are supported for test execution:
+
+| Flag                              | Description
+|-----------------------------------+---------------------------------------------------------+
+| `--scenario`                      | The scenario name, typically modeled after the folder name that contains the test
+| `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.
+| `--debug`, `--d`  | Launch the CAS web application with remote debugging enabled.
+| `--debug-port`, `--port` | Specify the remote debugging port, typically `5000`.
+| `--debug-suspend`, `--suspend`, `--s` | Suspend the CAS web application on startup until a debugger session connects.
+| `--rebuild`, `--r`, `--build` | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
+| `--dry-run`, `--y` | Launch the CAS web application configured in the test without actually running the test.
+| `--headless`, `--h` | Launch the test scenario with a headless browser.
+| `--rerun|--resume|--z` | Launch the test scenario and assume the CAS web application is already running from a previous attempt.
+| `--hbo` | A combination of `--headless` and `--build` where the build is run using an `--offline` Gradle flag.
+   
+For example, the `login-success` test scenario may be run using: 
+
+```bash
+pupcas login-success --hbo
+```
+  
+### Test Scenario Anatomy
+
+Each test scenario is composed of the following files:
+
+- `script.js`: The main driver of the test that executes the test, via launching a headless browser via Puppeteer. The basic outline of the test script may be:
+
+```js
+const puppeteer = require('puppeteer');
+const cas = require('../../cas.js');
+
+(async () => {
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    
+    // Do stuff and check/assert behavior...
+    
+    await browser.close();
+})();
+```
+
+- `script.json`: The *optional* test configuration in JSON that includes necessary CAS modules, properties, and other specifics. 
+        
+A basic modest outline of the test configuration may be:
+
+```json
+{
+  "dependencies": "module1,module2,module3,...",
+  "properties": [
+    "--cas.server.something=something"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+}
+```
+  
+The only required bit in the test JSON configuration might be the `dependencies` attribute.
 
 ### MacOS Firewall Popup
                       
