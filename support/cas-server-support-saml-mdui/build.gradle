@@ -14,6 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
 
     implementation libraries.opensaml
     implementation libraries.dropwizard
@@ -25,7 +26,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-services-api", configuration: "tests")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
