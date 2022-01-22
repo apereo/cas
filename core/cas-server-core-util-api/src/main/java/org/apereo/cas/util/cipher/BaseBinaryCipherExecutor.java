@@ -1,7 +1,6 @@
 package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
@@ -38,6 +37,7 @@ import java.security.spec.AlgorithmParameterSpec;
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
+
     private static final int GCM_IV_LENGTH = 12;
 
     private static final int IV_LENGTH = 16;
@@ -78,18 +78,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         return params.get("k").toString();
     }
 
-    private static AlgorithmParameterSpec buildParameterSpec(final int encryptionKeySize) {
-        if (encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH) {
-            val iv = new byte[IV_LENGTH];
-            RandomUtils.getNativeInstance().nextBytes(iv);
-            return new IvParameterSpec(iv);
-        }
-
-        val iv = new byte[GCM_IV_LENGTH];
-        RandomUtils.getNativeInstance().nextBytes(iv);
-        return new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-    }
-
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
@@ -107,10 +95,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey, this.parameterSpec);
             return aesCipher.doFinal(verifiedValue);
         } catch (final Exception e) {
-            if (LOGGER.isTraceEnabled()) {
-                throw new DecryptionException(e);
-            }
-            throw new DecryptionException();
+            throw LOGGER.isTraceEnabled() ? new DecryptionException(e) : new DecryptionException();
         }
     }
 
@@ -127,6 +112,16 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @return the signing key setting
      */
     protected abstract String getSigningKeySetting();
+
+    private AlgorithmParameterSpec buildParameterSpec(final int encryptionKeySize) {
+        val iv = encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH
+            ? new byte[IV_LENGTH]
+            : new byte[GCM_IV_LENGTH];
+        System.arraycopy(this.encryptionSecretKey, 0, iv, 0, iv.length);
+        return encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH
+            ? new IvParameterSpec(iv)
+            : new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+    }
 
     @SneakyThrows
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
