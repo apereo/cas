@@ -37,13 +37,7 @@ import java.security.spec.AlgorithmParameterSpec;
 @Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
-
-    private static final int GCM_IV_LENGTH = 12;
-
-    private static final int IV_LENGTH = 16;
-
     private static final int MINIMUM_ENCRYPTION_KEY_LENGTH = 32;
-
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
 
     /**
@@ -114,10 +108,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     protected abstract String getSigningKeySetting();
 
     private AlgorithmParameterSpec buildParameterSpec(final int encryptionKeySize) {
-        val iv = encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH
-            ? new byte[IV_LENGTH]
-            : new byte[GCM_IV_LENGTH];
-        System.arraycopy(this.encryptionSecretKey, 0, iv, 0, iv.length);
+        val iv = new byte[encryptionSecretKey.length];
+        System.arraycopy(this.encryptionSecretKey, 0, iv, 0, encryptionSecretKey.length);
         return encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH
             ? new IvParameterSpec(iv)
             : new GCMParameterSpec(GCM_TAG_LENGTH, iv);
