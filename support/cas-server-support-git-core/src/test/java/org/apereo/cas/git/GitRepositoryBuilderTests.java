@@ -18,7 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,6 +93,7 @@ public class GitRepositoryBuilderTests {
     /**
      * This test uses a dummy private repo on gitlab and the username password is a read-only deploy token.
      * Tests client auth of https and cloning repositories with multiple jgit http client implementations.
+     *
      * @throws IOException IO error
      */
     @Test
