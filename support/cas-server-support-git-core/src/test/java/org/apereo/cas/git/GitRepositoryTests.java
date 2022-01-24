@@ -37,6 +37,8 @@ public class GitRepositoryTests {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
+        props.setStrictHostKeyChecking(false);
+        props.setClearExistingIdentities(true);
         val builder = GitRepositoryBuilder.newInstance(props).build();
         assertFalse(builder.getObjectsInRepository().isEmpty());
         assertTrue(builder.pull());
@@ -62,9 +64,7 @@ public class GitRepositoryTests {
             builder.push();
             fail("Pushing changes should fail");
         } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
-
-    
 }

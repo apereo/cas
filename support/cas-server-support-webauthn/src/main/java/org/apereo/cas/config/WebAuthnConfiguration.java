@@ -46,10 +46,10 @@ import com.yubico.webauthn.data.AttestationConveyancePreference;
 import com.yubico.webauthn.data.RelyingPartyIdentity;
 import com.yubico.webauthn.extension.appid.AppId;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -362,18 +362,18 @@ public class WebAuthnConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "webAuthnProtocolEndpointConfigurer")
         public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
             @Qualifier("webAuthnCsrfTokenRepository")
             final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
                 @Override
-                @SneakyThrows
                 public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
-                    http.csrf(customizer -> {
+                    Unchecked.consumer(sec -> http.csrf(customizer -> {
                         val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
                         webAuthnCsrfTokenRepository.ifAvailable(
                             repository -> customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(repository));
-                    });
+                    })).accept(http);
                     return this;
                 }
             };

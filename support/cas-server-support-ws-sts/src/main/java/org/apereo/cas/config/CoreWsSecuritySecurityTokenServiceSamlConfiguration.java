@@ -2,11 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.wss4j.common.crypto.WSProviderConfig;
 import org.apache.wss4j.common.saml.OpenSAMLUtil;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -25,7 +25,6 @@ import org.springframework.util.ReflectionUtils;
 @Slf4j
 @AutoConfigureAfter(CoreSamlConfiguration.class)
 public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
-    @SneakyThrows
     private static void findFieldAndSetValue(final String fieldName, final Object value) {
         LOGGER.trace("Locating field name [{}]", fieldName);
         val field = ReflectionUtils.findField(OpenSAMLUtil.class, fieldName);
@@ -34,9 +33,8 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
             return;
         }
         ReflectionUtils.makeAccessible(field);
-
         LOGGER.trace("Setting field name [{}]", fieldName);
-        field.set(null, value);
+        Unchecked.consumer(f -> field.set(null, value)).accept(field);
     }
 
     @Bean
