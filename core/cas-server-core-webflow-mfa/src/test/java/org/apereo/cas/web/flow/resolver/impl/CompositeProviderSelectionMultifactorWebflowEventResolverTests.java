@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureMode
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -36,6 +37,7 @@ import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -114,6 +116,13 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         public void verifyComposite() {
             val provider = new DefaultChainingMultifactorAuthenticationProvider(
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
+
+            val mfa = new TestMultifactorAuthenticationProvider();
+            val bypass = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
+            when(bypass.shouldMultifactorAuthenticationProviderExecute(any(Authentication.class), any(RegisteredService.class),
+                any(MultifactorAuthenticationProvider.class), any(HttpServletRequest.class))).thenReturn(true);
+            mfa.setBypassEvaluator(bypass);
+            provider.addMultifactorAuthenticationProvider(mfa);
 
             val event = new EventFactorySupport().event(this,
                 ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER,

@@ -39,11 +39,11 @@ public class GitRepositoryTests {
         props.setBranchesToClone("master");
         props.setStrictHostKeyChecking(false);
         props.setClearExistingIdentities(true);
-        val builder = GitRepositoryBuilder.newInstance(props).build();
-        assertFalse(builder.getObjectsInRepository().isEmpty());
-        assertTrue(builder.pull());
+        val repo = GitRepositoryBuilder.newInstance(props).build();
+        assertFalse(repo.getObjectsInRepository().isEmpty());
+        assertTrue(repo.pull());
 
-        builder.getCredentialsProvider().add(new CredentialsProvider() {
+        repo.getCredentialsProvider().add(new CredentialsProvider() {
             @Override
             public boolean isInteractive() {
                 return false;
@@ -60,8 +60,8 @@ public class GitRepositoryTests {
             }
         });
         try {
-            builder.commitAll("Test");
-            builder.push();
+            repo.commitAll("Test");
+            repo.push();
             fail("Pushing changes should fail");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

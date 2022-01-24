@@ -123,7 +123,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             }
             val objectPatternStr = StringUtils.isBlank(rootDirectory)
                 ? GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES
-                : rootDirectory + "/" + GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES;
+                : rootDirectory + '/' + GitRepositoryRegisteredServiceLocator.PATTEN_ACCEPTED_REPOSITORY_FILES;
             val objectPattern = RegexUtils.createPattern(objectPatternStr, Pattern.CASE_INSENSITIVE);
             val objects = gitRepository.getObjectsInRepository(
                 new PathRegexPatternTreeFilter(objectPattern));
