@@ -1,14 +1,17 @@
 package org.apereo.cas.oidc.web;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
+import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -23,7 +26,14 @@ import java.util.List;
  * @since 6.4.0
  */
 @Slf4j
-public class OidcAuthenticationAuthorizeSecurityLogic extends DefaultSecurityLogic {
+public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrantingTicketAwareSecurityLogic {
+
+    public OidcAuthenticationAuthorizeSecurityLogic(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                                                    final TicketRegistry ticketRegistry,
+                                                    final CentralAuthenticationService centralAuthenticationService) {
+        super(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+    }
+
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {
