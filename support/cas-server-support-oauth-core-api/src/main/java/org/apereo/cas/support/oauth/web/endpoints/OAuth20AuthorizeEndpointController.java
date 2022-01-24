@@ -226,7 +226,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                     .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
                     .orElse(null);
             } catch (final InvalidTicketException e) {
-                LOGGER.trace("Cannot find live ticket-granting-ticket");
+                LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());
             }
         }
         if (ticketGrantingTicket == null) {
