@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -42,16 +41,16 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
                                              final SessionStore sessionStore, final List<Client> clients) {
 
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-                ticketGrantingTicketCookieGenerator, ticketRegistry, ((JEEContext) context).getNativeRequest());
+            ticketGrantingTicketCookieGenerator, ticketRegistry, ((JEEContext) context).getNativeRequest());
 
         if (ticketGrantingTicket == null) {
             try {
                 ticketGrantingTicket = sessionStore
-                        .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                        .map(ticketId -> centralAuthenticationService.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                        .orElse(null);
-            } catch (final InvalidTicketException e) {
-                LOGGER.trace("Cannot find live ticket-granting-ticket");
+                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                    .map(ticketId -> centralAuthenticationService.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                    .orElse(null);
+            } catch (final Exception e) {
+                LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());
             }
         }
 
