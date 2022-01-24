@@ -44,11 +44,12 @@ public class CasSamlServiceProvidersConfiguration {
         processSamlServiceProvider(provider, servicesManager, samlRegisteredServiceCachingMetadataResolver, s -> null, afterSave);
     }
 
-    private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
-                                                   final ServicesManager servicesManager,
-                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                   final Function<SamlRegisteredService, Void> beforeSave,
-                                                   final Function<SamlRegisteredService, Void> afterSave) {
+    private static void processSamlServiceProvider(
+        final AbstractSamlSPProperties provider,
+        final ServicesManager servicesManager,
+        final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+        final Function<SamlRegisteredService, Void> beforeSave,
+        final Function<SamlRegisteredService, Void> afterSave) {
         val service = SamlSPUtils.newSamlServiceProviderService(provider, samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             LOGGER.trace("Constructed service definition [{}]", service);
