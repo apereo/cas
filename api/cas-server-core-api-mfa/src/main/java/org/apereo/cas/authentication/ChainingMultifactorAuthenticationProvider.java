@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +26,7 @@ public interface ChainingMultifactorAuthenticationProvider extends MultifactorAu
      *
      * @return the multifactor authentication providers
      */
-    Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviders();
+    List<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviders();
 
     /**
      * Add multifactor authentication provider multifactor authentication provider.

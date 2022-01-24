@@ -21,8 +21,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,9 +41,9 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
 
     private final ApplicationContext applicationContext;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
-
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -78,28 +78,61 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
             .collect(Collectors.toList());
 
         if (resolvedProviders.size() != providers.size()) {
-            val providerIds = resolvedProviders
-                .stream()
-                .map(MultifactorAuthenticationProvider::getId)
-                .collect(Collectors.joining(","));
-            val message = String.format("Not all requested multifactor providers could be found. "
-                    + "Requested providers are [%s] and resolved providers are [%s]", globalProviderId, providerIds);
-            LOGGER.warn(message, globalProviderId);
-            throw new MultifactorAuthenticationProviderAbsentException(message);
+            handleAbsentMultifactorProvider(globalProviderId, resolvedProviders);
         }
 
         if (resolvedProviders.size() == 1) {
-            val provider = resolvedProviders.get(0);
-            LOGGER.debug("Resolved single multifactor provider [{}]", provider);
-            return Optional.of(provider);
+            return resolveSingleMultifactorProvider(resolvedProviders.get(0));
         }
 
+        return resolveMultifactorProvider(authentication, registeredService, resolvedProviders);
+    }
+
+    /**
+     * Handle absent multifactor provider.
+     *
+     * @param globalProviderId  the global provider id
+     * @param resolvedProviders the resolved providers
+     */
+    protected void handleAbsentMultifactorProvider(final String globalProviderId,
+                                                   final List<MultifactorAuthenticationProvider> resolvedProviders) {
+        val providerIds = resolvedProviders
+            .stream()
+            .map(MultifactorAuthenticationProvider::getId)
+            .collect(Collectors.joining(","));
+        val message = String.format("Not all requested multifactor providers could be found. "
+                                    + "Requested providers are [%s] and resolved providers are [%s]", globalProviderId, providerIds);
+        LOGGER.warn(message, globalProviderId);
+        throw new MultifactorAuthenticationProviderAbsentException(message);
+    }
+
+    /**
+     * Resolve single multifactor provider.
+     *
+     * @param resolvedProvider the resolved provider
+     * @return the optional
+     */
+    protected Optional<MultifactorAuthenticationProvider> resolveSingleMultifactorProvider(
+        final MultifactorAuthenticationProvider resolvedProvider) {
+        LOGGER.debug("Resolved single multifactor provider [{}]", resolvedProvider);
+        return Optional.of(resolvedProvider);
+    }
+
+    /**
+     * Resolve multifactor provider.
+     *
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @param resolvedProviders the resolved providers
+     * @return the optional
+     */
+    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorProvider(
+        final Authentication authentication,
+        final RegisteredService registeredService,
+        final List<MultifactorAuthenticationProvider> resolvedProviders) {
         val principal = authentication.getPrincipal();
         val provider = multifactorAuthenticationProviderSelector.resolve(resolvedProviders, registeredService, principal);
         LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
-        if (provider != null) {
-            return Optional.of(provider);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(provider);
     }
 }
