@@ -60,9 +60,10 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     }
 
     @Override
-    public RegisteredService getRegisteredServiceFromCacheByPredicate(final RegisteredService service,
-                                                                      final Predicate<DistributedCacheObject<RegisteredService>> predicate,
-                                                                      final ServiceRegistry serviceRegistry) {
+    public RegisteredService getRegisteredServiceFromCacheByPredicate(
+        final RegisteredService service,
+        final Predicate<DistributedCacheObject<RegisteredService>> predicate,
+        final ServiceRegistry serviceRegistry) {
         val result = this.distributedCacheManager.find(predicate);
         if (result.isPresent()) {
             val item = result.get();

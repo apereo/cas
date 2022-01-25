@@ -240,12 +240,8 @@ if [[ "${RERUN}" != "true" ]]; then
     properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
 
     if [[ "$DEBUG" == "true" ]]; then
-      if [[ "$instances" == "1" ]]; then
-        printgreen "Remote debugging is enabled on port $DEBUG_PORT"
-        runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-      else
-        printred "Remote debugging is disabled for multiple instance runs"
-      fi
+      printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+      runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
     fi
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
     echo -e "\nLaunching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
@@ -258,14 +254,17 @@ if [[ "${RERUN}" != "true" ]]; then
        -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
        --spring.profiles.active=none --server.ssl.key-store="$keystore" \
        ${properties} &
-     pid=$!
-     printcyan "Waiting for CAS instance #${c} under process id ${pid}"
-     until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
-         echo -n '.'
-         sleep 1
-     done
-     processIds+=( $pid )
-     serverPort=$((serverPort + 1))
+    pid=$!
+    printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+    until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
+       echo -n '.'
+       sleep 1
+    done
+    processIds+=( $pid )
+    serverPort=$((serverPort + 1))
+    if [[ "$DEBUG" == "true" ]]; then
+      DEBUG_PORT=$((DEBUG_PORT + 1))
+    fi
   done
 
   printgreen "\nReady!"
