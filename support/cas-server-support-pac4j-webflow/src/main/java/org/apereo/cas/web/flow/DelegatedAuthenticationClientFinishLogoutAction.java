@@ -71,10 +71,12 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends AbstractAct
                 .ifPresent(client -> {
                     LOGGER.debug("Located client from webflow state: [{}]", client);
                     val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
-                    val validator = client.getLogoutValidator();
-                    validator.setPostLogoutURL(logoutRedirect);
-                    LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
-                    WebUtils.putLogoutRedirectUrl(requestContext, null);
+                    if (logoutRedirect != null) {
+                        val validator = client.getLogoutValidator();
+                        validator.setPostLogoutURL(logoutRedirect);
+                        LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
+                        WebUtils.putLogoutRedirectUrl(requestContext, null);
+                    }
                 });
         }
         return null;
