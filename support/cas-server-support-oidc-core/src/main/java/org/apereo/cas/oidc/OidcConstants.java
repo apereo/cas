@@ -117,6 +117,11 @@ public interface OidcConstants {
     String PROFILE_URL = "oidcProfile";
 
     /**
+     * Oidc pushed authorization request url path segment url.
+     */
+    String PUSHED_AUTHORIZE_URL = "oidcPushAuthorize";
+    
+    /**
      * JWKS Endpoint url.
      */
     String JWKS_URL = "jwks";

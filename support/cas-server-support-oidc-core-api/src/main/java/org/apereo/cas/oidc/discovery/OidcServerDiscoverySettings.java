@@ -89,6 +89,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("request_parameter_supported")
     private boolean requestParameterSupported = true;
 
+    @JsonProperty("require_pushed_authorization_requests")
+    private boolean requirePushedAuthorizationRequests;
+
     @JsonProperty("authorization_response_iss_parameter_supported")
     private boolean authorizationResponseIssuerParameterSupported = true;
 
@@ -111,6 +114,11 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("userinfo_endpoint")
     public String getUserinfoEndpoint() {
         return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.PROFILE_URL);
+    }
+
+    @JsonProperty("pushed_authorization_request_endpoint")
+    public String getPushedAuthorizationRequestEndpoint() {
+        return StringUtils.appendIfMissing(this.issuer, "/").concat(OidcConstants.PUSHED_AUTHORIZE_URL);
     }
 
     @JsonProperty("jwks_uri")
