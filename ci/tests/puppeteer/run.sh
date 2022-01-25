@@ -242,6 +242,8 @@ if [[ "${RERUN}" != "true" ]]; then
     if [[ -z "${tmp}" ]] ; then
       tmp="/tmp"
     fi
+    export TMPDIR=${tmp}
+    echo "Using temporary directory ${TMPDIR}"
     properties="${properties//\$\{TMPDIR\}/tmp}"
 
     if [[ "$DEBUG" == "true" ]]; then
