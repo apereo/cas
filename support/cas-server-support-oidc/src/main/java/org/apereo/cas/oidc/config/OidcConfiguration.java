@@ -254,7 +254,9 @@ public class OidcConfiguration {
             Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
         interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
         interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-        interceptor.setSecurityLogic(new OidcAuthenticationAuthorizeSecurityLogic());
+        val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator.getObject(),
+                ticketRegistry.getObject(), centralAuthenticationService.getObject());
+        interceptor.setSecurityLogic(logic);
         return interceptor;
     }
 
