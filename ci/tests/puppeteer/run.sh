@@ -244,7 +244,7 @@ if [[ "${RERUN}" != "true" ]]; then
     fi
     export TMPDIR=${tmp}
     echo "Using temporary directory ${TMPDIR}"
-    properties="${properties//\$\{TMPDIR\}/tmp}"
+    properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
 
     if [[ "$DEBUG" == "true" ]]; then
       printgreen "Remote debugging is enabled on port $DEBUG_PORT"
