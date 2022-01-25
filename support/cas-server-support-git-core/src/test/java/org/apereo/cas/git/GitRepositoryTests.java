@@ -40,8 +40,8 @@ public class GitRepositoryTests {
         props.setStrictHostKeyChecking(false);
         props.setClearExistingIdentities(true);
         val repo = GitRepositoryBuilder.newInstance(props).build();
-        assertFalse(repo.getObjectsInRepository().isEmpty());
         assertTrue(repo.pull());
+        assertFalse(repo.getObjectsInRepository().isEmpty());
 
         repo.getCredentialsProvider().add(new CredentialsProvider() {
             @Override
