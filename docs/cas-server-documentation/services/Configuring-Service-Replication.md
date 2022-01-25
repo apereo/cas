@@ -42,7 +42,15 @@ rsync -avzh root@192.168.0.100:/etc/cas/services /etc/cas/services
 - To execute the transfer operation over ssh, use the `ssh --progress` flags.
 - To test the command execution in mock mode, use the `--dry-run` flag.
 
-## Hazelcast
+## Configuration
+   
+The following settings control the common and cor behavior of service registry replication:
+
+{% include_cached casproperties.html properties="cas.service-registry.stream.core" %}
+                                                                                 
+Replication strategies may be configured using one the methods listed below. 
+
+### Hazelcast
 
 If you'd rather not resort to outside tooling and processes or if the native options for your 
 deployment are not that attractive, you can take advantage of CAS' own tooling that provides a 
@@ -56,7 +64,7 @@ Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casproperties.html properties="cas.service-registry.stream.hazelcast" %}
 
-## Apache Kafka
+### Apache Kafka
 
 If you'd rather not resort to outside tooling and processes or if the native options for your 
 deployment are not that attractive, you can take advantage of CAS' own tooling that provides a 

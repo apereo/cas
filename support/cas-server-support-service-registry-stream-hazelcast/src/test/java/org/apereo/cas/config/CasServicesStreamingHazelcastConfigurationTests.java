@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasServicesStreamingConfiguration.class
 }, properties = {
     "cas.service-registry.stream.hazelcast.config.cluster.core.instance-name=servicesRegistryStream",
-    "cas.service-registry.stream.enabled=true"
+    "cas.service-registry.stream.core.enabled=true"
 })
 public class CasServicesStreamingHazelcastConfigurationTests {
     @Autowired

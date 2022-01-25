@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.service-registry.stream.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "CasServicesStreamingConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingConfiguration {
 
