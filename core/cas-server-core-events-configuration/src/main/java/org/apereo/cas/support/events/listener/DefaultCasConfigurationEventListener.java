@@ -10,8 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,16 +33,12 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     private final ApplicationContext applicationContext;
 
     @Override
-    @EventListener
-    @Async
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (event.isEligibleForContextRefresh()) {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
