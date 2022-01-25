@@ -6,8 +6,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.Optional;
 
@@ -23,8 +21,6 @@ public class OidcDefaultJsonWebKeyStoreListener implements OidcJsonWebKeyStoreLi
     private final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcJsonWebKeystoreCache;
 
     @Override
-    @EventListener
-    @Async
     public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {
         LOGGER.debug("Detected change in [{}]. Will invalidate OIDC JWKS cache...", event.getFile());
         oidcJsonWebKeystoreCache.invalidateAll();

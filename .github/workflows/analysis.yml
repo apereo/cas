@@ -164,6 +164,7 @@ jobs:
       fail-fast: false
       matrix:
         check:
+          - CheckAsyncAnnotationInInterface
           - CheckDuplicateGradleConfiguration
           - CheckDuplicateTestConfiguration
           - CheckMissingClassInTestsSuite
