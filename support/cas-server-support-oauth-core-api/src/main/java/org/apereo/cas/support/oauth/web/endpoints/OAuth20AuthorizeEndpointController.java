@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.CookieUtils;
@@ -219,10 +220,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             getConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
         if (ticketGrantingTicket == null) {
-            ticketGrantingTicket = getConfigurationContext().getSessionStore()
-                .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                .orElse(null);
+            try {
+                ticketGrantingTicket = getConfigurationContext().getSessionStore()
+                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                    .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                    .orElse(null);
+            } catch (final InvalidTicketException e) {
+                LOGGER.trace("Cannot find live ticket-granting-ticket");
+            }
         }
         if (ticketGrantingTicket == null) {
             val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
