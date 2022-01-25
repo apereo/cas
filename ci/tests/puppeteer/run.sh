@@ -237,7 +237,12 @@ if [[ "${RERUN}" != "true" ]]; then
     properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
     properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
     properties="${properties//\%\{random\}/${random}}"
-    properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
+
+    tmp="${TMPDIR}"
+    if [[ -z "${tmp}" ]] ; then
+      tmp="/tmp"
+    fi
+    properties="${properties//\$\{TMPDIR\}/tmp}"
 
     if [[ "$DEBUG" == "true" ]]; then
       printgreen "Remote debugging is enabled on port $DEBUG_PORT"

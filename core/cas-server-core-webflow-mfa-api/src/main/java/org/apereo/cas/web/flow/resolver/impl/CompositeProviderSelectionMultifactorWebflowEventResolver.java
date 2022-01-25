@@ -64,8 +64,11 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
             .orElseGet(() -> {
                 val activeProviders = chainingProvider.getMultifactorAuthenticationProviders()
                     .stream()
-                    .filter(provider -> provider.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(authentication,
-                        registeredService, provider, request))
+                    .filter(provider -> {
+                        val bypass = provider.getBypassEvaluator();
+                        return bypass == null || bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
+                            registeredService, provider, request);
+                    })
                     .collect(Collectors.toList());
                 LOGGER.debug("Finalized set of resolved events are [{}] with providers [{}]", resolveEvents, activeProviders);
                 return activeProviders.isEmpty() ? Optional.empty() : Optional.of(Pair.of(resolveEvents, activeProviders));
