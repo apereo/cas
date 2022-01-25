@@ -118,6 +118,7 @@ if [[ "${enabled}" == "false" ]]; then
 fi
 
 export SCENARIO="${scenarioName}"
+export SCENARIO_PATH="${scenario}"
 
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
@@ -211,56 +212,60 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
-  initScript=$(cat "${config}" | jq -j '.initScript // empty')
-  initScript="${initScript//\$\{PWD\}/${PWD}}"
-  initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
-  [ -n "${initScript}" ] && \
-    printgreen "Initialization script: ${initScript}" && \
-    chmod +x "${initScript}" && \
-    eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
-
-  instances=$(cat "${config}" | jq -j '.instances // 1')
-  
-  runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
-  runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-  [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
-
-  properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
-  properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
-  properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
-  properties="${properties//\%\{random\}/${random}}"
-  if [[ "$DEBUG" == "true" ]]; then
-    if [[ "$instances" == "1" ]]; then
-      printgreen "Remote debugging is enabled on port $DEBUG_PORT"
-      runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-    else
-      printred "Remote debugging is disabled for multiple instance runs"
-    fi
-  fi
-  runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
-  echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
-
-  springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
-  [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
-
   serverPort=8443
   processIds=()
+  instances=$(cat "${config}" | jq -j '.instances // 1')
   for (( c = 1; c <= instances; c++ ))
   do
+    initScript=$(cat "${config}" | jq -j '.initScript // empty')
+    initScript="${initScript//\$\{PWD\}/${PWD}}"
+    initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
+    [ -n "${initScript}" ] && \
+      printgreen "Initialization script: ${initScript}" && \
+      chmod +x "${initScript}" && \
+      eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
+
+    runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
+    runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+    [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
+
+    properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+
+    filter=".instance$c.properties // empty | join(\" \")"
+    properties="$properties $(cat $config | jq -j -f <(echo "$filter"))"
+
+    properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
+    properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
+    properties="${properties//\%\{random\}/${random}}"
+    properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
+
+    if [[ "$DEBUG" == "true" ]]; then
+      if [[ "$instances" == "1" ]]; then
+        printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+        runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
+      else
+        printred "Remote debugging is disabled for multiple instance runs"
+      fi
+    fi
+    runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
+    echo -e "\nLaunching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+
+    springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
+    [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+
     printcyan "Launching CAS instance #${c} under port ${serverPort}"
     java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
        -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
        --spring.profiles.active=none --server.ssl.key-store="$keystore" \
        ${properties} &
      pid=$!
-     printcyan "Waiting for CAS #${c} under process id ${pid}"
+     printcyan "Waiting for CAS instance #${c} under process id ${pid}"
      until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
          echo -n '.'
          sleep 1
      done
      processIds+=( $pid )
      serverPort=$((serverPort + 1))
-     clear
   done
 
   printgreen "\nReady!"

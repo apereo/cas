@@ -43,7 +43,7 @@ import java.util.concurrent.ExecutionException;
  * @since 6.3.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.service-registry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cas.service-registry.stream.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 @EnableKafka
 @Configuration(value = "CasServicesStreamingKafkaConfiguration", proxyBeanMethods = false)
