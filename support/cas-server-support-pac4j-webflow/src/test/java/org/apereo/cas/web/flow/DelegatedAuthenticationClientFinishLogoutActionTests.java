@@ -58,6 +58,21 @@ public class DelegatedAuthenticationClientFinishLogoutActionTests {
     }
 
     @Test
+    public void verifyOperationNoLogoutRedirectUrl() throws Exception {
+        val context = new MockRequestContext();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        WebUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
+        val samlClient = (SAML2Client) builtClients.findClient("SAML2Client").get();
+        samlClient.getLogoutValidator().setPostLogoutURL("https://google.com");
+        val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
+        assertNull(result);
+        assertEquals("https://google.com", samlClient.getLogoutValidator().getPostLogoutURL());
+        assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+    }
+
+    @Test
     public void verifyOperationWithRelay() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
