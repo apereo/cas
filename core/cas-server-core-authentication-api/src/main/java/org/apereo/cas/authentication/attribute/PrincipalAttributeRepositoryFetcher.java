@@ -54,8 +54,8 @@ public class PrincipalAttributeRepositoryFetcher {
             LOGGER.trace("Active attribute repository identifiers [{}]", activeAttributeRepositoryIdentifiers);
             filter = dao -> Arrays.stream(dao.getId())
                 .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
-                    || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
-                    || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
+                                   || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
+                                   || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
 
         val query = new LinkedHashMap<String, Object>();
@@ -75,7 +75,7 @@ public class PrincipalAttributeRepositoryFetcher {
 
         if (people.size() > 1) {
             LOGGER.warn("Multiple records were found for [{}] from attribute repositories for query [{}]. The records are [{}], "
-                    + "and CAS will only pick the first person record from the results.",
+                        + "and CAS will only pick the first person record from the results.",
                 principalId, query, people);
         }
 

@@ -136,6 +136,7 @@ handle the following types:
 - Micrometer
 - DuoSecurity Client
 - HikariCP
+- Hibernate
 - Spring Framework
 - Spring Boot
 - Apache Ignite
@@ -150,3 +151,4 @@ handle the following types:
 - MariaDb Driver
 - InfluxDb
 - Oshi
+- Mockito
