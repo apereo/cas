@@ -39,5 +39,8 @@ public class MessageSanitizationUtilsTests {
 
         results = MessageSanitizationUtils.sanitize("found a [token=mgf63isnfb1s!!#ut0__|] here...");
         assertTrue(results.contains("[token=*****"));
+
+        results = MessageSanitizationUtils.sanitize("found a ,clientSecret = p@$$wordSecret...");
+        assertTrue(results.contains(",clientSecret = *****..."));
     }
 }
