@@ -4,6 +4,8 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code DefaultCasServicesRegistryStreamingEventListener} to allow spring {@code @Async} support to use JDK proxy.
@@ -17,6 +19,8 @@ public interface CasServicesRegistryStreamingEventListener extends CasEventListe
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasRegisteredServiceLoadedEvent(CasRegisteredServiceLoadedEvent event);
 
     /**
@@ -24,6 +28,8 @@ public interface CasServicesRegistryStreamingEventListener extends CasEventListe
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasRegisteredServiceSavedEvent(CasRegisteredServiceSavedEvent event);
 
     /**
@@ -31,5 +37,7 @@ public interface CasServicesRegistryStreamingEventListener extends CasEventListe
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasRegisteredServiceDeletedEvent(CasRegisteredServiceDeletedEvent event);
 }

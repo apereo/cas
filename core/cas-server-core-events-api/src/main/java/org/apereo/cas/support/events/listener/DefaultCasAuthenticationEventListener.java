@@ -17,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.time.Instant;
 
@@ -58,8 +56,6 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -71,8 +67,6 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -84,8 +78,6 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -96,8 +88,6 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
@@ -108,8 +98,6 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
         if (this.casEventRepository != null) {
             val dto = prepareCasEvent(event);
