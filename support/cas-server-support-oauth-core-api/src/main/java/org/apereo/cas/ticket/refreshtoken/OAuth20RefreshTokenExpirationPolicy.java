@@ -48,10 +48,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     @Override
     public boolean isExpired(final TicketState ticketState) {
         val expired = isRefreshTokenExpired(ticketState);
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        return expired || super.isExpired(ticketState);
     }
 
     @Override

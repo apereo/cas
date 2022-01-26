@@ -43,8 +43,11 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     private long timeToKillInSeconds;
 
     @JsonCreator
-    public OAuth20AccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
-                                              @JsonProperty("timeToIdle") final long timeToKill) {
+    public OAuth20AccessTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long maxTimeToLive,
+        @JsonProperty("timeToIdle")
+        final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
@@ -52,10 +55,7 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     @Override
     public boolean isExpired(final TicketState ticketState) {
         val expired = isAccessTokenExpired(ticketState);
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        return expired || super.isExpired(ticketState);
     }
 
     @Override
@@ -107,8 +107,11 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator
-        public OAuthAccessTokenSovereignExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
-                                                         @JsonProperty("timeToIdle") final long timeToKill) {
+        public OAuthAccessTokenSovereignExpirationPolicy(
+            @JsonProperty("timeToLive")
+            final long maxTimeToLive,
+            @JsonProperty("timeToIdle")
+            final long timeToKill) {
             super(maxTimeToLive, timeToKill);
         }
 
