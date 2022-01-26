@@ -50,6 +50,14 @@ public class OidcDefaultJsonWebKeystoreGeneratorServiceTests extends AbstractOid
     }
 
     @Test
+    public void verifyRegeneration() throws Exception {
+        val resource1 = oidcJsonWebKeystoreGeneratorService.generate();
+        assertTrue(resource1.exists());
+        val resource2 = oidcJsonWebKeystoreGeneratorService.generate();
+        assertTrue(resource2.exists());
+    }
+
+    @Test
     public void verifyCurve256() throws Exception {
         val properties = new OidcProperties();
         properties.getJwks().getCore().setJwksType("ec");
