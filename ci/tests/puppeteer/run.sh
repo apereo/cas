@@ -1,5 +1,12 @@
 #!/bin/bash
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]] ; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 # Paths passed as arguments on command line get converted
 # by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
 # so this converts path to windows format
@@ -237,13 +244,6 @@ if [[ "${RERUN}" != "true" ]]; then
     properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
     properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
     properties="${properties//\%\{random\}/${random}}"
-
-    tmp="${TMPDIR}"
-    if [[ -z "${tmp}" ]] ; then
-      tmp="/tmp"
-    fi
-    export TMPDIR=${tmp}
-    echo "Using temporary directory ${TMPDIR}"
     properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
 
     if [[ "$DEBUG" == "true" ]]; then
