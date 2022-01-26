@@ -6,7 +6,6 @@ import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,8 +52,15 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
 
     private static final long PROVISIONED_THROUGHPUT = 10;
 
-    @SneakyThrows
-    public static void createSettingsTable(final DynamoDbClient amazonDynamoDBClient, final boolean deleteTables) {
+    /**
+     * Create settings table.
+     *
+     * @param amazonDynamoDBClient the amazon dynamo db client
+     * @param deleteTables         the delete tables
+     * @throws Exception the exception
+     */
+    public static void createSettingsTable(final DynamoDbClient amazonDynamoDBClient,
+                                           final boolean deleteTables) throws Exception {
         val request = createCreateTableRequest();
         if (deleteTables) {
             val delete = DeleteTableRequest.builder().tableName(request.tableName()).build();

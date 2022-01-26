@@ -20,6 +20,7 @@ import org.apereo.cas.oidc.jwks.generator.mongo.OidcMongoDbJsonWebKeystoreGenera
 import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.CasEventListener;
 
@@ -27,7 +28,6 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -67,7 +67,7 @@ public class OidcJwksConfiguration {
     @Configuration(value = "OidcEndpointsJwksMongoDbConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(MongoTemplate.class)
-    @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.mongo", name = { "host", "collection"})
+    @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.mongo", name = {"host", "collection"})
     public static class OidcEndpointsJwksMongoDbConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -92,7 +92,7 @@ public class OidcJwksConfiguration {
                 casProperties.getAuthn().getOidc());
         }
     }
-    
+
     @Configuration(value = "OidcEndpointsJwksJpaConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(JpaBeanFactory.class)
@@ -230,10 +230,11 @@ public class OidcJwksConfiguration {
             @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
                 fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
             @Override
-            @SneakyThrows
             public void run() {
-                LOGGER.info("Starting to rotate keys in the OIDC keystore...");
-                rotationService.rotate();
+                FunctionUtils.doAndIgnore(ig -> {
+                    LOGGER.info("Starting to rotate keys in the OIDC keystore...");
+                    rotationService.rotate();
+                });
             }
         }
 
@@ -245,10 +246,11 @@ public class OidcJwksConfiguration {
             @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
                 fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
             @Override
-            @SneakyThrows
             public void run() {
-                LOGGER.info("Starting to revoke keys in the OIDC keystore...");
-                rotationService.revoke();
+                FunctionUtils.doAndIgnore(ig -> {
+                    LOGGER.info("Starting to revoke keys in the OIDC keystore...");
+                    rotationService.revoke();
+                });
             }
         }
     }

@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
+import com.authy.AuthyApiClient;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
+
+import java.net.URL;
 
 /**
  * This is {@link AuthyAuthenticationEventExecutionPlanConfiguration}.
@@ -44,12 +47,14 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AuthyClientInstance authyClientInstance(final CasConfigurationProperties casProperties) {
-        val authy = casProperties.getAuthn().getMfa().getAuthy();
-        if (StringUtils.isBlank(authy.getApiKey())) {
-            throw new IllegalArgumentException("Authy API key must be defined");
-        }
-        return new AuthyClientInstance(authy);
+    @ConditionalOnMissingBean(name = "authyClientInstance")
+    public AuthyClientInstance authyClientInstance(final CasConfigurationProperties casProperties) throws Exception {
+        val properties = casProperties.getAuthn().getMfa().getAuthy();
+        val authyUrl = StringUtils.defaultIfBlank(properties.getApiUrl(), AuthyApiClient.DEFAULT_API_URI);
+        val url = new URL(authyUrl);
+        val testFlag = url.getProtocol().equalsIgnoreCase("http");
+        val authyClient = new AuthyApiClient(properties.getApiKey(), authyUrl, testFlag);
+        return new AuthyClientInstance(authyClient, properties);
     }
 
     @ConditionalOnMissingBean(name = "authyAuthenticationHandler")

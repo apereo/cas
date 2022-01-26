@@ -7,9 +7,9 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="warn" />
-        <Logger name="org.apereo.cas.git" level="warn" />
-        <Logger name="org.eclipse.jgit" level="info" />
-        <Logger name="com.jcraft.jsch" level="info" />
+        <Logger name="org.apereo.cas.git" level="debug" />
+        <Logger name="org.eclipse.jgit" level="debug" />
+        <Logger name="com.jcraft.jsch" level="debug" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

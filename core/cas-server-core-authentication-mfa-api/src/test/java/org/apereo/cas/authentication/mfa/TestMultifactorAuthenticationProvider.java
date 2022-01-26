@@ -26,12 +26,14 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
         setId(id);
     }
 
-    public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
+    public static TestMultifactorAuthenticationProvider registerProviderIntoApplicationContext(
+        final ConfigurableApplicationContext applicationContext) {
         return registerProviderIntoApplicationContext(applicationContext, "provider" + RandomUtils.randomAlphabetic(8));
     }
 
-    public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext,
-                                                                                           final MultifactorAuthenticationProvider provider) {
+    public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(
+        final ConfigurableApplicationContext applicationContext,
+        final MultifactorAuthenticationProvider provider) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, provider,
             "provider" + RandomUtils.randomAlphabetic(8));
     }

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -73,9 +74,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
             LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
                 authentication, registeredService);
         }
-        val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
-        WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
-        return new HashSet<>(pair.getKey());
+        val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+        return result.map(pair -> {
+            WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
+            return new HashSet<>(pair.getKey());
+        }).orElseGet(HashSet::new);
     }
 
     /**
@@ -87,7 +90,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      * @param request           the request
      * @return the set of events
      */
-    protected Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+    protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
@@ -99,7 +102,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
 
         if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
-            return Pair.of(resolveEvents, new HashSet<>(0));
+            return Optional.of(Pair.of(resolveEvents, new HashSet<>(0)));
         }
 
         val providerValues = providers.values();
@@ -110,6 +113,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
         val finalEvents = new TreeSet<>(Comparator.comparing(Event::getId));
         finalEvents.addAll(resolveEvents);
-        return Pair.of(finalEvents, providerValues);
+        return Optional.of(Pair.of(finalEvents, providerValues));
     }
 }

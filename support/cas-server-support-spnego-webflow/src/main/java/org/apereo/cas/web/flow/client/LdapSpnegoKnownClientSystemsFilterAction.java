@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +53,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
     }
 
     @Override
-    protected boolean shouldDoSpnego(final String remoteIp) {
+    protected boolean shouldDoSpnego(final String remoteIp) throws Exception {
         val ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
@@ -75,10 +74,10 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * Searches the ldap instance for the attribute value.
      *
      * @param remoteIp the remote ip
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
+    protected boolean executeSearchForSpnegoAttribute(final String remoteIp) throws Exception {
         val remoteHostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Resolved remote hostname [{}] based on ip [{}]", remoteHostName, remoteIp);
 

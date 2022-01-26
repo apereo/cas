@@ -75,8 +75,10 @@ public class GitRepository implements DisposableBean {
         val repository = this.gitInstance.getRepository();
         val head = repository.resolve(Constants.HEAD);
 
+        LOGGER.debug("Head object id is [{}]", head.toObjectId().toString());
         try (val walk = new RevWalk(repository)) {
             val commit = walk.parseCommit(head);
+            LOGGER.debug("Head commit id is [{}]", commit.getId());
             val tree = commit.getTree();
             try (val treeWalk = new TreeWalk(repository)) {
                 treeWalk.addTree(tree);

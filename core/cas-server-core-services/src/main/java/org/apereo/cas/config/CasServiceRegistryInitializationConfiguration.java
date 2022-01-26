@@ -18,7 +18,6 @@ import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.spring.CasEventListener;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -100,10 +99,9 @@ public class CasServiceRegistryInitializationConfiguration {
     @Configuration(value = "CasServiceRegistryEmbeddedConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasServiceRegistryEmbeddedConfiguration {
-        @SneakyThrows
         private static Resource getServiceRegistryInitializerServicesDirectoryResource(
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
+            final ConfigurableApplicationContext applicationContext) throws Exception {
             val registry = casProperties.getServiceRegistry().getJson();
             if (ResourceUtils.doesResourceExist(registry.getLocation())) {
                 LOGGER.debug("Using JSON service registry location [{}] for embedded service definitions", registry.getLocation());

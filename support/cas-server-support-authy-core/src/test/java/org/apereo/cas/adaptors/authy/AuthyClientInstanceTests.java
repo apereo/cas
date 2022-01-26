@@ -6,6 +6,8 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.authy.AuthyApiClient;
 import com.authy.api.Error;
+import com.authy.api.User;
+import com.authy.api.Users;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AuthyClientInstanceTests}.
@@ -24,18 +27,29 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MFAProvider")
 public class AuthyClientInstanceTests {
     @Test
-    public void verifyAction() {
-        val authy = new AuthyMultifactorAuthenticationProperties()
+    public void verifyAction() throws Exception {
+        val properties = new AuthyMultifactorAuthenticationProperties()
             .setCountryCode("1")
             .setApiKey("nfg734dbdv10fn$#")
             .setApiUrl(AuthyApiClient.DEFAULT_API_URI)
             .setMailAttribute("mail")
             .setPhoneAttribute("phone");
-        val client = new AuthyClientInstance(authy);
+
+        val authyUser = mock(User.class);
+        when(authyUser.getId()).thenReturn(1);
+        when(authyUser.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+        val authyUsers = mock(Users.class);
+        when(authyUsers.createUser(anyString(), anyString(), anyString())).thenReturn(authyUser);
+
+        val authy = mock(AuthyApiClient.class);
+        when(authy.getUsers()).thenReturn(authyUsers);
+
+        val client = new AuthyClientInstance(authy, properties);
         val user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("mail", List.of("casuser@example.org"), "phone", List.of("123-456-6789"))));
         assertNotNull(user);
-        assertTrue(user.getId() <= 0);
+        assertTrue(user.getId() > 0);
         assertTrue(HttpStatus.valueOf(user.getStatus()).isError());
 
         val error = new Error();

@@ -106,7 +106,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
 
-    protected AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
+    protected AbstractResourceBasedServiceRegistry(final Path configDirectory,
+                                                   final StringSerializer<RegisteredService> serializer,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                    final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,

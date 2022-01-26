@@ -19,12 +19,13 @@ import java.util.Optional;
  */
 public class AuthyMultifactorTrustedDeviceWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    public AuthyMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                          final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                          final FlowDefinitionRegistry flowDefinitionRegistry,
-                                                          final ConfigurableApplicationContext applicationContext,
-                                                          final CasConfigurationProperties casProperties,
-                                                          final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
+    public AuthyMultifactorTrustedDeviceWebflowConfigurer(
+        final FlowBuilderServices flowBuilderServices,
+        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final FlowDefinitionRegistry flowDefinitionRegistry,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry,
             applicationContext, casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
     }

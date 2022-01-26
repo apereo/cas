@@ -50,6 +50,13 @@ public class OidcDiscoveryProperties implements Serializable {
     private boolean authorizationResponseIssuerParameterSupported;
 
     /**
+     * Boolean parameter indicating
+     * whether the authorization server (CAS) accepts authorization request
+     * data only via the pushed authorization request method.
+     */
+    private boolean requirePushedAuthorizationRequests;
+
+    /**
      * List of supported scopes.
      */
     private List<String> scopes = Stream.of("openid", "profile", "email", "address", "phone", "offline_access")

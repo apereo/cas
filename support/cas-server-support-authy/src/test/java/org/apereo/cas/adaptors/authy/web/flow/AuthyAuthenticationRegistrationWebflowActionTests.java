@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.authy.AuthyApiClient;
 import com.authy.api.Error;
 import com.authy.api.Hash;
 import com.authy.api.Token;
@@ -36,11 +37,13 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
     @Test
     public void verifyOperation() throws Exception {
         val authyInstance = mock(AuthyClientInstance.class);
+        when(authyInstance.getAuthyClient()).thenReturn(mock(AuthyApiClient.class));
+        
         val tokens = mock(Tokens.class);
         val token = new Token(200, "OK", "Token is valid.");
         when(tokens.verify(eq(123456), eq("token"), anyMap())).thenReturn(token);
 
-        when(authyInstance.getAuthyTokens()).thenReturn(tokens);
+        when(authyInstance.getAuthyClient().getTokens()).thenReturn(tokens);
         val user = new User(200, "token");
         user.setId(123456);
         when(authyInstance.getOrCreateUser(any(Principal.class))).thenReturn(user);
@@ -51,7 +54,7 @@ public class AuthyAuthenticationRegistrationWebflowActionTests {
 
         val users = mock(Users.class);
         when(users.requestSms(anyInt())).thenReturn(hash);
-        when(authyInstance.getAuthyUsers()).thenReturn(users);
+        when(authyInstance.getAuthyClient().getUsers()).thenReturn(users);
 
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

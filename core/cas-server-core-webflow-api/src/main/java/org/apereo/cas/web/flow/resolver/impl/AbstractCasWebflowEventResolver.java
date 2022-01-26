@@ -119,8 +119,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return event;
     }
 
-
-
     /**
      * Resolve service from authentication request.
      *

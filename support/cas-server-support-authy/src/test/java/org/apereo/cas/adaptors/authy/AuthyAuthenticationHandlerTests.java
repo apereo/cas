@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
-import com.authy.AuthyException;
+import com.authy.AuthyApiClient;
 import com.authy.api.Token;
 import com.authy.api.Tokens;
 import com.authy.api.User;
@@ -33,6 +33,22 @@ import static org.mockito.Mockito.*;
  */
 @Tag("MFAProvider")
 public class AuthyAuthenticationHandlerTests {
+    private static AuthyClientInstance configureAuthyClientInstance(final int userStatus,
+                                                                    final int tokenStatus, final String message) throws Exception {
+        val authyInstance = mock(AuthyClientInstance.class);
+        when(authyInstance.getAuthyClient()).thenReturn(mock(AuthyApiClient.class));
+
+        val tokens = mock(Tokens.class);
+        val token = new Token(tokenStatus, "OK", message);
+        when(tokens.verify(eq(123456), eq("token"), anyMap())).thenReturn(token);
+
+        when(authyInstance.getAuthyClient().getTokens()).thenReturn(tokens);
+        val user = new User(userStatus, "token");
+        user.setId(123456);
+        when(authyInstance.getOrCreateUser(any(Principal.class))).thenReturn(user);
+        return authyInstance;
+    }
+
     @Test
     public void verifyOperation() throws Exception {
         val authyInstance = configureAuthyClientInstance(200, 200, Token.VALID_TOKEN_MESSAGE);
@@ -86,19 +102,5 @@ public class AuthyAuthenticationHandlerTests {
         RequestContextHolder.setRequestContext(context);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(new AuthyTokenCredential("token")));
-    }
-
-    private static AuthyClientInstance configureAuthyClientInstance(final int userStatus,
-        final int tokenStatus, final String message) throws AuthyException {
-        val authyInstance = mock(AuthyClientInstance.class);
-        val tokens = mock(Tokens.class);
-        val token = new Token(tokenStatus, "OK", message);
-        when(tokens.verify(eq(123456), eq("token"), anyMap())).thenReturn(token);
-
-        when(authyInstance.getAuthyTokens()).thenReturn(tokens);
-        val user = new User(userStatus, "token");
-        user.setId(123456);
-        when(authyInstance.getOrCreateUser(any(Principal.class))).thenReturn(user);
-        return authyInstance;
     }
 }
