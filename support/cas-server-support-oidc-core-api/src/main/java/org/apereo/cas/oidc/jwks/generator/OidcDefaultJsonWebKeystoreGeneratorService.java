@@ -68,6 +68,9 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     public Resource generate() throws Exception {
         val resource = determineJsonWebKeystoreResource();
         if (ResourceUtils.isFile(resource) && isWatcherEnabled()) {
+            if (resourceWatcherService != null) {
+                resourceWatcherService.close();
+            }
             resourceWatcherService = new FileWatcherService(resource.getFile(),
                 file -> new Consumer<File>() {
                     @Override
