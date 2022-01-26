@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code OidcJsonWebKeyStoreListenerImpl} to allow spring {@code @Async} support to use JDK proxy.
@@ -15,5 +17,7 @@ public interface OidcJsonWebKeyStoreListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleOidcJsonWebKeystoreModifiedEvent(OidcJsonWebKeystoreModifiedEvent event);
 }

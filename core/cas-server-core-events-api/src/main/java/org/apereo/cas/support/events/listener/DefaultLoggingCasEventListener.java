@@ -10,8 +10,6 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import static org.apereo.cas.util.serialization.MessageSanitizationUtils.*;
 
@@ -45,8 +43,6 @@ public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
                                                    + "For principal: [{}]\nWith released attributes: [{}]";
 
     @Override
-    @EventListener
-    @Async
     public void logTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent e) {
         val tgtId = sanitize(e.getId());
         LOGGER.debug(GRANTED_TGT_MSG,
@@ -58,22 +54,16 @@ public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
     }
 
     @Override
-    @EventListener
-    @Async
     public void logAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent e) {
         LOGGER.debug(AUTHN_TX_FAIL_MSG, e.getCredential(), e.getFailures());
     }
 
     @Override
-    @EventListener
-    @Async
     public void logAuthenticationPrincipalResolvedEvent(final CasAuthenticationPrincipalResolvedEvent e) {
         LOGGER.debug(PRINCIPAL_RESOLVED_MSG, e.getPrincipal().getId(), e.getPrincipal().getAttributes());
     }
 
     @Override
-    @EventListener
-    @Async
     public void logTicketGrantingTicketDestroyedEvent(final CasTicketGrantingTicketDestroyedEvent e) {
         val tgtId = sanitize(e.getId());
         LOGGER.debug(DESTROYED_TGT_MSG,
@@ -86,8 +76,6 @@ public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
     }
 
     @Override
-    @EventListener
-    @Async
     public void logProxyTicketGrantedEvent(final CasProxyTicketGrantedEvent e) {
         val pgt = e.getProxyGrantingTicket();
         val pt = e.getProxyTicket();
@@ -106,8 +94,6 @@ public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
     }
 
     @Override
-    @EventListener
-    @Async
     public void logServiceTicketGrantedEvent(final CasServiceTicketGrantedEvent e) {
         val serviceTicket = e.getServiceTicket();
         LOGGER.debug(CREATED_ST_MSG,
@@ -118,8 +104,6 @@ public class DefaultLoggingCasEventListener implements LoggingCasEventListener {
     }
 
     @Override
-    @EventListener
-    @Async
     public void logServiceTicketValidatedEvent(final CasServiceTicketValidatedEvent e) {
         val serviceTicket = e.getServiceTicket();
         val principal = serviceTicket.getTicketGrantingTicket().getAuthentication().getPrincipal();

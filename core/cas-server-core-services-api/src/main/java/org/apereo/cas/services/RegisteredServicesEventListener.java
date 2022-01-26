@@ -5,6 +5,8 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code DefaultRegisteredServicesEventListener} to allow spring {@code @Async} support to use JDK proxy.
@@ -19,6 +21,8 @@ public interface RegisteredServicesEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleRefreshEvent(CasRegisteredServicesRefreshEvent event);
 
     /**
@@ -26,6 +30,8 @@ public interface RegisteredServicesEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleEnvironmentChangeEvent(EnvironmentChangeEvent event);
 
     /**
@@ -33,6 +39,8 @@ public interface RegisteredServicesEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleRegisteredServiceExpiredEvent(CasRegisteredServiceExpiredEvent event);
 
 }

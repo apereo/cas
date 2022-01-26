@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.Map;
 
@@ -30,15 +28,11 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
     private final CasConfigurationProperties casProperties;
 
     @Override
-    @EventListener
-    @Async
     public void handleSurrogateAuthenticationFailureEvent(final CasSurrogateAuthenticationFailureEvent event) {
         notify(event.getPrincipal(), event);
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleSurrogateAuthenticationSuccessEvent(final CasSurrogateAuthenticationSuccessfulEvent event) {
         notify(event.getPrincipal(), event);
     }

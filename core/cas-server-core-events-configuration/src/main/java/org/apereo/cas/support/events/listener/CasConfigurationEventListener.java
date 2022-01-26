@@ -3,6 +3,8 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code DefaultCasConfigurationEventListener} to allow spring {@code @Async} support to use JDK proxy.
@@ -16,6 +18,8 @@ public interface CasConfigurationEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleRefreshEvent(EnvironmentChangeEvent event);
 
     /**
@@ -23,5 +27,7 @@ public interface CasConfigurationEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleConfigurationModifiedEvent(CasConfigurationModifiedEvent event);
 }
