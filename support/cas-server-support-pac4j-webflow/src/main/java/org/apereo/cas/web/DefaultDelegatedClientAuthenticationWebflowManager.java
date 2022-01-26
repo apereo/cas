@@ -21,10 +21,8 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
-import org.pac4j.core.util.generator.StaticValueGenerator;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
-import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.state.SAML2StateGenerator;
@@ -47,6 +45,10 @@ import java.util.Optional;
 @Getter
 @Transactional(transactionManager = "ticketTransactionManager")
 public class DefaultDelegatedClientAuthenticationWebflowManager implements DelegatedClientAuthenticationWebflowManager {
+    private static final String OIDC_CLIENT_ID_SESSION_KEY = "OIDC_CLIENT_ID";
+
+    private static final String OAUTH20_CLIENT_ID_SESSION_KEY = "OAUTH20_CLIENT_ID";
+
     private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
 
     private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
@@ -107,7 +109,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected void trackSessionIdForCasClient(final WebContext webContext, final TransientSessionTicket ticket,
                                               final CasClient casClient) {
-        casClient.getConfiguration().addCustomParam(PARAMETER_CLIENT_ID, ticket.getId());
         configContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
@@ -120,9 +121,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      */
     protected void trackSessionIdForOidcClient(final WebContext webContext, final OidcClient client,
                                                final TransientSessionTicket ticket) {
-        val config = client.getConfiguration();
-        config.setWithState(true);
-        config.setStateGenerator(new StaticValueGenerator(ticket.getId()));
+        configContext.getSessionStore().set(webContext, OIDC_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
     /**
@@ -135,9 +134,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     protected void trackSessionIdForOAuth20Client(final WebContext webContext,
                                                   final OAuth20Client client,
                                                   final TransientSessionTicket ticket) {
-        val config = client.getConfiguration();
-        config.setWithState(true);
-        config.setStateGenerator(new StaticValueGenerator(ticket.getId()));
+        configContext.getSessionStore().set(webContext, OAUTH20_CLIENT_ID_SESSION_KEY, ticket.getId());
     }
 
     /**
@@ -302,25 +299,33 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             }
         }
 
-        if (StringUtils.isBlank(clientId) && (client instanceof OAuth20Client || client instanceof OidcClient)) {
-            LOGGER.debug("Client identifier could not found in request parameters. Looking at state for the OAuth2/Oidc client");
-            clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER)
-                .map(String::valueOf).orElse(StringUtils.EMPTY);
-        }
+        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OAuth20Client.class, OAUTH20_CLIENT_ID_SESSION_KEY);
+        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OidcClient.class, OIDC_CLIENT_ID_SESSION_KEY);
+        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OAuth10Client.class, OAUTH10_CLIENT_ID_SESSION_KEY);
+        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, CasClient.class, CAS_CLIENT_ID_SESSION_KEY);
 
-        if (StringUtils.isBlank(clientId) && client instanceof OAuth10Client) {
-            LOGGER.debug("Client identifier could not be found in request parameters. Looking at session store for the OAuth1 client");
-            clientId = configContext.getSessionStore().get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY)
-                .map(Object::toString).orElse(StringUtils.EMPTY);
-            configContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
-        }
-        if (StringUtils.isBlank(clientId) && client instanceof CasClient) {
-            LOGGER.debug("Client identifier could not be found in request parameters. Looking at the session store for the CAS client");
-            clientId = configContext.getSessionStore().get(webContext, CAS_CLIENT_ID_SESSION_KEY)
-                .map(Object::toString).orElse(StringUtils.EMPTY);
-            configContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, null);
-        }
         LOGGER.debug("Located delegated client identifier [{}]", clientId);
+        return clientId;
+    }
+
+    /**
+     * Gets the delegated client id for a specific client type.
+     *
+     * @param webContext the web context
+     * @param client the client
+     * @param clientId the client id
+     * @param clientClass the client class
+     * @param key the key for the session store
+     * @return the retrieved or existing client id
+     */
+    protected String getDelegatedClientIdFromSessionStore(final WebContext webContext, final Client client, final String clientId,
+                                                          final Class clientClass, final String key) {
+        if (StringUtils.isBlank(clientId) && client != null && clientClass.isAssignableFrom(client.getClass())) {
+            LOGGER.debug("Client identifier could not be found in request parameters. Looking at session store for the [{}] client", clientClass);
+            val newClientId = configContext.getSessionStore().get(webContext, key).map(Object::toString).orElse(StringUtils.EMPTY);
+            configContext.getSessionStore().set(webContext, key, null);
+            return newClientId;
+        }
         return clientId;
     }
 }
