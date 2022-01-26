@@ -1,0 +1,29 @@
+{
+  "dependencies": "json-service-registry,service-registry-stream-hazelcast,reports",
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "properties": [
+    "--logging.level.org.apereo.cas=debug",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    
+    "--cas.audit.engine.enabled=false",
+    "--cas.service-registry.stream.core.enabled=true",
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.watcher-enabled=true"
+  ],
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+      "--cas.service-registry.stream.core.replication-mode=ACTIVE"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.service-registry.json.location=file://${TMPDIR}/cas-services",
+      "--cas.service-registry.stream.core.replication-mode=PASSIVE"
+    ]
+  }
+}

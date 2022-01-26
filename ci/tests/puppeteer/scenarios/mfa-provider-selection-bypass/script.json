@@ -1,0 +1,25 @@
+{
+  "dependencies": "yubikey,gauth",
+  "properties": [
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.mfa.yubikey.client-id=18420",
+    "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
+    "--cas.authn.mfa.yubikey.bypass.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bypass.groovy",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.mfa.gauth.bypass.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bypass.groovy",
+
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth,mfa-yubikey",
+    "--cas.authn.mfa.core.provider-selection-enabled=true"
+  ]
+}
+
+
+

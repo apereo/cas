@@ -51,7 +51,7 @@ public class DynamoDbCloudConfigBootstrapConfigurationTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeAll
-    public static void initialize() {
+    public static void initialize() throws Exception {
         val environment = new MockEnvironment();
         environment.setProperty(DynamoDbCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", "http://localhost:8000");
         environment.setProperty(DynamoDbCloudConfigBootstrapConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "local-instance", "true");
@@ -63,7 +63,6 @@ public class DynamoDbCloudConfigBootstrapConfigurationTests {
         val amazonDynamoDBClient = builder.build(DynamoDbClient.builder(), DynamoDbClient.class);
 
         DynamoDbCloudConfigBootstrapConfiguration.createSettingsTable(amazonDynamoDBClient, true);
-
         val values = new HashMap<String, AttributeValue>();
         values.put(DynamoDbCloudConfigBootstrapConfiguration.ColumnNames.ID.getColumnName(),
             AttributeValue.builder().s(UUID.randomUUID().toString()).build());

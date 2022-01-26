@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasServicesStreamingConfiguration.class
 }, properties = {
     "cas.service-registry.stream.kafka.bootstrap-address=localhost:9092",
-    "cas.service-registry.stream.enabled=true"
+    "cas.service-registry.stream.core.enabled=true"
 })
 @EnabledIfPortOpen(port = 9092)
 public class RegisteredServiceKafkaDistributedCacheManagerTests {

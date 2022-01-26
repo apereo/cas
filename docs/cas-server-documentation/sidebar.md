@@ -522,6 +522,7 @@ layout: null
                 * [Rotation](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS-Rotation.html)
             * [Logout](/cas/{{ version }}/authentication/OIDC-Authentication-Logout.html)
             * [Claims](/cas/{{ version }}/authentication/OIDC-Authentication-Claims.html)
+            * [PAR](/cas/{{ version }}/authentication/OIDC-Authentication-PAR.html)
             * [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [WS-Federation](#wsfedprotocol)

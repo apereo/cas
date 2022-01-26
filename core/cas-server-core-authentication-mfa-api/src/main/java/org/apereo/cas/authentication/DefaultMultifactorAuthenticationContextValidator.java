@@ -100,11 +100,12 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
-                                                                                              final Collection<MultifactorAuthenticationProvider> providers) {
+    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
+        final Authentication authentication,
+        final Collection<MultifactorAuthenticationProvider> providers) {
         val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
         LOGGER.debug("Available authentication context(s) are [{}]", contexts);
-        
+
         return providers
             .stream()
             .map(p -> {

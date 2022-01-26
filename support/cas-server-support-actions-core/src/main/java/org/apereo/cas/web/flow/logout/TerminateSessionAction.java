@@ -11,7 +11,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -120,7 +119,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) throws Exception {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
                 () -> isLogoutRequestConfirmed(requestContext),
                 () -> Boolean.TRUE)
@@ -153,9 +152,9 @@ public class TerminateSessionAction extends AbstractAction {
      *
      * @param context Request context.
      * @return "success"
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected Event terminate(final RequestContext context) {
+    protected Event terminate(final RequestContext context) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
