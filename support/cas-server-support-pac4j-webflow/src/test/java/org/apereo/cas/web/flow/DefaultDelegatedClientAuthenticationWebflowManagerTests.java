@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
-import org.apereo.cas.web.DefaultDelegatedClientAuthenticationWebflowManager;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -28,7 +27,6 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
@@ -111,12 +109,9 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         config.setClientId(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
         val client = new OidcClient(config);
+        client.setConfiguration(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertTrue(config.isWithState());
-        assertEquals(ticket.getId(), config.getStateGenerator().generateValue(context, JEESessionStore.INSTANCE));
-
-        httpServletRequest.addParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER, ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
@@ -131,15 +126,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         client.setConfiguration(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertTrue(config.isWithState());
-        assertEquals(ticket.getId(), config.getStateGenerator().generateValue(context, JEESessionStore.INSTANCE));
-
-        assertThrows(UnauthorizedServiceException.class,
-            () -> delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client));
-
-        httpServletRequest.addParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER, ticket.getId());
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }
@@ -166,7 +153,6 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         client.setConfiguration(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        assertEquals(ticket.getId(), config.getCustomParams().get(DefaultDelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
