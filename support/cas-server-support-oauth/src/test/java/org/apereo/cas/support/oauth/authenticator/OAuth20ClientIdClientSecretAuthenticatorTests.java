@@ -144,7 +144,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             oAuthClientAuthenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
             assertNotNull(credentials.getUserProfile());
-            
+
             assertEquals(credentials.getUsername().toLowerCase(), credentials.getUserProfile().getId());
             assertNotNull(credentials.getUserProfile().getAttribute("eduPersonAffiliation"));
             assertNull(credentials.getUserProfile().getAttribute("groupMembership"));

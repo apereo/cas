@@ -15,6 +15,7 @@ import org.springframework.webflow.execution.Event;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CompositeProviderSelectionMultifactorWebflowEventResolver}.
@@ -31,7 +32,7 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
     }
 
     @Override
-    protected Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+    protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
@@ -57,12 +58,20 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
                 val validatedEvent = CollectionUtils.wrapCollection(new Event(this,
                     validatedProvider.getId(), event.getAttributes()));
                 val validatedProviders = CollectionUtils.wrapCollection(validatedProvider);
-                return Pair.of(validatedEvent, validatedProviders);
+                return Optional.of(Pair.of(validatedEvent, validatedProviders));
             })
             .findAny()
             .orElseGet(() -> {
-                LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
-                return Pair.of(resolveEvents, chainingProvider.getMultifactorAuthenticationProviders());
+                val activeProviders = chainingProvider.getMultifactorAuthenticationProviders()
+                    .stream()
+                    .filter(provider -> {
+                        val bypass = provider.getBypassEvaluator();
+                        return bypass == null || bypass.shouldMultifactorAuthenticationProviderExecute(authentication,
+                            registeredService, provider, request);
+                    })
+                    .collect(Collectors.toList());
+                LOGGER.debug("Finalized set of resolved events are [{}] with providers [{}]", resolveEvents, activeProviders);
+                return activeProviders.isEmpty() ? Optional.empty() : Optional.of(Pair.of(resolveEvents, activeProviders));
             });
     }
 }

@@ -6,10 +6,10 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.reflections.ReflectionUtils;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 /**
  * This is {@link CasFeatureModule}.
@@ -27,8 +27,10 @@ public interface CasFeatureModule {
     @SneakyThrows
     @JsonIgnore
     default boolean isDefined() {
-        return Arrays.stream(getClass().getDeclaredFields())
-            .filter(field -> field.getAnnotation(RequiredProperty.class) != null)
+        val fields = ReflectionUtils.getAllFields(getClass(), field -> field.getAnnotation(RequiredProperty.class) != null);
+        
+        return fields
+            .stream()
             .allMatch(Unchecked.predicate(field -> {
                 var getter = getMethodName(field, "get");
                 if (ClassUtils.hasMethod(getClass(), getter)) {

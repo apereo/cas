@@ -432,7 +432,7 @@ public class CasValidationConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("serviceValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification serviceValidateControllerValidationSpecification,
@@ -466,7 +466,7 @@ public class CasValidationConfiguration {
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
@@ -503,7 +503,7 @@ public class CasValidationConfiguration {
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
@@ -544,7 +544,7 @@ public class CasValidationConfiguration {
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
@@ -581,7 +581,7 @@ public class CasValidationConfiguration {
             final ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,

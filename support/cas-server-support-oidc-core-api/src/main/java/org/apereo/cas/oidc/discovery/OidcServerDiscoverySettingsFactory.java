@@ -57,6 +57,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
 
+        discovery.setRequirePushedAuthorizationRequests(discoveryConfig.isRequirePushedAuthorizationRequests());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
         discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());

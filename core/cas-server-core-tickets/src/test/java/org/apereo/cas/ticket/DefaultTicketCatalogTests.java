@@ -62,7 +62,7 @@ import static org.mockito.Mockito.*;
 @Tag("Tickets")
 public class DefaultTicketCatalogTests {
     @Autowired
-    @Qualifier("ticketCatalog")
+    @Qualifier(TicketCatalog.BEAN_NAME)
     private TicketCatalog ticketCatalog;
 
     @Test

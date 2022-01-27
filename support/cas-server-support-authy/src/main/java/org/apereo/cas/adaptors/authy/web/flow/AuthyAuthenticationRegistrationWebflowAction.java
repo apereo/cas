@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.WebUtils;
 import com.authy.api.Hash;
 import com.authy.api.User;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
@@ -28,7 +27,7 @@ public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction
     private final AuthyClientInstance instance;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) throws Exception {
         val principal = WebUtils.getAuthentication(context).getPrincipal();
         val user = instance.getOrCreateUser(principal);
         if (!user.isOk()) {
@@ -57,8 +56,7 @@ public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction
         WebUtils.addErrorMessageToContext(requestContext, MESSAGE_CODE_ERROR, exception.getMessage());
     }
 
-    @SneakyThrows
-    private Hash submitAuthyRegistrationRequest(final User user) {
-        return instance.getAuthyUsers().requestSms(user.getId());
+    private Hash submitAuthyRegistrationRequest(final User user) throws Exception {
+        return instance.getAuthyClient().getUsers().requestSms(user.getId());
     }
 }

@@ -78,7 +78,7 @@ public class WsFederationAuthenticationConfiguration {
             final WsFederationHelper wsFederationHelper,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new WsFederationNavigationController(wsFederationCookieManager,
                 wsFederationHelper, wsFederationConfigurations.toList(), authenticationRequestServiceSelectionStrategies,

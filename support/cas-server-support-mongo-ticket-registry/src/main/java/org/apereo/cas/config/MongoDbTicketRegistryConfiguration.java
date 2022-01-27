@@ -33,7 +33,7 @@ public class MongoDbTicketRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public TicketRegistry ticketRegistry(
-        @Qualifier("ticketCatalog")
+        @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, 
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)

@@ -230,7 +230,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcLocaleChangeInterceptor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oidcLocaleChangeInterceptor(
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -389,7 +389,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcCasWebflowLoginContextProvider")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowLoginContextProvider oidcCasWebflowLoginContextProvider(
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new OidcCasWebflowLoginContextProvider(argumentExtractor);
         }

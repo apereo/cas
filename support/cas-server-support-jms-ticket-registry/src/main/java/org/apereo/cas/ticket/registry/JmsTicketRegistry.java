@@ -1,14 +1,15 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommand;
-import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
-import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
-import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
+import org.apereo.cas.ticket.queue.AddTicketMessageQueueCommand;
+import org.apereo.cas.ticket.queue.DeleteTicketMessageQueueCommand;
+import org.apereo.cas.ticket.queue.DeleteTicketsMessageQueueCommand;
+import org.apereo.cas.ticket.queue.TicketRegistryQueuePublisher;
+import org.apereo.cas.ticket.queue.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -19,18 +20,12 @@ import lombok.val;
  * @since 5.2.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class JmsTicketRegistry extends DefaultTicketRegistry {
 
-    private final JmsTicketRegistryPublisher ticketPublisher;
+    private final TicketRegistryQueuePublisher ticketPublisher;
 
     private final PublisherIdentifier id;
-
-    public JmsTicketRegistry(final JmsTicketRegistryPublisher publisher, final PublisherIdentifier id,
-                             final CipherExecutor cipherExecutor) {
-        super(cipherExecutor);
-        this.ticketPublisher = publisher;
-        this.id = id;
-    }
 
     @Override
     public void addTicketInternal(final @NonNull Ticket ticket) {

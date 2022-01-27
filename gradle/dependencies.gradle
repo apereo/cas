@@ -387,6 +387,10 @@ ext.libraries = [
                     exclude(group: "org.apache.cxf", module: "cxf-rt-ws-security")
                 }
         ],
+        apachecxfsearch        : dependencies.create("com.github.mmoayyed.cxf:cxf-rt-rs-extension-search:$apacheCxfVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.ow2.asm", module: "asm")
+        },
         casclient               : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
             exclude(group: "javax.servlet", module: "servlet-api")
             exclude(group: "org.slf4j", module: "log4j-over-slf4j")
@@ -1088,7 +1092,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
 
                 },
-                dependencies.create("org.messaginghub:pooled-jms:2.0.2") {
+                dependencies.create("org.messaginghub:pooled-jms:2.0.3") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "slf4j-log4j12")
                     exclude(group: "org.apache.commons", module: "commons-pool2")
@@ -1531,13 +1535,6 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("org.json:json:$jsonVersion") {
-                },
-                dependencies.create("org.testcontainers:testcontainers:$testContainersVersion") {
-                },
-                dependencies.create("org.testcontainers:junit-jupiter:$testContainersVersion") {
-                    exclude(group: "org.junit.jupiter", module: "junit-jupiter-api")
-                },
-                dependencies.create("org.testcontainers:mockserver:$testContainersVersion") {
                 },
                 dependencies.create("org.junit-pioneer:junit-pioneer:$junitPioneerVersion") {
                 }

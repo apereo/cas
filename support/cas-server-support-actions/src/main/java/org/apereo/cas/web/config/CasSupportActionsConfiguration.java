@@ -142,7 +142,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("logoutExecutionPlan")
             final LogoutExecutionPlan logoutExecutionPlan) {
@@ -161,7 +161,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("logoutExecutionPlan")
             final LogoutExecutionPlan logoutExecutionPlan) {
@@ -217,7 +217,7 @@ public class CasSupportActionsConfiguration {
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
             @Qualifier("singleSignOnParticipationStrategy")
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor), servicesManager,
                 authenticationRequestServiceSelectionStrategies, ticketGrantingTicketCookieGenerator,
@@ -317,7 +317,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("logoutExecutionPlan")
             final LogoutExecutionPlan logoutExecutionPlan) {
@@ -367,7 +367,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("logoutExecutionPlan")
             final LogoutExecutionPlan logoutExecutionPlan) {
@@ -386,7 +386,7 @@ public class CasSupportActionsConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier("logoutExecutionPlan")
             final LogoutExecutionPlan logoutExecutionPlan) {

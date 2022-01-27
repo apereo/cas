@@ -4,10 +4,13 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.FileSystemResource;
 
+import java.io.File;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,5 +39,17 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
         assertNotNull(decision);
         assertTrue(decision.getId() > 0);
         assertTrue(repo.findConsentDecisions(user).stream().anyMatch(c -> c.getId() == decision.getId()));
+    }
+
+    @Test
+    public void verifyDisposedRepository() throws Exception {
+        val repo = new JsonConsentRepository(new FileSystemResource(File.createTempFile("records", ".json")));
+        assertNotNull(repo.getWatcherService());
+        assertDoesNotThrow(new Executable() {
+            @Override
+            public void execute() {
+                repo.destroy();
+            }
+        });
     }
 }

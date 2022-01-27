@@ -59,7 +59,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
@@ -75,8 +75,9 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      *
      * @param remoteIp the remote ip
      * @return true boolean
+     * @throws Exception the exception
      */
-    protected boolean shouldDoSpnego(final String remoteIp) {
+    protected boolean shouldDoSpnego(final String remoteIp) throws Exception {
         return ipPatternCanBeChecked(remoteIp) && ipPatternMatches(remoteIp);
     }
 

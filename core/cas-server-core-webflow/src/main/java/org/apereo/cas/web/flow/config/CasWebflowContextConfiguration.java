@@ -204,7 +204,7 @@ public class CasWebflowContextConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor) {
             val interceptor = new CasLocaleChangeInterceptor(casProperties.getLocale(),
                 argumentExtractor, servicesManager);

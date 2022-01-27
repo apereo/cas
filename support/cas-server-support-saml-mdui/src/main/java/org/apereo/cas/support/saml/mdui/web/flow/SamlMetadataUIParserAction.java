@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
 
+    private final ArgumentExtractor argumentExtractor;
+
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val entityId = getEntityIdFromRequest(requestContext);
@@ -48,9 +51,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
-
         LOGGER.debug("Located entity id [{}] from request", entityId);
-
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
             val registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
@@ -137,6 +138,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     protected String getEntityIdFromRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameter(this.entityIdParameterName);
+        var entityId = request.getParameter(this.entityIdParameterName);
+        if (StringUtils.isBlank(entityId)) {
+            val service = argumentExtractor.extractService(request);
+            if (service != null && service.getAttributes().containsKey(this.entityIdParameterName)) {
+                entityId = service.getAttributes().get(this.entityIdParameterName).get(0).toString();
+            }
+        }
+        return entityId;
     }
 }

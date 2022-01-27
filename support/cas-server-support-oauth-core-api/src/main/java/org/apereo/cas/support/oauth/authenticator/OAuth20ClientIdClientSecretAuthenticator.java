@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -73,7 +72,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, webContext, sessionStore);
 
-            val credential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
+            val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
             val principal = principalResolver.resolve(credential);
 
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()

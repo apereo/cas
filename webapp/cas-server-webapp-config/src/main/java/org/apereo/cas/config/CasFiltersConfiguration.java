@@ -92,7 +92,7 @@ public class CasFiltersConfiguration {
         @Bean
         public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -165,7 +165,7 @@ public class CasFiltersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CorsConfigurationSource corsConfigurationSource(
             final CasConfigurationProperties casProperties,
-            @Qualifier("argumentExtractor")
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {

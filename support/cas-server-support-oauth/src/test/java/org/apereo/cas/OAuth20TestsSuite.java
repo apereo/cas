@@ -34,6 +34,7 @@ import org.apereo.cas.support.oauth.web.OAuth20AccessTokenSecurityLogicTests;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolverTests;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapterTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
+import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogicTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20AccessTokenResponseAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20CodeResponseAuditResourceResolverTests;
@@ -166,6 +167,7 @@ import org.junit.platform.suite.api.Suite;
     OAuth20RegisteredServiceCipherExecutorTests.class,
     OAuth20TokenAuthorizationResponseBuilderTests.class,
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
+    OAuth20TicketGrantingTicketAwareSecurityLogicTests.class,
     OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
     CSRFCookieTests.class,
     OAuth20LogoutDontReplicateSessionTests.class,

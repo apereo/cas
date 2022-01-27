@@ -14,6 +14,11 @@ import java.util.List;
  */
 public interface ArgumentExtractor {
     /**
+     * Bean implementation name.
+     */
+    String BEAN_NAME = "argumentExtractor";
+
+    /**
      * Retrieve the service from the request.
      *
      * @param request the request context.

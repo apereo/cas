@@ -25,7 +25,7 @@ public class MessageSanitizationUtils {
         + ")-\\d+-)([\\w.-]+)");
 
     private static final Pattern SENSITIVE_TEXT_PATTERN =
-        Pattern.compile("(password|token|credential|secret)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+        Pattern.compile("(clientSecret|password|token|credential|secret)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
 
     private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 

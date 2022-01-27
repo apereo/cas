@@ -1,5 +1,12 @@
 #!/bin/bash
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]] ; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 # Paths passed as arguments on command line get converted
 # by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
 # so this converts path to windows format
@@ -118,6 +125,7 @@ if [[ "${enabled}" == "false" ]]; then
 fi
 
 export SCENARIO="${scenarioName}"
+export SCENARIO_PATH="${scenario}"
 
 if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
@@ -210,47 +218,64 @@ if [[ "${RERUN}" != "true" ]]; then
   fi
 fi
 
-
 if [[ "${RERUN}" != "true" ]]; then
-  initScript=$(cat "${config}" | jq -j '.initScript // empty')
-  initScript="${initScript//\$\{PWD\}/${PWD}}"
-  initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
-  [ -n "${initScript}" ] && \
-    printgreen "Initialization script: ${initScript}" && \
-    chmod +x "${initScript}" && \
-    eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
+  serverPort=8443
+  processIds=()
+  instances=$(cat "${config}" | jq -j '.instances // 1')
+  for (( c = 1; c <= instances; c++ ))
+  do
+    initScript=$(cat "${config}" | jq -j '.initScript // empty')
+    initScript="${initScript//\$\{PWD\}/${PWD}}"
+    initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
+    [ -n "${initScript}" ] && \
+      printgreen "Initialization script: ${initScript}" && \
+      chmod +x "${initScript}" && \
+      eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
 
-  runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
-  runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-  [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
+    runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
+    runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+    [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-  properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
-  properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
-  properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
-  properties="${properties//\%\{random\}/${random}}"
-  if [[ "$DEBUG" == "true" ]]; then
-    printyellow "Enabling debugger on port $DEBUG_PORT"
-    runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-  fi
-  runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
-  echo -e "\nLaunching CAS with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+    properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
 
-  springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
-  [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+    filter=".instance$c.properties // empty | join(\" \")"
+    properties="$properties $(cat $config | jq -j -f <(echo "$filter"))"
 
-  java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-    -Dcom.sun.net.ssl.checkRevocation=false \
-    --spring.profiles.active=none --server.ssl.key-store="$keystore" \
-    ${properties} &
-  pid=$!
-  printgreen "\nWaiting for CAS under process id ${pid}"
-  until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
-      echo -n '.'
-      sleep 1
+    properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
+    properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
+    properties="${properties//\%\{random\}/${random}}"
+    properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
+
+    if [[ "$DEBUG" == "true" ]]; then
+      printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+      runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
+    fi
+    runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
+    echo -e "\nLaunching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+
+    springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
+    [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
+
+    printcyan "Launching CAS instance #${c} under port ${serverPort}"
+    java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
+       -Dcom.sun.net.ssl.checkRevocation=false --server.port=${serverPort}\
+       --spring.profiles.active=none --server.ssl.key-store="$keystore" \
+       ${properties} &
+    pid=$!
+    printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+    until curl -k -L --output /dev/null --silent --fail https://localhost:${serverPort}/cas/login; do
+       echo -n '.'
+       sleep 1
+    done
+    processIds+=( $pid )
+    serverPort=$((serverPort + 1))
+    if [[ "$DEBUG" == "true" ]]; then
+      DEBUG_PORT=$((DEBUG_PORT + 1))
+    fi
   done
-  printgreen "\n\nReady!"
-fi
 
+  printgreen "\nReady!"
+fi
 
 if [[ "${DRYRUN}" != "true" ]]; then
   clear
@@ -283,8 +308,11 @@ if [[ "${RERUN}" != "true" ]]; then
     read -r
   fi
 
-  printgreen "\nKilling CAS process ${pid}..."
-  kill -9 $pid
+  for p in "${processIds[@]}"; do
+    printgreen "Killing CAS process ${p}..."
+    kill -9 "$p"
+  done
+  
   printgreen "Removing previous build artifacts..."
   rm "$PWD"/cas.${projectType}
   rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore

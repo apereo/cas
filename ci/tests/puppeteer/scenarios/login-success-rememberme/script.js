@@ -17,7 +17,7 @@ const assert = require("assert");
     let tgc = await cas.assertTicketGrantingCookie(page);
     let date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
-    assert(now.getDay() + 1 === date.getDay())
+    assert(now.getDate() + 1 === date.getDate())
     await page.close()
 
     page = await cas.newPage(browser);

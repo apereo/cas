@@ -198,8 +198,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(this.signingKeySize);
-            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                signingKeyToUse, this.signingKeySize, getName(), getSigningKeySetting());
+            val prop = String.format("%s=%s", getSigningKeySetting(), signingKeyToUse);
+            //CHECKSTYLE:OFF
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
+                signingKeyToUse, this.signingKeySize, getName(), prop);
+            //CHECKSTYLE:ON
         } else {
             try {
                 val jwk = (PublicJsonWebKey) EncodingUtils.newJsonWebKey(signingKeyToUse);
@@ -223,8 +226,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(this.encryptionKeySize);
-            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                secretKeyToUse, this.encryptionKeySize, getName(), getEncryptionKeySetting());
+            val prop = String.format("%s=%s", getEncryptionKeySetting(), secretKeyToUse);
+            //CHECKSTYLE:OFF
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
+                secretKeyToUse, this.encryptionKeySize, getName(), prop);
+            //CHECKSTYLE:ON
         } else {
             try {
                 val results = JsonUtil.parseJson(secretKeyToUse);
