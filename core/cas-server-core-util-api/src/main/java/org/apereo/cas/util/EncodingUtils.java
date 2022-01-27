@@ -530,7 +530,6 @@ public class EncodingUtils {
             jwe.setAlgorithmHeaderValue(algorithmHeaderValue);
             jwe.setEncryptionMethodHeaderParameter(encryptionMethodHeaderParameter);
             jwe.setKey(secretKeyEncryptionKey);
-            jwe.setContentTypeHeaderValue("JWT");
             jwe.setHeader("typ", "JWT");
 
             customHeaders.forEach((k, v) -> jwe.setHeader(k, v.toString()));
