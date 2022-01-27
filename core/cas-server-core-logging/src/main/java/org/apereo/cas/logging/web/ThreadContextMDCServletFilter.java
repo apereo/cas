@@ -43,11 +43,6 @@ public class ThreadContextMDCServletFilter implements Filter {
         }
     }
 
-    /**
-     * Does nothing.
-     *
-     * @param filterConfig filter initial configuration. Ignored.
-     */
     @Override
     public void init(final FilterConfig filterConfig) {
     }
