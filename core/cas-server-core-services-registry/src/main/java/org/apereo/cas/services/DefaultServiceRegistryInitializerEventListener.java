@@ -5,8 +5,6 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * This is {@link DefaultServiceRegistryInitializerEventListener}.
@@ -20,16 +18,12 @@ public class DefaultServiceRegistryInitializerEventListener implements ServiceRe
     private final ServiceRegistryInitializer serviceRegistryInitializer;
 
     @Override
-    @EventListener
-    @Async
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (event.isEligibleForContextRefresh()) {
             rebind();

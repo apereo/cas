@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 
 import java.util.Map;
 
@@ -32,22 +30,16 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     private final CommunicationsManager communicationsManager;
 
     @Override
-    @EventListener
-    @Async
     public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         servicesManager.load();
     }
 
     @Override
-    @EventListener
-    @Async
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
     }
     
     @Override
-    @EventListener
-    @Async
     public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
         val registeredService = event.getRegisteredService();
         val contacts = registeredService.getContacts();

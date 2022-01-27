@@ -6,6 +6,8 @@ import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticat
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * Interface for {@code DefaultCasAuthenticationEventListener} to allow spring {@code @Async} support to use JDK proxy.
@@ -19,6 +21,8 @@ public interface DefaultCasEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasTicketGrantingTicketCreatedEvent(CasTicketGrantingTicketCreatedEvent event);
 
     /**
@@ -26,6 +30,8 @@ public interface DefaultCasEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasTicketGrantingTicketDeletedEvent(CasTicketGrantingTicketDestroyedEvent event);
 
     /**
@@ -33,6 +39,8 @@ public interface DefaultCasEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasAuthenticationTransactionFailureEvent(CasAuthenticationTransactionFailureEvent event);
 
     /**
@@ -40,6 +48,8 @@ public interface DefaultCasEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasAuthenticationPolicyFailureEvent(CasAuthenticationPolicyFailureEvent event);
 
     /**
@@ -47,5 +57,7 @@ public interface DefaultCasEventListener extends CasEventListener {
      *
      * @param event the event
      */
+    @EventListener
+    @Async
     void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event);
 }
