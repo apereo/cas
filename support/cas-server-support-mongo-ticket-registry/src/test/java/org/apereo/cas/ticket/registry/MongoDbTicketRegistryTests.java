@@ -23,8 +23,10 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -38,13 +40,15 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import javax.net.ssl.SSLContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -103,9 +107,12 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private TicketRegistry newTicketRegistry;
 
     @Autowired
-    @Qualifier("mongoDbTicketRegistryTemplate")
-    private MongoTemplate mongoDbTicketRegistryTemplate;
+    private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("sslContext")
+    private ObjectProvider<SSLContext> sslContext;
+    
     @BeforeEach
     public void before() {
         newTicketRegistry.deleteAll();
@@ -128,6 +135,7 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
+        val mongoDbTicketRegistryTemplate = new MongoDbConnectionFactory(sslContext.getObject()).buildMongoTemplate(casProperties.getTicket().getRegistry().getMongo());
         val registry = new MongoDbTicketRegistry(catalog, mongoDbTicketRegistryTemplate, mgr);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
