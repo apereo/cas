@@ -27,12 +27,4 @@ public interface ServiceTicket extends Ticket {
      * @return the server.
      */
     Service getService();
-
-    /**
-     * Determine if this ticket was created at the same time as a
-     * TicketGrantingTicket.
-     *
-     * @return true if it is, false otherwise.
-     */
-    boolean isFromNewLogin();
 }

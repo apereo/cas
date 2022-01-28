@@ -52,7 +52,8 @@ public class MockServiceTicket implements ServiceTicket, TicketState, ProxyGrant
         this(id, service, parent, null);
     }
 
-    public MockServiceTicket(final String id, final Service service,
+    public MockServiceTicket(final String id,
+                             final Service service,
                              final TicketGrantingTicket parent,
                              final ExpirationPolicy policy) {
         this.service = service;
@@ -63,12 +64,8 @@ public class MockServiceTicket implements ServiceTicket, TicketState, ProxyGrant
     }
 
     @Override
-    public boolean isFromNewLogin() {
-        return false;
-    }
-
-    @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication,
+                                                        final ExpirationPolicy expirationPolicy) {
         val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;

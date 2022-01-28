@@ -75,6 +75,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -281,6 +282,10 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME)
     protected OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper;
+
+    @Autowired
+    @Qualifier(TicketFactory.BEAN_NAME)
+    protected TicketFactory defaultTicketFactory;
 
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

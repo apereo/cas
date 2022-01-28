@@ -37,6 +37,5 @@ public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurat
         assertNotNull(ticketId.getObject());
         assertNotNull(ticketId.getRelyingPartyId());
         assertNotNull(ticketId.getExpirationPolicy());
-        assertTrue(ticketId.isFromNewLogin());
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
+import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -74,7 +75,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(s.getId(), sreturned.getId());
         assertEquals(s.isExpired(), sreturned.isExpired());
         assertEquals(s.getService(), sreturned.getService());
-        assertEquals(s.isFromNewLogin(), sreturned.isFromNewLogin());
+        assertEquals(((RenewableServiceTicket) s).isFromNewLogin(), ((RenewableServiceTicket) sreturned).isFromNewLogin());
     }
 
     @Test

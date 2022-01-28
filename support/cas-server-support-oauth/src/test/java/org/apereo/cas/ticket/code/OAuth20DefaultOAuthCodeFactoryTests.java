@@ -39,7 +39,6 @@ public class OAuth20DefaultOAuthCodeFactoryTests extends AbstractOAuth20Tests {
             "clientid-code", Map.of(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         assertNotNull(token);
-        assertTrue(token.isFromNewLogin());
         assertTrue(tgt.getDescendantTickets().stream().anyMatch(t -> t.equalsIgnoreCase(token.getId())));
     }
 

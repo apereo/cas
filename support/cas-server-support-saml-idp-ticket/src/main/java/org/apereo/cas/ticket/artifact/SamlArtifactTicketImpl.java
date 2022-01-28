@@ -44,8 +44,10 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
      */
     private Authentication authentication;
 
-    public SamlArtifactTicketImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
-                                  final TicketGrantingTicket ticketGrantingTicket, final String issuer, final String relyingParty, final String samlObject) {
+    public SamlArtifactTicketImpl(final String id, final Service service, final Authentication authentication,
+                                  final ExpirationPolicy expirationPolicy,
+                                  final TicketGrantingTicket ticketGrantingTicket,
+                                  final String issuer, final String relyingParty, final String samlObject) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
@@ -53,11 +55,6 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
         this.relyingPartyId = relyingParty;
         this.issuer = issuer;
         this.object = samlObject;
-    }
-
-    @Override
-    public boolean isFromNewLogin() {
-        return true;
     }
 
     @Override

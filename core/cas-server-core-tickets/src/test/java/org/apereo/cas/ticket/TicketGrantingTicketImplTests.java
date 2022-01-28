@@ -160,10 +160,9 @@ public class TicketGrantingTicketImplTests {
     public void verifyServiceTicketAsFromInitialCredentials() {
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        val s = t.grantServiceTicket(ID_GENERATOR
+        val s = (RenewableServiceTicket) t.grantServiceTicket(ID_GENERATOR
                 .getNewTicketId(ServiceTicket.PREFIX), RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE, false, true);
-
         assertTrue(s.isFromNewLogin());
     }
 
@@ -178,13 +177,12 @@ public class TicketGrantingTicketImplTests {
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
             true);
-        val s = t.grantServiceTicket(
+        val s = (RenewableServiceTicket) t.grantServiceTicket(
             ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE,
             false,
             true);
-
         assertFalse(s.isFromNewLogin());
     }
 

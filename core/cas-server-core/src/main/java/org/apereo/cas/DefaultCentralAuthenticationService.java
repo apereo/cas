@@ -27,6 +27,7 @@ import org.apereo.cas.support.events.ticket.CasServiceTicketValidatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -244,7 +245,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
 
         val serviceTicket = configurationContext.getTicketRegistry().getTicket(serviceTicketId, ServiceTicket.class);
-
         if (serviceTicket == null) {
             LOGGER.warn("Service ticket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
@@ -304,7 +304,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
 
             builder.addAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                CollectionUtils.wrap(serviceTicket.isFromNewLogin()));
+                CollectionUtils.wrap(((RenewableServiceTicket) serviceTicket).isFromNewLogin()));
             builder.addAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 CollectionUtils.wrap(CoreAuthenticationUtils.isRememberMeAuthentication(authentication)));
 
@@ -329,7 +329,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             val assertion = new DefaultAssertionBuilder(finalAuthentication)
                 .with(selectedService)
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
-                .with(serviceTicket.isFromNewLogin())
+                .with(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
                 .build();
 
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
