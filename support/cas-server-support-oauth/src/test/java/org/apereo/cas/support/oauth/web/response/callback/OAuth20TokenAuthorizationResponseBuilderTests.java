@@ -14,6 +14,7 @@ import org.jasig.cas.client.util.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
@@ -75,7 +76,10 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
     }
 
     @Test
-    public void verifyUnchangedStateAndNonceParameter() {
+    public void verifyUnchangedStateAndNonceParameter() throws Exception {
+        assertTrue(oauthTokenResponseBuilder.isSingleSignOnSessionRequired());
+        assertEquals(Ordered.LOWEST_PRECEDENCE, oauthAuthorizationCodeResponseBuilder.getOrder());
+
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);

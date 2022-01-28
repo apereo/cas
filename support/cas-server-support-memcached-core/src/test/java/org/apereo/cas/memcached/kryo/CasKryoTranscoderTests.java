@@ -17,6 +17,7 @@ import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
@@ -152,7 +153,7 @@ public class CasKryoTranscoderTests {
             null, authentication,
             NeverExpiresExpirationPolicy.INSTANCE);
 
-        val serviceTicket = expectedTGT.grantServiceTicket(ST_ID,
+        val serviceTicket = (ProxyGrantingTicketIssuerTicket) expectedTGT.grantServiceTicket(ST_ID,
             RegisteredServiceTestUtils.getService(),
             NeverExpiresExpirationPolicy.INSTANCE, false, true);
         var encoded = transcoder.encode(expectedTGT);

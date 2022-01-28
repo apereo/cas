@@ -55,4 +55,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcDiscoveryProperties discovery = new OidcDiscoveryProperties();
+
+    /**
+     * OIDC pushed authorization requests configuration.
+     */
+    @NestedConfigurationProperty
+    private OidcPushedAuthorizationProperties par = new OidcPushedAuthorizationProperties();
 }

@@ -45,7 +45,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
     }
 
     @Test
-    public void verifyBuild() {
+    public void verifyBuild() throws Exception {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));

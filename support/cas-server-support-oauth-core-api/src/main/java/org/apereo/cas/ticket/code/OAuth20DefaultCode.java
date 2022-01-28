@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -91,13 +90,6 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
     @Override
     public boolean isFromNewLogin() {
         return true;
-    }
-
-    @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
-                                                        final Authentication authentication,
-                                                        final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No proxy-granting ticket can be issued");
     }
 
     @Override

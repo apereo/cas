@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -81,9 +82,9 @@ public class DistributedTicketRegistryTests {
         val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         this.ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
-        val s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, true);
+        val s = (ProxyGrantingTicketIssuerTicket) returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, true);
         this.ticketRegistry.addTicket(s);
-        val s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
+        val s2 = (ProxyGrantingTicketIssuerTicket) this.ticketRegistry.getTicket("test2");
         assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));
         assertTrue(this.wasTicketUpdated);
         returned.markTicketExpired();
@@ -101,7 +102,7 @@ public class DistributedTicketRegistryTests {
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_NAME, a, NeverExpiresExpirationPolicy.INSTANCE));
         val tgt = this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class);
         val service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
-        val st1 = tgt.grantServiceTicket("ST1", service, NeverExpiresExpirationPolicy.INSTANCE, true, true);
+        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket("ST1", service, NeverExpiresExpirationPolicy.INSTANCE, true, true);
         this.ticketRegistry.addTicket(st1);
         assertNotNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));

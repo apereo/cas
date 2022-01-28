@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.artifact;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,8 +38,5 @@ public class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurat
         assertNotNull(ticketId.getRelyingPartyId());
         assertNotNull(ticketId.getExpirationPolicy());
         assertTrue(ticketId.isFromNewLogin());
-        assertThrows(UnsupportedOperationException.class,
-            () -> ticketId.grantProxyGrantingTicket("id",
-                tgt.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));
     }
 }

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -53,12 +52,6 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     @Override
     public boolean isFromNewLogin() {
         return true;
-    }
-
-    @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication,
-                                                        final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No proxy granting ticket is available");
     }
 
     @Override

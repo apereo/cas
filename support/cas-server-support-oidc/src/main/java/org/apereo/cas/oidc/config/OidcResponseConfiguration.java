@@ -7,6 +7,8 @@ import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
+import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
+import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
@@ -65,7 +67,7 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcClientCredentialsResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OAuth20ClientCredentialsResponseBuilder(
                 oidcConfigurationContext,
@@ -83,7 +85,7 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcTokenResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OAuth20TokenAuthorizationResponseBuilder(
                 oidcConfigurationContext,
@@ -100,11 +102,30 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcAuthorizationCodeResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(
                 oidcConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationModelAndViewBuilder")
+        public OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder() {
+            return new OidcPushedAuthorizationModelAndViewBuilder();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationRequestResponseBuilder")
+        public OAuth20AuthorizationResponseBuilder oidcPushedAuthorizationRequestResponseBuilder(
+            @Qualifier("oidcPushedAuthorizationModelAndViewBuilder")
+            final OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder,
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcPushedAuthorizationRequestResponseBuilder(oidcConfigurationContext,
+                oidcPushedAuthorizationModelAndViewBuilder);
         }
 
 
@@ -113,13 +134,14 @@ public class OidcResponseConfiguration {
     @Configuration(value = "OidcResponseImplicitConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcResponseImplicitConfiguration {
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcImplicitIdTokenCallbackUrlBuilder")
         public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcImplicitIdTokenAuthorizationResponseBuilder(
                 oidcConfigurationContext,
@@ -132,13 +154,12 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenAndTokenCallbackUrlBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder(
                 oidcConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
         }
-
     }
 
     @Configuration(value = "OidcResponseResourceOwnerConfiguration", proxyBeanMethods = false)
@@ -150,7 +171,7 @@ public class OidcResponseConfiguration {
         public OAuth20AuthorizationResponseBuilder oidcResourceOwnerCredentialsResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OAuth20ResourceOwnerCredentialsResponseBuilder(
                 oidcConfigurationContext,
@@ -166,7 +187,7 @@ public class OidcResponseConfiguration {
         @ConditionalOnMissingBean(name = "oidcIdTokenGenerator")
         @Bean
         public IdTokenGeneratorService oidcIdTokenGenerator(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcIdTokenGeneratorService(oidcConfigurationContext);
         }

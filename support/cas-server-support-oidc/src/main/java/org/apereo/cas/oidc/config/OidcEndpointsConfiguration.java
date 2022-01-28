@@ -14,6 +14,7 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
+import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
@@ -257,7 +258,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcWellKnownController")
         @Bean
         public OidcWellKnownEndpointController oidcWellKnownController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext,
             @Qualifier("oidcWebFingerDiscoveryService")
             final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
@@ -268,7 +269,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcProfileController")
         @Bean
         public OidcUserProfileEndpointController oidcProfileController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcUserProfileEndpointController(oidcConfigurationContext);
         }
@@ -276,9 +277,17 @@ public class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public OidcAuthorizeEndpointController oidcAuthorizeController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcAuthorizeEndpointController(oidcConfigurationContext);
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        public OidcPushedAuthorizeEndpointController oidcPushedAuthorizeController(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcPushedAuthorizeEndpointController(oidcConfigurationContext);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -289,7 +298,7 @@ public class OidcEndpointsConfiguration {
             final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
             @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcLogoutEndpointController(oidcConfigurationContext,
                 postLogoutRedirectUrlMatcher, urlValidator);
@@ -299,7 +308,7 @@ public class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcRevocationEndpointController")
         public OidcRevocationEndpointController oidcRevocationEndpointController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcRevocationEndpointController(oidcConfigurationContext);
         }
@@ -310,7 +319,7 @@ public class OidcEndpointsConfiguration {
         public OidcAccessTokenEndpointController oidcAccessTokenController(
             @Qualifier("accessTokenGrantAuditableRequestExtractor")
             final AuditableExecution accessTokenGrantAuditableRequestExtractor,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcAccessTokenEndpointController(oidcConfigurationContext,
                 accessTokenGrantAuditableRequestExtractor);
@@ -320,7 +329,7 @@ public class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
         public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcDynamicClientRegistrationEndpointController(oidcConfigurationContext);
         }
@@ -329,7 +338,7 @@ public class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcClientConfigurationEndpointController")
         @Bean
         public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcClientConfigurationEndpointController(oidcConfigurationContext);
         }
@@ -340,7 +349,7 @@ public class OidcEndpointsConfiguration {
         public OidcJwksEndpointController oidcJwksController(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService,
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcJwksEndpointController(oidcConfigurationContext, oidcJsonWebKeystoreGeneratorService);
         }
@@ -349,7 +358,7 @@ public class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcIntrospectionEndpointController")
         public OidcIntrospectionEndpointController oidcIntrospectionEndpointController(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
             return new OidcIntrospectionEndpointController(oidcConfigurationContext);
         }

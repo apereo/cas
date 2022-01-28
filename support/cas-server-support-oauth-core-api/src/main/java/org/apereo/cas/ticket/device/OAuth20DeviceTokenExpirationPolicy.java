@@ -26,11 +26,6 @@ import lombok.ToString;
 public class OAuth20DeviceTokenExpirationPolicy extends HardTimeoutExpirationPolicy {
     private static final long serialVersionUID = -1283286621686527360L;
 
-    /**
-     * Instantiates a new OAuth device code expiration policy.
-     *
-     * @param timeToLive the time to kill in seconds
-     */
     @JsonCreator
     public OAuth20DeviceTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToLive) {
         super(timeToLive);

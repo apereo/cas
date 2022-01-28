@@ -30,7 +30,8 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
 
     @Override
     @SneakyThrows
-    protected String prepareRedirectUrl(final WebContext context, final OAuthRegisteredService registeredService,
+    protected String prepareRedirectUrl(final WebContext context,
+                                        final OAuthRegisteredService registeredService,
                                         final String redirectUrl, final Map<String, String> parameters) {
         val discovery = casProperties.getAuthn().getOidc().getDiscovery();
         if (registeredService instanceof OidcRegisteredService && discovery.isAuthorizationResponseIssuerParameterSupported()) {

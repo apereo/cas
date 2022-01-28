@@ -59,7 +59,7 @@ public class OidcLogoutConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutMessageCreator oidcSingleLogoutMessageCreator(
-            @Qualifier("oidcConfigurationContext")
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcSingleLogoutMessageCreator(oidcConfigurationContext);
         }

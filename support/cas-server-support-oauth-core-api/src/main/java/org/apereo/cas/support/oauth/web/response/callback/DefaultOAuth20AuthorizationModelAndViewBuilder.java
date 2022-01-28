@@ -22,7 +22,8 @@ import java.util.Map;
 @Slf4j
 public class DefaultOAuth20AuthorizationModelAndViewBuilder implements OAuth20AuthorizationModelAndViewBuilder {
     @Override
-    public ModelAndView build(final WebContext context, final OAuthRegisteredService registeredService,
+    public ModelAndView build(final WebContext context,
+                              final OAuthRegisteredService registeredService,
                               final String url, final Map<String, String> parameters) {
         val responseType = OAuth20Utils.getResponseModeType(context);
         val redirectUrl = prepareRedirectUrl(context, registeredService, url, parameters);

@@ -28,7 +28,7 @@ import lombok.val;
 @Setter
 @NoArgsConstructor
 @Getter
-public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
+public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket, ProxyGrantingTicketIssuerTicket {
 
     private static final long serialVersionUID = -4223319704861765405L;
 

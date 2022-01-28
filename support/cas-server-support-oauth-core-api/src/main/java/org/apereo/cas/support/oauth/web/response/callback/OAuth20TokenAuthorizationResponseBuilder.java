@@ -43,7 +43,6 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     public ModelAndView build(final WebContext context,
                               final String clientId,
                               final AccessTokenRequestDataHolder holder) {
-
         val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
@@ -74,12 +73,13 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
      * @return the string
      * @throws Exception the exception
      */
-    protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestDataHolder holder,
-                                                        final String redirectUri,
-                                                        final OAuth20AccessToken accessToken,
-                                                        final List<NameValuePair> params,
-                                                        final OAuth20RefreshToken refreshToken,
-                                                        final WebContext context) throws Exception {
+    protected ModelAndView buildCallbackUrlResponseType(
+        final AccessTokenRequestDataHolder holder,
+        final String redirectUri,
+        final OAuth20AccessToken accessToken,
+        final List<NameValuePair> params,
+        final OAuth20RefreshToken refreshToken,
+        final WebContext context) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
