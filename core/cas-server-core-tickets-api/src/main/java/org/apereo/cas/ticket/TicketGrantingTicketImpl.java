@@ -130,8 +130,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * configuration, the ticket may be considered expired.
      */
     @Override
-    public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
-                                                         final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
+    public synchronized ServiceTicket grantServiceTicket(final String id, final Service service,
+                                                         final ExpirationPolicy expirationPolicy,
+                                                         final boolean credentialProvided,
+                                                         final boolean onlyTrackMostRecentSession) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
         trackService(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;

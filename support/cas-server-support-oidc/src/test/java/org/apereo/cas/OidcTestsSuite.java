@@ -64,6 +64,7 @@ import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptorTests;
 import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointControllerTests;
+import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointControllerTests;
 import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointControllerTests;
@@ -166,6 +167,7 @@ import org.junit.platform.suite.api.Suite;
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
+    OidcPushedAuthorizeEndpointControllerTests.class,
     OidcDefaultJsonWebKeystoreRotationServiceTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
 })

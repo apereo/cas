@@ -43,6 +43,16 @@ public interface OidcConstants {
     String LOGIN_HINT = "login_hint";
 
     /**
+     * Request URI parameter used in PAR requests.
+     */
+    String REQUEST_URI = "request_uri";
+
+    /**
+     * Expiration attribute used in PAR response payloads.
+     */
+    String EXPIRES_IN = "expires_in";
+
+    /**
      * The sub claim.
      */
     String CLAIM_SUB = "sub";

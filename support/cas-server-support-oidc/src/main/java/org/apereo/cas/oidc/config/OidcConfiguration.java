@@ -40,6 +40,9 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationUriFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriExpirationPolicyBuilder;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriFactory;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -73,6 +76,9 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -81,6 +87,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -263,7 +270,7 @@ public class OidcConfiguration {
     @Configuration(value = "OidcRedirectConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcRedirectConfiguration {
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "oidcRequestSupport")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -312,10 +319,13 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
+            @Qualifier("oidcRequestSupport")
+            final OidcRequestSupport oidcRequestSupport,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
-            return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
+            return new OidcConsentApprovalViewResolver(casProperties,
+                oidcRequestSupport, oauthDistributedSessionStore);
         }
     }
 
@@ -507,7 +517,7 @@ public class OidcConfiguration {
     public static class OidcContextConfiguration {
 
         @Bean
-        @ConditionalOnMissingBean(name = "oidcConfigurationContext")
+        @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
             @Qualifier("oidcIdTokenGenerator")
@@ -579,14 +589,20 @@ public class OidcConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
             final CasConfigurationProperties casProperties,
+            @Qualifier("oidcServerDiscoverySettingsFactory")
+            final OidcServerDiscoverySettings oidcServerDiscoverySettings,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
+                .discoverySettings(oidcServerDiscoverySettings)
                 .issuerService(oidcIssuerService)
+                .ticketFactory(ticketFactory)
                 .idTokenClaimCollector(oidcIdTokenClaimCollector)
                 .idTokenGeneratorService(oidcIdTokenGenerator)
                 .idTokenExpirationPolicy(grantingTicketExpirationPolicy)
@@ -597,9 +613,6 @@ public class OidcConfiguration {
                 .sessionStore(oauthDistributedSessionStore)
                 .servicesManager(servicesManager)
                 .ticketRegistry(ticketRegistry)
-                .accessTokenFactory(defaultAccessTokenFactory)
-                .deviceTokenFactory(defaultDeviceTokenFactory)
-                .deviceUserCodeFactory(defaultDeviceUserCodeFactory)
                 .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer)
                 .clientIdGenerator(new DefaultRandomStringGenerator())
                 .clientSecretGenerator(new DefaultRandomStringGenerator())
@@ -619,7 +632,6 @@ public class OidcConfiguration {
                 .accessTokenGrantRequestValidators(oauthTokenRequestValidators)
                 .userProfileDataCreator(oidcUserProfileDataCreator)
                 .userProfileViewRenderer(oidcUserProfileViewRenderer)
-                .oAuthCodeFactory(defaultOAuthCodeFactory)
                 .consentApprovalViewResolver(consentApprovalViewResolver)
                 .authenticationBuilder(authenticationBuilder)
                 .oauthAuthorizationResponseBuilders(oidcAuthorizationResponseBuilders)
@@ -734,6 +746,46 @@ public class OidcConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new OidcServerDiscoverySettingsFactory(casProperties, oidcIssuerService, applicationContext);
+        }
+    }
+
+    @Configuration(value = "OidcTicketFactoryPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class OidcTicketFactoryPlanConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "pushedAuthorizationUriExpirationPolicy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy(
+            final CasConfigurationProperties casProperties) {
+            return new OidcPushedAuthorizationUriExpirationPolicyBuilder(casProperties);
+        }
+
+        @ConditionalOnMissingBean(name = "pushedAuthorizationIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator pushedAuthorizationIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationUriFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OidcPushedAuthorizationUriFactory oidcPushedAuthorizationUriFactory(
+            @Qualifier("pushedAuthorizationUriExpirationPolicy")
+            final ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy,
+            @Qualifier("pushedAuthorizationIdGenerator")
+            final UniqueTicketIdGenerator pushedAuthorizationIdGenerator) {
+            return new OidcDefaultPushedAuthorizationUriFactory(pushedAuthorizationIdGenerator, pushedAuthorizationUriExpirationPolicy);
+        }
+
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationUriFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketFactoryExecutionPlanConfigurer oidcPushedAuthorizationUriFactoryConfigurer(
+            @Qualifier("oidcPushedAuthorizationUriFactory")
+            final OidcPushedAuthorizationUriFactory oidcPushedAuthorizationUriFactory) {
+            return () -> oidcPushedAuthorizationUriFactory;
         }
     }
 }

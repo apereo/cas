@@ -239,8 +239,8 @@ public class OidcRequestSupport {
      * @param endpoint   the endpoint
      * @return true /false
      */
-    public boolean isValidIssuerForEndpoint(final JEEContext webContext, final String endpoint) {
-        val requestUrl = webContext.getNativeRequest().getRequestURL().toString();
+    public boolean isValidIssuerForEndpoint(final WebContext webContext, final String endpoint) {
+        val requestUrl = webContext.getRequestURL();
         val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
         val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
 

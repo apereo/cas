@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,8 +29,9 @@ import java.util.LinkedHashMap;
  */
 @Slf4j
 public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder<OAuth20ConfigurationContext> {
-    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final OAuth20ConfigurationContext context,
-                                                                final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(
+        final OAuth20ConfigurationContext context,
+        final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
         super(context, authorizationModelAndViewBuilder);
     }
 
@@ -40,7 +42,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     public ModelAndView build(final WebContext webContext, final String clientId,
                               final AccessTokenRequestDataHolder holder) {
         val authentication = holder.getAuthentication();
-        val code = configurationContext.getOAuthCodeFactory().create(holder.getService(), authentication,
+        val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
+        val code = factory.create(holder.getService(), authentication,
             holder.getTicketGrantingTicket(), holder.getScopes(),
             holder.getCodeChallenge(), holder.getCodeChallengeMethod(),
             holder.getClientId(), holder.getClaims(),

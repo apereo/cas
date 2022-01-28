@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -30,7 +31,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public class MockServiceTicket implements ServiceTicket, TicketState {
+public class MockServiceTicket implements ServiceTicket, TicketState, ProxyGrantingTicketIssuerTicket {
 
     private static final long serialVersionUID = 8203377063087967768L;
 
@@ -39,8 +40,11 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final ZonedDateTime creationTime;
 
     private final Service service;
+
     private TicketGrantingTicket ticketGrantingTicket;
+
     private ExpirationPolicy expirationPolicy;
+
     private boolean expired;
 
     public MockServiceTicket(final String id, final Service service,

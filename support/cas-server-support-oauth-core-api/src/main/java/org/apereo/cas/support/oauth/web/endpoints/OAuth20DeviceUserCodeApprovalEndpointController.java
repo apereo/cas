@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
+import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,8 +63,9 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         if (StringUtils.isBlank(userCode)) {
             return codeNotfound;
         }
-        val codeId = getConfigurationContext().getDeviceUserCodeFactory().generateDeviceUserCode(userCode);
         try {
+            val factory = (OAuth20DeviceUserCodeFactory) getConfigurationContext().getTicketFactory().get(OAuth20DeviceUserCode.class);
+            val codeId = factory.generateDeviceUserCode(userCode);
             val deviceUserCode = getConfigurationContext().getCentralAuthenticationService().getTicket(codeId, OAuth20DeviceUserCode.class);
             if (deviceUserCode.isUserCodeApproved()) {
                 return getModelAndViewForFailure("codeapproved");

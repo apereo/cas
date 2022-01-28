@@ -241,6 +241,8 @@ public class CasOAuth20Configuration {
             final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
             @Qualifier("webApplicationServiceFactory")
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
@@ -253,14 +255,10 @@ public class CasOAuth20Configuration {
             final PrincipalFactory oauthPrincipalFactory,
             @Qualifier("callbackAuthorizeViewResolver")
             final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
-            @Qualifier("defaultAccessTokenFactory")
-            final OAuth20AccessTokenFactory defaultAccessTokenFactory,
             @Qualifier("profileScopeToAttributesFilter")
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig,
-            @Qualifier("defaultOAuthCodeFactory")
-            final OAuth20CodeFactory defaultOAuthCodeFactory,
             final ObjectProvider<List<OAuth20TokenRequestValidator>> oauthTokenRequestValidators,
             @Qualifier("deviceTokenExpirationPolicy")
             final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
@@ -282,9 +280,7 @@ public class CasOAuth20Configuration {
                 .sessionStore(oauthDistributedSessionStore)
                 .servicesManager(servicesManager)
                 .ticketRegistry(ticketRegistry)
-                .accessTokenFactory(defaultAccessTokenFactory)
-                .deviceTokenFactory(defaultDeviceTokenFactory)
-                .deviceUserCodeFactory(defaultDeviceUserCodeFactory)
+                .ticketFactory(ticketFactory)
                 .principalFactory(oauthPrincipalFactory)
                 .webApplicationServiceServiceFactory(webApplicationServiceFactory)
                 .casProperties(casProperties)
@@ -302,7 +298,6 @@ public class CasOAuth20Configuration {
                 .accessTokenGrantRequestValidators(oauthTokenRequestValidators)
                 .userProfileDataCreator(oAuth2UserProfileDataCreator)
                 .userProfileViewRenderer(oauthUserProfileViewRenderer)
-                .oAuthCodeFactory(defaultOAuthCodeFactory)
                 .consentApprovalViewResolver(consentApprovalViewResolver)
                 .authenticationBuilder(oauthCasAuthenticationBuilder)
                 .oauthInvalidAuthorizationResponseBuilder(oauthInvalidAuthorizationBuilder)

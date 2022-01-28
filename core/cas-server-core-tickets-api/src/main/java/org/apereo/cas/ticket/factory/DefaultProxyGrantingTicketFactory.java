@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPol
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -51,7 +52,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-        final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
+                                                    final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
         val pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
@@ -72,14 +73,15 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * @return the ticket
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
-        final String pgtId, final Class<T> clazz) {
+                                                              final String pgtId, final Class<T> clazz) {
 
         val proxyGrantingTicketExpirationPolicy = getProxyGrantingTicketExpirationPolicy(serviceTicket);
-        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, serviceTicket, authentication, pgtId);
+        val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
+        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, pgtIssuer, authentication, pgtId);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
+                                         + " is of type " + result.getClass()
+                                         + " when we were expecting " + clazz);
         }
         return (T) result;
     }
@@ -110,7 +112,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected ProxyGrantingTicket produceTicketWithAdequateExpirationPolicy(
         final RegisteredServiceProxyGrantingTicketExpirationPolicy servicePgtPolicy,
-        final ServiceTicket serviceTicket,
+        final ProxyGrantingTicketIssuerTicket serviceTicket,
         final Authentication authentication,
         final String pgtId) {
         if (servicePgtPolicy != null) {
@@ -125,7 +127,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     }
 
     /**
-     * Produce ticket identifier string.
+     * Produce ticket identifier.
      *
      * @return the ticket
      */

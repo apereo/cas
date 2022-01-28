@@ -28,6 +28,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -488,7 +489,7 @@ public abstract class BaseTicketRegistryTests {
 
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        val st1 = tgt.grantServiceTicket(serviceTicketId, service, NeverExpiresExpirationPolicy.INSTANCE, false, true);
+        val st1 = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId, service, NeverExpiresExpirationPolicy.INSTANCE, false, true);
         ticketRegistry.addTicket(st1);
         ticketRegistry.updateTicket(tgt);
 
@@ -520,7 +521,7 @@ public abstract class BaseTicketRegistryTests {
             assertNotNull(tgt, "Ticket-granting ticket must not be null");
             val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
             IntStream.range(1, 5).forEach(i -> {
-                val st = tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
+                val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
                     NeverExpiresExpirationPolicy.INSTANCE, false, true);
                 ticketRegistry.addTicket(st);
                 ticketRegistry.updateTicket(tgt);

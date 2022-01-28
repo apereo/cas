@@ -17,6 +17,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -281,11 +282,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         val clientConfigUri = OidcClientRegistrationUtils.getClientConfigurationUri(registeredService,
             getConfigurationContext().getCasProperties().getServer().getPrefix());
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientConfigUri);
-        val accessToken = getConfigurationContext().getAccessTokenFactory()
-            .create(service, authn,
-                List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
-                registeredService.getClientId(),
-                OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
+
+        val factory = (OAuth20AccessTokenFactory) getConfigurationContext().getTicketFactory().get(OAuth20AccessToken.class);
+        val accessToken = factory.create(service, authn,
+            List.of(OidcConstants.CLIENT_REGISTRATION_SCOPE),
+            registeredService.getClientId(),
+            OAuth20ResponseTypes.NONE, OAuth20GrantTypes.NONE);
         getConfigurationContext().getTicketRegistry().addTicket(accessToken);
         return accessToken;
     }

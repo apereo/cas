@@ -16,7 +16,8 @@ import java.util.Map;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20ConfigurationContext> implements OAuth20AuthorizationResponseBuilder {
+public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20ConfigurationContext>
+    implements OAuth20AuthorizationResponseBuilder {
 
     /**
      * Configuration context.

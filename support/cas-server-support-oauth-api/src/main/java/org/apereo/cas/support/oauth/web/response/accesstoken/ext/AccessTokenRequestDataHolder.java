@@ -13,6 +13,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -27,7 +29,7 @@ import java.util.Set;
  */
 @ToString
 @Getter
-@Builder
+@SuperBuilder
 public class AccessTokenRequestDataHolder {
 
     private final Service service;
@@ -54,6 +56,9 @@ public class AccessTokenRequestDataHolder {
     private final Map<String, Map<String, Object>> claims = new HashMap<>(0);
 
     @Builder.Default
+    private final Map<String, Object> parameters = new HashMap<>(0);
+
+    @Builder.Default
     private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
     private final String deviceCode;
@@ -67,10 +72,12 @@ public class AccessTokenRequestDataHolder {
 
     private final String clientId;
 
+    @JsonIgnore
     public boolean isCodeToken() {
         return token instanceof OAuth20Code;
     }
 
+    @JsonIgnore
     public boolean isRefreshToken() {
         return token instanceof OAuth20RefreshToken;
     }

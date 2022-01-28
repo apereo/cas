@@ -110,8 +110,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      */
     protected boolean isRequestAuthenticated(final ProfileManager manager, final WebContext context,
                                              final OAuthRegisteredService registeredService) {
-        val opt = manager.getProfile();
-        return opt.isPresent();
+        return manager.getProfile().isPresent();
     }
 
     /**
@@ -229,7 +228,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());
             }
         }
-        if (ticketGrantingTicket == null) {
+        if (ticketGrantingTicket == null && builder.isSingleSignOnSessionRequired()) {
             val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
             LOGGER.error(message);
             return OAuth20Utils.produceErrorView(new PreventedException(message));
