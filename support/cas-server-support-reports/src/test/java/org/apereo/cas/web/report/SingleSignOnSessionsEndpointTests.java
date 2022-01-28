@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -74,13 +75,14 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
         val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
-        centralAuthenticationService.createTicketGrantingTicket(authResult);
+        TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(authResult);
         results = singleSignOnSessionsEndpoint.destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null,
             0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
         assertNotNull(singleSignOnSessionsEndpoint.toString());
+        assertTrue(centralAuthenticationService.getTickets(ticket -> ticket.getId().equals(tgt.getId()) && !ticket.isExpired()).isEmpty());
     }
 
     @Test
