@@ -31,15 +31,16 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
 
-    public OidcHandlerInterceptorAdapter(final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
-                                         final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
-                                         final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
-                                         final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
-                                         final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
-                                         final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-                                         final ServicesManager servicesManager,
-                                         final SessionStore sessionStore,
-                                         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators) {
+    public OidcHandlerInterceptorAdapter(
+        final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
+        final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
+        final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
+        final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
+        final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
+        final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+        final ServicesManager servicesManager,
+        final SessionStore sessionStore,
+        final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
@@ -48,13 +49,18 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     }
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+                             final Object handler) throws Exception {
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}]", request.getRequestURI());
         if (!super.preHandle(request, response, handler)) {
             LOGGER.trace("Unable to pre-handle OIDC request at [{}]", request.getRequestURI());
             return false;
         }
 
+        if (isPushedAuthorizationRequest(request.getRequestURI())) {
+            LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
+            return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
+        }
         if (isClientConfigurationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC client configuration is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationClientConfigurationInterceptor.preHandle(request, response, handler);
@@ -88,6 +94,16 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      */
     protected boolean isClientConfigurationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.CLIENT_CONFIGURATION_URL));
+    }
+
+    /**
+     * Is PAR request.
+     *
+     * @param requestPath the request path
+     * @return true/false
+     */
+    protected boolean isPushedAuthorizationRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.PUSHED_AUTHORIZE_URL));
     }
 
     @Override

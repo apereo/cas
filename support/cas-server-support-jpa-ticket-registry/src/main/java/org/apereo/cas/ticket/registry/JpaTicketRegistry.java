@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 
 import lombok.Getter;
@@ -65,12 +66,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicketInternal(final Ticket ticket) {
-        this.transactionTemplate.executeWithoutResult(status -> {
+        transactionTemplate.executeWithoutResult(status -> {
             val encodeTicket = encodeTicket(ticket);
             val factory = getJpaTicketEntityFactory();
             val ticketEntity = factory.fromTicket(encodeTicket);
-            if (ticket.getTicketGrantingTicket() != null) {
-                ticketEntity.setParentId(encodeTicketId(ticket.getTicketGrantingTicket().getId()));
+            if (ticket instanceof TicketGrantingTicketAwareTicket
+                && TicketGrantingTicketAwareTicket.class.cast(ticket).getTicketGrantingTicket() != null) {
+                val parentId = encodeTicketId(((TicketGrantingTicketAwareTicket) ticket).getTicketGrantingTicket().getId());
+                ticketEntity.setParentId(parentId);
             }
             this.entityManager.persist(ticketEntity);
             LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);

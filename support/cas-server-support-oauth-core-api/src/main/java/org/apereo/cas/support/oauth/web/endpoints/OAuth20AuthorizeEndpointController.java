@@ -214,25 +214,30 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
-        var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
-            getConfigurationContext().getTicketRegistry(), context.getNativeRequest());
+        var accessTokenDataBuilder = AccessTokenRequestDataHolder.builder();
+        if (builder.isSingleSignOnSessionRequired()) {
+            var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+                getConfigurationContext().getTicketRegistry(), context.getNativeRequest());
 
-        if (ticketGrantingTicket == null) {
-            try {
-                ticketGrantingTicket = getConfigurationContext().getSessionStore()
-                    .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
-                    .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                    .orElse(null);
-            } catch (final InvalidTicketException e) {
-                LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());
+            if (ticketGrantingTicket == null) {
+                try {
+                    ticketGrantingTicket = getConfigurationContext().getSessionStore()
+                        .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                        .map(ticketId -> getConfigurationContext().getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                        .orElse(null);
+                } catch (final InvalidTicketException e) {
+                    LOGGER.trace("Cannot find active ticket-granting-ticket: [{}]", e.getMessage());
+                }
             }
+            if (ticketGrantingTicket == null) {
+                val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
+                LOGGER.error(message);
+                return OAuth20Utils.produceErrorView(new PreventedException(message));
+            }
+            accessTokenDataBuilder = accessTokenDataBuilder.ticketGrantingTicket(ticketGrantingTicket);
         }
-        if (ticketGrantingTicket == null && builder.isSingleSignOnSessionRequired()) {
-            val message = String.format("Missing ticket-granting-ticket for client id [%s] and service [%s]", clientId, registeredService.getName());
-            LOGGER.error(message);
-            return OAuth20Utils.produceErrorView(new PreventedException(message));
-        }
+
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
@@ -246,11 +251,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .toUpperCase();
 
         val claims = OAuth20Utils.parseRequestClaims(context);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = accessTokenDataBuilder
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .ticketGrantingTicket(ticketGrantingTicket)
             .grantType(OAuth20GrantTypes.valueOf(grantType))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)

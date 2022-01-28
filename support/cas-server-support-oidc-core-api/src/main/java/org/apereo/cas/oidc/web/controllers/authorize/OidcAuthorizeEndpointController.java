@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointContro
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,10 +41,17 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);
         }
 
+        if (getConfigurationContext().getDiscoverySettings().isRequirePushedAuthorizationRequests()
+            && webContext.getRequestURL().endsWith(OidcConstants.AUTHORIZE_URL)
+            && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))) {
+            LOGGER.warn("CAS is configured to only accept pushed authorization requests");
+            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
+        }
+
         val scopes = OAuth20Utils.getRequestedScopes(webContext);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
-                    + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
+                        + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
                 scopes, OidcConstants.StandardScopes.OPENID.getScope());
         }
         return super.handleRequest(request, response);

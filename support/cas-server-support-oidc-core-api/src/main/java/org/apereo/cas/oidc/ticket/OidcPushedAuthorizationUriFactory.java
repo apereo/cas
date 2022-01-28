@@ -17,5 +17,5 @@ public interface OidcPushedAuthorizationUriFactory extends TicketFactory {
      * @return the oidc pushed authorization uri
      * @throws Exception the exception
      */
-    OidcPushedAuthorizationUri create(AccessTokenRequestDataHolder holder) throws Exception;
+    OidcPushedAuthorizationRequest create(AccessTokenRequestDataHolder holder) throws Exception;
 }

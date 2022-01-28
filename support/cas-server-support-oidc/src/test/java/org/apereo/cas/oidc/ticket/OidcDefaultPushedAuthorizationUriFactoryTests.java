@@ -32,11 +32,11 @@ public class OidcDefaultPushedAuthorizationUriFactoryTests extends AbstractOidcT
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .build();
-        val factory = (OidcPushedAuthorizationUriFactory) defaultTicketFactory.get(OidcPushedAuthorizationUri.class);
+        val factory = (OidcPushedAuthorizationUriFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
         val ticket = factory.create(holder);
         assertNotNull(ticket);
-        assertTrue(ticket.getId().startsWith(OidcPushedAuthorizationUri.PREFIX));
-        assertEquals(OidcPushedAuthorizationUri.class, factory.getTicketType());
+        assertTrue(ticket.getId().startsWith(OidcPushedAuthorizationRequest.PREFIX));
+        assertEquals(OidcPushedAuthorizationRequest.class, factory.getTicketType());
 
         val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getPar().getMaxTimeToLiveInSeconds()).getSeconds();
         assertEquals(expiration, ticket.getExpirationPolicy().getTimeToLive());

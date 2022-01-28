@@ -8,24 +8,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * This is {@link OidcDefaultPushedAuthorizationUri}.
+ * This is {@link OidcDefaultPushedAuthorizationRequest}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Getter
 @NoArgsConstructor(force = true)
-public class OidcDefaultPushedAuthorizationUri extends AbstractTicket implements OidcPushedAuthorizationUri {
+public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket implements OidcPushedAuthorizationRequest {
     private static final long serialVersionUID = 5050969039357176961L;
 
     @JsonIgnore
-    private final String prefix = OidcPushedAuthorizationUri.PREFIX;
+    private final String prefix = OidcPushedAuthorizationRequest.PREFIX;
 
     private final String authorizationRequest;
 
-    public OidcDefaultPushedAuthorizationUri(final String id,
-                                             final ExpirationPolicy expirationPolicy,
-                                             final String request) {
+    public OidcDefaultPushedAuthorizationRequest(final String id,
+                                                 final ExpirationPolicy expirationPolicy,
+                                                 final String request) {
         super(id, expirationPolicy);
         this.authorizationRequest = request;
     }
