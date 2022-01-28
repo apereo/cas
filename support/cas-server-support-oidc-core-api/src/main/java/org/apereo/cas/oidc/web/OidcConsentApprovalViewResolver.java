@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -21,16 +22,24 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
+    private final OidcRequestSupport oidcRequestSupport;
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
+                                           final OidcRequestSupport oidcRequestSupport,
                                            final SessionStore sessionStore) {
         super(casProperties, sessionStore);
+        this.oidcRequestSupport = oidcRequestSupport;
     }
 
     @Override
     protected boolean isConsentApprovalBypassed(final WebContext context, final OAuthRegisteredService service) {
         if (service instanceof OidcRegisteredService) {
+            if (context.getRequestURL().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL)) {
+                LOGGER.trace("Consent approval is bypassed for pushed authorization requests");
+                return true;
+            }
             val url = context.getFullRequestURL();
             val prompts = OidcRequestSupport.getOidcPromptFromAuthorizationRequest(url);
             if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {

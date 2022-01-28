@@ -6,7 +6,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;                            
+import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,7 +32,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
         JEESessionStore.INSTANCE.set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, "true");
         val service = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://google.com");
-        assertNotNull(consentApprovalViewResolver.resolve(context, service));
+        assertFalse(consentApprovalViewResolver.resolve(context, service).hasView());
     }
 
     @Test
@@ -40,23 +40,37 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
         request.setQueryString(OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
-        
+
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
-        assertNotNull(consentApprovalViewResolver.resolve(context, service));
+        val mv = consentApprovalViewResolver.resolve(context, service);
+        assertTrue(mv.hasView());
+    }
+
+    @Test
+    public void verifyBypassedForPushAuthz() {
+        val request = new MockHttpServletRequest();
+        request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        val mv = consentApprovalViewResolver.resolve(context, service);
+        assertFalse(mv.hasView());
     }
 
     @Test
     public void verifyBypassedWithoutPrompt() {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
-        
+
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
-        assertNotNull(consentApprovalViewResolver.resolve(context, service));
+        val mv = consentApprovalViewResolver.resolve(context, service);
+        assertTrue(mv.hasView());
     }
 }
