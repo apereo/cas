@@ -319,13 +319,10 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
-            @Qualifier("oidcRequestSupport")
-            final OidcRequestSupport oidcRequestSupport,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
-            return new OidcConsentApprovalViewResolver(casProperties,
-                oidcRequestSupport, oauthDistributedSessionStore);
+            return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
         }
     }
 
