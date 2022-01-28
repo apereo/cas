@@ -79,9 +79,9 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsFromNewLoginFalse() {
-        val s = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
+        val s = (RenewableServiceTicket) tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
         assertTrue(s.isFromNewLogin());
-        val s1 = tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
+        val s1 = (RenewableServiceTicket) tgt.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, false);
         assertFalse(s1.isFromNewLogin());
     }
 

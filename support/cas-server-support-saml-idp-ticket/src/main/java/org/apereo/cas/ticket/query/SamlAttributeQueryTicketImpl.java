@@ -50,11 +50,6 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     }
 
     @Override
-    public boolean isFromNewLogin() {
-        return true;
-    }
-
-    @Override
     public String getPrefix() {
         return SamlAttributeQueryTicket.PREFIX;
     }

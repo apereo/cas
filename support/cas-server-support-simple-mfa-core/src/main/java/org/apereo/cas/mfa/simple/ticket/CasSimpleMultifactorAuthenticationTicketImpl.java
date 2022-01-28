@@ -30,7 +30,8 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket implements CasSimpleMultifactorAuthenticationTicket {
+public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket
+    implements CasSimpleMultifactorAuthenticationTicket {
     private static final long serialVersionUID = -6580305495605099699L;
 
     /**

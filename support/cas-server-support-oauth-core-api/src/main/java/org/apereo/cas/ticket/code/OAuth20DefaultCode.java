@@ -88,11 +88,6 @@ public class OAuth20DefaultCode extends AbstractTicket implements OAuth20Code {
     }
 
     @Override
-    public boolean isFromNewLogin() {
-        return true;
-    }
-
-    @Override
     public String getPrefix() {
         return OAuth20Code.PREFIX;
     }

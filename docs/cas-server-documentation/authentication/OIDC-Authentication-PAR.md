@@ -15,3 +15,7 @@ PAR allows CAS to authenticate the client before any user interaction happens. T
 
 <div class="alert alert-warning"><strong>Workers Ahead</strong><p>This feature is a work-in-progress and will receive additional
 updates in future releases. Please check back later.</p></div>
+
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.oidc.par" %}
