@@ -75,7 +75,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
         val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
-        TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(authResult);
+        val tgt = centralAuthenticationService.createTicketGrantingTicket(authResult);
         results = singleSignOnSessionsEndpoint.destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null,
             0, 1_000,
