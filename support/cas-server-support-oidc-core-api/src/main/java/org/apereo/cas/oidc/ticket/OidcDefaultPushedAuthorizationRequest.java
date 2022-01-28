@@ -1,9 +1,15 @@
 package org.apereo.cas.oidc.ticket;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.AbstractTicket;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,18 +21,32 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(force = true)
-public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket implements OidcPushedAuthorizationRequest {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket
+    implements OidcPushedAuthorizationRequest, AuthenticationAwareTicket {
     private static final long serialVersionUID = 5050969039357176961L;
 
     @JsonIgnore
     private final String prefix = OidcPushedAuthorizationRequest.PREFIX;
 
+    private final Authentication authentication;
+
+    private final Service service;
+
+    private final OAuthRegisteredService registeredService;
+
     private final String authorizationRequest;
 
     public OidcDefaultPushedAuthorizationRequest(final String id,
                                                  final ExpirationPolicy expirationPolicy,
+                                                 final Authentication authentication,
+                                                 final Service service,
+                                                 final OAuthRegisteredService registeredService,
                                                  final String request) {
         super(id, expirationPolicy);
-        this.authorizationRequest = request;
+        this.authorizationRequest = EncodingUtils.encodeBase64(request);
+        this.authentication = authentication;
+        this.service = service;
+        this.registeredService = registeredService;
     }
 }
