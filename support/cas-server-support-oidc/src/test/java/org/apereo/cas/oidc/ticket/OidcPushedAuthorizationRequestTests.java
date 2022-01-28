@@ -1,26 +1,38 @@
 package org.apereo.cas.oidc.ticket;
 
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcDefaultPushedAuthorizationUriFactoryTests}.
+ * This is {@link OidcPushedAuthorizationRequestTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcDefaultPushedAuthorizationUriFactoryTests extends AbstractOidcTests {
+public class OidcPushedAuthorizationRequestTests extends AbstractOidcTests {
+    @Autowired
+    @Qualifier(TicketFactory.BEAN_NAME)
+    private TicketFactory defaultTicketFactory;
+
+    @Autowired
+    @Qualifier("ticketSerializationManager")
+    private TicketSerializationManager ticketSerializationManager;
+
     @Test
     public void verifyOperation() throws Exception {
         val registeredService = getOidcRegisteredService();
@@ -32,13 +44,16 @@ public class OidcDefaultPushedAuthorizationUriFactoryTests extends AbstractOidcT
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .build();
-        val factory = (OidcPushedAuthorizationUriFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
+        val factory = (OidcPushedAuthorizationRequestFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
         val ticket = factory.create(holder);
-        assertNotNull(ticket);
-        assertTrue(ticket.getId().startsWith(OidcPushedAuthorizationRequest.PREFIX));
-        assertEquals(OidcPushedAuthorizationRequest.class, factory.getTicketType());
+        verifySerialization(ticket);
+    }
 
-        val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getPar().getMaxTimeToLiveInSeconds()).getSeconds();
-        assertEquals(expiration, ticket.getExpirationPolicy().getTimeToLive());
+    private void verifySerialization(final Ticket ticket) {
+        val serialized = ticketSerializationManager.serializeTicket(ticket);
+        assertNotNull(serialized);
+        val deserialized = ticketSerializationManager.deserializeTicket(serialized, ticket.getClass());
+        assertNotNull(deserialized);
+        assertEquals(deserialized, ticket);
     }
 }

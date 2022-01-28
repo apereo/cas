@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
-import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
@@ -40,7 +40,7 @@ public class OidcPushedAuthorizationRequestResponseBuilder extends BaseOAuth20Au
             .orElse(StringUtils.EMPTY);
         context.getRequestParameters().keySet()
             .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));
-        val factory = (OidcPushedAuthorizationUriFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
+        val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
         val uri = factory.create(holder);
         LOGGER.debug("Generated pushed authorization URI code: [{}]", uri);
 

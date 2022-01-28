@@ -4,12 +4,12 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
- * This is {@link OidcPushedAuthorizationUriFactory}.
+ * This is {@link OidcPushedAuthorizationRequestFactory}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-public interface OidcPushedAuthorizationUriFactory extends TicketFactory {
+public interface OidcPushedAuthorizationRequestFactory extends TicketFactory {
     /**
      * Create.
      *
