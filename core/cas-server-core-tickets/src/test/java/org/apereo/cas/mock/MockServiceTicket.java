@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
+import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -31,7 +32,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public class MockServiceTicket implements ServiceTicket, TicketState, ProxyGrantingTicketIssuerTicket {
+public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket, TicketState, ProxyGrantingTicketIssuerTicket {
 
     private static final long serialVersionUID = 8203377063087967768L;
 
@@ -113,5 +114,10 @@ public class MockServiceTicket implements ServiceTicket, TicketState, ProxyGrant
     @Override
     public void markTicketExpired() {
         this.expired = true;
+    }
+
+    @Override
+    public boolean isFromNewLogin() {
+        return false;
     }
 }
