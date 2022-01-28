@@ -44,7 +44,9 @@ public class OidcDefaultPushedAuthorizationUriFactory implements OidcPushedAutho
         val request = MAPPER.writeValueAsString(holder);
         val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
-        return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy, request);
+        return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
+            holder.getAuthentication(), holder.getService(), holder.getRegisteredService(),
+            request);
     }
 
     /**

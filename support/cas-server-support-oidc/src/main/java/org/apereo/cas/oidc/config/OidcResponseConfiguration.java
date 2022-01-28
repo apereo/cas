@@ -127,8 +127,6 @@ public class OidcResponseConfiguration {
             return new OidcPushedAuthorizationRequestResponseBuilder(oidcConfigurationContext,
                 oidcPushedAuthorizationModelAndViewBuilder);
         }
-
-
     }
 
     @Configuration(value = "OidcResponseImplicitConfiguration", proxyBeanMethods = false)
