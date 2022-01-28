@@ -24,13 +24,9 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
-    private final OidcRequestSupport oidcRequestSupport;
-
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
-                                           final OidcRequestSupport oidcRequestSupport,
                                            final SessionStore sessionStore) {
         super(casProperties, sessionStore);
-        this.oidcRequestSupport = oidcRequestSupport;
     }
 
     @Override
