@@ -119,7 +119,8 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
     }
 
     private static RegisteredService createMockRegisteredService(final String svcId,
-                                                                 final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
+                                                                 final boolean enabled,
+                                                                 final RegisteredServiceProxyPolicy proxy) {
         val mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
@@ -307,8 +308,11 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         return tgtRootMock;
     }
 
-    private TicketGrantingTicket createMockTicketGrantingTicket(final String id, final ServiceTicket svcTicket, final boolean isExpired,
-                                                                final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
+    private TicketGrantingTicket createMockTicketGrantingTicket(
+        final String id, final ServiceTicket svcTicket,
+        final boolean isExpired,
+        final TicketGrantingTicket root,
+        final List<Authentication> chainedAuthnList) {
         val tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(isExpired);
         when(tgtMock.getId()).thenReturn(id);
