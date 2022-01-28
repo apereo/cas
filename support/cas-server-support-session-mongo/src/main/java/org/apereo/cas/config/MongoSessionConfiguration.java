@@ -8,6 +8,10 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.session.data.mongo.JdkMongoSessionConverter;
 import org.springframework.session.data.mongo.config.annotation.web.http.EnableMongoHttpSession;
 
@@ -29,5 +33,12 @@ public class MongoSessionConfiguration {
     @Bean
     public JdkMongoSessionConverter jdkMongoSessionConverter() {
         return new JdkMongoSessionConverter(Duration.ofMinutes(DURATION_MINUTES));
+    }
+
+    @Bean
+    @Primary
+    public MongoTemplate mongoTemplate(final MongoDatabaseFactory factory,
+                                       final MongoConverter converter) {
+        return new MongoTemplate(factory, converter);
     }
 }
