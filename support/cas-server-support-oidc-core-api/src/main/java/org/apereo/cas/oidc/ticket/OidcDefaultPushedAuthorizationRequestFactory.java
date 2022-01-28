@@ -14,13 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 /**
- * This is {@link OidcDefaultPushedAuthorizationUriFactory}.
+ * This is {@link OidcDefaultPushedAuthorizationRequestFactory}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-public class OidcDefaultPushedAuthorizationUriFactory implements OidcPushedAuthorizationUriFactory {
+public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedAuthorizationRequestFactory {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

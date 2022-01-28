@@ -40,9 +40,9 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationUriFactory;
+import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriExpirationPolicyBuilder;
-import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriFactory;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -768,12 +768,12 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = "oidcPushedAuthorizationUriFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OidcPushedAuthorizationUriFactory oidcPushedAuthorizationUriFactory(
+        public OidcPushedAuthorizationRequestFactory oidcPushedAuthorizationUriFactory(
             @Qualifier("pushedAuthorizationUriExpirationPolicy")
             final ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy,
             @Qualifier("pushedAuthorizationIdGenerator")
             final UniqueTicketIdGenerator pushedAuthorizationIdGenerator) {
-            return new OidcDefaultPushedAuthorizationUriFactory(pushedAuthorizationIdGenerator, pushedAuthorizationUriExpirationPolicy);
+            return new OidcDefaultPushedAuthorizationRequestFactory(pushedAuthorizationIdGenerator, pushedAuthorizationUriExpirationPolicy);
         }
 
         @ConditionalOnMissingBean(name = "oidcPushedAuthorizationUriFactoryConfigurer")
@@ -781,8 +781,8 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer oidcPushedAuthorizationUriFactoryConfigurer(
             @Qualifier("oidcPushedAuthorizationUriFactory")
-            final OidcPushedAuthorizationUriFactory oidcPushedAuthorizationUriFactory) {
-            return () -> oidcPushedAuthorizationUriFactory;
+            final OidcPushedAuthorizationRequestFactory oidcPushedAuthorizationRequestFactory) {
+            return () -> oidcPushedAuthorizationRequestFactory;
         }
     }
 }
