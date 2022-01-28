@@ -142,6 +142,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
                     .httpServletRequest(Optional.of(request))
                     .httpServletResponse(Optional.of(response))
                     .build());
+            centralAuthenticationService.deleteTicket(ticket);
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("singleLogoutRequests", sloRequests);
