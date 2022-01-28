@@ -205,7 +205,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
         @Bean
         @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.rotation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = true)
+            name = "enabled", havingValue = "true", matchIfMissing = false)
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
@@ -215,7 +215,7 @@ public class OidcJwksConfiguration {
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
         @Bean
         @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.revocation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = true)
+            name = "enabled", havingValue = "true", matchIfMissing = false)
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
