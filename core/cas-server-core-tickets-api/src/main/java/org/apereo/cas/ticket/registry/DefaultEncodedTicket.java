@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -61,13 +60,6 @@ public class DefaultEncodedTicket implements EncodedTicket {
     @JsonIgnore
     public ZonedDateTime getCreationTime() {
         getOpNotSupportedMessage("getCreationTime");
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        getOpNotSupportedMessage("getTicketGrantingTicket");
         return null;
     }
 

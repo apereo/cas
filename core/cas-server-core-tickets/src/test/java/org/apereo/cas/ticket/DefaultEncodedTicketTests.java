@@ -26,7 +26,6 @@ public class DefaultEncodedTicketTests {
         val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
             id, TicketGrantingTicket.PREFIX);
 
-        assertNull(ticket1.getTicketGrantingTicket());
         assertNull(ticket1.getCreationTime());
         assertNull(ticket1.getExpirationPolicy());
         assertEquals(0, ticket1.compareTo(ticket2));

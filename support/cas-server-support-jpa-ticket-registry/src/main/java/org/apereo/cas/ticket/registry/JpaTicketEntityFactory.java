@@ -1,8 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.registry.generic.JpaTicketEntity;
 import org.apereo.cas.ticket.registry.mysql.MySQLJpaTicketEntity;
@@ -17,6 +20,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * This is {@link JpaTicketEntityFactory}.
@@ -61,13 +65,20 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
             ? ((AuthenticationAwareTicket) ticket).getAuthentication()
             : null;
 
+        val parentTicket = ticket instanceof TicketGrantingTicketAwareTicket
+            ? ((TicketGrantingTicketAwareTicket) ticket).getTicketGrantingTicket()
+            : null;
+
         val entity = getEntityClass().getDeclaredConstructor().newInstance();
         return entity
             .setId(ticket.getId())
-            .setParentId(ticket.getTicketGrantingTicket() != null ? ticket.getTicketGrantingTicket().getId() : null)
+            .setParentId(Optional.ofNullable(parentTicket).map(Ticket::getId).orElse(null))
             .setBody(jsonBody)
             .setType(ticket.getClass().getName())
-            .setPrincipalId(authentication != null ? authentication.getPrincipal().getId() : null)
+            .setPrincipalId(Optional.ofNullable(authentication)
+                .map(Authentication::getPrincipal)
+                .map(Principal::getId)
+                .orElse(null))
             .setCreationTime(ObjectUtils.defaultIfNull(ticket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
     }
 

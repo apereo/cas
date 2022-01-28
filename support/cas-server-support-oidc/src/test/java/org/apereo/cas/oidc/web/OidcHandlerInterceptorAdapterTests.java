@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oidc.dynamicClientRegistrationMode=PROTECTED")
+@TestPropertySource(properties = "cas.authn.oidc.dynamic-client-registration-mode=PROTECTED")
 public class OidcHandlerInterceptorAdapterTests extends AbstractOidcTests {
 
     @Test
@@ -50,6 +50,14 @@ public class OidcHandlerInterceptorAdapterTests extends AbstractOidcTests {
     public void verifyRegUrl() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
+        val response = new MockHttpServletResponse();
+        assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+    }
+
+    @Test
+    public void verifyPushAuthzUrl() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
         assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
     }

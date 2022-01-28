@@ -22,13 +22,6 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     String getId();
 
     /**
-     * Method to retrieve the TicketGrantingTicket that granted this ticket.
-     *
-     * @return the ticket or null if it has no parent
-     */
-    TicketGrantingTicket getTicketGrantingTicket();
-
-    /**
      * Method to return the time the Ticket was created.
      *
      * @return the time the ticket was created.

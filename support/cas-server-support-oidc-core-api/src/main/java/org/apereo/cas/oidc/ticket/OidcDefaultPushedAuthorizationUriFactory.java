@@ -36,15 +36,15 @@ public class OidcDefaultPushedAuthorizationUriFactory implements OidcPushedAutho
 
     @Override
     public Class<? extends Ticket> getTicketType() {
-        return OidcPushedAuthorizationUri.class;
+        return OidcPushedAuthorizationRequest.class;
     }
 
     @Override
-    public OidcPushedAuthorizationUri create(final AccessTokenRequestDataHolder holder) throws Exception {
+    public OidcPushedAuthorizationRequest create(final AccessTokenRequestDataHolder holder) throws Exception {
         val request = MAPPER.writeValueAsString(holder);
-        val id = idGenerator.getNewTicketId(OidcPushedAuthorizationUri.PREFIX);
+        val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
-        return new OidcDefaultPushedAuthorizationUri(id, expirationPolicy, request);
+        return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy, request);
     }
 
     /**
