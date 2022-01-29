@@ -122,6 +122,21 @@ if [ $? -ne 0 ]; then
  exit 1
 fi
 
+requiredEnvVars=$(cat "${config}" | jq -j '.requiredEnvVars // empty')
+if [[ ! -z ${requiredEnvVars} ]]; then
+  echo "Checking for required environment variables"
+  for e in ${requiredEnvVars//,/ } ; do
+    if [[ -z "${!e}" ]]; then
+      echo Required variable not set so not running test: ${e}
+      if [[ "${CI}" == "true" && ! -d ~/.npm ]] ; then
+        # creating folder so setup-node post action cleanup doesn't bomb out
+        mkdir ~/.npm
+      fi
+      exit 0
+    fi
+  done
+fi
+
 scenarioName=${scenario##*/}
 enabled=$(cat "${config}" | jq -j '.enabled')
 if [[ "${enabled}" == "false" ]]; then
