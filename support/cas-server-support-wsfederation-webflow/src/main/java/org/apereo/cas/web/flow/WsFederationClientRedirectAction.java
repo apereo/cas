@@ -10,7 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class WsFederationClientRedirectAction extends AbstractAction {
+public class WsFederationClientRedirectAction extends BaseCasWebflowAction {
     private final ServerProperties serverProperties;
 
     @Override

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 @RequiredArgsConstructor
-public class YubiKeyAuthenticationPrepareLoginAction extends AbstractAction {
+public class YubiKeyAuthenticationPrepareLoginAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override

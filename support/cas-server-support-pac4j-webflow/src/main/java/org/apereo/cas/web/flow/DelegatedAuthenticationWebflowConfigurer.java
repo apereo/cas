@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -101,7 +101,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
             CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
         val stopWebflowState = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
-        stopWebflowState.getEntryActionList().add(new AbstractAction() {
+        stopWebflowState.getEntryActionList().add(new BaseCasWebflowAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

@@ -23,7 +23,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class InitialFlowSetupAction extends AbstractAction {
+public class InitialFlowSetupAction extends BaseCasWebflowAction {
 
     private final List<ArgumentExtractor> argumentExtractors;
 

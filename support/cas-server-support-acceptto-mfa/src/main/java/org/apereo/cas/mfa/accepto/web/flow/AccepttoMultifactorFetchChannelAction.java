@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,7 +28,7 @@ import java.security.PublicKey;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AccepttoMultifactorFetchChannelAction extends AbstractAction {
+public class AccepttoMultifactorFetchChannelAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
     private final SessionStore sessionStore;
     private final PublicKey apiPublicKey;

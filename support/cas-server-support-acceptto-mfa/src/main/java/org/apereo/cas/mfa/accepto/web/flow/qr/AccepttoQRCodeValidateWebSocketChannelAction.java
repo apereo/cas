@@ -25,7 +25,6 @@ import org.hjson.JsonValue;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.http.HttpMethod;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -42,7 +41,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AccepttoQRCodeValidateWebSocketChannelAction extends AbstractAction {
+public class AccepttoQRCodeValidateWebSocketChannelAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

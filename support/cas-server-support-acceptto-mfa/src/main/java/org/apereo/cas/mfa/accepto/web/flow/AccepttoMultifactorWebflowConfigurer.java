@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -42,7 +41,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
             casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
     }
 
-    private static class AccepttoFinalizeAuthenticationAction extends AbstractAction {
+    private static class AccepttoFinalizeAuthenticationAction extends BaseCasWebflowAction {
         @Override
         protected Event doExecute(final RequestContext requestContext) {
             return new EventFactorySupport().success(this);

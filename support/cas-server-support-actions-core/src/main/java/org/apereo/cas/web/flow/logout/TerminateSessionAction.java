@@ -19,7 +19,6 @@ import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,7 +35,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class TerminateSessionAction extends AbstractAction {
+public class TerminateSessionAction extends BaseCasWebflowAction {
 
     /**
      * Parameter to indicate logout request is confirmed.

@@ -14,7 +14,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.HttpAction;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.saml.client.SAML2Client;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,7 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DelegatedAuthenticationClientFinishLogoutAction extends AbstractAction {
+public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebflowAction {
     private final Clients clients;
 
     private final SessionStore sessionStore;

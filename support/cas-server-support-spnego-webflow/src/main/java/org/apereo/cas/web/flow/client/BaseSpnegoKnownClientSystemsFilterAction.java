@@ -10,7 +10,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -32,7 +31,7 @@ import java.util.regex.Pattern;
 @Setter
 @Getter
 @AllArgsConstructor
-public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
+public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowAction {
 
     /**
      * Pattern of ip addresses to check.

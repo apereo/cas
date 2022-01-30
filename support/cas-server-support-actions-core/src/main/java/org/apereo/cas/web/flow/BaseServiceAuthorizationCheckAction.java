@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseServiceAuthorizationCheckAction extends AbstractAction {
+public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflowAction {
     private final ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;

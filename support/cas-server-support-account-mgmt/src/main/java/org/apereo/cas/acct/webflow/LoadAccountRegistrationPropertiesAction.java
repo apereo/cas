@@ -5,7 +5,6 @@ import org.apereo.cas.acct.AccountRegistrationService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-public class LoadAccountRegistrationPropertiesAction extends AbstractAction {
+public class LoadAccountRegistrationPropertiesAction extends BaseCasWebflowAction {
     private final AccountRegistrationService accountRegistrationService;
 
     @Override

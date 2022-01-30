@@ -5,7 +5,6 @@ import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryPro
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
-public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extends AbstractAction {
+public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extends BaseCasWebflowAction {
     /**
      * Attribute name in the request scope to indicate the direct url.
      */

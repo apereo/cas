@@ -5,7 +5,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class RemoveGoogleAnalyticsCookieAction extends AbstractAction {
+public class RemoveGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override

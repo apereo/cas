@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,7 +28,7 @@ import java.security.PublicKey;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AccepttoMultifactorDetermineUserAccountStatusAction extends AbstractAction {
+public class AccepttoMultifactorDetermineUserAccountStatusAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     private final PublicKey apiPublicKey;

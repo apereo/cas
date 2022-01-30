@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -31,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GenerateServiceTicketAction extends AbstractAction {
+public class GenerateServiceTicketAction extends BaseCasWebflowAction {
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final CentralAuthenticationService centralAuthenticationService;

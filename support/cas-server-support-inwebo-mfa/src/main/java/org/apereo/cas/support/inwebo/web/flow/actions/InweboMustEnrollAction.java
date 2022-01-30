@@ -4,7 +4,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -15,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class InweboMustEnrollAction extends AbstractAction {
+public class InweboMustEnrollAction extends BaseCasWebflowAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {

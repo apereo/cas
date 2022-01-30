@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AuthenticationExceptionHandlerAction extends AbstractAction {
+public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
     private final List<CasWebflowExceptionHandler> webflowExceptionHandlers;
 
     @Override

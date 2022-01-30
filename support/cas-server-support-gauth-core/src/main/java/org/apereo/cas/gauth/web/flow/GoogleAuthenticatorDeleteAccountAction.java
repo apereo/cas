@@ -5,7 +5,6 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrati
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class GoogleAuthenticatorDeleteAccountAction extends AbstractAction {
+public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction {
     private final OneTimeTokenCredentialRepository repository;
 
     @Override
