@@ -122,12 +122,12 @@ if [ $? -ne 0 ]; then
  exit 1
 fi
 
-requiredEnvVars=$(cat "${config}" | jq -j '.requiredEnvVars // empty')
+requiredEnvVars=$(jq -j '.requiredEnvVars // empty' < "${config}")
 if [[ ! -z ${requiredEnvVars} ]]; then
   echo "Checking for required environment variables"
   for e in ${requiredEnvVars//,/ } ; do
     if [[ -z "${!e}" ]]; then
-      echo Required variable not set so not running test: ${e}
+      echo "Required variable not set so not running test: ${e}"
       if [[ "${CI}" == "true" && ! -d ~/.npm ]] ; then
         # creating folder so setup-node post action cleanup doesn't bomb out
         mkdir ~/.npm
@@ -138,7 +138,7 @@ if [[ ! -z ${requiredEnvVars} ]]; then
 fi
 
 scenarioName=${scenario##*/}
-enabled=$(cat "${config}" | jq -j '.enabled')
+enabled=$(jq -j '.enabled' < "${config}")
 if [[ "${enabled}" == "false" ]]; then
   printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and enable the test."
   exit 0
@@ -192,7 +192,7 @@ if [[ "${RERUN}" != "true" ]]; then
   [ -f "${keystore}" ] && echo "Created ${keystore}"
 fi
 
-project=$(cat "${config}" | jq -j '.project // "tomcat"')
+project=$(jq -j '.project // "tomcat"' < "${config}")
 projectType=war
 if [[ $project == starter* ]]; then
   projectType=jar
@@ -204,9 +204,9 @@ if [[ ! -f "$casWebApplicationFile" ]]; then
   REBUILD="true"
 fi
 
-dependencies=$(cat "${config}" | jq -j '.dependencies')
+dependencies=$(jq -j '.dependencies' < "${config}")
 
-buildScript=$(cat "${config}" | jq -j '.buildScript // empty')
+buildScript=$(jq -j '.buildScript // empty' < "${config}")
 BUILD_SCRIPT=""
 if [[ -n "${buildScript}" ]]; then
   buildScript="${buildScript//\$\{PWD\}/${PORTABLE_PWD}}"
@@ -241,10 +241,10 @@ fi
 if [[ "${RERUN}" != "true" ]]; then
   serverPort=8443
   processIds=()
-  instances=$(cat "${config}" | jq -j '.instances // 1')
+  instances=$(jq -j '.instances // 1' < "${config}")
   for (( c = 1; c <= instances; c++ ))
   do
-    initScript=$(cat "${config}" | jq -j '.initScript // empty')
+    initScript=$(jq -j '.initScript // empty' < "${config}")
     initScript="${initScript//\$\{PWD\}/${PWD}}"
     initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
     [ -n "${initScript}" ] && \
@@ -252,11 +252,11 @@ if [[ "${RERUN}" != "true" ]]; then
       chmod +x "${initScript}" && \
       eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
 
-    runArgs=$(cat "${config}" | jq -j '.jvmArgs // empty')
+    runArgs=$(jq -j '.jvmArgs // empty' < "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"
     [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-    properties=$(cat "${config}" | jq -j '.properties // empty | join(" ")')
+    properties=$(jq -j '.properties // empty | join(" ")' < "${config}")
 
     filter=".instance$c.properties // empty | join(\" \")"
     properties="$properties $(cat $config | jq -j -f <(echo "$filter"))"
@@ -273,7 +273,7 @@ if [[ "${RERUN}" != "true" ]]; then
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
     printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
-    springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
+    springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' < "${config}")
     [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
     printcyan "Launching CAS instance #${c} under port ${serverPort}"
@@ -312,7 +312,7 @@ if [[ "${DRYRUN}" != "true" ]]; then
   fi
   echo -e "*************************************\n"
 
-  exitScript=$(cat "${config}" | jq -j '.exitScript // empty')
+  exitScript=$(jq -j '.exitScript // empty' < "${config}")
   exitScript="${exitScript//\$\{PWD\}/${PWD}}"
   exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
 
