@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,7 +25,7 @@ import java.util.Set;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DetermineDelegatedAuthenticationAction extends AbstractAction implements DisposableBean {
+public class DetermineDelegatedAuthenticationAction extends BaseCasWebflowAction implements DisposableBean {
     private final CasConfigurationProperties casProperties;
 
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;

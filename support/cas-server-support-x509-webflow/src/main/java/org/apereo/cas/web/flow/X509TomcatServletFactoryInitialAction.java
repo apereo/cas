@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 @RequiredArgsConstructor
-public class X509TomcatServletFactoryInitialAction extends AbstractAction {
+public class X509TomcatServletFactoryInitialAction extends BaseCasWebflowAction {
 
     /**
      * Attribute to indicate the x509 login endpoint.

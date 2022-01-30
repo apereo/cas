@@ -9,7 +9,6 @@ import com.authy.api.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction {
+public class AuthyAuthenticationRegistrationWebflowAction extends BaseCasWebflowAction {
     private static final String MESSAGE_CODE_ERROR = "cas.mfa.authy.error.authn";
 
     private final AuthyClientInstance instance;

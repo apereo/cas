@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius.web.flow;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -14,7 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-public class RadiusAuthenticationWebflowAction extends AbstractAction {
+public class RadiusAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
     @Override

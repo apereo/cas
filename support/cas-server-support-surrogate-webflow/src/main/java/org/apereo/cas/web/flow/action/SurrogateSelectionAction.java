@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,7 +27,7 @@ import java.util.HashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SurrogateSelectionAction extends AbstractAction {
+public class SurrogateSelectionAction extends BaseCasWebflowAction {
     /**
      * Surrogate Target parameter name.
      */

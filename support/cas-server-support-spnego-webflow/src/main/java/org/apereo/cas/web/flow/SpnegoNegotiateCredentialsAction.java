@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,7 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SpnegoNegotiateCredentialsAction extends AbstractAction {
+public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
     /**
      * Sets supported browsers by their user agent. The user agent
      * header defined will be compared against this list. The user agents configured

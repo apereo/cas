@@ -1,6 +1,5 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -10,7 +9,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class PrepareInterruptViewAction extends AbstractAction {
+public class PrepareInterruptViewAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         return null;

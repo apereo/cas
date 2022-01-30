@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -21,7 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class QRAuthenticationValidateTokenAction extends AbstractAction {
+public class QRAuthenticationValidateTokenAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -18,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class RenewAuthenticationRequestCheckAction extends AbstractAction {
+public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction {
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override

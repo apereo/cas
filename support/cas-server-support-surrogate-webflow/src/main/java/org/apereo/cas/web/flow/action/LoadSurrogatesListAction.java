@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LoadSurrogatesListAction extends AbstractAction {
+public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     private final SurrogateAuthenticationService surrogateService;
 

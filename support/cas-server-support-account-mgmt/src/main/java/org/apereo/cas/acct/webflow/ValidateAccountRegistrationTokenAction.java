@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ValidateAccountRegistrationTokenAction extends AbstractAction {
+public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction {
     private final CentralAuthenticationService centralAuthenticationService;
 
     private final AccountRegistrationService accountRegistrationService;

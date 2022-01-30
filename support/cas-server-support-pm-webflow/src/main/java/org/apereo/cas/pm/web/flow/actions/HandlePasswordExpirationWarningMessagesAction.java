@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMes
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,7 +17,7 @@ import java.util.LinkedHashSet;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class HandlePasswordExpirationWarningMessagesAction extends AbstractAction {
+public class HandlePasswordExpirationWarningMessagesAction extends BaseCasWebflowAction {
     /**
      * Attribute indicating password expiration warnings are found.
      */

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.saml.state.SAML2StateGenerator;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DelegatedAuthenticationClientLogoutAction extends AbstractAction {
+public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAction {
     private final Clients clients;
 
     private final SessionStore sessionStore;

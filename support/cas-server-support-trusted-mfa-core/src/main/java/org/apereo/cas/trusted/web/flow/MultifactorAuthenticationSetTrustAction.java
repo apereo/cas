@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,7 +30,7 @@ import java.time.temporal.ChronoUnit;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
+public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowAction {
 
     private final MultifactorAuthenticationTrustStorage storageService;
 

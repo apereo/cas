@@ -4,12 +4,12 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-public class AcceptableUsagePolicySubmitAction extends AbstractAction {
+public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
     private final AcceptableUsagePolicyRepository repository;
 
     /**

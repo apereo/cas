@@ -6,12 +6,12 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1
  */
 @RequiredArgsConstructor
-public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
+public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
     private final AcceptableUsagePolicyRepository repository;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;

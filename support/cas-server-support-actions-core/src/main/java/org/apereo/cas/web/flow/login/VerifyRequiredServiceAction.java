@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -37,7 +36,7 @@ import java.util.regex.Pattern;
  */
 @RequiredArgsConstructor
 @Getter
-public class VerifyRequiredServiceAction extends AbstractAction {
+public class VerifyRequiredServiceAction extends BaseCasWebflowAction {
     private final ServicesManager servicesManager;
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
     private final CasConfigurationProperties casProperties;

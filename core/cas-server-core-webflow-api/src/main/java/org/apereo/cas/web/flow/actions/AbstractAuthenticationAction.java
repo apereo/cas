@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,7 +28,7 @@ import java.util.HashMap;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public abstract class AbstractAuthenticationAction extends AbstractAction {
+public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction {
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 

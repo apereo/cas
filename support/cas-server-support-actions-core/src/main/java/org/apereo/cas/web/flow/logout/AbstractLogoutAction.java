@@ -5,12 +5,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,7 +25,7 @@ import java.util.Optional;
  * @since 4.0.0
  */
 @RequiredArgsConstructor
-public abstract class AbstractLogoutAction extends AbstractAction {
+public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
 
     private static final String NO_CACHE = "no-cache";
 

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -26,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends AbstractAction {
+public class AccepttoMultifactorValidateUserDeviceRegistrationAction extends BaseCasWebflowAction {
 
     private final CasConfigurationProperties casProperties;
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-public abstract class BasePasswordManagementAction extends AbstractAction {
+public abstract class BasePasswordManagementAction extends BaseCasWebflowAction {
     /**
      * Orders security questions consistently.
      *

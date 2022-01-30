@@ -5,7 +5,6 @@ import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -19,7 +18,7 @@ import java.util.function.Consumer;
  * @since 6.2.0
  */
 @RequiredArgsConstructor
-public class InitializeCaptchaAction extends AbstractAction {
+public class InitializeCaptchaAction extends BaseCasWebflowAction {
     private final CaptchaActivationStrategy activationStrategy;
 
     private final Consumer<RequestContext> onActivationConsumer;

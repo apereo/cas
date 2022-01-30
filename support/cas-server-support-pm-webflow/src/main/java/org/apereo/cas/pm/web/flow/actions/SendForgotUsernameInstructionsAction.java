@@ -24,7 +24,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,7 +38,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SendForgotUsernameInstructionsAction extends AbstractAction {
+public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
 
     /**
      * Parameter name to look up the user.

@@ -8,7 +8,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,7 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class DelegatedAuthenticationClientRetryAction extends AbstractAction {
+public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowAction {
     private final Clients clients;
 
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;

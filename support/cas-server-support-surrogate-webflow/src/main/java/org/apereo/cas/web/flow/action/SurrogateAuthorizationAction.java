@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
-public class SurrogateAuthorizationAction extends AbstractAction {
+public class SurrogateAuthorizationAction extends BaseCasWebflowAction {
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override

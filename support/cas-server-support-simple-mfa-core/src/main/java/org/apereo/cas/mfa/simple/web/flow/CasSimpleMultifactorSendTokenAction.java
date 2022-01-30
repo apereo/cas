@@ -117,7 +117,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     @Override
-    protected Event doPreExecute(final RequestContext requestContext) {
+    protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val result = bucketConsumer.consume();
         result.getHeaders().forEach(response::addHeader);

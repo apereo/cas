@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CreateGoogleAnalyticsCookieAction extends AbstractAction {
+public class CreateGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     private final CasCookieBuilder googleAnalyticsCookieBuilder;

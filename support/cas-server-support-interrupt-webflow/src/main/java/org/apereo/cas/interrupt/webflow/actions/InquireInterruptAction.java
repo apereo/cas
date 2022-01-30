@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,7 +27,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class InquireInterruptAction extends AbstractAction {
+public class InquireInterruptAction extends BaseCasWebflowAction {
     /**
      * Attribute recorded in authentication to indicate interrupt is finalized.
      */

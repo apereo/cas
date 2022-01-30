@@ -6,7 +6,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -18,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 @RequiredArgsConstructor
-public class VerifyPasswordlessAccountAuthenticationAction extends AbstractAction {
+public class VerifyPasswordlessAccountAuthenticationAction extends BaseCasWebflowAction {
     private final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
     @Override

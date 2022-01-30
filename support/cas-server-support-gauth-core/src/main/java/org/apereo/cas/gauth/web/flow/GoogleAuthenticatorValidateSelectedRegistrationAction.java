@@ -6,7 +6,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -17,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 @Slf4j
-public class GoogleAuthenticatorValidateSelectedRegistrationAction extends AbstractAction {
+public class GoogleAuthenticatorValidateSelectedRegistrationAction extends BaseCasWebflowAction {
     private static final String CODE = "screen.authentication.gauth.invalid";
 
     private static void addErrorMessageToContext(final RequestContext requestContext) {

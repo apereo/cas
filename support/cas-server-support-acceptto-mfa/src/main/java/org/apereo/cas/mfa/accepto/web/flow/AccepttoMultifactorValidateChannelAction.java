@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -26,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AccepttoMultifactorValidateChannelAction extends AbstractAction {
+public class AccepttoMultifactorValidateChannelAction extends BaseCasWebflowAction {
     private final SessionStore sessionStore;
     private final AuthenticationSystemSupport authenticationSystemSupport;
 

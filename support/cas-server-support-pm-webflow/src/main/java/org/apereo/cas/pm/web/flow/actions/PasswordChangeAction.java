@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -32,7 +31,7 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class PasswordChangeAction extends AbstractAction {
+public class PasswordChangeAction extends BaseCasWebflowAction {
 
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
 

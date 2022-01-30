@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class DisplayUserGraphicsBeforeAuthenticationAction extends AbstractAction {
+public class DisplayUserGraphicsBeforeAuthenticationAction extends BaseCasWebflowAction {
 
     private final UserGraphicalAuthenticationRepository repository;
 

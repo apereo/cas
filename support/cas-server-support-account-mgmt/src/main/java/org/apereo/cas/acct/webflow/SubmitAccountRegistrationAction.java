@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -35,7 +34,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class SubmitAccountRegistrationAction extends AbstractAction {
+public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     private final AccountRegistrationService accountRegistrationService;
 
     private final CasConfigurationProperties casProperties;
