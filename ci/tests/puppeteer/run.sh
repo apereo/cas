@@ -122,7 +122,7 @@ if [ $? -ne 0 ]; then
  exit 1
 fi
 
-requiredEnvVars=$(jq -j '.requiredEnvVars // empty' < "${config}")
+requiredEnvVars=$(jq -j '.conditions.env // empty' < "${config}")
 if [[ ! -z ${requiredEnvVars} ]]; then
   echo "Checking for required environment variables"
   for e in ${requiredEnvVars//,/ } ; do
