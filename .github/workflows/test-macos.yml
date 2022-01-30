@@ -14,15 +14,17 @@ env:
 ##########################################################################
 
 on:
-  push:
-    branches:
-      - master
-      - '!**.**.**'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - '!**.**.**'
+  schedule:
+    - cron: "0 0 * * 7"
+#  push:
+#    branches:
+#      - master
+#      - '!**.**.**'
+#  pull_request:
+#    types: [ labeled ]
+#    branches:
+#      - master
+#      - '!**.**.**'
 
 ##########################################################################
 
