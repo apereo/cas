@@ -43,6 +43,7 @@ DEBUG_SUSPEND="n"
 DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
+CLEAR="true"
 
 while (( "$#" )); do
   case "$1" in
@@ -87,6 +88,10 @@ while (( "$#" )); do
     ;;
   --rerun|--resume|--z)
     RERUN="true"
+    shift 1;
+    ;;
+  --noclear|--nc)
+    CLEAR=""
     shift 1;
     ;;
   *)
@@ -251,7 +256,7 @@ if [[ "${RERUN}" != "true" ]]; then
       runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
     fi
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
-    echo -e "\nLaunching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+    printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
     springAppJson=$(cat "${config}" | jq -j '.SPRING_APPLICATION_JSON // empty')
     [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
@@ -278,7 +283,9 @@ if [[ "${RERUN}" != "true" ]]; then
 fi
 
 if [[ "${DRYRUN}" != "true" ]]; then
-  clear
+  if [[ "${CLEAR}" == "true" ]]; then
+    clear
+  fi
   scriptPath="${scenario}/script.js"
   echo -e "*************************************"
   echo -e "Running ${scriptPath}\n"
