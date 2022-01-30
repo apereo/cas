@@ -1,8 +1,8 @@
 {
   "enabled": true,
-  "dependencies": "oidc",
+  "dependencies": "oidc,json-service-registry",
   "properties": [
-    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.core.init-from-json=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.server.name=https://localhost:8443",
@@ -17,10 +17,13 @@
 
     "--logging.level.org.apereo.cas=INFO",
     "--logging.level.org.apereo.services.persondir=INFO",
+    "--logging.level.org.apereo.cas.config=INFO",
+    "--logging.level.org.apereo.cas.services=INFO",
 
     "--cas.authn.oauth.core.user-profile-view-type=FLAT"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
 }
 
 

@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     // hit strapi endpoint that triggers CAS login to get JWT
-    await page.goto("http://localhost:1337/connect/cas", {waitUntil: 'networkidle2'});
+    await page.goto("http://localhost:1337/api/connect/cas", {waitUntil: 'networkidle2'});
     let element = await page.$('body pre');
     if (element == null) {
         let errorpage = await cas.textContent(page, 'body div main');
