@@ -1,5 +1,8 @@
 {
   "dependencies": "account-mgmt",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

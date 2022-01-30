@@ -12,6 +12,7 @@ const { Buffer } = require('buffer');
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
+const operativeSystemModule = require("os");
 
 const BROWSER_OPTIONS = {
     ignoreHTTPSErrors: true,
@@ -35,9 +36,12 @@ exports.logg = async(text) => {
 }
 
 exports.removeDirectory = async (directory) => {
-    await this.logg(`Removing directory ${directory}`)
-    fs.rmdir(directory, {recursive: true}, () => {
-    });
+    await this.logg(`Removing directory ${directory}`);
+    await fs.rmSync(directory, {recursive: true});
+    await this.logg(`Removed directory ${directory}`);
+    if (fs.existsSync(directory)) {
+        await this.logg(`Directory still there... ${directory}`);
+    }
 }
 
 exports.click = async (page, button) => {
@@ -137,7 +141,7 @@ exports.assertNoTicketGrantingCookie = async (page) => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === "TGC"
     });
-    console.log(`Asserting no ticket-granting cookie: ${tgc}`);
+    console.log("Asserting no ticket-granting cookie: " + JSON.stringify(tgc) );
     assert(tgc.length === 0);
 }
 
@@ -288,12 +292,21 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.launchWsFedSp = async (spDir, opts = []) => {
-    let args = ['-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
-    args = args.concat(opts);
-    console.log(`Launching WSFED SP in ${spDir} with ${args}`);
-    const exec = spawn('./gradlew', args, {cwd: spDir});
+exports.getGradleCmd = async () => {
+    let gradleCmd = './gradlew';
+    if (operativeSystemModule.type() === 'Windows_NT') {
+        gradleCmd = 'gradlew.bat';
+    }
+    return gradleCmd;
+}
 
+exports.launchWsFedSp = async (spDir, opts = []) => {
+    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+    args = args.concat(opts);
+    await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
+    let gradleCmd = await this.getGradleCmd()
+    const exec = spawn(gradleCmd, args, {cwd: spDir});
+    await this.logg(`Spawned process ID: ${exec.pid}`);
     exec.stdout.on('data', (data) => {
         console.log(data.toString());
     });
@@ -306,15 +319,39 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     return exec;
 }
 
+exports.stopGretty = async (gradleDir, deleteDir= true) => {
+    let args = ['appStop', '-q', '--no-daemon'];
+    await this.logg(`Stopping gretty in ${gradleDir} with ${args}`);
+    let gradleCmd = await this.getGradleCmd()
+    const exec = spawn(gradleCmd, args, {cwd: gradleDir});
+    await this.logg(`Launched stop gretty process ID: ${exec.pid}`);
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    exec.on('exit', (code) => {
+        console.log(`Stopped child process exited with code ${code}`);
+        if (deleteDir) {
+            this.sleep(30000);
+            this.removeDirectory(gradleDir);
+        }
+    });
+    return exec;
+}
+
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
-    let args = ['-q', '-x', 'test', '--no-daemon',
+    let keystorePath = path.normalize(process.env.CAS_KEYSTORE);
+    let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon',
         '-DidpMetadataType=idpMetadataFile',
         `-DidpMetadata=${idpMetadataPath}`,
-        `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
+        `-Dsp.sslKeystorePath=${keystorePath}`];
     args = args.concat(samlOpts);
-    console.log(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    const exec = spawn('./gradlew', args, {cwd: samlSpDir});
-
+    await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
+    let gradleCmd = await this.getGradleCmd()
+    const exec = spawn(gradleCmd, args, {cwd: samlSpDir});
+    await this.logg(`Spawned process ID: ${exec.pid}`);
     exec.stdout.on('data', (data) => {
         console.log(data.toString());
     });
@@ -323,6 +360,22 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
     });
     exec.on('exit', (code) => {
         console.log(`Child process exited with code ${code}`);
+    });
+    return exec;
+}
+
+exports.stopActuator = async (baseUrl) => {
+    let args = ['-k', '-X', 'POST', `${baseUrl}/actuator/shutdown`];
+    await this.logg(`Stopping boot app via shutdown actuator with ${args}`);
+    const exec = spawn("curl", args);
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    exec.on('exit', (code) => {
+        console.log(`Curl ran to invoke shutdown actuator and exited with code ${code}`);
     });
     return exec;
 }

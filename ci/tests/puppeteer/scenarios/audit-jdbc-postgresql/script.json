@@ -1,5 +1,8 @@
 {
   "dependencies": "audit-jdbc,reports",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.jdbc.show-sql=true",
     "--logging.level.org.hibernate=debug",

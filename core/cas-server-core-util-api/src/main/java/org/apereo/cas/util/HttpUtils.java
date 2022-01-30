@@ -23,6 +23,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -113,7 +114,13 @@ public class HttpUtils {
                 builder.setProxy(proxy);
             }
             val client = builder.build();
+
             return client.execute(request);
+        } catch(final SSLHandshakeException e) {
+            val url = execution.getUrl();
+            val paramPos = url.indexOf("?");
+            val sanitizedUrl = paramPos > 0 ? url.substring(0, paramPos) : url;
+            LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + "]", e);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

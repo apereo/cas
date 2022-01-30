@@ -52,4 +52,5 @@ const path = require("path");
     assert(json.firstName[0] === newFirstName);
 
     await browser.close();
+    await fs.unlinkSync(configFilePath)
 })();

@@ -3,6 +3,7 @@ import java.util.concurrent.ConcurrentHashMap
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
+
 buildscript {
     repositories {
         mavenCentral()
