@@ -8,7 +8,7 @@ const path = require('path');
     const baseUrl1 = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl1, res => {
         assert(res.status === 200)
-        console.log(`Services found: ${res.data[1].length}`);
+        console.log(`Services found on server 1: ${res.data[1].length}`);
         assert(res.data[1].length === 2)
     }, err => {
         throw err;
@@ -19,7 +19,7 @@ const path = require('path');
     const baseUrl2 = "https://localhost:8444/cas/actuator/registeredServices";
     await cas.doGet(baseUrl2, res => {
         assert(res.status === 200)
-        console.log(`Services found: ${res.data[1].length}`);
+        console.log(`Services found on server 2: ${res.data[1].length}`);
         assert(res.data[1].length === 2)
     }, err => {
         throw err;

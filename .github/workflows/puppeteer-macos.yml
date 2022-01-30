@@ -1,4 +1,4 @@
-name: Puppeteer
+name: Puppeteer MacOS
 
 ##########################################################################
 
@@ -23,39 +23,38 @@ env:
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
   SCENARIO_REGEX: ".*" # Use this to limit which tests run
+  JDK_JAVA_OPTIONS: "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
 
 on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'debug_enabled: Run the build with tmate debugging enabled (true/false)'
+        required: false
+        default: "false"
   push:
     branches:
-      - master
-      - '!**.**.**'
       - 'pr-*'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - '!**.**.**'
-
+  schedule:
+    - cron: '30 5 * * 5'
 ##########################################################################
 
 jobs:
   cancel-previous-runs:
-    if: ${{ (github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.9.1
+      - uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
-          
 
   initialize:
     needs: [cancel-previous-runs]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -67,20 +66,20 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
 
-##########################################################################
+  ##########################################################################
   
   puppeteer-scenarios:
     needs: [initialize]
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: macos-latest
+    timeout-minutes: 30
     outputs:
       scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -90,18 +89,34 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Download Dependencies
+      - name: Configure Gradle Timeouts
         run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
-          ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc --configure-on-demand --parallel --no-daemon -DcasModules="core" --no-watch-fs --max-workers=8
+          echo systemProp.org.gradle.internal.http.connectionTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.http.socketTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.max.retries=10 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.initial.backoff=500 >> gradle.properties
+      - name: Download Dependencies
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
+      - name: Build CAS for Cache
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          shell: bash
+          command: ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc --configure-on-demand --parallel --no-daemon -DcasModules="core" --no-watch-fs --max-workers=8
       - id: print-scenarios
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios
         run: echo "::set-output name=scenarios::$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios)]}"
 
-##########################################################################
+  ##########################################################################
   puppeteer-tests:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: [puppeteer-scenarios]
     continue-on-error: false
     strategy:
@@ -109,11 +124,15 @@ jobs:
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v3
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      - uses: actions/checkout@v2
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -130,12 +149,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
-        run: chmod -R +x ./ci/**/*.sh
+        run: chmod -R 777 ./ci/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         shell: bash
         run: |
           export RUNNER_OS=${{ runner.os }}
+          echo systemProp.org.gradle.internal.http.connectionTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.http.socketTimeout=60000 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.max.retries=10 >> gradle.properties
+          echo systemProp.org.gradle.internal.repository.initial.backoff=500 >> gradle.properties
           ./ci/tests/puppeteer/run.sh --dep-cache-days 10 --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################

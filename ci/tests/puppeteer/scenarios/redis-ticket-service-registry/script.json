@@ -1,5 +1,8 @@
 {
   "dependencies": "reports,redis-ticket-registry,redis-service-registry,gauth,gauth-redis,audit-redis",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
 

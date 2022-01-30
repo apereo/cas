@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PUPPETEER_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 tmp="${TMPDIR}"
 if [[ -z "${tmp}" ]] ; then
   tmp="/tmp"
@@ -11,8 +13,10 @@ echo "Using temp directory: ${TMPDIR}"
 # by msys2 on windows, in some cases that is good but not with --somearg=file:/${PWD}/ci/...
 # so this converts path to windows format
 PORTABLE_PWD=${PWD}
+PORTABLE_TMPDIR=${TMPDIR}
 command -v cygpath > /dev/null && test ! -z "$MSYSTEM"
 if [[ $? -eq 0 ]]; then
+  PORTABLE_TMPDIR=$(cygpath -w "$TMPDIR")
   PORTABLE_PWD=$(cygpath -w "$PWD")
 fi
 
@@ -44,6 +48,7 @@ DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
 CLEAR="true"
+MAX_WORKERS="8"
 
 while (( "$#" )); do
   case "$1" in
@@ -97,6 +102,14 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
+  --max-workers|--mw)
+    MAX_WORKERS="$2"
+    shift 2
+    ;;
+  --dep-cache-days|--dcd)
+    BUILDFLAGS="${BUILDFLAGS} -PdependencyCacheDays=$2"
+    shift 2
+    ;;
   --headless|--h)
     export HEADLESS="true"
     shift 1;
@@ -137,7 +150,7 @@ if [ $? -ne 0 ]; then
  exit 1
 fi
 
-requiredEnvVars=$(jq -j '.conditions.env // empty' < "${config}")
+requiredEnvVars=$(jq -j '.conditions.env // empty' "${config}")
 if [[ ! -z ${requiredEnvVars} ]]; then
   echo "Checking for required environment variables"
   for e in ${requiredEnvVars//,/ } ; do
@@ -152,8 +165,24 @@ if [[ ! -z ${requiredEnvVars} ]]; then
   done
 fi
 
+docker --version > /dev/null 2>&1
+dockerInstalled=$?
+
+dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
+if [[ "${dockerRequired}" == "true" ]]; then
+  echo "Docker required, checking if available"
+  if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
+    echo "Not running test in CI that requires docker, because non-linux github runner can't run docker"
+    exit 0
+  fi
+  if [[ $dockerInstalled -ne 0 ]] ; then
+    echo "Not running test because init script requires docker"
+  fi
+fi
+
+
 scenarioName=${scenario##*/}
-enabled=$(jq -j '.enabled' < "${config}")
+enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
   printyellow "\nTest scenario ${scenarioName} is not enabled. \nReview the scenario configuration at ${config} and enable the test."
   exit 0
@@ -178,9 +207,9 @@ fi
 
 random=$(openssl rand -hex 8)
 
-if [[ ! -d "$PWD"/ci/tests/puppeteer/node_modules/puppeteer || "${INSTALL_PUPPETEER}" == "true" ]]; then
+if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" == "true" ]]; then
   printgreen "Installing Puppeteer"
-  cd "$PWD"/ci/tests/puppeteer
+  cd $PUPPETEER_DIR
   npm_install_cmd="npm install"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
   cd -
@@ -190,11 +219,11 @@ fi
 
 if [[ "${RERUN}" != "true" ]]; then
   echo "Creating overlay work directory"
-  rm -Rf "$PWD"/ci/tests/puppeteer/overlay
-  mkdir "$PWD"/ci/tests/puppeteer/overlay
+  rm -Rf "${PUPPETEER_DIR}/overlay"
+  mkdir "${PUPPETEER_DIR}/overlay"
 fi
 
-keystore="$PWD"/ci/tests/puppeteer/overlay/thekeystore
+keystore="${PUPPETEER_DIR}/overlay/thekeystore"
 export CAS_KEYSTORE="${keystore}"
 
 if [[ "${RERUN}" != "true" ]]; then
@@ -207,7 +236,8 @@ if [[ "${RERUN}" != "true" ]]; then
   [ -f "${keystore}" ] && echo "Created ${keystore}"
 fi
 
-project=$(jq -j '.project // "tomcat"' < "${config}")
+echo "Checking project"
+project=$(jq -j '.project // "tomcat"' "${config}")
 projectType=war
 if [[ $project == starter* ]]; then
   projectType=jar
@@ -219,9 +249,11 @@ if [[ ! -f "$casWebApplicationFile" ]]; then
   REBUILD="true"
 fi
 
-dependencies=$(jq -j '.dependencies' < "${config}")
+echo "Getting dependencies"
+dependencies=$(jq -j '.dependencies' "${config}")
 
-buildScript=$(jq -j '.buildScript // empty' < "${config}")
+echo "Getting build script"
+buildScript=$(jq -j '.buildScript // empty' "${config}")
 BUILD_SCRIPT=""
 if [[ -n "${buildScript}" ]]; then
   buildScript="${buildScript//\$\{PWD\}/${PORTABLE_PWD}}"
@@ -235,13 +267,56 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-  ./gradlew :webapp:cas-server-webapp-${project}:build \
-    -DskipNestedConfigMetadataGen=true -x check -x javadoc --build-cache --configure-on-demand --parallel \
-    ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" -q ${BUILDFLAGS}
+  BUILD_CACHE=""
+  if [[ "$GRADLE_BUILDCACHE_PSW" != "" || "$CI" != "true" ]]; then
+    BUILD_CACHE="--build-cache"
+  fi
 
-  if [ $? -eq 1 ]; then
+  printcyan "Launching build in background to make observing slow builds easier"
+  targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
+  if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
+    rm -rf ./webapp/cas-server-webapp-${project}/build/libs
+  fi
+  buildcmd=$(printf '%s' \
+      "./gradlew :webapp:cas-server-webapp-${project}:build \
+      -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc ${BUILD_CACHE} --configure-on-demand --parallel \
+      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=${MAX_WORKERS} ${BUILDFLAGS}")
+  echo $buildcmd
+  $buildcmd > build.log 2>&1 &
+  pid=$!
+  sleep 20
+  ps -ef | grep $pid | grep java
+  if [[ $? -ne 0 ]]; then
+    # This check is mainly for running on windows in CI
+    printcyan "Java not running 20 seconds after starting gradlew ... trying again"
+    cat build.log
+    kill $pid
+    $buildcmd > build.log 2>&1 &
+    pid=$!
+  fi
+  printcyan "Waiting for build to finish. Process id is ${pid} - Waiting for ${targetArtifact}"
+  counter=0
+  until [[ -f ${targetArtifact} ]]; do
+     let counter++
+     if [[ $counter -gt 60 ]]; then
+        printred "\nBuild taking longer then 15 minutes, aborting."
+        printred "Build log"
+        cat build.log
+        printred "Build thread dump"
+        jstack $pid || true
+        exit 3
+     fi
+     echo -n '.'
+     sleep 15
+  done
+  wait $pid
+  if [ $? -ne 0 ]; then
     printred "\nFailed to build CAS web application. Examine the build output."
-    exit 1
+    cat build.log
+    exit 2
+  else
+    printgreen "\nBackground build successful. Build output was:"
+    cat build.log
   fi
 fi
 
@@ -256,12 +331,18 @@ fi
 if [[ "${RERUN}" != "true" ]]; then
   serverPort=8443
   processIds=()
-  instances=$(jq -j '.instances // 1' < "${config}")
+  echo "Getting instances"
+  instances=$(jq -j '.instances // 1' "${config}")
+  if [[ ! -z "$instances" ]]; then
+    echo "Found instances: ${instances}"
+  fi
   for (( c = 1; c <= instances; c++ ))
   do
     export SCENARIO="${scenarioName}"
-    
+
     initScript=$(jq -j '.initScript // empty' < "${config}")
+    echo "Getting init script"
+    initScript=$(jq -j '.initScript // empty' "${config}")
     initScript="${initScript//\$\{PWD\}/${PWD}}"
     initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
     scripts=$(echo "$initScript" | tr ',' '\n')
@@ -270,22 +351,30 @@ if [[ "${RERUN}" != "true" ]]; then
       printgreen "Running initialization script: ${script}"
       chmod +x "${script}"
       eval "${script}"
+      if [[ $? -ne 0 ]]; then
+        echo "Initialization script [${script}] failed."
+        exit 1
+      fi
     done
 
-    runArgs=$(jq -j '.jvmArgs // empty' < "${config}")
+    echo "Getting run args"
+    runArgs=$(jq -j '.jvmArgs // empty' "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"
     runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
     [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-    properties=$(jq -j '.properties // empty | join(" ")' < "${config}")
+    echo "Getting properties"
+    properties=$(jq -j '.properties // empty | join(" ")' "${config}")
 
+    echo "Getting instance filter"
     filter=".instance$c.properties // empty | join(\" \")"
-    properties="$properties $(cat $config | jq -j -f <(echo "$filter"))"
-
+    echo "$filter" > $TMPDIR/filter.jq
+    properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"
+    rm $TMPDIR/filter.jq
     properties="${properties//\$\{PWD\}/${PORTABLE_PWD}}"
     properties="${properties//\$\{SCENARIO\}/${scenarioName}}"
     properties="${properties//\%\{random\}/${random}}"
-    properties="${properties//\$\{TMPDIR\}/${TMPDIR}}"
+    properties="${properties//\$\{TMPDIR\}/${PORTABLE_TMPDIR}}"
 
     if [[ "$DEBUG" == "true" ]]; then
       printgreen "Remote debugging is enabled on port $DEBUG_PORT"
@@ -294,7 +383,8 @@ if [[ "${RERUN}" != "true" ]]; then
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
     printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
-    springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' < "${config}")
+    echo "Getting SPRING_APPLICATION_JSON"
+    springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
     [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
     printcyan "Launching CAS instance #${c} under port ${serverPort}"
@@ -334,7 +424,7 @@ if [[ "${DRYRUN}" != "true" ]]; then
   fi
   echo -e "*************************************\n"
 
-  exitScript=$(jq -j '.exitScript // empty' < "${config}")
+  exitScript=$(jq -j '.exitScript // empty' "${config}")
   exitScript="${exitScript//\$\{PWD\}/${PWD}}"
   exitScript="${exitScript//\$\{SCENARIO\}/${scenarioName}}"
 
@@ -359,10 +449,10 @@ if [[ "${RERUN}" != "true" ]]; then
   
   printgreen "Removing previous build artifacts..."
   rm "$PWD"/cas.${projectType}
-  rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
-  rm -Rf "$PWD"/ci/tests/puppeteer/overlay
+  rm "${PUPPETEER_DIR}/overlay/thekeystore"
+  rm -Rf "${PUPPETEER_DIR}/overlay"
 
-  if [[ "${CI}" == "true" ]]; then
+  if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then
     docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
     docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
   fi

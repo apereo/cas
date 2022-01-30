@@ -1,5 +1,8 @@
 {
   "dependencies": "core,jpa-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.jdbc.show-sql=false",
     "--cas.audit.engine.enabled=false",

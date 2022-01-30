@@ -1,5 +1,8 @@
 {
   "dependencies": "x509-webflow,ldap,person-directory",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
     "--server.ssl.trust-store-password=changeit",

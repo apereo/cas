@@ -1,5 +1,8 @@
 {
   "dependencies": "mongo-ticket-registry,mongo-service-registry,mongo-monitor,session-mongo",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.service-registry.core.init-from-json=true",
 

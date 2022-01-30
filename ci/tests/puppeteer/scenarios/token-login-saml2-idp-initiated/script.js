@@ -3,17 +3,16 @@ const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-async function cleanUp(exec) {
+async function cleanUp(samlSpDir) {
     console.log("Killing SAML2 SP process...");
-    exec.kill();
+    await cas.stopGretty(samlSpDir);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
-    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
 
 (async () => {
     let samlSpDir = path.join(__dirname, '/saml-sp');
     let idpMetadataPath = path.join(__dirname, '/saml-md/idp-metadata.xml');
-    let exec = await cas.launchSamlSp(idpMetadataPath, samlSpDir);
+    await cas.launchSamlSp(idpMetadataPath, samlSpDir);
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
@@ -39,9 +38,9 @@ async function cleanUp(exec) {
         await page.waitForTimeout(1000);
         
         await browser.close();
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
     }, async error => {
-        await cleanUp(exec);
+        await cleanUp(samlSpDir);
         console.log(error);
         throw error;
     })

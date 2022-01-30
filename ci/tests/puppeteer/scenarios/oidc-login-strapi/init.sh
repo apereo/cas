@@ -7,9 +7,7 @@ PROJECT=getstarted
 if [[ ! -d $STRAPI_FOLDER/$PROJECT ]] ; then
   mkdir -p $STRAPI_FOLDER
   cd $STRAPI_FOLDER
-  # run this command if you don't have yarn installed, should be installed on CI server already
-  #npm install -g yarn
-  yarn create strapi-app $PROJECT --quickstart --no-run
+  npx -y create-strapi-app $PROJECT --quickstart --no-run
   cd -
 fi
 
@@ -18,23 +16,28 @@ cp ${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/strapi-custom/server.js $STRA
 
 # install node modules for strapi app
 cd $STRAPI_FOLDER/$PROJECT
-yarn install
-
+set +e
+npm install
+RC=$?
+set -e
+if [[ $RC -ne 0 ]]; then
+  echo "Npm install failed, retrying ...."
+  npm install
+fi
 STRAPI_CMD=./node_modules/.bin/strapi
 
 # run without SSL verification in order to call CAS via https and not worry about SSL trust
-yarn build --no-optimization
+npm run build --no-optimization
 
 # This could probably be done in javascript as part of user-permissions plugin extension to modify
 # the bootstrap config before it goes in database, but doing this until that process better documented
 echo Dumping strapi configuration
 $STRAPI_CMD configuration:dump --file config.json --pretty
-sed -i 's|\\"cas\\":{\\"enabled\\":false|\\"cas\\":{\\"enabled\\":true|g' config.json
-sed -Ei 's|cas(.*)\\"secret\\":\\"\\"|cas\1\\"secret\\":\\"strapisecret\\"|g' config.json
-sed -Ei 's|cas(.*)\\"key\\":\\"\\"|cas\1\\"key\\":\\"strapi\\"|g' config.json
-sed -i 's|subdomain\\":\\"my.subdomain.com/cas|subdomain\\":\\"localhost:8443/cas|g' config.json
-# this next line is fixing a bug where default redirect url contains // instead of /
-sed -i 's|1337//api|1337/api|g' config.json
+# sed on mac requires -i to specify backup file
+sed -i'.bak' 's|\\"cas\\":{\\"enabled\\":false|\\"cas\\":{\\"enabled\\":true|g' config.json
+sed -i'.bak' -E 's|cas(.*)\\"secret\\":\\"\\"|cas\1\\"secret\\":\\"strapisecret\\"|g' config.json
+sed -i'.bak' -E 's|cas(.*)\\"key\\":\\"\\"|cas\1\\"key\\":\\"strapi\\"|g' config.json
+sed -i'.bak' 's|subdomain\\":\\"my.subdomain.com/cas|subdomain\\":\\"localhost:8443/cas|g' config.json
 echo Restoring modified strapi configuration
 $STRAPI_CMD configuration:restore --file config.json
 

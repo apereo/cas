@@ -7,7 +7,7 @@
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
     "--cas.authn.oidc.discovery.claims=sub,name,cn,given-name,given:name",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.audit.engine.enabled=false",
 
