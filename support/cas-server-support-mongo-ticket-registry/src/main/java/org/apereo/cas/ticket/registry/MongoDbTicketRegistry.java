@@ -229,7 +229,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .sum();
     }
 
-    private TicketHolder buildTicketAsDocument(final Ticket ticket) {
+    private TicketHolder buildTicketAsDocument(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
         val json = serializeTicketForMongoDocument(encTicket);
         if (StringUtils.isNotBlank(json)) {

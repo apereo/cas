@@ -55,7 +55,7 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     private TicketRegistry newTicketRegistry;
 
     @RepeatedTest(2)
-    public void verifyAddAndLoadExpired() {
+    public void verifyAddAndLoadExpired() throws Exception {
         newTicketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             AlwaysExpiresExpirationPolicy.INSTANCE));
@@ -67,7 +67,7 @@ public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
     public void verifyFails() {
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Exception {
                 newTicketRegistry.addTicket((Ticket) null);
             }
         });

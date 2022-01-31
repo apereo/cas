@@ -115,7 +115,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyProxies() {
+    public void verifyProxies() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
@@ -127,7 +127,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyDirect() {
+    public void verifyDirect() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
         centralAuthenticationService.addTicket(tgt);
@@ -139,7 +139,7 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyDeleteFails() {
+    public void verifyDeleteFails() throws Exception {
         val cas = mock(CentralAuthenticationService.class);
         when(cas.getTickets(any(Predicate.class))).thenReturn(List.of(new MockTicketGrantingTicket("casuser")));
         when(cas.deleteTicket(anyString())).thenThrow(new RuntimeException());

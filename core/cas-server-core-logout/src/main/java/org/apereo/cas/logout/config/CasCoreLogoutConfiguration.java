@@ -33,6 +33,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -181,10 +182,10 @@ public class CasCoreLogoutConfiguration {
 
                 if (casProperties.getLogout().isRemoveDescendantTickets()) {
                     LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
-                    plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets().forEach(t -> {
-                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
+                    plan.registerLogoutPostProcessor(tgt -> tgt.getDescendantTickets().forEach(Unchecked.consumer(t -> {
+                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, tgt.getId());
                         ticketRegistry.deleteTicket(t);
-                    }));
+                    })));
                 }
             };
         }

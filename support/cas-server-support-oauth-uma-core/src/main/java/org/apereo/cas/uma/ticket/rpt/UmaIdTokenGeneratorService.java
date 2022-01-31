@@ -38,7 +38,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) {
+                           final OAuthRegisteredService registeredService) throws Exception {
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(context);
         val claims = buildJwtClaims(accessToken, timeoutInSeconds,

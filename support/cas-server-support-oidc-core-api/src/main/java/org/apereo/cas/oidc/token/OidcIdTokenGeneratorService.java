@@ -63,7 +63,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
-                           final OAuthRegisteredService registeredService) {
+                           final OAuthRegisteredService registeredService) throws Exception {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);

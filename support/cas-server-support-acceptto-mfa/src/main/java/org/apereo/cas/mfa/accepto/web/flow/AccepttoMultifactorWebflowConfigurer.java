@@ -2,18 +2,16 @@ package org.apereo.cas.mfa.accepto.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,13 +37,6 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
                                                 final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
             casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
-    }
-
-    private static class AccepttoFinalizeAuthenticationAction extends BaseCasWebflowAction {
-        @Override
-        protected Event doExecute(final RequestContext requestContext) {
-            return new EventFactorySupport().success(this);
-        }
     }
 
     @Override
@@ -105,8 +96,7 @@ public class AccepttoMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             createTransitionForState(startState,
                 CasWebflowConstants.TRANSITION_ID_FINALIZE, "accepttoFinalizeAuthentication");
-            val finalizeAuthN = createActionState(flow, "accepttoFinalizeAuthentication",
-                new AccepttoFinalizeAuthenticationAction());
+            val finalizeAuthN = createActionState(flow, "accepttoFinalizeAuthentication", StaticEventExecutionAction.SUCCESS);
             createTransitionForState(finalizeAuthN,
                 CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET);
 

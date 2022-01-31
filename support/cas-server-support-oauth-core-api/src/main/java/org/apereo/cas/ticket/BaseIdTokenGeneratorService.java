@@ -54,9 +54,10 @@ public abstract class BaseIdTokenGeneratorService<T extends OAuth20Configuration
      * @param registeredService the registered service
      * @param accessToken       the access token
      * @return the string
+     * @throws Exception the exception
      */
     protected String encodeAndFinalizeToken(final JwtClaims claims, final OAuthRegisteredService registeredService,
-                                            final OAuth20AccessToken accessToken) {
+                                            final OAuth20AccessToken accessToken) throws Exception {
 
         LOGGER.debug("Received claims for the id token [{}] as [{}]", accessToken, claims);
         val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(registeredService, claims);

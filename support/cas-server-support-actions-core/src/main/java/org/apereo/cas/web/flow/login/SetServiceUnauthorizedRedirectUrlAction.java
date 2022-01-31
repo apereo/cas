@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

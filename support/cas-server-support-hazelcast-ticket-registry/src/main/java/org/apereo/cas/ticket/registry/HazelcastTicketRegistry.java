@@ -42,13 +42,13 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     private final long pageSize;
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) throws Exception {
         val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl < 0) {
             throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + " is set to use a negative ttl");

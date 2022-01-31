@@ -37,6 +37,24 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         super(configurationContext);
     }
 
+    private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
+                                                               final WSFederationRequest fedRequest) {
+        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
+
+        val parameters = new HashMap<String, Object>();
+        parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
+        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
+
+        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
+            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
+        }
+
+        LOGGER.trace("Posting relying party token to [{}]", postUrl);
+        return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE,
+            CollectionUtils.wrap("originalUrl", postUrl, "parameters", parameters));
+    }
+
     /**
      * Handle federation request.
      *
@@ -46,7 +64,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
-    protected ModelAndView handleFederationRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
+    protected ModelAndView handleFederationRequest(final HttpServletResponse response,
+                                                   final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         LOGGER.debug("Received callback profile request [{}]", request.getRequestURI());
 
@@ -68,11 +87,11 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);
         val securityTokenReq = getSecurityTokenFromRequest(request);
         val securityToken = FunctionUtils.doIfNull(securityTokenReq,
-            () -> {
-                LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
-                return fetchSecurityTokenFromAssertion(assertion, targetService);
-            },
-            () -> securityTokenReq)
+                () -> {
+                    LOGGER.debug("No security token is yet available. Invoking security token service to issue token");
+                    return fetchSecurityTokenFromAssertion(assertion, targetService);
+                },
+                () -> securityTokenReq)
             .get();
         addSecurityTokenTicketToRegistry(request, securityToken);
         val rpToken = produceRelyingPartyToken(request, targetService, fedRequest, securityToken, assertion);
@@ -89,7 +108,8 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         return token.get();
     }
 
-    private void addSecurityTokenTicketToRegistry(final HttpServletRequest request, final SecurityToken securityToken) {
+    private void addSecurityTokenTicketToRegistry(final HttpServletRequest request,
+                                                  final SecurityToken securityToken) throws Exception {
         LOGGER.trace("Creating security token as a ticket to CAS ticket registry...");
         val ticketRegistry = getConfigContext().getTicketRegistry();
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getConfigContext().getTicketGrantingTicketCookieGenerator(),
@@ -104,40 +124,22 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private String produceRelyingPartyToken(final HttpServletRequest request, final Service targetService,
-        final WSFederationRequest fedRequest, final SecurityToken securityToken,
-        final Assertion assertion) {
+                                            final WSFederationRequest fedRequest, final SecurityToken securityToken,
+                                            final Assertion assertion) {
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return getConfigContext().getRelyingPartyTokenProducer().produce(securityToken, service, fedRequest, request, assertion);
     }
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
-        final HttpServletRequest request,
-        final WSFederationRequest fedRequest) throws Exception {
+                                                          final HttpServletRequest request,
+                                                          final WSFederationRequest fedRequest) throws Exception {
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         val serviceUrl = constructServiceUrl(request, response, fedRequest);
         LOGGER.trace("Created service url for validation: [{}]", serviceUrl);
         val assertion = getConfigContext().getTicketValidator().validate(ticket, serviceUrl);
         LOGGER.debug("Located CAS assertion [{}]", assertion);
         return assertion;
-    }
-
-    private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
-        final WSFederationRequest fedRequest) {
-        val postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
-
-        val parameters = new HashMap<String, Object>();
-        parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
-        parameters.put(WSFederationConstants.WTREALM, fedRequest.getWtrealm());
-
-        if (StringUtils.isNotBlank(fedRequest.getWctx())) {
-            parameters.put(WSFederationConstants.WCTX, fedRequest.getWctx());
-        }
-
-        LOGGER.trace("Posting relying party token to [{}]", postUrl);
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE,
-            CollectionUtils.wrap("originalUrl", postUrl, "parameters", parameters));
     }
 
 }

@@ -849,8 +849,9 @@ public class OAuth20AccessTokenEndpointControllerTests extends AbstractOAuth20Te
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
     }
 
-    private OAuth20RefreshToken addRefreshTokenWithScope(final Principal principal, final List<String> scopes,
-                                                         final OAuthRegisteredService registeredService) {
+    private OAuth20RefreshToken addRefreshTokenWithScope(
+        final Principal principal, final List<String> scopes,
+        final OAuthRegisteredService registeredService) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());

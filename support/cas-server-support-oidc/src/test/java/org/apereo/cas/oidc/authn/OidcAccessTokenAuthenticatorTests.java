@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val token = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), getClaims());
@@ -50,7 +50,7 @@ public class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyFailsOperation() {
+    public void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val auth = new OidcAccessTokenAuthenticator(ticketRegistry, oidcTokenSigningAndEncryptionService,

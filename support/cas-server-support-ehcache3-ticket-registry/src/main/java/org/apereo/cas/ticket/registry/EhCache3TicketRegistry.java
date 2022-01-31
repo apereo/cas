@@ -50,7 +50,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) throws Exception {
         val metadata = this.ticketCatalog.find(ticketToAdd);
         val ticket = encodeTicket(ticketToAdd);
         val cache = getTicketCacheFor(metadata);
@@ -129,7 +129,7 @@ public class EhCache3TicketRegistry extends AbstractTicketRegistry implements Di
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }

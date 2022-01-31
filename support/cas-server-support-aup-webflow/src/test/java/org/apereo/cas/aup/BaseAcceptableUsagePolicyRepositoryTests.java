@@ -114,7 +114,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
-        final Map<String, List<Object>> profileAttributes) {
+        final Map<String, List<Object>> profileAttributes) throws Exception {
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
@@ -131,7 +131,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
         final Map<String, List<Object>> profileAttributes,
-        final Credential c) {
+        final Credential c) throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

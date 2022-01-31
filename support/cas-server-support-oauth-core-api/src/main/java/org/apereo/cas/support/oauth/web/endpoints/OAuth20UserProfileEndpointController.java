@@ -102,8 +102,9 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
      * Update the access token in the registry.
      *
      * @param accessTokenTicket the access token
+     * @throws Exception the exception
      */
-    protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) {
+    protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {
         val accessTokenState = TicketState.class.cast(accessTokenTicket);
         accessTokenState.update();
         if (accessTokenTicket.isExpired()) {

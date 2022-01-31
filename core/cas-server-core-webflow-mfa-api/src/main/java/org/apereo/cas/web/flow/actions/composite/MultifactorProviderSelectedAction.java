@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+
 import lombok.val;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;

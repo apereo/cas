@@ -36,7 +36,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
     }
 
     @Test
-    public void verifyAuthenticationWithJwtAccessToken() {
+    public void verifyAuthenticationWithJwtAccessToken() throws Exception {
         val accessToken = getAccessToken();
         this.ticketRegistry.addTicket(accessToken);
 
@@ -73,7 +73,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
     }
 
     @Test
-    public void verifyAuthentication() {
+    public void verifyAuthentication() throws Exception {
         val accessToken = getAccessToken();
         this.ticketRegistry.addTicket(accessToken);
 

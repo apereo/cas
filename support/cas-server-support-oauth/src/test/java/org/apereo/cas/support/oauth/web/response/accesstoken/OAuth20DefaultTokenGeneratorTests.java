@@ -84,7 +84,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifySlowDown() {
+    public void verifySlowDown() throws Exception {
         val generator = new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory, defaultDeviceTokenFactory,
             defaultDeviceUserCodeFactory, oAuthRefreshTokenFactory, centralAuthenticationService, casProperties);
         val token = defaultDeviceTokenFactory.createDeviceCode(

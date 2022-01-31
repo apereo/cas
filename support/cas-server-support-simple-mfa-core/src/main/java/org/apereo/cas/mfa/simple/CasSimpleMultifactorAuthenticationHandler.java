@@ -12,6 +12,7 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationUnique
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +90,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
      * @param acct the acct
      */
     protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
-        this.centralAuthenticationService.deleteTicket(acct.getId());
+        FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.deleteTicket(acct.getId()));
     }
 }

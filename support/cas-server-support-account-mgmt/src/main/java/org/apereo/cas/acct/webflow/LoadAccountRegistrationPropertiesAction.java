@@ -2,6 +2,7 @@ package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationProperty;
 import org.apereo.cas.acct.AccountRegistrationService;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;

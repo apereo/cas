@@ -37,7 +37,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    public void verifyBadTicketDecoding() {
+    public void verifyBadTicketDecoding() throws Exception {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
@@ -53,7 +53,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
     }
 
     @RepeatedTest(1)
-    public void verifyFailure() {
+    public void verifyFailure() throws Exception {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
@@ -62,7 +62,7 @@ public class RedisServerTicketRegistryTests extends BaseRedisSentinelTicketRegis
         }));
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Exception {
                 getNewTicketRegistry().addTicket((Ticket) null);
                 getNewTicketRegistry().updateTicket(null);
             }

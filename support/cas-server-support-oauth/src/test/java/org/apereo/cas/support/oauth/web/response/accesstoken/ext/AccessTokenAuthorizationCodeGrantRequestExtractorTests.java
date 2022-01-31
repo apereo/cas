@@ -48,7 +48,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
-    public void verifyExtraction() {
+    public void verifyExtraction() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
@@ -69,7 +69,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
-    public void verifyExpiredCode() {
+    public void verifyExpiredCode() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
@@ -90,7 +90,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
-    public void verifyUnknownService() {
+    public void verifyUnknownService() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "unknown.org/abc");
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
@@ -107,7 +107,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
-    public void verifyNoClientIdOrRedirectUri() {
+    public void verifyNoClientIdOrRedirectUri() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 

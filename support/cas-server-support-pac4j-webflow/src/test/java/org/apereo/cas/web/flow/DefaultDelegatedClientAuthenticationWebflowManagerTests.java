@@ -104,7 +104,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifyOidcStoreOperation() {
+    public void verifyOidcStoreOperation() throws Exception {
         val config = new OidcConfiguration();
         config.setClientId(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -118,7 +118,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifyOAuth2StoreOperation() {
+    public void verifyOAuth2StoreOperation() throws Exception {
         val config = new OAuth20Configuration();
         config.setKey(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -132,7 +132,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifyOAuth1StoreOperation() {
+    public void verifyOAuth1StoreOperation() throws Exception {
         val config = new OAuth10Configuration();
         config.setKey(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
@@ -146,7 +146,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifyCasStoreOperation() {
+    public void verifyCasStoreOperation() throws Exception {
         val config = new CasConfiguration();
         config.setLoginUrl("https://example.org/login");
         val client = new CasClient();
@@ -159,7 +159,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifySamlStoreOperation() {
+    public void verifySamlStoreOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
@@ -221,7 +221,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     }
 
     @Test
-    public void verifyExpiredTicketOperation() {
+    public void verifyExpiredTicketOperation() throws Exception {
         val config = new SAML2Configuration();
         val client = new SAML2Client(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);

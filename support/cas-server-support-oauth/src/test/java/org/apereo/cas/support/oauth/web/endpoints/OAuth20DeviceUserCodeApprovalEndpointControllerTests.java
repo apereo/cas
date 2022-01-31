@@ -57,7 +57,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyApproval() {
+    public void verifyApproval() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());

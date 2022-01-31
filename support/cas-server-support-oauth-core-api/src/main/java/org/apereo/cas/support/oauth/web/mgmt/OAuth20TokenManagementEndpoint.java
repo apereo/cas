@@ -82,10 +82,11 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
      * Delete access token.
      *
      * @param ticketId the ticket id
+     * @throws Exception the exception
      */
     @DeleteOperation
     @Operation(summary = "Delete token by id", parameters = {@Parameter(name = "ticketId", required = true)})
-    public void deleteToken(@Selector final String ticketId) {
+    public void deleteToken(@Selector final String ticketId) throws Exception {
         val ticket = getToken(ticketId);
         if (ticket != null) {
             centralAuthenticationService.deleteTicket(ticket.getId());

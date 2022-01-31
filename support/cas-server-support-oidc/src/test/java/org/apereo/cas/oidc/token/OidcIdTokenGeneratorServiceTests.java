@@ -71,7 +71,7 @@ public class OidcIdTokenGeneratorServiceTests {
     })
     public class IgnoringResponseTypeTests extends AbstractOidcTests {
         @Test
-        public void verifyTokenGenerationWithClaimsForCodeResponseType() {
+        public void verifyTokenGenerationWithClaimsForCodeResponseType() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -188,7 +188,7 @@ public class OidcIdTokenGeneratorServiceTests {
         }
 
         @Test
-        public void verifyTokenGenerationWithoutClaimsForCodeResponseType() {
+        public void verifyTokenGenerationWithoutClaimsForCodeResponseType() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
@@ -291,7 +291,7 @@ public class OidcIdTokenGeneratorServiceTests {
         }
 
         @Test
-        public void verifyTokenGenerationWithoutCallbackService() {
+        public void verifyTokenGenerationWithoutCallbackService() throws Exception {
             val request = new MockHttpServletRequest();
             val profile = new CommonProfile();
             profile.setClientName("OIDC");

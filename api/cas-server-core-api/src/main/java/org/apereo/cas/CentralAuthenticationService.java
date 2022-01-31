@@ -67,18 +67,20 @@ public interface CentralAuthenticationService {
      *
      * @param ticket the ticket
      * @return the updated ticket
+     * @throws Exception the exception
      * @since 5.0.0
      */
-    Ticket updateTicket(Ticket ticket);
+    Ticket updateTicket(Ticket ticket) throws Exception;
 
     /**
      * Add the ticket instance in the underlying storage mechanism.
      *
      * @param ticket the ticket
      * @return the updated ticket
+     * @throws Exception the exception
      * @since 6.2.0
      */
-    Ticket addTicket(Ticket ticket);
+    Ticket addTicket(Ticket ticket) throws Exception;
 
     /**
      * Obtains the given ticket by its id
@@ -120,8 +122,9 @@ public interface CentralAuthenticationService {
      *
      * @param ticketId the ticket id
      * @return count of deleted tickets
+     * @throws Exception the exception
      */
-    int deleteTicket(String ticketId);
+    int deleteTicket(String ticketId) throws Exception;
 
     /**
      * Attempts to delete a ticket from the underlying store
@@ -131,8 +134,9 @@ public interface CentralAuthenticationService {
      * ticket store.
      *
      * @param ticket the ticket id
+     * @throws Exception the exception
      */
-    default void deleteTicket(final Ticket ticket) {
+    default void deleteTicket(final Ticket ticket) throws Exception {
         deleteTicket(ticket.getId());
     }
 

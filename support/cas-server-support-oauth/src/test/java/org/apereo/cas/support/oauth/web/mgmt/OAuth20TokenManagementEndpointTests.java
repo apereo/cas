@@ -31,7 +31,7 @@ public class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     private OAuth20TokenManagementEndpoint tokenManagementEndpoint;
 
     @Test
-    public void verifyOperationWithJwt() {
+    public void verifyOperationWithJwt() throws Exception {
         val registeredService = getRegisteredService("example1", "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);

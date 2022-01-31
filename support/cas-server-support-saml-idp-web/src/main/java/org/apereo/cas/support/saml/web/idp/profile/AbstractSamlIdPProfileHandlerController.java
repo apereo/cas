@@ -330,12 +330,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @param ticketGrantingTicket the authentication
      * @param request              the request
      * @param response             the response
+     * @throws Exception the exception
      */
     protected void buildResponseBasedSingleSignOnSession(
         final Pair<? extends RequestAbstractType, MessageContext> context,
         final TicketGrantingTicket ticketGrantingTicket,
         final HttpServletRequest request,
-        final HttpServletResponse response) {
+        final HttpServletResponse response) throws Exception {
         val authnRequest = (AuthnRequest) context.getLeft();
         val id = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         val service = configurationContext.getWebApplicationServiceFactory().createService(id);

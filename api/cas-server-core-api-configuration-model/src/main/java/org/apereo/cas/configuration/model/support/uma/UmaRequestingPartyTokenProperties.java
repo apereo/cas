@@ -28,7 +28,7 @@ public class UmaRequestingPartyTokenProperties implements Serializable {
     private static final long serialVersionUID = 3988708361481340920L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the RP token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT3M";

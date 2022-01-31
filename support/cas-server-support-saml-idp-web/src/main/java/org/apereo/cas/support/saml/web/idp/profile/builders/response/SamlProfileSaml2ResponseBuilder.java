@@ -149,7 +149,8 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
-                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+        throws Exception {
         val existingQuery = request.getAttribute(AttributeQuery.class.getSimpleName());
         if (existingQuery == null) {
             val nameId = (String) request.getAttribute(NameID.class.getName());

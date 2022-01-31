@@ -47,7 +47,7 @@ public class GenerateServiceTicketActionTests extends AbstractWebflowActionsTest
     private Service service;
 
     @BeforeEach
-    public void onSetUp() {
+    public void onSetUp() throws Exception {
         getServicesManager().deleteAll();
         this.service = RegisteredServiceTestUtils.getService();
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());

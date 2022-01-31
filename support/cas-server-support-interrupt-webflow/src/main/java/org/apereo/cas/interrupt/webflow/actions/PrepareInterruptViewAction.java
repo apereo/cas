@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

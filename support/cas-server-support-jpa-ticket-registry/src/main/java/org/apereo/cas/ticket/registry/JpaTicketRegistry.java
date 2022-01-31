@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -66,7 +67,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicketInternal(final Ticket ticket) {
-        transactionTemplate.executeWithoutResult(status -> {
+        transactionTemplate.executeWithoutResult(Unchecked.consumer(status -> {
             val encodeTicket = encodeTicket(ticket);
             val factory = getJpaTicketEntityFactory();
             val ticketEntity = factory.fromTicket(encodeTicket);
@@ -77,7 +78,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             }
             this.entityManager.persist(ticketEntity);
             LOGGER.debug("Added ticket [{}] to registry.", encodeTicket);
-        });
+        }));
     }
 
     @Override
@@ -107,7 +108,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public int deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) throws Exception {
         return super.deleteTicket(ticketId);
     }
 
@@ -134,7 +135,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         LOGGER.trace("Updating ticket [{}]", ticket);
         val encodeTicket = this.encodeTicket(ticket);
 

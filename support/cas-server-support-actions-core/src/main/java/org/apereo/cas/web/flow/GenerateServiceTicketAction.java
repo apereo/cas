@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
      * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         LOGGER.trace("Service asking for service ticket is [{}]", service);
 
@@ -96,7 +97,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 LOGGER.debug("CAS has determined ticket-granting ticket [{}] is invalid and must be destroyed", ticketGrantingTicket);
-                this.centralAuthenticationService.deleteTicket(ticketGrantingTicket);
+                centralAuthenticationService.deleteTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
                 LOGGER.debug("Request indicates that it is gateway. Routing result to [{}] state", CasWebflowConstants.TRANSITION_ID_GATEWAY);

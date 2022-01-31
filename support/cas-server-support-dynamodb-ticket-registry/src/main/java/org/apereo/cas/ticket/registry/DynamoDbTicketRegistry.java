@@ -2,8 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,14 +18,9 @@ import java.util.function.Predicate;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     private final DynamoDbTicketRegistryFacilitator dbTableService;
-
-    public DynamoDbTicketRegistry(final CipherExecutor cipher, final DynamoDbTicketRegistryFacilitator dbTableService) {
-        setCipherExecutor(cipher);
-        this.dbTableService = dbTableService;
-        LOGGER.info("Setting up DynamoDb Ticket Registry instance");
-    }
 
     @Override
     public void addTicketInternal(final Ticket ticket) {
@@ -65,7 +60,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }

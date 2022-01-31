@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -39,37 +40,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
-
-    @Override
-    public Event doExecute(final RequestContext context) {
-        val service = WebUtils.getService(context);
-        val registeredService = WebUtils.getRegisteredService(context);
-        val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
-
-        LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
-        val authenticationResult = configurationContext.getAuthenticationSystemSupport()
-            .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        LOGGER.trace("Finalizing authentication event...");
-        val authentication = buildFinalAuthentication(authenticationResult);
-        val ticketGrantingTicket = determineTicketGrantingTicketId(context);
-        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
-        val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
-
-        if (registeredService != null && registeredService.getAccessStrategy() != null) {
-            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
-        }
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-        WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putAuthentication(tgt.getAuthentication(), context);
-
-        LOGGER.trace("Calculating authentication warning messages...");
-        val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
-        if (!warnings.isEmpty()) {
-            val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
-        }
-        return success();
-    }
 
     /**
      * Add warning messages to message context if needed.
@@ -109,36 +79,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         return builder.isEquals();
     }
 
-    private String determineTicketGrantingTicketId(final RequestContext context) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val ticketGrantingTicketId = configurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
-        if (StringUtils.isBlank(ticketGrantingTicketId)) {
-            return WebUtils.getTicketGrantingTicketId(context);
-        }
-        return ticketGrantingTicketId;
-    }
-
-    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicket) {
-        if (StringUtils.isBlank(ticketGrantingTicket)) {
-            return true;
-        }
-        LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
-        val authenticationFromTgt = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
-
-        if (authenticationFromTgt == null) {
-            LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-            configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
-            return true;
-        }
-
-        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
-            LOGGER.debug("Resulting authentication matches the authentication from context");
-            return false;
-        }
-        LOGGER.debug("Resulting authentication is different from the context");
-        return true;
-    }
-
     /**
      * Adds a warning message to the message context.
      *
@@ -152,6 +92,37 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             .defaultText(warning.getDefaultMessage())
             .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
+    }
+
+    @Override
+    public Event doExecute(final RequestContext context) throws Exception {
+        val service = WebUtils.getService(context);
+        val registeredService = WebUtils.getRegisteredService(context);
+        val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
+
+        LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
+        val authenticationResult = configurationContext.getAuthenticationSystemSupport()
+            .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        LOGGER.trace("Finalizing authentication event...");
+        val authentication = buildFinalAuthentication(authenticationResult);
+        val ticketGrantingTicket = determineTicketGrantingTicketId(context);
+        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
+        val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
+
+        if (registeredService != null && registeredService.getAccessStrategy() != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+        }
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putAuthenticationResult(authenticationResult, context);
+        WebUtils.putAuthentication(tgt.getAuthentication(), context);
+
+        LOGGER.trace("Calculating authentication warning messages...");
+        val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
+        if (!warnings.isEmpty()) {
+            val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
+        }
+        return success();
     }
 
     /**
@@ -196,5 +167,36 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             LoggingUtils.error(LOGGER, e);
             throw new InvalidTicketException(ticketGrantingTicket);
         }
+    }
+
+    private String determineTicketGrantingTicketId(final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val ticketGrantingTicketId = configurationContext.getTicketGrantingTicketCookieGenerator().retrieveCookieValue(request);
+        if (StringUtils.isBlank(ticketGrantingTicketId)) {
+            return WebUtils.getTicketGrantingTicketId(context);
+        }
+        return ticketGrantingTicketId;
+    }
+
+    private boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
+                                                    final String ticketGrantingTicket) throws Exception {
+        if (StringUtils.isBlank(ticketGrantingTicket)) {
+            return true;
+        }
+        LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
+        val authenticationFromTgt = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
+
+        if (authenticationFromTgt == null) {
+            LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
+            configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+            return true;
+        }
+
+        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
+            LOGGER.debug("Resulting authentication matches the authentication from context");
+            return false;
+        }
+        LOGGER.debug("Resulting authentication is different from the context");
+        return true;
     }
 }

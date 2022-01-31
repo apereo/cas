@@ -70,7 +70,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
 
 
     @Test
-    public void verifyUnknownService() {
+    public void verifyUnknownService() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -112,7 +112,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
 
 
     @Test
-    public void verifyTicketExpired() {
+    public void verifyTicketExpired() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -152,7 +152,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
     }
 
     @Test
-    public void verifyEncryptedNameIDFails() {
+    public void verifyEncryptedNameIDFails() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -192,7 +192,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests extends Bas
     }
 
     @Test
-    public void verifyOK() {
+    public void verifyOK() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");

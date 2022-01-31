@@ -40,7 +40,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public ModelAndView build(final WebContext webContext, final String clientId,
-                              final AccessTokenRequestDataHolder holder) {
+                              final AccessTokenRequestDataHolder holder) throws Exception {
         val authentication = holder.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(holder.getService(), authentication,

@@ -43,7 +43,7 @@ public class CouchbaseAcceptableUsagePolicyRepositoryTests extends BaseAcceptabl
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         assertNotNull(acceptableUsagePolicyRepository);
         val id = UUID.randomUUID().toString();
         verifyRepositoryAction(id,

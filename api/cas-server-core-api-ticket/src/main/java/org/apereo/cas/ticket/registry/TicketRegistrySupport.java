@@ -70,6 +70,7 @@ public interface TicketRegistrySupport {
      *
      * @param ticketGrantingTicketId the ticket granting ticket id
      * @param authentication         the authentication
+     * @throws Exception the exception
      */
-    void updateAuthentication(String ticketGrantingTicketId, Authentication authentication);
+    void updateAuthentication(String ticketGrantingTicketId, Authentication authentication) throws Exception;
 }

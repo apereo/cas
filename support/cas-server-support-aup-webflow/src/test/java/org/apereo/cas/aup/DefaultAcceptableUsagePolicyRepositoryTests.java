@@ -147,7 +147,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
         @Test
-        public void verifyMissingUserAccepted() {
+        public void verifyMissingUserAccepted() throws Exception {
             val actualPrincipalId = UUID.randomUUID().toString();
             val c = getCredential(actualPrincipalId);
             val context = getRequestContext(actualPrincipalId, Map.of(), c);

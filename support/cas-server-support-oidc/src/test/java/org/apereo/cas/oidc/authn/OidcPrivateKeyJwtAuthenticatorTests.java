@@ -92,7 +92,7 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadUser() {
+    public void verifyBadUser() throws Exception {
         val auth = new OidcPrivateKeyJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -124,7 +124,8 @@ public class OidcPrivateKeyJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     private UsernamePasswordCredentials getCredential(final MockHttpServletRequest request,
-                                                      final String uid, final String password, final String clientId) {
+                                                      final String uid, final String password,
+                                                      final String clientId) throws Exception {
         val credentials = new UsernamePasswordCredentials(uid, password);
 
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),

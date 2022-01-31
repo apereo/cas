@@ -63,7 +63,7 @@ public class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    public void verifyOK() {
+    public void verifyOK() throws Exception {
         assertNotNull(qrAuthenticationChannelController);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -94,7 +94,7 @@ public class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    public void verifyFails() {
+    public void verifyFails() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val payload = JwtBuilder.JwtRequest.builder()

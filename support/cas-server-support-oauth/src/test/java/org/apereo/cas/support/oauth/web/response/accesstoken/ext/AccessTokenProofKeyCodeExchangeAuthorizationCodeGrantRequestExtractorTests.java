@@ -29,7 +29,7 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyExtraction() {
+    public void verifyExtraction() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CODE_VERIFIER, "code-verifier");
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());

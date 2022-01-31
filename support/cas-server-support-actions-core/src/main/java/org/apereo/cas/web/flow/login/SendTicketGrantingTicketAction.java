@@ -5,6 +5,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 
@@ -34,7 +35,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecute(final RequestContext context) throws Exception {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         val ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
 

@@ -57,7 +57,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
     @Override
-    public TransientSessionTicket store(final JEEContext webContext, final Client client) {
+    public TransientSessionTicket store(final JEEContext webContext, final Client client) throws Exception {
         val ticket = storeDelegatedClientAuthenticationRequest(webContext);
         rememberSelectedClientIfNecessary(webContext, client);
 
@@ -80,7 +80,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     }
 
     @Override
-    public Service retrieve(final RequestContext requestContext, final WebContext webContext, final Client client) {
+    public Service retrieve(final RequestContext requestContext, final WebContext webContext,
+                            final Client client) throws Exception {
         val clientId = getDelegatedClientId(webContext, client);
         val ticket = retrieveSessionTicketViaClientId(webContext, clientId);
         restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket);
@@ -157,8 +158,9 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      *
      * @param webContext the web context
      * @return the transient session ticket
+     * @throws Exception the exception
      */
-    protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(final JEEContext webContext) {
+    protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(final JEEContext webContext) throws Exception {
         val properties = buildTicketProperties(webContext);
         val originalService = configContext.getArgumentExtractor().extractService(webContext.getNativeRequest());
         val service = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(originalService);

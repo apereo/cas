@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test
-    public void verifyAddTicket() {
+    public void verifyAddTicket() throws Exception {
         var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.getObject().addTicket(ticket);
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(), ticket);

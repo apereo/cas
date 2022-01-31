@@ -45,7 +45,7 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyCountForPrincipal() {
+    public void verifyCountForPrincipal() throws Exception {
         val user = UUID.randomUUID().toString();
         val tgt = new MockTicketGrantingTicket(user);
         val st = new MockServiceTicket("ST-123456", RegisteredServiceTestUtils.getService(), tgt);
@@ -59,7 +59,7 @@ public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
 
     @RepeatedTest(1)
-    public void verifyEncodeFails() {
+    public void verifyEncodeFails() throws Exception {
         val cipher = new DefaultTicketCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
         val reg = new DefaultTicketRegistry(new ConcurrentHashMap<>(10, 10, 5), cipher);

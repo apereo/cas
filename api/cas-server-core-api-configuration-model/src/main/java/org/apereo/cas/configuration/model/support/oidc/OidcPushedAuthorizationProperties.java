@@ -26,7 +26,7 @@ public class OidcPushedAuthorizationProperties implements Serializable {
     private static final long serialVersionUID = 632228615694269276L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the PAR token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT30S";

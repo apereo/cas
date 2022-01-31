@@ -84,12 +84,12 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) throws Exception {
         addTicketToCassandra(ticket, true);
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicketToCassandra(ticket, false);
         return ticket;
     }
@@ -221,7 +221,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
 
-    private void addTicketToCassandra(final Ticket ticket, final boolean inserting) {
+    private void addTicketToCassandra(final Ticket ticket, final boolean inserting) throws Exception {
         LOGGER.debug("Adding ticket [{}]", ticket.getId());
         val metadata = this.ticketCatalog.find(ticket);
         LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);

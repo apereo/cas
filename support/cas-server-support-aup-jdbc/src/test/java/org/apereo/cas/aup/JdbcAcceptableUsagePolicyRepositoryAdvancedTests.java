@@ -64,13 +64,13 @@ public class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAc
     }
 
     @Test
-    public void verifyRepositoryActionWithAdvancedConfig() {
+    public void verifyRepositoryActionWithAdvancedConfig() throws Exception {
         verifyRepositoryAction("casuser",
             CollectionUtils.wrap("aupAccepted", List.of("false"), "email", List.of("casuser@example.org")));
     }
 
     @Test
-    public void verifySubmitWithoutAuthn() {
+    public void verifySubmitWithoutAuthn() throws Exception {
         val c = getCredential("casuser");
         val context = getRequestContext("casuser", Map.of(), c);
         WebUtils.putAuthentication(null, context);

@@ -407,6 +407,15 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
+    @BeforeEach
+    public void setup() {
+        this.applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
+            CasConfigurationProperties.class.getSimpleName());
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+    }
+
     protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
         return addRegisteredService(false, grantTypes);
     }
@@ -499,12 +508,12 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessTokenId, refreshTokenId);
     }
 
-    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService) throws Exception {
         return addCodeWithChallenge(principal, registeredService, null, null);
     }
 
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
-                                               final String codeChallenge, final String codeChallengeMethod) {
+                                               final String codeChallenge, final String codeChallengeMethod) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
@@ -529,7 +538,8 @@ public abstract class AbstractOAuth20Tests {
             .decode(token);
     }
 
-    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService) {
+    protected OAuth20RefreshToken addRefreshToken(final Principal principal,
+                                                  final OAuthRegisteredService registeredService) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -541,7 +551,9 @@ public abstract class AbstractOAuth20Tests {
         return refreshToken;
     }
 
-    protected OAuth20RefreshToken addRefreshToken(final Principal principal, final OAuthRegisteredService registeredService, final OAuth20AccessToken accessToken) {
+    protected OAuth20RefreshToken addRefreshToken(final Principal principal,
+                                                  final OAuthRegisteredService registeredService,
+                                                  final OAuth20AccessToken accessToken) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
@@ -554,7 +566,7 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected OAuth20AccessToken addAccessToken(final Principal principal,
-                                                final OAuthRegisteredService registeredService) {
+                                                final OAuthRegisteredService registeredService) throws Exception {
         val code = addCode(principal, registeredService);
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
@@ -672,17 +684,8 @@ public abstract class AbstractOAuth20Tests {
         return Beans.newDuration(seconds).getSeconds();
     }
 
-    @BeforeEach
-    public void setup() {
-        this.applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, CasConfigurationProperties.class,
-            CasConfigurationProperties.class.getSimpleName());
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-    }
-
     @TestConfiguration(value = "OAuth20TestConfiguration", proxyBeanMethods = false)
-        public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
+    public static class OAuth20TestConfiguration implements ComponentSerializationPlanConfigurer {
         @Autowired
         protected ApplicationContext applicationContext;
 

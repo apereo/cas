@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+
 import lombok.val;
 
 import java.util.ArrayList;

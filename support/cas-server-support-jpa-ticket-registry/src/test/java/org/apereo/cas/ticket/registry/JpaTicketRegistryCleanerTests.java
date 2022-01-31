@@ -27,6 +27,7 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +94,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @Test
     @Order(10)
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -122,7 +123,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @Test
     @Order(10)
-    public void verifyTransientTicketCleaning() {
+    public void verifyTransientTicketCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -147,7 +148,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @RepeatedTest(2)
     @Order(1)
-    public void verifyOauthOperation() {
+    public void verifyOauthOperation() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -178,7 +179,7 @@ public class JpaTicketRegistryCleanerTests {
 
     @Test
     @Order(10)
-    public void verifyDeviceCodeAndUserCleaning() {
+    public void verifyDeviceCodeAndUserCleaning() throws Exception {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
             RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
@@ -211,18 +212,21 @@ public class JpaTicketRegistryCleanerTests {
     @Order(100)
     public void verifyConcurrentCleaner() throws Exception {
         val registryTask = new TimerTask() {
+            @Override
             public void run() {
                 for (int i = 0; i < 5; i++) {
-                    val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
-                        CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
-                        new HardTimeoutExpirationPolicy(1));
-                    ticketRegistry.addTicket(tgt);
+                    FunctionUtils.doAndIgnore(s -> {
+                        val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
+                            CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
+                            new HardTimeoutExpirationPolicy(1));
+                        ticketRegistry.addTicket(tgt);
 
-                    val st = tgt.grantServiceTicket(ServiceTicket.PREFIX + '-'
-                                                    + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
-                        new HardTimeoutExpirationPolicy(1), true, false);
-                    ticketRegistry.addTicket(st);
-                    ticketRegistry.updateTicket(tgt);
+                        val st = tgt.grantServiceTicket(ServiceTicket.PREFIX + '-'
+                                                        + RandomUtils.randomAlphabetic(16), RegisteredServiceTestUtils.getService(),
+                            new HardTimeoutExpirationPolicy(1), true, false);
+                        ticketRegistry.addTicket(st);
+                        ticketRegistry.updateTicket(tgt);
+                    });
                 }
             }
         };

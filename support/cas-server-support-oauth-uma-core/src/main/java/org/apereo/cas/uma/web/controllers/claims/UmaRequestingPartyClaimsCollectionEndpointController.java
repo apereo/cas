@@ -43,13 +43,14 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
      * @param request     the request
      * @param response    the response
      * @return redirect view
+     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_CLAIMS_COLLECTION_URL)
     public View getClaims(@RequestParam("client_id") final String clientId,
                           @RequestParam("redirect_uri") final String redirectUri,
                           @RequestParam("ticket") final String ticketId,
                           @RequestParam(value = "state", required = false) final String state,
-                          final HttpServletRequest request, final HttpServletResponse response) {
+                          final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 

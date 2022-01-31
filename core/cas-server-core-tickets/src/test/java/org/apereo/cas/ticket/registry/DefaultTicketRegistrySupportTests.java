@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DefaultTicketRegistrySupportTests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val registry = new DefaultTicketRegistry();
         val tgt = new MockTicketGrantingTicket("casuser", Map.of("name", List.of("CAS")));
         registry.addTicket(tgt);

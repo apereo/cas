@@ -71,7 +71,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyAction() {
+    public void verifyAction() throws Exception {
         val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -97,7 +97,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyDisabledServiceAction() {
+    public void verifyDisabledServiceAction() throws Exception {
         val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -126,7 +126,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyNoUserAction() {
+    public void verifyNoUserAction() throws Exception {
         val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -142,7 +142,7 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBadJwt() {
+    public void verifyBadJwt() throws Exception {
         val auth = new OidcClientSecretJwtAuthenticator(servicesManager,
             registeredServiceAccessStrategyEnforcer, ticketRegistry,
             webApplicationServiceFactory, casProperties, applicationContext);
@@ -159,7 +159,8 @@ public class OidcClientSecretJwtAuthenticatorTests extends AbstractOidcTests {
     }
 
     private UsernamePasswordCredentials getCredentials(final MockHttpServletRequest request,
-                                                       final String uid, final String password, final String clientId) {
+                                                       final String uid, final String password,
+                                                       final String clientId) throws Exception {
         val credentials = new UsernamePasswordCredentials(uid, password);
         val code = defaultOAuthCodeFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(),

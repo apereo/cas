@@ -40,8 +40,9 @@ public class DynamoDbTicketRegistryConfiguration {
             final CasConfigurationProperties casProperties) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val crypto = db.getCrypto();
-            return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto,
-                "dynamo-db"), dynamoDbTicketRegistryFacilitator);
+            val registry = new DynamoDbTicketRegistry(dynamoDbTicketRegistryFacilitator);
+            registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db"));
+            return registry;
         }
     }
 

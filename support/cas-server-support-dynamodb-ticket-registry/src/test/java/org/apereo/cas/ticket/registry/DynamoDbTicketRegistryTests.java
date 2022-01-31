@@ -73,7 +73,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private ServicesManager servicesManager;
 
     @RepeatedTest(2)
-    public void verifyOAuthCodeCanBeAdded() {
+    public void verifyOAuthCodeCanBeAdded() throws Exception {
         val code = createOAuthCode();
         newTicketRegistry.addTicket(code);
         assertSame(1, newTicketRegistry.deleteTicket(code.getId()), "Wrong ticket count");
@@ -81,7 +81,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyAccessTokenCanBeAdded() {
+    public void verifyAccessTokenCanBeAdded() throws Exception {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
             servicesManager, RegisteredServiceCipherExecutor.noOp());
@@ -96,7 +96,7 @@ public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyRefreshTokenCanBeAdded() {
+    public void verifyRefreshTokenCanBeAdded() throws Exception {
         val token = new OAuth20DefaultRefreshTokenFactory(neverExpiresExpirationPolicyBuilder(), servicesManager)
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),

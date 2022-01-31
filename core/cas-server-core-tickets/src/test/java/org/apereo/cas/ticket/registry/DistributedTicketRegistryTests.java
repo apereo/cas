@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.RenewableServiceTicket;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -50,8 +49,9 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void verifyProxiedInstancesEqual() {
-        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+    public void verifyProxiedInstancesEqual() throws Exception {
+        val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(),
+            NeverExpiresExpirationPolicy.INSTANCE);
         this.ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
         assertEquals(t, returned);
@@ -79,7 +79,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void verifyUpdateOfRegistry() throws AbstractTicketException {
+    public void verifyUpdateOfRegistry() throws Exception {
         val t = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         this.ticketRegistry.addTicket(t);
         val returned = (TicketGrantingTicket) this.ticketRegistry.getTicket(TGT_ID);
@@ -98,7 +98,7 @@ public class DistributedTicketRegistryTests {
     }
 
     @Test
-    public void verifyDeleteTicketWithPGT() {
+    public void verifyDeleteTicketWithPGT() throws Exception {
         val a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_NAME, a, NeverExpiresExpirationPolicy.INSTANCE));
         val tgt = this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class);

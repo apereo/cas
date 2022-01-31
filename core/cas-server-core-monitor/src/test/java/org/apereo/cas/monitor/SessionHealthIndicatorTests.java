@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,15 +39,15 @@ public class SessionHealthIndicatorTests {
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         val ticket = new TicketGrantingTicketImpl[]{null};
-        IntStream.range(0, tgtCount).forEach(i -> {
+        IntStream.range(0, tgtCount).forEach(Unchecked.intConsumer(i -> {
             ticket[0] = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
             registry.addTicket(ticket[0]);
-        });
+        }));
 
         if (ticket[0] != null) {
             val testService = getService("junit");
-            IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                testService, TEST_EXP_POLICY, false, true)));
+            IntStream.range(0, stCount).forEach(Unchecked.intConsumer(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                testService, TEST_EXP_POLICY, false, true))));
         }
     }
 

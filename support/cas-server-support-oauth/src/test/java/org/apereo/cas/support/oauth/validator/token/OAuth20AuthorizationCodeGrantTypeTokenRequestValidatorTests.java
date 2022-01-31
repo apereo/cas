@@ -57,7 +57,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     private OAuth20TokenRequestValidator validator;
 
     @BeforeEach
-    public void before() {
+    public void before() throws Exception {
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
@@ -146,7 +146,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
     }
 
     @Test
-    public void verifyUnknownCodeRevokesPreviousAccessTokens() {
+    public void verifyUnknownCodeRevokesPreviousAccessTokens() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val profile = new CommonProfile();
@@ -214,7 +214,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         assertTrue(this.validator.validate(new JEEContext(request, response)));
     }
 
-    private OAuth20Code registerTicket(final OAuthRegisteredService service) {
+    private OAuth20Code registerTicket(final OAuthRegisteredService service) throws Exception {
         val builder = new OAuth20DefaultCasAuthenticationBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             new WebApplicationServiceFactory(),

@@ -56,7 +56,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     @Test
-    public void verifyTGTThatIsExpired() {
+    public void verifyTGTThatIsExpired() throws Exception {
         val c = new OpenIdCredential(TGT_ID, USERNAME);
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
@@ -66,7 +66,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     @Test
-    public void verifyTGTWithDifferentId() {
+    public void verifyTGTWithDifferentId() throws Exception {
         val c = new OpenIdCredential(TGT_ID, "test1");
         val t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);

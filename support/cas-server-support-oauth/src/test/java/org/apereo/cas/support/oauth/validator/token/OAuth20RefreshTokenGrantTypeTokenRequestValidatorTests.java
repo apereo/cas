@@ -44,7 +44,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
     private OAuth20TokenRequestValidator validator;
 
     @BeforeEach
-    public void before() {
+    public void before() throws Exception {
         servicesManager.deleteAll();
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
@@ -169,7 +169,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
         assertTrue(validator.validate(new JEEContext(request, response)));
     }
 
-    private void registerTicket(final String name, final String clientId) {
+    private void registerTicket(final String name, final String clientId) throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         val token = mock(OAuth20RefreshToken.class);
         when(token.getId()).thenReturn(name);
