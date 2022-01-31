@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.Saml
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.CookieUtils;
@@ -157,8 +158,9 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
                 getConfigurationContext().getTicketRegistry(), request);
-            val ticket = getConfigurationContext().getSamlAttributeQueryTicketFactory().create(nameId,
-                assertion, adaptor.getEntityId(), ticketGrantingTicket);
+
+            val samlAttributeQueryTicketFactory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
+            val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion, adaptor.getEntityId(), ticketGrantingTicket);
             getConfigurationContext().getTicketRegistry().addTicket(ticket);
             request.setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
         }

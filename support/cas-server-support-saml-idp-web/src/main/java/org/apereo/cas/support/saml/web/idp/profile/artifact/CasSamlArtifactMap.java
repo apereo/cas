@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -31,7 +33,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;
 
-    private final SamlArtifactTicketFactory samlArtifactTicketFactory;
+    private final TicketFactory ticketFactory;
 
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
@@ -55,6 +57,7 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
                 .orElse(null);
         }
 
+        val samlArtifactTicketFactory = (SamlArtifactTicketFactory) ticketFactory.get(SamlArtifactTicket.class);
         val ticket = samlArtifactTicketFactory.create(artifact,
             Objects.requireNonNull(ticketGrantingTicket).getAuthentication(),
             ticketGrantingTicket,

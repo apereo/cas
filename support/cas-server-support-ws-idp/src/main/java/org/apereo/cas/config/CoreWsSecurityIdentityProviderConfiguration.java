@@ -13,7 +13,7 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
@@ -190,8 +190,8 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier("securityTokenTicketFactory")
-            final SecurityTokenTicketFactory securityTokenTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("wsFederationCallbackService")
@@ -216,14 +216,13 @@ public class CoreWsSecurityIdentityProviderConfiguration {
                 .securityTokenServiceTokenFetcher(securityTokenServiceTokenFetcher)
                 .serviceSelectionStrategy(wsFederationAuthenticationServiceSelectionStrategy)
                 .httpClient(httpClient)
-                .securityTokenTicketFactory(securityTokenTicketFactory)
+                .ticketFactory(ticketFactory)
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .ticketRegistrySupport(ticketRegistrySupport)
                 .callbackService(wsFederationCallbackService)
                 .build();
         }
-
     }
 
     @Configuration(value = "CoreWsSecurityIdentityProviderControllersConfiguration", proxyBeanMethods = false)

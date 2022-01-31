@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -119,8 +120,8 @@ public class CasOAuthUmaConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaConfigurationContext umaConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("defaultUmaPermissionTicketFactory")
-            final UmaPermissionTicketFactory defaultUmaPermissionTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("umaResourceSetClaimPermissionExaminer")
             final UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -156,9 +157,9 @@ public class CasOAuthUmaConfiguration {
                 .sessionStore(oauthDistributedSessionStore)
                 .ticketRegistry(ticketRegistry)
                 .centralAuthenticationService(centralAuthenticationService)
-                .umaPermissionTicketFactory(defaultUmaPermissionTicketFactory)
                 .umaResourceSetRepository(umaResourceSetRepository)
                 .idTokenSigningAndEncryptionService(signingService)
+                .ticketFactory(ticketFactory)
                 .build();
         }
 
