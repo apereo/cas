@@ -86,6 +86,10 @@ public class ResourceUtilsTests {
         val path = Files.createTempDirectory("castest-");
         assertTrue(ResourceUtils.doesResourceExist(ResourceUtils.getResourceFrom(path.toString())));
         FileUtils.forceDelete(path.toFile());
+        val nonFileResourceMissing = ResourceUtils.getRawResourceFrom("classpath:doesnotexist.json");
+        assertDoesNotThrow(() -> ResourceUtils.doesResourceExist(nonFileResourceMissing));
+        val nonFileExists = ResourceUtils.getRawResourceFrom("classpath:log4j2-test.xml");
+        assertDoesNotThrow(() -> ResourceUtils.doesResourceExist(nonFileExists));
     }
 
 
