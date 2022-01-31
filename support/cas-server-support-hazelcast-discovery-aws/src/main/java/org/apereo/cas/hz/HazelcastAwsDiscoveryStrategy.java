@@ -41,7 +41,9 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_HOST_HEADER, aws.getHostHeader());
         }
         if (aws.getPort() > 0) {
-            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT, aws.getPort());
+            properties.put(
+                    HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT,
+                    Integer.toString(aws.getPort()));
         }
         if (StringUtils.hasText(aws.getRegion())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_REGION, aws.getRegion());

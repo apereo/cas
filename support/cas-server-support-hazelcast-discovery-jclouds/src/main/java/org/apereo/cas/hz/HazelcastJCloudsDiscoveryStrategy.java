@@ -43,7 +43,9 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_IDENTITY, jclouds.getIdentity());
         }
         if (jclouds.getPort() > 0) {
-            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_HZ_PORT, jclouds.getPort());
+            properties.put(
+                    HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_HZ_PORT,
+                    Integer.toString(jclouds.getPort()));
         }
         if (StringUtils.hasText(jclouds.getProvider())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_PROVIDER, jclouds.getProvider());
