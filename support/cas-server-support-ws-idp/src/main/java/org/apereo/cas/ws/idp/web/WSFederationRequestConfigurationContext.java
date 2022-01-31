@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
@@ -43,7 +43,7 @@ public class WSFederationRequestConfigurationContext {
 
     private final HttpClient httpClient;
 
-    private final SecurityTokenTicketFactory securityTokenTicketFactory;
+    private final TicketFactory ticketFactory;
 
     private final TicketRegistry ticketRegistry;
 

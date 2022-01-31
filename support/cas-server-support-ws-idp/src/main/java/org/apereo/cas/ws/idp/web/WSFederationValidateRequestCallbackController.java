@@ -3,6 +3,8 @@ package org.apereo.cas.ws.idp.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.SecurityTokenTicket;
+import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -114,9 +116,10 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val ticketRegistry = getConfigContext().getTicketRegistry();
         val tgt = CookieUtils.getTicketGrantingTicketFromRequest(getConfigContext().getTicketGrantingTicketCookieGenerator(),
             ticketRegistry, request);
-
         val serializedToken = SerializationUtils.serialize(securityToken);
-        val ticket = getConfigContext().getSecurityTokenTicketFactory().create(tgt, serializedToken);
+
+        val securityTokenTicketFactory = (SecurityTokenTicketFactory) getConfigContext().getTicketFactory().get(SecurityTokenTicket.class);
+        val ticket = securityTokenTicketFactory.create(tgt, serializedToken);
         LOGGER.trace("Created security token ticket [{}]", ticket);
         ticketRegistry.addTicket(ticket);
         LOGGER.trace("Added security token as a ticket to CAS ticket registry...");
