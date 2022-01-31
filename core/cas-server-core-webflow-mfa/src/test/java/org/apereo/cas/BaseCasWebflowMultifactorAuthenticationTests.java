@@ -127,7 +127,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     }
 
     @TestConfiguration(value = "TestAuthenticationConfiguration", proxyBeanMethods = false)
-        public static class TestAuthenticationConfiguration {
+    public static class TestAuthenticationConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer() {
             return plan -> plan.registerAuthenticationHandler(new AcceptUsersAuthenticationHandler(CollectionUtils.wrap("casuser", "Mellon")));

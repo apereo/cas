@@ -84,14 +84,14 @@ public class DistributedJEESessionStore implements SessionStore {
         val ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.updateTicket(ticket));
+            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.updateTicket(ticket));
         } else if (ticket == null) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
             val created = transientFactory.create(sessionId, properties);
-            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.addTicket(created));
+            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.addTicket(created));
         } else {
             ticket.getProperties().putAll(properties);
-            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.updateTicket(ticket));
+            FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.updateTicket(ticket));
         }
     }
 
@@ -100,7 +100,7 @@ public class DistributedJEESessionStore implements SessionStore {
         val sessionId = fetchSessionIdFromContext(webContext);
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            FunctionUtils.doAndIgnore(s -> centralAuthenticationService.deleteTicket(ticketId));
+            FunctionUtils.doUnchecked(s -> centralAuthenticationService.deleteTicket(ticketId));
 
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());

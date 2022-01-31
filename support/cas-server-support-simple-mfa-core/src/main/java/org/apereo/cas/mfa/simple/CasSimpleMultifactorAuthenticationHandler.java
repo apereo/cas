@@ -90,6 +90,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
      * @param acct the acct
      */
     protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
-        FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.deleteTicket(acct.getId()));
+        FunctionUtils.doUnchecked(s -> this.centralAuthenticationService.deleteTicket(acct.getId()));
     }
 }

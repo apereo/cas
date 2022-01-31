@@ -68,7 +68,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     }
 
     @TestConfiguration(value = "CachingPrincipalAttributeRepositoryTestConfiguration", proxyBeanMethods = false)
-        public static class CachingPrincipalAttributeRepositoryTestConfiguration {
+    public static class CachingPrincipalAttributeRepositoryTestConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {

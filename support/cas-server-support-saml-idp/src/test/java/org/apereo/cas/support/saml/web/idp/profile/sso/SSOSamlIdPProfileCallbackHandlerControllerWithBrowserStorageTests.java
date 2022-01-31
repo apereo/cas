@@ -108,7 +108,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerWithBrowserStorageTests e
     }
 
     @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
-        public static class SamlIdPTestConfiguration {
+    public static class SamlIdPTestConfiguration {
 
         @Bean
         public TicketValidator samlIdPTicketValidator() throws Exception {

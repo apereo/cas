@@ -30,19 +30,19 @@ public final class DuoWeb {
 		final String duo_sig;
 		final String app_sig;
 
-		if (username.equals("")) {
+		if (username.isEmpty()) {
 			return ERR_USER;
 		}
 		if (username.indexOf('|') != -1) {
 			return ERR_USER;
 		}
-		if (ikey.equals("") || ikey.length() != IKEY_LEN) {
+		if (ikey.isEmpty() || ikey.length() != IKEY_LEN) {
 			return ERR_IKEY;
 		}
-		if (skey.equals("") || skey.length() != SKEY_LEN) {
+		if (skey.isEmpty() || skey.length() != SKEY_LEN) {
 			return ERR_SKEY;
 		}
-		if (akey.equals("") || akey.length() < AKEY_LEN) {
+		if (akey.isEmpty() || akey.length() < AKEY_LEN) {
 			return ERR_AKEY;
 		}
 
@@ -53,7 +53,7 @@ public final class DuoWeb {
 			return ERR_UNKNOWN;
 		}
 
-		return duo_sig + ":" + app_sig;
+		return duo_sig + ':' + app_sig;
 	}
 
 	public static String verifyResponse(final String ikey, final String skey, final String akey, final String sig_response)

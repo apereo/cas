@@ -256,7 +256,7 @@ public class CasSupportActionsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {

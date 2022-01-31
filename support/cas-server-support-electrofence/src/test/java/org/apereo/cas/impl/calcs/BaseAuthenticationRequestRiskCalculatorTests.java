@@ -90,14 +90,14 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
     @BeforeEach
-    public void prepTest() {
+    public void prepTest() throws Exception {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
     }
 
     @TestConfiguration(value = "ElectronicFenceTestConfiguration", proxyBeanMethods = false)
-        public static class ElectronicFenceTestConfiguration {
+    public static class ElectronicFenceTestConfiguration {
         @Bean
         public SmsSender smsSender() {
             return new MockSmsSender();

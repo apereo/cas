@@ -148,7 +148,7 @@ public class TokenAuthenticationHandlerTests {
     }
 
     @TestConfiguration(value = "TokenAuthenticationTests", proxyBeanMethods = false)
-        public static class TestTokenAuthenticationConfiguration {
+    public static class TestTokenAuthenticationConfiguration {
         @Bean
         public List inMemoryRegisteredServices() {
             var svc = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);

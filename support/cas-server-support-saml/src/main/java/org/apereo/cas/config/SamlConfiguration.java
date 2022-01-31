@@ -188,7 +188,7 @@ public class SamlConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlResponseBuilder")
             final SamlResponseBuilder samlResponseBuilder,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,

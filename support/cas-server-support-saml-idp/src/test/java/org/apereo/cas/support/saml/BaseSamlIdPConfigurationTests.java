@@ -278,7 +278,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-        public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         private PrincipalResolver defaultPrincipalResolver;

@@ -75,7 +75,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @TestConfiguration(value = "RestConsentRepositoryTestConfiguration", proxyBeanMethods = false)
-        public static class RestConsentRepositoryTestConfiguration {
+    public static class RestConsentRepositoryTestConfiguration {
 
         @Bean
         public RestConsentRepositoryStorage restConsentRepositoryStorage() {

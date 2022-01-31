@@ -69,7 +69,7 @@ public class WsFederationAuthenticationConfiguration {
         public WsFederationNavigationController wsFederationNavigationController(
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties,
             @Qualifier("wsFederationCookieManager")

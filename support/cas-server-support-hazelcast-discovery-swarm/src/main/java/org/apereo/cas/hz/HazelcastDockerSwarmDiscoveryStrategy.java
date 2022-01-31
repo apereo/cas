@@ -31,25 +31,9 @@ import java.util.Properties;
 @Slf4j
 public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
-    @Override
-    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
-                                                 final Config configuration, final NetworkConfig networkConfig) {
-        val dockerSwarm = cluster.getDiscovery().getDockerSwarm();
-        val memberProvider = dockerSwarm.getMemberProvider();
-        val dnsProvider = dockerSwarm.getDnsProvider();
-
-        if (memberProvider.isEnabled()) {
-            return getDiscoveryStrategyConfigViaMemberAddressProvider(configuration, networkConfig, memberProvider);
-        }
-        if (dnsProvider.isEnabled()) {
-            return getDiscoveryStrategyConfigViaDnsProvider(networkConfig, dnsProvider);
-        }
-        throw new IllegalArgumentException("No discovery strategy is turned on and enabled in configuration");
-    }
-
     @SneakyThrows
     private static Optional<DiscoveryStrategyConfig> getDiscoveryStrategyConfigViaDnsProvider(final NetworkConfig networkConfig,
-                                                                                    final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
+                                                                                              final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
         networkConfig.setPortAutoIncrement(false);
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();
         memberAddressProviderConfig.setEnabled(true);
@@ -57,7 +41,7 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         val props = new Properties();
         props.put("serviceName", dnsProvider.getServiceName());
         props.put("servicePort",
-                Integer.toString(dnsProvider.getServicePort()));
+            Integer.toString(dnsProvider.getServicePort()));
         memberAddressProviderConfig.setImplementation(new DockerDNSRRMemberAddressProvider(props));
 
         val properties = new HashMap<String, Comparable>();
@@ -68,8 +52,8 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
     }
 
     private static Optional<DiscoveryStrategyConfig> getDiscoveryStrategyConfigViaMemberAddressProvider(final Config configuration,
-                                                       final NetworkConfig networkConfig,
-                                                       final HazelcastDockerSwarmDiscoveryProperties.MemberAddressProvider memberProvider) {
+                                                                                                        final NetworkConfig networkConfig,
+                                                                                                        final HazelcastDockerSwarmDiscoveryProperties.MemberAddressProvider memberProvider) {
 
         configuration.setProperty(BaseHazelcastProperties.SHUT_DOWN_HOOK_ENABLED_PROP, Boolean.TRUE.toString());
         configuration.setProperty(BaseHazelcastProperties.SOCKET_BIND_ANY_PROP, Boolean.FALSE.toString());
@@ -93,8 +77,8 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
         }
         if (memberProvider.getHazelcastPeerPort() > 0) {
             properties.put(
-                    "hazelcast-peer-port",
-                    Integer.toString(memberProvider.getHazelcastPeerPort()));
+                "hazelcast-peer-port",
+                Integer.toString(memberProvider.getHazelcastPeerPort()));
         }
         val cfg = new DiscoveryStrategyConfig(new DockerSwarmDiscoveryStrategyFactory(), properties);
         try {
@@ -103,6 +87,22 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.of(cfg);
+    }
+
+    @Override
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                                 final Config configuration, final NetworkConfig networkConfig) {
+        val dockerSwarm = cluster.getDiscovery().getDockerSwarm();
+        val memberProvider = dockerSwarm.getMemberProvider();
+        val dnsProvider = dockerSwarm.getDnsProvider();
+
+        if (memberProvider.isEnabled()) {
+            return getDiscoveryStrategyConfigViaMemberAddressProvider(configuration, networkConfig, memberProvider);
+        }
+        if (dnsProvider.isEnabled()) {
+            return getDiscoveryStrategyConfigViaDnsProvider(networkConfig, dnsProvider);
+        }
+        throw new IllegalArgumentException("No discovery strategy is turned on and enabled in configuration");
     }
 
 }

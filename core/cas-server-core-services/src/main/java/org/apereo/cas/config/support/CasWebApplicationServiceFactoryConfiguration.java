@@ -32,7 +32,7 @@ public class CasWebApplicationServiceFactoryConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasWebApplicationServiceFactoryBaseConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
+        @ConditionalOnMissingBean(name = WebApplicationService.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactory<WebApplicationService> webApplicationServiceFactory() {
             return new WebApplicationServiceFactory();
@@ -46,7 +46,7 @@ public class CasWebApplicationServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "casWebApplicationServiceFactoryConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactoryConfigurer casWebApplicationServiceFactoryConfigurer(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return () -> CollectionUtils.wrap(webApplicationServiceFactory);
         }

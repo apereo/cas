@@ -71,7 +71,7 @@ public class ConditionalOnMatchingHostnameTests {
 
     @Test
     void doesNotMatch2() {
-        load(ConfigurationBeansDependOnHost.class, "hostname="+ HOSTNAME + "2");
+        load(ConfigurationBeansDependOnHost.class, "hostname=" + HOSTNAME + '2');
         assertThat(this.context.containsBean("foo")).isFalse();
     }
 

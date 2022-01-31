@@ -402,7 +402,7 @@ public class CasValidationConfiguration {
         @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyController proxyController(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,

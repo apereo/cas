@@ -11,6 +11,7 @@ import org.apereo.cas.util.serialization.MessageSanitizationUtils;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -74,11 +75,12 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         return ALL_IP_ADDRS.get(index);
     }
 
-    public static CasEvent createEvent(final String user, final CasEventRepository casEventRepository) {
+    public static CasEvent createEvent(final String user, final CasEventRepository casEventRepository) throws Exception {
         return createEvent(user, RandomUtils.nextInt(), casEventRepository);
     }
 
-    public static CasEvent createEvent(final String user, final int i, final CasEventRepository casEventRepository) {
+    public static CasEvent createEvent(final String user, final int i,
+                                       final CasEventRepository casEventRepository) throws Exception {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
@@ -93,11 +95,11 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         return dto;
     }
     
-    public static void createEvent(final int i, final CasEventRepository casEventRepository) {
+    public static void createEvent(final int i, final CasEventRepository casEventRepository) throws Exception {
         createEvent("casuser", i, casEventRepository);
     }
 
-    public static void createEvents(final CasEventRepository casEventRepository) {
-        IntStream.range(1, 1000).forEach(i -> createEvent(i, casEventRepository));
+    public static void createEvents(final CasEventRepository casEventRepository) throws Exception {
+        IntStream.range(1, 1000).forEach(Unchecked.intConsumer(i -> createEvent(i, casEventRepository)));
     }
 }

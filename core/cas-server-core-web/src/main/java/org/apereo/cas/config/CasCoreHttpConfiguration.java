@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultCasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
@@ -11,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -46,7 +48,7 @@ public class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = "trustStoreSslSocketFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SSLConnectionSocketFactory trustStoreSslSocketFactory(
+        public LayeredConnectionSocketFactory trustStoreSslSocketFactory(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
@@ -97,7 +99,7 @@ public class CasCoreHttpConfiguration {
         private static SimpleHttpClientFactoryBean buildHttpClientFactoryBean(
             final CasSSLContext casSslContext,
             final HostnameVerifier hostnameVerifier,
-            final SSLConnectionSocketFactory trustStoreSslSocketFactory,
+            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) {
             val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
 
@@ -120,10 +122,10 @@ public class CasCoreHttpConfiguration {
         }
 
         private static SimpleHttpClient getHttpClient(final boolean redirectEnabled,
-                                                final CasSSLContext casSslContext,
-                                                final HostnameVerifier hostnameVerifier,
-                                                final SSLConnectionSocketFactory trustStoreSslSocketFactory,
-                                                final CasConfigurationProperties casProperties) throws Exception {
+                                                      final CasSSLContext casSslContext,
+                                                      final HostnameVerifier hostnameVerifier,
+                                                      final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
+                                                      final CasConfigurationProperties casProperties) {
             val c = buildHttpClientFactoryBean(casSslContext, hostnameVerifier, trustStoreSslSocketFactory, casProperties);
             c.setRedirectsEnabled(redirectEnabled);
             c.setCircularRedirectsAllowed(redirectEnabled);
@@ -139,22 +141,22 @@ public class CasCoreHttpConfiguration {
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
             @Qualifier("trustStoreSslSocketFactory")
-            final SSLConnectionSocketFactory trustStoreSslSocketFactory,
+            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return buildHttpClientFactoryBean(casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);
         }
 
-        @ConditionalOnMissingBean(name = "noRedirectHttpClient")
+        @ConditionalOnMissingBean(name = HttpClient.BEAN_NAME_HTTPCLIENT_NO_REDIRECT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SimpleHttpClient noRedirectHttpClient(
+        public HttpClient noRedirectHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
             @Qualifier("trustStoreSslSocketFactory")
-            final SSLConnectionSocketFactory trustStoreSslSocketFactory,
+            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return getHttpClient(false, casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);
@@ -169,7 +171,7 @@ public class CasCoreHttpConfiguration {
             @Qualifier("hostnameVerifier")
             final HostnameVerifier hostnameVerifier,
             @Qualifier("trustStoreSslSocketFactory")
-            final SSLConnectionSocketFactory trustStoreSslSocketFactory,
+            final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) throws Exception {
             return getHttpClient(true, casSslContext, hostnameVerifier,
                 trustStoreSslSocketFactory, casProperties);

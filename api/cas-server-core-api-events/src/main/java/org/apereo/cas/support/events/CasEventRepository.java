@@ -26,8 +26,9 @@ public interface CasEventRepository {
      * Save.
      *
      * @param event the event
+     * @throws Exception the exception
      */
-    void save(CasEvent event);
+    void save(CasEvent event) throws Exception;
 
     /**
      * Load collection.

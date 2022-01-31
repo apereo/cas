@@ -37,7 +37,7 @@ public class RestServicesConfiguration {
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController(
         final CasConfigurationProperties casProperties,
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

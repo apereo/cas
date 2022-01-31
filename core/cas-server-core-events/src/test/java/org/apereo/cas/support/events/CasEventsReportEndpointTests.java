@@ -81,7 +81,7 @@ public class CasEventsReportEndpointTests {
     }
 
     @TestConfiguration(value = "CasEventsReportEndpointTestConfiguration", proxyBeanMethods = false)
-        public static class CasEventsReportEndpointTestConfiguration {
+    public static class CasEventsReportEndpointTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {

@@ -239,7 +239,7 @@ public class CasOAuth20Configuration {
             final CasCookieBuilder oauthDistributedSessionCookieGenerator,
             @Qualifier("oauthUserProfileViewRenderer")
             final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
@@ -385,7 +385,7 @@ public class CasOAuth20Configuration {
             final UrlResolver casCallbackUrlResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -794,7 +794,7 @@ public class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthDeviceCodeResponseTypeRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -845,7 +845,7 @@ public class CasOAuth20Configuration {
         public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -859,7 +859,7 @@ public class CasOAuth20Configuration {
         public OAuth20AuthorizationRequestValidator oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -873,7 +873,7 @@ public class CasOAuth20Configuration {
         public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -887,7 +887,7 @@ public class CasOAuth20Configuration {
         public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -901,7 +901,7 @@ public class CasOAuth20Configuration {
         public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -1164,7 +1164,7 @@ public class CasOAuth20Configuration {
             final PrincipalFactory oauthPrincipalFactory,
             @Qualifier("profileScopeToAttributesFilter")
             final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultCasAuthenticationBuilder(oauthPrincipalFactory,
@@ -1178,7 +1178,7 @@ public class CasOAuth20Configuration {
         public Authenticator oAuthClientAuthenticator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -1202,7 +1202,7 @@ public class CasOAuth20Configuration {
         public Authenticator oAuthProofKeyCodeExchangeAuthenticator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -1226,7 +1226,7 @@ public class CasOAuth20Configuration {
         public Authenticator oAuthRefreshTokenAuthenticator(
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -1250,7 +1250,7 @@ public class CasOAuth20Configuration {
         public Authenticator oAuthUserAuthenticator(
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
