@@ -190,7 +190,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             throw new InvalidTicketException(id);
         }
         if (ticket.isExpired()) {
-            FunctionUtils.doAndIgnore(s -> deleteTicket(id));
+            FunctionUtils.doUnchecked(s -> deleteTicket(id));
             LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
             throw new InvalidTicketException(id);
         }

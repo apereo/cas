@@ -52,7 +52,7 @@ public class TokenCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenTicketValidator")
         public TicketValidator tokenTicketValidator(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -131,7 +131,7 @@ public class TokenCoreConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenCipherExecutor")

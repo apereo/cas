@@ -61,7 +61,7 @@ public class SamlMetadataUIWebflowConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         final ArgumentExtractor argumentExtractor,
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> serviceFactory) {
         val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
         return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter,

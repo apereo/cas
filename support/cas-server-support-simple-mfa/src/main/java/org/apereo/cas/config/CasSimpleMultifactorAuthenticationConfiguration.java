@@ -16,6 +16,7 @@ import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustedDeviceWebfl
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
@@ -63,8 +64,8 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
-            @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
-            final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
@@ -76,8 +77,9 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
             final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
             val simple = casProperties.getAuthn().getMfa().getSimple();
             return new CasSimpleMultifactorSendTokenAction(centralAuthenticationService,
-                communicationsManager, casSimpleMultifactorAuthenticationTicketFactory, simple,
-                mfaSimpleMultifactorTokenCommunicationStrategy, mfaSimpleMultifactorBucketConsumer);
+                communicationsManager, ticketFactory, simple,
+                mfaSimpleMultifactorTokenCommunicationStrategy,
+                mfaSimpleMultifactorBucketConsumer);
         }
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")

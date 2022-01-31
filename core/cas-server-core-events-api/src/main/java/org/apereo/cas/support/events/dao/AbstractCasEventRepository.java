@@ -51,7 +51,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     }
 
     @Override
-    public void save(final CasEvent event) {
+    public void save(final CasEvent event) throws Exception {
         if (getEventRepositoryFilter().shouldSaveEvent(event)) {
             saveInternal(event);
 
@@ -78,7 +78,8 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     }
 
     @Override
-    public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
+    public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
+                                                                  final ZonedDateTime dateTime) {
         return getEventsOfTypeForPrincipal(type, principal)
             .filter(e -> {
                 val dt = convertEventCreationTime(e);
@@ -125,6 +126,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
      *
      * @param event the event
      * @return saved cas event
+     * @throws Exception the exception
      */
-    public abstract CasEvent saveInternal(CasEvent event);
+    public abstract CasEvent saveInternal(CasEvent event) throws Exception;
 }

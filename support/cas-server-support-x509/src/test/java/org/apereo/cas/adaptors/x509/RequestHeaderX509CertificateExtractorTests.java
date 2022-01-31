@@ -64,7 +64,7 @@ public class RequestHeaderX509CertificateExtractorTests {
 
     @Test
     public void verifyBadHeaderLength4() {
-        val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + " " + RequestHeaderX509CertificateExtractor.X509_FOOTER;
+        val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + ' ' + RequestHeaderX509CertificateExtractor.X509_FOOTER;
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
         assertNull(x509CertificateExtractor.extract(request));

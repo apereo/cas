@@ -92,7 +92,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @TestConfiguration(value = "ProxyTestConfiguration", proxyBeanMethods = false)
-        public static class ProxyTestConfiguration {
+    public static class ProxyTestConfiguration {
         @Bean
         public SpringTemplateEngine springTemplateEngine() {
             return new SpringTemplateEngine();

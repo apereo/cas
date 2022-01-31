@@ -122,7 +122,7 @@ public class DefaultCasEventListenerTests {
     }
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
-        public static class EventTestConfiguration {
+    public static class EventTestConfiguration {
         @Bean
         public CasEventRepository casEventRepository() {
             return new AbstractCasEventRepository(CasEventRepositoryFilter.noOp()) {

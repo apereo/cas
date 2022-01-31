@@ -2,7 +2,6 @@ package org.apereo.cas.util.function;
 
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -300,12 +299,12 @@ public class FunctionUtils {
     }
 
     /**
-     * Do and ignore.
+     * Do unchecked.
      *
      * @param consumer the consumer
      * @param params   the params
      */
-    public static void doAndIgnore(final CheckedConsumer<Object> consumer, final Object... params) {
+    public static void doUnchecked(final CheckedConsumer<Object> consumer, final Object... params) {
         Unchecked.consumer(s -> consumer.accept(params)).accept(null);
     }
 
@@ -316,7 +315,6 @@ public class FunctionUtils {
      * @param callback the callback
      * @return the t
      */
-    @SneakyThrows
     public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) {
         return doAndRetry(List.of(), callback);
     }
@@ -329,7 +327,6 @@ public class FunctionUtils {
      * @param callback the callback
      * @return the t
      */
-    @SneakyThrows
     public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
                                    final RetryCallback<T, Exception> callback) {
         val retryTemplate = new RetryTemplate();
@@ -342,7 +339,7 @@ public class FunctionUtils {
 
         retryTemplate.setRetryPolicy(new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true));
         retryTemplate.setThrowLastExceptionOnExhausted(true);
-        return retryTemplate.execute(callback);
+        return Unchecked.supplier(() -> retryTemplate.execute(callback)).get();
     }
 
     /**

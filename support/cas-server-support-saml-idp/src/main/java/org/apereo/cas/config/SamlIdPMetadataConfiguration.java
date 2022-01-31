@@ -96,7 +96,7 @@ public class SamlIdPMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataController samlIdPMetadataController(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier("samlIdPMetadataGenerator")
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,

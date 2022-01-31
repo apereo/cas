@@ -39,7 +39,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(
             servicesManager,

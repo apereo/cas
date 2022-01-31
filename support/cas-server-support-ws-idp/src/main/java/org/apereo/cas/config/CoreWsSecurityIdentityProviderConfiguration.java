@@ -86,7 +86,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceSelectionStrategy")
         public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -117,7 +117,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         public Service wsFederationCallbackService(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
             return webApplicationServiceFactory
                 .createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
@@ -163,7 +163,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "wsFederationTicketValidator")
         public TicketValidator wsFederationTicketValidator(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
@@ -184,7 +184,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
         public WSFederationRequestConfigurationContext wsFederationConfigurationContext(
             @Qualifier("wsFederationRelyingPartyTokenProducer")
             final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer,
-            @Qualifier("noRedirectHttpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_NO_REDIRECT)
             final HttpClient httpClient,
             @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy,
@@ -204,7 +204,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("wsFederationTicketValidator")
             final TicketValidator wsFederationTicketValidator,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties) {
             return WSFederationRequestConfigurationContext.builder()

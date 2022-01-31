@@ -158,7 +158,7 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
         val rootDir = new File(gitDir, "svc-cfg");
         val clientDir = new File(rootDir, RegexRegisteredService.FRIENDLY_NAME);
-        val svc2FileName = svc2.getName() + "-" + svc2.getId() + ".json";
+        val svc2FileName = svc2.getName() + '-' + svc2.getId() + ".json";
         val svc2File = new File(clientDir, svc2FileName);
         val anotherRootDir = new File(gitDir, "svc-cfg2");
         FileUtils.copyFile(svc2File, new File(gitDir, svc2FileName));

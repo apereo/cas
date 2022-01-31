@@ -10,9 +10,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -45,14 +45,7 @@ public class DynamoDbCasEventsFacilitator {
 
     private final DynamoDbClient amazonDynamoDBClient;
 
-    /**
-     * Build table attribute values map.
-     *
-     * @param record the record
-     * @return the map
-     */
-    @SneakyThrows
-    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final CasEvent record) {
+    private static Map<String, AttributeValue> buildTableAttributeValuesMap(final CasEvent record) throws Exception {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(record.getPrincipalId()).build());
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
@@ -64,8 +57,7 @@ public class DynamoDbCasEventsFacilitator {
         return values;
     }
 
-    @SneakyThrows
-    private static CasEvent extractAttributeValuesFrom(final Map<String, AttributeValue> item) {
+    private static CasEvent extractAttributeValuesFrom(final Map<String, AttributeValue> item) throws Exception {
         val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
         val id = Long.valueOf(item.get(ColumnNames.ID.getColumnName()).n());
         val type = item.get(ColumnNames.TYPE.getColumnName()).s();
@@ -80,9 +72,9 @@ public class DynamoDbCasEventsFacilitator {
      * Create tables.
      *
      * @param deleteTables the delete tables
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    public void createTable(final boolean deleteTables) {
+    public void createTable(final boolean deleteTables) throws Exception {
         DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables,
             List.of(AttributeDefinition.builder().attributeName(ColumnNames.ID.getColumnName()).attributeType(ScalarAttributeType.N).build()),
@@ -94,8 +86,9 @@ public class DynamoDbCasEventsFacilitator {
      *
      * @param record the record
      * @return the cas event
+     * @throws Exception the exception
      */
-    public CasEvent save(final CasEvent record) {
+    public CasEvent save(final CasEvent record) throws Exception {
         val values = buildTableAttributeValuesMap(record);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, record);
@@ -110,8 +103,10 @@ public class DynamoDbCasEventsFacilitator {
 
     /**
      * Delete all.
+     *
+     * @throws Exception the exception
      */
-    public void deleteAll() {
+    public void deleteAll() throws Exception {
         createTable(true);
     }
 
@@ -199,7 +194,7 @@ public class DynamoDbCasEventsFacilitator {
      * @return the events of type for principal
      */
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
-                                                                      final ZonedDateTime dateTime) {
+                                                                  final ZonedDateTime dateTime) {
         val query = List.of(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.TYPE.getColumnName())
@@ -272,12 +267,11 @@ public class DynamoDbCasEventsFacilitator {
         private final String columnName;
     }
 
-    @SneakyThrows
     private Stream<CasEvent> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
-                dynamoDbProperties.getTableName(),
-                queries,
-                DynamoDbCasEventsFacilitator::extractAttributeValuesFrom);
+            dynamoDbProperties.getTableName(),
+            queries,
+            Unchecked.function(DynamoDbCasEventsFacilitator::extractAttributeValuesFrom));
     }
 
 }

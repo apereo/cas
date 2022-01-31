@@ -91,7 +91,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
-        public static class RestfulServiceRegistryTestConfiguration {
+    public static class RestfulServiceRegistryTestConfiguration {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;

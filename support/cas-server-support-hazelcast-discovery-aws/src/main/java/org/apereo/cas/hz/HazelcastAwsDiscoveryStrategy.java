@@ -42,8 +42,8 @@ public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy
         }
         if (aws.getPort() > 0) {
             properties.put(
-                    HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT,
-                    Integer.toString(aws.getPort()));
+                HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT,
+                Integer.toString(aws.getPort()));
         }
         if (StringUtils.hasText(aws.getRegion())) {
             properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_REGION, aws.getRegion());

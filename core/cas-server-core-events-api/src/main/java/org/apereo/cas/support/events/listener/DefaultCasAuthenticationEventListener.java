@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 /**
@@ -33,6 +34,7 @@ import java.time.Instant;
 @Slf4j
 public class DefaultCasAuthenticationEventListener implements DefaultCasEventListener {
 
+    @NotNull
     private final CasEventRepository casEventRepository;
 
     private static CasEvent prepareCasEvent(final AbstractCasEvent event) {
@@ -56,54 +58,44 @@ public class DefaultCasAuthenticationEventListener implements DefaultCasEventLis
     }
 
     @Override
-    public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
-        if (this.casEventRepository != null) {
-            val dto = prepareCasEvent(event);
-            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
-            dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-            this.casEventRepository.save(dto);
-        }
+    public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) throws Exception {
+        val dto = prepareCasEvent(event);
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        this.casEventRepository.save(dto);
     }
 
     @Override
-    public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) {
-        if (this.casEventRepository != null) {
-            val dto = prepareCasEvent(event);
-            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-            dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
-            dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-            this.casEventRepository.save(dto);
-        }
+    public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) throws Exception {
+        val dto = prepareCasEvent(event);
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.putEventId(MessageSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
+        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        this.casEventRepository.save(dto);
     }
 
     @Override
-    public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) {
-        if (this.casEventRepository != null) {
-            val dto = prepareCasEvent(event);
-            dto.setPrincipalId(event.getCredential().getId());
-            dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
-            this.casEventRepository.save(dto);
-        }
+    public void handleCasAuthenticationTransactionFailureEvent(final CasAuthenticationTransactionFailureEvent event) throws Exception {
+        val dto = prepareCasEvent(event);
+        dto.setPrincipalId(event.getCredential().getId());
+        dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+        this.casEventRepository.save(dto);
     }
 
     @Override
-    public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) {
-        if (this.casEventRepository != null) {
-            val dto = prepareCasEvent(event);
-            dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-            dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
-            this.casEventRepository.save(dto);
-        }
+    public void handleCasAuthenticationPolicyFailureEvent(final CasAuthenticationPolicyFailureEvent event) throws Exception {
+        val dto = prepareCasEvent(event);
+        dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
+        dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
+        this.casEventRepository.save(dto);
     }
 
     @Override
-    public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) {
-        if (this.casEventRepository != null) {
-            val dto = prepareCasEvent(event);
-            dto.putEventId(event.getService().getName());
-            dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-            this.casEventRepository.save(dto);
-        }
+    public void handleCasRiskyAuthenticationDetectedEvent(final CasRiskyAuthenticationDetectedEvent event) throws Exception {
+        val dto = prepareCasEvent(event);
+        dto.putEventId(event.getService().getName());
+        dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
+        this.casEventRepository.save(dto);
     }
 }

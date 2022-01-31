@@ -12,6 +12,7 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -45,14 +46,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private final CommunicationsManager communicationsManager;
 
-    private final CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
+    private final TicketFactory ticketFactory;
 
     private final CasSimpleMultifactorAuthenticationProperties properties;
 
     private final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
     private final BucketConsumer bucketConsumer;
-    
+
     /**
      * Send a SMS.
      *
@@ -185,8 +186,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             .orElseGet(() -> {
                 WebUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
                 val service = WebUtils.getService(requestContext);
-                val token = ticketFactory.create(service,
-                    CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+                val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+                val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
                 LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
                 return token;
             });

@@ -20,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 public class GroovyCasEventRepositoryFilterTests extends InMemoryCasEventRepositoryTests {
 
     @TestConfiguration(value = "GroovyCasEventRepositoryFilterTestConfiguration", proxyBeanMethods = false)
-        public static class GroovyCasEventRepositoryFilterTestConfiguration {
+    public static class GroovyCasEventRepositoryFilterTestConfiguration {
 
         @Bean
         public CasEventRepositoryFilter casEventRepositoryFilter() {
