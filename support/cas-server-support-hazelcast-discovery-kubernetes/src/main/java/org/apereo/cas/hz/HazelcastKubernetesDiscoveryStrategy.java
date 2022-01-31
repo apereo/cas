@@ -32,7 +32,9 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
             properties.put(KubernetesProperties.SERVICE_DNS.key(), kube.getServiceDns());
         }
         if (kube.getServiceDnsTimeout() > 0) {
-            properties.put(KubernetesProperties.SERVICE_DNS_TIMEOUT.key(), kube.getServiceDnsTimeout());
+            properties.put(
+                    KubernetesProperties.SERVICE_DNS_TIMEOUT.key(),
+                    Integer.toString(kube.getServiceDnsTimeout()));
         }
         if (StringUtils.hasText(kube.getServiceName())) {
             properties.put(KubernetesProperties.SERVICE_NAME.key(), kube.getServiceName());
@@ -55,7 +57,9 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
         properties.put(KubernetesProperties.RESOLVE_NOT_READY_ADDRESSES.key(), kube.isResolveNotReadyAddresses());
         properties.put(KubernetesProperties.USE_NODE_NAME_AS_EXTERNAL_ADDRESS.key(), kube.isUseNodeNameAsExternalAddress());
         if (kube.getApiRetries() > 0) {
-            properties.put(KubernetesProperties.KUBERNETES_API_RETIRES.key(), kube.getApiRetries());
+            properties.put(
+                    KubernetesProperties.KUBERNETES_API_RETIRES.key(),
+                    Integer.toString(kube.getApiRetries()));
         }
 
         if (StringUtils.hasText(kube.getKubernetesMaster())) {
@@ -68,7 +72,9 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
             properties.put(KubernetesProperties.KUBERNETES_CA_CERTIFICATE.key(), kube.getCaCertificate());
         }
         if (kube.getServicePort() > 0) {
-            properties.put(KubernetesProperties.SERVICE_PORT.key(), kube.getServicePort());
+            properties.put(
+                    KubernetesProperties.SERVICE_PORT.key(),
+                    Integer.toString(kube.getServicePort()));
         }
         return Optional.of(new DiscoveryStrategyConfig(new HazelcastKubernetesDiscoveryStrategyFactory(), properties));
     }
