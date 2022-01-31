@@ -90,6 +90,27 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
     }
 
     @Test
+    public void verifyExpiredTgt() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCode(principal, service);
+        code.getTicketGrantingTicket().markTicketExpired();
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
+    }
+
+    @Test
     public void verifyUnknownService() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "unknown.org/abc");

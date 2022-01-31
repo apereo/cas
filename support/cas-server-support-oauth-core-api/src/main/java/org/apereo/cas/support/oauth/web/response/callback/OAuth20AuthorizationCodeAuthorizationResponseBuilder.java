@@ -50,6 +50,11 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         configurationContext.getTicketRegistry().addTicket(code);
+        val tgt = holder.getTicketGrantingTicket();
+        if (tgt != null) {
+            LOGGER.debug("Updating parent ticket-granting-ticket [{}]", tgt);
+            configurationContext.getTicketRegistry().updateTicket(tgt);
+        }
         return buildCallbackViewViaRedirectUri(webContext, clientId, authentication, code);
     }
 

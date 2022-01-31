@@ -58,6 +58,10 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
+        val tgt = token.getTicketGrantingTicket();
+        if (tgt == null || tgt.isExpired()) {
+            throw new InvalidTicketException(getOAuthParameter(request));
+        }
         val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
