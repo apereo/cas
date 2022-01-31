@@ -56,7 +56,8 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
 
         val props = new Properties();
         props.put("serviceName", dnsProvider.getServiceName());
-        props.put("servicePort", dnsProvider.getServicePort());
+        props.put("servicePort",
+                Integer.toString(dnsProvider.getServicePort()));
         memberAddressProviderConfig.setImplementation(new DockerDNSRRMemberAddressProvider(props));
 
         val properties = new HashMap<String, Comparable>();
@@ -91,7 +92,9 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
             properties.put("skip-verify-ssl", memberProvider.isSkipVerifySsl());
         }
         if (memberProvider.getHazelcastPeerPort() > 0) {
-            properties.put("hazelcast-peer-port", memberProvider.getHazelcastPeerPort());
+            properties.put(
+                    "hazelcast-peer-port",
+                    Integer.toString(memberProvider.getHazelcastPeerPort()));
         }
         val cfg = new DiscoveryStrategyConfig(new DockerSwarmDiscoveryStrategyFactory(), properties);
         try {

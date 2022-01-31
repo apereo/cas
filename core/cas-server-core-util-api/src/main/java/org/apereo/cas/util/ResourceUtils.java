@@ -89,6 +89,8 @@ public class ResourceUtils {
     /**
      * Does resource exist?
      *
+     * On Windows, reading one byte from a directory does not return length greater than zero so an explicit directory
+     * check is needed.
      * @param res the res
      * @return true/false
      */
@@ -97,6 +99,9 @@ public class ResourceUtils {
             return false;
         }
         try {
+            if (res.isFile() && FileUtils.isDirectory(res.getFile())) {
+                return true;
+            }
             IOUtils.read(res.getInputStream(), new byte[1]);
             return res.contentLength() > 0;
         } catch (final FileNotFoundException e) {
