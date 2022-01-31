@@ -190,11 +190,11 @@ public class EhcacheTicketRegistryConfiguration {
             }
             ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
         });
-
         manager.initializeCaches();
         LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
-        return new EhCacheTicketRegistry(ticketCatalog, ehCacheManager,
-            CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+        val registry = new EhCacheTicketRegistry(ticketCatalog, ehCacheManager);
+        registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+        return registry;
     }
 
     /**

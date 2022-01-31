@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
     @Test
-    public void verifyAccessTokenResponseAsCode() {
+    public void verifyAccessTokenResponseAsCode() throws Exception {
         val token = OAuth20TokenGeneratedResult.builder()
             .accessToken(getAccessToken())
             .refreshToken(getRefreshToken())

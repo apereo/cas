@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 

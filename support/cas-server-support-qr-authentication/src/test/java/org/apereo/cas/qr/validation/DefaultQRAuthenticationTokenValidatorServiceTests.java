@@ -81,7 +81,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyExpiredJwt() {
+    public void verifyExpiredJwt() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -103,7 +103,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadSubject() {
+    public void verifyBadSubject() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -125,7 +125,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadIssuer() {
+    public void verifyBadIssuer() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -148,7 +148,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyUnauhzDevice() {
+    public void verifyUnauhzDevice() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val deviceId = UUID.randomUUID().toString();
@@ -172,7 +172,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifySuccess() {
+    public void verifySuccess() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -199,7 +199,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadDeviceId() {
+    public void verifyBadDeviceId() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 

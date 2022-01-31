@@ -28,7 +28,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     private final PublisherIdentifier id;
 
     @Override
-    public void addTicketInternal(final @NonNull Ticket ticket) {
+    public void addTicketInternal(final @NonNull Ticket ticket) throws Exception {
         super.addTicketInternal(ticket);
         LOGGER.trace("Publishing add command for id [{}] and ticket [{}]", id, ticket.getId());
         ticketPublisher.publishMessageToQueue(new AddTicketMessageQueueCommand(id, ticket));
@@ -50,7 +50,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         val result = super.updateTicket(ticket);
         LOGGER.trace("Publishing update command for id [{}] and ticket [{}]", id, ticket.getId());
         ticketPublisher.publishMessageToQueue(new UpdateTicketMessageQueueCommand(id, ticket));

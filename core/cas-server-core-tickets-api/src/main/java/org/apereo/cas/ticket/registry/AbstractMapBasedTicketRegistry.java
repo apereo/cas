@@ -23,17 +23,12 @@ import java.util.function.Predicate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
 
-    /**
-     * Creates a new, empty registry with the cipher.
-     *
-     * @param cipherExecutor the cipher executor
-     */
     protected AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor) {
         setCipherExecutor(cipherExecutor);
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
         LOGGER.debug("Putting ticket [{}] in registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
@@ -79,7 +74,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         LOGGER.trace("Updating ticket [{}] in registry...", ticket.getId());
         addTicket(ticket);
         return ticket;

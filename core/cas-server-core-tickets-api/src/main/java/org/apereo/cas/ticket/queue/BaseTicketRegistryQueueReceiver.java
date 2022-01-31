@@ -25,8 +25,9 @@ public abstract class BaseTicketRegistryQueueReceiver {
      * Receive message from queue and execute command.
      *
      * @param command the command
+     * @throws Exception the exception
      */
-    public void receive(final BaseMessageQueueCommand command) {
+    public void receive(final BaseMessageQueueCommand command) throws Exception {
         if (!command.getId().equals(getTicketRegistryId())) {
             LOGGER.debug("Received message from ticket registry id [{}]. Executing command [{}]",
                 command.getId(), command.getClass().getSimpleName());

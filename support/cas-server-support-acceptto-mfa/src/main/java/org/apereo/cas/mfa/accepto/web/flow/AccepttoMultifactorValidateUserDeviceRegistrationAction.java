@@ -5,6 +5,7 @@ import org.apereo.cas.mfa.accepto.AccepttoApiUtils;
 import org.apereo.cas.mfa.accepto.AccepttoEmailCredential;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

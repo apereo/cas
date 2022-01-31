@@ -95,7 +95,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyLargeDataset() {
+    public void verifyLargeDataset() throws Exception {
         val ticketGrantingTickets = Stream.generate(() -> {
             var ticketGrantingTicketId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
@@ -114,7 +114,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifySecurityTokenTicket() {
+    public void verifySecurityTokenTicket() throws Exception {
         val securityTokenTicketFactory = new DefaultSecurityTokenTicketFactory(
             new DefaultUniqueTicketIdGenerator(),
             neverExpiresExpirationPolicyBuilder());
@@ -133,7 +133,7 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    public void verifyLogoutCascades() {
+    public void verifyLogoutCascades() throws Exception {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),

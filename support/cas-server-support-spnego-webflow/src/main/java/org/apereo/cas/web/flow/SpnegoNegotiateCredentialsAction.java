@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -55,11 +56,10 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
                     ticket instanceof OAuth20AccessToken
                         && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
-                accessTokensByCode.forEach(ticket -> {
+                accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
                     LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
                     getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
-                });
-
+                }));
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }

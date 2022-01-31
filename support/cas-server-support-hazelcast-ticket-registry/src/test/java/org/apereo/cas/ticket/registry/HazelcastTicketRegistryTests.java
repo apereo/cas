@@ -74,7 +74,7 @@ public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
         val registry = new HazelcastTicketRegistry(instance, catalog, 0);
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Exception {
                 registry.addTicket(ticket);
             }
         });

@@ -27,14 +27,14 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     private final Cache<String, Ticket> cache;
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         val encodedTicket = encodeTicket(ticket);
         this.cache.put(encodedTicket.getId(), encodedTicket);
         return ticket;
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) throws Exception {
         val ticket = encodeTicket(ticketToAdd);
         val expirationPolicy = ticketToAdd.getExpirationPolicy();
         val idleTime = expirationPolicy.getTimeToIdle() <= 0

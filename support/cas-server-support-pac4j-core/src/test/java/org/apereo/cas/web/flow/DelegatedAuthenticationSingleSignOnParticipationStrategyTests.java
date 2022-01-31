@@ -109,7 +109,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    public void verifySsoWithMismatchedClient() {
+    public void verifySsoWithMismatchedClient() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -144,7 +144,7 @@ public class DelegatedAuthenticationSingleSignOnParticipationStrategyTests {
     }
 
     @Test
-    public void verifySsoWithMissingClientAndExclusive() {
+    public void verifySsoWithMissingClientAndExclusive() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

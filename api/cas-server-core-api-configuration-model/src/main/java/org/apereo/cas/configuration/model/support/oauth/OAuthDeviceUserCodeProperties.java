@@ -26,7 +26,7 @@ public class OAuthDeviceUserCodeProperties implements Serializable {
     private static final long serialVersionUID = -1232081675586528350L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT1M";

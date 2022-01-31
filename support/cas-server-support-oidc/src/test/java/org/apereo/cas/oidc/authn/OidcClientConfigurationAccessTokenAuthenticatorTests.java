@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class OidcClientConfigurationAccessTokenAuthenticatorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);
@@ -43,7 +43,7 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
     }
 
     @Test
-    public void verifyFailsOperation() {
+    public void verifyFailsOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         val auth = new OidcClientConfigurationAccessTokenAuthenticator(ticketRegistry, oidcAccessTokenJwtBuilder);

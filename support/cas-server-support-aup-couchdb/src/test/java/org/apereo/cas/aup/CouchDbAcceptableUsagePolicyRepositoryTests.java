@@ -76,7 +76,7 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         assertNotNull(acceptableUsagePolicyRepository);
         val attributes = CollectionUtils.<String, List<Object>>wrap("aupAccepted", List.of("false"),
             "email", List.of("CASuser@example.org"));

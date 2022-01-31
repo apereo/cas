@@ -58,7 +58,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     private Ignite ignite;
 
     @Override
-    public void addTicketInternal(final Ticket ticket) {
+    public void addTicketInternal(final Ticket ticket) throws Exception {
         val encodedTicket = encodeTicket(ticket);
         val metadata = this.ticketCatalog.find(ticket);
         val cache = getIgniteCacheFromMetadata(metadata);
@@ -127,7 +127,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }

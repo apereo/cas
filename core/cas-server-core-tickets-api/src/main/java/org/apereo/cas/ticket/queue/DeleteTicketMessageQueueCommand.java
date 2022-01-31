@@ -26,13 +26,14 @@ public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
     private String ticketId;
 
     @JsonCreator
-    public DeleteTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id, @JsonProperty("ticketId") final String ticketId) {
+    public DeleteTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id,
+                                           @JsonProperty("ticketId") final String ticketId) {
         super(id);
         this.ticketId = ticketId;
     }
 
     @Override
-    public void execute(final TicketRegistry registry) {
+    public void execute(final TicketRegistry registry) throws Exception {
         LOGGER.debug("Executing queue command on ticket registry id [{}] to delete ticket [{}]", getId().getId(), ticketId);
         registry.deleteTicket(this.ticketId);
     }

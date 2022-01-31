@@ -66,7 +66,7 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    public void verifyFails() {
+    public void verifyFails() throws Exception {
         val couchDb = mock(TicketRepository.class);
         doThrow(new DbAccessException()).when(couchDb).update(any());
         val registry = new CouchDbTicketRegistry(couchDb, 1);

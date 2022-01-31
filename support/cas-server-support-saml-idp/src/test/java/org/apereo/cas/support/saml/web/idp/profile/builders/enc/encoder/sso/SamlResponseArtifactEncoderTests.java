@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

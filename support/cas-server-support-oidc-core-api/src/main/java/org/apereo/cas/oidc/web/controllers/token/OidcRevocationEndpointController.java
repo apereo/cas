@@ -35,7 +35,7 @@ public class OidcRevocationEndpointController extends OAuth20RevocationEndpointC
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request,
-                                      final HttpServletResponse response) {
+                                      final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getOidcRequestSupport().isValidIssuerForEndpoint(webContext, OidcConstants.REVOCATION_URL)) {
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.NOT_FOUND);

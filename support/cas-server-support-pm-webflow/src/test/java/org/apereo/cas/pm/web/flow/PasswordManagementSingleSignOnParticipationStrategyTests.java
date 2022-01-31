@@ -55,7 +55,7 @@ public class PasswordManagementSingleSignOnParticipationStrategyTests extends Ba
     }
 
     @Test
-    public void verifyStrategyWithAValidPmRequest() {
+    public void verifyStrategyWithAValidPmRequest() throws Exception {
         val ctx = new MockRequestContext();
         val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);

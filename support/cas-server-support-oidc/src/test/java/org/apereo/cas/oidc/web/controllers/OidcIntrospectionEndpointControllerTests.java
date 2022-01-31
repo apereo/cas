@@ -34,7 +34,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
     protected OidcIntrospectionEndpointController oidcIntrospectionEndpointController;
 
     @Test
-    public void verifyOperationWithValidTicket() {
+    public void verifyOperationWithValidTicket() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 
@@ -63,7 +63,7 @@ public class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests 
     }
 
     @Test
-    public void verifyOperationWithInvalidTicket() {
+    public void verifyOperationWithInvalidTicket() throws Exception {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
 

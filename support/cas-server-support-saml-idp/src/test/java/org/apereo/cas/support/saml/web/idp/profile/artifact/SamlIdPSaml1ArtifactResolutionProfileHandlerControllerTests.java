@@ -63,7 +63,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
 
     @Test
     @Order(1)
-    public void verifyOK() {
+    public void verifyOK() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");

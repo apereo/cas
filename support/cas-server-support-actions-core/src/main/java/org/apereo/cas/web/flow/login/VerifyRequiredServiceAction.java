@@ -8,6 +8,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;

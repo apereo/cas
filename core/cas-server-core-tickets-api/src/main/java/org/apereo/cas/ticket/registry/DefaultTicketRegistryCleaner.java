@@ -10,6 +10,7 @@ import org.apereo.cas.util.lock.LockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -44,7 +45,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     @Override
     public int cleanTicket(final Ticket ticket) {
-        return this.lockRepository.execute(ticket.getId(), () -> {
+        return this.lockRepository.execute(ticket.getId(), Unchecked.supplier(() -> {
             if (ticket instanceof TicketGrantingTicket) {
                 LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                 logoutManager.performLogout(SingleLogoutExecutionRequest.builder()
@@ -53,7 +54,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
             }
             LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
             return ticketRegistry.deleteTicket(ticket);
-        }).orElseThrow();
+        })).orElseThrow();
     }
 
     /**

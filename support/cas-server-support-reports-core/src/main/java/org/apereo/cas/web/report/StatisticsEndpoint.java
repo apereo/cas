@@ -8,6 +8,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -59,7 +60,7 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
         val expiredSts = new AtomicInteger();
 
         val tickets = this.centralAuthenticationService.getTickets(ticket -> true);
-        tickets.forEach(ticket -> {
+        tickets.forEach(Unchecked.consumer(ticket -> {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
                     this.centralAuthenticationService.deleteTicket(ticket.getId());
@@ -75,7 +76,7 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
                     unexpiredTgts.incrementAndGet();
                 }
             }
-        });
+        }));
 
         model.put("unexpiredTgts", unexpiredTgts);
         model.put("unexpiredSts", unexpiredSts);

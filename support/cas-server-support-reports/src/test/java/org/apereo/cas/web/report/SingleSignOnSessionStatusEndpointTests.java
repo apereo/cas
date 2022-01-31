@@ -43,7 +43,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

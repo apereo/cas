@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

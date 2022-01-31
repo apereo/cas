@@ -7,7 +7,7 @@ category: Protocols
 
 # PAR - OpenID Connect Authentication
 
-Pushed Authorization Request (PAR) allows clients to push the payload of an OIDC authorization request to CAS via a direct request. The result of this push provides clients with a request URI that is used as reference to the data in a subsequent call to the authorization endpoint via the user-agent.
+[Pushed Authorization Request (PAR)](https://tools.ietf.org/html/draft-ietf-oauth-par) allows clients to push the payload of an OIDC authorization request to CAS via a direct request. The result of this push provides clients with a request URI that is used as reference to the data in a subsequent call to the authorization endpoint via the user-agent.
 
 PAR fosters security by providing clients a simple means for a confidential and integrity protected authorization request. Clients requiring an even higher security level, especially cryptographically confirmed non-repudiation, are able to use JWT-based request objects in conduction with a pushed authorization request.
 

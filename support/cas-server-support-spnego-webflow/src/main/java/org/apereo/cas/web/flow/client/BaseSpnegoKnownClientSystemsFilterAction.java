@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AllArgsConstructor;

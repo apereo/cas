@@ -13,6 +13,7 @@ import org.apereo.cas.token.JwtBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 
 import java.util.Map;
@@ -56,7 +57,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
                                                               final OAuth20AccessTokenResponseResult result) {
         val model = super.getAccessTokenResponseModel(webContext, result);
         val accessToken = result.getGeneratedToken().getAccessToken();
-        accessToken.ifPresent(token -> {
+        accessToken.ifPresent(Unchecked.consumer(token -> {
             val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
             val idToken = idTokenGenerator.generate(webContext, accessToken.get(),
                 result.getAccessTokenTimeout(), result.getResponseType(),
@@ -64,7 +65,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
 
             LOGGER.debug("Generated ID token [{}]", idToken);
             model.put(OidcConstants.ID_TOKEN, idToken);
-        });
+        }));
         return model;
     }
 }

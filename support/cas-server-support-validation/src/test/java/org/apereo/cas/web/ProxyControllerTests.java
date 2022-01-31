@@ -63,7 +63,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyExistingPGT() {
+    public void verifyExistingPGT() throws Exception {
         val ticket = new ProxyGrantingTicketImpl(
             WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
@@ -78,7 +78,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     }
 
     @Test
-    public void verifyNotAuthorizedPGT() {
+    public void verifyNotAuthorizedPGT() throws Exception {
         val ticket = new ProxyGrantingTicketImpl(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);

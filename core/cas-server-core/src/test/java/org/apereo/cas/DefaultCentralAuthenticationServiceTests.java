@@ -73,12 +73,12 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyDestroyTicketGrantingTicketWithNonExistingTicket() {
+    public void verifyDestroyTicketGrantingTicketWithNonExistingTicket() throws Exception {
         getCentralAuthenticationService().deleteTicket("test");
     }
 
     @Test
-    public void verifyDestroyTicketGrantingTicketWithValidTicket() {
+    public void verifyDestroyTicketGrantingTicketWithValidTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().deleteTicket(ticketId.getId());
@@ -103,7 +103,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Exception {
                 getCentralAuthenticationService().deleteTicket(serviceTicketId.getId());
             }
         });
@@ -183,7 +183,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyGrantServiceTicketWithInvalidTicketGrantingTicket() {
+    public void verifyGrantServiceTicketWithInvalidTicketGrantingTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
 
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -215,7 +215,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyDelegateTicketGrantingTicketWithBadServiceTicket() {
+    public void verifyDelegateTicketGrantingTicketWithBadServiceTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
 
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -290,7 +290,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyValidateServiceTicketWithInvalidServiceTicket() {
+    public void verifyValidateServiceTicketWithInvalidServiceTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
 
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -302,7 +302,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyValidateServiceTicketWithInvalidProxy() {
+    public void verifyValidateServiceTicketWithInvalidProxy() throws Exception {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
 
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -346,7 +346,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     }
 
     @Test
-    public void verifyTicketState() {
+    public void verifyTicketState() throws Exception {
         val svc = getService("testDefault");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -500,7 +500,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
      * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.
      */
     @Test
-    public void verifyDestroyRemoteRegistry() throws AbstractTicketException, AuthenticationException {
+    public void verifyDestroyRemoteRegistry() throws Exception {
         val registry = new MockOnlyOneTicketRegistry();
         val expirationPolicy = mock(ExpirationPolicy.class);
         when(expirationPolicy.getClock()).thenReturn(Clock.systemUTC());

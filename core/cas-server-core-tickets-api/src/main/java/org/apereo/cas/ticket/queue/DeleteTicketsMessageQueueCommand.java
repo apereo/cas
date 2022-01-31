@@ -22,7 +22,6 @@ public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
     @JsonCreator
     public DeleteTicketsMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id) {
         super(id);
-
     }
 
     @Override

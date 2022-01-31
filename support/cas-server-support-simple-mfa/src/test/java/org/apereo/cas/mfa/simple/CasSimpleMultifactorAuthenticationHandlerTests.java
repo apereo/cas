@@ -82,7 +82,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsPrincipal() {
+    public void verifyFailsPrincipal() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -102,7 +102,7 @@ public class CasSimpleMultifactorAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsExpiredToken() {
+    public void verifyFailsExpiredToken() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

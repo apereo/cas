@@ -18,6 +18,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,9 +80,9 @@ public class EhCacheHealthIndicatorTests {
          * above 10% free WARN threshold
          */
         IntStream.range(0, 95)
-            .forEach(i -> this.ticketRegistry.addTicket(
+            .forEach(Unchecked.intConsumer(i -> this.ticketRegistry.addTicket(
                 new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
-                new MockTicketGrantingTicket("test"))));
+                new MockTicketGrantingTicket("test")))));
 
         status = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, status.getStatus());
@@ -90,11 +91,11 @@ public class EhCacheHealthIndicatorTests {
          * Exceed the capacity and force evictions
          * which should report WARN status
          */
-        IntStream.range(95, 110).forEach(i -> {
+        IntStream.range(95, 110).forEach(Unchecked.intConsumer(i -> {
             val st = new MockServiceTicket("ST-" + i, RegisteredServiceTestUtils.getService(),
                 new MockTicketGrantingTicket("test"));
             this.ticketRegistry.addTicket(st);
-        });
+        }));
 
         status = monitor.health();
         assertEquals("WARN", status.getStatus().getCode());

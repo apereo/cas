@@ -120,7 +120,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
     }
 
     @Test
-    public void verifySsoWithMismatchedHandlers() {
+    public void verifySsoWithMismatchedHandlers() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -152,7 +152,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
     }
 
     @Test
-    public void verifySsoWithHandlers() {
+    public void verifySsoWithHandlers() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -184,7 +184,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
     }
 
     @Test
-    public void verifySsoWithExcludedHandlers() {
+    public void verifySsoWithExcludedHandlers() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -19,7 +20,7 @@ public class GoogleAuthenticatorDeleteAccountAction extends BaseCasWebflowAction
     private final OneTimeTokenCredentialRepository repository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         val id = requestContext.getRequestParameters()
             .getRequired(OneTimeTokenAccountConfirmSelectionRegistrationAction.REQUEST_PARAMETER_ACCOUNT_ID, Long.class);
         repository.delete(id);

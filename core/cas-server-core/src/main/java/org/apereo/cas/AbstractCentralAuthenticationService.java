@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -99,18 +100,18 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         resourceResolverName = AuditResourceResolvers.DESTROY_TICKET_RESOURCE_RESOLVER)
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
-    public int deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) throws Exception {
         return configurationContext.getTicketRegistry().deleteTicket(ticketId);
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         configurationContext.getTicketRegistry().updateTicket(ticket);
         return ticket;
     }
 
     @Override
-    public Ticket addTicket(final Ticket ticket) {
+    public Ticket addTicket(final Ticket ticket) throws Exception {
         configurationContext.getTicketRegistry().addTicket(ticket);
         return ticket;
     }
@@ -189,7 +190,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             throw new InvalidTicketException(id);
         }
         if (ticket.isExpired()) {
-            deleteTicket(id);
+            FunctionUtils.doAndIgnore(s -> deleteTicket(id));
             LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
             throw new InvalidTicketException(id);
         }

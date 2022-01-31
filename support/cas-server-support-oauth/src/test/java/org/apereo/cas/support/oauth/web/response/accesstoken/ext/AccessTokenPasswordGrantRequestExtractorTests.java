@@ -30,7 +30,7 @@ public class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test
-    public void verifyNoProfile() {
+    public void verifyNoProfile() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.PASSWORD.getType());

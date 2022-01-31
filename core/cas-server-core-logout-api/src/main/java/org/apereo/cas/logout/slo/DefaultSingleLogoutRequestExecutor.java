@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
@@ -59,7 +58,7 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);
             centralAuthenticationService.deleteTicket(ticketId);
             return logoutRequests;
-        } catch (final InvalidTicketException e) {
+        } catch (final Exception e) {
             val msg = String.format("Ticket-granting ticket [%s] cannot be found in the ticket registry.", ticketId);
             LOGGER.debug(msg, e);
         } finally {

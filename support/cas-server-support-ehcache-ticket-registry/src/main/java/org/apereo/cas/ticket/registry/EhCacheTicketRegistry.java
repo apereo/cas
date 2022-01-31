@@ -4,8 +4,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.CacheManager;
@@ -13,6 +14,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,37 +36,23 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Deprecated(since = "6.2.0")
+@RequiredArgsConstructor
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
     private final TicketCatalog ticketCatalog;
 
     private final CacheManager cacheManager;
 
-    /**
-     * Instantiates a new EhCache ticket registry.
-     *
-     * @param ticketCatalog the ticket catalog
-     * @param cacheManager  the cache manager
-     * @param cipher        the cipher
-     */
-    public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager, final CipherExecutor cipher) {
-        this.ticketCatalog = ticketCatalog;
-        this.cacheManager = cacheManager;
-        setCipherExecutor(cipher);
-        LOGGER.info("Setting up Ehcache Ticket Registry...");
-    }
-
     private static Map<Object, Element> getAllUnexpired(final Ehcache map) {
-        try {
-            return map.getAll(map.getKeysWithExpiryCheck());
-        } catch (final Exception e) {
-            LoggingUtils.warn(LOGGER, e);
-            return new HashMap<>(0);
-        }
+        return FunctionUtils.doAndHandle(() -> map.getAll(map.getKeysWithExpiryCheck()),
+            (CheckedFunction<Throwable, Map<Object, Element>>) throwable -> {
+                LoggingUtils.warn(LOGGER, throwable);
+                return new HashMap<>(0);
+            }).get();
     }
 
     @Override
-    public void addTicketInternal(final Ticket ticketToAdd) {
+    public void addTicketInternal(final Ticket ticketToAdd) throws Exception {
         val metadata = this.ticketCatalog.find(ticketToAdd);
 
         val ticket = encodeTicket(ticketToAdd);
@@ -150,7 +138,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }

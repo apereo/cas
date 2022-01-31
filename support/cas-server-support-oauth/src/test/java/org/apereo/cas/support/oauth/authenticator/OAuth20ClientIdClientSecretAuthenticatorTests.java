@@ -69,7 +69,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithBadSecret() {
+        public void verifyAuthenticationWithBadSecret() throws Exception {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -83,7 +83,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithCodeChallengePkce() {
+        public void verifyAuthenticationWithCodeChallengePkce() throws Exception {
             val refreshToken = getRefreshToken(service);
             ticketRegistry.addTicket(refreshToken);
 
@@ -103,7 +103,7 @@ public class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        public void verifyAuthenticationWithGrantTypeRefreshToken() {
+        public void verifyAuthenticationWithGrantTypeRefreshToken() throws Exception {
             val refreshToken = getRefreshToken(serviceWithoutSecret);
             ticketRegistry.addTicket(refreshToken);
 

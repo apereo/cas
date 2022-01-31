@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

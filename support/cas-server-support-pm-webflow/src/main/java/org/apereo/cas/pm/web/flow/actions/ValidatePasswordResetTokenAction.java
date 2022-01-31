@@ -6,6 +6,7 @@ import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -93,7 +93,7 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyFailsOperation() {
+    public void verifyFailsOperation() throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 

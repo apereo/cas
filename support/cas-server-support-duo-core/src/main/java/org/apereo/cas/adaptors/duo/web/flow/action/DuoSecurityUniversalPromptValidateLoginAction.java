@@ -56,7 +56,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         val requestParameters = requestContext.getRequestParameters();
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
             val duoState = requestParameters.get(REQUEST_PARAMETER_STATE, String.class);

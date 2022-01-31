@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.util.LoggingUtils;
@@ -73,7 +72,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
             deviceUserCode.approveUserCode();
             getConfigurationContext().getTicketRegistry().updateTicket(deviceUserCode);
             return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
-        } catch (final InvalidTicketException e) {
+        } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
             return codeNotfound;
         }

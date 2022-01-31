@@ -3,6 +3,7 @@ package org.apereo.cas.qr.web.flow;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

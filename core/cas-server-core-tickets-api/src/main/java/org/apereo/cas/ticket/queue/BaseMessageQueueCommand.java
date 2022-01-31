@@ -33,7 +33,8 @@ public abstract class BaseMessageQueueCommand implements Serializable {
      * Execute.
      *
      * @param registry the registry
+     * @throws Exception the exception
      */
-    public void execute(final TicketRegistry registry) {
+    public void execute(final TicketRegistry registry) throws Exception {
     }
 }

@@ -25,11 +25,12 @@ public interface IdTokenGeneratorService {
      * @param grantType         the grant type
      * @param registeredService the registered service
      * @return the string
+     * @throws Exception the exception
      */
     String generate(WebContext webContext,
                     OAuth20AccessToken accessToken,
                     long timeoutInSeconds,
                     OAuth20ResponseTypes responseType,
                     OAuth20GrantTypes grantType,
-                    OAuthRegisteredService registeredService);
+                    OAuthRegisteredService registeredService) throws Exception;
 }

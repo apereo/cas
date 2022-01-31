@@ -130,14 +130,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) throws Exception {
         addTicket(ticket);
         return ticket;
     }
 
-    /**
-     * Stops the couchbase client.
-     */
     @Override
     public void destroy() {
         LOGGER.trace("Shutting down Couchbase");

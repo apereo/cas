@@ -37,7 +37,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
     @Override
-    public Ticket updateTicket(final Ticket ticketToUpdate) {
+    public Ticket updateTicket(final Ticket ticketToUpdate) throws Exception {
         val ticket = encodeTicket(ticketToUpdate);
         LOGGER.debug("Updating ticket [{}]", ticket);
         val clientFromPool = getClientFromPool();

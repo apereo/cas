@@ -3,6 +3,7 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 

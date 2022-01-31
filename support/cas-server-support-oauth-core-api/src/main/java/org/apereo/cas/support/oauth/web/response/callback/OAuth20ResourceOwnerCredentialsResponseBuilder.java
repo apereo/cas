@@ -29,7 +29,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
 
     @Override
     public ModelAndView build(final WebContext context, final String clientId,
-                              final AccessTokenRequestDataHolder holder) {
+                              final AccessTokenRequestDataHolder holder) throws Exception {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())

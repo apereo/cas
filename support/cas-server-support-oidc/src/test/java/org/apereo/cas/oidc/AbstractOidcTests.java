@@ -390,7 +390,7 @@ public abstract class AbstractOidcTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Exception {
         this.applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, casProperties,
@@ -428,15 +428,15 @@ public abstract class AbstractOidcTests {
         return claims;
     }
 
-    protected OAuth20AccessToken getAccessToken() {
+    protected OAuth20AccessToken getAccessToken() throws Exception {
         return getAccessToken(StringUtils.EMPTY, "clientId");
     }
 
-    protected OAuth20AccessToken getAccessToken(final String clientId) {
+    protected OAuth20AccessToken getAccessToken(final String clientId) throws Exception {
         return getAccessToken(StringUtils.EMPTY, clientId);
     }
 
-    protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) {
+    protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Exception {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         val code = addCode(principal, getOidcRegisteredService());
 
@@ -457,7 +457,7 @@ public abstract class AbstractOidcTests {
     }
 
     protected OAuth20Code addCode(final Principal principal,
-                                  final OAuthRegisteredService registeredService) {
+                                  final OAuthRegisteredService registeredService) throws Exception {
         val tgt = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();

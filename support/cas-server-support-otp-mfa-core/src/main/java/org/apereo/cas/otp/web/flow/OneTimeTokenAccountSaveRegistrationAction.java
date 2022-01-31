@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

@@ -149,7 +149,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    public void verifyFinishAuthenticationAuthzFailure() {
+    public void verifyFinishAuthenticationAuthzFailure() throws Exception {
         val request = new MockHttpServletRequest();
         request.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
@@ -381,7 +381,7 @@ public class DelegatedClientAuthenticationActionTests {
     }
 
     @Test
-    public void verifySsoAuthenticationUnauthz() {
+    public void verifySsoAuthenticationUnauthz() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

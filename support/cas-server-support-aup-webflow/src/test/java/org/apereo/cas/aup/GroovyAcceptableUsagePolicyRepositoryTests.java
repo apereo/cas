@@ -38,12 +38,12 @@ public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUs
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyRepositoryActionWithAdvancedConfig() {
+    public void verifyRepositoryActionWithAdvancedConfig() throws Exception {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("aupAccepted", "false"));
     }
 
     @Test
-    public void verifyPolicyTerms() {
+    public void verifyPolicyTerms() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -57,7 +57,7 @@ public class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUs
     }
 
     @Test
-    public void verifyPolicyTermsFails() {
+    public void verifyPolicyTermsFails() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));

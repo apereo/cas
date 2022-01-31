@@ -39,7 +39,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     private final CentralAuthenticationService centralAuthenticationService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val transientTicket = request.getParameter(PasswordManagementWebflowUtils.REQUEST_PARAMETER_NAME_PASSWORD_RESET_TOKEN);
 

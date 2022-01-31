@@ -24,6 +24,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -94,11 +95,12 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
      * @param casProperties             casProperties
      * @param service                   service from the flow scope
      * @return URL a user can use to start the password reset process
+     * @throws Exception the exception
      */
     protected String buildPasswordResetUrl(final String username,
                                            final PasswordManagementService passwordManagementService,
                                            final CasConfigurationProperties casProperties,
-                                           final WebApplicationService service) {
+                                           final WebApplicationService service) throws Exception {
 
         val query = PasswordManagementQuery.builder().username(username).build();
         val token = passwordManagementService.createToken(query);
@@ -134,7 +136,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined() && !communicationsManager.isSmsSenderDefined()) {
             return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);

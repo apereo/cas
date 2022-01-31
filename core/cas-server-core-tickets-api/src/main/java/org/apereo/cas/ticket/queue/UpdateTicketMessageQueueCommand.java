@@ -26,13 +26,14 @@ public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand {
     private Ticket ticket;
 
     @JsonCreator
-    public UpdateTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id, @JsonProperty("ticket") final Ticket ticket) {
+    public UpdateTicketMessageQueueCommand(@JsonProperty("id") final PublisherIdentifier id,
+                                           @JsonProperty("ticket") final Ticket ticket) {
         super(id);
         this.ticket = ticket;
     }
 
     @Override
-    public void execute(final TicketRegistry registry) {
+    public void execute(final TicketRegistry registry) throws Exception {
         LOGGER.debug("Executing queue command on ticket registry id [{}] to update ticket [{}]", getId().getId(), ticket);
         registry.updateTicket(ticket);
     }

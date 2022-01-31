@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;

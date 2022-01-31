@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @Tag("OIDC")
 public class OidcUserProfileDataCreatorTests extends AbstractOidcTests {
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val accessToken = getAccessToken();
         val data = oidcUserProfileDataCreator.createFrom(accessToken, context);

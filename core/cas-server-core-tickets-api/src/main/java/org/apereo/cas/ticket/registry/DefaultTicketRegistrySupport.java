@@ -68,7 +68,7 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     }
 
     @Override
-    public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
+    public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) throws Exception {
         if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
             val tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             if (tgt != null && !tgt.isExpired()) {

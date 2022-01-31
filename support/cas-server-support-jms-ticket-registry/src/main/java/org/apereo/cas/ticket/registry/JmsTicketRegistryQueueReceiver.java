@@ -19,7 +19,7 @@ public class JmsTicketRegistryQueueReceiver extends BaseTicketRegistryQueueRecei
 
     @JmsListener(destination = JmsTicketRegistryQueuePublisher.QUEUE_DESTINATION, containerFactory = "messageQueueTicketRegistryFactory")
     @Override
-    public void receive(final BaseMessageQueueCommand command) {
+    public void receive(final BaseMessageQueueCommand command) throws Exception {
         super.receive(command);
     }
 }

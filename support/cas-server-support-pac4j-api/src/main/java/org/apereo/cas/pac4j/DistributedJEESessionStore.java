@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -80,17 +81,17 @@ public class DistributedJEESessionStore implements SessionStore {
             LOGGER.warn("Object value [{}] assigned to [{}] is not serializable and may not be part of the ticket [{}]", value, key, sessionId);
         }
 
-        var ticket = getTransientSessionTicketForSession(context);
+        val ticket = getTransientSessionTicketForSession(context);
         if (value == null && ticket != null) {
             ticket.getProperties().remove(key);
-            this.centralAuthenticationService.updateTicket(ticket);
+            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.updateTicket(ticket));
         } else if (ticket == null) {
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-            ticket = transientFactory.create(sessionId, properties);
-            this.centralAuthenticationService.addTicket(ticket);
+            val created = transientFactory.create(sessionId, properties);
+            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.addTicket(created));
         } else {
             ticket.getProperties().putAll(properties);
-            this.centralAuthenticationService.updateTicket(ticket);
+            FunctionUtils.doAndIgnore(s -> this.centralAuthenticationService.updateTicket(ticket));
         }
     }
 
@@ -99,7 +100,7 @@ public class DistributedJEESessionStore implements SessionStore {
         val sessionId = fetchSessionIdFromContext(webContext);
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            this.centralAuthenticationService.deleteTicket(ticketId);
+            FunctionUtils.doAndIgnore(s -> centralAuthenticationService.deleteTicket(ticketId));
 
             val context = JEEContext.class.cast(webContext);
             cookieGenerator.removeCookie(context.getNativeResponse());

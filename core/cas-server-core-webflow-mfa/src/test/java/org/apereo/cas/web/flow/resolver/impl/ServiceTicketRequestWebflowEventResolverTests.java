@@ -45,7 +45,7 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyAttemptWithoutCredential() {
+    public void verifyAttemptWithoutCredential() throws Exception {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();
@@ -91,7 +91,7 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyServiceTicketRequestCreated() {
+    public void verifyServiceTicketRequestCreated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -114,7 +114,7 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyServiceTicketRequestPrincipalMismatch() {
+    public void verifyServiceTicketRequestPrincipalMismatch() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -136,7 +136,7 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyServiceTicketRequestFailsAuthN() {
+    public void verifyServiceTicketRequestFailsAuthN() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -159,7 +159,7 @@ public class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflo
     }
 
     @Test
-    public void verifyServiceTicketRequestWithRenew() {
+    public void verifyServiceTicketRequestWithRenew() throws Exception {
         val context = new MockRequestContext();
 
         val request = new MockHttpServletRequest();

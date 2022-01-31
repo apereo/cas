@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.authy.web.flow;
 
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.authy.api.Hash;

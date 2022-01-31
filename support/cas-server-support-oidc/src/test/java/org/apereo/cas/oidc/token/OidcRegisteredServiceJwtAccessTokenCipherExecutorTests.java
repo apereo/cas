@@ -39,7 +39,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
     }
 
     @Test
-    public void verifyNoSigningKey() {
+    public void verifyNoSigningKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getDefaultValue()));
@@ -53,7 +53,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
     }
 
     @Test
-    public void verifyEncKey() {
+    public void verifyEncKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
@@ -67,7 +67,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends Abst
     }
 
     @Test
-    public void verifyNoEncKey() {
+    public void verifyNoEncKey() throws Exception {
         val service = getOidcRegisteredService("whatever");
         service.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));

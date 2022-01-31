@@ -14,10 +14,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -46,7 +46,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected CipherExecutor cipherExecutor;
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticket) throws Exception {
         if (ticket != null && !ticket.isExpired()) {
             addTicketInternal(ticket);
         }
@@ -112,7 +112,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public int deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) throws Exception {
         if (StringUtils.isBlank(ticketId)) {
             LOGGER.trace("No ticket id is provided for deletion");
             return 0;
@@ -126,7 +126,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public int deleteTicket(final Ticket ticket) {
+    public int deleteTicket(final Ticket ticket) throws Exception {
         val count = new AtomicInteger(0);
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
@@ -158,8 +158,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * registry implementation.
      *
      * @param ticket the ticket
+     * @throws Exception the exception
      */
-    protected abstract void addTicketInternal(Ticket ticket);
+    protected abstract void addTicketInternal(Ticket ticket) throws Exception;
 
     /**
      * Delete tickets.
@@ -178,7 +179,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the total number of deleted tickets
      */
     protected int deleteTickets(final Stream<String> tickets) {
-        return tickets.mapToInt(this::deleteTicket).sum();
+        return tickets.mapToInt(Unchecked.toIntFunction(this::deleteTicket)).sum();
     }
 
     /**
@@ -227,9 +228,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      *
      * @param ticket the ticket
      * @return the ticket
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected Ticket encodeTicket(final Ticket ticket) {
+    protected Ticket encodeTicket(final Ticket ticket) throws Exception {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
             return ticket;
@@ -304,8 +305,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
 
-    @SneakyThrows
-    private Ticket createEncodedTicket(final Ticket ticket) {
+    private Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         val encodedTicketId = encodeTicketId(ticket.getId());
@@ -313,7 +313,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             ByteSource.wrap(encodedTicketObject).read(), ticket.getPrefix());
     }
 
-    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
+    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count,
+                                                  final TicketGrantingTicket tgt) throws Exception {
         val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
@@ -324,7 +325,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
     }
 
-    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
+    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) throws Exception {
         ticket.getTicketGrantingTicket().getProxyGrantingTickets().remove(ticket.getId());
         updateTicket(ticket.getTicketGrantingTicket());
     }

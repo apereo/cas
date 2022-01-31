@@ -61,7 +61,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
 
 
     @Test
-    public void verifyAuthenticationPlainWithoutSecret() {
+    public void verifyAuthenticationPlainWithoutSecret() throws Exception {
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(new OAuth20DefaultCode("CODE-1234567890",
@@ -81,7 +81,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationPlainWithSecretTransmittedByFormAuthn() {
+    public void verifyAuthenticationPlainWithSecretTransmittedByFormAuthn() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(
@@ -102,7 +102,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationPlainWithSecretTransmittedByBasicAuthn() {
+    public void verifyAuthenticationPlainWithSecretTransmittedByBasicAuthn() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "secret");
         val request = new MockHttpServletRequest();
         ticketRegistry.addTicket(
@@ -122,7 +122,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationHashedWithoutSecret() {
+    public void verifyAuthenticationHashedWithoutSecret() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -143,7 +143,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyUnknownDigest() {
+    public void verifyUnknownDigest() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("clientWithoutSecret", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -163,7 +163,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationHashedWithSecretTransmittedByFormAuthn() {
+    public void verifyAuthenticationHashedWithSecretTransmittedByFormAuthn() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -185,7 +185,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationHashedWithSecretTransmittedByBasicFormAuthn() {
+    public void verifyAuthenticationHashedWithSecretTransmittedByBasicFormAuthn() throws Exception {
         val hash = EncodingUtils.encodeUrlSafeBase64(DigestUtils.rawDigestSha256("ABCD123"));
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
@@ -207,7 +207,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticatorTests extends BaseOAuth20Au
     }
 
     @Test
-    public void verifyAuthenticationNotHashedCorrectly() {
+    public void verifyAuthenticationNotHashedCorrectly() throws Exception {
         val credentials = new UsernamePasswordCredentials("client", "ABCD123");
         val request = new MockHttpServletRequest();
         val ticket = new OAuth20DefaultCode("CODE-1234567890",

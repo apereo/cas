@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 

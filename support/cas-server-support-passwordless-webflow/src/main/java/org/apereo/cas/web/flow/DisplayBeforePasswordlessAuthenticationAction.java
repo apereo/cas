@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthe
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

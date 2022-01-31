@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -59,6 +60,6 @@ public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
             ticketGrantingTicket,
             issuerId,
             relyingPartyId, samlMessage);
-        ticketRegistry.addTicket(ticket);
+        FunctionUtils.doAndIgnore(s -> ticketRegistry.addTicket(ticket));
     }
 }

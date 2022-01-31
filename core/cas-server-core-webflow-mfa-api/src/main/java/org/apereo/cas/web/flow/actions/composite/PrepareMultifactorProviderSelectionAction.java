@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.actions.composite;
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;

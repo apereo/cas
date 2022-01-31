@@ -84,7 +84,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyAuthnHandledWithRenew() {
+    public void verifyAuthnHandledWithRenew() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -106,7 +106,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyAuthnResolvesEvent() {
+    public void verifyAuthnResolvesEvent() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -127,7 +127,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyAuthnResolvesMfaEvent() {
+    public void verifyAuthnResolvesMfaEvent() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
@@ -155,7 +155,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyAuthnResolvesMfaContextValidatedNoForceExecution() {
+    public void verifyAuthnResolvesMfaContextValidatedNoForceExecution() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);
@@ -182,7 +182,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolverTests
     }
 
     @Test
-    public void verifyAuthnResolvesMfaContextValidated() {
+    public void verifyAuthnResolvesMfaContextValidated() throws Exception {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         request.addParameter(casProperties.getAuthn().getMfa().getTriggers().getHttp().getRequestParameter(), TestMultifactorAuthenticationProvider.ID);

@@ -39,7 +39,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyEncodingWithoutEncryptionForService() {
+    public void verifyEncodingWithoutEncryptionForService() throws Exception {
         val accessToken = getAccessToken();
         val registeredService = getOidcRegisteredService(accessToken.getClientId());
         registeredService.setJwtAccessToken(true);
@@ -55,7 +55,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyExtractionAsParameterForService() {
+    public void verifyExtractionAsParameterForService() throws Exception {
         val accessToken = getAccessToken();
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
         val encoder = getAccessTokenEncoder(accessToken, registeredService);
@@ -67,7 +67,7 @@ public class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyEncodingWithNoCiphersForService() {
+    public void verifyEncodingWithNoCiphersForService() throws Exception {
         val accessToken = getAccessToken(StringUtils.EMPTY, "encoding-service-clientid");
         val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
 
