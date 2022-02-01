@@ -20,6 +20,7 @@ public interface ConsentApprovalViewResolver {
      * @param context the context
      * @param service the service
      * @return the model and view. Could be an empty view which would indicate consent is not required.
+     * @throws Exception the exception
      */
-    ModelAndView resolve(WebContext context, OAuthRegisteredService service);
+    ModelAndView resolve(WebContext context, OAuthRegisteredService service) throws Exception;
 }

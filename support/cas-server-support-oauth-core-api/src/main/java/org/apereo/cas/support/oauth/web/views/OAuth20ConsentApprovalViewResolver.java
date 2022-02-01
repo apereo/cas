@@ -5,7 +5,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
     protected final SessionStore sessionStore;
 
     @Override
-    public ModelAndView resolve(final WebContext context, final OAuthRegisteredService service) {
+    public ModelAndView resolve(final WebContext context, final OAuthRegisteredService service) throws Exception {
         var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(bypassApprovalParameter)) {
@@ -72,9 +71,10 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @param ctx the ctx
      * @param svc the svc
      * @return the model and view
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected ModelAndView redirectToApproveView(final WebContext ctx, final OAuthRegisteredService svc) {
+    protected ModelAndView redirectToApproveView(final WebContext ctx,
+                                                 final OAuthRegisteredService svc) throws Exception {
         val callbackUrl = ctx.getFullRequestURL();
         LOGGER.trace("callbackUrl: [{}]", callbackUrl);
 
