@@ -41,8 +41,8 @@ import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
-import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -319,10 +319,13 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
-            return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
+            return new OidcConsentApprovalViewResolver(casProperties,
+                oauthDistributedSessionStore, centralAuthenticationService);
         }
     }
 
@@ -755,7 +758,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy(
             final CasConfigurationProperties casProperties) {
-            return new OidcPushedAuthorizationUriExpirationPolicyBuilder(casProperties);
+            return new OidcPushedAuthorizationRequestExpirationPolicyBuilder(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "pushedAuthorizationIdGenerator")
