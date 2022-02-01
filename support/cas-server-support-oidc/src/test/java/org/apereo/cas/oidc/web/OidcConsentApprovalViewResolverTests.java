@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
     @Test
-    public void verifyBypassedBySession() {
+    public void verifyBypassedBySession() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -45,7 +45,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedByPrompt() {
+    public void verifyBypassedByPrompt() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
         request.setQueryString(OidcConstants.PROMPT + '=' + OidcConstants.PROMPT_CONSENT);
@@ -59,7 +59,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedForPushAuthz() {
+    public void verifyBypassedForPushAuthz() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something/" + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
@@ -102,7 +102,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    public void verifyBypassedWithoutPrompt() {
+    public void verifyBypassedWithoutPrompt() throws Exception {
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something");
 
