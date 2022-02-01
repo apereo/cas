@@ -12,9 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,10 +32,9 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     public void verifyOAuth() {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val accessToken = mock(OAuth20AccessToken.class);
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal();
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertEquals(original, principal);
     }
 
@@ -46,10 +42,9 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
     public void verifyOperationFilterWithoutOpenId() {
         val service = getOidcRegisteredService();
         val accessToken = mock(OAuth20AccessToken.class);
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal();
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertEquals(original, principal);
     }
 
@@ -63,12 +58,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.OPENID.getScope());
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("address"));
@@ -94,12 +88,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().add(OidcConstants.StandardScopes.ADDRESS.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PHONE.getScope());
         service.getScopes().add(OidcConstants.StandardScopes.PROFILE.getScope());
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("address"));
         assertTrue(principal.getAttributes().containsKey("gender"));
@@ -122,12 +115,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().clear();
         service.getScopes().add(OidcConstants.StandardScopes.EMAIL.getScope());
 
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
 
         assertTrue(principal.getAttributes().containsKey("email"));
         assertEquals(1, principal.getAttributes().size());
@@ -148,12 +140,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().clear();
         service.setAttributeReleasePolicy(new OidcProfileScopeAttributeReleasePolicy());
 
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("gender"));
         assertEquals(2, principal.getAttributes().size());
@@ -172,12 +163,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         service.getScopes().clear();
         service.setAttributeReleasePolicy(new OidcProfileScopeAttributeReleasePolicy());
 
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("gender"));
         assertEquals(2, principal.getAttributes().size());
@@ -191,12 +181,11 @@ public class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.OPENID.getScope()));
         service.setAttributeReleasePolicy(new OidcProfileScopeAttributeReleasePolicy());
 
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
         val original = CoreAuthenticationTestUtils.getPrincipal(
             CollectionUtils.wrap("email", "casuser@example.org", "address", "1234 Main Street",
                 "phone", "123445677", "name", "CAS", "gender", "male"));
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
-            original, service, context, accessToken);
+            original, service, accessToken);
         assertTrue(principal.getAttributes().containsKey("name"));
         assertTrue(principal.getAttributes().containsKey("gender"));
         assertTrue(principal.getAttributes().containsKey("address"));

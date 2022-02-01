@@ -212,9 +212,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .stream()
             .filter(b -> b.supports(context))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
+            .orElseThrow(() -> new IllegalArgumentException("Could not build the callback response. Response type likely not supported"));
 
-        var accessTokenDataBuilder = AccessTokenRequestDataHolder.builder();
+        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+            .map(String::valueOf)
+            .orElse(StringUtils.EMPTY);
+        var holderBuilder = AccessTokenRequestDataHolder.builder();
         if (builder.isSingleSignOnSessionRequired()) {
             var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
                 getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
@@ -235,7 +238,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 LOGGER.error(message);
                 return OAuth20Utils.produceErrorView(new PreventedException(message));
             }
-            accessTokenDataBuilder = accessTokenDataBuilder.ticketGrantingTicket(ticketGrantingTicket);
+            holderBuilder = holderBuilder.ticketGrantingTicket(ticketGrantingTicket);
         }
 
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
@@ -250,20 +253,26 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .map(String::valueOf).orElse(StringUtils.EMPTY)
             .toUpperCase();
 
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
         val claims = OAuth20Utils.parseRequestClaims(context);
-        val holder = accessTokenDataBuilder
+        val holder = holderBuilder
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.valueOf(grantType))
+            .responseType(OAuth20Utils.getResponseType(context))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
             .clientId(clientId)
+            .redirectUri(redirectUri)
+            .userProfile(userProfile)
             .claims(claims)
+            .responseMode(OAuth20Utils.getResponseModeType(context))
             .build();
-
+        context.getRequestParameters().keySet()
+            .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));
         LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]", grantType, scopes, clientId);
-        return builder.build(context, clientId, holder);
+        return builder.build(clientId, holder);
     }
 }

@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.WebContext;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;

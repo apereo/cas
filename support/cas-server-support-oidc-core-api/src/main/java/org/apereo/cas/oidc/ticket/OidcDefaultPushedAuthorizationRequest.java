@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.AbstractTicket;
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

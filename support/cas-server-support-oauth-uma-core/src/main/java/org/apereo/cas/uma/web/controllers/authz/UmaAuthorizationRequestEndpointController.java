@@ -199,10 +199,14 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
 
         val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
-        request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
-        request.setAttribute(ResourceSet.class.getName(), resourceSet);
-        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(new JEEContext(request, response),
-            accessToken, timeout, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
+
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
+            getUmaConfigurationContext().getSessionStore());
+        userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
+        userProfile.addAttribute(ResourceSet.class.getName(), resourceSet);
+
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
+            .generate(accessToken, timeout, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken);
         getUmaConfigurationContext().getCentralAuthenticationService().updateTicket(accessToken);
 

@@ -7,9 +7,13 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 
-import lombok.Builder;
 import lombok.Getter;
-import org.springframework.core.io.ResourceLoader;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
+import org.pac4j.core.profile.UserProfile;
+
+import javax.annotation.Nonnull;
+import java.io.Serializable;
 
 /**
  * This is {@link OAuth20AccessTokenResponseResult}.
@@ -17,18 +21,31 @@ import org.springframework.core.io.ResourceLoader;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Builder
+@SuperBuilder
 @Getter
-public class OAuth20AccessTokenResponseResult {
+@Jacksonized
+public class OAuth20AccessTokenResponseResult implements Serializable {
 
-    private final ResourceLoader resourceLoader;
+    private static final long serialVersionUID = -1229778562782271609L;
+
     private final RegisteredService registeredService;
+
     private final Service service;
+
     private final OAuth20TokenGeneratedResult generatedToken;
+
     private final long accessTokenTimeout;
+
     private final long deviceTokenTimeout;
+
     private final OAuth20ResponseTypes responseType;
+
     private final OAuth20GrantTypes grantType;
+
     private final CasConfigurationProperties casProperties;
+
     private final long deviceRefreshInterval;
+
+    @Nonnull
+    private final UserProfile userProfile;
 }

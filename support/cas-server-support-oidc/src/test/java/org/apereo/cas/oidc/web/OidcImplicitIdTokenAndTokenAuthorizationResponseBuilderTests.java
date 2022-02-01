@@ -54,16 +54,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val code = addCode(principal, registeredService);
-        val holder = AccessTokenRequestDataHolder.builder()
-            .token(code)
-            .clientId(registeredService.getClientId())
-            .service(CoreAuthenticationTestUtils.getService())
-            .authentication(RegisteredServiceTestUtils.getAuthentication(principal, attributes))
-            .registeredService(registeredService)
-            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
-            .responseType(OAuth20ResponseTypes.CODE)
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
-            .build();
+
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
         val context = new JEEContext(request, new MockHttpServletResponse());
@@ -74,8 +65,21 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         profile.setId("casuser");
 
         manager.save(true, profile, false);
+
+        val holder = AccessTokenRequestDataHolder.builder()
+            .token(code)
+            .clientId(registeredService.getClientId())
+            .service(CoreAuthenticationTestUtils.getService())
+            .authentication(RegisteredServiceTestUtils.getAuthentication(principal, attributes))
+            .registeredService(registeredService)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .userProfile(profile)
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
+
         servicesManager.save(registeredService);
-        val mv = oidcImplicitIdTokenAndTokenCallbackUrlBuilder.build(context, registeredService.getClientId(), holder);
+        val mv = oidcImplicitIdTokenAndTokenCallbackUrlBuilder.build(registeredService.getClientId(), holder);
         assertNotNull(mv);
     }
 }

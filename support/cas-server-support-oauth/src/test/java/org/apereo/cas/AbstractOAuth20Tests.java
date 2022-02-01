@@ -671,7 +671,7 @@ public abstract class AbstractOAuth20Tests {
             .service(service)
             .generatedToken(generatedToken)
             .build();
-        return accessTokenResponseGenerator.generate(new JEEContext(mockRequest, mockResponse), result);
+        return accessTokenResponseGenerator.generate(result);
     }
 
     /**

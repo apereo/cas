@@ -30,6 +30,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -576,6 +577,19 @@ public class OAuth20Utils {
         val clientSecret = getRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
+    }
+
+    /**
+     * Gets authenticated user profile.
+     *
+     * @param context      the context
+     * @param sessionStore the session store
+     * @return the authenticated user profile
+     */
+    public UserProfile getAuthenticatedUserProfile(final WebContext context, final SessionStore sessionStore) {
+        val manager = new ProfileManager(context, sessionStore);
+        val profile = manager.getProfile();
+        return profile.orElseThrow(() -> new IllegalArgumentException("Unable to determine the user profile from the context"));
     }
 
     /**

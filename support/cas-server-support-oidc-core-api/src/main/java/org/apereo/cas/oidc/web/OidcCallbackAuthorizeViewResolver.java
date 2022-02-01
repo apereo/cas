@@ -14,7 +14,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,7 +65,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
                     () -> OidcRequestSupport.getRedirectUrlWithError(originalRedirectUrl.get(), OidcConstants.LOGIN_REQUIRED, context))
                 .get();
             LOGGER.warn("Unable to detect authenticated user profile for prompt-less login attempts. Redirecting to URL [{}]", redirect);
-            return authorizationModelAndViewBuilder.build(context, registeredService, redirect, parameters);
+            return authorizationModelAndViewBuilder.build(registeredService, responseType, redirect, parameters);
         }
         if (prompt.contains(OidcConstants.PROMPT_LOGIN)) {
             LOGGER.trace("Removing login prompt from URL [{}]", url);
