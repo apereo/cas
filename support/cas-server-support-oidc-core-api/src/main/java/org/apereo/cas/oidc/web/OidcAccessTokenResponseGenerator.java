@@ -59,7 +59,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         accessToken.ifPresent(Unchecked.consumer(token -> {
             val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
             val idToken = idTokenGenerator.generate(accessToken.get(),
-                result.getAccessTokenTimeout(), result.getResponseType(),
+                result.getAccessTokenTimeout(), result.getUserProfile(), result.getResponseType(),
                 result.getGrantType(), oidcRegisteredService);
 
             LOGGER.debug("Generated ID token [{}]", idToken);

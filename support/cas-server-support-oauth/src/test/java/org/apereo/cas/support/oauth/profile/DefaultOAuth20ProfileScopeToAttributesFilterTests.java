@@ -7,11 +7,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,7 +33,6 @@ public class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractO
             RegisteredServiceTestUtils.getService(),
             principal,
             RegisteredServiceTestUtils.getRegisteredService(),
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
             mock(OAuth20AccessToken.class));
         assertEquals(input, principal);
         assertTrue(profileScopeToAttributesFilter.getAttributeReleasePolicies().isEmpty());

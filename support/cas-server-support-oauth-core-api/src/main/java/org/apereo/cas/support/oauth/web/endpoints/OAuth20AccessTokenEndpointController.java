@@ -154,6 +154,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .casProperties(getConfigurationContext().getCasProperties())
             .generatedToken(result)
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
+            .userProfile(requestHolder.getUserProfile())
             .build();
         return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
     }

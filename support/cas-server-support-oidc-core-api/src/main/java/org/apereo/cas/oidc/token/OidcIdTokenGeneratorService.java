@@ -26,7 +26,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
@@ -58,19 +57,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     @Override
-    public String generate(final WebContext context,
-                           final OAuth20AccessToken accessToken,
+    public String generate(final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
+                           final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(), "Registered service instance is not an OIDC service");
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
-        val authenticatedProfile = getAuthenticatedProfile(context);
-        LOGGER.debug("Current user profile to use for ID token is [{}]", authenticatedProfile);
-        val claims = buildJwtClaims(accessToken, timeoutInSeconds,
-            oidcRegisteredService, authenticatedProfile, context, responseType, grantType);
+        val claims = buildJwtClaims(accessToken, timeoutInSeconds, oidcRegisteredService, responseType, grantType);
 
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
@@ -85,8 +81,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
      * @param accessToken      the access token
      * @param timeoutInSeconds the timeoutInSeconds
      * @param service          the service
-     * @param profile          the user profile
-     * @param context          the context
      * @param responseType     the response type
      * @param grantType        the grant type
      * @return the jwt claims
@@ -94,13 +88,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final OidcRegisteredService service,
-                                       final UserProfile profile,
-                                       final WebContext context,
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
         val authentication = accessToken.getAuthentication();
         val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(accessToken.getService(), authentication.getPrincipal(), service, context, accessToken);
+            .filter(accessToken.getService(), authentication.getPrincipal(), service, accessToken);
         LOGGER.debug("Principal to use to build th ID token is [{}]", principal);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();

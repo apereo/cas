@@ -54,16 +54,6 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
         val code = addCode(principal, registeredService);
-        val holder = AccessTokenRequestDataHolder.builder()
-            .clientId(registeredService.getClientId())
-            .service(CoreAuthenticationTestUtils.getService())
-            .authentication(authentication)
-            .registeredService(registeredService)
-            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
-            .responseType(OAuth20ResponseTypes.CODE)
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
-            .token(code)
-            .build();
 
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
@@ -76,8 +66,21 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         profile.setId("casuser");
 
         manager.save(true, profile, false);
+
+        val holder = AccessTokenRequestDataHolder.builder()
+            .clientId(registeredService.getClientId())
+            .service(CoreAuthenticationTestUtils.getService())
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .token(code)
+            .userProfile(profile)
+            .build();
+
         servicesManager.save(registeredService);
-        val mv = oidcImplicitIdTokenCallbackUrlBuilder.build(context, registeredService.getClientId(), holder);
+        val mv = oidcImplicitIdTokenCallbackUrlBuilder.build(registeredService.getClientId(), holder);
         assertNotNull(mv);
     }
 }

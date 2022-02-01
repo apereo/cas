@@ -55,9 +55,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
             .build();
 
         assertTrue(oidcPushedAuthorizationRequestResponseBuilder.supports(webContext));
-        
-        val mv = oidcPushedAuthorizationRequestResponseBuilder.build(webContext,
-            registeredService.getClientId(), holder);
+
+        val mv = oidcPushedAuthorizationRequestResponseBuilder.build(registeredService.getClientId(), holder);
         assertTrue(mv.getModel().containsKey(OidcConstants.EXPIRES_IN));
         val uri = mv.getModel().get(OidcConstants.REQUEST_URI).toString();
         val ticket = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);

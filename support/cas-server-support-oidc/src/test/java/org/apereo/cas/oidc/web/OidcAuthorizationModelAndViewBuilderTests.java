@@ -19,6 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,15 +38,15 @@ public class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests
     private OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder;
 
     @Test
-    public void verifyOperationForOidc() {
+    public void verifyOperationForOidc() throws Exception {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_MODE, OAuth20ResponseModeTypes.FORM_POST.getType());
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val parameters = new HashMap<String, String>();
         val registeredService = getOidcRegisteredService();
-        val results = oauthAuthorizationModelAndViewBuilder.build(context, registeredService,
-            "https://localhost:8443/app/redirect", parameters);
+        val results = oauthAuthorizationModelAndViewBuilder.build(registeredService,
+            OAuth20ResponseModeTypes.FORM_POST, "https://localhost:8443/app/redirect", parameters);
         assertTrue(results.getModel().containsKey("originalUrl"));
         val url = results.getModel().get("originalUrl").toString();
         assertTrue(url.contains(OidcConstants.ISS.concat("=")));
@@ -54,15 +55,15 @@ public class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests
     }
 
     @Test
-    public void verifyOperationForNonOidc() {
+    public void verifyOperationForNonOidc() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
         val parameters = new HashMap<String, String>();
         val registeredService = getOAuthRegisteredService(UUID.randomUUID().toString(), "https://localhost:8443/app/redirect");
-        val results = oauthAuthorizationModelAndViewBuilder.build(context, registeredService,
-            "https://localhost:8443/app/redirect", parameters);
+        val results = oauthAuthorizationModelAndViewBuilder.build(registeredService,
+            OAuth20ResponseModeTypes.FORM_POST, "https://localhost:8443/app/redirect", parameters);
         val view = (RedirectView) results.getView();
-        assertEquals("https://localhost:8443/app/redirect", view.getUrl());
+        assertEquals("https://localhost:8443/app/redirect", Objects.requireNonNull(view).getUrl());
     }
 }

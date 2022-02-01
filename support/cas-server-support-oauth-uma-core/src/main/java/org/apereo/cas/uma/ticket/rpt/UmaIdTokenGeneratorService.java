@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -33,16 +32,14 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
     }
 
     @Override
-    public String generate(final WebContext context,
-                           final OAuth20AccessToken accessToken,
+    public String generate(final OAuth20AccessToken accessToken,
                            final long timeoutInSeconds,
+                           final UserProfile userProfile,
                            final OAuth20ResponseTypes responseType,
                            final OAuth20GrantTypes grantType,
                            final OAuthRegisteredService registeredService) throws Exception {
         LOGGER.debug("Attempting to produce claims for the rpt access token [{}]", accessToken);
-        val authenticatedProfile = getAuthenticatedProfile(context);
-        val claims = buildJwtClaims(accessToken, timeoutInSeconds,
-            registeredService, authenticatedProfile, context, responseType);
+        val claims = buildJwtClaims(accessToken, timeoutInSeconds, userProfile, registeredService, responseType);
 
         return encodeAndFinalizeToken(claims, registeredService, accessToken);
     }
@@ -54,17 +51,15 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
      * @param timeoutInSeconds the timeout in seconds
      * @param service          the service
      * @param profile          the profile
-     * @param context          the context
      * @param responseType     the response type
      * @return the jwt claims
      */
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
-                                       final OAuthRegisteredService service,
                                        final UserProfile profile,
-                                       final WebContext context,
+                                       final OAuthRegisteredService service,
                                        final OAuth20ResponseTypes responseType) {
-        val permissionTicket = (UmaPermissionTicket) context.getRequestAttribute(UmaPermissionTicket.class.getName()).orElse(null);
+        val permissionTicket = (UmaPermissionTicket) profile.getAttribute(UmaPermissionTicket.class.getName());
         val claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(getConfigurationContext().getCasProperties().getAuthn().getOauth().getUma().getCore().getIssuer());

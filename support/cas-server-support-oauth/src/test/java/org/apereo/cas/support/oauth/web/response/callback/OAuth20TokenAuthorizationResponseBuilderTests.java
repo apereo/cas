@@ -13,10 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.springframework.core.Ordered;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.AbstractMap;
@@ -100,8 +97,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
             .generateRefreshToken(true)
             .build();
-        val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
-        val modelAndView = oauthTokenResponseBuilder.build(context, CLIENT_ID, holder);
+        val modelAndView = oauthTokenResponseBuilder.build(CLIENT_ID, holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
         assertTrue(modelAndView.getModel().isEmpty());
 

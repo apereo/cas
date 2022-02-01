@@ -52,12 +52,13 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket(authentication))
             .service(RegisteredServiceTestUtils.getService("example"))
+            .redirectUri("https://github.com/apereo/cas")
             .build();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         val context = new JEEContext(request, new MockHttpServletResponse());
-        val mv = oauthAuthorizationCodeResponseBuilder.build(context, registeredService.getClientId(), holder);
+        val mv = oauthAuthorizationCodeResponseBuilder.build(registeredService.getClientId(), holder);
         assertTrue(mv.getView() instanceof RedirectView);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.CODE));
         assertTrue(mv.getModel().containsKey(OAuth20Constants.STATE));

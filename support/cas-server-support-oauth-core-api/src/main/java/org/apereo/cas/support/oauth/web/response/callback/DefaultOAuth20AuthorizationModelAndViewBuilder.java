@@ -7,7 +7,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 

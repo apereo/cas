@@ -17,7 +17,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
+import org.pac4j.core.profile.UserProfile;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -40,6 +42,7 @@ public class AccessTokenRequestDataHolder implements Serializable {
 
     private final Service service;
 
+    @Nonnull
     private final Authentication authentication;
 
     private final OAuth20Token token;
@@ -48,6 +51,7 @@ public class AccessTokenRequestDataHolder implements Serializable {
 
     private final boolean expireOldRefreshToken;
 
+    @Nonnull
     private final OAuthRegisteredService registeredService;
 
     private final TicketGrantingTicket ticketGrantingTicket;
@@ -82,6 +86,9 @@ public class AccessTokenRequestDataHolder implements Serializable {
     private final String clientId;
 
     private final String redirectUri;
+
+    @Nonnull
+    private final UserProfile userProfile;
 
     @JsonIgnore
     public boolean isCodeToken() {

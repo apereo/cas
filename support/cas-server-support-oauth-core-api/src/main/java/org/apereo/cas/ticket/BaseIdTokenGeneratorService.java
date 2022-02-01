@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -24,27 +21,12 @@ import org.springframework.beans.factory.ObjectProvider;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 @Getter
-public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext> implements IdTokenGeneratorService {
+public abstract class BaseIdTokenGeneratorService<T extends OAuth20ConfigurationContext>
+    implements IdTokenGeneratorService {
     private final ObjectProvider<T> configurationContextProvider;
 
     protected T getConfigurationContext() {
         return this.configurationContextProvider.getObject();
-    }
-
-    /**
-     * Gets authenticated profile.
-     *
-     * @param context the context
-     * @return the authenticated profile
-     */
-    protected UserProfile getAuthenticatedProfile(final WebContext context) {
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
-        val profile = manager.getProfile();
-
-        if (profile.isEmpty()) {
-            throw new IllegalArgumentException("Unable to determine the user profile from the context");
-        }
-        return profile.get();
     }
 
     /**

@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.ticket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 
 import lombok.val;
@@ -33,7 +34,7 @@ public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOid
     private OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
@@ -41,7 +42,7 @@ public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOid
         val parameters = new LinkedHashMap<String, String>();
         parameters.put(OidcConstants.EXPIRES_IN, "100");
         parameters.put(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());
-        val mv = oidcPushedAuthorizationModelAndViewBuilder.build(webContext, getOidcRegisteredService(),
+        val mv = oidcPushedAuthorizationModelAndViewBuilder.build(getOidcRegisteredService(), OAuth20ResponseModeTypes.FORM_POST,
             RegisteredServiceTestUtils.CONST_TEST_URL2, parameters);
         assertTrue(mv.getModel().containsKey(OidcConstants.EXPIRES_IN));
         assertTrue(mv.getModel().containsKey(OidcConstants.REQUEST_URI));

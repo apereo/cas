@@ -5,7 +5,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.RequiredArgsConstructor;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;

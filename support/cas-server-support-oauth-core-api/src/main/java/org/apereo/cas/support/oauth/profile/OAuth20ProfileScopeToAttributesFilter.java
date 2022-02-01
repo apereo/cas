@@ -6,8 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
-import org.pac4j.core.context.WebContext;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
