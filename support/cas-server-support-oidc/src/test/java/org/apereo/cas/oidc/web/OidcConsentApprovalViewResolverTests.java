@@ -88,7 +88,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
         val factory = (OidcPushedAuthorizationRequestFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
         val ticket = factory.create(holder);
         ticketRegistry.addTicket(ticket);
-        
+
         val request = new MockHttpServletRequest();
         request.setRequestURI("https://cas.org/something/" + OidcConstants.AUTHORIZE_URL);
         request.addParameter(OidcConstants.REQUEST_URI, ticket.getId());
@@ -97,7 +97,7 @@ public class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
 
         val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val mv = consentApprovalViewResolver.resolve(context, service);
-        assertFalse(mv.hasView());
+        assertTrue(mv.hasView());
         assertEquals(3, ((Collection) mv.getModel().get("scopes")).size());
     }
 
