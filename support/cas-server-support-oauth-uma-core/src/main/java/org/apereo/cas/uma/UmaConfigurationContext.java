@@ -1,10 +1,8 @@
 package org.apereo.cas.uma;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
-import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 
 import lombok.Getter;
@@ -23,11 +21,12 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 public class UmaConfigurationContext extends OAuth20ConfigurationContext {
-    private final UmaPermissionTicketFactory umaPermissionTicketFactory;
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "umaConfigurationContext";
 
     private final ResourceSetRepository umaResourceSetRepository;
-
-    private final CasConfigurationProperties casProperties;
 
     private final UmaResourceSetClaimPermissionExaminer claimPermissionExaminer;
 

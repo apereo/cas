@@ -13,9 +13,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Map;
 
@@ -32,10 +29,6 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
 
     @Test
     public void verifyOperation() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(CLIENT_ID)
             .service(CoreAuthenticationTestUtils.getService())
@@ -55,7 +48,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
     @Test
     public void verifyModelAndViewPost() throws Exception {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
-        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build( registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService, OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of("key", "value")));
     }
 
     @Test

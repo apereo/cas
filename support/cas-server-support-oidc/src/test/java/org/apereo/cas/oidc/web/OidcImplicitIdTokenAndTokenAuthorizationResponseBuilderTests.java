@@ -66,6 +66,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.IDTOKEN_TOKEN)
             .userProfile(profile)
+            .redirectUri("https://oauth.example.org")
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
 

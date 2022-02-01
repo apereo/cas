@@ -9,12 +9,9 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationMo
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -35,10 +32,6 @@ public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOid
 
     @Test
     public void verifyOperation() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        val webContext = new JEEContext(request, response);
-
         val parameters = new LinkedHashMap<String, String>();
         parameters.put(OidcConstants.EXPIRES_IN, "100");
         parameters.put(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());
