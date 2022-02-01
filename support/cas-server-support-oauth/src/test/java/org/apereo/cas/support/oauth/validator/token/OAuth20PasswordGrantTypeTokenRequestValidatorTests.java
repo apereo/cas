@@ -75,7 +75,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

@@ -19,14 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 
 /**
- * This is {@link OidcPushedAuthorizationRequestResponseBuilder}.
+ * This is {@link OidcPushedAuthorizationRequestUriResponseBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class OidcPushedAuthorizationRequestResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder<OidcConfigurationContext> {
-    public OidcPushedAuthorizationRequestResponseBuilder(
+public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth20AuthorizationResponseBuilder<OidcConfigurationContext> {
+    public OidcPushedAuthorizationRequestUriResponseBuilder(
         final OidcConfigurationContext configurationContext,
         final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
         super(configurationContext, authorizationModelAndViewBuilder);

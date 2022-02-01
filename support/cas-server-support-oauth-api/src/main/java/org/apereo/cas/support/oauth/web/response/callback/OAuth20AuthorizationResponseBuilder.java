@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 
@@ -19,34 +20,31 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order
 public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     /**
      * Build response model and view.
      *
-     * @param context           the context
      * @param registeredService the registered service
      * @param redirectUrl       the redirect url
      * @param parameters        the parameters
      * @return the model and view
      * @throws Exception the exception
      */
-    ModelAndView build(WebContext context,
-                       OAuthRegisteredService registeredService,
+    ModelAndView build(OAuthRegisteredService registeredService,
+                       OAuth20ResponseModeTypes responseMode,
                        String redirectUrl,
                        Map<String, String> parameters) throws Exception;
 
     /**
      * Build.
      *
-     * @param context  the context
      * @param clientId the client id
      * @param holder   the holder
      * @return the view response
      * @throws Exception the exception
      */
-    ModelAndView build(WebContext context,
-                       String clientId,
+    ModelAndView build(String clientId,
                        AccessTokenRequestDataHolder holder) throws Exception;
 
     /**

@@ -15,16 +15,17 @@ public interface OAuth20RequestValidator extends Ordered {
      * Validate request.
      *
      * @param context the context
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    boolean validate(WebContext context);
+    boolean validate(WebContext context) throws Exception;
 
     /**
      * Supports request?
      *
      * @param context the context
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    boolean supports(WebContext context);
-
+    boolean supports(WebContext context) throws Exception;
 }

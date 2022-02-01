@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 @Tag("OAuth")
 public class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests {
     @Test
-    public void verifySupports() {
+    public void verifySupports() throws Exception {
         val serviceManager = mock(ServicesManager.class);
 
         val service = new OAuthRegisteredService();

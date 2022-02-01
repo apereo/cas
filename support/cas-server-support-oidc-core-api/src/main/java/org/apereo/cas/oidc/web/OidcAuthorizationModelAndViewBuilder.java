@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.WebContext;
 
 import java.util.Map;
 import java.util.Optional;
@@ -29,10 +28,8 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
     private final CasConfigurationProperties casProperties;
 
     @Override
-    @SneakyThrows
-    protected String prepareRedirectUrl(final WebContext context,
-                                        final OAuthRegisteredService registeredService,
-                                        final String redirectUrl, final Map<String, String> parameters) {
+    protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,
+                                        final String redirectUrl, final Map<String, String> parameters) throws Exception {
         val discovery = casProperties.getAuthn().getOidc().getDiscovery();
         if (registeredService instanceof OidcRegisteredService && discovery.isAuthorizationResponseIssuerParameterSupported()) {
             val oidcService = (OidcRegisteredService) registeredService;
@@ -43,6 +40,6 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
                 .build()
                 .toString();
         }
-        return super.prepareRedirectUrl(context, registeredService, redirectUrl, parameters);
+        return super.prepareRedirectUrl(registeredService, redirectUrl, parameters);
     }
 }

@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,26 @@ import javax.servlet.http.HttpServletResponse;
 public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20RevocationEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
+    }
+
+    /**
+     * Is the OAuth token a Refresh Token?
+     *
+     * @param token the token
+     * @return whether the token type is a RefreshToken
+     */
+    private static boolean isRefreshToken(final OAuth20Token token) {
+        return token instanceof OAuth20RefreshToken;
+    }
+
+    /**
+     * Is the OAuth token an Access Token?
+     *
+     * @param token the token
+     * @return whether the token type is a RefreshToken
+     */
+    private static boolean isAccessToken(final OAuth20Token token) {
+        return token instanceof OAuth20AccessToken;
     }
 
     /**
@@ -93,9 +114,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
     protected ModelAndView generateRevocationResponse(final String token,
                                                       final String clientId,
                                                       final HttpServletResponse response) throws Exception {
-
         val registryToken = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20Token.class);
-
         if (registryToken == null) {
             LOGGER.error("Provided token [{}] has not been found in the ticket registry", token);
         } else if (isRefreshToken(registryToken) || isAccessToken(registryToken)) {
@@ -135,26 +154,6 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
     }
 
     /**
-     * Is the OAuth token a Refresh Token?
-     *
-     * @param token the token
-     * @return whether the token type is a RefreshToken
-     */
-    private static boolean isRefreshToken(final OAuth20Token token) {
-        return token instanceof OAuth20RefreshToken;
-    }
-
-    /**
-     * Is the OAuth token an Access Token?
-     *
-     * @param token the token
-     * @return whether the token type is a RefreshToken
-     */
-    private static boolean isAccessToken(final OAuth20Token token) {
-        return token instanceof OAuth20AccessToken;
-    }
-
-    /**
      * Gets registered service by client id.
      *
      * @param clientId the client id
@@ -164,16 +163,10 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
     }
 
-    /**
-     * Verify the revocation request.
-     *
-     * @param context the context
-     * @return whether the authorize request is valid
-     */
-    private boolean verifyRevocationRequest(final JEEContext context) {
+    private boolean verifyRevocationRequest(final WebContext context) throws Exception {
         val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
-            .filter(b -> b.supports(context))
+            .filter(Unchecked.predicate(b -> b.supports(context)))
             .findFirst()
             .orElse(null);
         if (validator == null) {

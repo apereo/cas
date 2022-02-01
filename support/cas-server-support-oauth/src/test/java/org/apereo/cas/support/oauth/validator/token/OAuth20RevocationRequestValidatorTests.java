@@ -63,7 +63,7 @@ public class OAuth20RevocationRequestValidatorTests {
     }
 
     @Test
-    public void verifyOperationClientSecretPost() {
+    public void verifyOperationClientSecretPost() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -86,15 +86,14 @@ public class OAuth20RevocationRequestValidatorTests {
     }
 
     @Test
-    public void verifyOperationClientSecretBasic() {
+    public void verifyOperationClientSecretBasic() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertTrue(this.validator.validate(new JEEContext(request, response)));
-
-
+        
         request.removeHeader("Authorization");
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);

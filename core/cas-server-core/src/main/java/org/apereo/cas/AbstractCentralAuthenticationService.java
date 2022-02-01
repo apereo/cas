@@ -12,6 +12,7 @@ import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.LoggingUtils;
@@ -224,5 +225,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
+    }
+
+    @Override
+    public TicketFactory getTicketFactory() {
+        return this.configurationContext.getTicketFactory();
     }
 }

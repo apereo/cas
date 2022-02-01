@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -210,7 +211,7 @@ public class OAuth20Utils {
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
-        return (Collection<String>) map.get(OAuth20Constants.SCOPE);
+        return new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
     }
 
     /**

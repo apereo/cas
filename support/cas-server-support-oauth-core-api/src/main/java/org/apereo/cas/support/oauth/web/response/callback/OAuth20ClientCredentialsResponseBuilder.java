@@ -17,8 +17,9 @@ import org.pac4j.core.context.WebContext;
  */
 public class OAuth20ClientCredentialsResponseBuilder<T extends OAuth20ConfigurationContext> extends OAuth20ResourceOwnerCredentialsResponseBuilder<T> {
 
-    public OAuth20ClientCredentialsResponseBuilder(final T configurationContext,
-                                                   final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+    public OAuth20ClientCredentialsResponseBuilder(
+        final T configurationContext,
+        final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
         super(configurationContext, authorizationModelAndViewBuilder);
     }
 

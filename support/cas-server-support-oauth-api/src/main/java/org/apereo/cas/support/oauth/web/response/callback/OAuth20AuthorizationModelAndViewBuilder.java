@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
@@ -18,14 +18,15 @@ public interface OAuth20AuthorizationModelAndViewBuilder {
     /**
      * Customize.
      *
-     * @param context           the context
      * @param registeredService the registered service
+     * @param responseMode      the response mode
      * @param redirectUrl       the redirect url
      * @param parameters        the parameters
      * @return the model and view
+     * @throws Exception the exception
      */
-    ModelAndView build(WebContext context,
-                       OAuthRegisteredService registeredService,
+    ModelAndView build(OAuthRegisteredService registeredService,
+                       OAuth20ResponseModeTypes responseMode,
                        String redirectUrl,
-                       Map<String, String> parameters);
+                       Map<String, String> parameters) throws Exception;
 }

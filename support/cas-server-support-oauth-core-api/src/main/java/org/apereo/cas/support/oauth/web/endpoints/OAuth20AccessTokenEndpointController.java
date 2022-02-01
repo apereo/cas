@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.springframework.http.MediaType;
@@ -109,7 +110,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(requestHolder.getAuthentication());
             val tokenResult = getConfigurationContext().getAccessTokenGenerator().generate(requestHolder);
             LOGGER.debug("Access token generated result is: [{}]", tokenResult);
-            return generateAccessTokenResponse(context, requestHolder, tokenResult);
+            return generateAccessTokenResponse(requestHolder, tokenResult);
         } catch (final Exception e) {
             return handleAccessTokenException(e, response);
         }
@@ -132,14 +133,13 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     /**
      * Generate access token response model and view.
      *
-     * @param context       the context
      * @param requestHolder the request holder
      * @param result        the result
      * @return the model and view
      */
-    protected ModelAndView generateAccessTokenResponse(final WebContext context,
-                                                       final AccessTokenRequestDataHolder requestHolder,
-                                                       final OAuth20TokenGeneratedResult result) {
+    protected ModelAndView generateAccessTokenResponse(
+        final AccessTokenRequestDataHolder requestHolder,
+        final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val deviceRefreshInterval = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
@@ -155,7 +155,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             .generatedToken(result)
             .grantType(result.getGrantType().orElse(OAuth20GrantTypes.NONE))
             .build();
-        return getConfigurationContext().getAccessTokenResponseGenerator().generate(context, tokenResult);
+        return getConfigurationContext().getAccessTokenResponseGenerator().generate(tokenResult);
     }
 
     @RequiredArgsConstructor
@@ -178,15 +178,10 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 
-    /**
-     * Verify the access token request.
-     *
-     * @return true, if successful
-     */
-    private boolean verifyAccessTokenRequest(final WebContext context) {
+    private boolean verifyAccessTokenRequest(final WebContext context) throws Exception {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
         return validators.stream()
-            .filter(ext -> ext.supports(context))
+            .filter(Unchecked.predicate(ext -> ext.supports(context)))
             .findFirst()
             .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))
             .validate(context);

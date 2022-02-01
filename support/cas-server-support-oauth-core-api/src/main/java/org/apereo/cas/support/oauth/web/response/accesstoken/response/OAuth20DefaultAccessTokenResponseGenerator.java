@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -43,35 +42,31 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && generatedToken.getAccessToken().isEmpty();
+               && generatedToken.getDeviceCode().isPresent()
+               && generatedToken.getUserCode().isPresent()
+               && generatedToken.getAccessToken().isEmpty();
     }
 
     @Audit(action = AuditableActions.OAUTH2_ACCESS_TOKEN_RESPONSE,
         actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    @SneakyThrows
-    public ModelAndView generate(final WebContext webContext,
-                                 final OAuth20AccessTokenResponseResult result) {
+    public ModelAndView generate(final OAuth20AccessTokenResponseResult result) {
         if (shouldGenerateDeviceFlowResponse(result)) {
-            return generateResponseForDeviceToken(webContext, result);
+            return generateResponseForDeviceToken(result);
         }
 
-        return generateResponseForAccessToken(webContext, result);
+        return generateResponseForAccessToken(result);
     }
 
     /**
      * Generate response for device token model and view.
      *
-     * @param webContext the web context
-     * @param result     the result
+     * @param result the result
      * @return the model and view
      */
     @SneakyThrows
-    protected ModelAndView generateResponseForDeviceToken(final WebContext webContext,
-                                                          final OAuth20AccessTokenResponseResult result) {
+    protected ModelAndView generateResponseForDeviceToken(final OAuth20AccessTokenResponseResult result) {
         val model = getDeviceTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }
@@ -100,25 +95,21 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     /**
      * Generate response for access token model and view.
      *
-     * @param webContext the web context
-     * @param result     the result
+     * @param result the result
      * @return the model and view
      */
-    protected ModelAndView generateResponseForAccessToken(final WebContext webContext,
-                                                          final OAuth20AccessTokenResponseResult result) {
-        val model = getAccessTokenResponseModel(webContext, result);
+    protected ModelAndView generateResponseForAccessToken(final OAuth20AccessTokenResponseResult result) {
+        val model = getAccessTokenResponseModel(result);
         return new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
     }
 
     /**
      * Generate internal.
      *
-     * @param webContext the web context
      * @param result     the result
      * @return the access token response model
      */
-    protected Map<String, Object> getAccessTokenResponseModel(final WebContext webContext,
-                                                              final OAuth20AccessTokenResponseResult result) {
+    protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
         val model = new LinkedHashMap<String, Object>();
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken().ifPresent(t -> {

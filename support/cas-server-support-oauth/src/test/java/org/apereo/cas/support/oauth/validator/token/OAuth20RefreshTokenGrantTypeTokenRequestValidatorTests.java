@@ -74,7 +74,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
     }
 
     @Test
-    public void verifyRefreshTokenFromAnotherClientId() {
+    public void verifyRefreshTokenFromAnotherClientId() throws Exception {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -94,7 +94,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
     }
 
     @Test
-    public void verifyOperationClientSecretPost() {
+    public void verifyOperationClientSecretPost() throws Exception {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();
@@ -131,7 +131,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
     }
 
     @Test
-    public void verifyOperationClientSecretBasic() {
+    public void verifyOperationClientSecretBasic() throws Exception {
         val request = new MockHttpServletRequest();
 
         val profile = new CommonProfile();

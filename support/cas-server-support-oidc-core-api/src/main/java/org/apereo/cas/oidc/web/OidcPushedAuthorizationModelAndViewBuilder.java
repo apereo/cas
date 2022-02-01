@@ -21,13 +21,13 @@ import java.util.Map;
  */
 public class OidcPushedAuthorizationModelAndViewBuilder implements OAuth20AuthorizationModelAndViewBuilder {
     @Override
-    public ModelAndView build(final WebContext context, final OAuthRegisteredService registeredService,
+    public ModelAndView build(final OAuthRegisteredService registeredService,
                               final String redirectUrl, final Map<String, String> parameters) {
         val model = new LinkedHashMap<String, Object>();
         model.put(OidcConstants.EXPIRES_IN, Long.valueOf(parameters.get(OidcConstants.EXPIRES_IN)));
         model.put(OidcConstants.REQUEST_URI, parameters.get(OidcConstants.REQUEST_URI));
         val mv = new ModelAndView(new MappingJackson2JsonView(), model);
-        mv.setStatus(HttpStatus.OK);
+        mv.setStatus(HttpStatus.CREATED);
         return mv;
     }
 }
