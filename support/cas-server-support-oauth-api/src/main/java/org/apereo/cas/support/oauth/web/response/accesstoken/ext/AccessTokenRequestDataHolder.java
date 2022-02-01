@@ -90,8 +90,7 @@ public class AccessTokenRequestDataHolder implements Serializable {
 
     private final String redirectUri;
 
-    @Nonnull
-    @JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     @JsonSubTypes({
         @JsonSubTypes.Type(value = CommonProfile.class, name = "commonProfile")
     })

@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import org.pac4j.core.profile.UserProfile;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -46,6 +45,5 @@ public class OAuth20AccessTokenResponseResult implements Serializable {
 
     private final long deviceRefreshInterval;
 
-    @Nonnull
     private final UserProfile userProfile;
 }

@@ -96,6 +96,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .responseType(OAuth20ResponseTypes.TOKEN)
             .ticketGrantingTicket(new MockTicketGrantingTicket(ID))
             .generateRefreshToken(true)
+            .redirectUri("https://oauth.example.org")
             .build();
         val modelAndView = oauthTokenResponseBuilder.build(CLIENT_ID, holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");

@@ -95,6 +95,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val holder = AccessTokenRequestDataHolder.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
+            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         assertThrows(ThrottledOAuth20DeviceUserCodeApprovalException.class, () -> generator.generate(holder));
     }
@@ -113,6 +115,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val holder = AccessTokenRequestDataHolder.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
+            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         assertThrows(UnapprovedOAuth20DeviceUserCodeException.class, () -> generator.generate(holder));
     }
@@ -131,6 +135,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val holder = AccessTokenRequestDataHolder.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
+            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         userCode.markTicketExpired();
         assertThrowsWithRootCause(IllegalArgumentException.class,
@@ -150,6 +156,8 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val holder = AccessTokenRequestDataHolder.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
+            .authentication(RegisteredServiceTestUtils.getAuthentication())
+            .registeredService(getRegisteredService(UUID.randomUUID().toString(), "secret"))
             .build();
         token.markTicketExpired();
         assertThrowsWithRootCause(IllegalArgumentException.class,

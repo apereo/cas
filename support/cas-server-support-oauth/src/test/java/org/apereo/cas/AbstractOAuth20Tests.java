@@ -457,7 +457,6 @@ public abstract class AbstractOAuth20Tests {
     protected Pair<String, String> assertClientOK(final OAuthRegisteredService service,
                                                   final boolean refreshToken,
                                                   final String scopes) {
-
         val principal = createPrincipal();
         val code = addCode(principal, service);
         LOGGER.debug("Added code [{}] for principal [{}]", code, principal);

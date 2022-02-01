@@ -30,6 +30,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
         val token = mock(OAuth20Token.class);
         when(token.getId()).thenReturn("CODE");
         when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
 
         val service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
@@ -44,11 +45,11 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .token(token)
             .ticketGrantingTicket(token.getTicketGrantingTicket())
+            .redirectUri("https://oauth.example.org")
             .build();
         val result = AuditableExecutionResult.builder()
             .executionResult(holder)
             .build();
-
         assertTrue(r.resolveFrom(mock(JoinPoint.class), result).length > 0);
     }
 }
