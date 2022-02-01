@@ -34,6 +34,7 @@ public class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractO
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
+            .userProfile(profile)
             .build();
         val factory = (OidcPushedAuthorizationRequestFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
         val ticket = factory.create(holder);

@@ -67,7 +67,6 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val claims = buildJwtClaims(accessToken, timeoutInSeconds, oidcRegisteredService, responseType, grantType);
-
         return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 

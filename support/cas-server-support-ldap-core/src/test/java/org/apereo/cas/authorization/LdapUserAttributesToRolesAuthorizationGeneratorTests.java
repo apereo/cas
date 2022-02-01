@@ -51,7 +51,7 @@ public class LdapUserAttributesToRolesAuthorizationGeneratorTests {
                 "cn={user}", List.of("casTest"), List.of(ret.value()));
             searchOp.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
             val generator = new LdapUserAttributesToRolesAuthorizationGenerator(searchOp, false, "unknown", "ROLE");
-            var profile = new CommonProfile();
+            val profile = new CommonProfile();
             profile.setId("casTest");
 
             val result = generator.generate(mock(WebContext.class), JEESessionStore.INSTANCE, profile);

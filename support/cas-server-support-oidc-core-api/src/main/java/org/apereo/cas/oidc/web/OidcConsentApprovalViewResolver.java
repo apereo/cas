@@ -1,7 +1,10 @@
 package org.apereo.cas.oidc.web;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -10,6 +13,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 
@@ -24,9 +28,13 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
+    private final CentralAuthenticationService centralAuthenticationService;
+
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
-                                           final SessionStore sessionStore) {
+                                           final SessionStore sessionStore,
+                                           final CentralAuthenticationService centralAuthenticationService) {
         super(casProperties, sessionStore);
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @Override
@@ -61,10 +69,19 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             model.put("dynamicTime", oidcRegisteredService.getDynamicRegistrationDateTime());
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
-            supportedScopes.retainAll(OAuth20Utils.getRequestedScopes(webContext));
+
+            val requestedScopes = OAuth20Utils.getRequestedScopes(webContext);
+            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(webContext);
+            webContext.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
+                val authzRequest = centralAuthenticationService.getTicket(uri, OidcPushedAuthorizationRequest.class);
+                val uriFactory = (OidcPushedAuthorizationRequestFactory) centralAuthenticationService.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
+                val holder = uriFactory.toAccessTokenRequest(authzRequest);
+                userInfoClaims.addAll(holder.getClaims().keySet());
+                requestedScopes.addAll(holder.getScopes());
+            }));
+            supportedScopes.retainAll(requestedScopes);
             supportedScopes.add(OidcConstants.StandardScopes.OPENID.getScope());
             model.put("scopes", supportedScopes);
-            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(webContext);
             model.put("userInfoClaims", userInfoClaims);
         }
     }

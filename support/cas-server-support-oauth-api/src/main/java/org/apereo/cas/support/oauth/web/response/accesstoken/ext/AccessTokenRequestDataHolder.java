@@ -11,12 +11,15 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.annotation.Nonnull;
@@ -88,6 +91,10 @@ public class AccessTokenRequestDataHolder implements Serializable {
     private final String redirectUri;
 
     @Nonnull
+    @JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+    @JsonSubTypes({
+        @JsonSubTypes.Type(value = CommonProfile.class, name = "commonProfile")
+    })
     private final UserProfile userProfile;
 
     @JsonIgnore

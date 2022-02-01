@@ -67,6 +67,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .token(code)
             .userProfile(profile)
+            .redirectUri("https://oauth.example.org")
             .build();
 
         servicesManager.save(registeredService);
