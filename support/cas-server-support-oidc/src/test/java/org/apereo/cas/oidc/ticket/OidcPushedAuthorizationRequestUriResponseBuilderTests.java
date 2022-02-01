@@ -13,6 +13,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,6 +38,8 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         assertEquals(0, oidcPushedAuthorizationRequestResponseBuilder.getOrder());
 
         val registeredService = getOidcRegisteredService();
+        val profile = new CommonProfile();
+        profile.setId("casuser");
 
         val request = getHttpRequestForEndpoint(OidcConstants.PUSHED_AUTHORIZE_URL);
         request.addParameter("param1", "value1");
@@ -52,6 +55,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
+            .userProfile(profile)
             .build();
 
         assertTrue(oidcPushedAuthorizationRequestResponseBuilder.supports(webContext));

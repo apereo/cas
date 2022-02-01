@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.profile.CommonProfile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +25,8 @@ public class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractO
     @Test
     public void verifyOperation() throws Exception {
         val registeredService = getOidcRegisteredService();
+        val profile = new CommonProfile();
+        profile.setId("casTest");
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())

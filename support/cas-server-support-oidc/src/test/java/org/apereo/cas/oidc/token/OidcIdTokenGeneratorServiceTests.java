@@ -28,7 +28,6 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -308,27 +307,17 @@ public class OidcIdTokenGeneratorServiceTests {
             when(accessToken.getTicketGrantingTicket()).thenReturn(tgt);
             when(accessToken.getId()).thenReturn(getClass().getSimpleName());
 
-            val idToken = oidcIdTokenGenerator.generate( accessToken, 30, profile,
+            val idToken = oidcIdTokenGenerator.generate(accessToken, 30, profile,
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
                 OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
             assertNotNull(idToken);
         }
 
         @Test
-        public void verifyTokenGenerationFailsWithoutProfile() {
-            assertThrows(IllegalArgumentException.class, () -> {
-                val accessToken = mock(OAuth20AccessToken.class);
-                oidcIdTokenGenerator.generate( accessToken, 30, mock(UserProfile.class),
-                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE,
-                    OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, "clientid"));
-            });
-        }
-
-        @Test
         public void verifyUnknownServiceType() {
             assertThrows(IllegalArgumentException.class, () -> {
                 val accessToken = mock(OAuth20AccessToken.class);
-                oidcIdTokenGenerator.generate( accessToken, 30, mock(UserProfile.class),
+                oidcIdTokenGenerator.generate(accessToken, 30, new CommonProfile(),
                     OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, new MockOAuthRegisteredService());
             });
         }

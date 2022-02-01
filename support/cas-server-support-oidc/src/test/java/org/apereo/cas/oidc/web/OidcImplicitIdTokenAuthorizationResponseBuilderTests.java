@@ -14,9 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -55,17 +53,9 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal, attributes);
         val code = addCode(principal, registeredService);
 
-        val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        val manager = new ProfileManager(context, JEESessionStore.INSTANCE);
-
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("casuser");
-
-        manager.save(true, profile, false);
 
         val holder = AccessTokenRequestDataHolder.builder()
             .clientId(registeredService.getClientId())
@@ -73,7 +63,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
             .authentication(authentication)
             .registeredService(registeredService)
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
-            .responseType(OAuth20ResponseTypes.CODE)
+            .responseType(OAuth20ResponseTypes.ID_TOKEN)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .token(code)
             .userProfile(profile)
