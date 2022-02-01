@@ -44,5 +44,12 @@ public class OidcDefaultPushedAuthorizationRequestFactoryTests extends AbstractO
 
         val expiration = Beans.newDuration(casProperties.getAuthn().getOidc().getPar().getMaxTimeToLiveInSeconds()).getSeconds();
         assertEquals(expiration, ticket.getExpirationPolicy().getTimeToLive());
+
+        val atRequest = factory.toAccessTokenRequest(ticket);
+        assertEquals(holder.getAuthentication(), atRequest.getAuthentication());
+        assertEquals(holder.getService(), atRequest.getService());
+        assertEquals(holder.getRegisteredService(), atRequest.getRegisteredService());
+        assertEquals(holder.getClientId(), atRequest.getClientId());
+        assertEquals(holder.getUserProfile().getId(), atRequest.getUserProfile().getId());
     }
 }

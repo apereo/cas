@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +47,13 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
         return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService(),
-            request);
+            EncodingUtils.encodeBase64(request));
+    }
+
+    @Override
+    public AccessTokenRequestDataHolder toAccessTokenRequest(final OidcPushedAuthorizationRequest authzRequest) throws Exception {
+        val decodedRequest = EncodingUtils.decodeBase64ToString(authzRequest.getAuthorizationRequest());
+        return MAPPER.readValue(decodedRequest, AccessTokenRequestDataHolder.class);
     }
 
     /**
