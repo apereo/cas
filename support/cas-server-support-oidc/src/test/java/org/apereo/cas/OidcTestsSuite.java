@@ -48,6 +48,7 @@ import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationModelAndViewBuilderTest
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilderTests;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestUriResponseBuilderTests;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestTests;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidatorTests;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorServiceTests;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionServiceTests;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutorTests;
@@ -177,6 +178,7 @@ import org.junit.platform.suite.api.Suite;
     OidcAuthenticationAuthorizeSecurityLogicTests.class,
     DefaultOidcAttributeReleasePolicyFactoryTests.class,
     OidcSingleLogoutMessageCreatorTests.class,
+    OidcPushedAuthorizationRequestValidatorTests.class,
     OidcPushedAuthorizeEndpointControllerTests.class,
     OidcDefaultJsonWebKeystoreRotationServiceTests.class,
     OidcSingleLogoutServiceMessageHandlerTests.class
