@@ -22,25 +22,26 @@ import org.springframework.web.servlet.ModelAndView;
 public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20ConfigurationContext>
     extends BaseOAuth20AuthorizationResponseBuilder<T> {
 
-    public OAuth20ResourceOwnerCredentialsResponseBuilder(final T configurationContext,
-                                                          final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
+    public OAuth20ResourceOwnerCredentialsResponseBuilder(
+        final T configurationContext,
+        final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder) {
         super(configurationContext, authorizationModelAndViewBuilder);
     }
 
     @Override
-    public ModelAndView build(final WebContext context, final String clientId,
+    public ModelAndView build(final String clientId,
                               final AccessTokenRequestDataHolder holder) throws Exception {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
             .service(holder.getService())
             .accessTokenTimeout(accessTokenResult.getAccessToken().map(OAuth20AccessToken::getExpiresIn).orElse(0L))
-            .responseType(OAuth20Utils.getResponseType(context))
+            .responseType(holder.getResponseType())
             .casProperties(configurationContext.getCasProperties())
             .generatedToken(accessTokenResult)
             .grantType(holder.getGrantType())
             .build();
-        configurationContext.getAccessTokenResponseGenerator().generate(context, result);
+        configurationContext.getAccessTokenResponseGenerator().generate(result);
         return new ModelAndView();
     }
 

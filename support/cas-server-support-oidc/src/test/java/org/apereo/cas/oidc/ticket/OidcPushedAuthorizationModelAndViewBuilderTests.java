@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -44,5 +45,6 @@ public class OidcPushedAuthorizationModelAndViewBuilderTests extends AbstractOid
             RegisteredServiceTestUtils.CONST_TEST_URL2, parameters);
         assertTrue(mv.getModel().containsKey(OidcConstants.EXPIRES_IN));
         assertTrue(mv.getModel().containsKey(OidcConstants.REQUEST_URI));
+        assertEquals(HttpStatus.CREATED, mv.getStatus());
     }
 }

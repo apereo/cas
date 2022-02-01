@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,19 +38,14 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     @Override
-    @SneakyThrows
-    public ModelAndView build(final WebContext context,
-                              final String clientId,
-                              final AccessTokenRequestDataHolder holder) {
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
+    public ModelAndView build(final String clientId,
+                              final AccessTokenRequestDataHolder holder) throws Exception {
+        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, holder.getRedirectUri());
         val result = configurationContext.getAccessTokenGenerator().generate(holder);
         val accessToken = result.getAccessToken().orElse(null);
         val refreshToken = result.getRefreshToken().orElse(null);
         LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
-        return buildCallbackUrlResponseType(holder, redirectUri, accessToken, new ArrayList<>(0), refreshToken, context);
+        return buildCallbackUrlResponseType(holder, accessToken, new ArrayList<>(0), refreshToken);
     }
 
     @Override
@@ -65,26 +59,22 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
      * Build callback url response type string.
      *
      * @param holder       the holder
-     * @param redirectUri  the redirect uri
      * @param accessToken  the access token
      * @param params       the params
      * @param refreshToken the refresh token
-     * @param context      the context
      * @return the string
      * @throws Exception the exception
      */
     protected ModelAndView buildCallbackUrlResponseType(
         final AccessTokenRequestDataHolder holder,
-        final String redirectUri,
         final OAuth20AccessToken accessToken,
         final List<NameValuePair> params,
-        final OAuth20RefreshToken refreshToken,
-        final WebContext context) throws Exception {
+        final OAuth20RefreshToken refreshToken) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val builder = new URIBuilder(redirectUri);
+        val builder = new URIBuilder(holder.getRedirectUri());
         val stringBuilder = new StringBuilder();
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
@@ -139,6 +129,6 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
         LOGGER.debug("Redirecting to URL [{}]", url);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getServicesManager(), accessToken.getClientId());
-        return build(context, registeredService, url, new LinkedHashMap<>());
+        return build(registeredService, holder.getResponseMode(), url, new LinkedHashMap<>());
     }
 }

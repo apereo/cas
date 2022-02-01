@@ -18,4 +18,13 @@ public interface OidcPushedAuthorizationRequestFactory extends TicketFactory {
      * @throws Exception the exception
      */
     OidcPushedAuthorizationRequest create(AccessTokenRequestDataHolder holder) throws Exception;
+
+    /**
+     * To access token request access token request data holder.
+     *
+     * @param authzRequest the authz request
+     * @return the access token request data holder
+     * @throws Exception the exception
+     */
+    AccessTokenRequestDataHolder toAccessTokenRequest(OidcPushedAuthorizationRequest authzRequest) throws Exception;
 }

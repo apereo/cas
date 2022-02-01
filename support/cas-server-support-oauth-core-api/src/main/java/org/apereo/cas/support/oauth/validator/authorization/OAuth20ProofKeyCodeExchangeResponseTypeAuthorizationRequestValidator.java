@@ -26,7 +26,7 @@ public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidato
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final WebContext context) throws Exception  {
         val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).map(String::valueOf).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }

@@ -10,6 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -173,10 +174,11 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      *
      * @param request  the request
      * @param response the response
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request,
-                                             final HttpServletResponse response) {
+                                             final HttpServletResponse response) throws Exception {
         val requestPath = request.getRequestURI();
         return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(new JEEContext(request, response));
     }
@@ -209,11 +211,12 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      *
      * @param context the context
      * @return whether the authorize request is valid
+     * @throws Exception the exception
      */
-    protected boolean isValidAuthorizeRequest(final JEEContext context) {
+    protected boolean isValidAuthorizeRequest(final JEEContext context) throws Exception {
         val validator = oauthAuthorizationRequestValidators.getObject()
             .stream()
-            .filter(b -> b.supports(context))
+            .filter(Unchecked.predicate(b -> b.supports(context)))
             .findFirst()
             .orElse(null);
         return validator != null && validator.validate(context);

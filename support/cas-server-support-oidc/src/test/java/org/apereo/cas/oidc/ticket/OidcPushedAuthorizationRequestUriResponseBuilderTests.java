@@ -20,13 +20,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OidcPushedAuthorizationRequestResponseBuilderTests}.
+ * This is {@link OidcPushedAuthorizationRequestUriResponseBuilderTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Tag("OIDC")
-public class OidcPushedAuthorizationRequestResponseBuilderTests extends AbstractOidcTests {
+public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcPushedAuthorizationRequestResponseBuilder")
     private OAuth20AuthorizationResponseBuilder oidcPushedAuthorizationRequestResponseBuilder;

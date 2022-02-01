@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -39,7 +38,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final WebContext webContext, final String clientId,
+    public ModelAndView build(final String clientId,
                               final AccessTokenRequestDataHolder holder) throws Exception {
         val authentication = holder.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
@@ -50,7 +49,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         configurationContext.getTicketRegistry().addTicket(code);
-        return buildCallbackViewViaRedirectUri(webContext, clientId, authentication, code);
+        return buildCallbackViewViaRedirectUri(holder, code);
     }
 
     @Override
@@ -64,23 +63,17 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     /**
      * Build callback view via redirect uri model and view.
      *
-     * @param context        the context
-     * @param clientId       the client id
-     * @param authentication the authentication
-     * @param code           the code
+     * @param code the code
      * @return the model and view
+     * @throws Exception the exception
      */
-    protected ModelAndView buildCallbackViewViaRedirectUri(final WebContext context, final String clientId,
-                                                           final Authentication authentication,
-                                                           final OAuth20Code code) {
-        val attributes = authentication.getAttributes();
+    protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestDataHolder holder,
+                                                           final OAuth20Code code) throws Exception {
+        val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
-        LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
+        LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
 
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
@@ -90,8 +83,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         if (StringUtils.isNotBlank(nonce)) {
             params.put(OAuth20Constants.NONCE, nonce);
         }
-        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
-        return build(context, registeredService, redirectUri, params);
+        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", holder.getRedirectUri(), params.keySet(), holder.getClientId());
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), holder.getClientId());
+        return build(registeredService, holder.getResponseMode(), holder.getRedirectUri(), params);
     }
 }

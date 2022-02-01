@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
@@ -30,10 +31,10 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
     protected final OAuth20AuthorizationModelAndViewBuilder authorizationModelAndViewBuilder;
 
     @Override
-    public ModelAndView build(final WebContext context,
-                              final OAuthRegisteredService registeredService,
+    public ModelAndView build(final OAuthRegisteredService registeredService,
+                              final OAuth20ResponseModeTypes responseMode,
                               final String redirectUrl,
-                              final Map<String, String> parameters) {
-        return authorizationModelAndViewBuilder.build(context, registeredService, redirectUrl, parameters);
+                              final Map<String, String> parameters) throws Exception {
+        return authorizationModelAndViewBuilder.build(registeredService, responseMode, redirectUrl, parameters);
     }
 }
