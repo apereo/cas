@@ -50,22 +50,69 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * Pre-validate an Authorization request.
      *
      * @param context the context
-     * @return true/false
+     * @return true /false
+     * @throws Exception the exception
      */
-    protected boolean preValidate(final WebContext context) {
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(clientId)) {
-            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
-            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID), false);
+    protected boolean preValidate(final WebContext context) throws Exception {
+        val clientId = getClientIdFromRequest(context);
+        val registeredService = verifyRegisteredServiceByClientId(context, clientId);
+        if (registeredService == null) {
             return false;
         }
 
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(redirectUri)) {
-            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.REDIRECT_URI);
-            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST,
-                String.format("Missing required parameter: [%s]", OAuth20Constants.REDIRECT_URI), false);
+        val redirectUri = getRedirectUriFromRequest(context);
+        if (!verifyRedirectUriForRegisteredService(context, registeredService, redirectUri)) {
             return false;
+        }
+
+        val responseType = getResponseTypeFromRequest(context);
+        if (!verifyResponseType(context, responseType)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets response type from request.
+     *
+     * @param context the context
+     * @return the response type from request
+     */
+    protected String getResponseTypeFromRequest(final WebContext context) {
+        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+    }
+
+    /**
+     * Gets redirect uri from request.
+     *
+     * @param context the context
+     * @return the redirect uri from request
+     */
+    protected String getRedirectUriFromRequest(final WebContext context) {
+        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
+    }
+
+    /**
+     * Gets client id from request.
+     *
+     * @param context the context
+     * @return the client id from request
+     */
+    protected String getClientIdFromRequest(final WebContext context) {
+        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+    }
+
+    /**
+     * Verify registered service by client id.
+     *
+     * @param context the context
+     * @return the o auth registered service
+     */
+    protected OAuthRegisteredService verifyRegisteredServiceByClientId(final WebContext context, final String clientId) {
+        if (StringUtils.isBlank(clientId)) {
+            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.CLIENT_ID);
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, String.format("Missing required parameter: [%s]", OAuth20Constants.CLIENT_ID), false);
+            return null;
         }
 
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
@@ -79,32 +126,9 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.",
                 ObjectUtils.defaultIfNull(registeredService, clientId));
             setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
-            return false;
+            return null;
         }
-
-        if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
-            LOGGER.warn("Callback URL [{}] is not authorized for registered service [{}].", redirectUri, registeredService.getServiceId());
-            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
-            return false;
-        }
-
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(responseType)) {
-            setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
-                String.format("Missing required parameter: [%s]", OAuth20Constants.RESPONSE_TYPE), true);
-            return false;
-        }
-
-        if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
-            LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
-                responseType, OAuth20ResponseTypes.values());
-            setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
-                String.format("Unsupported response_type: [%s]", responseType), true);
-
-            return false;
-        }
-
-        return true;
+        return registeredService;
     }
 
     /**
@@ -130,6 +154,50 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+    }
+
+    /**
+     * Verify redirect uri for registered service boolean.
+     *
+     * @param context           the context
+     * @param registeredService the registered service
+     * @param redirectUri       the redirect uri
+     * @return the boolean
+     */
+    protected boolean verifyRedirectUriForRegisteredService(final WebContext context,
+                                                            final OAuthRegisteredService registeredService,
+                                                            final String redirectUri) {
+        if (StringUtils.isBlank(redirectUri)) {
+            LOGGER.warn("Missing required parameter [{}]", OAuth20Constants.REDIRECT_URI);
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST,
+                String.format("Missing required parameter: [%s]", OAuth20Constants.REDIRECT_URI), false);
+            return false;
+        }
+
+        if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
+            LOGGER.warn("Callback URL [{}] is not authorized for registered service [{}].", redirectUri, registeredService.getServiceId());
+            setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean verifyResponseType(final WebContext context, final String responseType) {
+        if (StringUtils.isBlank(responseType)) {
+            setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
+                String.format("Missing required parameter: [%s]", OAuth20Constants.RESPONSE_TYPE), true);
+            return false;
+        }
+
+        if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
+            LOGGER.warn("Response type [{}] is not found in the list of supported values [{}].",
+                responseType, OAuth20ResponseTypes.values());
+            setErrorDetails(context, OAuth20Constants.UNSUPPORTED_RESPONSE_TYPE,
+                String.format("Unsupported response_type: [%s]", responseType), true);
+
+            return false;
+        }
+        return true;
     }
 
 }
