@@ -34,6 +34,7 @@ public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrant
         super(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
     }
 
+
     @Override
     protected List<UserProfile> loadProfiles(final ProfileManager manager, final WebContext context,
                                              final SessionStore sessionStore, final List<Client> clients) {

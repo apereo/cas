@@ -219,7 +219,16 @@ public interface OidcConstants {
         /**
          * registration is protected for all.
          */
-        PROTECTED
+        PROTECTED;
+
+        /**
+         * Is protected?
+         *
+         * @return the boolean
+         */
+        public boolean isProtected() {
+            return this == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
+        }
     }
 
     /**

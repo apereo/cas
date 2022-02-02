@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.validator.authorization.BaseOAuth20AuthorizationRequestValidator;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.pac4j.core.context.WebContext;
@@ -32,13 +33,15 @@ public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20Authoriz
 
     @Override
     public boolean validate(final WebContext context) throws Exception {
-        val requestUri = context.getRequestParameter(OidcConstants.REQUEST_URI).get();
-        val uriToken = centralAuthenticationService.getTicket(requestUri, OidcPushedAuthorizationRequest.class);
-        val uriFactory = (OidcPushedAuthorizationRequestFactory) centralAuthenticationService.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
-        val holder = uriFactory.toAccessTokenRequest(uriToken);
-        context.setRequestAttribute(OidcPushedAuthorizationRequest.class.getName(), holder);
-        val givenClientId = getClientIdFromRequest(context);
-        return givenClientId.equals(holder.getClientId()) && verifyRegisteredServiceByClientId(context, holder.getClientId()) != null;
+        return FunctionUtils.doAndHandle(() -> {
+            val requestUri = context.getRequestParameter(OidcConstants.REQUEST_URI).get();
+            val uriToken = centralAuthenticationService.getTicket(requestUri, OidcPushedAuthorizationRequest.class);
+            val uriFactory = (OidcPushedAuthorizationRequestFactory) centralAuthenticationService.getTicketFactory().get(OidcPushedAuthorizationRequest.class);
+            val holder = uriFactory.toAccessTokenRequest(uriToken);
+            context.setRequestAttribute(OidcPushedAuthorizationRequest.class.getName(), holder);
+            val givenClientId = getClientIdFromRequest(context);
+            return givenClientId.equals(holder.getClientId()) && verifyRegisteredServiceByClientId(context, holder.getClientId()) != null;
+        }, throwable -> false).get();
     }
 
     @Override
