@@ -34,7 +34,8 @@ public class DefaultOAuth20AuthorizationModelAndViewBuilder implements OAuth20Au
             LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
             return mv;
         }
-        return new ModelAndView(new RedirectView(redirectUrl), parameters);
+        val mv = new RedirectView(redirectUrl);
+        return new ModelAndView(mv, parameters);
     }
 
     /**

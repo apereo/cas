@@ -37,6 +37,8 @@ public interface CookieSameSitePolicy {
                 return strict();
             case "lax":
                 return lax();
+            case "off":
+                return off();
             case "none":
             default:
                 return none();
@@ -68,6 +70,15 @@ public interface CookieSameSitePolicy {
      */
     static CookieSameSitePolicy strict() {
         return (request, response) -> Optional.of("SameSite=Strict;");
+    }
+
+    /**
+     * Off cookie same site policy.
+     *
+     * @return the cookie same site policy
+     */
+    static CookieSameSitePolicy off() {
+        return (request, response) -> Optional.empty();
     }
 
     /**

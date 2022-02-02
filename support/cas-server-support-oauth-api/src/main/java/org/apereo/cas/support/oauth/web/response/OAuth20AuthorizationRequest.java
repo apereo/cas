@@ -25,7 +25,7 @@ public class OAuth20AuthorizationRequest implements Serializable {
 
     private final String grantType;
 
-    private final String contextPath;
+    private final String url;
 
     private final String clientId;
 

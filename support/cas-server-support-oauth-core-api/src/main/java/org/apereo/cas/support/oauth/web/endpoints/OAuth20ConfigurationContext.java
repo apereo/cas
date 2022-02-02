@@ -23,6 +23,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
@@ -30,18 +31,23 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.val;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20ConfigurationContext}.
@@ -119,4 +125,21 @@ public class OAuth20ConfigurationContext {
     private final OAuth20TokenSigningAndEncryptionService idTokenSigningAndEncryptionService;
 
     private final CasCookieBuilder oauthDistributedSessionCookieGenerator;
+
+    /**
+     * Gets ticket granting ticket.
+     *
+     * @param context the context
+     * @return the ticket granting ticket
+     */
+    public TicketGrantingTicket fetchTicketGrantingTicketFrom(final JEEContext context) {
+        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+            getTicketGrantingTicketCookieGenerator(),
+            getTicketRegistry(), context.getNativeRequest());
+        return Optional.ofNullable(ticketGrantingTicket)
+            .orElseGet(() -> getSessionStore()
+                .get(context, WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID)
+                .map(ticketId -> getCentralAuthenticationService().getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                .orElse(null));
+    }
 }

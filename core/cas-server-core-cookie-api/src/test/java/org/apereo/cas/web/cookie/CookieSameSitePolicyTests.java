@@ -8,7 +8,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Cookie")
 public class CookieSameSitePolicyTests {
+    @Test
+    public void verifyOff() {
+        val opt = CookieSameSitePolicy.of(CookieGenerationContext.builder().sameSitePolicy("Off").build());
+        assertNotNull(opt);
+        assertTrue(opt.build(new MockHttpServletRequest(), new MockHttpServletResponse()).isEmpty());
+    }
+
+
     @Test
     public void verifyNone() {
         val opt = CookieSameSitePolicy.of(CookieGenerationContext.builder().sameSitePolicy("NONE").build());
