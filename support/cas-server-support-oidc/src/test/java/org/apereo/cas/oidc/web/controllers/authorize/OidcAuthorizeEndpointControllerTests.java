@@ -10,6 +10,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -104,13 +105,16 @@ public class OidcAuthorizeEndpointControllerTests {
             sessionStore.set(context, Pac4jConstants.USER_PROFILES,
                 CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
 
-            var modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
-            var view = modelAndView.getView();
+            val modelAndView = oidcAuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
+            val view = modelAndView.getView();
             assertTrue(view instanceof RedirectView);
+            val url = ((RedirectView) view).getUrl();
+            assertTrue(url.startsWith("https://oauth.example.org/"));
 
-            modelAndView = oidcAuthorizeEndpointController.handleRequestPost(mockRequest, mockResponse);
-            view = modelAndView.getView();
-            assertTrue(view instanceof RedirectView);
+            val fragment = new URIBuilder(url).getFragment();
+            assertTrue(fragment.contains(OAuth20Constants.ACCESS_TOKEN));
+            assertTrue(fragment.contains(OAuth20Constants.EXPIRES_IN));
+            assertTrue(fragment.contains(OAuth20Constants.TOKEN_TYPE));
         }
     }
 

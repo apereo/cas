@@ -14,10 +14,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,11 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() {
-        val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-
         val authzRequest = OAuth20AuthorizationRequest.builder()
             .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())
             .build();

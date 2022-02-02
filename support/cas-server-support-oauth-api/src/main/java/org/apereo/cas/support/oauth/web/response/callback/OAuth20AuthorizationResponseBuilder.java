@@ -1,15 +1,21 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20AuthorizationResponseBuilder} that attempts to build the callback url
@@ -26,6 +32,7 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      * Build response model and view.
      *
      * @param registeredService the registered service
+     * @param responseMode      the response mode
      * @param redirectUrl       the redirect url
      * @param parameters        the parameters
      * @return the model and view
@@ -39,13 +46,11 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     /**
      * Build.
      *
-     * @param clientId the client id
-     * @param holder   the holder
+     * @param holder the holder
      * @return the view response
      * @throws Exception the exception
      */
-    ModelAndView build(String clientId,
-                       AccessTokenRequestDataHolder holder) throws Exception;
+    ModelAndView build(AccessTokenRequestContext holder) throws Exception;
 
     /**
      * Supports request?
@@ -53,23 +58,29 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      * @param context the context
      * @return true/false
      */
-    boolean supports(WebContext context);
-
-    /**
-     * Is single sign on session required for this builder?
-     * This geneerally forces the presence of a ticket-granting ticket
-     * to be found before this builder can operate further.
-     * Some builders may be able to work without a session initially,
-     * such as those that operate on PAR requests.
-     *
-     * @return the boolean
-     */
-    default boolean isSingleSignOnSessionRequired() {
-        return true;
-    }
+    boolean supports(OAuth20AuthorizationRequest context);
 
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * To authorization request optional.
+     *
+     * @param context           the context
+     * @param authentication    the authentication
+     * @param service           the service
+     * @param registeredService the registered service
+     * @return the o auth 20 authorization request
+     */
+    default Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
+        final WebContext context, final Authentication authentication,
+        final Service service, final OAuthRegisteredService registeredService) {
+        return Optional.of(OAuth20AuthorizationRequest.builder()
+            .clientId(context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY))
+            .url(context.getRequestURL())
+            .responseType(context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
+            .grantType(context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
     }
 }

@@ -12,9 +12,6 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Collections;
@@ -56,10 +53,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
             .service(RegisteredServiceTestUtils.getService("example"))
             .redirectUri("https://github.com/apereo/cas")
             .build();
-        val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
-        request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
-        val context = new JEEContext(request, new MockHttpServletResponse());
+
         val mv = oauthAuthorizationCodeResponseBuilder.build(holder);
         assertTrue(mv.getView() instanceof RedirectView);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.CODE));
