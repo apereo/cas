@@ -11,15 +11,13 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import net.minidev.json.annotate.JsonIgnore;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.annotation.Nonnull;
@@ -30,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link AccessTokenRequestDataHolder}.
+ * This is {@link AccessTokenRequestContext}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -39,7 +37,7 @@ import java.util.Set;
 @Getter
 @SuperBuilder
 @Jacksonized
-public class AccessTokenRequestDataHolder implements Serializable {
+public class AccessTokenRequestContext implements Serializable {
 
     private static final long serialVersionUID = 1428887534614525042L;
 
@@ -57,7 +55,8 @@ public class AccessTokenRequestDataHolder implements Serializable {
     @Nonnull
     private final OAuthRegisteredService registeredService;
 
-    private final TicketGrantingTicket ticketGrantingTicket;
+    @Setter
+    private TicketGrantingTicket ticketGrantingTicket;
 
     @Builder.Default
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
@@ -90,10 +89,6 @@ public class AccessTokenRequestDataHolder implements Serializable {
 
     private final String redirectUri;
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-    @JsonSubTypes({
-        @JsonSubTypes.Type(value = CommonProfile.class, name = "commonProfile")
-    })
     private final UserProfile userProfile;
 
     @JsonIgnore

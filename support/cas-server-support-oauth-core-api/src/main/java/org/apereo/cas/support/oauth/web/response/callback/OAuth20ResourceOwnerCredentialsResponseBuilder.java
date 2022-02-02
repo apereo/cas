@@ -1,16 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -29,8 +27,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
     }
 
     @Override
-    public ModelAndView build(final String clientId,
-                              final AccessTokenRequestDataHolder holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val accessTokenResult = configurationContext.getAccessTokenGenerator().generate(holder);
         val result = OAuth20AccessTokenResponseResult.builder()
             .registeredService(holder.getRegisteredService())
@@ -47,9 +44,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilder<T extends OAuth20Con
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.PASSWORD);
+    public boolean supports(final OAuth20AuthorizationRequest context) {
+        return OAuth20Utils.isGrantType(context.getGrantType(), OAuth20GrantTypes.PASSWORD);
     }
 }

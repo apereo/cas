@@ -21,7 +21,7 @@ public interface AccessTokenGrantRequestExtractor {
      * @param response the response
      * @return the access token request data holder
      */
-    AccessTokenRequestDataHolder extract(HttpServletRequest request, HttpServletResponse response);
+    AccessTokenRequestContext extract(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Supports grant type?

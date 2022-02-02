@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,7 +29,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
 
     @Test
     public void verifyOperation() throws Exception {
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .clientId(CLIENT_ID)
             .service(CoreAuthenticationTestUtils.getService())
             .authentication(RegisteredServiceTestUtils.getAuthentication(
@@ -39,7 +39,7 @@ public class OAuth20ResourceOwnerCredentialsResponseBuilderTests extends Abstrac
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
-        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(CLIENT_ID, holder));
+        assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(holder));
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, CLIENT_ID);
         assertNotNull(oauthResourceOwnerCredentialsResponseBuilder.build(registeredService,
             OAuth20ResponseModeTypes.FORM_POST, "https://example.org", Map.of()));

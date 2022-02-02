@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 /**
  * This is {@link OAuth20TokenGenerator}.
@@ -18,5 +18,5 @@ public interface OAuth20TokenGenerator {
      * @return the token result
      * @throws Exception the exception
      */
-    OAuth20TokenGeneratedResult generate(AccessTokenRequestDataHolder responseHolder) throws Exception;
+    OAuth20TokenGeneratedResult generate(AccessTokenRequestContext responseHolder) throws Exception;
 }

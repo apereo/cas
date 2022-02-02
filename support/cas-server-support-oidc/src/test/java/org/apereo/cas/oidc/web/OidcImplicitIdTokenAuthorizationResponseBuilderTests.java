@@ -8,7 +8,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +40,11 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        assertTrue(oidcImplicitIdTokenCallbackUrlBuilder.supports(context));
+
+        val authzRequest = OAuth20AuthorizationRequest.builder()
+            .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())
+            .build();
+        assertTrue(oidcImplicitIdTokenCallbackUrlBuilder.supports(authzRequest));
     }
 
     @Test
@@ -57,7 +62,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("casuser");
 
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(CoreAuthenticationTestUtils.getService())
             .authentication(authentication)
@@ -71,7 +76,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends Abstra
             .build();
 
         servicesManager.save(registeredService);
-        val mv = oidcImplicitIdTokenCallbackUrlBuilder.build(registeredService.getClientId(), holder);
+        val mv = oidcImplicitIdTokenCallbackUrlBuilder.build(holder);
         assertNotNull(mv);
     }
 }

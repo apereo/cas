@@ -4,7 +4,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -15,7 +16,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -38,9 +38,8 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     @Override
-    public ModelAndView build(final String clientId,
-                              final AccessTokenRequestDataHolder holder) throws Exception {
-        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, holder.getRedirectUri());
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
+        LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
         val result = configurationContext.getAccessTokenGenerator().generate(holder);
         val accessToken = result.getAccessToken().orElse(null);
         val refreshToken = result.getRefreshToken().orElse(null);
@@ -49,10 +48,8 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.TOKEN.getType());
+    public boolean supports(final OAuth20AuthorizationRequest context) {
+        return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.TOKEN.getType());
     }
 
     /**
@@ -66,7 +63,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
      * @throws Exception the exception
      */
     protected ModelAndView buildCallbackUrlResponseType(
-        final AccessTokenRequestDataHolder holder,
+        final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
         final List<NameValuePair> params,
         final OAuth20RefreshToken refreshToken) throws Exception {

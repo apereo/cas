@@ -8,7 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.val;
@@ -92,7 +92,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         ticketRegistry.addTicket(token);
         val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token);
         ticketRegistry.addTicket(userCode);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
             .authentication(RegisteredServiceTestUtils.getAuthentication())
@@ -112,7 +112,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         ticketRegistry.addTicket(userCode);
 
         Thread.sleep(2000);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
             .authentication(RegisteredServiceTestUtils.getAuthentication())
@@ -132,7 +132,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         ticketRegistry.addTicket(userCode);
 
         Thread.sleep(2000);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
             .authentication(RegisteredServiceTestUtils.getAuthentication())
@@ -153,7 +153,7 @@ public class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val userCode = defaultDeviceUserCodeFactory.createDeviceUserCode(token);
         ticketRegistry.addTicket(userCode);
         Thread.sleep(2000);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .responseType(OAuth20ResponseTypes.DEVICE_CODE)
             .deviceCode(token.getId())
             .authentication(RegisteredServiceTestUtils.getAuthentication())

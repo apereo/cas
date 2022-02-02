@@ -12,7 +12,7 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -138,7 +138,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
      * @return the model and view
      */
     protected ModelAndView generateAccessTokenResponse(
-        final AccessTokenRequestDataHolder requestHolder,
+        final AccessTokenRequestContext requestHolder,
         final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val deviceRefreshInterval = Beans.newDuration(getConfigurationContext().getCasProperties()
@@ -167,15 +167,15 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         private final String message;
     }
 
-    private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
-                                                                                  final HttpServletResponse response) {
+    private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
+                                                                               final HttpServletResponse response) {
         val audit = AuditableContext.builder()
             .httpRequest(request)
             .httpResponse(response)
             .build();
         val accessResult = accessTokenGrantAuditableRequestExtractor.execute(audit);
         val execResult = accessResult.getExecutionResult();
-        return (AccessTokenRequestDataHolder) execResult.orElseThrow(
+        return (AccessTokenRequestContext) execResult.orElseThrow(
             () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 

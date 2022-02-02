@@ -7,7 +7,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
@@ -38,8 +38,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final String clientId,
-                              final AccessTokenRequestDataHolder holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val authentication = holder.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(holder.getService(), authentication,
@@ -53,11 +52,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
+    public boolean supports(final OAuth20AuthorizationRequest context) {
+        return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.CODE.getType());
     }
 
     /**
@@ -67,7 +63,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
      * @return the model and view
      * @throws Exception the exception
      */
-    protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestDataHolder holder,
+    protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
                                                            final OAuth20Code code) throws Exception {
         val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();

@@ -1,16 +1,16 @@
 package org.apereo.cas.oidc.ticket;
 
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -22,9 +22,6 @@ import lombok.val;
  */
 @RequiredArgsConstructor
 public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedAuthorizationRequestFactory {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
-
     /**
      * Default instance for the ticket id generator.
      */
@@ -41,8 +38,8 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     }
 
     @Override
-    public OidcPushedAuthorizationRequest create(final AccessTokenRequestDataHolder holder) throws Exception {
-        val request = MAPPER.writeValueAsString(holder);
+    public OidcPushedAuthorizationRequest create(final AccessTokenRequestContext holder) throws Exception {
+        val request = SerializationUtils.serialize(holder);
         val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
         return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
@@ -51,9 +48,10 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     }
 
     @Override
-    public AccessTokenRequestDataHolder toAccessTokenRequest(final OidcPushedAuthorizationRequest authzRequest) throws Exception {
-        val decodedRequest = EncodingUtils.decodeBase64ToString(authzRequest.getAuthorizationRequest());
-        return MAPPER.readValue(decodedRequest, AccessTokenRequestDataHolder.class);
+    public AccessTokenRequestContext toAccessTokenRequest(final OidcPushedAuthorizationRequest authzRequest) throws Exception {
+        val decodedRequest = EncodingUtils.decodeBase64(authzRequest.getAuthorizationRequest());
+        return SerializationUtils.decodeAndDeserializeObject(decodedRequest,
+            CipherExecutor.noOp(), AccessTokenRequestContext.class);
     }
 
     /**

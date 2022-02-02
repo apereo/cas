@@ -42,7 +42,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     @Override
-    public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
+    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) {
         val context = new JEEContext(request, response);
         val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
 
@@ -62,7 +62,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
-        val builder = AccessTokenRequestDataHolder.builder()
+        val builder = AccessTokenRequestContext.builder()
             .scopes(scopes)
             .service(service)
             .authentication(token.getAuthentication())
@@ -121,8 +121,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @param builder  the builder
      * @return the access token request data holder
      */
-    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+    protected AccessTokenRequestContext extractInternal(
+        final HttpServletRequest request, final HttpServletResponse response,
+        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
         return builder.build();
     }
 
@@ -179,8 +180,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = StringUtils.isNotBlank(clientId)
-                ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId)
-                : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getOAuthConfigurationContext().getServicesManager(), redirectUri);
+            ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId)
+            : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getOAuthConfigurationContext().getServicesManager(), redirectUri);
         if (registeredService == null) {
             LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri);
         } else {

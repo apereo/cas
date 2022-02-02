@@ -6,7 +6,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +74,6 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
 
     @Test
     public void verifyUnchangedStateAndNonceParameter() throws Exception {
-        assertTrue(oauthTokenResponseBuilder.isSingleSignOnSessionRequired());
         assertEquals(Ordered.LOWEST_PRECEDENCE, oauthAuthorizationCodeResponseBuilder.getOrder());
 
         val registeredService = getRegisteredService("example", CLIENT_SECRET, new LinkedHashSet<>());
@@ -86,7 +85,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
         attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
 
-        val holder = AccessTokenRequestDataHolder
+        val holder = AccessTokenRequestContext
             .builder()
             .clientId(registeredService.getClientId())
             .service(service)
@@ -98,7 +97,7 @@ public class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth
             .generateRefreshToken(true)
             .redirectUri("https://oauth.example.org")
             .build();
-        val modelAndView = oauthTokenResponseBuilder.build(CLIENT_ID, holder);
+        val modelAndView = oauthTokenResponseBuilder.build(holder);
         assertTrue(modelAndView.getView() instanceof RedirectView, "Expected RedirectView");
         assertTrue(modelAndView.getModel().isEmpty());
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.ticket;
 
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
@@ -17,7 +17,7 @@ public interface OidcPushedAuthorizationRequestFactory extends TicketFactory {
      * @return the oidc pushed authorization uri
      * @throws Exception the exception
      */
-    OidcPushedAuthorizationRequest create(AccessTokenRequestDataHolder holder) throws Exception;
+    OidcPushedAuthorizationRequest create(AccessTokenRequestContext holder) throws Exception;
 
     /**
      * To access token request access token request data holder.
@@ -26,5 +26,5 @@ public interface OidcPushedAuthorizationRequestFactory extends TicketFactory {
      * @return the access token request data holder
      * @throws Exception the exception
      */
-    AccessTokenRequestDataHolder toAccessTokenRequest(OidcPushedAuthorizationRequest authzRequest) throws Exception;
+    AccessTokenRequestContext toAccessTokenRequest(OidcPushedAuthorizationRequest authzRequest) throws Exception;
 }
