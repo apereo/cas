@@ -4,16 +4,15 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.core.OrderComparator;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,6 +45,14 @@ import java.util.Optional;
 public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20AuthorizeEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
+    }
+
+    private static Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
+        final OAuthRegisteredService registeredService,
+        final JEEContext context, final Service service,
+        final Authentication authentication,
+        final OAuth20AuthorizationResponseBuilder builder) {
+        return builder.toAuthorizationRequest(context, authentication, service, registeredService);
     }
 
     /**
@@ -177,17 +185,18 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
                 .build();
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
-        } catch (final UnauthorizedServiceException | PrincipalException e) {
-            LoggingUtils.error(LOGGER, e);
-            return OAuth20Utils.produceUnauthorizedErrorView();
-        }
 
-        val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
-        if (modelAndView != null && modelAndView.hasView()) {
-            return modelAndView;
+            val modelAndView = buildAuthorizationForRequest(registeredService, context, service, authentication);
+            return Optional.ofNullable(modelAndView)
+                .filter(ModelAndView::hasView)
+                .orElseGet(() -> {
+                    LOGGER.trace("No explicit view was defined as part of the authorization response");
+                    return null;
+                });
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
         }
-        LOGGER.trace("No explicit view was defined as part of the authorization response");
-        return null;
     }
 
     /**
@@ -210,7 +219,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val authzRequest = registeredBuilders
             .stream()
             .sorted(OrderComparator.INSTANCE)
-            .map(builder -> builder.toAuthorizationRequest(context, authentication, service, registeredService))
+            .map(builder -> toAuthorizationRequest(registeredService, context, service, authentication, builder))
             .filter(Objects::nonNull)
             .filter(Optional::isPresent)
             .findFirst()
@@ -299,6 +308,4 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             grantType, scopes, authzRequest.getClientId());
         return holder;
     }
-
-
 }

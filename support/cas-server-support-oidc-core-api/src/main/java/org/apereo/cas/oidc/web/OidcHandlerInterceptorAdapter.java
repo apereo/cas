@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -9,8 +10,11 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,22 +33,23 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     private final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor;
 
-    private final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
+    private final CasConfigurationProperties casProperties;
 
     public OidcHandlerInterceptorAdapter(
         final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
         final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
         final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
         final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
-        final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode,
+        final CasConfigurationProperties casProperties,
         final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
         final ServicesManager servicesManager,
         final SessionStore sessionStore,
         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
+
         this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
-        this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
+        this.casProperties = casProperties;
         this.requiresAuthenticationClientConfigurationInterceptor = requiresAuthenticationClientConfigurationInterceptor;
     }
 
@@ -52,8 +57,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws Exception {
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}]", request.getRequestURI());
-        if (!super.preHandle(request, response, handler)) {
-            LOGGER.trace("Unable to pre-handle OIDC request at [{}]", request.getRequestURI());
+        if (casProperties.getAuthn().getOidc().getDiscovery().isRequirePushedAuthorizationRequests()
+            && HttpMethod.valueOf(request.getMethod()) != HttpMethod.POST
+            && StringUtils.isBlank(request.getParameter(OidcConstants.REQUEST_URI))
+            && isAuthorizationRequest(request, response)) {
+            LOGGER.warn("CAS is configured to only accept pushed authorization requests and this is not a POST");
+            response.setStatus(HttpStatus.SC_FORBIDDEN);
             return false;
         }
 
@@ -61,6 +70,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
         }
+        
+        if (!super.preHandle(request, response, handler)) {
+            LOGGER.trace("Unable to pre-handle OIDC request at [{}]", request.getRequestURI());
+            return false;
+        }
+
         if (isClientConfigurationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC client configuration is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationClientConfigurationInterceptor.preHandle(request, response, handler);
@@ -129,11 +144,14 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     }
 
     /**
-     * Is dynamic client registration request protected boolean.
+     * Is dynamic client registration request protected?
      *
      * @return true/false
      */
     private boolean isDynamicClientRegistrationRequestProtected() {
-        return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
+        val oidc = casProperties.getAuthn().getOidc();
+        return OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
+            oidc.getCore().getDynamicClientRegistrationMode(),
+            OidcConstants.DynamicClientRegistrationMode.PROTECTED.name())).isProtected();
     }
 }
