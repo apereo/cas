@@ -73,6 +73,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         assertNotNull(ticket);
 
         val request = new MockHttpServletRequest();
+        request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
         val response = new MockHttpServletResponse();
         var context = new JEEContext(request, response);
 

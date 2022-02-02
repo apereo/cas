@@ -310,6 +310,23 @@ public class OAuth20Utils {
     }
 
     /**
+     * Gets grant type.
+     *
+     * @param context the context
+     * @return the grant type
+     */
+    public static OAuth20GrantTypes getGrantType(final WebContext context) {
+        val grantType = getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val type = Arrays.stream(OAuth20GrantTypes.values())
+            .filter(t -> t.getType().equalsIgnoreCase(grantType))
+            .findFirst()
+            .orElse(OAuth20GrantTypes.NONE);
+        LOGGER.debug("OAuth grant type is [{}]", type);
+        return type;
+    }
+
+    /**
      * Gets response mode type.
      *
      * @param context the context
