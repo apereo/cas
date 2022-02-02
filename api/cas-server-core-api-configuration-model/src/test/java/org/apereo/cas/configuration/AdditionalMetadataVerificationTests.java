@@ -68,7 +68,7 @@ public class AdditionalMetadataVerificationTests {
     private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
         val mapper = new ObjectMapper().findAndRegisterModules();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
         val propertiesNode = jsonNodeRoot.get("properties");
         val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {

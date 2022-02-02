@@ -17,17 +17,20 @@ import org.pac4j.core.context.WebContext;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator extends OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
+public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator extends
+    OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
 
-    public OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
-                                                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                                                final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+    public OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
     @Override
-    public boolean supports(final WebContext context) throws Exception  {
-        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).map(String::valueOf).orElse(StringUtils.EMPTY);
+    public boolean supports(final WebContext context) throws Exception {
+        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }
 }

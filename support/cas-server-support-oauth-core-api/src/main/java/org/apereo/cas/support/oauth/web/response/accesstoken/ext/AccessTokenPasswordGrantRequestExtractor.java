@@ -30,7 +30,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
+    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) {
         val context = new JEEContext(request, response);
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getKey();
         val scopes = OAuth20Utils.parseRequestScopes(context);
@@ -64,7 +64,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         val result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         val ticketGrantingTicket = getOAuthConfigurationContext().getCentralAuthenticationService().createTicketGrantingTicket(result);
 
-        return AccessTokenRequestDataHolder.builder()
+        return AccessTokenRequestContext.builder()
             .scopes(scopes)
             .service(service)
             .authentication(authentication)

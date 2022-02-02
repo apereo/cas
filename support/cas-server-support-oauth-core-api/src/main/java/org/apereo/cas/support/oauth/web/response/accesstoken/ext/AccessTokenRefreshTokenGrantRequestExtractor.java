@@ -15,7 +15,6 @@ import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,14 +31,26 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     }
 
     @Override
+    public boolean supports(final HttpServletRequest context) {
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        return OAuth20Utils.isGrantType(grantType, getGrantType());
+    }
+
+    @Override
+    public OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.REFRESH_TOKEN;
+    }
+
+    @Override
     protected String getOAuthParameterName() {
         return OAuth20Constants.REFRESH_TOKEN;
     }
 
     @Override
-    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request,
-                                                           final HttpServletResponse response,
-                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+    protected AccessTokenRequestContext extractInternal(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
 
         val context = new JEEContext(request, response);
         val registeredService = getOAuthRegisteredServiceBy(context);
@@ -52,17 +63,6 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
         builder.expireOldRefreshToken(shouldRenewRefreshToken);
 
         return super.extractInternal(request, response, builder);
-    }
-
-    @Override
-    public boolean supports(final HttpServletRequest context) {
-        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType, getGrantType());
-    }
-
-    @Override
-    public OAuth20GrantTypes getGrantType() {
-        return OAuth20GrantTypes.REFRESH_TOKEN;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
      */
     @Override
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes, final OAuth20Token token,
-        final HttpServletRequest request) {
+                                                        final HttpServletRequest request) {
         if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
             LOGGER.error("Requested scopes [{}] exceed the granted scopes [{}] for token [{}]",
                 requestedScopes, token.getScopes(), token.getId());

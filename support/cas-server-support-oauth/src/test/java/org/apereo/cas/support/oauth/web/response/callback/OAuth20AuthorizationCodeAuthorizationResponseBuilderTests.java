@@ -5,7 +5,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.code.OAuth20Code;
 
 import lombok.val;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends AbstractOAuth20Tests {
     private static final String STATE = UUID.randomUUID().toString();
+
     private static final String NONCE = UUID.randomUUID().toString();
 
     @Test
@@ -45,7 +47,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
         val authentication = RegisteredServiceTestUtils.getAuthentication(
             RegisteredServiceTestUtils.getPrincipal("casuser"), attributes);
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .authentication(authentication)
             .registeredService(registeredService)
@@ -58,7 +60,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://github.com/apereo/cas");
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
         val context = new JEEContext(request, new MockHttpServletResponse());
-        val mv = oauthAuthorizationCodeResponseBuilder.build(registeredService.getClientId(), holder);
+        val mv = oauthAuthorizationCodeResponseBuilder.build(holder);
         assertTrue(mv.getView() instanceof RedirectView);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.CODE));
         assertTrue(mv.getModel().containsKey(OAuth20Constants.STATE));
@@ -66,6 +68,11 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends A
 
         val code = mv.getModel().get(OAuth20Constants.CODE).toString();
         assertNotNull(ticketRegistry.getTicket(code, OAuth20Code.class));
-        assertTrue(oauthAuthorizationCodeResponseBuilder.supports(context));
+
+        val authzRequest = OAuth20AuthorizationRequest.builder()
+            .responseType(OAuth20ResponseTypes.CODE.getType())
+            .clientId(holder.getClientId())
+            .build();
+        assertTrue(oauthAuthorizationCodeResponseBuilder.supports(authzRequest));
     }
 }

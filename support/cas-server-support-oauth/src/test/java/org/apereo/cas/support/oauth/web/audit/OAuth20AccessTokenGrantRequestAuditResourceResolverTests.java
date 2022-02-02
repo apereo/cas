@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -37,7 +37,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
         service.setName("OAUTH");
         service.setId(123);
 
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .scopes(CollectionUtils.wrapSet("email"))
             .service(token.getService())
             .authentication(token.getAuthentication())

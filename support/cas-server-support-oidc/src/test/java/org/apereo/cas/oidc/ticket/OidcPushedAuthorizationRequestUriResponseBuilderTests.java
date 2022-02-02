@@ -6,7 +6,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 
 import lombok.val;
@@ -34,7 +35,6 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
 
     @Test
     public void verifyOperation() throws Exception {
-        assertFalse(oidcPushedAuthorizationRequestResponseBuilder.isSingleSignOnSessionRequired());
         assertEquals(0, oidcPushedAuthorizationRequestResponseBuilder.getOrder());
 
         val registeredService = getOidcRegisteredService();
@@ -48,7 +48,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
 
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .clientId(registeredService.getClientId())
             .service(RegisteredServiceTestUtils.getService())
             .authentication(RegisteredServiceTestUtils.getAuthentication())
@@ -58,9 +58,12 @@ public class OidcPushedAuthorizationRequestUriResponseBuilderTests extends Abstr
             .userProfile(profile)
             .build();
 
-        assertTrue(oidcPushedAuthorizationRequestResponseBuilder.supports(webContext));
-
-        val mv = oidcPushedAuthorizationRequestResponseBuilder.build(registeredService.getClientId(), holder);
+        val authzRequest = OAuth20AuthorizationRequest.builder()
+            .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())
+            .build();
+        
+        assertTrue(oidcPushedAuthorizationRequestResponseBuilder.supports(authzRequest));
+        val mv = oidcPushedAuthorizationRequestResponseBuilder.build(holder);
         assertTrue(mv.getModel().containsKey(OidcConstants.EXPIRES_IN));
         val uri = mv.getModel().get(OidcConstants.REQUEST_URI).toString();
         val ticket = ticketRegistry.getTicket(uri, OidcPushedAuthorizationRequest.class);

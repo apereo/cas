@@ -8,15 +8,14 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,9 +37,10 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
     public void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.IDTOKEN_TOKEN.getType());
-        val response = new MockHttpServletResponse();
-        val context = new JEEContext(request, response);
-        assertTrue(oidcImplicitIdTokenAndTokenCallbackUrlBuilder.supports(context));
+        val authzRequest = OAuth20AuthorizationRequest.builder()
+            .responseType(OAuth20ResponseTypes.IDTOKEN_TOKEN.getType())
+            .build();
+        assertTrue(oidcImplicitIdTokenAndTokenCallbackUrlBuilder.supports(authzRequest));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("casuser");
 
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .token(code)
             .clientId(registeredService.getClientId())
             .service(CoreAuthenticationTestUtils.getService())
@@ -71,7 +71,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extend
             .build();
 
         servicesManager.save(registeredService);
-        val mv = oidcImplicitIdTokenAndTokenCallbackUrlBuilder.build(registeredService.getClientId(), holder);
+        val mv = oidcImplicitIdTokenAndTokenCallbackUrlBuilder.build(holder);
         assertNotNull(mv);
     }
 }

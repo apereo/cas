@@ -28,7 +28,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -218,9 +218,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         try {
             if (configurationContext.getCipherExecutor() != null) {
                 LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
-                return !StringUtils.isEmpty(configurationContext.getCipherExecutor().decode(ticketId));
+                return !ObjectUtils.isEmpty(configurationContext.getCipherExecutor().decode(ticketId));
             }
-            return !StringUtils.isEmpty(ticketId);
+            return !ObjectUtils.isEmpty(ticketId);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }

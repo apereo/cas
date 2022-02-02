@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.audit;
 
 import org.apereo.cas.audit.AuditableExecutionResult;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,7 +25,7 @@ public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnV
         val executionResult = auditResult.getExecutionResult();
 
         if (executionResult.isPresent()) {
-            val accessTokenRequest = (AccessTokenRequestDataHolder) executionResult.get();
+            val accessTokenRequest = (AccessTokenRequestContext) executionResult.get();
             val tokenId = accessTokenRequest.getToken() == null ? "N/A" : accessTokenRequest.getToken().getId();
             val values = new HashMap<>();
             values.put("token", tokenId);

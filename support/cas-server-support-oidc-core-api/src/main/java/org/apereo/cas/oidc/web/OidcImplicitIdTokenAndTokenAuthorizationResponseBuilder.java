@@ -2,10 +2,10 @@ package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -13,10 +13,8 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -37,15 +35,13 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.IDTOKEN_TOKEN);
+    public boolean supports(final OAuth20AuthorizationRequest context) {
+        return OAuth20Utils.isResponseType(context.getResponseType(), OAuth20ResponseTypes.IDTOKEN_TOKEN);
     }
 
     @Override
     protected ModelAndView buildCallbackUrlResponseType(
-        final AccessTokenRequestDataHolder holder,
+        final AccessTokenRequestContext holder,
         final OAuth20AccessToken accessToken,
         final List<NameValuePair> params,
         final OAuth20RefreshToken refreshToken) throws Exception {
