@@ -1,8 +1,14 @@
 description = "Apereo CAS OAuth Server API Support"
 dependencies {
     api project(":api:cas-server-core-api-throttle")
+    api project(":api:cas-server-core-api-webflow")
 
     implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-token-core-api")
+
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-util-api")
+
     compileOnly project(":core:cas-server-core-tickets")
 
     implementation libraries.nimbus

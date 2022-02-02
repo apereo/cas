@@ -26,6 +26,7 @@ public class OidcCasCallbackUrlResolver extends OAuth20CasCallbackUrlResolver {
         list.add(OidcConstants.UI_LOCALES);
         list.add(OidcConstants.MAX_AGE);
         list.add(OidcConstants.LOGIN_HINT);
+        list.add(OidcConstants.REQUEST_URI);
         return list;
     }
 }

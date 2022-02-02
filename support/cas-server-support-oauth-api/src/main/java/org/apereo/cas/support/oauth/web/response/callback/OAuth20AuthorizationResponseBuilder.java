@@ -2,13 +2,11 @@ package org.apereo.cas.support.oauth.web.response.callback;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -66,7 +64,7 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
     }
 
     /**
-     * To authorization request optional.
+     * To authorization request.
      *
      * @param context           the context
      * @param authentication    the authentication
@@ -74,13 +72,7 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      * @param registeredService the registered service
      * @return the o auth 20 authorization request
      */
-    default Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
-        final WebContext context, final Authentication authentication,
-        final Service service, final OAuthRegisteredService registeredService) {
-        return Optional.of(OAuth20AuthorizationRequest.builder()
-            .clientId(context.getRequestParameter(OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY))
-            .url(context.getRequestURL())
-            .responseType(context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
-            .grantType(context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
-    }
+    Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
+        WebContext context, Authentication authentication,
+        Service service, OAuthRegisteredService registeredService);
 }

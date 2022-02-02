@@ -291,7 +291,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .grantType(OAuth20GrantTypes.valueOf(grantType))
+            .grantType(OAuth20Utils.getGrantType(context))
             .responseType(OAuth20Utils.getResponseType(context))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
