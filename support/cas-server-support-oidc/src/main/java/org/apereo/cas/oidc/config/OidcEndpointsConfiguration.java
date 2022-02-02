@@ -165,17 +165,13 @@ public class OidcEndpointsConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            val mode = OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
-                oidc.getCore().getDynamicClientRegistrationMode(),
-                OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
 
             return new OidcHandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor,
                 requiresAuthenticationDynamicRegistrationInterceptor,
                 requiresAuthenticationClientConfigurationInterceptor,
-                mode,
+                casProperties,
                 accessTokenGrantRequestExtractors,
                 servicesManager,
                 oauthDistributedSessionStore,

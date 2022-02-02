@@ -5,8 +5,11 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -20,46 +23,65 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oidc.dynamic-client-registration-mode=PROTECTED")
-public class OidcHandlerInterceptorAdapterTests extends AbstractOidcTests {
+public class OidcHandlerInterceptorAdapterTests {
 
-    @Test
-    public void verifyNothing() throws Exception {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        assertTrue(oauthInterceptor.preHandle(request, response, new Object()));
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.oidc.discovery.require-pushed-authorization-requests=true")
+    public class PushedAuthorizationTests extends AbstractOidcTests {
+        @Test
+        public void verifyAuthzUrl() throws Exception {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI('/' + OidcConstants.AUTHORIZE_URL);
+            request.setMethod(HttpMethod.GET.name());
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+            assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+        }
     }
 
-    @Test
-    public void verifyNoOIDC() throws Exception {
-        val request = new MockHttpServletRequest();
-        request.setRequestURI('/' + OAuth20Constants.DEVICE_AUTHZ_URL);
-        val response = new MockHttpServletResponse();
-        assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
-    }
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.oidc.dynamic-client-registration-mode=PROTECTED")
+    public class DefaultTests extends AbstractOidcTests {
+        @Test
+        public void verifyNothing() throws Exception {
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            assertTrue(oauthInterceptor.preHandle(request, response, new Object()));
+        }
 
-    @Test
-    public void verifyConfigUrl() throws Exception {
-        val request = new MockHttpServletRequest();
-        request.setRequestURI('/' + OidcConstants.CLIENT_CONFIGURATION_URL);
-        val response = new MockHttpServletResponse();
-        assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
-    }
+        @Test
+        public void verifyNoOIDC() throws Exception {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI('/' + OAuth20Constants.DEVICE_AUTHZ_URL);
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
 
-    @Test
-    public void verifyRegUrl() throws Exception {
-        val request = new MockHttpServletRequest();
-        request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
-        assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
-    }
+        @Test
+        public void verifyConfigUrl() throws Exception {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI('/' + OidcConstants.CLIENT_CONFIGURATION_URL);
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
 
-    @Test
-    public void verifyPushAuthzUrl() throws Exception {
-        val request = new MockHttpServletRequest();
-        request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
-        val response = new MockHttpServletResponse();
-        assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        @Test
+        public void verifyRegUrl() throws Exception {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI('/' + OidcConstants.REGISTRATION_URL);
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
+
+        @Test
+        public void verifyPushAuthzUrl() throws Exception {
+            val request = new MockHttpServletRequest();
+            request.setRequestURI('/' + OidcConstants.PUSHED_AUTHORIZE_URL);
+            val response = new MockHttpServletResponse();
+            assertFalse(oauthInterceptor.preHandle(request, response, new Object()));
+        }
     }
 
 }
