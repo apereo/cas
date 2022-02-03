@@ -117,14 +117,19 @@ exports.assertInvisibility = async (page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
-exports.assertTicketGrantingCookie = async (page) => {
+exports.assertTicketGrantingCookie = async (page, present= true) => {
     const tgc = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === "TGC"
     });
-    assert(tgc.length !== 0);
-    console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
-    return tgc[0];
+    if (present) {
+        assert(tgc.length !== 0);
+        console.log(`Asserting ticket-granting cookie: ${tgc[0].value}`);
+        return tgc[0];
+    } else {
+        assert(tgc.length === 0);
+        console.log(`Ticket-granting cookie cannot be found`);
+    }
 }
 
 exports.assertNoTicketGrantingCookie = async (page) => {
