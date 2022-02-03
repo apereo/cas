@@ -2,15 +2,12 @@ package org.apereo.cas.logging.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.util.spring.DirectObjectProvider;
+import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,19 +25,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ExtendWith(MockitoExtension.class)
 @Tag("Web")
 public class ThreadContextMDCServletFilterTests {
-
-    @Mock
-    private CookieRetrievingCookieGenerator cookieRetrievingCookieGenerator;
-
-    @Mock
-    private TicketRegistrySupport ticketSupport;
-
-    @InjectMocks
-    private ThreadContextMDCServletFilter filter;
-
     @Test
     public void verifyFilter() throws Exception {
         val request = new MockHttpServletRequest();
@@ -61,9 +47,13 @@ public class ThreadContextMDCServletFilterTests {
         val response = new MockHttpServletResponse();
         val filterChain = new MockFilterChain();
 
-        lenient().when(cookieRetrievingCookieGenerator.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
-        lenient().when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
-
+        val cookieBuilder = mock(CasCookieBuilder.class);
+        val ticketSupport = mock(TicketRegistrySupport.class);
+        when(cookieBuilder.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn("TICKET");
+        when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
+        val filter = new ThreadContextMDCServletFilter(
+            new DirectObjectProvider<>(ticketSupport),
+            new DirectObjectProvider<>(cookieBuilder));
         filter.init(mock(FilterConfig.class));
         filter.doFilter(request, response, filterChain);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
