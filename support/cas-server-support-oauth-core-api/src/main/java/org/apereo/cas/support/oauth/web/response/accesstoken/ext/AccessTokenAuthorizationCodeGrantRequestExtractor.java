@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -58,7 +59,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        val tgt = token.getTicketGrantingTicket();
+        val tgtId = token.getTicketGrantingTicket().getId();
+        val tgt = getOAuthConfigurationContext().getTicketRegistry().getTicket(tgtId, TicketGrantingTicket.class);
         if (tgt == null || tgt.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
