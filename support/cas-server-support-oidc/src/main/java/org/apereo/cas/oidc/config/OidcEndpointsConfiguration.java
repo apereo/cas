@@ -149,6 +149,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthInterceptor(
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,

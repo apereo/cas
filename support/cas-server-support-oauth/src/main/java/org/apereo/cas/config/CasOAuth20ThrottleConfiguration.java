@@ -117,6 +117,7 @@ public class CasOAuth20ThrottleConfiguration {
     public static class CasOAuth20ThrottleInterceptorConfiguration {
         @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig,
