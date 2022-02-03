@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -95,11 +97,11 @@ public class CasWebAppConfiguration {
     @Bean
     public WebMvcConfigurer casWebAppWebMvcConfigurer(
         @Qualifier("localeChangeInterceptor")
-        final LocaleChangeInterceptor localeChangeInterceptor) {
+        final ObjectProvider<LocaleChangeInterceptor> localeChangeInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(final InterceptorRegistry registry) {
-                registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**");
+                registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
             }
         };
     }

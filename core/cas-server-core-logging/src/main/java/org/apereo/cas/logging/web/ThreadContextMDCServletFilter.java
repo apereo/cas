@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,9 +33,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
-    private final TicketRegistrySupport ticketRegistrySupport;
+    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
-    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
 
     private static void addContextAttribute(final String attributeName, final Object value) {
         val result = Optional.ofNullable(value).map(Object::toString).orElse(null);
@@ -93,9 +94,9 @@ public class ThreadContextMDCServletFilter implements Filter {
                 Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
             }
 
-            val cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            val cookieValue = this.ticketGrantingTicketCookieGenerator.getObject().retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {
-                val p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
+                val p = this.ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
                 if (p != null) {
                     addContextAttribute("principal", p.getId());
                 }

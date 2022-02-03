@@ -105,6 +105,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
+import org.pac4j.core.engine.SecurityLogic;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
@@ -156,25 +157,29 @@ public class OidcConfiguration {
     @Configuration(value = "OidcWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcWebConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig,
+        public SecurityLogic oidcAuthorizationSecurityLogic(
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+            return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
+            @Qualifier("oidcAuthorizationSecurityLogic")
+            final SecurityLogic oidcAuthorizationSecurityLogic,
+            @Qualifier("oauthSecConfig")
+            final Config oauthSecConfig) {
+            val interceptor = new SecurityInterceptor(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-
-            val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
-            interceptor.setSecurityLogic(logic);
+            interceptor.setSecurityLogic(oidcAuthorizationSecurityLogic);
             return interceptor;
         }
     }

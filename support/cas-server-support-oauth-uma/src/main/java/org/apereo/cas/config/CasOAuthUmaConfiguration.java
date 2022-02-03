@@ -41,6 +41,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -188,6 +189,7 @@ public class CasOAuthUmaConfiguration {
 
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
@@ -201,6 +203,7 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
@@ -235,19 +238,19 @@ public class CasOAuthUmaConfiguration {
         @ConditionalOnMissingBean(name = "umaWebMvcConfigurer")
         public WebMvcConfigurer umaWebMvcConfigurer(
             @Qualifier("umaAuthorizationApiTokenSecurityInterceptor")
-            final SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor,
+            final ObjectProvider<SecurityInterceptor> umaAuthorizationApiTokenSecurityInterceptor,
             @Qualifier("umaRequestingPartyTokenSecurityInterceptor")
-            final SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor) {
+            final ObjectProvider<SecurityInterceptor> umaRequestingPartyTokenSecurityInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor).order(100)
+                    registry.addInterceptor(new RefreshableHandlerInterceptor(umaRequestingPartyTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
-                    registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor).order(100)
+                    registry.addInterceptor(new RefreshableHandlerInterceptor(umaAuthorizationApiTokenSecurityInterceptor)).order(100)
                         .addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
                 }
             };

@@ -11,6 +11,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -46,9 +47,9 @@ public class CasLoggingConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport,
+            final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
-            final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
+            final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator) {
             val filter = new ThreadContextMDCServletFilter(ticketRegistrySupport, ticketGrantingTicketCookieGenerator);
             val initParams = new HashMap<String, String>();
             val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();

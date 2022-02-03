@@ -29,21 +29,21 @@ import java.util.List;
  */
 @Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
-    private final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor;
+    private final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor;
 
-    private final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor;
+    private final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor;
 
     private final CasConfigurationProperties casProperties;
 
     public OidcHandlerInterceptorAdapter(
-        final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
-        final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
-        final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
-        final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
+        final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+        final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+        final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
+        final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
         final CasConfigurationProperties casProperties,
         final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-        final ServicesManager servicesManager,
-        final SessionStore sessionStore,
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<SessionStore> sessionStore,
         final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators);
@@ -68,7 +68,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
         if (isPushedAuthorizationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
-            return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
+            return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
         
         if (!super.preHandle(request, response, handler)) {
@@ -78,14 +78,14 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
         if (isClientConfigurationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC client configuration is protected at [{}]", request.getRequestURI());
-            return requiresAuthenticationClientConfigurationInterceptor.preHandle(request, response, handler);
+            return requiresAuthenticationClientConfigurationInterceptor.getObject().preHandle(request, response, handler);
 
         }
         if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC request at [{}] is one of dynamic client registration", request.getRequestURI());
             if (isDynamicClientRegistrationRequestProtected()) {
                 LOGGER.trace("OIDC dynamic client registration is protected at [{}]", request.getRequestURI());
-                return requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, handler);
+                return requiresAuthenticationDynamicRegistrationInterceptor.getObject().preHandle(request, response, handler);
             }
         }
         return true;
