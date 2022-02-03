@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ import java.io.Serializable;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class RadiusServerConfigurationContext implements Serializable {
     private static final long serialVersionUID = -7593796856411325124L;
 

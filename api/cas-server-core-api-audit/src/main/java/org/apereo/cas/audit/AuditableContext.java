@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Builder
+@SuperBuilder
 public class AuditableContext {
 
     private final Service service;

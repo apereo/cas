@@ -154,7 +154,7 @@ public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired

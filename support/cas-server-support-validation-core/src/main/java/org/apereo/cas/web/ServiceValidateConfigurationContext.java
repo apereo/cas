@@ -9,10 +9,10 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
@@ -25,7 +25,7 @@ import java.util.Set;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class ServiceValidateConfigurationContext {
     private final Set<CasProtocolValidationSpecification> validationSpecifications;
 

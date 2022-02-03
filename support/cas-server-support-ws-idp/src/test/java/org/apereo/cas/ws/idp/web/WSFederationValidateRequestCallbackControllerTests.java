@@ -60,7 +60,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired

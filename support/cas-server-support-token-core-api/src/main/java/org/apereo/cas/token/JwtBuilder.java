@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -177,7 +178,7 @@ public class JwtBuilder {
     /**
      * The type Jwt request that allows the builder to create JWTs.
      */
-    @Builder
+    @SuperBuilder
     @Getter
     @ToString
     public static class JwtRequest {

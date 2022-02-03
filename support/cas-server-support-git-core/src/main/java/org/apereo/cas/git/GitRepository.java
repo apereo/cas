@@ -1,9 +1,9 @@
 package org.apereo.cas.git;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -187,7 +187,7 @@ public class GitRepository implements DisposableBean {
     /**
      * The type Git object.
      */
-    @Builder
+    @SuperBuilder
     @Getter
     public static class GitObject {
         private final String content;

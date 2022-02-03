@@ -50,7 +50,7 @@ public class WSFederationValidateRequestControllerTests extends BaseCoreWsSecuri
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired

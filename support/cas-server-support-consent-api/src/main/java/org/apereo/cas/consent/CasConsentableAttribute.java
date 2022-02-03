@@ -1,10 +1,10 @@
 package org.apereo.cas.consent;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode
-@Builder
+@SuperBuilder
 public class CasConsentableAttribute implements Serializable {
     private static final long serialVersionUID = 6097374842509284286L;
 

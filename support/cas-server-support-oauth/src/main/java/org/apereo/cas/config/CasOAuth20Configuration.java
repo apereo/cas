@@ -231,7 +231,7 @@ public class CasOAuth20Configuration {
             final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("oAuth2UserProfileDataCreator")
             final OAuth20UserProfileDataCreator oAuth2UserProfileDataCreator,
