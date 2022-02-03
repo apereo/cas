@@ -49,7 +49,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAut
     }
 
     @Test
-    public void verifyTestWithGeoLoc() {
+    public void verifyTestWithGeoLoc() throws Exception {
         val id = UUID.randomUUID().toString();
         MockTicketGrantingTicketCreatedEventProducer.createEvent(id, casEventRepository);
         val authentication = CoreAuthenticationTestUtils.getAuthentication(id);

@@ -20,44 +20,49 @@ public interface DefaultCasEventListener extends CasEventListener {
      * Handle TGT creation event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     @Async
-    void handleCasTicketGrantingTicketCreatedEvent(CasTicketGrantingTicketCreatedEvent event);
+    void handleCasTicketGrantingTicketCreatedEvent(CasTicketGrantingTicketCreatedEvent event) throws Exception;
 
     /**
      * Handle TGT deleted event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     @Async
-    void handleCasTicketGrantingTicketDeletedEvent(CasTicketGrantingTicketDestroyedEvent event);
+    void handleCasTicketGrantingTicketDeletedEvent(CasTicketGrantingTicketDestroyedEvent event) throws Exception;
 
     /**
      * Handle cas authentication policy failure event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     @Async
-    void handleCasAuthenticationTransactionFailureEvent(CasAuthenticationTransactionFailureEvent event);
+    void handleCasAuthenticationTransactionFailureEvent(CasAuthenticationTransactionFailureEvent event) throws Exception;
 
     /**
      * Handle cas authentication policy failure event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     @Async
-    void handleCasAuthenticationPolicyFailureEvent(CasAuthenticationPolicyFailureEvent event);
+    void handleCasAuthenticationPolicyFailureEvent(CasAuthenticationPolicyFailureEvent event) throws Exception;
 
     /**
      * Handle cas risky authentication detected event.
      *
      * @param event the event
+     * @throws Exception the exception
      */
     @EventListener
     @Async
-    void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event);
+    void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event) throws Exception;
 }

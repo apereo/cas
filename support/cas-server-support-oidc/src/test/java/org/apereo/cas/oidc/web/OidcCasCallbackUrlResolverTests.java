@@ -40,6 +40,7 @@ public class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
         request.addParameter(OAuth20Constants.STATE, UUID.randomUUID().toString());
         request.addParameter(OidcConstants.UI_LOCALES, "de");
         request.addParameter(OidcConstants.MAX_AGE, "100");
+        request.addParameter(OidcConstants.REQUEST_URI, UUID.randomUUID().toString());
 
         val output = casCallbackUrlResolver.compute(
             OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
@@ -51,6 +52,7 @@ public class OidcCasCallbackUrlResolverTests extends AbstractOidcTests {
         assertTrue(uri.getQueryParams().stream().anyMatch(p -> p.getName().equalsIgnoreCase(OAuth20Constants.STATE)));
         assertTrue(uri.getQueryParams().stream().anyMatch(p -> p.getName().equalsIgnoreCase(OidcConstants.UI_LOCALES)));
         assertTrue(uri.getQueryParams().stream().anyMatch(p -> p.getName().equalsIgnoreCase(OidcConstants.MAX_AGE)));
+        assertTrue(uri.getQueryParams().stream().anyMatch(p -> p.getName().equalsIgnoreCase(OidcConstants.REQUEST_URI)));
     }
 
 }

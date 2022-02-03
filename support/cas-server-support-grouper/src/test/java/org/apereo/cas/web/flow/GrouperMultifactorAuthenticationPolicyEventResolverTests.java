@@ -68,7 +68,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolverTests {
     }
 
     @TestConfiguration(value = "GrouperTestConfiguration", proxyBeanMethods = false)
-        public static class GrouperTestConfiguration {
+    public static class GrouperTestConfiguration {
         @Bean
         public GrouperFacade grouperFacade() {
             val group = new WsGroup();

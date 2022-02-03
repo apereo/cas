@@ -1,14 +1,21 @@
 package org.apereo.cas.oidc.config;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
-import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestResponseBuilder;
+import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestUriResponseBuilder;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
@@ -124,8 +131,25 @@ public class OidcResponseConfiguration {
             final OAuth20AuthorizationModelAndViewBuilder oidcPushedAuthorizationModelAndViewBuilder,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcPushedAuthorizationRequestResponseBuilder(oidcConfigurationContext,
+            return new OidcPushedAuthorizationRequestUriResponseBuilder(oidcConfigurationContext,
                 oidcPushedAuthorizationModelAndViewBuilder);
+        }
+
+        @ConditionalOnMissingBean(name = "oidcPushedAuthorizationRequestValidator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20AuthorizationRequestValidator oidcPushedAuthorizationRequestValidator(
+            @Qualifier("registeredServiceAccessStrategyEnforcer")
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
+            return new OidcPushedAuthorizationRequestValidator(servicesManager,
+                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
+                centralAuthenticationService);
         }
     }
 

@@ -104,7 +104,7 @@ public class CasCoreLogoutConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
@@ -127,7 +127,7 @@ public class CasCoreLogoutConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("defaultSingleLogoutMessageCreator")
             final SingleLogoutMessageCreator defaultSingleLogoutMessageCreator,
-            @Qualifier("noRedirectHttpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_NO_REDIRECT)
             final HttpClient noRedirectHttpClient,
             @Qualifier("singleLogoutServiceLogoutUrlBuilder")
             final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {

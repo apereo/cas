@@ -26,6 +26,11 @@ public class OidcPushedAuthorizationProperties implements Serializable {
     private static final long serialVersionUID = 632228615694269276L;
 
     /**
+     * Controls number of times a request can be used within CAS server.
+     */
+    private long numberOfUses = 1;
+
+    /**
      * Hard timeout to kill the PAR token and expire it.
      */
     @DurationCapable

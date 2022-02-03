@@ -120,6 +120,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
 
     @Test
     public void verifyGrantServiceTicketWithValidTicketGrantingTicket() {
+        assertNotNull(getCentralAuthenticationService().getTicketFactory());
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
         val ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);

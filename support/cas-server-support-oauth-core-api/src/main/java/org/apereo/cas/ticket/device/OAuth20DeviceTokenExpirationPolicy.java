@@ -27,7 +27,9 @@ public class OAuth20DeviceTokenExpirationPolicy extends HardTimeoutExpirationPol
     private static final long serialVersionUID = -1283286621686527360L;
 
     @JsonCreator
-    public OAuth20DeviceTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToLive) {
+    public OAuth20DeviceTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToLive) {
         super(timeToLive);
     }
 }

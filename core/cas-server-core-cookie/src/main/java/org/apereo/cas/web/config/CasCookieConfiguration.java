@@ -85,7 +85,7 @@ public class CasCookieConfiguration {
             return new WarningCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
         }
 
-        @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
+        @ConditionalOnMissingBean(name = CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(

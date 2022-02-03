@@ -37,14 +37,6 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .responseType(OAuth20ResponseTypes.CODE)
             .build();
 
-        val result = OAuth20AccessTokenResponseResult.builder()
-            .service(RegisteredServiceTestUtils.getService())
-            .registeredService(getOidcRegisteredService())
-            .resourceLoader(resourceLoader)
-            .casProperties(casProperties)
-            .generatedToken(token)
-            .build();
-
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -53,9 +45,18 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
         profile.setId("casuser");
-        
+
         manager.save(true, profile, false);
-        val mv = oidcAccessTokenResponseGenerator.generate(context, result);
+
+        val result = OAuth20AccessTokenResponseResult.builder()
+            .service(RegisteredServiceTestUtils.getService())
+            .registeredService(getOidcRegisteredService())
+            .casProperties(casProperties)
+            .generatedToken(token)
+            .userProfile(profile)
+            .build();
+
+        val mv = oidcAccessTokenResponseGenerator.generate(result);
         assertNotNull(mv);
         val modelMap = mv.getModelMap();
         assertTrue(modelMap.containsKey(OAuth20Constants.ACCESS_TOKEN));
@@ -75,15 +76,6 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .userCode(deviceUserCodeFactory.createDeviceUserCode(devCode).getId())
             .build();
 
-        val result = OAuth20AccessTokenResponseResult.builder()
-            .service(RegisteredServiceTestUtils.getService())
-            .registeredService(getOidcRegisteredService())
-            .resourceLoader(resourceLoader)
-            .casProperties(casProperties)
-            .generatedToken(token)
-            .responseType(OAuth20ResponseTypes.DEVICE_CODE)
-            .build();
-
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -94,10 +86,20 @@ public class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
         profile.setId("casuser");
 
         manager.save(true, profile, false);
-        val mv = oidcAccessTokenResponseGenerator.generate(context, result);
+
+        val result = OAuth20AccessTokenResponseResult.builder()
+            .service(RegisteredServiceTestUtils.getService())
+            .registeredService(getOidcRegisteredService())
+            .casProperties(casProperties)
+            .generatedToken(token)
+            .responseType(OAuth20ResponseTypes.DEVICE_CODE)
+            .userProfile(profile)
+            .build();
+
+        val mv = oidcAccessTokenResponseGenerator.generate(result);
         assertNotNull(mv);
         val modelMap = mv.getModelMap();
-        
+
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_VERIFICATION_URI));
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_USER_CODE));
         assertTrue(modelMap.containsKey(OAuth20Constants.DEVICE_CODE));

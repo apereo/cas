@@ -30,6 +30,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,6 +44,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -210,7 +212,7 @@ public class OAuth20Utils {
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
-        return (Collection<String>) map.get(OAuth20Constants.SCOPE);
+        return new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
     }
 
     /**
@@ -304,6 +306,23 @@ public class OAuth20Utils {
             .findFirst()
             .orElse(OAuth20ResponseTypes.CODE);
         LOGGER.debug("OAuth response type is [{}]", type);
+        return type;
+    }
+
+    /**
+     * Gets grant type.
+     *
+     * @param context the context
+     * @return the grant type
+     */
+    public static OAuth20GrantTypes getGrantType(final WebContext context) {
+        val grantType = getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+            .map(String::valueOf).orElse(StringUtils.EMPTY);
+        val type = Arrays.stream(OAuth20GrantTypes.values())
+            .filter(t -> t.getType().equalsIgnoreCase(grantType))
+            .findFirst()
+            .orElse(OAuth20GrantTypes.NONE);
+        LOGGER.debug("OAuth grant type is [{}]", type);
         return type;
     }
 
@@ -575,6 +594,19 @@ public class OAuth20Utils {
         val clientSecret = getRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return Pair.of(clientId, clientSecret);
+    }
+
+    /**
+     * Gets authenticated user profile.
+     *
+     * @param context      the context
+     * @param sessionStore the session store
+     * @return the authenticated user profile
+     */
+    public UserProfile getAuthenticatedUserProfile(final WebContext context, final SessionStore sessionStore) {
+        val manager = new ProfileManager(context, sessionStore);
+        val profile = manager.getProfile();
+        return profile.orElseThrow(() -> new IllegalArgumentException("Unable to determine the user profile from the context"));
     }
 
     /**

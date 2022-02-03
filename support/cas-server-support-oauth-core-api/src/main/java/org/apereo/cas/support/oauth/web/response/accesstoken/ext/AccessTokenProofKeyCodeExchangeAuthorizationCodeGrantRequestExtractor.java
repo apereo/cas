@@ -21,13 +21,6 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     }
 
     @Override
-    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
-        val challenge = request.getParameter(OAuth20Constants.CODE_CHALLENGE);
-        return builder.codeVerifier(challenge).build();
-    }
-
-    @Override
     public boolean supports(final HttpServletRequest context) {
         val challenge = context.getParameter(OAuth20Constants.CODE_VERIFIER);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
@@ -36,5 +29,13 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     @Override
     public boolean requestMustBeAuthenticated() {
         return true;
+    }
+
+    @Override
+    protected AccessTokenRequestContext extractInternal(
+        final HttpServletRequest request, final HttpServletResponse response,
+        final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
+        val challenge = request.getParameter(OAuth20Constants.CODE_CHALLENGE);
+        return builder.codeVerifier(challenge).build();
     }
 }

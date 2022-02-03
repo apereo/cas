@@ -48,7 +48,7 @@ public class CasCoreRestConfiguration {
             final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory,
             @Qualifier("defaultMultifactorTriggerSelectionStrategy")
             final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
@@ -61,7 +61,6 @@ public class CasCoreRestConfiguration {
                 webApplicationServiceFactory, multifactorTriggerSelectionStrategy,
                 servicesManager, requestedContextValidator);
         }
-
     }
 
     @Configuration(value = "CasCoreRestCredentialFactoryConfiguration", proxyBeanMethods = false)
@@ -85,7 +84,6 @@ public class CasCoreRestConfiguration {
         }
 
     }
-
 
     @Configuration(value = "CasCoreRestCredentialFactoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

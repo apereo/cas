@@ -14,9 +14,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
  * @since 5.2.0
  */
 public class OAuth20IdTokenResponseTypeAuthorizationRequestValidator extends OAuth20TokenResponseTypeAuthorizationRequestValidator {
-    public OAuth20IdTokenResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
-                                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+    public OAuth20IdTokenResponseTypeAuthorizationRequestValidator(
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 

@@ -54,6 +54,7 @@ public class LdapAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class LdapAuthenticationPlanConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")

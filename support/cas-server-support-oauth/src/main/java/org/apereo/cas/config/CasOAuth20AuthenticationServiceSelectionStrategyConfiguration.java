@@ -30,7 +30,7 @@ public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy(
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,

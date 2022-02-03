@@ -196,7 +196,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = AuditActionResolvers.CREATE_PROXY_GRANTING_TICKET_RESOLVER,
         resourceResolverName = AuditResourceResolvers.CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
+    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId,
+                                                         final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
 
         AuthenticationCredentialsThreadLocalBinder.bindCurrent(authenticationResult.getAuthentication());
@@ -338,7 +339,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
             return assertion;
         } finally {
-            FunctionUtils.doAndIgnore(s -> {
+            FunctionUtils.doUnchecked(s -> {
                 if (serviceTicket.isExpired()) {
                     deleteTicket(serviceTicketId);
                 } else {
@@ -370,7 +371,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val factory = (TicketGrantingTicketFactory) configurationContext.getTicketFactory().get(TicketGrantingTicket.class);
         val ticketGrantingTicket = factory.create(authentication, service, TicketGrantingTicket.class);
 
-        FunctionUtils.doAndIgnore(s -> {
+        FunctionUtils.doUnchecked(s -> {
             configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
             doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
         });

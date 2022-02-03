@@ -91,7 +91,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
@@ -143,7 +143,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
-        @Qualifier("ticketGrantingTicketCookieGenerator")
+        @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport) {
@@ -171,7 +171,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
@@ -190,7 +190,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
-        @Qualifier("webApplicationServiceFactory")
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,

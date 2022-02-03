@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.AbstractTicket;
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -23,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket
-    implements OidcPushedAuthorizationRequest, AuthenticationAwareTicket {
+    implements OidcPushedAuthorizationRequest {
     private static final long serialVersionUID = 5050969039357176961L;
 
     @JsonIgnore
@@ -44,7 +42,7 @@ public class OidcDefaultPushedAuthorizationRequest extends AbstractTicket
                                                  final OAuthRegisteredService registeredService,
                                                  final String request) {
         super(id, expirationPolicy);
-        this.authorizationRequest = EncodingUtils.encodeBase64(request);
+        this.authorizationRequest = request;
         this.authentication = authentication;
         this.service = service;
         this.registeredService = registeredService;

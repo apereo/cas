@@ -33,8 +33,8 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
         }
         if (kube.getServiceDnsTimeout() > 0) {
             properties.put(
-                    KubernetesProperties.SERVICE_DNS_TIMEOUT.key(),
-                    Integer.toString(kube.getServiceDnsTimeout()));
+                KubernetesProperties.SERVICE_DNS_TIMEOUT.key(),
+                Integer.toString(kube.getServiceDnsTimeout()));
         }
         if (StringUtils.hasText(kube.getServiceName())) {
             properties.put(KubernetesProperties.SERVICE_NAME.key(), kube.getServiceName());
@@ -58,8 +58,8 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
         properties.put(KubernetesProperties.USE_NODE_NAME_AS_EXTERNAL_ADDRESS.key(), kube.isUseNodeNameAsExternalAddress());
         if (kube.getApiRetries() > 0) {
             properties.put(
-                    KubernetesProperties.KUBERNETES_API_RETIRES.key(),
-                    Integer.toString(kube.getApiRetries()));
+                KubernetesProperties.KUBERNETES_API_RETIRES.key(),
+                Integer.toString(kube.getApiRetries()));
         }
 
         if (StringUtils.hasText(kube.getKubernetesMaster())) {
@@ -72,9 +72,7 @@ public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryS
             properties.put(KubernetesProperties.KUBERNETES_CA_CERTIFICATE.key(), kube.getCaCertificate());
         }
         if (kube.getServicePort() > 0) {
-            properties.put(
-                    KubernetesProperties.SERVICE_PORT.key(),
-                    Integer.toString(kube.getServicePort()));
+            properties.put(KubernetesProperties.SERVICE_PORT.key(), Integer.toString(kube.getServicePort()));
         }
         return Optional.of(new DiscoveryStrategyConfig(new HazelcastKubernetesDiscoveryStrategyFactory(), properties));
     }

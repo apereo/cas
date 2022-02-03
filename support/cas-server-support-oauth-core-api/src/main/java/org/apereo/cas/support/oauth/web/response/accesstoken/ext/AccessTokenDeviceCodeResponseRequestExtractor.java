@@ -29,7 +29,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
+    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) {
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
@@ -52,7 +52,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
         val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        return AccessTokenRequestDataHolder.builder()
+        return AccessTokenRequestContext.builder()
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)

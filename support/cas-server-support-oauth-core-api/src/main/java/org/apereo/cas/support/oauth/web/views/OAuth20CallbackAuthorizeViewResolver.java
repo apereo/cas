@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -22,7 +22,7 @@ public interface OAuth20CallbackAuthorizeViewResolver {
      * @param url     the url
      * @return true if the redirect should resume.
      */
-    ModelAndView resolve(JEEContext ctx, ProfileManager manager, String url);
+    ModelAndView resolve(WebContext ctx, ProfileManager manager, String url);
 
     /**
      * As default o auth 20 callback authorize view resolver.

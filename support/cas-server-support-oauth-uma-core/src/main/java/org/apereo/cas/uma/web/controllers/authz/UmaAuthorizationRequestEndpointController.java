@@ -5,7 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.uma.UmaConfigurationContext;
@@ -174,7 +174,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
         scopes.addAll(resourceSet.getScopes());
 
-        val holder = AccessTokenRequestDataHolder.builder()
+        val holder = AccessTokenRequestContext.builder()
             .authentication(currentAat.getAuthentication())
             .ticketGrantingTicket(currentAat.getTicketGrantingTicket())
             .grantType(OAuth20GrantTypes.UMA_TICKET)
@@ -199,10 +199,14 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
 
         val timeout = Beans.newDuration(getUmaConfigurationContext().getCasProperties()
             .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
-        request.setAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
-        request.setAttribute(ResourceSet.class.getName(), resourceSet);
-        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(new JEEContext(request, response),
-            accessToken, timeout, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
+
+        val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
+            getUmaConfigurationContext().getSessionStore());
+        userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
+        userProfile.addAttribute(ResourceSet.class.getName(), resourceSet);
+
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
+            .generate(accessToken, timeout, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
         accessToken.setIdToken(idToken);
         getUmaConfigurationContext().getCentralAuthenticationService().updateTicket(accessToken);
 

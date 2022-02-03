@@ -42,6 +42,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlPr
 import org.apereo.cas.support.saml.web.idp.profile.builders.subject.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.artifact.DefaultSamlArtifactTicketFactory;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicyBuilder;
@@ -106,20 +107,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -132,12 +131,11 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileAttributeQueryFaultResponseBuilder(context);
         }
@@ -159,20 +157,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -185,17 +181,15 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileAttributeQueryResponseBuilder(context);
         }
-
-
+        
         @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -227,20 +221,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -253,12 +245,11 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileSamlSoap11FaultResponseBuilder(context);
         }
@@ -280,20 +271,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -306,12 +295,11 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileSamlSoap11ResponseBuilder(context);
         }
@@ -333,20 +321,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -359,12 +345,11 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileArtifactFaultResponseBuilder(context);
         }
@@ -386,20 +371,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
@@ -412,12 +395,11 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
                 .samlSoapResponseBuilder(samlProfileSamlResponseBuilder)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileArtifactResponseBuilder(context);
         }
@@ -531,20 +513,18 @@ public class SamlIdPConfiguration {
             final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("samlIdPDistributedSessionStore")
             final SessionStore samlIdPDistributedSessionStore,
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlArtifactMap")
             final SAMLArtifactMap samlArtifactMap,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("samlAttributeQueryTicketFactory")
-            final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
+            final CentralAuthenticationService centralAuthenticationService) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -555,11 +535,10 @@ public class SamlIdPConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .ticketRegistry(ticketRegistry)
                 .sessionStore(samlIdPDistributedSessionStore)
-                .samlArtifactTicketFactory(samlArtifactTicketFactory)
                 .samlArtifactMap(samlArtifactMap)
                 .centralAuthenticationService(centralAuthenticationService)
-                .samlAttributeQueryTicketFactory(samlAttributeQueryTicketFactory)
                 .casProperties(casProperties)
+                .ticketFactory(ticketFactory)
                 .build();
             return new SamlProfileSaml2ResponseBuilder(context);
         }
@@ -639,11 +618,11 @@ public class SamlIdPConfiguration {
         @Bean(initMethod = "initialize", destroyMethod = "destroy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SAMLArtifactMap samlArtifactMap(
-            @Qualifier("samlArtifactTicketFactory")
-            final SamlArtifactTicketFactory samlArtifactTicketFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
             @Qualifier("samlArtifactTicketExpirationPolicy")
             final ExpirationPolicyBuilder samlArtifactTicketExpirationPolicy,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -651,7 +630,7 @@ public class SamlIdPConfiguration {
             final SessionStore samlIdPDistributedSessionStore,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            val map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory,
+            val map = new CasSamlArtifactMap(ticketRegistry, ticketFactory,
                 ticketGrantingTicketCookieGenerator, samlIdPDistributedSessionStore, centralAuthenticationService);
             val expirationPolicy = samlArtifactTicketExpirationPolicy.buildTicketExpirationPolicy();
             map.setArtifactLifetime(Duration.ofSeconds(expirationPolicy.getTimeToLive()));

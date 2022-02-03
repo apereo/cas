@@ -1,0 +1,27 @@
+{
+  "dependencies": "oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+    
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
+
+    "--cas.authn.oidc.discovery.require-pushed-authorization-requests=true",
+    "--cas.authn.oidc.par.max-time-to-live-in-seconds=PT30S",
+    "--cas.authn.oidc.par.number-of-uses=1",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+
+
+

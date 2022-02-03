@@ -129,7 +129,7 @@ public class SSOSamlIdPProfileCallbackHandlerControllerTests extends BaseSamlIdP
     }
 
     @TestConfiguration(value = "SamlIdPTestConfiguration", proxyBeanMethods = false)
-        public static class SamlIdPTestConfiguration {
+    public static class SamlIdPTestConfiguration {
         @Bean
         public TicketValidator samlIdPTicketValidator() throws Exception {
             val validator = mock(TicketValidator.class);

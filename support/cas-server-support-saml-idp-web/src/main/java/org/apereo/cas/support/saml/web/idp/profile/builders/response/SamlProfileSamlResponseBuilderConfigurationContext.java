@@ -6,15 +6,14 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
-import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
@@ -31,7 +30,7 @@ import org.pac4j.core.context.session.SessionStore;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class SamlProfileSamlResponseBuilderConfigurationContext {
 
     private final transient VelocityEngine velocityEngineFactory;
@@ -48,13 +47,9 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
 
     private final transient TicketRegistry ticketRegistry;
 
-    private final transient SamlArtifactTicketFactory samlArtifactTicketFactory;
-
     private final transient CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     private final transient SAMLArtifactMap samlArtifactMap;
-
-    private final transient SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
 
     private final transient SamlProfileObjectBuilder<? extends SAMLObject> samlSoapResponseBuilder;
 
@@ -63,4 +58,6 @@ public class SamlProfileSamlResponseBuilderConfigurationContext {
     private final transient CentralAuthenticationService centralAuthenticationService;
 
     private final MetadataResolver samlIdPMetadataResolver;
+
+    private final TicketFactory ticketFactory;
 }

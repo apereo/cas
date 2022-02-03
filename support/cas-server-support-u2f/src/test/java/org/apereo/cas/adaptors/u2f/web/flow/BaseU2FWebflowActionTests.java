@@ -142,7 +142,7 @@ public abstract class BaseU2FWebflowActionTests {
     }
 
     @TestConfiguration(value = "U2FTestConfiguration", proxyBeanMethods = false)
-        public static class U2FTestConfiguration {
+    public static class U2FTestConfiguration {
         @Bean
         public U2F u2fService() throws Exception {
             val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));

@@ -17,11 +17,8 @@ import org.junit.jupiter.api.parallel.Isolated;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link HazelcastDockerSwarmDiscoveryStrategyTests}.
@@ -32,6 +29,21 @@ import static org.mockito.Mockito.when;
 @Tag("Hazelcast")
 @Isolated
 public class HazelcastDockerSwarmDiscoveryStrategyTests {
+    private static void assertAllPropsAreValid(final Map<String, Comparable> properties,
+                                               final Collection<PropertyDefinition> configurationProperties) {
+        for (val propertyDefinition : configurationProperties) {
+            val value = properties.get(propertyDefinition.key());
+            if (value == null) {
+                assertTrue(propertyDefinition.optional(),
+                    () -> "Property " + propertyDefinition.key() + " is not optional and should be given");
+            } else {
+                assertDoesNotThrow(
+                    () -> propertyDefinition.typeConverter().convert(value),
+                    () -> "Property " + propertyDefinition.key() + " has invalid value '" + value + '\'');
+            }
+        }
+    }
+
     @Test
     public void verifyOperationDns() {
         val cluster = new HazelcastClusterProperties();
@@ -49,7 +61,7 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
         assertNotNull(result);
         assertTrue(result.isPresent());
 
-        Collection<PropertyDefinition> configurationProperties = new DockerDNSRRDiscoveryStrategyFactory().getConfigurationProperties();
+        val configurationProperties = new DockerDNSRRDiscoveryStrategyFactory().getConfigurationProperties();
         assertAllPropsAreValid(result.get().getProperties(), configurationProperties);
     }
 
@@ -76,29 +88,13 @@ public class HazelcastDockerSwarmDiscoveryStrategyTests {
             assertNotNull(result);
             assertTrue(result.isPresent());
 
-            Collection<PropertyDefinition> configurationProperties = new DockerSwarmDiscoveryStrategyFactory()
-                    .getConfigurationProperties();
+            val configurationProperties = new DockerSwarmDiscoveryStrategyFactory().getConfigurationProperties();
             assertAllPropsAreValid(result.get().getProperties(), configurationProperties);
         } finally {
             if (origHazelcastPeerPort == null) {
                 System.clearProperty(hazelcastPeerPortProperty);
             } else {
                 System.setProperty(hazelcastPeerPortProperty, origHazelcastPeerPort);
-            }
-        }
-    }
-
-    private void assertAllPropsAreValid(final Map<String, Comparable> properties,
-                                        final Collection<PropertyDefinition> configurationProperties) {
-        for (val propertyDefinition : configurationProperties) {
-            val value = properties.get(propertyDefinition.key());
-            if (value == null) {
-                assertTrue(propertyDefinition.optional(),
-                        "Property " + propertyDefinition.key() + " is not optional and should be given");
-            } else {
-                assertDoesNotThrow(
-                        () -> propertyDefinition.typeConverter().convert(value),
-                        "Property " + propertyDefinition.key() + " has invalid value '"+value+"'");
             }
         }
     }

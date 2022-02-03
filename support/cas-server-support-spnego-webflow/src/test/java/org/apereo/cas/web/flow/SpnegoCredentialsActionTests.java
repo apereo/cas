@@ -81,7 +81,7 @@ public class SpnegoCredentialsActionTests extends AbstractSpnegoTests {
     }
     
     @TestConfiguration(value = "SpnegoAuthenticationTestConfiguration", proxyBeanMethods = false)
-        public static class SpnegoAuthenticationTestConfiguration {
+    public static class SpnegoAuthenticationTestConfiguration {
         @Bean
         public BeanContainer<Authentication> spnegoAuthentications() {
             return BeanContainer.of(CollectionUtils.wrapList(new MockJcifsAuthentication()));

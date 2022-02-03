@@ -28,9 +28,10 @@ import org.springframework.core.Ordered;
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator extends BaseOAuth20AuthorizationRequestValidator {
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    public OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
-                                                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                                             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+    public OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -50,7 +51,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator e
     }
 
     @Override
-    public boolean supports(final WebContext context) {
+    public boolean supports(final WebContext context) throws Exception {
         if (preValidate(context)) {
             val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE);
             return OAuth20Utils.isResponseType(responseType.map(String::valueOf).orElse(StringUtils.EMPTY), getResponseType());

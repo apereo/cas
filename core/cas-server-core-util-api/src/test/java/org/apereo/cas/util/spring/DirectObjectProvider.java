@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.spring;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;

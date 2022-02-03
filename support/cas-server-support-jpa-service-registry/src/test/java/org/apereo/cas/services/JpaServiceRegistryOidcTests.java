@@ -55,7 +55,7 @@ public class JpaServiceRegistryOidcTests extends JpaServiceRegistryTests {
     }
 
     @TestConfiguration(value = "OidcJpaServiceRegistryTestConfiguration", proxyBeanMethods = false)
-        public static class OidcJpaServiceRegistryTestConfiguration {
+    public static class OidcJpaServiceRegistryTestConfiguration {
         @Bean
         public ServiceRegistryListener oidcServiceRegistryListener() {
             return new OidcServiceRegistryListener(new DefaultOidcAttributeReleasePolicyFactory(new CasConfigurationProperties()));

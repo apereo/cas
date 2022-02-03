@@ -118,7 +118,7 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     protected CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
@@ -278,7 +278,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-        public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
+    public static class SamlIdPMetadataTestConfiguration implements AuthenticationEventExecutionPlanConfigurer {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         private PrincipalResolver defaultPrincipalResolver;

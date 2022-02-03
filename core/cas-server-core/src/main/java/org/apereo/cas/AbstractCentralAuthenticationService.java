@@ -12,6 +12,7 @@ import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.LoggingUtils;
@@ -27,7 +28,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -190,7 +191,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             throw new InvalidTicketException(id);
         }
         if (ticket.isExpired()) {
-            FunctionUtils.doAndIgnore(s -> deleteTicket(id));
+            FunctionUtils.doUnchecked(s -> deleteTicket(id));
             LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
             throw new InvalidTicketException(id);
         }
@@ -217,12 +218,17 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         try {
             if (configurationContext.getCipherExecutor() != null) {
                 LOGGER.trace("Attempting to decode service ticket [{}] to verify authenticity", ticketId);
-                return !StringUtils.isEmpty(configurationContext.getCipherExecutor().decode(ticketId));
+                return !ObjectUtils.isEmpty(configurationContext.getCipherExecutor().decode(ticketId));
             }
-            return !StringUtils.isEmpty(ticketId);
+            return !ObjectUtils.isEmpty(ticketId);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
+    }
+
+    @Override
+    public TicketFactory getTicketFactory() {
+        return this.configurationContext.getTicketFactory();
     }
 }

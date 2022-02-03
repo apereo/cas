@@ -13,10 +13,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * This is {@link CouchDbTicketRegistryProperties}.
  *
  * @author Timur Duehr
- * @see org.apache.http.params.HttpParams
- * @see org.apache.http.params.HttpProtocolParams
- * @see org.apache.http.params.HttpConnectionParams
- * @see org.apache.http.params.BasicHttpParams
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-couchdb-ticket-registry")

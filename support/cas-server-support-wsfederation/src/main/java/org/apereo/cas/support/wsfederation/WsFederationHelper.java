@@ -209,8 +209,7 @@ public class WsFederationHelper {
             LOGGER.debug("Locating list of requested security tokens");
             val rst = rsToken.getRequestedSecurityToken();
             LOGGER.debug("Locating the first occurrence of a requested security token in the list");
-            val reqToken = rst.get(0);
-            return reqToken;
+            return rst.get(0);
         } catch (final Exception ex) {
             LoggingUtils.error(LOGGER, ex);
         }

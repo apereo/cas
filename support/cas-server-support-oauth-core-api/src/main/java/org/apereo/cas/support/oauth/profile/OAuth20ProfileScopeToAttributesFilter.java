@@ -6,8 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
-import org.pac4j.core.context.WebContext;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,13 +27,11 @@ public interface OAuth20ProfileScopeToAttributesFilter {
      * @param service           the service
      * @param profile           the profile
      * @param registeredService the registered service
-     * @param context           the context
      * @param accessToken       the access token
      * @return the map
      */
     default Principal filter(final Service service, final Principal profile,
                              final RegisteredService registeredService,
-                             final WebContext context,
                              final OAuth20AccessToken accessToken) {
         return profile;
     }

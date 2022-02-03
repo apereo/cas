@@ -22,7 +22,9 @@ public class SamlArtifactTicketExpirationPolicy extends HardTimeoutExpirationPol
     private static final long serialVersionUID = -6574724814970233926L;
 
     @JsonCreator
-    public SamlArtifactTicketExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public SamlArtifactTicketExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToKillInSeconds) {
         super(timeToKillInSeconds);
     }
 }

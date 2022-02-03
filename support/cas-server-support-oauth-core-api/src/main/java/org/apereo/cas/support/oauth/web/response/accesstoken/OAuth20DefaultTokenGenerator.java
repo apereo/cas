@@ -9,7 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
@@ -78,7 +78,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final CasConfigurationProperties casProperties;
 
-    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder,
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestContext holder,
                                                                          final Pair<OAuth20AccessToken, OAuth20RefreshToken> pair) {
         return OAuth20TokenGeneratedResult.builder()
             .registeredService(holder.getRegisteredService())
@@ -90,7 +90,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     @Override
-    public OAuth20TokenGeneratedResult generate(final AccessTokenRequestDataHolder holder) throws Exception {
+    public OAuth20TokenGeneratedResult generate(final AccessTokenRequestContext holder) throws Exception {
         if (OAuth20ResponseTypes.DEVICE_CODE.equals(holder.getResponseType())) {
             return generateAccessTokenOAuthDeviceCodeResponseType(holder);
         }
@@ -106,7 +106,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @return the OAuth token generated result
      * @throws Exception the exception
      */
-    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestDataHolder holder) throws Exception {
+    protected OAuth20TokenGeneratedResult generateAccessTokenOAuthDeviceCodeResponseType(final AccessTokenRequestContext holder) throws Exception {
         val deviceCode = holder.getDeviceCode();
 
         if (StringUtils.isNotBlank(deviceCode)) {
@@ -117,7 +117,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 LOGGER.debug("Provided user code [{}] linked to device code [{}] is approved", deviceCodeTicket.getId(), deviceCode);
                 this.centralAuthenticationService.deleteTicket(deviceCode);
 
-                val deviceResult = AccessTokenRequestDataHolder.builder()
+                val deviceResult = AccessTokenRequestContext.builder()
                     .service(holder.getService())
                     .authentication(holder.getAuthentication())
                     .registeredService(holder.getRegisteredService())
@@ -163,7 +163,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @return the pair
      * @throws Exception the exception
      */
-    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestDataHolder holder) throws Exception {
+    protected Pair<OAuth20AccessToken, OAuth20RefreshToken> generateAccessTokenOAuthGrantTypes(final AccessTokenRequestContext holder) throws Exception {
         LOGGER.debug("Creating access token for [{}]", holder.getService());
         val clientId = holder.getRegisteredService().getClientId();
         val authnBuilder = DefaultAuthenticationBuilder
@@ -208,7 +208,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @param accessToken the accessToken
      * @throws Exception the exception
      */
-    protected void updateOAuthCode(final AccessTokenRequestDataHolder holder, final OAuth20AccessToken accessToken) throws Exception {
+    protected void updateOAuthCode(final AccessTokenRequestContext holder, final OAuth20AccessToken accessToken) throws Exception {
         if (holder.isRefreshToken()) {
             val refreshToken = (OAuth20RefreshToken) holder.getToken();
             refreshToken.getAccessTokens().add(accessToken.getId());
@@ -260,7 +260,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * @return the refresh token
      * @throws Exception the exception
      */
-    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder,
+    protected OAuth20RefreshToken generateRefreshToken(final AccessTokenRequestContext responseHolder,
                                                        final OAuth20AccessToken accessToken) throws Exception {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
@@ -302,7 +302,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     private Pair<OAuth20DeviceToken, OAuth20DeviceUserCode> createDeviceTokensInTicketRegistry(
-        final AccessTokenRequestDataHolder holder) throws Exception {
+        final AccessTokenRequestContext holder) throws Exception {
         val deviceToken = deviceTokenFactory.createDeviceCode(holder.getService());
         LOGGER.debug("Created device code token [{}]", deviceToken.getId());
 
@@ -318,7 +318,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return Pair.of(deviceToken, deviceUserCode);
     }
 
-    private void expireOldRefreshToken(final AccessTokenRequestDataHolder responseHolder) throws Exception {
+    private void expireOldRefreshToken(final AccessTokenRequestContext responseHolder) throws Exception {
         val oldRefreshToken = responseHolder.getToken();
         LOGGER.debug("Expiring old refresh token [{}]", oldRefreshToken);
         oldRefreshToken.markTicketExpired();

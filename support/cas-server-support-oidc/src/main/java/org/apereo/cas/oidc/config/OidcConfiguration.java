@@ -41,8 +41,8 @@ import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
-import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationUriExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -105,6 +105,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.extractor.BearerAuthExtractor;
+import org.pac4j.core.engine.SecurityLogic;
 import org.pac4j.core.http.adapter.JEEHttpActionAdapter;
 import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.DefaultMatchers;
@@ -156,25 +157,29 @@ public class OidcConfiguration {
     @Configuration(value = "OidcWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcWebConfiguration {
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
-            @Qualifier("oauthSecConfig")
-            final Config oauthSecConfig,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+        public SecurityLogic oidcAuthorizationSecurityLogic(
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
-            val interceptor = new SecurityInterceptor(oauthSecConfig,
-                Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
+            return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
+            @Qualifier("oidcAuthorizationSecurityLogic")
+            final SecurityLogic oidcAuthorizationSecurityLogic,
+            @Qualifier("oauthSecConfig")
+            final Config oauthSecConfig) {
+            val interceptor = new SecurityInterceptor(oauthSecConfig, Authenticators.CAS_OAUTH_CLIENT, JEEHttpActionAdapter.INSTANCE);
             interceptor.setMatchers(DefaultMatchers.SECURITYHEADERS);
             interceptor.setAuthorizers(DefaultAuthorizers.IS_FULLY_AUTHENTICATED);
-
-            val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry, centralAuthenticationService);
-            interceptor.setSecurityLogic(logic);
+            interceptor.setSecurityLogic(oidcAuthorizationSecurityLogic);
             return interceptor;
         }
     }
@@ -275,7 +280,7 @@ public class OidcConfiguration {
         @ConditionalOnMissingBean(name = "oidcRequestSupport")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcRequestSupport oidcRequestSupport(
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
@@ -319,10 +324,13 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
-            return new OidcConsentApprovalViewResolver(casProperties, oauthDistributedSessionStore);
+            return new OidcConsentApprovalViewResolver(casProperties,
+                oauthDistributedSessionStore, centralAuthenticationService);
         }
     }
 
@@ -421,7 +429,7 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcPrivateKeyJwtClientProvider(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -450,7 +458,7 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcClientSecretJwtClientProvider(
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -573,9 +581,9 @@ public class OidcConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("clientRegistrationRequestSerializer")
             final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer,
-            @Qualifier("webApplicationServiceFactory")
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             final ObjectProvider<List<OAuth20TokenRequestValidator>> oauthTokenRequestValidators,
             @Qualifier("oauthSecConfig")
@@ -755,7 +763,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ExpirationPolicyBuilder pushedAuthorizationUriExpirationPolicy(
             final CasConfigurationProperties casProperties) {
-            return new OidcPushedAuthorizationUriExpirationPolicyBuilder(casProperties);
+            return new OidcPushedAuthorizationRequestExpirationPolicyBuilder(casProperties);
         }
 
         @ConditionalOnMissingBean(name = "pushedAuthorizationIdGenerator")

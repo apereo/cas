@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.WebContext;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -47,9 +46,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
     private final Collection<OidcCustomScopeAttributeReleasePolicy> userScopes;
 
-    public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
-                                              final CasConfigurationProperties casProperties,
-                                              final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
+    public OidcProfileScopeToAttributesFilter(
+        final PrincipalFactory principalFactory,
+        final CasConfigurationProperties casProperties,
+        final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
         this.principalFactory = principalFactory;
         this.casProperties = casProperties;
         this.userScopes = oidcAttributeReleasePolicyFactory.getUserDefinedScopes();
@@ -60,9 +60,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public Principal filter(final Service service,
                             final Principal profile,
                             final RegisteredService registeredService,
-                            final WebContext context,
                             final OAuth20AccessToken accessToken) {
-        val principal = super.filter(service, profile, registeredService, context, accessToken);
+        val principal = super.filter(service, profile, registeredService, accessToken);
         if (registeredService instanceof OidcRegisteredService) {
             val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {

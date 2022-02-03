@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -225,4 +226,11 @@ public interface CentralAuthenticationService {
      */
     ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
+
+    /**
+     * Gets ticket factory.
+     *
+     * @return the ticket factory
+     */
+    TicketFactory getTicketFactory();
 }

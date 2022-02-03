@@ -3,12 +3,12 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
@@ -41,8 +40,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         actionResolverName = AuditActionResolvers.OAUTH2_CODE_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_CODE_RESPONSE_RESOURCE_RESOLVER)
     @Override
-    public ModelAndView build(final WebContext webContext, final String clientId,
-                              final AccessTokenRequestDataHolder holder) throws Exception {
+    public ModelAndView build(final AccessTokenRequestContext holder) throws Exception {
         val authentication = holder.getAuthentication();
         val factory = (OAuth20CodeFactory) configurationContext.getTicketFactory().get(OAuth20Code.class);
         val code = factory.create(holder.getService(), authentication,
@@ -60,37 +58,28 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
                         return null;
                     });
         });
-        return buildCallbackViewViaRedirectUri(webContext, clientId, authentication, code);
+        return buildCallbackViewViaRedirectUri(holder, code);
     }
 
     @Override
-    public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
+    public boolean supports(final OAuth20AuthorizationRequest context) {
+        return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.CODE.getType());
     }
 
     /**
      * Build callback view via redirect uri model and view.
      *
-     * @param context        the context
-     * @param clientId       the client id
-     * @param authentication the authentication
-     * @param code           the code
+     * @param code the code
      * @return the model and view
+     * @throws Exception the exception
      */
-    protected ModelAndView buildCallbackViewViaRedirectUri(final WebContext context, final String clientId,
-                                                           final Authentication authentication,
-                                                           final OAuth20Code code) {
-        val attributes = authentication.getAttributes();
+    protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,
+                                                           final OAuth20Code code) throws Exception {
+        val attributes = holder.getAuthentication().getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).get(0).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).get(0).toString();
 
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
-            .map(String::valueOf)
-            .orElse(StringUtils.EMPTY);
-        LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
+        LOGGER.debug("Authorize request successful for client [{}] with redirect uri [{}]", holder.getClientId(), holder.getRedirectUri());
 
         val params = new LinkedHashMap<String, String>();
         params.put(OAuth20Constants.CODE, code.getId());
@@ -100,8 +89,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
         if (StringUtils.isNotBlank(nonce)) {
             params.put(OAuth20Constants.NONCE, nonce);
         }
-        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", redirectUri, params.keySet(), clientId);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
-        return build(context, registeredService, redirectUri, params);
+        LOGGER.debug("Redirecting to URL [{}] with params [{}] for clientId [{}]", holder.getRedirectUri(), params.keySet(), holder.getClientId());
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), holder.getClientId());
+        return build(registeredService, holder.getResponseMode(), holder.getRedirectUri(), params);
     }
 }

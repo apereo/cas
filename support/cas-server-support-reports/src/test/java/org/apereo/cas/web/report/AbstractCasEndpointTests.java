@@ -75,7 +75,7 @@ public abstract class AbstractCasEndpointTests {
     protected AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @TestConfiguration(value = "AuditTestConfiguration", proxyBeanMethods = false)
-        public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
+    public static class AuditTestConfiguration implements AuditTrailExecutionPlanConfigurer {
         @Override
         public void configureAuditTrailExecutionPlan(final AuditTrailExecutionPlan plan) {
             plan.registerAuditTrailManager(new MockAuditTrailManager());

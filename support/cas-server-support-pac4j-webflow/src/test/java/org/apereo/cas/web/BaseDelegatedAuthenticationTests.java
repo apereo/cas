@@ -130,7 +130,7 @@ public abstract class BaseDelegatedAuthenticationTests {
     }
 
     @TestConfiguration(value = "Saml2ClientMetadataControllerTestConfiguration", proxyBeanMethods = false)
-        public static class DelegatedAuthenticationWebflowTestConfiguration {
+    public static class DelegatedAuthenticationWebflowTestConfiguration {
         @Bean
         public Clients builtClients() throws Exception {
             val idpMetadata = new File("src/test/resources/idp-metadata.xml").getCanonicalPath();

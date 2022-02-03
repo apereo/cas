@@ -24,6 +24,7 @@ import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
 import org.apereo.cas.util.spring.BeanContainerTests;
 import org.apereo.cas.util.spring.ConvertersTests;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptorTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
@@ -71,6 +72,7 @@ import org.junit.platform.suite.api.Suite;
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,
+    RefreshableHandlerInterceptorTests.class,
     WatchableGroovyScriptResourceTests.class,
     TemporaryFileSystemResourceTests.class,
     PathWatcherServiceTests.class,

@@ -14,7 +14,6 @@ import org.apereo.cas.token.JwtBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.context.WebContext;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +30,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
      * The ID token generator service.
      */
     protected final IdTokenGeneratorService idTokenGenerator;
+
     private final OidcIssuerService oidcIssuerService;
 
     public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
@@ -53,14 +53,13 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected Map<String, Object> getAccessTokenResponseModel(final WebContext webContext,
-                                                              final OAuth20AccessTokenResponseResult result) {
-        val model = super.getAccessTokenResponseModel(webContext, result);
+    protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
+        val model = super.getAccessTokenResponseModel(result);
         val accessToken = result.getGeneratedToken().getAccessToken();
         accessToken.ifPresent(Unchecked.consumer(token -> {
             val oidcRegisteredService = (OidcRegisteredService) result.getRegisteredService();
-            val idToken = idTokenGenerator.generate(webContext, accessToken.get(),
-                result.getAccessTokenTimeout(), result.getResponseType(),
+            val idToken = idTokenGenerator.generate(accessToken.get(),
+                result.getAccessTokenTimeout(), result.getUserProfile(), result.getResponseType(),
                 result.getGrantType(), oidcRegisteredService);
 
             LOGGER.debug("Generated ID token [{}]", idToken);
