@@ -159,7 +159,7 @@ public class CasCoreWebflowConfiguration {
             final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator) {
             return CasWebflowEventResolutionConfigurationContext.builder()
                 .authenticationContextValidator(authenticationContextValidator)

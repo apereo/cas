@@ -200,7 +200,7 @@ public class CoreWsSecurityIdentityProviderConfiguration {
             final SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("ticketGrantingTicketCookieGenerator")
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier("wsFederationTicketValidator")
             final TicketValidator wsFederationTicketValidator,

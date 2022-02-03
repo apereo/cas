@@ -1,7 +1,7 @@
 package org.apereo.cas.util.model;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import lombok.val;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @since 6.2.0
  */
 @Getter
-@Builder
+@SuperBuilder
 public class Capacity implements Serializable {
     private static final long serialVersionUID = -331719796564884951L;
 

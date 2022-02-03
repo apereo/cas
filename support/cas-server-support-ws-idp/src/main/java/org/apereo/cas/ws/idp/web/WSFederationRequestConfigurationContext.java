@@ -14,10 +14,10 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.jasig.cas.client.validation.TicketValidator;
 
 /**
@@ -29,7 +29,7 @@ import org.jasig.cas.client.validation.TicketValidator;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class WSFederationRequestConfigurationContext {
     private final ServicesManager servicesManager;
 

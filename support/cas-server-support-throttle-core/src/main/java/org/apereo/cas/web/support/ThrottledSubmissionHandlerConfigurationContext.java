@@ -4,10 +4,10 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -19,7 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class ThrottledSubmissionHandlerConfigurationContext {
     private final int failureThreshold;
 

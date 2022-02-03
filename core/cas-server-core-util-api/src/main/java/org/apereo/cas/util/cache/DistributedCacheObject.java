@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import lombok.val;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ import java.util.TreeMap;
 @ToString
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode

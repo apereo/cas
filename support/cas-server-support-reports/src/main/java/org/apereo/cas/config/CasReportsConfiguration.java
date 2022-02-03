@@ -143,7 +143,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
-        @Qualifier("ticketGrantingTicketCookieGenerator")
+        @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
         final TicketRegistrySupport ticketRegistrySupport) {

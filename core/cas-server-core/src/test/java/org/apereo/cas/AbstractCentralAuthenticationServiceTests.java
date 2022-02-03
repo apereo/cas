@@ -37,7 +37,7 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired

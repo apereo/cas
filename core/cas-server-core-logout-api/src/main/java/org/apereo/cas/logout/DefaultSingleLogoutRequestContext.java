@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Transient;
 import java.net.URL;
@@ -25,7 +26,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestContext {
 
     /**

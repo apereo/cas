@@ -10,10 +10,10 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
@@ -30,7 +30,7 @@ import org.pac4j.core.context.session.SessionStore;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class SamlProfileSamlResponseBuilderConfigurationContext {
 
     private final transient VelocityEngine velocityEngineFactory;
