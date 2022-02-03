@@ -102,9 +102,10 @@ public class CasThemesConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "themesStaticResourcesWebMvcConfigurer")
-    public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer(final CasConfigurationProperties casProperties,
-                                                                  final WebProperties webProperties,
-                                                                  final ThymeleafProperties thymeleafProperties) {
+    public WebMvcConfigurer themesStaticResourcesWebMvcConfigurer(
+        final CasConfigurationProperties casProperties,
+        final WebProperties webProperties,
+        final ThymeleafProperties thymeleafProperties) {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(final ResourceHandlerRegistry registry) {

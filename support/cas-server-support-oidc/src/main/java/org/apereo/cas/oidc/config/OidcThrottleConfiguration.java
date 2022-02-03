@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -39,6 +40,7 @@ public class OidcThrottleConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
         public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("authenticationThrottlingExecutionPlan")
             final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {

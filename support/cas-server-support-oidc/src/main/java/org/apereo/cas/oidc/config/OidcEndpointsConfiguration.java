@@ -34,6 +34,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -122,6 +123,7 @@ public class OidcEndpointsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class OidcInterceptorsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
@@ -138,6 +140,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
@@ -149,21 +152,22 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthInterceptor(
             final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
             @Qualifier("oauthDistributedSessionStore")
-            final SessionStore oauthDistributedSessionStore,
+            final ObjectProvider<SessionStore> oauthDistributedSessionStore,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
-            final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor,
+            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-            final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor,
+            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
             @Qualifier("requiresAuthenticationClientConfigurationInterceptor")
-            final HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor,
+            final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
             @Qualifier("requiresAuthenticationDynamicRegistrationInterceptor")
-            final HandlerInterceptor requiresAuthenticationDynamicRegistrationInterceptor,
+            final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
+            final ObjectProvider<ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
 
             return new OidcHandlerInterceptorAdapter(
@@ -190,6 +194,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oidcWebMvcConfigurer(
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
@@ -200,7 +205,7 @@ public class OidcEndpointsConfiguration {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
-                    registry.addInterceptor(oauthInterceptor.getObject())
+                    registry.addInterceptor(new RefreshableHandlerInterceptor(oauthInterceptor))
                         .order(100)
                         .addPathPatterns(baseEndpoint.concat("/*"));
                 }

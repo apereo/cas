@@ -35,18 +35,18 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     /**
      * Access token interceptor.
      */
-    protected final HandlerInterceptor requiresAuthenticationAccessTokenInterceptor;
+    protected final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor;
 
     /**
      * Authorization interceptor.
      */
-    protected final HandlerInterceptor requiresAuthenticationAuthorizeInterceptor;
+    protected final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor;
 
     private final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors;
 
-    private final ServicesManager servicesManager;
+    private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final SessionStore sessionStore;
+    private final ObjectProvider<SessionStore> sessionStore;
 
     private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
 
@@ -55,14 +55,14 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
         if (requestRequiresAuthentication(request, response)) {
-            return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
+            return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
         }
 
         if (isDeviceTokenRequest(request, response)) {
-            return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
+            return requiresAuthenticationAuthorizeInterceptor.getObject().preHandle(request, response, handler);
         }
 
-        return !isAuthorizationRequest(request, response) || requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
+        return !isAuthorizationRequest(request, response) || requiresAuthenticationAuthorizeInterceptor.getObject().preHandle(request, response, handler);
     }
 
     /**
@@ -74,12 +74,12 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return true/false
      */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore).getLeft();
+        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore.getObject()).getLeft();
         if (clientId.isEmpty()) {
             return true;
         }
 
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId);
         return registeredService == null || OAuth20Utils.doesServiceNeedAuthentication(registeredService);
     }
 
