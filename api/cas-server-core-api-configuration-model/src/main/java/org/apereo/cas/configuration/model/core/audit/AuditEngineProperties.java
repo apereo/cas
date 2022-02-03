@@ -61,7 +61,7 @@ public class AuditEngineProperties implements Serializable {
     private String alternateServerAddrHeaderName;
 
     /**
-     * Request header to use identify the client address.
+     * Request header to use to identify the client address.
      * <p>
      * If the application is sitting behind a load balancer,
      * the client address typically ends up being the load balancer
