@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link SamlArtifactTicketExpirationPolicy}.
@@ -18,13 +17,14 @@ import lombok.experimental.SuperBuilder;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @ToString(callSuper = true)
-@SuperBuilder
 public class SamlArtifactTicketExpirationPolicy extends HardTimeoutExpirationPolicy {
 
     private static final long serialVersionUID = -6574724814970233926L;
 
     @JsonCreator
-    public SamlArtifactTicketExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public SamlArtifactTicketExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToKillInSeconds) {
         super(timeToKillInSeconds);
     }
 }

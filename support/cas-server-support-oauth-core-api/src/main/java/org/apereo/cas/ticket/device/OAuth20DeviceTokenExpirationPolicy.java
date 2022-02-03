@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link OAuth20DeviceTokenExpirationPolicy}.
@@ -24,12 +23,13 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
 public class OAuth20DeviceTokenExpirationPolicy extends HardTimeoutExpirationPolicy {
     private static final long serialVersionUID = -1283286621686527360L;
 
     @JsonCreator
-    public OAuth20DeviceTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToLive) {
+    public OAuth20DeviceTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToLive) {
         super(timeToLive);
     }
 }
