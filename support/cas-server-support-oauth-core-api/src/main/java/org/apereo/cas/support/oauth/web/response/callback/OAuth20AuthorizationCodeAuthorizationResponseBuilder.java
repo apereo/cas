@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,6 +21,7 @@ import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 /**
  * This is {@link OAuth20AuthorizationCodeAuthorizationResponseBuilder}.
@@ -50,11 +52,14 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         configurationContext.getTicketRegistry().addTicket(code);
-        val tgt = holder.getTicketGrantingTicket();
-        if (tgt != null) {
-            LOGGER.debug("Updating parent ticket-granting-ticket [{}]", tgt);
-            configurationContext.getTicketRegistry().updateTicket(tgt);
-        }
+        val ticketGrantingTicket = holder.getTicketGrantingTicket();
+        Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> {
+            FunctionUtils.doAndHandle(() -> configurationContext.getCentralAuthenticationService().updateTicket(tgt),
+                    throwable -> {
+                        LOGGER.error("Unable to update ticket-granting-ticket [{}]", tgt, throwable);
+                        return null;
+                    });
+        });
         return buildCallbackViewViaRedirectUri(webContext, clientId, authentication, code);
     }
 

@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -59,11 +58,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        val tgtId = token.getTicketGrantingTicket().getId();
-        val tgt = getOAuthConfigurationContext().getTicketRegistry().getTicket(tgtId, TicketGrantingTicket.class);
-        if (tgt == null || tgt.isExpired()) {
-            throw new InvalidTicketException(getOAuthParameter(request));
-        }
+        ensureThatTheTicketGrantingTicketIsNotExpired(token.getTicketGrantingTicket().getId());
+
         val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
@@ -80,6 +76,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Ensure that the ticket-granting-ticket is not expired by retrieving it.
+     *
+     * @param tgtId the ticket-granting-ticket identifier
+     */
+    protected void ensureThatTheTicketGrantingTicketIsNotExpired(final String tgtId) {
+        getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(tgtId);
     }
 
     /**
