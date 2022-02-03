@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -60,6 +61,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
         val response = new MockHttpServletResponse();
@@ -81,7 +83,31 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
         code.markTicketExpired();
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
+    }
+
+    @Test
+    public void verifyExpiredTgt() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCode(principal, service);
+        val expiredTgt = ((MockTicketGrantingTicket) code.getTicketGrantingTicket()).clone();
+        expiredTgt.markTicketExpired();
+        ticketRegistry.addTicket(expiredTgt);
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
         val response = new MockHttpServletResponse();
@@ -99,6 +125,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
         val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
         val response = new MockHttpServletResponse();
@@ -114,6 +141,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
         val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val code = addCode(principal, service);
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
         val response = new MockHttpServletResponse();

@@ -58,6 +58,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null || token.isExpired()) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
+        ensureThatTheTicketGrantingTicketIsNotExpired(token.getTicketGrantingTicket().getId());
+
         val scopes = extractRequestedScopesByToken(requestedScopes, token, request);
         val service = getOAuthConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
 
@@ -74,6 +76,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .ticketGrantingTicket(token.getTicketGrantingTicket());
 
         return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Ensure that the ticket-granting-ticket is not expired by retrieving it.
+     *
+     * @param tgtId the ticket-granting-ticket identifier
+     */
+    protected void ensureThatTheTicketGrantingTicketIsNotExpired(final String tgtId) {
+        getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(tgtId);
     }
 
     /**
