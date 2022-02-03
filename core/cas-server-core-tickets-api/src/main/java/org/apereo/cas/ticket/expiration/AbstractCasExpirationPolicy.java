@@ -3,12 +3,10 @@ package org.apereo.cas.ticket.expiration;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import lombok.val;
 
 import java.time.Clock;
@@ -27,18 +25,16 @@ import java.util.UUID;
 @Setter
 @ToString
 @EqualsAndHashCode
-@SuperBuilder
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private static final long serialVersionUID = 8042104336580063690L;
 
     private String name;
 
-    @Builder.Default
     private Clock clock = Clock.systemUTC();
 
     protected AbstractCasExpirationPolicy() {
-        this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();
+        this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID();
     }
 
     @Override
