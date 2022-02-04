@@ -72,7 +72,7 @@ public class SamlIdPMultifactorAuthenticationTriggerTests extends BaseSamlIdPWeb
         assertTrue(samlIdPMultifactorAuthenticationTrigger.supports(request, registeredService,
             RegisteredServiceTestUtils.getAuthentication(), service));
         val result = samlIdPMultifactorAuthenticationTrigger.isActivated(RegisteredServiceTestUtils.getAuthentication(),
-            registeredService, request, service);
+            registeredService, request, response, service);
         assertTrue(result.isPresent());
     }
 

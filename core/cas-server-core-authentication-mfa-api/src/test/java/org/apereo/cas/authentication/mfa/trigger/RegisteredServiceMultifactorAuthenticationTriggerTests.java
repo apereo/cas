@@ -27,7 +27,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -38,7 +38,8 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
         assertNotNull(trigger.getCasProperties());
         assertNotNull(trigger.getMultifactorAuthenticationProviderSelector());
-        val result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(null, null,
+            this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
     
@@ -52,7 +53,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -65,7 +66,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -78,7 +79,7 @@ public class RegisteredServiceMultifactorAuthenticationTriggerTests extends Base
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
 }

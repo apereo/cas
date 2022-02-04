@@ -26,7 +26,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestHeader("mfaPolicy");
         this.httpRequest.addHeader("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -36,7 +36,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestParameter("mfaPolicy");
         this.httpRequest.addParameter("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -46,7 +46,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -56,7 +56,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.getSession(true).setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -67,7 +67,7 @@ public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultif
         httpRequest.setAttribute("mfaPolicy", "invalid");
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 }
 

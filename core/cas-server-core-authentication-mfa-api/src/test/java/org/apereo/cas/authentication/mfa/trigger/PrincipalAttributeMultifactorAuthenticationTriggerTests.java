@@ -30,7 +30,7 @@ public class PrincipalAttributeMultifactorAuthenticationTriggerTests extends Bas
         principal.setGlobalPrincipalAttributeValueRegex(".+@example.*");
         val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -45,7 +45,7 @@ public class PrincipalAttributeMultifactorAuthenticationTriggerTests extends Bas
         val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
         val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(props, resolver, applicationContext);
         val e = assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
         assertNotNull(e.getCode());
         assertTrue(e.getHandlerErrors().containsKey(MultifactorAuthenticationRequiredException.class.getSimpleName()));
     }

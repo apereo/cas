@@ -21,6 +21,7 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,8 +46,8 @@ public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthe
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
-        val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val context = new JEEContext(request, response);
         val result = SamlIdPUtils.retrieveSamlRequest(context, distributedSessionStore, openSamlConfigBean, AuthnRequest.class);
         val mappings = getAuthenticationContextMappings();

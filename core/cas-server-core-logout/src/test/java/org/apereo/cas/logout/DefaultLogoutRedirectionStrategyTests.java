@@ -87,7 +87,7 @@ public class DefaultLogoutRedirectionStrategyTests {
 
         val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
         val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.TRUE);
+        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
         val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
             new WebApplicationServiceFactory());
         strategy.handle(context);
@@ -105,7 +105,7 @@ public class DefaultLogoutRedirectionStrategyTests {
 
         val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
         val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.TRUE);
+        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
         val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
             new WebApplicationServiceFactory());
         strategy.handle(context);
@@ -123,7 +123,7 @@ public class DefaultLogoutRedirectionStrategyTests {
 
         val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
         val logoutUrlBuilder = mock(SingleLogoutServiceLogoutUrlBuilder.class);
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.TRUE);
+        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.TRUE);
         val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
             new WebApplicationServiceFactory());
         strategy.handle(context);
@@ -144,7 +144,7 @@ public class DefaultLogoutRedirectionStrategyTests {
         val extractor = new DefaultArgumentExtractor(new LogoutWebApplicationServiceFactory(props.getLogout()));
         val strategy = new DefaultLogoutRedirectionStrategy(extractor, props, logoutUrlBuilder,
             new WebApplicationServiceFactory());
-        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any())).thenReturn(Boolean.FALSE);
+        when(logoutUrlBuilder.isServiceAuthorized(any(WebApplicationService.class), any(), any())).thenReturn(Boolean.FALSE);
         strategy.handle(context);
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
     }

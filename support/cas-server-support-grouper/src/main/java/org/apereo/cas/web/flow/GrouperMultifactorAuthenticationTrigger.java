@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -52,7 +53,9 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest request, final Service service) {
+                                                                   final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         val grouperField = casProperties.getAuthn().getMfa()
             .getTriggers().getGrouper().getGrouperGroupField();
         if (StringUtils.isBlank(grouperField)) {

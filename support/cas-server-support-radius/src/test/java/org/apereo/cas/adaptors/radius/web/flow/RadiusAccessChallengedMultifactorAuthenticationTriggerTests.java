@@ -40,6 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,9 +94,11 @@ public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
     public void verifyTriggerInactive() {
         assertTrue(multifactorAuthenticationTrigger.isActivated(CoreAuthenticationTestUtils.getAuthentication(),
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
             CoreAuthenticationTestUtils.getService()).isEmpty());
         assertTrue(multifactorAuthenticationTrigger.isActivated(null,
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
             CoreAuthenticationTestUtils.getService()).isEmpty());
     }
 
@@ -107,6 +110,7 @@ public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
 
         assertThrows(AuthenticationException.class, () -> multifactorAuthenticationTrigger.isActivated(authn,
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
             CoreAuthenticationTestUtils.getService()));
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -116,6 +120,7 @@ public class RadiusAccessChallengedMultifactorAuthenticationTriggerTests {
 
         assertTrue(multifactorAuthenticationTrigger.isActivated(authnMfa,
             CoreAuthenticationTestUtils.getRegisteredService(), new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
             CoreAuthenticationTestUtils.getService()).isPresent());
     }
 }

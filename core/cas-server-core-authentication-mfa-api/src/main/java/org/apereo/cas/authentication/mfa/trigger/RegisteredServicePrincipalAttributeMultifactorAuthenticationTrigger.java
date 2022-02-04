@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -53,6 +54,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");

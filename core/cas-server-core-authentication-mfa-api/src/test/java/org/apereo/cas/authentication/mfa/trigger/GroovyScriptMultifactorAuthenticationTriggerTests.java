@@ -36,11 +36,11 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
         val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
         val service = MultifactorAuthenticationTestUtils.getService("nomfa");
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, service);
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, service);
         assertFalse(result.isPresent());
     }
 
@@ -49,12 +49,12 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
     public void verifyScriptDoesNotExist() {
         val props = new CasConfigurationProperties();
         var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
         
         props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("DoesNotExist.groovy"));
         trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -65,13 +65,13 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
 
         var trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(null, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(null, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
 
-        result = trigger.isActivated(authentication, null, this.httpRequest, mock(Service.class));
+        result = trigger.isActivated(authentication, null, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
-        result = trigger.isActivated(authentication, registeredService, this.httpRequest, null);
+        result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, null);
         assertFalse(result.isPresent());
 
         trigger.destroy();
@@ -86,7 +86,7 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getGroovyScript().setLocation(new FileSystemResource(file));
         val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
     
@@ -98,7 +98,7 @@ public class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMulti
         props.getAuthn().getMfa().getGroovyScript().setLocation(new ClassPathResource("GroovyMfaTrigger.groovy"));
         val trigger = new GroovyScriptMultifactorAuthenticationTrigger(props, applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
 }

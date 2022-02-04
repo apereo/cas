@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -52,11 +53,12 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
      * @param request           the request
      * @return the authentication context validation result
      */
-    protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(final MultifactorAuthenticationProvider provider,
-                                                                                             final RegisteredService registeredService,
-                                                                                             final Authentication authentication,
-                                                                                             final Service service,
-                                                                                             final HttpServletRequest request) {
+    protected static AuthenticationContextValidationResult validateMultifactorProviderBypass(
+        final MultifactorAuthenticationProvider provider,
+        final RegisteredService registeredService,
+        final Authentication authentication,
+        final Service service,
+        final HttpServletRequest request) {
         if (provider.isAvailable(registeredService)) {
             val bypassEvaluator = provider.getBypassEvaluator();
             if (bypassEvaluator != null) {
@@ -85,24 +87,28 @@ public class DefaultRequestedAuthenticationContextValidator implements Requested
     }
 
     @Override
-    public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
+    public AuthenticationContextValidationResult validateAuthenticationContext(final Assertion assertion,
+                                                                               final HttpServletRequest request,
+                                                                               final HttpServletResponse response) {
         LOGGER.trace("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val registeredService = servicesManager.findServiceBy(assertion.getService());
         val authentication = assertion.getPrimaryAuthentication();
-        return validateAuthenticationContext(request, registeredService, authentication, assertion.getService());
+        return validateAuthenticationContext(request, response, registeredService, authentication, assertion.getService());
     }
 
     @Override
-    public AuthenticationContextValidationResult validateAuthenticationContext(final HttpServletRequest request,
-                                                                               final RegisteredService registeredService,
-                                                                               final Authentication authentication,
-                                                                               final Service service) {
+    public AuthenticationContextValidationResult validateAuthenticationContext(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final RegisteredService registeredService,
+        final Authentication authentication,
+        final Service service) {
         if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
             LOGGER.debug("Multifactor authentication execution is ignored for [{}]", registeredService.getName());
             return toSuccessfulResult();
         }
 
-        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, registeredService, authentication, service);
+        val providerResult = multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, authentication, service);
         if (providerResult.isEmpty()) {
             LOGGER.debug("No authentication context is required for this request");
             return toSuccessfulResult();

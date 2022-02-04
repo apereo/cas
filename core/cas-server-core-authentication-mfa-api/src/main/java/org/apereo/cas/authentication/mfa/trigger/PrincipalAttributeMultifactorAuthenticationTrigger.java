@@ -25,6 +25,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");

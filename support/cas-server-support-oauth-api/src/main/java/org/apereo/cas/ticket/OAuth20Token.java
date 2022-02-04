@@ -5,6 +5,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
 
     /**

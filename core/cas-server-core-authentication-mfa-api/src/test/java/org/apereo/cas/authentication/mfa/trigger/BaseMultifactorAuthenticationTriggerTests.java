@@ -22,6 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
     protected RegisteredService registeredService;
 
     protected MockHttpServletRequest httpRequest;
+
+    protected MockHttpServletResponse httpResponse;
 
     protected TestMultifactorAuthenticationProvider multifactorAuthenticationProvider;
 
@@ -83,5 +86,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
         this.httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         var clientInfo = new ClientInfo(this.httpRequest);
         ClientInfoHolder.setClientInfo(clientInfo);
+
+        this.httpResponse = new MockHttpServletResponse();
     }
 }

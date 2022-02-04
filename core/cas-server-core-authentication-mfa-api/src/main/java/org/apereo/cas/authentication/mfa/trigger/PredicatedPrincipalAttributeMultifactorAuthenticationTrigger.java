@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -47,6 +48,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
         val predicateResource = casProperties.getAuthn().getMfa().getTriggers()
             .getPrincipal().getGlobalPrincipalAttributePredicate().getLocation();

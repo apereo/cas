@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -52,6 +53,7 @@ public class UserAuthenticationResource {
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
+     * @param response    the response
      * @return ResponseEntity representing RESTful response
      */
     @PostMapping(value = RestProtocolConstants.ENDPOINT_USERS,
@@ -64,9 +66,10 @@ public class UserAuthenticationResource {
             MediaType.APPLICATION_JSON_VALUE
         })
     public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                      final HttpServletRequest request) {
+                                                      final HttpServletRequest request,
+                                                      final HttpServletResponse response) {
         try {
-            val authenticationResult = authenticationService.authenticate(requestBody, request);
+            val authenticationResult = authenticationService.authenticate(requestBody, request, response);
             val result = authenticationResult.orElseThrow(FailedLoginException::new);
             return this.userAuthenticationResourceEntityResponseFactory.build(result, request);
         } catch (final AuthenticationException e) {

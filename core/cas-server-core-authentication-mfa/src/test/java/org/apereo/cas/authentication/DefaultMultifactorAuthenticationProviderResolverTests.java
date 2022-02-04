@@ -190,7 +190,9 @@ public class DefaultMultifactorAuthenticationProviderResolverTests {
             CollectionUtils.wrap("mfa-principal", List.of(provider2.getId())));
         val result = trigger.isActivated(CoreAuthenticationTestUtils.getAuthentication(principal,
             CollectionUtils.wrap("mfa-authn", List.of(provider2.getId()))),
-            CoreAuthenticationTestUtils.getRegisteredService(), request, CoreAuthenticationTestUtils.getService());
+            CoreAuthenticationTestUtils.getRegisteredService(), request,
+            new MockHttpServletResponse(),
+            CoreAuthenticationTestUtils.getService());
         if (assertPresence) {
             assertTrue(result.isPresent());
             assertEquals(provider2.getId(), result.get().getId());

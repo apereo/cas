@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.OAuth20Token;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface OAuth20RefreshToken extends OAuth20Token {
 
     /**

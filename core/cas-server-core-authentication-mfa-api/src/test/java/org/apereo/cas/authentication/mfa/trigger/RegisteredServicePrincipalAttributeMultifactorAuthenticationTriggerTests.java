@@ -41,7 +41,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -65,7 +65,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         when(selector.resolve(any(Collection.class), any(), any())).thenReturn(provider2);
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), appCtx, selector);
-        val result = trigger.isActivated(authentication, registeredService, httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
         assertEquals(provider2.getId(), result.get().getId());
     }
@@ -83,7 +83,8 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
-        assertThrows(AuthenticationException.class, () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+        assertThrows(AuthenticationException.class, () -> trigger.isActivated(authentication, registeredService,
+            this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -114,7 +115,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger
         val trigger = new RegisteredServicePrincipalAttributeMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()), applicationContext,
             mock(MultifactorAuthenticationProviderSelector.class));
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
 }

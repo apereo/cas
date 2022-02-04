@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     private static MultifactorAuthenticationTrigger getMultifactorAuthenticationTrigger() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);
         when(trigger.supports(any(), any(), any(), any())).thenReturn(true);
-        when(trigger.isActivated(any(), any(), any(), any()))
+        when(trigger.isActivated(any(), any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
         return trigger;
     }
@@ -34,7 +35,9 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
     public void verifyOperation() {
         val trigger = getMultifactorAuthenticationTrigger();
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
-        val result = strategy.resolve(new MockHttpServletRequest(), MultifactorAuthenticationTestUtils.getRegisteredService(),
+        val result = strategy.resolve(new MockHttpServletRequest(),
+            new MockHttpServletResponse(),
+            MultifactorAuthenticationTestUtils.getRegisteredService(),
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
         assertTrue(result.isPresent());
@@ -48,7 +51,8 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
         assertFalse(strategy.getMultifactorAuthenticationTriggers().isEmpty());
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getMultifactorPolicy().isBypassEnabled()).thenReturn(true);
-        val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
+        val result = strategy.resolve(new MockHttpServletRequest(), new MockHttpServletResponse(),
+            registeredService,
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
         assertTrue(result.isEmpty());
@@ -60,7 +64,8 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategyTests {
         val strategy = new DefaultMultifactorAuthenticationTriggerSelectionStrategy(List.of(trigger));
         val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getMultifactorPolicy().isBypassEnabled()).thenReturn(true);
-        val result = strategy.resolve(new MockHttpServletRequest(), registeredService,
+        val result = strategy.resolve(new MockHttpServletRequest(), new MockHttpServletResponse(),
+            registeredService,
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
             MultifactorAuthenticationTestUtils.getService("https://www.example.org"));
         assertTrue(result.isEmpty());

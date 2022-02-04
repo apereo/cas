@@ -31,7 +31,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -44,7 +44,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -63,7 +63,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
     public void verifyEmptyProviders() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        
+
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getScript()).thenReturn("groovy { return '" + multifactorAuthenticationProvider.getId() + "' }");
         when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
@@ -71,7 +71,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -94,7 +94,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTriggerTests exte
 
         val props = new CasConfigurationProperties();
         val trigger = new ScriptedRegisteredServiceMultifactorAuthenticationTrigger(props, applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 }

@@ -32,11 +32,11 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     public void verifyUndefined() {
         val props = new CasConfigurationProperties();
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
 
         trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
+        result = trigger.isActivated(null, null, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
@@ -52,13 +52,13 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
 
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
         timeProps.setProviderId("bad-id");
         val trigger2 = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger2.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger2.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
 
@@ -76,6 +76,6 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
         props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 }

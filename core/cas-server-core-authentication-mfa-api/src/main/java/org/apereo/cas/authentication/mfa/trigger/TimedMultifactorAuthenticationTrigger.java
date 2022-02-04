@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -48,6 +50,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
 
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor();
@@ -73,7 +76,7 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
     /**
      * Check timed multifactor providers for request optional.
      *
-     * @param service        the service
+     * @param service the service
      * @return the provider
      */
     protected Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service) {

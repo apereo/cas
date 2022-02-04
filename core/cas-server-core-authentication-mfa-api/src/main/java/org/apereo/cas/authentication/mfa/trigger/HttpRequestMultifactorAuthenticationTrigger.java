@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
