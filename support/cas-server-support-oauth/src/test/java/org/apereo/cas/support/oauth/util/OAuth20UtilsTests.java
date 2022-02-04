@@ -42,7 +42,6 @@ import static org.mockito.Mockito.*;
 public class OAuth20UtilsTests {
     @Test
     public void verifyRequestHeaderBad() {
-        assertNull(OAuth20Utils.getServiceRequestHeaderIfAny(null));
         assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));
     }
 
