@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.UserProfile;
 
@@ -61,10 +61,11 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    public Service buildService(final OAuthRegisteredService registeredService, final JEEContext context, final boolean useServiceHeader) {
+    public Service buildService(final OAuthRegisteredService registeredService,
+                                final WebContext context, final boolean useServiceHeader) {
         var id = StringUtils.EMPTY;
         if (useServiceHeader) {
-            id = OAuth20Utils.getServiceRequestHeaderIfAny(context.getNativeRequest());
+            id = OAuth20Utils.getServiceRequestHeaderIfAny(context);
             LOGGER.debug("Located service based on request header is [{}]", id);
         }
         if (StringUtils.isBlank(id)) {
@@ -76,11 +77,10 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
     @Override
     public Authentication build(final UserProfile profile,
                                 final OAuthRegisteredService registeredService,
-                                final JEEContext context,
+                                final WebContext context,
                                 final Service service) {
 
         val attrs = new HashMap<>(profile.getAttributes());
-
         val profileAttributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects(attrs);
         val newPrincipal = principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);

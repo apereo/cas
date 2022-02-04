@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -64,19 +63,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             .flatMap(Collection::stream)
             .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
-    }
-
-    private static boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
-        if (auth1 == null || auth2 == null) {
-            return false;
-        }
-
-        val builder = new EqualsBuilder();
-        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
-        builder.append(auth1.getCredentials(), auth2.getCredentials());
-        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
-        builder.append(auth1.getAttributes(), auth2.getAttributes());
-        return builder.isEquals();
     }
 
     /**
@@ -149,7 +135,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
                 if (StringUtils.isNotBlank(ticketGrantingTicket)) {
                     LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicket);
-                    configurationContext.getTicketRegistry().deleteTicket(ticketGrantingTicket);
+                    configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
                 }
 
                 LOGGER.trace("Attempting to issue a new ticket-granting ticket...");
@@ -180,19 +166,18 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
 
     private boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
                                                     final String ticketGrantingTicket) throws Exception {
-        if (StringUtils.isBlank(ticketGrantingTicket)) {
-            return true;
-        }
         LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
         val authenticationFromTgt = configurationContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicket);
 
         if (authenticationFromTgt == null) {
             LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
-            configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+            if (StringUtils.isNotBlank(ticketGrantingTicket)) {
+                configurationContext.getCentralAuthenticationService().deleteTicket(ticketGrantingTicket);
+            }
             return true;
         }
 
-        if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
+        if (authentication.isEqualTo(authenticationFromTgt)) {
             LOGGER.debug("Resulting authentication matches the authentication from context");
             return false;
         }

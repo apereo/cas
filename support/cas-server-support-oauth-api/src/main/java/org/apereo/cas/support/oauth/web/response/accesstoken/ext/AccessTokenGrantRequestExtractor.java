@@ -3,8 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.pac4j.core.context.WebContext;
 
 /**
  * This is {@link AccessTokenGrantRequestExtractor}.
@@ -17,11 +16,10 @@ public interface AccessTokenGrantRequestExtractor {
     /**
      * Extract access token into a request data holder.
      *
-     * @param request  the request
-     * @param response the response
+     * @param webContext the web context
      * @return the access token request data holder
      */
-    AccessTokenRequestContext extract(HttpServletRequest request, HttpServletResponse response);
+    AccessTokenRequestContext extract(WebContext webContext);
 
     /**
      * Supports grant type?
@@ -29,7 +27,7 @@ public interface AccessTokenGrantRequestExtractor {
      * @param context the context
      * @return true /false
      */
-    boolean supports(HttpServletRequest context);
+    boolean supports(WebContext context);
 
     /**
      * Gets grant type.

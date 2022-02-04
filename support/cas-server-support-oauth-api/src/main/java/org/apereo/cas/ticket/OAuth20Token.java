@@ -2,6 +2,9 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.code.OAuth20Code;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +33,7 @@ public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
 
     /**
      * Client id for whom this token was issued.
+     *
      * @return client id.
      */
     String getClientId();
@@ -48,4 +52,13 @@ public interface OAuth20Token extends ServiceTicket, AuthenticationAwareTicket {
      */
     OAuth20GrantTypes getGrantType();
 
+    /**
+     * Is oauth code?
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    default boolean isCode() {
+        return this instanceof OAuth20Code;
+    }
 }

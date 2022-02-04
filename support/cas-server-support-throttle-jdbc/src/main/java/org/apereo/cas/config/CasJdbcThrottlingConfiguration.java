@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "CasJdbcThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(prefix = "cas.authn.throttle.jdbc", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasJdbcThrottlingConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -37,6 +39,7 @@ public class CasJdbcThrottlingConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "jdbcAuthenticationThrottle")
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(
         @Qualifier("inspektrThrottleDataSource")
         final DataSource inspektrThrottleDataSource,

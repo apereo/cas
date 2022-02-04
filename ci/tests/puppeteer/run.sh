@@ -254,6 +254,7 @@ if [[ "${RERUN}" != "true" ]]; then
 
     runArgs=$(jq -j '.jvmArgs // empty' < "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"
+    runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
     [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
     properties=$(jq -j '.properties // empty | join(" ")' < "${config}")

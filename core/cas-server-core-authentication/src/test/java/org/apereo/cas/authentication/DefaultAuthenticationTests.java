@@ -38,9 +38,10 @@ public class DefaultAuthenticationTests {
 
     @Test
     public void verifySerializeADefaultAuthenticationToJson() throws Exception {
-        val serviceWritten = CoreAuthenticationTestUtils.getAuthentication();
-        mapper.writeValue(JSON_FILE, serviceWritten);
-        val serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
-        assertEquals(serviceWritten, serviceRead);
+        val authn = CoreAuthenticationTestUtils.getAuthentication();
+        mapper.writeValue(JSON_FILE, authn);
+        val authn2 = mapper.readValue(JSON_FILE, Authentication.class);
+        assertEquals(authn, authn2);
+        assertTrue(authn.isEqualTo(authn2));
     }
 }

@@ -159,8 +159,10 @@ public class OAuth20UtilsTests {
     @Test
     public void verifyServiceHeader() {
         val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
         request.addHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE), RegisteredServiceTestUtils.CONST_TEST_URL);
-        val result = OAuth20Utils.getServiceRequestHeaderIfAny(request);
+        val result = OAuth20Utils.getServiceRequestHeaderIfAny(context);
         assertNotNull(result);
     }
 
