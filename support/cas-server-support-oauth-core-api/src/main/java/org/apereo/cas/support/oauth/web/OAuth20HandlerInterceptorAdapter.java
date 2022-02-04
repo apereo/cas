@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -147,6 +148,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      */
     protected boolean requestRequiresAuthentication(final HttpServletRequest request,
                                                     final HttpServletResponse response) {
+        val context = new JEEContext(request, response);
         val revokeTokenRequest = isRevokeTokenRequest(request, response);
 
         if (revokeTokenRequest) {
@@ -154,7 +156,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         }
 
         val accessTokenRequest = isAccessTokenRequest(request, response);
-        val extractor = extractAccessTokenGrantRequest(request);
+        val extractor = extractAccessTokenGrantRequest(context);
         if (!accessTokenRequest) {
             if (extractor.isPresent()) {
                 val ext = extractor.get();
@@ -179,8 +181,9 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      */
     protected boolean isAuthorizationRequest(final HttpServletRequest request,
                                              final HttpServletResponse response) throws Exception {
+        val context = new JEEContext(request, response);
         val requestPath = request.getRequestURI();
-        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(new JEEContext(request, response));
+        return doesUriMatchPattern(requestPath, getAuthorizeUrls()) && isValidAuthorizeRequest(context);
     }
 
     /**
@@ -222,10 +225,11 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         return validator != null && validator.validate(context);
     }
 
-    private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(final HttpServletRequest request) {
+    private Optional<AccessTokenGrantRequestExtractor> extractAccessTokenGrantRequest(
+        final WebContext context) {
         return accessTokenGrantRequestExtractors.getObject()
             .stream()
-            .filter(ext -> ext.supports(request))
+            .filter(ext -> ext.supports(context))
             .findFirst();
     }
 }

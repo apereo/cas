@@ -227,8 +227,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public Authentication build() {
-        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal,
-            this.attributes, this.successes, this.failures, this.warnings);
+        return new DefaultAuthentication(this.authenticationDate, this.principal,
+            this.warnings, this.credentials,
+            this.attributes, this.successes, this.failures);
     }
 
     @Override

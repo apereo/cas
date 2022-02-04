@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
@@ -49,14 +51,15 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             holder.getClientId(), holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
-        configurationContext.getTicketRegistry().addTicket(code);
+        configurationContext.getCentralAuthenticationService().addTicket(code);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> {
-            FunctionUtils.doAndHandle(() -> configurationContext.getCentralAuthenticationService().updateTicket(tgt),
-                    throwable -> {
-                        LOGGER.error("Unable to update ticket-granting-ticket [{}]", tgt, throwable);
-                        return null;
-                    });
+            FunctionUtils.doAndHandle(ticket -> {
+                configurationContext.getCentralAuthenticationService().updateTicket(ticket);
+            }, (CheckedFunction<Throwable, TicketGrantingTicket>) throwable -> {
+                LOGGER.error("Unable to update ticket-granting-ticket [{}]", ticketGrantingTicket, throwable);
+                return null;
+            }).accept(tgt);
         });
         return buildCallbackViewViaRedirectUri(holder, code);
     }

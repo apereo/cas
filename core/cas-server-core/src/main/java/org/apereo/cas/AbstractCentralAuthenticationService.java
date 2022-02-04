@@ -25,6 +25,7 @@ import lombok.Setter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,7 +103,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Transactional(transactionManager = "ticketTransactionManager")
     @Override
     public int deleteTicket(final String ticketId) throws Exception {
-        return configurationContext.getTicketRegistry().deleteTicket(ticketId);
+        return StringUtils.isNotBlank(ticketId)
+            ? configurationContext.getTicketRegistry().deleteTicket(ticketId)
+            : 0;
     }
 
     @Override

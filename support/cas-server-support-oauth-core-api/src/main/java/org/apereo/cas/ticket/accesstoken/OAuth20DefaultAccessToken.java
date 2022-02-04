@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.code.OAuth20DefaultCode;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @NoArgsConstructor
-public class OAuth20DefaultAccessToken extends OAuth20DefaultCode implements OAuth20AccessToken {
+public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth20AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;
 

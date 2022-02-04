@@ -1,13 +1,12 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.pac4j.core.context.WebContext;
 
 /**
  * This is {@link AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor}.
@@ -15,14 +14,15 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
+public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor
+    extends AccessTokenAuthorizationCodeGrantRequestExtractor {
     public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 
     @Override
-    public boolean supports(final HttpServletRequest context) {
-        val challenge = context.getParameter(OAuth20Constants.CODE_VERIFIER);
+    public boolean supports(final WebContext context) {
+        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }
 
@@ -33,9 +33,9 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
 
     @Override
     protected AccessTokenRequestContext extractInternal(
-        final HttpServletRequest request, final HttpServletResponse response,
+        final WebContext context,
         final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
-        val challenge = request.getParameter(OAuth20Constants.CODE_CHALLENGE);
+        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return builder.codeVerifier(challenge).build();
     }
 }

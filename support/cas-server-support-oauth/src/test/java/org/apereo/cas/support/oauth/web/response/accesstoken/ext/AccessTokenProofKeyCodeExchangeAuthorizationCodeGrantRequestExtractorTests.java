@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,7 +47,9 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
         assertTrue(extractor.requestMustBeAuthenticated());
-        val result = extractor.extract(request, response);
+
+        val context = new JEEContext(request, response);
+        val result = extractor.extract(context);
         assertNotNull(result);
     }
 }

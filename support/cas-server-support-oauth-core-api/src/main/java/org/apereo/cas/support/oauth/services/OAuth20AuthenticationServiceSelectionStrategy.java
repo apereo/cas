@@ -22,6 +22,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.JEEContext;
 
 import java.util.Optional;
 
@@ -106,7 +107,8 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-                    id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
+                    val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+                    id = OAuth20Utils.getServiceRequestHeaderIfAny(new JEEContext(request, response));
                 }
                 if (StringUtils.isBlank(id)) {
                     id = clientId.get().getValue();

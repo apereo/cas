@@ -36,7 +36,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -289,7 +288,7 @@ public class OAuth20Utils {
      */
     public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST
-            || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
+               || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
     /**
@@ -395,8 +394,8 @@ public class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
-            + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+                    + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
+                    + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -415,8 +414,8 @@ public class OAuth20Utils {
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+                    + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+                    + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
     }
 
@@ -452,15 +451,10 @@ public class OAuth20Utils {
      * @param context the context
      * @return the service request header if any
      */
-    public static String getServiceRequestHeaderIfAny(final HttpServletRequest context) {
-        if (context == null) {
-            return null;
-        }
-        var id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
-        if (StringUtils.isBlank(id)) {
-            id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
-        }
-        return id;
+    public static String getServiceRequestHeaderIfAny(final WebContext context) {
+        return context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE)
+            .or(() -> context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE)))
+            .orElse(StringUtils.EMPTY);
     }
 
     /**
@@ -475,8 +469,8 @@ public class OAuth20Utils {
         val matchingStrategy = registeredService != null ? registeredService.getMatchingStrategy() : null;
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
-                    + "Service is considered unauthorized. Verify the service matching strategy used in the service "
-                    + "definition is correct and does in fact match the client [{}]",
+                         + "Service is considered unauthorized. Verify the service matching strategy used in the service "
+                         + "definition is correct and does in fact match the client [{}]",
                 OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }

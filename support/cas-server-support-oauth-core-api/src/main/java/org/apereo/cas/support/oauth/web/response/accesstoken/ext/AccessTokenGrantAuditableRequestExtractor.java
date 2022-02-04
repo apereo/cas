@@ -10,6 +10,7 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.pac4j.core.context.JEEContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,15 +31,16 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
         actionResolverName = AuditActionResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER)
     @Override
-    public AuditableExecutionResult execute(final AuditableContext context) {
-        val request = (HttpServletRequest) context.getRequest().orElseThrow();
-        val response = (HttpServletResponse) context.getResponse().orElseThrow();
+    public AuditableExecutionResult execute(final AuditableContext auditableContext) {
+        val request = (HttpServletRequest) auditableContext.getRequest().orElseThrow();
+        val response = (HttpServletResponse) auditableContext.getResponse().orElseThrow();
 
+        val context = new JEEContext(request, response);
         val result = this.accessTokenGrantRequestExtractors.stream()
-            .filter(ext -> ext.supports(request))
+            .filter(ext -> ext.supports(context))
             .findFirst()
             .orElseThrow(() -> new UnsupportedOperationException("Access token request is not supported"))
-            .extract(request, response);
+            .extract(context);
 
         return AuditableExecutionResult.builder().executionResult(result).build();
     }

@@ -11,11 +11,9 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.JEEContext;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.
@@ -30,8 +28,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
+    public AccessTokenRequestContext extract(final WebContext context) {
         val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getKey();
         val scopes = OAuth20Utils.parseRequestScopes(context);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
@@ -76,8 +73,8 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
     }
 
     @Override
-    public boolean supports(final HttpServletRequest context) {
-        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+    public boolean supports(final WebContext context) {
+        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 

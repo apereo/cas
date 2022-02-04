@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,7 +46,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
         assertEquals(extractor.getResponseType(), OAuth20ResponseTypes.NONE);
-        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(InvalidTicketException.class, () -> extractor.extract(context));
     }
 
     @Test
@@ -66,7 +69,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        val result = extractor.extract(request, response);
+
+        val context = new JEEContext(request, response);
+        val result = extractor.extract(context);
         assertNotNull(result);
     }
 
@@ -89,7 +94,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(InvalidTicketException.class, () -> extractor.extract(context));
     }
 
     @Test
@@ -112,7 +119,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertThrows(InvalidTicketException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(InvalidTicketException.class, () -> extractor.extract(context));
     }
 
     @Test
@@ -130,7 +139,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(context));
     }
 
     @Test
@@ -146,7 +157,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val response = new MockHttpServletResponse();
         val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
-        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(context));
     }
 
 }

@@ -37,6 +37,11 @@ public class JdbcThrottleProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = -9199878384425691919L;
 
     /**
+     * Decide whether JDBC audits should be enabled.
+     */
+    private boolean enabled = true;
+    
+    /**
      * Audit query to execute against the database
      * to locate audit records based on IP, user, date and
      * an application code along with the relevant audit action.

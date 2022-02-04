@@ -516,8 +516,12 @@ public abstract class AbstractOAuth20Tests {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
+
+        val tgt = new MockTicketGrantingTicket("casuser");
+        this.ticketRegistry.addTicket(tgt);
+        
         val code = oAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>(),
+            tgt, new ArrayList<>(),
             codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
@@ -586,7 +590,8 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected Pair<OAuth20AccessToken, OAuth20RefreshToken> assertRefreshTokenOk(final OAuthRegisteredService service,
-                                                                                 final OAuth20RefreshToken refreshToken, final Principal principal) throws Exception {
+                                                                                 final OAuth20RefreshToken refreshToken,
+                                                                                 final Principal principal) throws Exception {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
@@ -606,7 +611,7 @@ public abstract class AbstractOAuth20Tests {
             }
         }
         val newRefreshToken = service.isRenewRefreshToken()
-            ? this.ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
+            ? ticketRegistry.getTicket(mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString(), OAuth20RefreshToken.class)
             : refreshToken;
 
         assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));

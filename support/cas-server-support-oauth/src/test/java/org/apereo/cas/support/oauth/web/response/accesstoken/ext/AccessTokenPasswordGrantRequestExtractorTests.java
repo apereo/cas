@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -47,7 +48,9 @@ public class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth
         val extractor = new AccessTokenPasswordGrantRequestExtractor(oauth20ConfigurationContext);
         assertTrue(extractor.requestMustBeAuthenticated());
         assertNull(extractor.getResponseType());
-        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(request, response));
+
+        val context = new JEEContext(request, response);
+        assertThrows(UnauthorizedServiceException.class, () -> extractor.extract(context));
     }
 
 }

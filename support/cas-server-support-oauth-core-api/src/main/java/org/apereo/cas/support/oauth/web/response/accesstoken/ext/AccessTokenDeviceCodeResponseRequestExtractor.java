@@ -10,11 +10,8 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.AnonymousProfile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link AccessTokenDeviceCodeResponseRequestExtractor}.
@@ -29,20 +26,19 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    public AccessTokenRequestContext extract(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
+    public AccessTokenRequestContext extract(final WebContext context) {
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val deviceCode = request.getParameter(OAuth20Constants.CODE);
-
-        val context = new JEEContext(request, response);
+        val deviceCode = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE).orElse(StringUtils.EMPTY);
         val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(new AnonymousProfile(), registeredService, context, service);
+        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(new AnonymousProfile(),
+            registeredService, context, service);
 
         val audit = AuditableContext.builder()
             .service(service)
@@ -64,9 +60,9 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     }
 
     @Override
-    public boolean supports(final HttpServletRequest context) {
-        val responseType = context.getParameter(OAuth20Constants.RESPONSE_TYPE);
-        val clientId = context.getParameter(OAuth20Constants.CLIENT_ID);
+    public boolean supports(final WebContext context) {
+        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
             && StringUtils.isNotBlank(clientId);
     }
