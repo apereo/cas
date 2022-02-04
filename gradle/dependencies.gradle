@@ -725,14 +725,10 @@ ext.libraries = [
         hibernate               : [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
-                    exclude(group: "org.hibernate", module: "hibernate-core")
-                    exclude(group: "org.jboss.logging", module: "jboss-logging-annotations")
+                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.dom4j", module: "dom4j")
-                    exclude(group: "com.fasterxml", module: "classmate")
-                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
-                    exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.glassfish.jaxb", module: "jaxb-runtime")
                 },
                 dependencies.create("org.dom4j:dom4j:$dom4jVersion") {
