@@ -29,6 +29,7 @@ import org.springframework.core.Ordered;
 
 import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,9 +60,10 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-        final RegisteredService registeredService,
-        final HttpServletRequest httpServletRequest,
-        final Service service) {
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();

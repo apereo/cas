@@ -37,7 +37,7 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "LdapAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnMultiValuedProperty(name = "cas.authn.ldap[0]", value = {"url", "type"})
+@ConditionalOnMultiValuedProperty(name = "cas.authn.ldap[0]", value = {"ldap-url", "type"})
 public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")

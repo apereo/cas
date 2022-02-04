@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -38,11 +39,11 @@ public class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTe
         assertTrue(singleLogoutServiceLogoutUrlBuilder.getOrder() > 0);
         val request = new MockHttpServletRequest();
         val service = RegisteredServiceTestUtils.getService("https://somewhere.org");
-        assertFalse(singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request)));
+        assertFalse(singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(new MockHttpServletResponse())));
 
         request.addParameter(OAuth20Constants.CLIENT_ID, id);
         assertTrue(singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(
-            RegisteredServiceTestUtils.getService(), Optional.of(request)));
+            RegisteredServiceTestUtils.getService(), Optional.of(request), Optional.of(new MockHttpServletResponse())));
     }
 
 }

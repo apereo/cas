@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -48,9 +49,11 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilder implements SingleLogout
     }
 
     @Override
-    public boolean isServiceAuthorized(final WebApplicationService service, final Optional<HttpServletRequest> httpRequest) {
+    public boolean isServiceAuthorized(final WebApplicationService service,
+                                       final Optional<HttpServletRequest> httpRequest,
+                                       final Optional<HttpServletResponse> httpResponse) {
         return singleLogoutServiceLogoutUrlBuilders
             .stream()
-            .anyMatch(builder -> builder.isServiceAuthorized(service, httpRequest));
+            .anyMatch(builder -> builder.isServiceAuthorized(service, httpRequest, httpResponse));
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
@@ -51,7 +52,9 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
         if (groovyScript == null) {
             LOGGER.trace("No groovy script is configured for multifactor authentication");

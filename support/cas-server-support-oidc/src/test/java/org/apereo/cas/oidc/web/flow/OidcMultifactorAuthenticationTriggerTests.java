@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,8 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             assertThrows(AuthenticationException.class,
-                () -> oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service));
+                () -> oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request,
+                    new MockHttpServletResponse(), service));
         }
     }
 
@@ -67,7 +69,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn,
-                registeredService, request, service).isPresent());
+                registeredService, request, new MockHttpServletResponse(), service).isPresent());
         }
     }
 
@@ -81,7 +83,8 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val request = new MockHttpServletRequest();
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-            assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
+            assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService,
+                request, new MockHttpServletResponse(), service).isEmpty());
         }
 
         @Test
@@ -94,7 +97,8 @@ public class OidcMultifactorAuthenticationTriggerTests {
                 String.format("https://app.org?%s=mfa-dummy", OAuth20Constants.ACR_VALUES));
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-            assertFalse(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
+            assertFalse(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService,
+                request, new MockHttpServletResponse(), service).isEmpty());
         }
 
         @Test
@@ -106,7 +110,8 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             val service = RegisteredServiceTestUtils.getService(url);
-            assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService, request, service).isEmpty());
+            assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn, registeredService,
+                request, new MockHttpServletResponse(), service).isEmpty());
         }
     }
 }

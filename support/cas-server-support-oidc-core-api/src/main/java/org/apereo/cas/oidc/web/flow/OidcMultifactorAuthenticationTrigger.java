@@ -12,23 +12,25 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.jooq.lambda.Unchecked;
+import org.pac4j.core.context.JEEContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URISyntaxException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,12 +54,15 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    private static String getAuthenticationClassReference(final HttpServletRequest request) throws URISyntaxException {
-        var acr = request.getParameter(OAuth20Constants.ACR_VALUES);
+    private static String getAuthenticationClassReference(final HttpServletRequest request,
+                                                          final HttpServletResponse response) {
+        val context = new JEEContext(request, response);
+        val acr = OAuth20Utils.getRequestParameter(context, OAuth20Constants.ACR_VALUES).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(acr)) {
             val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
             if (StringUtils.isNotBlank(serviceParam)) {
-                val queryParams = new URIBuilder(UriComponentsBuilder.fromUriString(serviceParam).toUriString()).getQueryParams();
+                val queryParams = Unchecked.supplier(
+                    () -> new URIBuilder(UriComponentsBuilder.fromUriString(serviceParam).toUriString()).getQueryParams()).get();
                 val parameter = queryParams
                     .stream()
                     .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
@@ -71,12 +76,12 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
     }
 
     @Override
-    @SneakyThrows
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
                                                                    final Service service) {
-        val acr = getAuthenticationClassReference(request);
+        val acr = getAuthenticationClassReference(request, response);
         if (StringUtils.isBlank(acr)) {
             LOGGER.debug("No ACR provided in the authentication request");
             return Optional.empty();

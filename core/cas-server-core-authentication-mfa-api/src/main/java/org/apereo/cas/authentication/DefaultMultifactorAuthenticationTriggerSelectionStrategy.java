@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements
 
     @Override
     public Optional<MultifactorAuthenticationProvider> resolve(final HttpServletRequest request,
+                                                               final HttpServletResponse response,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication,
                                                                final Service service) {
@@ -38,7 +40,7 @@ public class DefaultMultifactorAuthenticationTriggerSelectionStrategy implements
             if (!trigger.supports(request, registeredService, authentication, service)) {
                 continue;
             }
-            val activated = trigger.isActivated(authentication, registeredService, request, service);
+            val activated = trigger.isActivated(authentication, registeredService, request, response, service);
             if (activated.isPresent()) {
                 return activated;
             }

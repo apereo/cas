@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@NoArgsConstructor
 public class OAuth20DefaultCode extends BaseOAuth20Token implements OAuth20Code {
     private static final long serialVersionUID = -8203878835348247880L;
 

@@ -111,7 +111,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         try {
             prepareForTicketValidation(request, service, serviceTicketId);
-            return handleTicketValidation(request, service, serviceTicketId);
+            return handleTicketValidation(request, response, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             val code = e.getCode();
             val description = getTicketValidationErrorDescription(code,
@@ -196,11 +196,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Handle ticket validation model and view.
      *
      * @param request         the request
+     * @param response        the response
      * @param service         the service
      * @param serviceTicketId the service ticket id
      * @return the model and view
      */
-    protected ModelAndView handleTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
+    protected ModelAndView handleTicketValidation(final HttpServletRequest request,
+                                                  final HttpServletResponse response,
+                                                  final WebApplicationService service, final String serviceTicketId) {
         var proxyGrantingTicketId = (ProxyGrantingTicket) null;
         val serviceCredential = getServiceCredentialsFromRequest(service, request);
         if (serviceCredential != null) {
@@ -229,7 +232,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, description, request, service);
         }
 
-        val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator().validateAuthenticationContext(assertion, request);
+        val ctxResult = serviceValidateConfigurationContext.getRequestedContextValidator()
+            .validateAuthenticationContext(assertion, request, response);
         if (!ctxResult.isSuccess()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }

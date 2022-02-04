@@ -14,6 +14,7 @@ import lombok.val;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -49,7 +50,8 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
 
     @Override
     public boolean isServiceAuthorized(final WebApplicationService service,
-                                       final Optional<HttpServletRequest> request) {
+                                       final Optional<HttpServletRequest> request,
+                                       final Optional<HttpServletResponse> response) {
         val registeredService = servicesManager.findServiceBy(service);
         return supports(registeredService, service, request);
     }

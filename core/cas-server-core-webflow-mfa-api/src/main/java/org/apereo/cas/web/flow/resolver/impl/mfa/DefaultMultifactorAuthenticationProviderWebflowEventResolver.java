@@ -21,6 +21,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,7 +47,8 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         val service = resolveServiceFromAuthenticationRequest(context);
         val authentication = WebUtils.getAuthentication(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val result = determineMultifactorAuthenticationProvider(registeredService, authentication, request, service);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val result = determineMultifactorAuthenticationProvider(registeredService, authentication, request, response, service);
         return result
             .map(provider -> {
                 LOGGER.trace("Building event based on the authentication provider [{}] and service [{}]", provider, registeredService);
@@ -68,15 +70,27 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         return super.resolveSingle(context);
     }
 
-    private Optional<MultifactorAuthenticationProvider> determineMultifactorAuthenticationProvider(final RegisteredService registeredService,
-                                                                                                   final Authentication authentication,
-                                                                                                   final HttpServletRequest request,
-                                                                                                   final Service service) {
+    /**
+     * Determine multifactor authentication provider optional.
+     *
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @param request           the request
+     * @param response          the response
+     * @param service           the service
+     * @return the optional
+     */
+    protected Optional<MultifactorAuthenticationProvider> determineMultifactorAuthenticationProvider(
+        final RegisteredService registeredService,
+        final Authentication authentication,
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Service service) {
         if (registeredService != null && registeredService.getMultifactorPolicy().isBypassEnabled()) {
             return Optional.empty();
         }
         if (multifactorAuthenticationTrigger.supports(request, registeredService, authentication, service)) {
-            return multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
+            return multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, response, service);
         }
         return Optional.empty();
     }

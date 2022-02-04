@@ -44,7 +44,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
-            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
             assertTrue(result.isEmpty());
         }
     }
@@ -61,7 +61,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
-            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
             assertTrue(result.isPresent());
         }
     }
@@ -78,7 +78,7 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
             val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
                 new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
                 applicationContext);
-            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+            val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
             assertTrue(result.isEmpty());
         }
     }
@@ -90,10 +90,10 @@ public class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMulti
         val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
         props.getAuthn().getMfa().getTriggers().getRest().setUrl("http://localhost:9313");
-        result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
+        result = trigger.isActivated(null, null, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
 }

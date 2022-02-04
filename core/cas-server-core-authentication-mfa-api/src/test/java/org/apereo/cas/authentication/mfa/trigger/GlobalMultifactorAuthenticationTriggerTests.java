@@ -33,7 +33,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID);
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -55,7 +55,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ',' + otherProvider.getId());
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
         assertEquals(TestMultifactorAuthenticationProvider.ID, result.get().getId());
     }
@@ -83,7 +83,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactor
         val props = new CasConfigurationProperties();
         val trigger = new GlobalMultifactorAuthenticationTrigger(props, applicationContext,
             (providers, service, principal) -> providers.iterator().next());
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 }

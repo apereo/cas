@@ -119,9 +119,9 @@ public class TicketGrantingTicketResourceTests {
         lenient().when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        lenient().when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+        lenient().when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(true).build());
-        lenient().when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
+        lenient().when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
             .thenReturn(Optional.empty());
 
         val authenticationSystemSupport = new DefaultAuthenticationSystemSupport(
@@ -223,9 +223,9 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyCreateTgtWithMfa() throws Exception {
-        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
-        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
+        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
 
         val expectedReturnEntityBody = "TGT-1";

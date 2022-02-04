@@ -104,9 +104,9 @@ public class UserAuthenticationResourceTests {
     public void verifyAuthWithMfaFails() throws Exception {
         val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
-        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
-        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
+        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider("mfa-unknown")));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -121,9 +121,9 @@ public class UserAuthenticationResourceTests {
         val result = builder.build(new DefaultPrincipalElectionStrategy());
         when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
-        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
-        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any()))
+        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any()))
             .thenReturn(Optional.of(new TestMultifactorAuthenticationProvider()));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -139,9 +139,9 @@ public class UserAuthenticationResourceTests {
         lenient().when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(authenticationSupport.finalizeAllAuthenticationTransactions(any(), any())).thenReturn(result);
-        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any()))
+        when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
-        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any())).thenReturn(Optional.empty());
+        when(multifactorTriggerSelectionStrategy.resolve(any(), any(), any(), any(), any())).thenReturn(Optional.empty());
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param("username", "casuser")
             .param("password", "Mellon"))

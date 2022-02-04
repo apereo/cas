@@ -34,7 +34,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "185.86.151.11");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -53,7 +53,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "^Mozilla.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -66,7 +66,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         geoResponse.addAddress("123 Main St London UK");
         when(this.geoLocationService.locate(anyString(), any(GeoLocationRequest.class))).thenReturn(geoResponse);
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
@@ -79,7 +79,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-xyz", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
 
@@ -89,7 +89,7 @@ public class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifact
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(this.geoLocationService, props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
 }

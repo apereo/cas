@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -102,7 +103,8 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
         @Parameter(name = "serialNumber"),
         @Parameter(name = "roleArn"),
         @Parameter(name = "requestBody"),
-        @Parameter(name = "request")
+        @Parameter(name = "request"),
+        @Parameter(name = "response")
     })
     public ResponseEntity<String> fetchCredentials(@RequestParam(required = false, defaultValue = "PT1H") final String duration,
                                                    @RequestParam(value = "token", required = false) final String tokenCode,
@@ -110,11 +112,12 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
                                                    @RequestParam(required = false) final String serialNumber,
                                                    @RequestParam(required = false) final String roleArn,
                                                    @RequestBody final MultiValueMap<String, String> requestBody,
-                                                   final HttpServletRequest request) {
+                                                   final HttpServletRequest request,
+                                                   final HttpServletResponse response) {
 
         var authenticationResult = (AuthenticationResult) null;
         try {
-            authenticationResult = restAuthenticationService.authenticate(requestBody, request)
+            authenticationResult = restAuthenticationService.authenticate(requestBody, request, response)
                 .orElseThrow(AuthenticationException::new);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

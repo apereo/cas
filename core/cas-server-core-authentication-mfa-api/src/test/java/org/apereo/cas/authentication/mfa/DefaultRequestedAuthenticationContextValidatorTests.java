@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val assertion = mock(Assertion.class);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(CASUSER);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -95,7 +96,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER, CollectionUtils.wrap(CASUSER, AUTH_ATTRIBUTES));
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
         assertTrue(result.getContextId().isEmpty());
     }
@@ -127,7 +128,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         auth.getAttributes().put("authn_method", List.of(provider2.getId()));
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -147,7 +148,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER, CollectionUtils.wrap(CASUSER, AUTH_ATTRIBUTES));
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -168,7 +169,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(result.isSuccess());
     }
 
@@ -196,7 +197,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
 
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, attrs);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -213,7 +214,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(result.isSuccess());
     }
 
@@ -236,7 +237,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -262,7 +263,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(result.isSuccess());
     }
 
@@ -287,7 +288,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertTrue(result.isSuccess());
     }
 
@@ -311,7 +312,7 @@ public class DefaultRequestedAuthenticationContextValidatorTests {
         val principal = MultifactorAuthenticationTestUtils.getPrincipal(CASUSER);
         val auth = MultifactorAuthenticationTestUtils.getAuthentication(principal, AUTH_ATTRIBUTES);
         when(assertion.getPrimaryAuthentication()).thenReturn(auth);
-        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest());
+        val result = validator.validateAuthenticationContext(assertion, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(result.isSuccess());
     }
 }

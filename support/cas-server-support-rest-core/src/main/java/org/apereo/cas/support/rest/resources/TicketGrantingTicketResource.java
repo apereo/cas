@@ -90,10 +90,12 @@ public class TicketGrantingTicketResource {
             MediaType.TEXT_HTML_VALUE,
             MediaType.TEXT_PLAIN_VALUE
         })
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request) {
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false)
+                                                             final MultiValueMap<String, String> requestBody,
+                                                             final HttpServletRequest request,
+                                                             final HttpServletResponse response) {
         try {
-            val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
+            val tgtId = createTicketGrantingTicketForRequest(requestBody, request, response);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, request, applicationContext);
@@ -141,12 +143,14 @@ public class TicketGrantingTicketResource {
      *
      * @param requestBody the request body
      * @param request     the request
+     * @param response    the response
      * @return the ticket granting ticket
      * @throws Exception the authentication exception
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
-                                                                        final HttpServletRequest request) throws Exception {
-        val authenticationResult = authenticationService.authenticate(requestBody, request);
+                                                                        final HttpServletRequest request,
+                                                                        final HttpServletResponse response) throws Exception {
+        val authenticationResult = authenticationService.authenticate(requestBody, request, response);
         val result = authenticationResult.orElseThrow(FailedLoginException::new);
         return centralAuthenticationService.createTicketGrantingTicket(result);
     }

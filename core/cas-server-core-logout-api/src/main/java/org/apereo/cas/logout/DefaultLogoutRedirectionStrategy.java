@@ -41,13 +41,15 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
     @Override
     public void handle(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         Optional.ofNullable(argumentExtractor.extractService(request))
             .or(() -> {
                 val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
                 return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
                     () -> Optional.of(serviceFactory.createService(redirectUrl)), Optional::<WebApplicationService>empty).get();
             })
-            .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request)))
+            .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service,
+                Optional.of(request), Optional.of(response)))
             .ifPresentOrElse(service -> {
                 WebUtils.putServiceIntoFlowScope(requestContext, service);
                 if (casProperties.getLogout().isFollowServiceRedirects()) {

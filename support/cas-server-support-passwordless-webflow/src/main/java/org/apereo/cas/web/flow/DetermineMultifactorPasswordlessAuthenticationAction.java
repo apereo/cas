@@ -56,8 +56,8 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BaseCa
 
         if (!shouldActivateMultifactorAuthenticationFor(requestContext, user)) {
             LOGGER.debug("User [{}] is not activated to use CAS-provided multifactor authentication providers. "
-                + "You may wish to re-examine your CAS configuration to enable and allow for multifactor authentication to be "
-                + "combined with passwordless authentication", user);
+                         + "You may wish to re-examine your CAS configuration to enable and allow for multifactor authentication to be "
+                         + "combined with passwordless authentication", user);
             return success();
         }
 
@@ -71,7 +71,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BaseCa
         val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);
         if (result.isEmpty()) {
             LOGGER.debug("No CAS-provided multifactor authentication trigger required user [{}] to proceed with MFA. "
-                + "CAS will proceed with its normal passwordless authentication flow.", user);
+                         + "CAS will proceed with its normal passwordless authentication flow.", user);
             return success();
         }
 
@@ -108,12 +108,14 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BaseCa
      * @param service        the service
      * @return the optional
      */
-    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
-                                                                                                   final WebApplicationService service) {
+    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
+        final RequestContext requestContext, final Authentication auth,
+        final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val registeredService = WebUtils.getRegisteredService(requestContext);
-            return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
+            return multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, auth, service);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

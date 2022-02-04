@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -74,10 +75,12 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered {
     /**
      * Is service authorized?
      *
-     * @param service the service
-     * @param request the request
-     * @return true/false
+     * @param service  the service
+     * @param request  the request
+     * @param response the response
+     * @return true /false
      */
     boolean isServiceAuthorized(WebApplicationService service,
-                                Optional<HttpServletRequest> request);
+                                Optional<HttpServletRequest> request,
+                                Optional<HttpServletResponse> response);
 }

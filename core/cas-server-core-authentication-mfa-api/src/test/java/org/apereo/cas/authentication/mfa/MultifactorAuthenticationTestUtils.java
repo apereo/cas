@@ -104,7 +104,7 @@ public class MultifactorAuthenticationTestUtils {
 
         val service = MultifactorAuthenticationTestUtils.getRegisteredService("https://www.github.com/apereo/cas", failureMode);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
-        when(multifactorTrigger.resolve(any(), any(), any(), any())).thenReturn(provider);
+        when(multifactorTrigger.resolve(any(), any(), any(), any(), any())).thenReturn(provider);
 
         val multifactorContextValidator = new DefaultMultifactorAuthenticationContextValidator(
             "authn_method",
