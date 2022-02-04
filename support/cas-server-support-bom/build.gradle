@@ -1,4 +1,8 @@
-description = "Apereo CAS ‌‌Bill of Material"
+ext {
+    skipPublication = true
+}
+
+description = "Apereo CAS Bill of Material"
 
 def getProjectNamePattern() {
     return "^cas-server-(core-api|core|support|webapp).*"
@@ -7,8 +11,6 @@ def getProjectNamePattern() {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact file("cas-server-support-bom.md")
-
             pom.withXml {
                 ansi.green "Creating BOM with all project dependencies for ${project.name}"
 
