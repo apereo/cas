@@ -318,11 +318,15 @@ subprojects {
                                 createPomRepositories(asNode())
                             }
                         }
+                    } else if (project.hasProperty("skipPublication") && project.skipPublication) {
+                        ansi.green "Skipping artifact publication for project ${project.name}"
                     } else {
                         logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
                             from components.java
-                            if (!rootProject.publishMinimalArtifacts) {
+                            if (project.hasProperty("publishMinimalArtifacts") && project.publishMinimalArtifacts) {
+                                ansi.green "Publishing minimal artifacts for project ${project.name}"
+                            } else {
                                 artifact tasks['sourcesJar']
                                 artifact tasks['resourcesJar']
                                 artifact tasks['javadocJar']
