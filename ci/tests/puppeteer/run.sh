@@ -127,7 +127,7 @@ if [[ ! -z ${requiredEnvVars} ]]; then
   echo "Checking for required environment variables"
   for e in ${requiredEnvVars//,/ } ; do
     if [[ -z "${!e}" ]]; then
-      echo "Required variable not set so not running test: ${e}"
+      printred "Required environment variable ${e} is not set; skipping test execution."
       if [[ "${CI}" == "true" && ! -d ~/.npm ]] ; then
         # creating folder so setup-node post action cleanup doesn't bomb out
         mkdir ~/.npm
@@ -272,7 +272,7 @@ if [[ "${RERUN}" != "true" ]]; then
       runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
     fi
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
-    printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]" "${c}" "${properties}" "${runArgs}" "${dependencies}"
+    printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
     springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' < "${config}")
     [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}

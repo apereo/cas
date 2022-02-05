@@ -93,6 +93,7 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint 
      * @param roleArn      the role arn
      * @param requestBody  the request body
      * @param request      the request
+     * @param response     the response
      * @return the map
      */
     @PostMapping

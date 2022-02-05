@@ -21,6 +21,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 
@@ -65,14 +66,24 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         private static WsFederationConfiguration getWsFederationConfiguration(
             final WsFederationDelegationProperties wsfed,
             final ConfigurableApplicationContext applicationContext) {
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val config = new WsFederationConfiguration();
+
             config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
             config.setIdentityAttribute(wsfed.getIdentityAttribute());
-            config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
-            config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
-            config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
-            config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
-            config.setSigningCertificates(wsfed.getSigningCertificateResources());
+
+            val id = resolver.resolve(wsfed.getIdentityProviderIdentifier());
+            config.setIdentityProviderIdentifier(id);
+
+            val url = resolver.resolve(wsfed.getIdentityProviderUrl());
+            config.setIdentityProviderUrl(url);
+
+            val rpId = resolver.resolve(wsfed.getRelyingPartyIdentifier());
+            config.setRelyingPartyIdentifier(rpId);
+
+            val resources = resolver.resolve(wsfed.getSigningCertificateResources());
+            config.setSigningCertificates(resources);
+
             org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey()).forEach(
                 s -> config.setEncryptionPrivateKey(applicationContext.getResource(s)));
             org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate()).forEach(
@@ -81,6 +92,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             config.setAttributeMutator(getAttributeMutatorForWsFederationConfig(wsfed));
             config.setAutoRedirectType(wsfed.getAutoRedirectType());
             config.setName(wsfed.getName());
+            config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
             config.setCookieGenerator(getCookieGeneratorForWsFederationConfig(wsfed));
             FunctionUtils.doIfNotNull(wsfed.getId(), config::setId);
             return config;
@@ -158,7 +170,10 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         plan.registerAuthenticationHandler(handler);
                     } else {
                         val cfg = wsFederationConfigurations.toSet().stream()
-                            .filter(c -> c.getIdentityProviderUrl().equalsIgnoreCase(wsfed.getIdentityProviderUrl()))
+                            .filter(c -> {
+                                val resolver = SpringExpressionLanguageValueResolver.getInstance();
+                                return c.getIdentityProviderUrl().equalsIgnoreCase(resolver.resolve(wsfed.getIdentityProviderUrl()));
+                            })
                             .findFirst()
                             .orElseThrow(() ->
                                 new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));

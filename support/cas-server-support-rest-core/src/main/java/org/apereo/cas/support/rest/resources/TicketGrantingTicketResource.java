@@ -75,6 +75,7 @@ public class TicketGrantingTicketResource {
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request     raw HttpServletRequest used to call this method
+     * @param response    the response
      * @return ResponseEntity representing RESTful response
      */
     @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS,
