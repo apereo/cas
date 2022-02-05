@@ -158,7 +158,7 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data...\n"
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand
+    ./gradlew :docs:cas-server-documentation-processor:build --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8
     if [ $? -eq 1 ]; then
       echo "Unable to build the documentation processor. Aborting..."
       exit 1
