@@ -151,7 +151,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Run Analysis
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true --max-workers-8
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true --max-workers=8
         
 ##########################################################################
 
