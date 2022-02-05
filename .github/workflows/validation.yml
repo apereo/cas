@@ -111,7 +111,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Validate Javadocs
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel javadoc -x test -x check -DskipNestedConfigMetadataGen=true --parallel --max-workers-8
 
 ##########################################################################
 

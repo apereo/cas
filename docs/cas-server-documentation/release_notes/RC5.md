@@ -68,7 +68,7 @@ or `Secret` concepts in Kubernetes is now *baked* into CAS.
 
 The collection of end-to-end browser tests based on Puppeteer continue to grow
 to add additional scenarios. At this point, there are
-approximately `240` test scenarios and we'll continue to add more in the coming releases.
+approximately `246` test scenarios and we'll continue to add more in the coming releases.
    
 ### OpenID Connect JMeter Script
    

@@ -159,7 +159,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the OAuth token
      */
     protected OAuth20Token getOAuthTokenFromRequest(final WebContext context) {
-        return getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(getOAuthParameter(context), OAuth20Token.class);
+        val id = getOAuthParameter(context);
+        return getOAuthConfigurationContext().getCentralAuthenticationService().getTicket(id, OAuth20Token.class);
     }
 
     /**

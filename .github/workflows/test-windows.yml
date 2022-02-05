@@ -14,7 +14,7 @@ env:
 
 on:
   schedule:
-    - cron: "0 0 * * 7"
+    - cron: "0 0 * * 5"
 #  push:
 #    branches:
 #      - master

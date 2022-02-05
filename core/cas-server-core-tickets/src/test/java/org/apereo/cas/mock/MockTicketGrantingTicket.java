@@ -114,16 +114,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
             principalAttributes);
     }
 
-    protected MockTicketGrantingTicket(final MockTicketGrantingTicket tgt) {
-        this.id = tgt.getId();
-        this.created = tgt.getCreationTime();
-        this.authentication = tgt.getAuthentication();
-    }
-
-    public MockTicketGrantingTicket clone() {
-        return new MockTicketGrantingTicket(this);
-    }
-
     @Override
     public void trackService(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         this.services.put(id, service);

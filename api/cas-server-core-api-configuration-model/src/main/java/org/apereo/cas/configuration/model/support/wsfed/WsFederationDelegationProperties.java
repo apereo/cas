@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.wsfed;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -39,12 +40,14 @@ public class WsFederationDelegationProperties implements Serializable {
      * The entity id or the identifier of the Wsfed instance.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String identityProviderIdentifier = "http://adfs.example.org/adfs/services/trust";
 
     /**
      * Wsfed identity provider url.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
 
     /**
@@ -61,6 +64,7 @@ public class WsFederationDelegationProperties implements Serializable {
      * The identifier for CAS (RP) registered with wsfed.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String relyingPartyIdentifier = "urn:cas:localhost";
 
     /**
