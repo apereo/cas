@@ -82,7 +82,7 @@ jobs:
         run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v2
       - name: Download Dependencies
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
