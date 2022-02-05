@@ -155,4 +155,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers-8
+        run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers=8
