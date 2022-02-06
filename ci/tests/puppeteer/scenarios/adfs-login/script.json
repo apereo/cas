@@ -1,0 +1,45 @@
+{
+  "dependencies": "wsfederation-webflow",
+  "conditions": {
+    "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
+  },
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ,
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+
+    "--cas.authn.wsfed[0].cookie.crypto.encryption.key=wjDVCGIx5ztrk9vKI55YIP01SLE4Ziaj0WsfjvVIaAE",
+    "--cas.authn.wsfed[0].cookie.crypto.signing.key=BXI9U68k1OYJ-vgCvqtZHLPhkCCiAWWfGiqHWdBVF7hXsvgLD1WQHgHbUYee039w7KXux7zfRpBDBeq6K3jfUg",
+    
+    "--cas.authn.wsfed[0].identity-provider-url=https://${#environmentVars['ADFS_HOST']}/adfs/ls/",
+    "--cas.authn.wsfed[0].identity-provider-identifier=http://${#environmentVars['ADFS_HOST']}/adfs/services/trust",
+    "--cas.authn.wsfed[0].relying-party-identifier=${#environmentVars['ADFS_RELYING_PARTY_ID']}",
+    "--cas.authn.wsfed[0].name=ADFS Server",
+    "--cas.authn.wsfed[0].id=ADFS",
+    "--cas.authn.wsfed[0].tolerance=PT60S",
+    "--cas.authn.wsfed[0].identity-attribute=upn",
+    "--cas.authn.wsfed[0].signing-certificate-resources=https://${#environmentVars['ADFS_HOST']}/federationmetadata/2007-06/federationmetadata.xml",
+
+    "--cas.authn.wsfed[0].attributes-type=BOTH",
+    "--cas.authn.wsfed[0].attribute-resolver-enabled=true",
+    "--cas.authn.wsfed[0].auto-redirect-type=SERVER",
+
+    "--cas.authn.wsfed[0].attribute-mutator-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/WsFedAttrs.groovy"
+  ]
+}
+
+

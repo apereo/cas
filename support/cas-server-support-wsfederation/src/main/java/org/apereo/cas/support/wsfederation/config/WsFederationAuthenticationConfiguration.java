@@ -4,22 +4,29 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.support.wsfederation.services.WSFederationAuthenticationServiceRegistry;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link WsFederationAuthenticationConfiguration}.
@@ -43,6 +50,22 @@ public class WsFederationAuthenticationConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return new WsFederationHelper(configBean, servicesManager);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceRegistryExecutionPlanConfigurer")
+        public ServiceRegistryExecutionPlanConfigurer wsFederationAuthenticationServiceRegistryExecutionPlanConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return plan -> {
+                val service = new RegexRegisteredService();
+                service.setId(RandomUtils.nextLong());
+                service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("WS-Federation Authentication Request");
+                service.setServiceId("^".concat(casProperties.getServer().getPrefix()).concat(".+"));
+                plan.registerServiceRegistry(new WSFederationAuthenticationServiceRegistry(applicationContext, service));
+            };
         }
     }
 

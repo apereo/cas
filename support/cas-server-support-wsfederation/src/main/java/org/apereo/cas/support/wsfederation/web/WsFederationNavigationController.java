@@ -4,17 +4,13 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +29,6 @@ import java.util.Collection;
  */
 @Controller("wsFederationNavigationController")
 @RequestMapping
-@Slf4j
 @RequiredArgsConstructor
 public class WsFederationNavigationController {
     /**
@@ -72,25 +67,17 @@ public class WsFederationNavigationController {
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
-        try {
-            val cfg = configurations.stream()
-                .filter(c -> c.getId().equals(wsfedId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
-            val service = determineService(request);
-            val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
-            val url = cfg.getAuthorizationUrl(id, cfg.getId());
-            wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
-            return new RedirectView(url);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
+        val service = determineService(request);
+        val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+        val url = cfg.getAuthorizationUrl(id, cfg.getId());
+        wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
+        return new RedirectView(url);
     }
 
     private Service determineService(final HttpServletRequest request) {
-        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
-            webApplicationServiceFactory.createService(casLoginEndpoint));
+        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request), webApplicationServiceFactory.createService(casLoginEndpoint));
         return this.authenticationRequestServiceSelectionStrategies.resolveService(initialService);
     }
 }
