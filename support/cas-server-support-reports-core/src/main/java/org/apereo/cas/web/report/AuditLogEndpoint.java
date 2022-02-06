@@ -14,7 +14,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 
@@ -51,7 +50,9 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
     @SuppressWarnings("JavaUtilDate")
     @Operation(summary = "Provide a report of the audit log using a given interval",
         parameters = {@Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H")})
-    public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
+    public Set<AuditActionContext> getAuditLog(
+        @Selector
+        final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
@@ -78,7 +79,7 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
      * @param resourceOperatedUpon - resource operated on.
      * @return - the audit log
      */
-    @WriteOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @WriteOperation(produces = {"application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
         parameters = {
             @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"),
@@ -87,11 +88,17 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
             @Parameter(name = "principal"),
             @Parameter(name = "resourceOperatedUpon")
         })
-    public Set<AuditActionContext> getAuditLog(@Nullable final String interval,
-                                               @Nullable final String actionPerformed,
-                                               @Nullable final String clientIpAddress,
-                                               @Nullable final String principal,
-                                               @Nullable final String resourceOperatedUpon) {
+    public Set<AuditActionContext> getAuditLog(
+        @Nullable
+        final String interval,
+        @Nullable
+        final String actionPerformed,
+        @Nullable
+        final String clientIpAddress,
+        @Nullable
+        final String principal,
+        @Nullable
+        final String resourceOperatedUpon) {
         return getAuditLog(interval)
             .stream()
             .filter(e -> StringUtils.isBlank(actionPerformed) || e.getActionPerformed().matches(actionPerformed))
