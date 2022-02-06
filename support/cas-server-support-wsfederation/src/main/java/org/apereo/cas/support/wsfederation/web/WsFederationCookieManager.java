@@ -88,7 +88,8 @@ public class WsFederationCookieManager {
      * @param configuration the configuration
      */
     public void store(final HttpServletRequest request, final HttpServletResponse response,
-                      final String wctx, final Service service, final WsFederationConfiguration configuration) {
+                      final String wctx, final Service service,
+                      final WsFederationConfiguration configuration) {
         val session = new HashMap<String, Object>();
         session.put(CasProtocolConstants.PARAMETER_SERVICE + '-' + wctx, service);
         val methods = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);

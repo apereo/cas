@@ -116,7 +116,6 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
             -> CollectionUtils.firstElement(value).map(Object::toString).ifPresent(v -> builder.addParameter(key, v)));
         initialUrl = builder.toString();
         LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
-        val authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
-        authenticationRedirectStrategy.redirect(request, response, initialUrl);
+        response.sendRedirect(initialUrl);
     }
 }

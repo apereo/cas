@@ -147,8 +147,9 @@ exports.submitForm = async (page, selector) => {
     await page.waitForTimeout(2500)
 }
 
-exports.type = async (page, selector, value) => {
-    console.log(`Typing ${value} in field ${selector}`);
+exports.type = async (page, selector, value, obfuscate = false) => {
+    let logValue = obfuscate ? "******" : value;
+    console.log(`Typing ${logValue} in field ${selector}`);
     await page.$eval(selector, el => el.value = '');
     await page.type(selector, value);
 }
