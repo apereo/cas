@@ -80,9 +80,9 @@
             <property name="max" value="130"/>
             <property name="severity" value="error"/>
         </module>
-<!--        <module name="UnusedLocalVariable">-->
-<!--            <property name="severity" value="error"/>-->
-<!--        </module>-->
+        <module name="UnusedLocalVariable">
+            <property name="severity" value="error"/>
+        </module>
         <module name="Indentation">
             <property name="severity" value="error"/>
         </module>

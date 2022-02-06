@@ -21,7 +21,7 @@ public class DefaultPasswordValidationService implements PasswordValidationServi
     
     @Override
     public boolean isValid(final UsernamePasswordCredential c, final PasswordChangeRequest bean) {
-        if (StringUtils.isEmpty(bean.getPassword())) {
+        if (!StringUtils.hasText(bean.getPassword())) {
             LOGGER.error("Provided password is blank");
             return false;
         }
