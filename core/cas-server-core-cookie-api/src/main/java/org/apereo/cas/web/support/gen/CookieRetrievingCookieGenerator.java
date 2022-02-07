@@ -12,8 +12,8 @@ import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  * @since 3.1
  */
 @Slf4j
-@Setter
+@Getter
 public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable, CasCookieBuilder {
     private static final long serialVersionUID = -4926982428809856313L;
 

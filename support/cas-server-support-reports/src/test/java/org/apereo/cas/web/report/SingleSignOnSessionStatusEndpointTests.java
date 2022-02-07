@@ -43,6 +43,15 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     private TicketRegistry ticketRegistry;
 
     @Test
+    public void verifyOperationByValue() throws Exception {
+        val request = new MockHttpServletRequest();
+        val tgt = new MockTicketGrantingTicket("casuser");
+        ticketRegistry.addTicket(tgt);
+        val entity = singleSignOnSessionStatusEndpoint.ssoStatus(tgt.getId(), request);
+        assertTrue(entity.getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
     public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -51,7 +60,7 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
         ticketRegistry.addTicket(tgt);
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
-        val entity = singleSignOnSessionStatusEndpoint.ssoStatus(request);
+        val entity = singleSignOnSessionStatusEndpoint.ssoStatus(null, request);
         assertTrue(entity.getStatusCode().is2xxSuccessful());
         val body = Objects.requireNonNull(Map.class.cast(entity.getBody()));
         assertTrue(body.containsKey("principal"));
@@ -64,12 +73,12 @@ public class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointT
     @Test
     public void verifyNoTicket() {
         val request = new MockHttpServletRequest();
-        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(request).getStatusCode().is4xxClientError());
+        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
 
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
-        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(request).getStatusCode().is4xxClientError());
+        assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
     }
 }

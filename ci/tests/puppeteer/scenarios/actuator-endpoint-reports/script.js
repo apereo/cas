@@ -8,8 +8,7 @@ const cas = require('../../cas.js');
 
     await page.goto("https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
-
-    await cas.assertTicketGrantingCookie(page);
+    let tgc = await cas.assertTicketGrantingCookie(page);
 
     const endpoints = [
         "info",
@@ -35,7 +34,7 @@ const cas = require('../../cas.js');
         "authenticationPolicies",
         "auditLog/PT1H",
         "ssoSessions",
-        "sso",
+        `sso?tgc=${tgc.value}`,
         "casModules",
         "ticketExpirationPolicies?serviceId=10000001",
         "springWebflow",
@@ -48,9 +47,11 @@ const cas = require('../../cas.js');
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         console.log(`Trying ${url}`)
-        const response = await page.goto(url);
-        console.log(`${response.status()} ${response.statusText()}`)
-        assert(response.ok())
+        await cas.doRequest(url, "GET", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36'
+        }, 200);
     }
     await browser.close();
 })();
