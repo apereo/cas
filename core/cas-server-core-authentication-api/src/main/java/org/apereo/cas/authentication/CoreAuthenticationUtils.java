@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthent
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
@@ -27,13 +28,13 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.validation.Assertion;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,6 +51,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -113,8 +115,8 @@ public class CoreAuthenticationUtils {
             val repoIdsArray = activeAttributeRepositoryIdentifiers.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
             filter = dao -> Arrays.stream(dao.getId())
                 .anyMatch(daoId -> daoId.equalsIgnoreCase(IPersonAttributeDao.WILDCARD)
-                    || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
-                    || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
+                                   || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
+                                   || StringUtils.equalsAnyIgnoreCase(IPersonAttributeDao.WILDCARD, repoIdsArray));
         }
 
         val attrs = attributeRepository.getPerson(principalId, filter);
@@ -351,17 +353,18 @@ public class CoreAuthenticationUtils {
      * @param personDirectory     the person directory
      * @return the resolver
      */
-    @SneakyThrows
     public static <T extends PrincipalResolver> T newPersonDirectoryPrincipalResolver(
         final PrincipalFactory principalFactory,
         final IPersonAttributeDao attributeRepository,
         final IAttributeMerger attributeMerger,
         final Class<T> resolverClass,
         final PersonDirectoryPrincipalResolverProperties... personDirectory) {
-        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger, personDirectory);
 
-        val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
-        return ctor.newInstance(context);
+        val context = buildPrincipalResolutionContext(principalFactory, attributeRepository, attributeMerger, personDirectory);
+        return Unchecked.supplier(() -> {
+            val ctor = resolverClass.getDeclaredConstructor(PrincipalResolutionContext.class);
+            return ctor.newInstance(context);
+        }).get();
     }
 
     /**
@@ -373,10 +376,17 @@ public class CoreAuthenticationUtils {
      * @param personDirectory     the person directory properties
      * @return the resolver
      */
-    public static PrincipalResolutionContext buildPrincipalResolutionContext(final PrincipalFactory principalFactory,
-                                                                             final IPersonAttributeDao attributeRepository,
-                                                                             final IAttributeMerger attributeMerger,
-                                                                             final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+    public static PrincipalResolutionContext buildPrincipalResolutionContext(
+        final PrincipalFactory principalFactory,
+        final IPersonAttributeDao attributeRepository,
+        final IAttributeMerger attributeMerger,
+        final PersonDirectoryPrincipalResolverProperties... personDirectory) {
+
+        val transformers = Arrays.stream(personDirectory)
+            .map(p -> PrincipalNameTransformerUtils.newPrincipalNameTransformer(p.getPrincipalTransformation()))
+            .collect(Collectors.toList());
+        val transformer = new ChainingPrincipalNameTransformer(transformers);
+
         return PrincipalResolutionContext.builder()
             .attributeRepository(attributeRepository)
             .attributeMerger(attributeMerger)
@@ -388,7 +398,7 @@ public class CoreAuthenticationUtils {
                 .filter(StringUtils::isNotBlank)
                 .findFirst()
                 .orElse(StringUtils.EMPTY))
-            .principalNameTransformer(formUserId -> formUserId)
+            .principalNameTransformer(transformer)
             .useCurrentPrincipalId(Arrays.stream(personDirectory).filter(p -> p.getUseExistingPrincipalId() != TriStateBoolean.UNDEFINED)
                 .map(p -> p.getUseExistingPrincipalId().toBoolean()).findFirst().orElse(Boolean.FALSE))
             .resolveAttributes(Arrays.stream(personDirectory).filter(p -> p.getAttributeResolutionEnabled() != TriStateBoolean.UNDEFINED)

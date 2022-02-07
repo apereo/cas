@@ -6,6 +6,7 @@ import org.apereo.cas.util.model.TriStateBoolean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -75,5 +76,11 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * Accepted values are: {@code last}, {@code first}.
      */
     private String principalResolutionConflictStrategy = "last";
+
+    /**
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
 }

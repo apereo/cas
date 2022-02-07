@@ -315,7 +315,7 @@ layout: null
     *   [Adaptive](#adaptiveauthn)
         *   [Overview](/cas/{{ version }}/mfa/Configuring-Adaptive-Authentication.html)
         *   [GeoTracking](/cas/{{ version }}/authentication/GeoTracking-Authentication-Requests.html)
-        *   [IP Intelligence](/cas/{{ version }}/authentication/Adaptive-Authentication-IP-Intelligence.html)
+        *   [IP Intelligence](/cas/{{ version }}/mfa/Adaptive-Authentication-IP-Intelligence.html)
         *   [Risk Assessment](/cas/{{ version }}/authentication/Configuring-RiskBased-Authentication.html)
 
 * [SSO & SLO](#ssoandslo)

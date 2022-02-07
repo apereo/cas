@@ -92,8 +92,7 @@ public class TrustedAuthenticationConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository) {
-            val resolver = new ChainingPrincipalResolver(principalElectionStrategy,
-                casProperties);
+            val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
             val personDirectory = casProperties.getPersonDirectory();
             val trusted = casProperties.getAuthn().getTrusted();
             val bearingPrincipalResolver = CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(trustedPrincipalFactory,

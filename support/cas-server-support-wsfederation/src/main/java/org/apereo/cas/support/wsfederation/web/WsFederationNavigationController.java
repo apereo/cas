@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -65,10 +66,11 @@ public class WsFederationNavigationController {
      * @return the view
      */
     @GetMapping(ENDPOINT_REDIRECT)
-    public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
+    public View redirectToProvider(final HttpServletRequest request,
+                                   final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
         val cfg = configurations.stream().filter(c -> c.getId().equals(wsfedId)).findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
+            .orElseThrow(() -> new UnauthorizedServiceException("Could not locate WsFederation configuration for " + wsfedId));
         val service = determineService(request);
         val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
         val url = cfg.getAuthorizationUrl(id, cfg.getId());

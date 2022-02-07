@@ -96,6 +96,15 @@ public interface BeanContainer<T> {
      */
     T first();
 
+    /**
+     * Is container empty?
+     *
+     * @return the boolean
+     */
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
     @RequiredArgsConstructor
     class ListBeanContainer<T> implements BeanContainer<T> {
         private final List<T> items;
