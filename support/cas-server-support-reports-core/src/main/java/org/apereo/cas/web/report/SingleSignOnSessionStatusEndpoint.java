@@ -12,6 +12,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -38,8 +39,14 @@ public class SingleSignOnSessionStatusEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get current status of single sign-on")
-    public ResponseEntity<Map<?, ?>> ssoStatus(final HttpServletRequest request) {
-        val tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+    public ResponseEntity<Map<?, ?>> ssoStatus(
+        @RequestParam(name = "tgc", required = false, defaultValue = StringUtils.EMPTY)
+        final String tgc,
+        final HttpServletRequest request) {
+
+        val tgtId = StringUtils.isNotBlank(tgc)
+            ? ticketGrantingTicketCookieGenerator.getCasCookieValueManager().obtainCookieValue(tgc, request)
+            : ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isBlank(tgtId)) {
             return ResponseEntity.badRequest().build();
         }

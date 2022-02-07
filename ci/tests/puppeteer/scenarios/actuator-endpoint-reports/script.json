@@ -6,6 +6,8 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.accept.name=STATIC",
 
+    "--cas.tgc.pin-to-session=false",
+
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 

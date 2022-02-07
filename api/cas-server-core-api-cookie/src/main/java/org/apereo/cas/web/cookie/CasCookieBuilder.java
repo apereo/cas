@@ -102,4 +102,11 @@ public interface CasCookieBuilder {
      * @param response the response
      */
     void removeAll(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * Gets cas cookie value manager.
+     *
+     * @return the cas cookie value manager
+     */
+    CookieValueManager getCasCookieValueManager();
 }

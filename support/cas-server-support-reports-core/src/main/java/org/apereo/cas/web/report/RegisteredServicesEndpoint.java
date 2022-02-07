@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -79,7 +80,18 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Handle and produce a list of services from registry")
-    @GetMapping(produces = {"application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(consumes = {
+        ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/vnd.cas.services+yaml"
+    },
+        produces = {
+            ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            "application/vnd.cas.services+yaml"
+        })
     public ResponseEntity<String> handle() throws Exception {
         return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.load()));
     }
@@ -92,7 +104,15 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
-    @GetMapping(path = "{id}", produces = {"application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
+        consumes = {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            ActuatorMediaType.V2_JSON,
+            ActuatorMediaType.V3_JSON,
+            "application/vnd.cas.services+yaml",
+            MediaType.APPLICATION_JSON_VALUE
+        })
     public ResponseEntity<String> fetchService(
         @PathVariable
         final String id) throws Exception {
@@ -113,7 +133,15 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Fetch services by their type")
-    @GetMapping(path = "type/{type}", produces = {"application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(path = "type/{type}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
+        consumes = {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            ActuatorMediaType.V2_JSON,
+            ActuatorMediaType.V3_JSON,
+            "application/vnd.cas.services+yaml",
+            MediaType.APPLICATION_JSON_VALUE
+        })
     public ResponseEntity<String> fetchServicesByType(
         @PathVariable
         final String type) throws Exception {
@@ -129,8 +157,15 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Delete registered service by id")
-    @DeleteMapping(path = "{id}", produces = {"application/vnd.cas.services+yaml",
-        MediaType.APPLICATION_JSON_VALUE})
+    @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
+        consumes = {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            ActuatorMediaType.V2_JSON,
+            ActuatorMediaType.V3_JSON,
+            "application/vnd.cas.services+yaml",
+            MediaType.APPLICATION_JSON_VALUE
+        })
     public ResponseEntity<String> deleteService(
         @PathVariable
         final String id) throws Exception {
@@ -158,9 +193,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @PostMapping(path = "/import", consumes = {
         MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        ActuatorMediaType.V2_JSON,
+        ActuatorMediaType.V3_JSON,
         "application/vnd.cas.services+yaml",
         MediaType.APPLICATION_JSON_VALUE
-    })
+    }, produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Import registered services as a JSON document or a zip file")
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
