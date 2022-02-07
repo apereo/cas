@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
@@ -24,7 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private List<PrincipalNameTransformer> transformers = new ArrayList<>(0);;
+    private List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
 
     @Override
     public String transform(final String formUserId) {

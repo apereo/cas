@@ -12,6 +12,8 @@ const path = require('path');
         assert(res.data[1].length === 2)
     }, err => {
         throw err;
+    }, {
+        'Content-Type': 'application/json'
     })
 
     const baseUrl2 = "https://localhost:8444/cas/actuator/registeredServices";
@@ -21,6 +23,8 @@ const path = require('path');
         assert(res.data[1].length === 2)
     }, err => {
         throw err;
+    }, {
+        'Content-Type': 'application/json'
     })
 
     let s1Path = path.join(__dirname, "services/Sample-1.json");
@@ -46,6 +50,8 @@ const path = require('path');
         })
     }, err => {
         throw err;
+    }, {
+        'Content-Type': 'application/json'
     })
 
     await cas.doGet(baseUrl2, res => {
@@ -56,6 +62,8 @@ const path = require('path');
         })
     }, err => {
         throw err;
+    }, {
+        'Content-Type': 'application/json'
     })
 })();
 

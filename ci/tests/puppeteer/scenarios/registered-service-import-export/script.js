@@ -26,6 +26,8 @@ const os = require("os");
         },
         error => {
             throw error;
+        }, {
+            'Content-Type': 'application/json'
         })
 
     await cas.doGet(`${baseUrl}/export`,
