@@ -3,5 +3,5 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.springsession
     implementation libraries.springsessionmongo
-    runtimeOnly libraries.mongo
+    implementation libraries.mongo
 }
