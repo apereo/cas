@@ -41,7 +41,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services-authentication")
-    testImplementation project(":core:cas-server-core-services-registry")
 
     testImplementation project(":support:cas-server-support-thymeleaf")
 
