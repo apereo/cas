@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,7 +35,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -186,14 +186,14 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jaasPersonDirectoryPrincipalResolvers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
+        public BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers(
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final IPersonAttributeDao attributeRepository,
             @Qualifier("jaasPrincipalFactory")
             final PrincipalFactory jaasPrincipalFactory) {
             val personDirectory = casProperties.getPersonDirectory();
-            return casProperties.getAuthn().getJaas()
+            return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
@@ -202,20 +202,20 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     return CoreAuthenticationUtils.newPersonDirectoryPrincipalResolver(jaasPrincipalFactory,
                         attributeRepository, attributeMerger, jaasPrincipal, personDirectory);
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         }
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public List<AuthenticationHandler> jaasAuthenticationHandlers(
+        public BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("jaasPrincipalFactory")
             final PrincipalFactory jaasPrincipalFactory) {
-            return casProperties.getAuthn().getJaas()
+            return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
@@ -248,7 +248,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
                     return h;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         }
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")
@@ -256,11 +256,11 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("jaasAuthenticationHandlers")
-            final List<AuthenticationHandler> jaasAuthenticationHandlers,
+            final BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers,
             @Qualifier("jaasPersonDirectoryPrincipalResolvers")
-            final List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers,
-                jaasPersonDirectoryPrincipalResolvers);
+            final BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolvers(jaasAuthenticationHandlers.toList(),
+                jaasPersonDirectoryPrincipalResolvers.toList());
         }
     }
 }

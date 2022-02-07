@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -19,7 +20,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,8 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfPortOpen(port = 10389)
 public class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
-    private static final String CN = UUID.randomUUID().toString();
-    
+    private static final String CN = RandomUtils.randomAlphabetic(6);
+
     @Autowired
     @Qualifier("personDirectoryAttributeRepositoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;

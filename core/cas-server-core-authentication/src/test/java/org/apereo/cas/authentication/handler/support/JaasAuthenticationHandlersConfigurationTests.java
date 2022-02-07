@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.BeanContainer;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -73,11 +74,11 @@ import static org.mockito.Mockito.*;
 public class JaasAuthenticationHandlersConfigurationTests {
     @Autowired
     @Qualifier("jaasAuthenticationHandlers")
-    private List<AuthenticationHandler> jaasAuthenticationHandlers;
+    private BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers;
 
     @Autowired
     @Qualifier("jaasPersonDirectoryPrincipalResolvers")
-    private List<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers;
+    private BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers;
 
     @Test
     public void verifyOperation() {
@@ -86,8 +87,7 @@ public class JaasAuthenticationHandlersConfigurationTests {
     }
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+    public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(FileUtils.getTempDirectory(), "jaas-authn.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
