@@ -65,8 +65,6 @@ public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepository
     @AfterEach
     public void tearDown() {
         deviceRepository.removeAll();
-        couchDbRepository.deleteAll();
-        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
     @Test

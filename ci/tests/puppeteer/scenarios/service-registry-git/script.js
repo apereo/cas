@@ -8,5 +8,7 @@ const assert = require("assert");
         assert(res.data[1].length === 2)
     }, err => {
         throw err;
+    }, {
+        'Content-Type': 'application/json'
     })
 })();
