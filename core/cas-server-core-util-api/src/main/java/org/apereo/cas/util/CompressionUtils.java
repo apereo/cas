@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 
-import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -120,11 +119,10 @@ public class CompressionUtils {
      * @return the new string
      */
     public static String decodeByteArrayToString(final byte[] bytes) {
-        @Cleanup
         val bais = new ByteArrayInputStream(bytes);
-        @Cleanup
         val baos = new ByteArrayOutputStream();
         val buf = new byte[bytes.length];
+
         try (val iis = new InflaterInputStream(bais)) {
             var count = iis.read(buf);
             while (count != -1) {
