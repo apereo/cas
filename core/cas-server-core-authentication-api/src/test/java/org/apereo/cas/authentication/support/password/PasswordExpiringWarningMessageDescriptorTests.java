@@ -20,4 +20,9 @@ public class PasswordExpiringWarningMessageDescriptorTests {
         assertEquals(30, d.getDaysToExpiration());
         assertEquals("DefaultMessage", d.getDefaultMessage());
     }
+
+    @Test
+    public void verifyEncoding() {
+        new PasswordExpiringWarningMessageDescriptor();
+    }
 }
