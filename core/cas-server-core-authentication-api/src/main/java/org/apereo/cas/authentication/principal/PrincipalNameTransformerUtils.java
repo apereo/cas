@@ -6,7 +6,6 @@ import org.apereo.cas.util.transforms.BlockingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformer;
-import org.apereo.cas.util.transforms.NoOpPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 
@@ -47,8 +46,6 @@ public class PrincipalNameTransformerUtils {
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
             chain.addTransformer(t);
-        } else {
-            chain.addTransformer(new NoOpPrincipalNameTransformer());
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
