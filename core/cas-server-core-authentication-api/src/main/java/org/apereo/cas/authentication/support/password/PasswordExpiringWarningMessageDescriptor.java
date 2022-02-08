@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@NoArgsConstructor
 public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDescriptor {
     /**
      * Serialization version marker.
