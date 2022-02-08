@@ -15,7 +15,6 @@ import com.okta.sdk.client.Clients;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 
 import java.nio.charset.StandardCharsets;
 
@@ -39,14 +38,14 @@ public class OktaConfigurationFactory {
             .setConnectionTimeout(properties.getConnectionTimeout());
 
         FunctionUtils.doIfNotNull(properties.getApiToken(), token -> clientBuilder.setClientCredentials(new TokenClientCredentials(token)));
-        FunctionUtils.doIfNotNull(properties.getPrivateKey().getLocation(), Unchecked.consumer(path -> {
+        FunctionUtils.doIfNotNull(properties.getPrivateKey().getLocation(), path -> {
             val resource = IOUtils.toString(path.getInputStream(), StandardCharsets.UTF_8);
             clientBuilder
                 .setAuthorizationMode(AuthorizationMode.PRIVATE_KEY)
                 .setPrivateKey(resource)
                 .setClientId(properties.getClientId())
                 .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
-        }));
+        });
 
         if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {
             if (StringUtils.isNotBlank(properties.getProxyUsername()) && StringUtils.isNotBlank(properties.getProxyPassword())) {

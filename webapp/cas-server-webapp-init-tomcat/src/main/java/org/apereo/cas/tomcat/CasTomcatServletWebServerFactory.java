@@ -37,7 +37,6 @@ import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;
-import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
@@ -126,19 +125,19 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                     handler.setSSLHonorCipherOrder(apr.isSslHonorCipherOrder());
 
                     FunctionUtils.doIfNotNull(apr.getSslCaCertificateFile(),
-                        Unchecked.consumer(f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath())));
+                        f -> handler.setSSLCACertificateFile(apr.getSslCaCertificateFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateFile(),
-                        Unchecked.consumer(f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath())));
+                        f -> handler.setSSLCertificateFile(apr.getSslCertificateFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateKeyFile(),
-                        Unchecked.consumer(f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath())));
+                        f -> handler.setSSLCertificateKeyFile(apr.getSslCertificateKeyFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCertificateChainFile(),
-                        Unchecked.consumer(f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath())));
+                        f -> handler.setSSLCertificateChainFile(apr.getSslCertificateChainFile().getCanonicalPath()));
 
                     FunctionUtils.doIfNotNull(apr.getSslCaRevocationFile(),
-                        Unchecked.consumer(f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath())));
+                        f -> handler.setSSLCARevocationFile(apr.getSslCaRevocationFile().getCanonicalPath()));
                 }
             });
         }

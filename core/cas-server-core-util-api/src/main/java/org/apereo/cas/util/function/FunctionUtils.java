@@ -124,7 +124,8 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the function
      */
-    public static <T, R> Function<T, R> doIf(final Predicate<T> condition, final CheckedFunction<T, R> trueFunction,
+    public static <T, R> Function<T, R> doIf(final Predicate<T> condition,
+                                             final CheckedFunction<T, R> trueFunction,
                                              final CheckedFunction<T, R> falseFunction) {
         return t -> {
             try {
@@ -176,7 +177,7 @@ public class FunctionUtils {
      * @param trueFunction the true function
      */
     public static <T> void doIfNotNull(final T input,
-                                       final Consumer<T> trueFunction) {
+                                       final CheckedConsumer<T> trueFunction) {
         try {
             if (input != null) {
                 trueFunction.accept(input);
@@ -220,7 +221,8 @@ public class FunctionUtils {
      * @param errorHandler the error handler
      * @return the function
      */
-    public static <T, R> Function<T, R> doAndHandle(final CheckedFunction<T, R> function, final CheckedFunction<Throwable, R> errorHandler) {
+    public static <T, R> Function<T, R> doAndHandle(final CheckedFunction<T, R> function,
+                                                    final CheckedFunction<Throwable, R> errorHandler) {
         return t -> {
             try {
                 return function.apply(t);
@@ -250,6 +252,7 @@ public class FunctionUtils {
                 function.accept(value);
             } catch (final Throwable e) {
                 try {
+                    LoggingUtils.warn(LOGGER, e);
                     errorHandler.apply(e);
                 } catch (final Throwable ex) {
                     throw new IllegalArgumentException(ex);

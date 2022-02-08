@@ -11,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -76,7 +75,7 @@ public class YamlServiceRegistryConfiguration {
             final ServiceRegistry yamlServiceRegistry) {
             val registry = casProperties.getServiceRegistry().getYaml();
             return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
-                Unchecked.consumer(input -> plan.registerServiceRegistry(yamlServiceRegistry)));
+                input -> plan.registerServiceRegistry(yamlServiceRegistry));
         }
     }
 }

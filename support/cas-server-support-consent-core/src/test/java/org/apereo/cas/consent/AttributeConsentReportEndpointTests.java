@@ -48,7 +48,7 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val uid = UUID.randomUUID().toString();
         val desc = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getRegisteredService(), uid,

@@ -52,7 +52,7 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
         LOGGER.debug("Populating LDAP entries from [{}]", resource);
         LdapIntegrationTestsOperations.populateEntries(localhost, resource.getInputStream(), "ou=people,dc=example,dc=org");
     }
-    
+
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
@@ -69,7 +69,7 @@ public class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     }
 
     @Test
-    public void verifyNoConsent() {
+    public void verifyNoConsent() throws Exception {
         val ldap = casProperties.getConsent().getLdap();
         val factory = mock(ConnectionFactory.class);
         val repo = new LdapConsentRepository(factory, ldap);
