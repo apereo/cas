@@ -5,10 +5,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 
 import java.util.Objects;
 
@@ -36,7 +36,6 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
     }
 
     @Override
-    @SneakyThrows
     public Ticket deserializeTicket(final String ticketContent, final String type) {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
@@ -45,8 +44,10 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
         if (serializer == null) {
             throw new IllegalArgumentException("Unable to find ticket deserializer for " + type);
         }
-        val clazz = Class.forName(type);
-        return deserializeTicket(ticketContent, (Class) clazz);
+        return Unchecked.supplier(() -> {
+            val clazz = Class.forName(type);
+            return deserializeTicket(ticketContent, (Class) clazz);
+        }).get();
     }
 
     @Override
@@ -60,8 +61,8 @@ public class DefaultTicketStringSerializationManager implements TicketSerializat
         }
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId()
-                + " is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
+                                         + " is of type " + ticket.getClass()
+                                         + " when we were expecting " + clazz);
         }
         return (T) ticket;
     }

@@ -11,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import javax.persistence.Transient;
 
@@ -116,12 +116,13 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.getScript();
     }
 
-    @SneakyThrows
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {
-        if (this.groovyPolicyInstance == null) {
-            val groovyResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
-            this.groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
-        }
+        Unchecked.consumer(o -> {
+            if (groovyPolicyInstance == null) {
+                val groovyResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(groovyScript));
+                groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
+            }
+        }).accept(this.groovyScript);
     }
 
 }

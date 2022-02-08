@@ -6,9 +6,9 @@ import org.apereo.cas.util.ssl.CompositeX509KeyManager;
 import org.apereo.cas.util.ssl.CompositeX509TrustManager;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.ssl.SSLContexts;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 import javax.net.ssl.HostnameVerifier;
@@ -88,16 +88,15 @@ public class DefaultCasSSLContext implements CasSSLContext {
         this.hostnameVerifier = hostnameVerifier;
     }
 
-    @SneakyThrows
     private static KeyManagerFactory getKeyManagerFactory(final String algorithm, final KeyStore keystore,
-                                                          final char[] password) {
+                                                          final char[] password) throws Exception {
         val factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return factory;
     }
 
-    @SneakyThrows
-    private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) {
+    private static Collection<X509TrustManager> getTrustManager(final String algorithm,
+                                                                final KeyStore keystore) throws Exception {
         val factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())
@@ -107,10 +106,11 @@ public class DefaultCasSSLContext implements CasSSLContext {
     }
 
     @Override
-    @SneakyThrows
     public TrustManagerFactory getTrustManagerFactory() {
-        val factory = TrustManagerFactory.getInstance(ALG_NAME_PKIX);
-        factory.init(this.casTrustStore);
-        return factory;
+        return Unchecked.supplier(() -> {
+            val factory = TrustManagerFactory.getInstance(ALG_NAME_PKIX);
+            factory.init(this.casTrustStore);
+            return factory;
+        }).get();
     }
 }

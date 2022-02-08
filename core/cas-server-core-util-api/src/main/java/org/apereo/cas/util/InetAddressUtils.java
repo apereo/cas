@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.net.InetAddress;
 import java.net.URL;
@@ -40,14 +40,15 @@ public class InetAddressUtils {
      *
      * @return the cas server host name
      */
-    @SneakyThrows
     public static String getCasServerHostName() {
-        val hostName = InetAddress.getLocalHost().getHostName();
-        val index = hostName.indexOf('.');
-        if (index > 0) {
-            return hostName.substring(0, index);
-        }
-        return hostName;
+        return Unchecked.supplier(() -> {
+            val hostName = InetAddress.getLocalHost().getHostName();
+            val index = hostName.indexOf('.');
+            if (index > 0) {
+                return hostName.substring(0, index);
+            }
+            return hostName;
+        }).get();
     }
 
     /**
@@ -56,12 +57,14 @@ public class InetAddressUtils {
      * @param name the name
      * @return the cas server host address
      */
-    @SneakyThrows
     public static String getCasServerHostAddress(final String name) {
-        val host = getByName(name);
-        if (host != null) {
-            return host.getHostAddress();
-        }
-        return null;
+        return Unchecked.supplier(() -> {
+            val host = getByName(name);
+            
+            if (host != null) {
+                return host.getHostAddress();
+            }
+            return null;
+        }).get();
     }
 }
