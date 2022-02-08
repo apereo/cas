@@ -1,6 +1,9 @@
 {
   "dependencies": "simple-mfa,surrogate-webflow",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
     "--cas.authn.surrogate.simple.surrogates.casuser=user3",
     
     "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=employeeNumber",

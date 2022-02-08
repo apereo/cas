@@ -1,0 +1,16 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.authn.accept.users=CASUSER::p@ssw0rd",
+    "--cas.authn.accept.principal-transformation.case-conversion=UPPERCASE",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+
+    "--cas.person-directory.principal-transformation.case-conversion=LOWERCASE"
+  ]
+}
