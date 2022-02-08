@@ -11,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -72,6 +71,6 @@ public class JsonServiceRegistryConfiguration {
         final ServiceRegistry jsonServiceRegistry) {
         val registry = casProperties.getServiceRegistry().getJson();
         return plan -> FunctionUtils.doIfNotNull(registry.getLocation(),
-            Unchecked.consumer(input -> plan.registerServiceRegistry(jsonServiceRegistry)));
+            input -> plan.registerServiceRegistry(jsonServiceRegistry));
     }
 }

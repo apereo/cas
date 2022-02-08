@@ -39,7 +39,7 @@ public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected ConsentRepository repository;
 
     @Test
-    public void storeBadDecision() {
+    public void storeBadDecision() throws Exception {
         val repo = getRepository("storeBadDecision");
         assertNull(repo.storeConsentDecision(null));
     }

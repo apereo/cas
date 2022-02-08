@@ -49,7 +49,7 @@ public class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Test
-    public void verifyLargeDataset() {
+    public void verifyLargeDataset() throws Exception {
         val principal = UUID.randomUUID().toString();
         for (int i = 0; i < COUNT; i++) {
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());

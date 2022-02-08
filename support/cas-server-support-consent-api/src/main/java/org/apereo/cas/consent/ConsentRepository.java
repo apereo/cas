@@ -47,8 +47,9 @@ public interface ConsentRepository extends Serializable {
      *
      * @param decision the decision
      * @return consent decision updated/added
+     * @throws Exception the exception
      */
-    ConsentDecision storeConsentDecision(ConsentDecision decision);
+    ConsentDecision storeConsentDecision(ConsentDecision decision) throws Exception;
 
     /**
      * Delete consent decision.

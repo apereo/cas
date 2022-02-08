@@ -1,11 +1,10 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
@@ -32,26 +30,26 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        try {
+        FunctionUtils.doAndHandle(bldr -> {
             val statistics = getStatistics();
-            builder.withDetail("name", getName());
+            bldr.withDetail("name", getName());
             if (statistics == null || statistics.length == 0) {
-                builder.outOfService().withDetail("message", "Cache statistics are not available.");
+                bldr.outOfService().withDetail("message", "Cache statistics are not available.");
                 return;
             }
 
             val statuses = Arrays.stream(statistics)
-                .map(this::status)
+                .map(AbstractCacheHealthIndicator.this::status)
                 .collect(Collectors.toSet());
 
             if (statuses.contains(Status.OUT_OF_SERVICE)) {
-                builder.outOfService();
+                bldr.outOfService();
             } else if (statuses.contains(Status.DOWN)) {
-                builder.down();
+                bldr.down();
             } else if (statuses.contains(new Status("WARN"))) {
-                builder.status("WARN");
+                bldr.status("WARN");
             } else {
-                builder.up();
+                bldr.up();
             }
 
             Arrays.stream(statistics).forEach(s -> {
@@ -62,13 +60,12 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 map.put("percentFree", s.getPercentFree());
                 map.put("state", s.toString(new StringBuilder()));
 
-                builder.withDetail(s.getName(), map);
+                bldr.withDetail(s.getName(), map);
             });
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            builder.down(e);
-        }
-
+        }, throwable -> {
+            builder.down(throwable);
+            return builder;
+        }).accept(builder);
     }
 
     /**

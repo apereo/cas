@@ -7,14 +7,15 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -47,31 +48,20 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     private final LdapConsentProperties ldapProperties;
 
     private static ConsentDecision mapFromJson(final String json) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             LOGGER.trace("Mapping JSON value [{}] to consent object", json);
             return MAPPER.readValue(JsonValue.readHjson(json).toString(), ConsentDecision.class);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+        }, throwable -> null).get();
     }
 
-    @SneakyThrows
-    private static String mapToJson(final ConsentDecision consent) {
+    private static String mapToJson(final ConsentDecision consent) throws Exception {
         val json = MAPPER.writeValueAsString(consent);
         LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
         return json;
     }
 
-    /**
-     * Merges a new decision into existing decisions.
-     * Decisions are matched by ID.
-     *
-     * @param ldapConsent existing consent decisions
-     * @param decision    new decision
-     * @return new decision set
-     */
-    private static Set<String> mergeDecision(final LdapAttribute ldapConsent, final ConsentDecision decision) {
+    private static Set<String> mergeDecision(final LdapAttribute ldapConsent,
+                                             final ConsentDecision decision) throws Exception {
         if (decision.getId() < 0) {
             decision.setId(System.currentTimeMillis());
         }
@@ -107,7 +97,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
                 .map(LdapConsentRepository::mapFromJson)
                 .filter(Objects::nonNull)
                 .filter(filter)
-                .map(LdapConsentRepository::mapToJson)
+                .map(Unchecked.function(LdapConsentRepository::mapToJson))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         }
@@ -175,7 +165,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Exception {
         LOGGER.debug("Storing consent decision [{}]", decision);
         val entry = readConsentEntry(decision.getPrincipal());
         if (entry != null) {

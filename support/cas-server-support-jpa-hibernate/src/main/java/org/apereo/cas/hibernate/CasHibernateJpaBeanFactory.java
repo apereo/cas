@@ -7,10 +7,9 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +36,6 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     private final ConfigurableApplicationContext applicationContext;
@@ -74,18 +72,15 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put("hibernate.jdbc.time_zone", "UTC");
         properties.put("hibernate.jdbc.fetch_size", jpaProperties.getFetchSize());
 
-        if (StringUtils.isNotBlank(jpaProperties.getPhysicalNamingStrategyClassName())) {
-            try {
+        FunctionUtils.doIfNotNull(jpaProperties.getPhysicalNamingStrategyClassName(),
+            s -> {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());
                 val namingStrategy = PhysicalNamingStrategy.class.cast(clazz.getDeclaredConstructor().newInstance());
                 if (namingStrategy instanceof ApplicationContextAware) {
                     ((ApplicationContextAware) namingStrategy).setApplicationContext(applicationContext);
                 }
                 properties.put(Environment.PHYSICAL_NAMING_STRATEGY, namingStrategy);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
-        }
+            });
         properties.putAll(jpaProperties.getProperties());
 
         val bean = JpaBeans.newEntityManagerFactoryBean(config);

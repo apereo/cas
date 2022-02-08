@@ -32,13 +32,14 @@ public interface ConsentEngine extends Serializable {
      * @param reminderTimeUnit  the reminder time unit
      * @param options           the options
      * @return the stored decision
+     * @throws Exception the exception
      */
     ConsentDecision storeConsentDecision(Service service,
                                          RegisteredService registeredService,
                                          Authentication authentication,
                                          long reminder,
                                          ChronoUnit reminderTimeUnit,
-                                         ConsentReminderOptions options);
+                                         ConsentReminderOptions options) throws Exception;
 
     /**
      * Find consent decision consent decision.

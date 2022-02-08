@@ -52,7 +52,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final Authentication authentication,
                                                 final long reminder,
                                                 final ChronoUnit reminderTimeUnit,
-                                                final ConsentReminderOptions options) {
+                                                final ConsentReminderOptions options) throws Exception {
         val attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         attributes.replaceAll((key, value) -> {
             var attr = CasConsentableAttribute.builder()
