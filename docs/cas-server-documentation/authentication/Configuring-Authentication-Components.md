@@ -80,10 +80,6 @@ Authentication failures are typically collected in CAS by the name of each authe
 
 Please see [authentication security policies](Configuring-Authentication-Policy.html) for more details.
 
-## Principal Resolution
-
-Please see [this guide](Configuring-Authentication-PrincipalResolution.html) for more details.
-
 ## Long Term Authentication
 
 CAS has support for long term Ticket Granting Tickets, a feature that is also referred to as _"Remember Me"_
