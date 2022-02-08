@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
@@ -41,9 +40,8 @@ public interface CasSSLContext {
     static CasSSLContext system() {
         return new CasSSLContext() {
             @Override
-            @SneakyThrows
             public KeyManagerFactory getKeyManagerFactory() {
-                return KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
             }
 
             @Override
@@ -153,17 +151,17 @@ public interface CasSSLContext {
         }
 
         @Override
-        @SneakyThrows
         public SSLContext getSslContext() {
-            val sc = SSLContext.getInstance("SSL");
-            sc.init(getKeyManagers(), getTrustManagers(), null);
-            return sc;
+            return Unchecked.supplier(() -> {
+                val sc = SSLContext.getInstance("SSL");
+                sc.init(getKeyManagers(), getTrustManagers(), null);
+                return sc;
+            }).get();
         }
 
         @Override
-        @SneakyThrows
         public KeyManagerFactory getKeyManagerFactory() {
-            return KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            return Unchecked.supplier(() -> KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())).get();
         }
 
         @Override

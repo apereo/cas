@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,6 +10,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
@@ -49,9 +49,11 @@ public class EncodingUtils {
     public static final String JSON_WEB_KEY = "k";
 
     private static final Base32 BASE32_CHUNKED_ENCODER = new Base32(76, new byte[]{10});
+
     private static final Base32 BASE32_UNCHUNKED_ENCODER = new Base32(0, new byte[]{10});
 
     private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+
     private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
 
     /**
@@ -240,9 +242,8 @@ public class EncodingUtils {
      * @param encoding the encoding
      * @return the encoded value
      */
-    @SneakyThrows
     public static String urlEncode(final String value, final String encoding) {
-        return URLEncoder.encode(value, encoding);
+        return Unchecked.supplier(() -> URLEncoder.encode(value, encoding)).get();
     }
 
     /**
@@ -251,9 +252,10 @@ public class EncodingUtils {
      * @param value the value to decode
      * @return the decoded value
      */
-    @SneakyThrows
     public static String urlDecode(final String value) {
-        return StringUtils.isBlank(value) ? value : URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        return StringUtils.isBlank(value)
+            ? value
+            : Unchecked.supplier(() -> URLDecoder.decode(value, StandardCharsets.UTF_8.name())).get();
     }
 
     /**
@@ -273,19 +275,20 @@ public class EncodingUtils {
      * @param asString   the as string
      * @return the byte [ ]
      */
-    @SneakyThrows
     public static byte[] verifyJwsSignature(final Key signingKey, final String asString) {
-        val jws = new JsonWebSignature();
-        jws.setCompactSerialization(asString);
-        jws.setKey(signingKey);
+        return Unchecked.supplier(() -> {
+            val jws = new JsonWebSignature();
+            jws.setCompactSerialization(asString);
+            jws.setKey(signingKey);
 
-        val verified = jws.verifySignature();
-        if (verified) {
-            val payload = jws.getEncodedPayload();
-            LOGGER.trace("Successfully decoded value. Result in Base64url-encoding is [{}]", payload);
-            return EncodingUtils.decodeUrlSafeBase64(payload);
-        }
-        return null;
+            val verified = jws.verifySignature();
+            if (verified) {
+                val payload = jws.getEncodedPayload();
+                LOGGER.trace("Successfully decoded value. Result in Base64url-encoding is [{}]", payload);
+                return EncodingUtils.decodeUrlSafeBase64(payload);
+            }
+            return null;
+        }).get();
     }
 
     /**
@@ -295,7 +298,6 @@ public class EncodingUtils {
      * @param signingKey the signing key
      * @return the byte [ ]
      */
-    @SneakyThrows
     public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
         val asString = new String(value, StandardCharsets.UTF_8);
         return verifyJwsSignature(signingKey, asString);
@@ -324,9 +326,8 @@ public class EncodingUtils {
      * @param json the json
      * @return the json web key
      */
-    @SneakyThrows
     public static JsonWebKey newJsonWebKey(final String json) {
-        return JsonWebKey.Factory.newJwk(json);
+        return Unchecked.supplier(() -> JsonWebKey.Factory.newJwk(json)).get();
     }
 
     /**
@@ -335,9 +336,8 @@ public class EncodingUtils {
      * @param size the size
      * @return the json web key
      */
-    @SneakyThrows
     public static JsonWebKey newJsonWebKey(final int size) {
-        return RsaJwkGenerator.generateJwk(size, null, RandomUtils.getNativeInstance());
+        return Unchecked.supplier(() -> RsaJwkGenerator.generateJwk(size, null, RandomUtils.getNativeInstance())).get();
     }
 
     /**
@@ -358,7 +358,6 @@ public class EncodingUtils {
      * @param secret the secret
      * @return the key
      */
-    @SneakyThrows
     public static Key generateJsonWebKey(final String secret) {
         val keys = new HashMap<String, Object>(2);
         keys.put("kty", "oct");
@@ -372,10 +371,11 @@ public class EncodingUtils {
      * @param params the params
      * @return the key
      */
-    @SneakyThrows
     public static Key generateJsonWebKey(final Map<String, Object> params) {
-        val jwk = JsonWebKey.Factory.newJwk(params);
-        return jwk.getKey();
+        return Unchecked.supplier(() -> {
+            val jwk = JsonWebKey.Factory.newJwk(params);
+            return jwk.getKey();
+        }).get();
     }
 
 
@@ -424,28 +424,29 @@ public class EncodingUtils {
      * @param headers              the headers
      * @return the string
      */
-    @SneakyThrows
     public static String signJws(final JwtClaims claims,
                                  final PublicJsonWebKey jsonWebKey,
                                  final String algorithmHeaderValue,
                                  final Map<String, Object> headers) {
-        val jws = new JsonWebSignature();
-        val jsonClaims = claims.toJson();
-        jws.setPayload(jsonClaims);
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-        jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        jws.setHeader("typ", "JWT");
-        headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
-        if (jsonWebKey != null) {
-            jws.setKey(jsonWebKey.getPrivateKey());
-            if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
-                jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+        return Unchecked.supplier(() -> {
+            val jws = new JsonWebSignature();
+            val jsonClaims = claims.toJson();
+            jws.setPayload(jsonClaims);
+            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
+            jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
+            jws.setHeader("typ", "JWT");
+            headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
+            if (jsonWebKey != null) {
+                jws.setKey(jsonWebKey.getPrivateKey());
+                if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
+                    jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+                }
+                jws.setAlgorithmHeaderValue(StringUtils.defaultString(algorithmHeaderValue, AlgorithmIdentifiers.NONE));
             }
-            jws.setAlgorithmHeaderValue(StringUtils.defaultString(algorithmHeaderValue, AlgorithmIdentifiers.NONE));
-        }
-        LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
-            jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
-        return jws.getCompactSerialization();
+            LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
+                jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
+            return jws.getCompactSerialization();
+        }).get();
     }
 
     /**
@@ -457,17 +458,18 @@ public class EncodingUtils {
      * @param headers        the headers
      * @return the byte [ ]
      */
-    @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue,
                                  final Map<String, Object> headers) {
-        val base64 = EncodingUtils.encodeUrlSafeBase64(value);
-        val jws = new JsonWebSignature();
-        jws.setEncodedPayload(base64);
-        jws.setAlgorithmHeaderValue(algHeaderValue);
-        jws.setKey(key);
-        jws.setHeader("typ", "JWT");
-        headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
-        return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
+        return Unchecked.supplier(() -> {
+            val base64 = EncodingUtils.encodeUrlSafeBase64(value);
+            val jws = new JsonWebSignature();
+            jws.setEncodedPayload(base64);
+            jws.setAlgorithmHeaderValue(algHeaderValue);
+            jws.setKey(key);
+            jws.setHeader("typ", "JWT");
+            headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
+            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
+        }).get();
     }
 
     /**
@@ -559,7 +561,6 @@ public class EncodingUtils {
      * @param value                  the value
      * @return the decrypted value
      */
-    @SneakyThrows
     public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
         try {
             val jwe = new JsonWebEncryption();

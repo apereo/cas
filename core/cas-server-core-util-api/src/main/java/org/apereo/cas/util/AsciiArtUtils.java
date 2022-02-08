@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +30,6 @@ public class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
         out.println(ANSI_CYAN);
         if (StringUtils.isNotBlank(additional)) {
@@ -49,7 +47,6 @@ public class AsciiArtUtils {
      * @param out        the out
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArtWarning(final Logger out, final String additional) {
         val ascii = '\n'
             + "  ____ _____ ___  ____  _ \n"
@@ -69,7 +66,6 @@ public class AsciiArtUtils {
      * @param out        the out
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArtReady(final Logger out, final String additional) {
         val ascii = '\n'
             + "  ____  _____    _    ______   __\n"

@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -91,13 +90,11 @@ public class CompressionUtils {
         extendedBytes[bytes.length] = 0;
         inflater.setInput(extendedBytes);
 
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        } catch (final DataFormatException e) {
-            return null;
-        }
+        }, throwable -> null).get();
     }
 
     /**
@@ -107,12 +104,13 @@ public class CompressionUtils {
      * @param zippedBase64Str the zipped base 64 str
      * @return the string, or null
      */
-    @SneakyThrows
     public static String decompress(final String zippedBase64Str) {
-        val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-        try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-            return IOUtils.toString(zi, Charset.defaultCharset());
-        }
+        return Unchecked.supplier(() -> {
+            val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
+            try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+                return IOUtils.toString(zi, Charset.defaultCharset());
+            }
+        }).get();
     }
 
     /**
@@ -121,7 +119,6 @@ public class CompressionUtils {
      * @param bytes the data to encode
      * @return the new string
      */
-    @SneakyThrows
     public static String decodeByteArrayToString(final byte[] bytes) {
         @Cleanup
         val bais = new ByteArrayInputStream(bytes);
@@ -149,16 +146,17 @@ public class CompressionUtils {
      * @param srcTxt the src txt
      * @return the string in UTF-8 format and base64'ed, or null.
      */
-    @SneakyThrows
     public static String compress(final String srcTxt) {
-        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
-            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-            zos.flush();
-            zos.finish();
-            val bytes = rstBao.toByteArray();
-            val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
-            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-        }
+        return Unchecked.supplier(() -> {
+            try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
+                zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
+                zos.flush();
+                zos.finish();
+                val bytes = rstBao.toByteArray();
+                val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+                return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
+            }
+        }).get();
     }
 
     /**
@@ -169,25 +167,26 @@ public class CompressionUtils {
      * @param prefix     the prefix
      * @return the writable resource
      */
-    @SneakyThrows
     public static WritableResource toZipFile(final Stream<?> dataStream,
                                              final Function<Object, File> converter,
                                              final String prefix) {
-        val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
-        val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
-        Files.deleteIfExists(file.toPath());
-        val env = new HashMap<String, Object>();
-        env.put("create", "true");
-        env.put("encoding", StandardCharsets.UTF_8.name());
-        try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
-            dataStream.forEach(Unchecked.consumer(entry -> {
-                var sourceFile = converter.apply(entry);
-                if (sourceFile.exists()) {
-                    val pathInZipfile = zipfs.getPath("/".concat(sourceFile.getName()));
-                    Files.copy(sourceFile.toPath(), pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }));
-        }
-        return new TemporaryFileSystemResource(file);
+        return Unchecked.supplier(() -> {
+            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
+            val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
+            Files.deleteIfExists(file.toPath());
+            val env = new HashMap<String, Object>();
+            env.put("create", "true");
+            env.put("encoding", StandardCharsets.UTF_8.name());
+            try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), env)) {
+                dataStream.forEach(Unchecked.consumer(entry -> {
+                    var sourceFile = converter.apply(entry);
+                    if (sourceFile.exists()) {
+                        val pathInZipfile = zipfs.getPath("/".concat(sourceFile.getName()));
+                        Files.copy(sourceFile.toPath(), pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }));
+            }
+            return new TemporaryFileSystemResource(file);
+        }).get();
     }
 }

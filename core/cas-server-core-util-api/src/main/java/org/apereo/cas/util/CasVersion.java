@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -48,11 +48,12 @@ public class CasVersion {
      *
      * @return the date/time
      */
-    @SneakyThrows
     public static ZonedDateTime getDateTime() {
-        val clazz = CasVersion.class;
-        val resource = clazz.getResource(clazz.getSimpleName() + ".class");
-        val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
-        return DateTimeUtils.zonedDateTimeOf(time);
+        return Unchecked.supplier(() -> {
+            val clazz = CasVersion.class;
+            val resource = clazz.getResource(clazz.getSimpleName() + ".class");
+            val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
+            return DateTimeUtils.zonedDateTimeOf(time);
+        }).get();
     }
 }

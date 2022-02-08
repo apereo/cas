@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * JSON utility methods.
- * 
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -26,12 +26,13 @@ public class JsonUtils {
      * @param model    the model
      * @param response the response
      */
-    @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        val jsonConverter = new MappingJackson2HttpMessageConverter();
-        jsonConverter.setPrettyPrint(true);
-        val jsonMimeType = MediaType.APPLICATION_JSON;
-        jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
+        Unchecked.consumer(o -> {
+            val jsonConverter = new MappingJackson2HttpMessageConverter();
+            jsonConverter.setPrettyPrint(true);
+            val jsonMimeType = MediaType.APPLICATION_JSON;
+            jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
+        }).accept(model);
     }
 
     /**
@@ -39,7 +40,6 @@ public class JsonUtils {
      *
      * @param response the response
      */
-    @SneakyThrows
     public static void render(final HttpServletResponse response) {
         val map = new HashMap<String, Object>();
         response.setStatus(HttpServletResponse.SC_OK);
