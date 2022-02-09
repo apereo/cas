@@ -29,9 +29,6 @@ import java.util.Map;
 @SuperBuilder
 public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestContext {
 
-    /**
-     * Generated serialVersionUID.
-     */
     private static final long serialVersionUID = -6411421298859045022L;
 
     /**

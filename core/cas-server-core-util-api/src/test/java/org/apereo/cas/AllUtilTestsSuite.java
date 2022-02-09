@@ -74,6 +74,7 @@ import org.junit.platform.suite.api.Suite;
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,
+    DefaultMessageDescriptorTests.class,
     RefreshableHandlerInterceptorTests.class,
     WatchableGroovyScriptResourceTests.class,
     TemporaryFileSystemResourceTests.class,

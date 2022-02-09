@@ -31,9 +31,6 @@ import java.util.Arrays;
 @Setter
 public class X509CertificateCredential extends AbstractCredential {
 
-    /**
-     * Unique Id for serialization.
-     */
     private static final long serialVersionUID = 631753409512746474L;
 
     /**

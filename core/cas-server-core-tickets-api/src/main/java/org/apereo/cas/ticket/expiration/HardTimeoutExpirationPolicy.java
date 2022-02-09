@@ -29,9 +29,6 @@ import java.time.temporal.ChronoUnit;
 @Builder
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = 6728077010285422290L;
 
     /**

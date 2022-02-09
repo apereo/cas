@@ -30,9 +30,6 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
 
-    /**
-     * Serializable Unique ID.
-     */
     private static final long serialVersionUID = 3833747698242303540L;
 
     @Override

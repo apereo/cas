@@ -14,9 +14,6 @@ import java.util.Map;
  */
 public class UnresolvedPrincipalException extends PrincipalException {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = 380456166081802820L;
 
     /**

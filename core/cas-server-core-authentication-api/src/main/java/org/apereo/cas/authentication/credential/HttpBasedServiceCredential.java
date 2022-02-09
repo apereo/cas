@@ -30,9 +30,6 @@ import java.net.URL;
 @EqualsAndHashCode(callSuper = true)
 public class HttpBasedServiceCredential extends AbstractCredential {
 
-    /**
-     * Unique Serializable ID.
-     */
     private static final long serialVersionUID = 1492607216336354503L;
 
     /**

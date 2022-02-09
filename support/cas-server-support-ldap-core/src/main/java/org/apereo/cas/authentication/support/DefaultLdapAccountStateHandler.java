@@ -167,8 +167,6 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      */
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
                                  final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) {
-
-
         LOGGER.debug("Handling account state warning [{}]", warning);
         if (warning == null) {
             LOGGER.debug("Account state warning not defined");

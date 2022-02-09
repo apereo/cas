@@ -31,9 +31,6 @@ import java.time.temporal.ChronoUnit;
 @Builder
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = 7670537200691354820L;
 
     /**

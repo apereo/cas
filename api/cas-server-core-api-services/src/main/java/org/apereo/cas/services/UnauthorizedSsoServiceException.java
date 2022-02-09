@@ -10,9 +10,6 @@ package org.apereo.cas.services;
  */
 public class UnauthorizedSsoServiceException extends UnauthorizedServiceException {
 
-    /**
-     * Comment for {@code serialVersionUID}.
-     */
     private static final long serialVersionUID = 8909291297815558561L;
 
     /**

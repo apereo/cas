@@ -25,9 +25,6 @@ import lombok.ToString;
 @ToString(callSuper = true, exclude = "password")
 public class OneTimePasswordCredential extends BasicIdentifiableCredential {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = 1892587671827699709L;
 
     /**

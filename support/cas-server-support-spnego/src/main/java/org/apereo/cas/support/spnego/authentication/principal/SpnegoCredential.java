@@ -29,9 +29,6 @@ import java.util.stream.IntStream;
 @EqualsAndHashCode(of = {"initToken", "nextToken", "principal"})
 public class SpnegoCredential implements Credential {
 
-    /**
-     * Unique id for serialization.
-     */
     private static final long serialVersionUID = 84084596791289548L;
 
     private static final int NTLM_TOKEN_MAX_LENGTH = 8;

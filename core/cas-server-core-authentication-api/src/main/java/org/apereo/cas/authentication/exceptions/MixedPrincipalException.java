@@ -16,9 +16,6 @@ import lombok.Getter;
 @Getter
 public class MixedPrincipalException extends PrincipalException {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = -9040132618070273997L;
 
     /**

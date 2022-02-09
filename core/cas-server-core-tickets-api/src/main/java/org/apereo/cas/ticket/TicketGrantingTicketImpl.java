@@ -37,9 +37,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
-    /**
-     * Unique Id for serialization.
-     */
     private static final long serialVersionUID = -8608149809180911599L;
 
     /**
