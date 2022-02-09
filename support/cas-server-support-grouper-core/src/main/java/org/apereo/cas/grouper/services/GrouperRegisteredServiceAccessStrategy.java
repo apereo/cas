@@ -2,7 +2,7 @@ package org.apereo.cas.grouper.services;
 
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
-import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 
 import edu.internet2.middleware.grouperClient.util.GrouperClientConfig;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
+public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     /**
      * The attribute name that collects grouper groups as attributes.

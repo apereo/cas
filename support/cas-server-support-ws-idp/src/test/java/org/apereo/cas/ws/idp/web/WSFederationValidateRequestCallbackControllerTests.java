@@ -155,7 +155,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
     @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
     public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
-        public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() {
+        public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);
             when(producer.produce(any(), any(), any(), any(), any())).thenReturn(UUID.randomUUID().toString());
             return producer;

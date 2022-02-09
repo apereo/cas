@@ -128,7 +128,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
     private String produceRelyingPartyToken(final HttpServletRequest request, final Service targetService,
                                             final WSFederationRequest fedRequest, final SecurityToken securityToken,
-                                            final Assertion assertion) {
+                                            final Assertion assertion) throws Exception {
         val service = findAndValidateFederationRequestForRegisteredService(targetService, fedRequest);
         LOGGER.debug("Located registered service [{}] to create relying-party tokens...", service);
         return getConfigContext().getRelyingPartyTokenProducer().produce(securityToken, service, fedRequest, request, assertion);

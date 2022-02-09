@@ -28,11 +28,11 @@ import java.util.Map;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1108201604115278440L;
 
@@ -42,19 +42,15 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
+        val exec = HttpUtils.HttpExecutionRequest.builder()
+            .method(HttpMethod.GET)
+            .url(this.endpointUrl)
+            .parameters(CollectionUtils.wrap("username", principal))
+            .build();
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .url(this.endpointUrl)
-                .parameters(CollectionUtils.wrap("username", principal))
-                .build();
-
-            val response = HttpUtils.execute(exec);
-            val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
-            return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
-        }
-        return false;
+        val response = HttpUtils.execute(exec);
+        val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+        return response != null && currentCodes.contains(String.valueOf(response.getStatusLine().getStatusCode()));
     }
 
 }

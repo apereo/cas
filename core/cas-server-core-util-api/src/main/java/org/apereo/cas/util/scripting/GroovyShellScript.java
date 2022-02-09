@@ -25,38 +25,16 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
         this.groovyScript = ScriptingUtils.parseGroovyShellScript(script);
     }
 
-    /**
-     * Execute.
-     *
-     * @param <T>   the type parameter
-     * @param args  the args
-     * @param clazz the clazz
-     * @return the result
-     */
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz) {
         return execute(args, clazz, true);
     }
 
-    /**
-     * Execute.
-     *
-     * @param args the args
-     */
     @Override
     public void execute(final Object[] args) {
         execute(args, Void.class, true);
     }
 
-    /**
-     * Execute.
-     *
-     * @param <T>         the type parameter
-     * @param args        the args
-     * @param clazz       the clazz
-     * @param failOnError the fail on error
-     * @return the t
-     */
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         if (this.groovyScript != null) {

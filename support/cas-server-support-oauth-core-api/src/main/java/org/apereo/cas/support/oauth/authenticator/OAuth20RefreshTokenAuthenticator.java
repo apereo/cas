@@ -44,12 +44,6 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
             registeredServiceCipherExecutor, ticketRegistry, principalResolver);
     }
 
-    /**
-     * Verify if OAuth20RefreshTokenAuthenticator can authenticate the given context.
-     *
-     * @param context the context
-     * @return true if authenticator can validate credentials.
-     */
     @Override
     protected boolean canAuthenticate(final WebContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);

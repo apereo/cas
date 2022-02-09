@@ -27,13 +27,13 @@ import java.time.ZonedDateTime;
  * @since 4.2
  */
 @Slf4j
-@ToString(callSuper = true)
+@ToString
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public class TimeBasedRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
 
@@ -46,19 +46,27 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     @ExpressionLanguageCapable
     private String zoneId = ZoneOffset.UTC.getId();
 
-    /**
-     * Initiates the time-based access strategy.
-     *
-     * @param enabled    is service access allowed?
-     * @param ssoEnabled is service allowed to take part in SSO?
-     */
-    public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
-        super(enabled, ssoEnabled);
-    }
-
     @Override
     public boolean isServiceAccessAllowed() {
-        return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess() && super.isServiceAccessAllowed();
+        return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess();
+    }
+
+    public String getStartingDateTime() {
+        return StringUtils.isBlank(startingDateTime)
+            ? null
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(startingDateTime);
+    }
+
+    public String getEndingDateTime() {
+        return StringUtils.isBlank(endingDateTime)
+            ? null
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(endingDateTime);
+    }
+
+    public String getZoneId() {
+        return StringUtils.isBlank(zoneId)
+            ? ZoneOffset.UTC.getId()
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(zoneId);
     }
 
     /**
@@ -117,23 +125,5 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
             }
         }
         return true;
-    }
-
-    public String getStartingDateTime() {
-        return StringUtils.isBlank(startingDateTime)
-            ? null
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(startingDateTime);
-    }
-
-    public String getEndingDateTime() {
-        return StringUtils.isBlank(endingDateTime)
-            ? null
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(endingDateTime);
-    }
-
-    public String getZoneId() {
-        return StringUtils.isBlank(zoneId)
-            ? ZoneOffset.UTC.getId()
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(zoneId);
     }
 }

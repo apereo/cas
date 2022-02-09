@@ -29,7 +29,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junitpioneer.jupiter.RetryingTest;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -512,13 +511,9 @@ public abstract class AbstractServiceRegistryTests {
     @MethodSource(GET_PARAMETERS)
     public void verifyAccessStrategyWithStarEndDate(final Class<? extends RegisteredService> registeredServiceClass) {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), registeredServiceClass);
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, false);
-
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
-
-        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 
         val r2 = this.serviceRegistry.save(r);
@@ -534,7 +529,6 @@ public abstract class AbstractServiceRegistryTests {
         val authz = new RemoteEndpointServiceAccessStrategy();
         authz.setEndpointUrl("http://www.google.com?this=that");
         authz.setAcceptableResponseCodes("200,405,403");
-        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 
         val r2 = this.serviceRegistry.save(r);

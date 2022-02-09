@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("CasConfiguration")
+@Tag("Grouper")
 @SpringBootTest(classes = BaseGrouperConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.authn.attribute-repository.grouper.state=ACTIVE")
 public class CasPersonDirectoryGrouperConfigurationTests {

@@ -22,6 +22,7 @@ import org.apereo.cas.util.scripting.GroovyShellScriptTests;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
+import org.apereo.cas.util.spring.ApplicationContextProviderTests;
 import org.apereo.cas.util.spring.BeanContainerTests;
 import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptorTests;
@@ -67,6 +68,7 @@ import org.junit.platform.suite.api.Suite;
     LoggingUtilsTests.class,
     SocketUtilsTests.class,
     BeanContainerTests.class,
+    ApplicationContextProviderTests.class,
     MessageSanitizationUtilsTests.class,
     InetAddressUtilsTests.class,
     CompositeX509TrustManagerTests.class,

@@ -107,9 +107,6 @@ public class ThreadContextMDCServletFilter implements Filter {
         }
     }
 
-    /**
-     * Does nothing.
-     */
     @Override
     public void destroy() {
     }

@@ -11,6 +11,7 @@ import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -32,6 +33,20 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
+    }
+
+    /**
+     * Process bean injections.
+     *
+     * @param bean the bean
+     */
+    public static void processBeanInjections(final Object bean) {
+        val ac = getConfigurableApplicationContext();
+        if (ac != null) {
+            val bpp = new AutowiredAnnotationBeanPostProcessor();
+            bpp.setBeanFactory(ac.getAutowireCapableBeanFactory());
+            bpp.processInjection(bean);
+        }
     }
 
     @Override

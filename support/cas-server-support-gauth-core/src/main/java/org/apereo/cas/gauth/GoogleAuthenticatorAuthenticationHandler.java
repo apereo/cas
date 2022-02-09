@@ -32,11 +32,12 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
-    public GoogleAuthenticatorAuthenticationHandler(final String name,
-                                                    final ServicesManager servicesManager,
-                                                    final PrincipalFactory principalFactory,
-                                                    final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
-                                                    final Integer order) {
+    public GoogleAuthenticatorAuthenticationHandler(
+        final String name,
+        final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory,
+        final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
+        final Integer order) {
         super(name, servicesManager, principalFactory, order);
         this.validator = validator;
     }

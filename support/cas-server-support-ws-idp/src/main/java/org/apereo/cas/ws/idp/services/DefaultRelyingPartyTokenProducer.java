@@ -49,8 +49,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private final Set<String> customClaims;
 
-    @SneakyThrows
-    private static String serializeRelyingPartyToken(final Element rpToken) {
+    private static String serializeRelyingPartyToken(final Element rpToken) throws Exception {
         val sw = new StringWriter();
         val transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -63,7 +62,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
                           final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final Assertion assertion) {
+                          final Assertion assertion) throws Exception {
         val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
         mapAttributesToRequestedClaims(service, sts, assertion);
         val rpToken = requestSecurityTokenResponse(service, sts, assertion);

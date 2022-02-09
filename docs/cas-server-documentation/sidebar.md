@@ -190,7 +190,7 @@ layout: null
             *   [JPA](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-JPA.html)
             *   [REST](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-Rest.html)
 * [Attributes](#casattributes)
-    *   [Principal (Attribute) Resolution](#attrresolution)
+    *   [Attribute Resolution](#attrresolution)
         *   [Overview](/cas/{{ version }}/integration/Attribute-Resolution.html)
         *   [Definitions](/cas/{{ version }}/integration/Attribute-Definitions.html)
         *   [Repositories](#attrrepositories)

@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -3975861635454453130L;
 
     /**
