@@ -16,9 +16,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class InMemoryThrottledSubmissionCleaner implements Runnable {
     private final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan;
 
-    /**
-     * Kicks off the job that attempts to clean the throttling submission record history.
-     */
     @Override
     @Scheduled(initialDelayString = "${cas.authn.throttle.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.throttle.schedule.repeat-interval:PT15S}")

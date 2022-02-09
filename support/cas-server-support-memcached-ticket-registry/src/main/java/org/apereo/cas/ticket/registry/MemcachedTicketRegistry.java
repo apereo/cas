@@ -116,9 +116,6 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
         return new ArrayList<>(0);
     }
 
-    /**
-     * Destroy the client and shut down.
-     */
     @Override
     public void destroy() {
         this.connectionPool.close();

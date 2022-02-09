@@ -11,17 +11,17 @@ find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 dockerPlatform="unknown"
 type docker &> /dev/null
 if [[ $? -ne 0 ]] ; then
-  echo "Docker server is not available."
+  echo "Docker engine is not available."
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-  printf "Docker server platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+  printf "Docker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
 fi
 
 function isDockerOnLinux() {
   if [[ $dockerPlatform =~ "linux" ]]; then
     return 0
   fi
-  printf "${RED}Docker server is not available for the linux platform.${ENDCOLOR}"
+  printf "${RED}Docker engine is not available for the linux platform.${ENDCOLOR}"
   return 1
 }
 
@@ -29,7 +29,7 @@ function isDockerOnWindows() {
   if [[ $dockerPlatform =~ "windows" ]]; then
     return 0
   fi
-  printf "${RED}Docker server is not available for the windows platform.${ENDCOLOR}"
+  printf "${RED}Docker engine is not available for the windows platform.${ENDCOLOR}"
   return 1
 }
 
@@ -50,6 +50,10 @@ coverageTask=""
 
 while (( "$#" )); do
     case "$1" in
+    --max-workers)
+        parallel="${parallel} --max-workers=8"
+        shift
+        ;;
     --no-parallel)
         parallel="--no-parallel "
         shift
@@ -116,6 +120,9 @@ while (( "$#" )); do
             case "${categoryItem}" in
             test|simple|run|basic|unit|unittests)
                 task+="testSimple "
+                ;;
+            grouper)
+                task+="testGrouper "
                 ;;
             webapp)
                 task+="testWebApp "

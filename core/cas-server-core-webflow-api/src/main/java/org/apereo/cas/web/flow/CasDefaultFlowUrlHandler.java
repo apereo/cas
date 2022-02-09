@@ -37,12 +37,6 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      */
     private String flowExecutionKeyParameter = DEFAULT_FLOW_EXECUTION_KEY_PARAMETER;
 
-    /**
-     * Get the flow execution key.
-     *
-     * @param request the current HTTP servlet request.
-     * @return the flow execution key.
-     */
     @Override
     public String getFlowExecutionKey(final HttpServletRequest request) {
         return request.getParameter(this.flowExecutionKeyParameter);

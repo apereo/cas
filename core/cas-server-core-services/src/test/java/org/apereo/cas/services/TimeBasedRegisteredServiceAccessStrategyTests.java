@@ -33,8 +33,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePass() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
         assertTrue(authz.isServiceAccessAllowed());
@@ -43,8 +42,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangeFailStartTime() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
         assertFalse(authz.isServiceAccessAllowed());
@@ -53,7 +51,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkFailWithNowAfterEndTime() {
-        var authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        var authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
         assertFalse(authz.isServiceAccessAllowed());
@@ -61,7 +59,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkLocalFailWithNowAfterEndTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
         assertFalse(authz.isServiceAccessAllowed());
@@ -69,7 +67,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkLocalFailWithNowBeforeStartTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(15).toString());
         assertFalse(authz.isServiceAccessAllowed());
@@ -77,7 +75,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkExpressionLanguage() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime("${#localStartDay}");
         authz.setEndingDateTime("${#localEndDay}");
         authz.setZoneId("${#zoneId}");
@@ -86,7 +84,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthorizationByRangePassEndTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
         assertTrue(authz.isServiceAccessAllowed());
@@ -94,7 +92,7 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
-        val authWritten = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+        val authWritten = new TimeBasedRegisteredServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, authWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, TimeBasedRegisteredServiceAccessStrategy.class);
         assertEquals(authWritten, credentialRead);

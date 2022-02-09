@@ -38,7 +38,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
         assertNull(authz.getUnauthorizedRedirectUrl());
-        assertNotNull(authz.getDelegatedAuthenticationPolicy());
+        assertNull(authz.getDelegatedAuthenticationPolicy());
         assertNotNull(authz.getRequiredAttributes());
     }
 

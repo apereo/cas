@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Simple")
+@Tag("Grouper")
 @SpringBootTest(classes = {
     GrouperPersonAttributeDaoTests.GrouperPersonAttributeDaoTestConfiguration.class,
     BaseGrouperConfigurationTests.SharedTestConfiguration.class

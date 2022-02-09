@@ -72,9 +72,6 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
 
     }
 
-    /**
-     * Close.
-     */
     @Override
     public void close() {
         if (this.keystorePatchWatcherService != null) {

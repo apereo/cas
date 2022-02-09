@@ -25,8 +25,9 @@ public interface WSFederationRelyingPartyTokenProducer {
      * @param servletRequest the servlet request
      * @param assertion      the assertion
      * @return the element; token issues for the relying party
+     * @throws Exception the exception
      */
     String produce(SecurityToken securityToken, WSFederationRegisteredService service,
                    WSFederationRequest fedRequest, HttpServletRequest servletRequest,
-                   Assertion assertion);
+                   Assertion assertion) throws Exception;
 }

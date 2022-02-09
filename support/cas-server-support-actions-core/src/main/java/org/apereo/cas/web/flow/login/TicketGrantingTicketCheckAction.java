@@ -26,12 +26,6 @@ public class TicketGrantingTicketCheckAction extends BaseCasWebflowAction {
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * Determines whether the TGT in the flow request context is valid.
-     *
-     * @param requestContext Flow request context.
-     * @return webflow transition to indicate TGT status.
-     */
     @Override
     public Event doExecute(final RequestContext requestContext) {
         val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);

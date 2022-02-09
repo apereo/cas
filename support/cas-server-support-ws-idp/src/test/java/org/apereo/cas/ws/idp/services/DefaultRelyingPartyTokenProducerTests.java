@@ -96,7 +96,7 @@ public class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIde
 
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val request = new MockHttpServletRequest();
 
         val registeredService = new WSFederationRegisteredService();

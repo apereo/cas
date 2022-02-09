@@ -114,4 +114,5 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     default Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(0);
     }
+
 }

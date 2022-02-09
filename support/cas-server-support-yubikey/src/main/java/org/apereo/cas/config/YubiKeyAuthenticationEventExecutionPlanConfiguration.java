@@ -98,15 +98,16 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationHandler")
-    public AuthenticationHandler yubikeyAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                              @Qualifier("yubikeyPrincipalFactory")
-                                                              final PrincipalFactory yubikeyPrincipalFactory,
-                                                              @Qualifier("yubicoClient")
-                                                              final YubicoClient yubicoClient,
-                                                              @Qualifier("yubiKeyAccountRegistry")
-                                                              final YubiKeyAccountRegistry yubiKeyAccountRegistry,
-                                                              @Qualifier(ServicesManager.BEAN_NAME)
-                                                              final ServicesManager servicesManager) {
+    public AuthenticationHandler yubikeyAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyPrincipalFactory")
+        final PrincipalFactory yubikeyPrincipalFactory,
+        @Qualifier("yubicoClient")
+        final YubicoClient yubicoClient,
+        @Qualifier("yubiKeyAccountRegistry")
+        final YubiKeyAccountRegistry yubiKeyAccountRegistry,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         return new YubiKeyAuthenticationHandler(yubi.getName(), servicesManager, yubikeyPrincipalFactory, yubicoClient, yubiKeyAccountRegistry, yubi.getOrder());
     }

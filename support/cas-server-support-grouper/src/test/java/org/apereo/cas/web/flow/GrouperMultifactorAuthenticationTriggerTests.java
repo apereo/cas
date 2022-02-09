@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFATrigger")
+@Tag("Grouper")
 public class GrouperMultifactorAuthenticationTriggerTests {
 
     @Test

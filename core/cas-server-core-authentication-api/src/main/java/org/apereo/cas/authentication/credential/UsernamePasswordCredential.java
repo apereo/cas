@@ -58,11 +58,6 @@ public class UsernamePasswordCredential extends AbstractCredential {
         return this.username;
     }
 
-    /**
-     * Validate.
-     *
-     * @param context the context
-     */
     @Override
     public void validate(final ValidationContext context) {
         val messages = context.getMessageContext();

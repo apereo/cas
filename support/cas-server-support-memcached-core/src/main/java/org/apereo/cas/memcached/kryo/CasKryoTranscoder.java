@@ -36,12 +36,6 @@ import java.io.ByteArrayOutputStream;
 public class CasKryoTranscoder implements Transcoder<Object> {
     private final CasKryoPool kryoPool;
 
-    /**
-     * Asynchronous decoding is not supported.
-     *
-     * @param d Data to decode.
-     * @return false.
-     */
     @Override
     public boolean asyncDecode(final CachedData d) {
         return false;
@@ -75,11 +69,6 @@ public class CasKryoTranscoder implements Transcoder<Object> {
         }
     }
 
-    /**
-     * Maximum size of encoded data supported by this transcoder.
-     *
-     * @return {@code net.spy.memcached.CachedData#MAX_SIZE}.
-     */
     @Override
     public int getMaxSize() {
         return CachedData.MAX_SIZE;

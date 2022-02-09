@@ -29,8 +29,8 @@ import java.util.Set;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"order", "groovyScript"})
-public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
+@EqualsAndHashCode(of = {"order", "groovyScript"}, callSuper = true)
+public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -2407494148882123062L;
 

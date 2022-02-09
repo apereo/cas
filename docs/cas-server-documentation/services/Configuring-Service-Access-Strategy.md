@@ -379,21 +379,7 @@ The script itself may be designed as such by overriding the needed operations wh
 import org.apereo.cas.services.*
 import java.util.*
 
-class GroovyRegisteredAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
-    @Override
-    boolean isServiceAccessAllowed() {
-        ...
-    }
-
-    @Override
-    boolean isServiceAccessAllowedForSso() {
-        ...
-    }
-
-    @Override
-    boolean doPrincipalAttributesAllowServiceAccess(String principal, Map<String, Object> attributes) {
-        ...
-    }
+class GroovyRegisteredAccessStrategy implements RegisteredServiceAccessStrategy {
 }
 ```
 

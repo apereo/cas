@@ -531,14 +531,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return state.getTransition(transition) != null;
     }
 
-    /**
-     * Create flow variable flow variable.
-     *
-     * @param flow the flow
-     * @param id   the id
-     * @param type the type
-     * @return the flow variable
-     */
     @Override
     public FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
         val opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();

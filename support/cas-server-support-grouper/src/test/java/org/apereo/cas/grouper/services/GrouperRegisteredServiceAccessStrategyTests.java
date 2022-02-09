@@ -19,12 +19,8 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("RegisteredService")
+@Tag("Grouper")
 public class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
@@ -48,15 +44,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAccessStrategyJson() throws Exception {
-        val attributes = new HashMap<String, Set<String>>();
-        val v1 = new HashSet<String>();
-        v1.add("admin");
-        attributes.put("memberOf", v1);
-
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setConfigProperties(CollectionUtils.wrap("hello", "world"));
-        grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
 
         val appCtx = new StaticApplicationContext();
@@ -88,9 +78,6 @@ public class GrouperRegisteredServiceAccessStrategyTests {
                 return List.of(result);
             }
         };
-        val requiredAttributes = new HashMap<String, Set<String>>();
-        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Collections.singleton("SampleGroup"));
-        strategy.setRequiredAttributes(requiredAttributes);
         val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
         assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
     }
