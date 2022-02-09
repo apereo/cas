@@ -4,8 +4,6 @@ import org.apereo.cas.DefaultMessageDescriptor;
 
 import java.io.Serializable;
 
-import lombok.NoArgsConstructor;
-
 /**
  * Message conveying account password expiration warning details.
  *
@@ -13,7 +11,6 @@ import lombok.NoArgsConstructor;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@NoArgsConstructor
 public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDescriptor {
     /**
      * Serialization version marker.
@@ -33,6 +30,13 @@ public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDesc
      */
     public PasswordExpiringWarningMessageDescriptor(final String defaultMsg, final long days) {
         super(CODE, defaultMsg, new Serializable[]{days});
+    }
+
+    /**
+     * No arg constructor needed for serialization.
+     */
+    public PasswordExpiringWarningMessageDescriptor() {
+        super(CODE);
     }
 
     public long getDaysToExpiration() {

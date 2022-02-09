@@ -22,7 +22,8 @@ public class PasswordExpiringWarningMessageDescriptorTests {
     }
 
     @Test
-    public void verifyEncoding() {
-        new PasswordExpiringWarningMessageDescriptor();
+    public void verifyNoArgsConstructor() {
+        val d = new PasswordExpiringWarningMessageDescriptor();
+        assertNotNull(d.getCode());
     }
 }
