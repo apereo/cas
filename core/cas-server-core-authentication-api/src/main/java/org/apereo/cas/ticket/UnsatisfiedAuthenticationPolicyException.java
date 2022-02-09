@@ -15,9 +15,6 @@ import lombok.NonNull;
 @Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
-    /**
-     * Serializable ID for unique id.
-     */
     private static final long serialVersionUID = -827432780367197133L;
 
     /**

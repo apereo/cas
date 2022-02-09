@@ -30,9 +30,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = -3113998493287982485L;
 
     /**

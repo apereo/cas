@@ -50,8 +50,29 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     private PasswordPolicyContext passwordPolicyConfiguration;
 
     protected AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                         final PrincipalFactory principalFactory, final Integer order) {
+                                                            final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        if (!UsernamePasswordCredential.class.isInstance(credential)) {
+            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
+            return false;
+        }
+        if (getCredentialSelectionPredicate() == null) {
+            LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
+            return true;
+        }
+        LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
+        val result = getCredentialSelectionPredicate().test(credential);
+        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
+        return result;
     }
 
     @SneakyThrows
@@ -117,29 +138,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential,
-                                                                                                 String originalPassword) throws GeneralSecurityException, PreventedException;
-
-    @Override
-    public boolean supports(final Class<? extends Credential> clazz) {
-        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        if (!UsernamePasswordCredential.class.isInstance(credential)) {
-            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
-            return false;
-        }
-        if (getCredentialSelectionPredicate() == null) {
-            LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
-            return true;
-        }
-        LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
-        val result = getCredentialSelectionPredicate().test(credential);
-        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
-        return result;
-    }
+    protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        UsernamePasswordCredential credential,
+        String originalPassword) throws GeneralSecurityException, PreventedException;
 
     /**
      * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded

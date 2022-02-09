@@ -18,9 +18,6 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
      */
     public static final String MESSAGE = "Proxying is not allowed for registered service ";
 
-    /**
-     * Comment for {@code serialVersionUID}.
-     */
     private static final long serialVersionUID = -7307803750894078575L;
 
     public UnauthorizedProxyingException() {

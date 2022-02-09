@@ -31,9 +31,6 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = 205979491183779408L;
 
     /**

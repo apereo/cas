@@ -33,9 +33,6 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class SimplePrincipal implements Principal {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = -1255260750151385796L;
 
     /**

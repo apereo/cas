@@ -23,9 +23,6 @@ import org.springframework.binding.validation.ValidationContext;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = 8196868021183513898L;
 
     @JsonIgnore

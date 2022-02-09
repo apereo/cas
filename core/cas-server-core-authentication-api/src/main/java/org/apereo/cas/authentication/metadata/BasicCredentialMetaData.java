@@ -19,9 +19,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class BasicCredentialMetaData implements CredentialMetaData {
 
-    /**
-     * Serialization version marker.
-     */
     private static final long serialVersionUID = 4929579849241505377L;
 
     /**
