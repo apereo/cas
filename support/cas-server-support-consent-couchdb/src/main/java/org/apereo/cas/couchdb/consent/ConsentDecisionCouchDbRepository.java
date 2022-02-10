@@ -1,6 +1,7 @@
 package org.apereo.cas.couchdb.consent;
 
 import org.apereo.cas.consent.ConsentDecision;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.ektorp.ComplexKey;
@@ -9,6 +10,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.GenerateView;
 import org.ektorp.support.View;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 
 import java.util.List;
 
@@ -94,10 +96,12 @@ public class ConsentDecisionCouchDbRepository extends CouchDbRepositorySupport<C
      * Remove all.
      */
     public void removeAll() {
-        if (this.couchDbInstance.checkIfDbExists(db.getDatabaseName())) {
-            this.couchDbInstance.deleteDatabase(db.getDatabaseName());
-            this.couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
+        FunctionUtils.doAndHandle(unused -> {
+            if (couchDbInstance.checkIfDbExists(db.getDatabaseName())) {
+                couchDbInstance.deleteDatabase(db.getDatabaseName());
+            }
+            couchDbInstance.createDatabaseIfNotExists(db.getDatabaseName());
             initStandardDesignDocument();
-        }
+        }, (CheckedFunction<Throwable, Void>) throwable -> null).accept(null);
     }
 }
