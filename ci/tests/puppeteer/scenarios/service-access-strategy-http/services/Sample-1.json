@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "https://.+github.io.*",
+  "id": 1,
+  "name": "Sample",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy",
+    "ipAddress" : "192.\\d\\d\\d.\\d\\d\\d.101"
+  }
+}

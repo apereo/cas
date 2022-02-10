@@ -28,6 +28,7 @@ import org.apereo.cas.services.GroovyAuthenticationHandlerResolverTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.GroovyRegisteredServiceUsernameProviderTests;
+import org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.InMemoryServiceRegistryTests;
 import org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategyTests;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategyTests;
@@ -121,6 +122,7 @@ import org.junit.platform.suite.api.Suite;
     RegisteredServiceYamlSerializerTests.class,
     RegisteredServiceAuthenticationPolicyResolverTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
+    HttpRequestRegisteredServiceAccessStrategyTests.class,
     GroovyRegisteredServiceMultifactorPolicyTests.class,
     RegisteredServiceMutantRegexAttributeFilterTests.class,
     RegisteredServiceScriptedAttributeFilterTests.class,

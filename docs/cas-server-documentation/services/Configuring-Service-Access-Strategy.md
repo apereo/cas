@@ -19,7 +19,7 @@ validated when an authentication request from the application arrives.
 
 The default strategy allows one to configure a service with the following properties:
 
-| Field                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Field                     | Description                                                                                                                  |
 |---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `enabled`                 | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.                                                                                                                                                                                                                                                                                                                                                              |
 | `ssoEnabled`              | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`).                                                                                                                                                                                                                                                                                                                                                                  |
@@ -297,8 +297,7 @@ The following parameters are passed to the script:
 
 ## Time-Based
 
-The time-based access strategy is an extension of the default which additionally,
-allows one to configure a service with the following properties:
+The time-based access strategy allows one to configure a service with the following properties:
 
 | Field              | Description                                                                                                    |
 |--------------------|----------------------------------------------------------------------------------------------------------------|
@@ -327,11 +326,35 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
 
 The configuration of the public key component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
+## HTTP Request
+
+This strategy allows one to configure a service with the following properties:
+
+| Field       | Description                                                                    |
+|-------------|--------------------------------------------------------------------------------|
+| `ipAddress` | (Optional) Regular expression pattern compared against the client IP address.  |
+| `userAgent` | (Optional) Regular expression pattern compared against the browser user agent. |
+
+The objective of this policy is examine specific properties of the HTTP request and make service access decisions by comparing those properties
+with pre-defined rules and patterns, such as those that might be based on an IP address, user-agent, etc.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy",
+    "endpointUrl" : "https://somewhere.example.org",
+    "ipAddress" : "192.\\d\\d\\d.\\d\\d\\d.101",
+    "userAgent": "Chrome.+"
+  }
+}
+```
 
 ## Remote Endpoint
 
-This strategy is an extension of the default which additionally,
-allows one to configure a service with the following properties:
+This strategy allows one to configure a service access strategy with the following properties:
 
 | Field                     | Description                                                                                |
 |---------------------------|--------------------------------------------------------------------------------------------|
@@ -342,7 +365,7 @@ The objective of this policy is to ensure a remote endpoint can make service acc
 receiving the CAS authenticated principal as url parameter of a `GET` request. The response code that
 the endpoint returns is then compared against the policy setting and if a match is found, access is granted.
 
-Remote endpoint access strategy authorizing service access based on response code:
+Here is an example of the remote endpoint access strategy authorizing service access based on response code:
 
 ```json
 {

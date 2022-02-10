@@ -53,7 +53,11 @@ public class PrincipalAttributesCoreProperties implements Serializable {
     private boolean recoverExceptions = true;
 
     /**
-     * Merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources.
+     * Merging strategies can be used to resolve conflicts when the same attributes are found from multiple sources.
+     * A merging strategy is used to handle conflicts for both principal attributes as well as those that are captured
+     * by the authentication attempt. Conflicts arise when the multiple attribute sources or repositories produce the same
+     * attribute with the same name, or when there are multiple legs in an authentication flow that produce the same attribute
+     * as authentication metadata for each leg of the attempt (i.e. when going through MFA flows).
      */
     private MergingStrategyTypes merger = MergingStrategyTypes.REPLACE;
 
