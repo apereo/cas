@@ -298,6 +298,7 @@ if [[ "${RERUN}" != "true" ]]; then
   printgreen "\nReady!"
 fi
 
+RC=-1
 if [[ "${DRYRUN}" != "true" ]]; then
   if [[ "${CLEAR}" == "true" ]]; then
     clear
@@ -327,7 +328,7 @@ fi
 
 if [[ "${RERUN}" != "true" ]]; then
   if [[ "${CI}" != "true" ]]; then
-    printgreen "Hit enter to cleanup scenario ${scenario} that ended with exit code $RC\n"
+    printgreen "Hit enter to clean up scenario ${scenario}\n"
     read -r
   fi
 

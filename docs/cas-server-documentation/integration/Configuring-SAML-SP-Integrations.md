@@ -50,7 +50,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="http://www.workday.com/">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a>
 
-<a href="https://help.webex.com/docs/DOC-1067">
+<a href="https://help.webex.com/en-us/article/g5ey83/Configure-Single-Sign-On-for-Cisco-Webex-Site">
 <img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="100"></a>
 
 <a href="https://www.collegeboard.org/powerfaids/net-partner">
