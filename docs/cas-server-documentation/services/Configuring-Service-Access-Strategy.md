@@ -428,8 +428,6 @@ Grouper access strategy based on group's display extension:
   "id" : 62,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : true,
     "requireAllAttributes" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",

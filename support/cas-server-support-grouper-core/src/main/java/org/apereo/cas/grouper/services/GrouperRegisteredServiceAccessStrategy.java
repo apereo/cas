@@ -3,6 +3,7 @@ package org.apereo.cas.grouper.services;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 
 import edu.internet2.middleware.grouperClient.util.GrouperClientConfig;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,12 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 
+    /**
+     * Collection of required attributes
+     * for this service to proceed.
+     */
+    private Map<String, Set<String>> requiredAttributes = new HashMap<>(0);
+
     private Map<String, String> configProperties = new TreeMap<>();
 
     @Override
@@ -64,7 +72,11 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
             .forEach(group -> grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group)));
         LOGGER.debug("Adding [{}] under attribute name [{}] to collection of attributes", grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
         allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
-        return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
+
+        return RegisteredServiceAccessStrategyEvaluator.builder()
+            .requiredAttributes(this.requiredAttributes)
+            .build()
+            .evaluate(principal, allAttributes);
     }
 
     /**
