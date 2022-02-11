@@ -17,6 +17,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -168,8 +169,17 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                 val map = (Map) Objects.requireNonNull(scratch).getMap();
                 map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
                 val assertion = getAssertion(username, password, entityId);
-                val object = this.responseBuilder.build(authnRequest, request, response, assertion,
-                    loadedService, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, messageContext);
+                val buildContext = SamlProfileBuilderContext.builder()
+                    .samlRequest(authnRequest)
+                    .httpRequest(request)
+                    .httpResponse(response)
+                    .authenticatedAssertion(assertion)
+                    .registeredService(loadedService)
+                    .adaptor(adaptor)
+                    .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+                    .messageContext(messageContext)
+                    .build();
+                val object = responseBuilder.build(buildContext);
                 val encoded = SamlUtils.transformSamlObject(saml20ObjectBuilder.getOpenSamlConfigBean(), object, true).toString();
                 return new ResponseEntity<>(encoded, HttpStatus.OK);
             }

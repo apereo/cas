@@ -16,13 +16,14 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserSessionStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -39,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -370,6 +372,35 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     /**
+     * Build saml response.
+     *
+     * @throws Exception the exception
+     */
+    protected void buildSamlResponse(final HttpServletResponse response,
+                                     final HttpServletRequest request,
+                                     final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
+                                     final AuthenticatedAssertionContext casAssertion,
+                                     final String binding) throws Exception {
+        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
+        val pair = getRegisteredServiceAndFacade(authnRequest);
+
+        val entityId = pair.getValue().getEntityId();
+        LOGGER.debug("Preparing SAML2 response for [{}]", entityId);
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(response)
+            .authenticatedAssertion(casAssertion)
+            .registeredService(pair.getKey())
+            .adaptor(pair.getValue())
+            .binding(binding)
+            .messageContext(authenticationContext.getValue())
+            .build();
+        configurationContext.getResponseBuilder().build(buildContext);
+        LOGGER.info("Built the SAML2 response for [{}]", entityId);
+    }
+
+    /**
      * Build authentication context pair pair.
      *
      * @param request      the request
@@ -452,7 +483,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Located issuer [{}] from authentication request", issuer);
 
         val registeredService = verifySamlRegisteredService(issuer);
-        LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
+        LOGGER.debug("Fetching SAML2 metadata adaptor for [{}]", issuer);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, authnRequest);
 
@@ -519,31 +550,6 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     /**
-     * Build saml response.
-     *
-     * @param response              the response
-     * @param request               the request
-     * @param authenticationContext the authentication context
-     * @param casAssertion          the cas assertion
-     * @param binding               the binding
-     */
-    protected void buildSamlResponse(final HttpServletResponse response,
-                                     final HttpServletRequest request,
-                                     final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
-                                     final AuthenticatedAssertionContext casAssertion,
-                                     final String binding) {
-
-        val authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
-        val pair = getRegisteredServiceAndFacade(authnRequest);
-
-        val entityId = pair.getValue().getEntityId();
-        LOGGER.debug("Preparing SAML response for [{}]", entityId);
-        configurationContext.getResponseBuilder().build(authnRequest, request, response, casAssertion,
-            pair.getKey(), pair.getValue(), binding, authenticationContext.getValue());
-        LOGGER.info("Built the SAML response for [{}]", entityId);
-    }
-
-    /**
      * Gets registered service and facade.
      *
      * @param request the request
@@ -574,25 +580,25 @@ public abstract class AbstractSamlIdPProfileHandlerController {
      * @return the soap 11 context
      */
     protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
-        try {
-            val decoder = new HTTPSOAP11Decoder();
-            decoder.setParserPool(configurationContext.getOpenSamlConfigBean().getParserPool());
-            decoder.setHttpServletRequest(request);
+        return FunctionUtils.doAndHandle(new CheckedSupplier<MessageContext>() {
+            @Override
+            public MessageContext get() throws Throwable {
+                val decoder = new HTTPSOAP11Decoder();
+                decoder.setParserPool(configurationContext.getOpenSamlConfigBean().getParserPool());
+                decoder.setHttpServletRequest(request);
 
-            val binding = new BindingDescriptor();
-            binding.setId(getClass().getName());
-            binding.setShortName(getClass().getName());
-            binding.setSignatureCapable(true);
-            binding.setSynchronous(true);
+                val binding = new BindingDescriptor();
+                binding.setId(getClass().getName());
+                binding.setShortName(getClass().getName());
+                binding.setSignatureCapable(true);
+                binding.setSynchronous(true);
 
-            decoder.setBindingDescriptor(binding);
-            decoder.initialize();
-            decoder.decode();
-            return decoder.getMessageContext();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+                decoder.setBindingDescriptor(binding);
+                decoder.initialize();
+                decoder.decode();
+                return decoder.getMessageContext();
+            }
+        }, throwable -> null).get();
     }
 
     /**
@@ -632,16 +638,13 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected ModelAndView handleSsoPostProfileRequest(final HttpServletResponse response,
                                                        final HttpServletRequest request,
                                                        final BaseHttpServletRequestXMLMessageDecoder decoder) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val result = getConfigurationContext().getSamlHttpRequestExtractor()
                 .extract(request, decoder, AuthnRequest.class)
                 .orElseThrow(() -> new IllegalArgumentException("Unable to extract SAML request"));
             val context = Pair.of(AuthnRequest.class.cast(result.getLeft()), result.getRight());
             return initiateAuthenticationRequest(context, response, request);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            return WebUtils.produceErrorView(e);
-        }
+        }, WebUtils::produceErrorView).get();
     }
 
     /**

@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
@@ -48,10 +49,11 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
      *
      * @param response the response
      * @param request  the request
+     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY)
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) {
+                                     final HttpServletRequest request) throws Exception {
         val ctx = decodeSoapRequest(request);
         val query = (AttributeQuery) ctx.getMessage();
         try {
@@ -76,13 +78,13 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
             val authentication = ticket.getAuthentication();
 
             val principal = resolvePrincipalForAttributeQuery(authentication, registeredService);
-            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(registeredService)
                 .service(ticket.getService())
                 .principal(principal)
                 .build();
 
-            val principalAttributes = registeredService.getAttributeReleasePolicy().getConsentableAttributes(context);
+            val principalAttributes = registeredService.getAttributeReleasePolicy().getConsentableAttributes(releasePolicyContext);
             LOGGER.debug("Initial consentable principal attributes are [{}]", principalAttributes);
 
             val authenticationAttributes = getConfigurationContext().getAuthenticationAttributeReleasePolicy()
@@ -96,14 +98,30 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
 
             val casAssertion = buildCasAssertion(principalId, registeredService, finalAttributes);
             request.setAttribute(AttributeQuery.class.getSimpleName(), query);
-            getConfigurationContext().getResponseBuilder().build(query, request, response, casAssertion,
-                registeredService, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
+
+            val buildContext = SamlProfileBuilderContext.builder()
+                .samlRequest(query)
+                .httpRequest(request)
+                .httpResponse(response)
+                .authenticatedAssertion(casAssertion)
+                .registeredService(registeredService)
+                .adaptor(facade)
+                .binding(SAMLConstants.SAML2_SOAP11_BINDING_URI)
+                .messageContext(ctx)
+                .build();
+            getConfigurationContext().getResponseBuilder().build(buildContext);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
-            getConfigurationContext().getSamlFaultResponseBuilder().build(query, request, response,
-                null, null, null, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
+            val buildContext = SamlProfileBuilderContext.builder()
+                .samlRequest(query)
+                .httpRequest(request)
+                .httpResponse(response)
+                .binding(SAMLConstants.SAML2_SOAP11_BINDING_URI)
+                .messageContext(ctx)
+                .build();
+            getConfigurationContext().getSamlFaultResponseBuilder().build(buildContext);
         }
     }
 

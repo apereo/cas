@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.apache.xerces.xs.XSObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -338,12 +338,20 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
 
     private Response buildResponse(final MockHttpServletRequest request,
                                    final MockHttpServletResponse response,
-                                   final SamlRegisteredService service,
+                                   final SamlRegisteredService registeredService,
                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                    final AuthnRequest authnRequest,
                                    final AuthenticatedAssertionContext assertion,
-                                   final String binding) {
-        return samlProfileSamlResponseBuilder.build(authnRequest, request, response,
-            assertion, service, adaptor, binding, new MessageContext());
+                                   final String binding) throws Exception {
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(response)
+            .authenticatedAssertion(assertion)
+            .registeredService(registeredService)
+            .adaptor(adaptor)
+            .binding(binding)
+            .build();
+        return samlProfileSamlResponseBuilder.build(buildContext);
     }
 }
