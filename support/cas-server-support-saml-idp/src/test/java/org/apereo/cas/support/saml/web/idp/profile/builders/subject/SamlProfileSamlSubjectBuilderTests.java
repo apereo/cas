@@ -2,11 +2,11 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifySubjectWithNoNameId() {
+    public void verifySubjectWithNoNameId() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -44,15 +44,21 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
 
-        val result = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
-            assertion, service, adaptor,
-            SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(response)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val result = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(result);
     }
 
     @Test
-    public void verifySubjectWithSkewedConfData() {
+    public void verifySubjectWithSkewedConfData() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -68,10 +74,16 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val now = ZonedDateTime.now(ZoneOffset.UTC)
             .plusSeconds(service.getSkewAllowance()).toInstant().truncatedTo(ChronoUnit.SECONDS);
 
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
-            assertion, service, adaptor,
-            SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(response)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
         val subjectData = subject.getSubjectConfirmations().get(0).getSubjectConfirmationData();
@@ -79,7 +91,7 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
     }
 
     @Test
-    public void verifyEncryptedSubject() {
+    public void verifyEncryptedSubject() throws Exception {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -96,10 +108,16 @@ public class SamlProfileSamlSubjectBuilderTests extends BaseSamlIdPConfiguration
         val assertion = getAssertion();
 
         service.setRequiredNameIdFormat(NameID.ENCRYPTED);
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, response,
-            assertion, service, adaptor,
-            SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(response)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject);
 
         val subjectConfirmation = subject.getSubjectConfirmations().get(0);

@@ -1010,7 +1010,7 @@ public class WebUtils {
      * @param e    the e
      * @return the model and view
      */
-    public static ModelAndView produceErrorView(final String view, final Exception e) {
+    public static ModelAndView produceErrorView(final String view, final Throwable e) {
         val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         return mv;
@@ -1035,7 +1035,7 @@ public class WebUtils {
      * @param e the e
      * @return the model and view
      */
-    public static ModelAndView produceErrorView(final Exception e) {
+    public static ModelAndView produceErrorView(final Throwable e) {
         return produceErrorView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, e);
     }
 

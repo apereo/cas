@@ -71,6 +71,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -195,9 +196,9 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
             @Qualifier("samlProfileSamlSoap11FaultResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11FaultResponseBuilder,
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlSoap11FaultResponseBuilder,
             @Qualifier("samlProfileSamlSoap11ResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> samlProfileSamlSoap11ResponseBuilder) {
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlSoap11ResponseBuilder) {
             samlProfileHandlerConfigurationContext.setResponseBuilder(samlProfileSamlSoap11ResponseBuilder);
             samlProfileHandlerConfigurationContext.setSamlFaultResponseBuilder(samlProfileSamlSoap11FaultResponseBuilder);
             return new ECPSamlIdPProfileHandlerController(samlProfileHandlerConfigurationContext);
@@ -209,9 +210,9 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
             @Qualifier("samlProfileSamlArtifactFaultResponseBuilder")
-            final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactFaultResponseBuilder,
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlArtifactFaultResponseBuilder,
             @Qualifier("samlProfileSamlArtifactResponseBuilder")
-            final SamlProfileObjectBuilder<Response> samlProfileSamlArtifactResponseBuilder) {
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlArtifactResponseBuilder) {
             samlProfileHandlerConfigurationContext.setSamlFaultResponseBuilder(samlProfileSamlArtifactFaultResponseBuilder);
             samlProfileHandlerConfigurationContext.setResponseBuilder(samlProfileSamlArtifactResponseBuilder);
             return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(samlProfileHandlerConfigurationContext);
@@ -224,7 +225,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileHandlerConfigurationContext")
             final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext,
             @Qualifier("samlProfileSamlAttributeQueryResponseBuilder")
-            final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryResponseBuilder) {
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlAttributeQueryResponseBuilder) {
             samlProfileHandlerConfigurationContext.setResponseBuilder(samlProfileSamlAttributeQueryResponseBuilder);
             return new SamlIdPSaml2AttributeQueryProfileHandlerController(samlProfileHandlerConfigurationContext);
         }
@@ -539,7 +540,7 @@ public class SamlIdPEndpointsConfiguration {
             @Qualifier("samlProfileSamlResponseBuilder")
             final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder,
             @Qualifier("samlProfileSamlAttributeQueryFaultResponseBuilder")
-            final SamlProfileObjectBuilder<Response> samlProfileSamlAttributeQueryFaultResponseBuilder,
+            final SamlProfileObjectBuilder<Envelope> samlProfileSamlAttributeQueryFaultResponseBuilder,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory defaultTicketFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
