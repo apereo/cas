@@ -8,12 +8,8 @@ category: Services
 
 # Configure Service Access Strategy
 
-The access strategy of a registered service provides fine-grained control over the service authorization rules.
-It describes whether the service is allowed to use the CAS server, allowed to participate in
-single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
-attributes that must exist before access can be granted to the service. This behavior allows one to configure
-various attributes in terms of access roles for the application and define rules that would be enacted and
-validated when an authentication request from the application arrives.
+The access strategy of a registered service provides fine-grained control over the service authorization rules. It describes whether the service is allowed to use the CAS server, allowed to participate in
+single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives.
 
 ## Default Strategy
 
@@ -123,14 +119,12 @@ To access the service, the principal must have a `cn` attribute whose value is e
 }
 ```
 
-<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for 
-a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Required values for a given attribute support regular expression patterns. For example, a <code>phone</code> attribute could
 require a value pattern of <code>\d\d\d-\d\d\d-\d\d\d\d</code>.</p></div>
 
 #### Static Unauthorized Redirect URL
 
-Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`. If so,
-the user will be redirected to `https://www.github.com` instead.
+Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`. If so, the user will be redirected to `https://www.github.com` instead.
 
 ```json
 {
@@ -151,9 +145,7 @@ the user will be redirected to `https://www.github.com` instead.
 
 #### Dynamic Unauthorized Redirect URL
 
-Service access is denied if the principal does *not* have a `cn` attribute 
-containing the value `super-user`. If so, the redirect URL
-will be dynamically determined based on outcome of the specified Groovy script.
+Service access is denied if the principal does *not* have a `cn` attribute containing the value `super-user`. If so, the redirect URL will be dynamically determined based on outcome of the specified Groovy script.
 
 ```json
 {
@@ -232,10 +224,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 
 #### Enforce Must-Not-Have Attributes
 
-To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
-OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`. The principal
-also must not have an attribute "role" whose value matches the pattern `deny.+`.
-
+To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`. The principal also must not have an attribute "role" whose value matches the pattern `deny.+`.
 
 ```json
 {
@@ -261,8 +250,7 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
 }
 ```
 
-<div class="alert alert-info"><strong>Supported Syntax</strong><p>Rejected values for 
-a given attribute support regular expression patterns. For example, a <code>role</code> attribute could
+<div class="alert alert-info"><strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular expression patterns. For example, a <code>role</code> attribute could
 be designed with a value value pattern of <code>admin-.*</code>.</p></div>
 
 ## Global Groovy Script
@@ -314,9 +302,6 @@ Service access is only allowed within `startingDateTime` and `endingDateTime`:
   "id" : 62,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : true,
-    "unauthorizedRedirectUrl" : "https://www.github.com",
     "startingDateTime" : "2015-11-01T13:19:54.132-07:00",
     "endingDateTime" : "2015-11-10T13:19:54.248-07:00",
     "zoneId" : "UTC"
@@ -345,7 +330,6 @@ with pre-defined rules and patterns, such as those that might be based on an IP 
   "id" : 1,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy",
-    "endpointUrl" : "https://somewhere.example.org",
     "ipAddress" : "192.\\d\\d\\d.\\d\\d\\d.101",
     "userAgent": "Chrome.+"
   }
