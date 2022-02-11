@@ -29,7 +29,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.context.session.SessionStore;
 
 import javax.annotation.Nonnull;
@@ -68,7 +68,7 @@ public class SamlProfileHandlerConfigurationContext {
     private final OpenSamlConfigBean openSamlConfigBean;
 
     @Nonnull
-    private SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
+    private SamlProfileObjectBuilder<? extends XMLObject> responseBuilder;
 
     @Nonnull
     private final SamlIdPLogoutResponseObjectBuilder logoutResponseBuilder;
@@ -92,7 +92,7 @@ public class SamlProfileHandlerConfigurationContext {
     private HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
 
     @Nonnull
-    private SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
+    private SamlProfileObjectBuilder<? extends XMLObject> samlFaultResponseBuilder;
 
     @Nonnull
     private final TicketValidator ticketValidator;

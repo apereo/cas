@@ -4,6 +4,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -38,10 +39,11 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
      *
      * @param response the response
      * @param request  the request
+     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) {
+                                     final HttpServletRequest request) throws Exception {
         val ctx = decodeSoapRequest(request);
         val artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {
@@ -66,14 +68,31 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
             val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
                 issuerService, registeredService,
                 CollectionUtils.wrap("artifact", ticket));
-            getConfigurationContext().getResponseBuilder().build(artifactMsg, request, response, casAssertion,
-                registeredService, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+
+            val buildContext = SamlProfileBuilderContext.builder()
+                .samlRequest(artifactMsg)
+                .httpRequest(request)
+                .httpResponse(response)
+                .authenticatedAssertion(casAssertion)
+                .registeredService(registeredService)
+                .adaptor(facade)
+                .binding(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)
+                .messageContext(ctx)
+                .build();
+            getConfigurationContext().getResponseBuilder().build(buildContext);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR,
                 "Unable to build SOAP response: " + StringUtils.defaultString(e.getMessage()));
-            getConfigurationContext().getSamlFaultResponseBuilder().build(artifactMsg, request, response,
-                null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+
+            val buildContext = SamlProfileBuilderContext.builder()
+                .samlRequest(artifactMsg)
+                .httpRequest(request)
+                .httpResponse(response)
+                .binding(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)
+                .messageContext(ctx)
+                .build();
+            getConfigurationContext().getSamlFaultResponseBuilder().build(buildContext);
         }
     }
 }
