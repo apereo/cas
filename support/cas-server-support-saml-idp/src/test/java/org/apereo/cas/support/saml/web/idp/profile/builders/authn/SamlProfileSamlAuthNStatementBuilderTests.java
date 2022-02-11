@@ -2,12 +2,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,22 +32,25 @@ public class SamlProfileSamlAuthNStatementBuilderTests extends BaseSamlIdPConfig
     private SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder;
 
     @Test
-    public void verifyOperation() {
-        val assertion = getAssertion();
+    public void verifyOperation() throws Exception {
         val request = getAuthnRequestFor(UUID.randomUUID().toString());
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(
             samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
-        
-        val result = samlProfileSamlAuthNStatementBuilder.build(request,
-            new MockHttpServletRequest(),
-            new MockHttpServletResponse(),
-            assertion, service,
-            adaptor,
-            SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(request)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val result = samlProfileSamlAuthNStatementBuilder.build(buildContext);
         assertNotNull(result);
     }
 }

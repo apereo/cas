@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -33,7 +34,15 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
         service.setRequiredAuthenticationContextClass("some-context-class");
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
-        val result = builder.build(getAssertion(), authnRequest, adaptor.get(), service);
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+
+        val result = builder.build(buildContext);
         assertEquals(service.getRequiredAuthenticationContextClass(), result);
     }
 
@@ -46,7 +55,14 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
         when(context.getAuthnContextClassRefs()).thenReturn(List.of());
         when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
-        val result = builder.build(getAssertion(), authnRequest, adaptor.get(), service);
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+        val result = builder.build(buildContext);
         assertEquals(AuthnContext.PPT_AUTHN_CTX, result);
     }
 
@@ -62,7 +78,14 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
         when(context.getAuthnContextClassRefs()).thenReturn(List.of(classRef));
         when(authnRequest.getRequestedAuthnContext()).thenReturn(context);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
-        val result = builder.build(getAssertion(), authnRequest, adaptor.get(), service);
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+        val result = builder.build(buildContext);
         assertEquals(AuthnContext.PPT_AUTHN_CTX, result);
     }
 
@@ -71,7 +94,7 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
         val props = new CasConfigurationProperties();
         props.getAuthn().getSamlIdp().getCore().getAuthenticationContextClassMappings()
             .add(String.format("https://refeds.org/profile/mfa->%s", TestMultifactorAuthenticationProvider.ID));
-        
+
         val builder = new DefaultAuthnContextClassRefBuilder(props);
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
@@ -85,7 +108,14 @@ public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigur
             samlRegisteredServiceCachingMetadataResolver, service, authnRequest);
         val assertion = getAssertion(Map.of(props.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
             TestMultifactorAuthenticationProvider.ID));
-        val result = builder.build(assertion, authnRequest, adaptor.get(), service);
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .authenticatedAssertion(assertion)
+            .registeredService(service)
+            .adaptor(adaptor.get())
+            .build();
+        val result = builder.build(buildContext);
         assertEquals("https://refeds.org/profile/mfa", result);
     }
 }

@@ -2,12 +2,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
     private SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder;
 
     @Test
-    public void verifyNoEncryption() {
+    public void verifyNoEncryption() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
@@ -46,71 +46,111 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilderTests extends BaseS
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
-        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service2,
-            adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
 
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(getAuthnRequestFor(service))
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service2)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
         assertTrue(statement.getEncryptedAttributes().isEmpty());
         assertFalse(statement.getAttributes().isEmpty());
     }
 
     @Test
-    public void verifyEncryptionDisabledIfAssertionEncrypted() {
+    public void verifyEncryptionDisabledIfAssertionEncrypted() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.setEncryptAssertions(true);
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
-        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(getAuthnRequestFor(service))
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
 
         assertTrue(statement.getEncryptedAttributes().isEmpty());
         assertFalse(statement.getAttributes().isEmpty());
     }
 
     @Test
-    public void verifyEncryptionForAllUndefined() {
+    public void verifyEncryptionForAllUndefined() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade
             .get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
-        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(getAuthnRequestFor(service))
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
 
         assertFalse(statement.getEncryptedAttributes().isEmpty());
         assertTrue(statement.getAttributes().isEmpty());
     }
 
     @Test
-    public void verifyEncryptionForAll() {
+    public void verifyEncryptionForAll() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("*");
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
-        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(getAuthnRequestFor(service))
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
 
         assertFalse(statement.getEncryptedAttributes().isEmpty());
         assertTrue(statement.getAttributes().isEmpty());
     }
 
     @Test
-    public void verifyEncryptionForSome() {
+    public void verifyEncryptionForSome() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setEncryptAttributes(true);
         service.getEncryptableAttributes().add("uid");
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
-        val statement = samlProfileSamlAttributeStatementBuilder.build(getAuthnRequestFor(service), new MockHttpServletRequest(),
-            new MockHttpServletResponse(), getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI,
-            new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(getAuthnRequestFor(service))
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val statement = samlProfileSamlAttributeStatementBuilder.build(buildContext);
 
         assertFalse(statement.getEncryptedAttributes().isEmpty());
         assertFalse(statement.getAttributes().isEmpty());

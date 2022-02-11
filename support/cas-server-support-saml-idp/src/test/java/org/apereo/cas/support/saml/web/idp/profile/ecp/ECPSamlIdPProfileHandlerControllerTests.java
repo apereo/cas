@@ -54,7 +54,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyOK() {
+    public void verifyOK() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -71,7 +71,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyBadAuthn() {
+    public void verifyBadAuthn() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -90,7 +90,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyNoCredentials() {
+    public void verifyNoCredentials() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -104,7 +104,7 @@ public class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    public void verifyFailures() {
+    public void verifyFailures() throws Exception {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         val headers = HttpUtils.createBasicAuthHeaders("casuser", "casuser");

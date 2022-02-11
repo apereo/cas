@@ -64,8 +64,9 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
-import org.opensaml.saml.saml2.ecp.Response;
+import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -93,7 +94,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryFaultResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlAttributeQueryFaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -143,7 +144,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlAttributeQueryResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -189,7 +190,7 @@ public class SamlIdPConfiguration {
                 .build();
             return new SamlProfileAttributeQueryResponseBuilder(context);
         }
-        
+
         @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -207,7 +208,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlSoap11FaultResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlSoap11FaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -234,7 +235,7 @@ public class SamlIdPConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)
@@ -257,7 +258,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlSoap11ResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlSoap11ResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -307,7 +308,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlArtifactFaultResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactFaultResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlArtifactFaultResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -357,7 +358,7 @@ public class SamlIdPConfiguration {
         @ConditionalOnMissingBean(name = "samlProfileSamlArtifactResponseBuilder")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactResponseBuilder(
+        public SamlProfileObjectBuilder<Envelope> samlProfileSamlArtifactResponseBuilder(
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
@@ -384,7 +385,7 @@ public class SamlIdPConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier("samlProfileSamlResponseBuilder")
-            final SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder) {
+            final SamlProfileObjectBuilder<Response> samlProfileSamlResponseBuilder) {
             val context = SamlProfileSamlResponseBuilderConfigurationContext.builder()
                 .samlIdPMetadataResolver(casSamlIdPMetadataResolver)
                 .openSamlConfigBean(openSamlConfigBean)

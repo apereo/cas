@@ -3,13 +3,13 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -44,7 +44,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     private SamlProfileObjectBuilder<SAMLObject> samlProfileSamlNameIdBuilder;
 
     @Test
-    public void verifyNoSupportedFormats() {
+    public void verifyNoSupportedFormats() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -63,15 +63,23 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
         when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>(0));
-        val result = samlProfileSamlNameIdBuilder.build(authnRequest, new MockHttpServletRequest(),
-            new MockHttpServletResponse(),
-            getAssertion(), service, facade,
-            SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(facade)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val result = samlProfileSamlNameIdBuilder.build(buildContext);
         assertNotNull(result);
     }
 
     @Test
-    public void verifyUnknownSupportedFormats() {
+    public void verifyUnknownSupportedFormats() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -89,14 +97,24 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
         when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>(0));
-        val result = samlProfileSamlNameIdBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(null, Map.of()), service, facade, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion(null, Map.of()))
+            .registeredService(service)
+            .adaptor(facade)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val result = samlProfileSamlNameIdBuilder.build(buildContext);
         assertNull(result);
     }
 
 
     @Test
-    public void verifyNameId() {
+    public void verifyNameId() throws Exception {
         verifyNameIdByFormat(NameID.EMAIL);
         verifyNameIdByFormat(NameID.TRANSIENT);
         verifyNameIdByFormat(NameID.PERSISTENT);
@@ -108,7 +126,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     }
 
     @Test
-    public void verifyPersistedNameIdFormat() {
+    public void verifyPersistedNameIdFormat() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.PERSISTENT);
 
@@ -116,8 +134,17 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject.getNameID());
         assertEquals(NameID.PERSISTENT, subject.getNameID().getFormat());
         assertEquals(adaptor.getEntityId(), subject.getNameID().getSPNameQualifier());
@@ -125,7 +152,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     }
 
     @Test
-    public void verifyAttributeQueryNameID() {
+    public void verifyAttributeQueryNameID() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.PERSISTENT);
 
@@ -142,8 +169,16 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
 
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
-        val subject = samlProfileSamlSubjectBuilder.build(attributeQuery, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(attributeQuery)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject.getNameID());
 
         assertEquals(aqNameId.getValue(), subject.getNameID().getValue());
@@ -153,7 +188,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     }
 
     @Test
-    public void verifyPersistedNameIdFormatWithServiceEntityIdOverride() {
+    public void verifyPersistedNameIdFormatWithServiceEntityIdOverride() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.PERSISTENT);
         service.setIssuerEntityId(UUID.randomUUID().toString());
@@ -163,8 +198,17 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).get();
 
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNotNull(subject.getNameID());
         assertEquals(NameID.PERSISTENT, subject.getNameID().getFormat());
         assertEquals(adaptor.getEntityId(), subject.getNameID().getSPNameQualifier());
@@ -174,7 +218,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
 
     @Test
     @SuppressWarnings("JavaUtilDate")
-    public void verifyEncryptedNameIdFormat() {
+    public void verifyEncryptedNameIdFormat() throws Exception {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.ENCRYPTED);
         service.setSkipGeneratingSubjectConfirmationNameId(false);
@@ -185,8 +229,16 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
             service, service.getServiceId()).get();
 
         val request = new MockHttpServletRequest();
-        val subject = samlProfileSamlSubjectBuilder.build(authnRequest, request, new MockHttpServletResponse(),
-            getAssertion(), service, adaptor, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(request)
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
         assertNull(subject.getNameID());
         assertNotNull(subject.getEncryptedID());
         assertFalse(subject.getSubjectConfirmations().isEmpty());
@@ -197,7 +249,7 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     }
 
     @Test
-    public void verifySkipTransient() {
+    public void verifySkipTransient() throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -214,14 +266,23 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT));
-        val result = (NameID) samlProfileSamlNameIdBuilder.build(authnRequest, new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(), service, facade, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(facade)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(buildContext);
         assertNotNull(result);
         assertEquals(NameID.TRANSIENT, result.getFormat());
         assertEquals("casuser", result.getValue());
     }
 
-    private void verifyNameIdByFormat(final String format) {
+    private void verifyNameIdByFormat(final String format) throws Exception {
         val authnRequest = mock(AuthnRequest.class);
         val issuer = mock(Issuer.class);
         when(issuer.getValue()).thenReturn("https://idp.example.org");
@@ -237,9 +298,17 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         val facade = mock(SamlRegisteredServiceServiceProviderMetadataFacade.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
         when(facade.getSupportedNameIdFormats()).thenReturn(CollectionUtils.wrapList(NameID.TRANSIENT, format));
-        val result = (NameID) samlProfileSamlNameIdBuilder.build(authnRequest,
-            new MockHttpServletRequest(), new MockHttpServletResponse(),
-            getAssertion(), service, facade, SAMLConstants.SAML2_POST_BINDING_URI, new MessageContext());
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(getAssertion())
+            .registeredService(service)
+            .adaptor(facade)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(buildContext);
         assertNotNull(result);
         assertEquals(format, result.getFormat());
         if (format.equals(NameID.TRANSIENT)) {

@@ -84,8 +84,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
         }
         return WebUtils.produceErrorView(new IllegalArgumentException("Unable to build SAML response"));
     }
-
-
+    
     private ModelAndView handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         val authnContext = retrieveAuthenticationRequest(response, request);
 
