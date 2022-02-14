@@ -41,14 +41,13 @@ public class LdapAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnLdapAuthenticationEnabled
     public PrincipalFactory ldapPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapAuthenticationHandlerSetFactoryBean")
-    @ConditionalOnLdapAuthenticationEnabled
     public SetFactoryBean ldapAuthenticationHandlerSetFactoryBean() {
         return LdapUtils.createLdapAuthenticationFactoryBean();
     }
@@ -59,7 +58,6 @@ public class LdapAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnLdapAuthenticationEnabled
         public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
@@ -87,7 +85,6 @@ public class LdapAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
         @Bean
-        @ConditionalOnLdapAuthenticationEnabled
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")
