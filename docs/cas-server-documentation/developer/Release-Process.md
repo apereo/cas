@@ -131,12 +131,12 @@ based on the newly-released version.
 <div class="alert alert-warning"><strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
-- Modify the `cas-server-documentation/cas-config.yml` file to exclude relevant branches and directories from the build. 
+- Modify the `cas-server-documentation/_config.yml` file to exclude relevant branches and directories from the build. 
 - Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/gh-pages/_layouts/default.html).
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](Build-Process.html) to include any needed information on how to build the new release.
 - Update [the release notes](../release_notes/Overview.html) and remove all previous entries.
-- Send a pull request to [Algolia](https://github.com/algolia/docsearch-configs/blob/master/configs/apereo.json) for the new documentation version to index the new space for search requests.
+- Send a pull request to [Algolia](https://crawler.algolia.com/) for the new documentation version to index the new space for search requests.
 
 ## Update Maintenance Policy
 
