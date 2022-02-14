@@ -13,10 +13,8 @@ env:
 
 on:
   push:
-    branches: [ 6.5.x ]
-  pull_request:
-    types: [ labeled ]
-    branches: [ 6.5.x ]
+    branches-ignore:
+      - '**'
 
 ##########################################################################
 
