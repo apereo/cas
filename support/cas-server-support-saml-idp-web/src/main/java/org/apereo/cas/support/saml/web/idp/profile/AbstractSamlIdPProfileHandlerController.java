@@ -374,6 +374,11 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     /**
      * Build saml response.
      *
+     * @param response              the response
+     * @param request               the request
+     * @param authenticationContext the authentication context
+     * @param casAssertion          the cas assertion
+     * @param binding               the binding
      * @throws Exception the exception
      */
     protected void buildSamlResponse(final HttpServletResponse response,
