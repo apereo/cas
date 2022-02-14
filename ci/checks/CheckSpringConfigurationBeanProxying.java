@@ -33,12 +33,8 @@ public class CheckSpringConfigurationBeanProxying {
 
     protected static void checkPattern(final String arg) throws IOException {
         var failBuild = new AtomicBoolean(false);
-        final var results = new ArrayList<>();
-
-        var patternBeanMethods = Pattern.compile("public\\s\\w+(<\\w+>)*\\s(\\w+)\\(");
-
         Files.walk(Paths.get(arg))
-            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("SurrogateAuthenticationAuditConfiguration.java"))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith(".java"))
             .forEach(file -> {
                 var text = readFile(file);
                 if (text.contains("@Configuration")) {
