@@ -11,7 +11,6 @@ import lombok.val;
 import org.ektorp.DbAccessException;
 import org.ektorp.DocumentNotFoundException;
 import org.ektorp.UpdateConflictException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +51,6 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistryCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
-
-    @AfterEach
-    public void afterEachTest() {
-        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
