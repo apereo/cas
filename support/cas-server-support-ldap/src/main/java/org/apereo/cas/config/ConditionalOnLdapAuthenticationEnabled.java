@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * @since 6.5.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Documented
 @ConditionalOnMultiValuedProperty(name = "cas.authn.ldap[0]", value = {"ldap-url", "type"})
 public @interface ConditionalOnLdapAuthenticationEnabled {

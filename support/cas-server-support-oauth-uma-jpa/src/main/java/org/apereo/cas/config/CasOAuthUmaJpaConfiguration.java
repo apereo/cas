@@ -41,8 +41,7 @@ import javax.sql.DataSource;
 @ConditionalOnProperty(name = "cas.authn.oauth.uma.resource-set.jpa.url")
 @Configuration(value = "CasOAuthUmaJpaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaJpaConfiguration {
-
-
+    
     @Configuration(value = "CasOAuthUmaJpaEntityConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaJpaEntityConfiguration {
