@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.ConditionalOnAcceptableUsageEnabled;
 import org.apereo.cas.aup.CouchDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -26,7 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CasAcceptableUsagePolicyCoucbDbConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnAcceptableUsageEnabled
 public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @ConditionalOnMissingBean(name = "aupCouchDbFactory")

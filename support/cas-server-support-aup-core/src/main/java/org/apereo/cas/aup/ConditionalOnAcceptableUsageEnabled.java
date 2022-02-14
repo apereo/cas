@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  */
 @ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
 public @interface ConditionalOnAcceptableUsageEnabled {
 }

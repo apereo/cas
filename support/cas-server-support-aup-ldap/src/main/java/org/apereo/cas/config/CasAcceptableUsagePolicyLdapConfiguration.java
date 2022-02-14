@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.ConditionalOnAcceptableUsageEnabled;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Configuration(value = "CasAcceptableUsagePolicyLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnAcceptableUsageEnabled
 public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

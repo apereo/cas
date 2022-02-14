@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.ConditionalOnAcceptableUsageEnabled;
 import org.apereo.cas.aup.JdbcAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -29,7 +30,7 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "CasAcceptableUsagePolicyJdbcConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnAcceptableUsageEnabled
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Bean

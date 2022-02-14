@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.ConditionalOnAcceptableUsageEnabled;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,7 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnAcceptableUsageEnabled
 @Configuration(value = "CasAcceptableUsagePolicyMongoDbConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 

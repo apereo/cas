@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.ConditionalOnAcceptableUsageEnabled;
 import org.apereo.cas.aup.DefaultAcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.GroovyAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -45,7 +46,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.acceptable-usage-policy.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnAcceptableUsageEnabled
 @Configuration(value = "CasAcceptableUsagePolicyWebflowConfiguration", proxyBeanMethods = false)
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
