@@ -37,18 +37,19 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "LdapAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnMultiValuedProperty(name = "cas.authn.ldap[0]", value = {"ldap-url", "type"})
 public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnLdapAuthenticationEnabled
     public PrincipalFactory ldapPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "ldapAuthenticationHandlerSetFactoryBean")
+    @ConditionalOnLdapAuthenticationEnabled
     public SetFactoryBean ldapAuthenticationHandlerSetFactoryBean() {
         return LdapUtils.createLdapAuthenticationFactoryBean();
     }
@@ -59,6 +60,7 @@ public class LdapAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnLdapAuthenticationEnabled
         public BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers(
             @Qualifier("ldapAuthenticationHandlerSetFactoryBean")
             final SetFactoryBean ldapAuthenticationHandlerSetFactoryBean,
@@ -86,12 +88,13 @@ public class LdapAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "ldapAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @ConditionalOnLdapAuthenticationEnabled
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("ldapAuthenticationHandlers")
             final BeanContainer<AuthenticationHandler> ldapAuthenticationHandlers,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver) throws Exception {
+            final PrincipalResolver defaultPrincipalResolver) {
             return plan -> ldapAuthenticationHandlers.toList().forEach(handler -> {
                 LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
