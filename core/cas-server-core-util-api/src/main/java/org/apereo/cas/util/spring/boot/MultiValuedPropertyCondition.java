@@ -39,7 +39,7 @@ public class MultiValuedPropertyCondition extends SpringBootCondition {
         if (matched) {
             return ConditionOutcome.match("Found matching property for " + name);
         }
-        return ConditionOutcome.noMatch("Could not find matching property for " + name);
+        return ConditionOutcome.noMatch("Could not find matching property values for " + values + " via prefix " + name);
     }
 
 }
