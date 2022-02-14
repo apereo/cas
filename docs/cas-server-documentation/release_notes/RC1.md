@@ -58,3 +58,13 @@ The following items are new improvements and enhancements presented in this rele
 
 ## Library Upgrades
 
+- AspectJ
+- Spring Data CosmosDb
+- Spring Cloud AWS
+- Bucket4j
+- MongoDb Driver
+- CosmosDb
+- Kryo
+- Gson
+- Nimbus OIDC
+

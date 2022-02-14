@@ -50,8 +50,9 @@ public class SamlProfileBuilderContext {
     /**
      * Transfer to a new context.
      *
-     * @param request     the query
+     * @param request   the query
      * @param toBinding the binding
+     * @return the saml profile builder context
      */
     public SamlProfileBuilderContext transferTo(final RequestAbstractType request, final String toBinding) {
         return SamlProfileBuilderContext.builder()
