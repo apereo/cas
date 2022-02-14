@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -37,7 +36,6 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "LdapAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnMultiValuedProperty(name = "cas.authn.ldap[0]", value = {"ldap-url", "type"})
 public class LdapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
