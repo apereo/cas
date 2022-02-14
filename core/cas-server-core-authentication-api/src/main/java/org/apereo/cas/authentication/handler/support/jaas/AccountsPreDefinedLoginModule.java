@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,12 +27,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class AccountsPreDefinedLoginModule implements LoginModule {
     private Subject subject;
 
     private CallbackHandler callbackHandler;
-    
+
     private Map<String, String> accounts;
 
     private boolean succeeded;
@@ -60,12 +58,11 @@ public class AccountsPreDefinedLoginModule implements LoginModule {
         val nameCallback = new NameCallback("username");
         val passwordCallback = new PasswordCallback("password", false);
 
-        try {
+        FunctionUtils.doAndHandle(o -> {
             callbackHandler.handle(new Callback[]{nameCallback, passwordCallback});
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new FailedLoginException(e.getMessage());
-        }
+        }, throwable -> {
+            throw new FailedLoginException(throwable.getMessage());
+        }).accept(nameCallback);
 
         val username = nameCallback.getName();
         if (accounts.containsKey(username)) {

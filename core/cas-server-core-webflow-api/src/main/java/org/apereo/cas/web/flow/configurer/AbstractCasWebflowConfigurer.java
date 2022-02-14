@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.configurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 
 import lombok.AccessLevel;
@@ -13,6 +14,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -128,16 +130,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public void initialize() {
-        try {
+        FunctionUtils.doAndHandle(o -> {
             LOGGER.trace("Initializing CAS webflow configuration...");
             if (casProperties.getWebflow().getAutoConfiguration().isEnabled()) {
                 doInitialize();
             } else {
                 LOGGER.info("Webflow auto-configuration is disabled for [{}]", getClass().getName());
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+        }, throwable -> null).accept(this);
     }
 
     @Override
