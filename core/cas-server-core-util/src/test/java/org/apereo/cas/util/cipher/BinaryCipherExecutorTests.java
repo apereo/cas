@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

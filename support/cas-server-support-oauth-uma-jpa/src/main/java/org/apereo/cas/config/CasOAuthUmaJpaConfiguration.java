@@ -85,7 +85,6 @@ public class CasOAuthUmaJpaConfiguration {
     @Configuration(value = "CasOAuthUmaJpaTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaJpaTransactionConfiguration {
-
         @Bean
         public PlatformTransactionManager umaTransactionManager(
             @Qualifier("umaEntityManagerFactory")
@@ -94,8 +93,6 @@ public class CasOAuthUmaJpaConfiguration {
             mgmr.setEntityManagerFactory(emf);
             return mgmr;
         }
-
-
     }
 
     @Configuration(value = "CasOAuthUmaJpaDataConfiguration", proxyBeanMethods = false)

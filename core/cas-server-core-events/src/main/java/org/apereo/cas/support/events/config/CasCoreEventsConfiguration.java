@@ -46,8 +46,7 @@ public class CasCoreEventsConfiguration {
             return new DefaultLoggingCasEventListener();
         }
     }
-
-
+    
     @Configuration(value = "CasCoreEventsWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEventsWebConfiguration {
