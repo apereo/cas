@@ -10,6 +10,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,11 +26,10 @@ public class AccountsPreDefinedLoginModuleTests {
     @Test
     public void verifyOperation() throws Exception {
         val module = new AccountsPreDefinedLoginModule();
-        assertThrows(FailedLoginException.class, module::login);
+        assertThrowsWithRootCause(IllegalArgumentException.class, FailedLoginException.class, module::login);
         assertFalse(module.abort());
         module.initialize(new Subject(true, Set.of(new AccountsPreDefinedLoginModule.StaticPrincipal()),
             Set.of(), Set.of()), mock(CallbackHandler.class), Map.of(), Map.of());
         assertFalse(module.login());
     }
-
 }
