@@ -8,10 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.jooq.lambda.Unchecked;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -94,8 +94,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     @Override
-    @SneakyThrows
     public OneTimeTokenAccount clone() {
-        return (OneTimeTokenAccount) super.clone();
+        return Unchecked.supplier(() -> (OneTimeTokenAccount) super.clone()).get();
     }
 }

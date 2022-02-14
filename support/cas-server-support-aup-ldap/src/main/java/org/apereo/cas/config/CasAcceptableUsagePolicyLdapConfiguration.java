@@ -10,7 +10,6 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;

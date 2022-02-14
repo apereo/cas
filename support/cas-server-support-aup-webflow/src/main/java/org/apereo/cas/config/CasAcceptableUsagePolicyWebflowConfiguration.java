@@ -28,7 +28,6 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
