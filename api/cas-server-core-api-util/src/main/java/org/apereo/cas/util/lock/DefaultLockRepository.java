@@ -1,8 +1,8 @@
 package org.apereo.cas.util.lock;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.integration.support.locks.LockRegistry;
 
 import java.util.Optional;
@@ -22,18 +22,19 @@ public class DefaultLockRepository implements LockRepository {
     private final LockRegistry lockRegistry;
 
     @Override
-    @SneakyThrows
     public <T> Optional<T> execute(final Object lockKey, final Supplier<T> consumer) {
-        val lock = lockRegistry.obtain(lockKey);
-        val lockFound = lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        return Optional.of(lockFound)
-            .filter(Boolean::booleanValue)
-            .map(result -> {
-                try {
-                    return consumer.get();
-                } finally {
-                    lock.unlock();
-                }
-            });
+        return Unchecked.supplier(() -> {
+            val lock = lockRegistry.obtain(lockKey);
+            val lockFound = lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            return Optional.of(lockFound)
+                .filter(Boolean::booleanValue)
+                .map(result -> {
+                    try {
+                        return consumer.get();
+                    } finally {
+                        lock.unlock();
+                    }
+                });
+        }).get();
     }
 }

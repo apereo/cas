@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
 import com.google.common.collect.Maps;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.codec.binary.Hex;
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,12 +84,13 @@ public interface ProtocolAttributeEncoder {
      * @param s the s
      * @return the string
      */
-    @SneakyThrows
     static String decodeAttribute(final String s) {
-        if (isAttributeNameEncoded(s)) {
-            return new String(Hex.decodeHex(s.substring(1)), StandardCharsets.UTF_8);
-        }
-        return s;
+        return Unchecked.supplier(() -> {
+            if (isAttributeNameEncoded(s)) {
+                return new String(Hex.decodeHex(s.substring(1)), StandardCharsets.UTF_8);
+            }
+            return s;
+        }).get();
     }
 
     /**

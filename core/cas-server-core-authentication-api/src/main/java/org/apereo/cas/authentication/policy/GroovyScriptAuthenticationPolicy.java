@@ -15,9 +15,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.persistence.Transient;
@@ -55,10 +55,11 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     }
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication auth,
-                                                             final Set<AuthenticationHandler> authenticationHandlers,
-                                                             final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(
+        final Authentication auth,
+        final Set<AuthenticationHandler> authenticationHandlers,
+        final ConfigurableApplicationContext applicationContext,
+        final Optional<Serializable> assertion) throws Exception {
         initializeWatchableScriptIfNeeded();
         val ex = getScriptExecutionResult(auth);
         if (ex != null && ex.isPresent()) {
@@ -69,14 +70,15 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Override
     public boolean shouldResumeOnFailure(final Throwable failure) {
-        initializeWatchableScriptIfNeeded();
-        val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
-        executableScript.setBinding(args);
-        return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+        return Unchecked.supplier(() -> {
+            initializeWatchableScriptIfNeeded();
+            val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
+            executableScript.setBinding(args);
+            return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+        }).get();
     }
 
-    @SneakyThrows
-    private void initializeWatchableScriptIfNeeded() {
+    private void initializeWatchableScriptIfNeeded() throws Exception {
         if (this.executableScript == null) {
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
             if (!matcherFile.find()) {

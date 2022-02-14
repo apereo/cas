@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.model.core.authentication.AttributeRepositor
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.jooq.lambda.Unchecked;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
 
@@ -85,7 +85,6 @@ public class Beans {
      * @param value the length in seconds.
      * @return the duration
      */
-    @SneakyThrows
     public static Duration newDuration(final String value) {
         if ("0".equalsIgnoreCase(value) || "NEVER".equalsIgnoreCase(value)) {
             return Duration.ZERO;
@@ -106,8 +105,7 @@ public class Beans {
      * @param suffix the suffix
      * @return the temp file path
      */
-    @SneakyThrows
     public static String getTempFilePath(final String prefix, final String suffix) {
-        return File.createTempFile(prefix, suffix).getCanonicalPath();
+        return Unchecked.supplier(() -> File.createTempFile(prefix, suffix).getCanonicalPath()).get();
     }
 }

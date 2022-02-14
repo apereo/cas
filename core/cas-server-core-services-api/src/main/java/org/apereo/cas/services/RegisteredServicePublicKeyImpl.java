@@ -12,12 +12,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 
 import javax.crypto.Cipher;
 import java.security.PublicKey;
@@ -46,32 +46,34 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     private String algorithm = "RSA";
 
-    @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        if (StringUtils.isNotBlank(this.location)) {
-            LOGGER.trace("Attempting to read public key from [{}]", this.location);
-            val factory = initializePublicKeyFactoryBean();
-            return factory.getObject();
-        }
-        LOGGER.warn("No public key location is defined");
-        return null;
+        return Unchecked.supplier(() -> {
+            if (StringUtils.isNotBlank(this.location)) {
+                LOGGER.trace("Attempting to read public key from [{}]", this.location);
+                val factory = initializePublicKeyFactoryBean();
+                return factory.getObject();
+            }
+            LOGGER.warn("No public key location is defined");
+            return null;
+        }).get();
     }
 
 
     @Override
     public Cipher toCipher() {
-        if (StringUtils.isNotBlank(this.location)) {
-            LOGGER.trace("Attempting to initialize the cipher for public key [{}]", this.location);
-            return initializePublicKeyFactoryBean().toCipher();
-        }
-        LOGGER.warn("NO public key location is defined");
-        return null;
+        return Unchecked.supplier(() -> {
+            if (StringUtils.isNotBlank(location)) {
+                LOGGER.trace("Attempting to initialize the cipher for public key [{}]", location);
+                return initializePublicKeyFactoryBean().toCipher();
+            }
+            LOGGER.warn("NO public key location is defined");
+            return null;
+        }).get();
     }
 
     @JsonIgnore
-    @SneakyThrows
-    private PublicKeyFactoryBean initializePublicKeyFactoryBean() {
+    private PublicKeyFactoryBean initializePublicKeyFactoryBean() throws Exception {
         val resolved = SpringExpressionLanguageValueResolver.getInstance().resolve(this.location);
         val resource = ResourceUtils.getResourceFrom(resolved);
         val factory = new PublicKeyFactoryBean(resource, this.algorithm);
