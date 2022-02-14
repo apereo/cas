@@ -79,7 +79,7 @@ skip this step and move on to next section to build and release.</p></div>
 releases, when new branches are created.</p></div>
  
 Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
-* 
+
 * Modify the `analysis.yml` workflow to run on the newly-created branch. Disable `spotBugsMain`, `spotBugsTest` and `checkLicense` tasks.
 * Modify the `validation.yml` workflow to run on the newly-created branch.
 * Modify the `build.yml` workflow to run on the newly-created branch, and only on Ubuntu. Disable the job to skip building on the latest JDK.

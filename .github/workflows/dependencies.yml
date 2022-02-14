@@ -12,19 +12,8 @@ env:
 
 on:
   push:
-    branches:
-      - master
-      - '!**.**.**'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - '!**.**.**'
-  schedule:
-    # * is a special character in YAML; must quote this string
-    # https://crontab.guru
-    # At 08:00 on Friday
-    - cron:  '0 8 * * 5'
+    branches-ignore:
+      - '**'
 ##########################################################################
 
 jobs:

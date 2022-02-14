@@ -11,19 +11,10 @@ env:
   JDK_CURRENT: 11
   CATEGORY_REGEX: ".*" # Use this to limit which tests run
 ##########################################################################
-
 on:
-  schedule:
-    - cron: "0 0 * * 5"
-#  push:
-#    branches:
-#      - master
-#      - '!**.**.**'
-#  pull_request:
-#    types: [ labeled ]
-#    branches:
-#      - master
-#      - '!**.**.**'
+  push:
+    branches-ignore:
+      - '**'
 
 ##########################################################################
 
