@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 
@@ -14,7 +13,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class InetAddressUtils {
 
@@ -29,7 +27,7 @@ public class InetAddressUtils {
             val url = new URL(urlAddr);
             return InetAddress.getByName(url.getHost());
         } catch (final Exception e) {
-            LOGGER.trace("Host name could not be determined automatically.", e);
+            System.out.println("Host name could not be determined automatically! - in InetAddressUtils.getByName cause:" + e);
         }
         return null;
     }
@@ -42,12 +40,17 @@ public class InetAddressUtils {
      */
     public static String getCasServerHostName() {
         return Unchecked.supplier(() -> {
-            val hostName = InetAddress.getLocalHost().getHostName();
-            val index = hostName.indexOf('.');
-            if (index > 0) {
-                return hostName.substring(0, index);
+            try {
+                val hostName = InetAddress.getLocalHost().getHostName();
+                val index = hostName.indexOf('.');
+                if (index > 0) {
+                    return hostName.substring(0, index);
+                }
+                return hostName;
+            } catch(java.net.UnknownHostException ex) {
+                System.out.println("InetAddressUtils.getCasServerHostName failed!cause:" + ex);
+                return "unknown";
             }
-            return hostName;
         }).get();
     }
 
