@@ -76,10 +76,6 @@ function preserveAnchorTagOnForm() {
         let location = self.document.location;
         let hash = location.hash;
 
-        if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
-            hash = `#${hash}`;
-        }
-
         let action = $('#fm1').attr('action');
         if (action === undefined) {
             action = location.href;
