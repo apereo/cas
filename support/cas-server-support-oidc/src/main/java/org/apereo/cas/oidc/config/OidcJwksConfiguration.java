@@ -21,8 +21,8 @@ import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationServi
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;

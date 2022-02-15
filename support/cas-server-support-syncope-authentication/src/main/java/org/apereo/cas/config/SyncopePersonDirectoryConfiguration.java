@@ -5,15 +5,17 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.syncope.SyncopePersonAttributeDao;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -26,20 +28,28 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "SyncopePersonDirectoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty("cas.authn.attribute-repository.syncope.url")
 public class SyncopePersonDirectoryConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.onProperty("cas.authn.attribute-repository.syncope.url");
 
     @ConditionalOnMissingBean(name = "syncopePersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @SuppressWarnings("unchecked")
     public BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos(
-        final CasConfigurationProperties casProperties) {
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) throws Exception {
 
-        val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
-        val dao = new SyncopePersonAttributeDao(properties);
-        dao.setOrder(properties.getOrder());
-        FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
-        return BeanContainer.of(CollectionUtils.wrapList(dao));
+        return BeanSupplier.of(BeanContainer.class)
+            .when(CONDITION.matches(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
+                val dao = new SyncopePersonAttributeDao(properties);
+                dao.setOrder(properties.getOrder());
+                FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
+                return BeanContainer.of(CollectionUtils.wrapList(dao));
+            })
+            .orElse(BeanContainer::empty)
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "syncopeAttributeRepositoryPlanConfigurer")

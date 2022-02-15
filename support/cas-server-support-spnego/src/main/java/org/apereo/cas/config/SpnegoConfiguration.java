@@ -15,7 +15,7 @@ import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenti
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import jcifs.spnego.Authentication;
 import lombok.val;

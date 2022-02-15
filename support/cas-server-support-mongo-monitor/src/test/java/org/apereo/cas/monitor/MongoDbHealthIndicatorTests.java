@@ -22,7 +22,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;

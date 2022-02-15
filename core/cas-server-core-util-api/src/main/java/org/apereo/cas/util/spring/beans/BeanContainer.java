@@ -1,4 +1,4 @@
-package org.apereo.cas.util.spring;
+package org.apereo.cas.util.spring.beans;
 
 import lombok.RequiredArgsConstructor;
 

@@ -2,7 +2,7 @@ package org.apereo.cas.syncope.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;

@@ -72,7 +72,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration(value = "CasAccountManagementWebflowConfiguration")
+@Configuration(value = "CasAccountManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasAccountManagementWebflowConfiguration {
 
