@@ -59,7 +59,7 @@ public class SingleSignOnSessionStatusEndpoint {
         if (auth == null) {
             return ResponseEntity.badRequest().build();
         }
-        val ticketState = this.ticketRegistrySupport.getTicketState(tgtId);
+        val ticketState = this.ticketRegistrySupport.getTicket(tgtId);
         val body = CollectionUtils.wrap("principal", auth.getPrincipal().getId(),
             "authenticationDate", auth.getAuthenticationDate(),
             "ticketGrantingTicketCreationTime", ticketState.getCreationTime(),

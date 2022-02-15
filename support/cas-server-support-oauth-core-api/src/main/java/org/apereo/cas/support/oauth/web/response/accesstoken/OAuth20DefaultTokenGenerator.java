@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceToken;
@@ -214,7 +213,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             refreshToken.getAccessTokens().add(accessToken.getId());
             this.centralAuthenticationService.updateTicket(refreshToken);
         } else if (holder.isCodeToken()) {
-            val codeState = TicketState.class.cast(holder.getToken());
+            val codeState = Ticket.class.cast(holder.getToken());
             codeState.update();
 
             if (holder.getToken().isExpired()) {

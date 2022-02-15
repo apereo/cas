@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.model.TriStateBoolean;
 
@@ -64,7 +66,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             if (ssoPolicy != null) {
                 val ticketState = getTicketState(ssoRequest);
                 if (ticketState.isPresent()) {
-                    return ssoPolicy.shouldParticipateInSso(registeredService, ticketState.get());
+                    return ssoPolicy.shouldParticipateInSso(registeredService, (AuthenticationAwareTicket) ticketState.get());
                 }
             }
 
@@ -72,7 +74,7 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
             if (tgtPolicy != null) {
                 val ticketState = getTicketState(ssoRequest);
                 return tgtPolicy.toExpirationPolicy()
-                    .map(policy -> !policy.isExpired(ticketState.get())).orElse(Boolean.TRUE);
+                    .map(policy -> !policy.isExpired((TicketGrantingTicketAwareTicket) ticketState.get())).orElse(Boolean.TRUE);
             }
         } finally {
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);

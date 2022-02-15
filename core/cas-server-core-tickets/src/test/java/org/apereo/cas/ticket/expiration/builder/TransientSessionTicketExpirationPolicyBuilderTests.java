@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.expiration.builder;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 
@@ -40,7 +39,7 @@ public class TransientSessionTicketExpirationPolicyBuilderTests {
         val policy = builder.buildTicketExpirationPolicy();
         assertNotNull(policy);
 
-        val ticket = (TicketState) new DefaultTransientSessionTicketFactory(builder)
+        val ticket = new DefaultTransientSessionTicketFactory(builder)
             .create(RegisteredServiceTestUtils.getService());
         assertFalse(ticket.isExpired());
         ticket.update();

@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
-import org.apereo.cas.ticket.TicketState;
+
+
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,7 +58,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds,
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 

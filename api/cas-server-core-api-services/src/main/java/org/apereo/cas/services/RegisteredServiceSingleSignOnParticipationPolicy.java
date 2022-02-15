@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,7 +34,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
      * @return true /false
      */
     @JsonIgnore
-    boolean shouldParticipateInSso(RegisteredService registeredService, TicketState ticketState);
+    boolean shouldParticipateInSso(RegisteredService registeredService, AuthenticationAwareTicket ticketState);
 
     @Override
     default int getOrder() {

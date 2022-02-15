@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -27,7 +28,7 @@ public class NeverRegisteredServiceSingleSignOnParticipationPolicy implements Re
     private static final long serialVersionUID = -1123946898337761319L;
 
     @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
         return false;
     }
 }

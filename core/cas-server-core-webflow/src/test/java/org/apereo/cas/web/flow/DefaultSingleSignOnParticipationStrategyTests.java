@@ -198,7 +198,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         val tgt = new MockTicketGrantingTicket("casuser");
         val sso = new SingleSignOnProperties();
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
-        when(ticketRegistrySupport.getTicketState(anyString())).thenReturn(tgt);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
         val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
@@ -232,7 +232,7 @@ public class DefaultSingleSignOnParticipationStrategyTests {
         tgt.setCreated(ZonedDateTime.now(ZoneOffset.UTC).minusHours(1));
         val sso = new SingleSignOnProperties();
         val ticketRegistrySupport = mock(TicketRegistrySupport.class);
-        when(ticketRegistrySupport.getTicketState(anyString())).thenReturn(tgt);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
         val strategy = new DefaultSingleSignOnParticipationStrategy(mgr, sso,
             ticketRegistrySupport, mock(AuthenticationServiceSelectionPlan.class));
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));

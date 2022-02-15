@@ -62,4 +62,30 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * Mark a ticket as expired.
      */
     void markTicketExpired();
+
+    /**
+     * Returns the last time the ticket was used.
+     *
+     * @return the last time the ticket was used.
+     */
+    ZonedDateTime getLastTimeUsed();
+
+    /**
+     * Get the second to last time used.
+     *
+     * @return the previous time used.
+     */
+    ZonedDateTime getPreviousTimeUsed();
+
+    /**
+     * Records the <i>previous</i> last time this ticket was used as well as
+     * the last usage time. The ticket usage count is also incremented.
+     * <p>Tickets themselves are solely responsible to maintain their state. The
+     * determination of ticket usage is left up to the implementation and
+     * the specific ticket type.
+     *
+     * @see ExpirationPolicy
+     * @since 5.0.0
+     */
+    void update();
 }

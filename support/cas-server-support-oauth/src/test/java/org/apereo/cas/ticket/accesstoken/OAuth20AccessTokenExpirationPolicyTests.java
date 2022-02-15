@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -32,7 +32,7 @@ public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20Expirati
 
     @Test
     public void verifyAccessTokenExpiredAfterSystemTime() {
-        val ticket = mock(TicketState.class);
+        val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
         val exp = new OAuth20AccessTokenExpirationPolicy(100, 100);
         assertTrue(exp.isExpired(ticket));
@@ -40,7 +40,7 @@ public class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20Expirati
 
     @Test
     public void verifyAccessTokenExpiredAfterTimeToKill() {
-        val ticket = mock(TicketState.class);
+        val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         when(ticket.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
         val exp = new OAuth20AccessTokenExpirationPolicy(100, 100);

@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
+
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         val tgt = ticketState.getTicketGrantingTicket();
         return tgt != null && tgt.isExpired();
     }
