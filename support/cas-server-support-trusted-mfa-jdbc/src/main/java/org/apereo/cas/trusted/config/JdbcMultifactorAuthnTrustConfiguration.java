@@ -10,7 +10,7 @@ import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticatio
 import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;

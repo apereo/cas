@@ -12,7 +12,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;

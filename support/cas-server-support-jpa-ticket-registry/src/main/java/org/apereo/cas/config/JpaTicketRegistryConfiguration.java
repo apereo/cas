@@ -14,7 +14,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;

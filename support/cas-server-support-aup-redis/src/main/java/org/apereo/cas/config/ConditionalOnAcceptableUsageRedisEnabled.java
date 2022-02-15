@@ -21,14 +21,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
-@Conditional({ConditionalOnAcceptableUsageRedisEnabled.AcceptableUsageRedisCondition.class})
+@Conditional(ConditionalOnAcceptableUsageRedisEnabled.AcceptableUsageRedisCondition.class)
 public @interface ConditionalOnAcceptableUsageRedisEnabled {
     class AcceptableUsageRedisCondition extends AllNestedConditions {
         AcceptableUsageRedisCondition() {
             super(ConfigurationPhase.PARSE_CONFIGURATION);
         }
 
-        @ConditionalOnAcceptableUsageEnabled()
+        @ConditionalOnAcceptableUsageEnabled
         static class OnAcceptableUsagePolicyEnabled {
         }
 

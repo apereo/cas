@@ -8,7 +8,7 @@ import org.apereo.cas.consent.JpaConsentDecision;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;

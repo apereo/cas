@@ -9,7 +9,7 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.jpa.JpaCasEvent;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;

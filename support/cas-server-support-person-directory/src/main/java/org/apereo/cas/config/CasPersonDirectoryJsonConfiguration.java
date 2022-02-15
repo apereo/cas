@@ -6,7 +6,7 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnMultiValuedProperty;
 
 import lombok.extern.slf4j.Slf4j;
