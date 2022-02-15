@@ -84,11 +84,7 @@ function preserveAnchorTagOnForm() {
         if (action === undefined) {
             action = location.href;
         } else {
-            let qidx = location.href.indexOf('?');
-            if (qidx !== -1) {
-                let queryParams = location.href.substring(qidx);
-                action += queryParams;
-            }
+            action += location.search;
         }
         action += hash;
         $('#fm1').attr('action', action);
