@@ -32,7 +32,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
@@ -260,20 +259,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request with service [{}] linked to service ticket [{}]",
                 resolvedService, selectedService, serviceTicket.getId());
 
-            configurationContext.getLockRepository().execute(serviceTicket.getId(), () -> {
-                if (serviceTicket.isExpired()) {
-                    LOGGER.info("ServiceTicket [{}] has expired.", serviceTicketId);
-                    throw new InvalidTicketException(serviceTicketId);
-                }
-                if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
-                    LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                        serviceTicketId, serviceTicket.getService().getId(), resolvedService.getId());
-                    throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
-                }
-                val ticketState = TicketState.class.cast(serviceTicket);
-                ticketState.update();
-                return ticketState;
-            });
+            configurationContext.getLockRepository().execute(serviceTicket.getId(),
+                Unchecked.supplier(() -> {
+                    if (serviceTicket.isExpired()) {
+                        LOGGER.info("ServiceTicket [{}] has expired.", serviceTicketId);
+                        throw new InvalidTicketException(serviceTicketId);
+                    }
+                    if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
+                        LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
+                            serviceTicketId, serviceTicket.getService().getId(), resolvedService.getId());
+                        throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
+                    }
+                    serviceTicket.update();
+                    configurationContext.getTicketRegistry().updateTicket(serviceTicket);
+                    return serviceTicket;
+                }));
 
             val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
             LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
@@ -329,7 +329,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             enforceRegisteredServiceAccess(selectedService, registeredService, accessPrincipal);
 
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
-
             val assertion = new DefaultAssertionBuilder(finalAuthentication)
                 .with(selectedService)
                 .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
