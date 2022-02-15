@@ -74,15 +74,13 @@ function showGeoPosition(position) {
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(() => {
         let location = self.document.location;
-        let hash = location.hash;
 
         let action = $('#fm1').attr('action');
         if (action === undefined) {
             action = location.href;
         } else {
-            action += location.search;
+            action += location.search + location.hash;
         }
-        action += hash;
         $('#fm1').attr('action', action);
 
     });
