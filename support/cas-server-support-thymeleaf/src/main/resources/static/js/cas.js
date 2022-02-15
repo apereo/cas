@@ -74,7 +74,7 @@ function showGeoPosition(position) {
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(() => {
         let location = self.document.location;
-        let hash = decodeURIComponent(location.hash);
+        let hash = location.hash;
 
         if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = `#${hash}`;
