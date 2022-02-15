@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +22,7 @@ public class NeverRegisteredServiceSingleSignOnParticipationPolicyTests {
     @Test
     public void verifyOperation() {
         val input = new NeverRegisteredServiceSingleSignOnParticipationPolicy();
-        assertFalse(input.shouldParticipateInSso(mock(RegisteredService.class), mock(TicketState.class)));
+        assertFalse(input.shouldParticipateInSso(mock(RegisteredService.class), mock(AuthenticationAwareTicket.class)));
     }
 
 }

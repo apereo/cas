@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -46,7 +48,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         val expired = isRefreshTokenExpired(ticketState);
         return expired || super.isExpired(ticketState);
     }
@@ -69,7 +71,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
      * @return true/false
      */
     @JsonIgnore
-    protected boolean isRefreshTokenExpired(final TicketState ticketState) {
+    protected boolean isRefreshTokenExpired(final Ticket ticketState) {
         if (ticketState == null) {
             return true;
         }
@@ -96,7 +98,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
         }
 
         @Override
-        public boolean isExpired(final TicketState ticketState) {
+        public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
             return isRefreshTokenExpired(ticketState);
         }
     }

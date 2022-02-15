@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
-import org.apereo.cas.ticket.TicketState;
+
+
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -48,7 +50,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         if (ticketState == null) {
             LOGGER.debug("Ticket state is null for [{}]. Ticket has expired.", this.getClass().getSimpleName());
             return true;

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -32,7 +33,7 @@ public class DefaultRegisteredServiceSingleSignOnParticipationPolicy implements 
     private TriStateBoolean createCookieOnRenewedAuthentication;
 
     @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
         return true;
     }
 }

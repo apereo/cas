@@ -24,7 +24,7 @@ public interface ExpirationPolicy extends Serializable {
      * @param ticketState The snapshot of the current ticket state
      * @return true if the ticket is expired, false otherwise.
      */
-    boolean isExpired(TicketState ticketState);
+    boolean isExpired(TicketGrantingTicketAwareTicket ticketState);
 
     /**
      * Method to determine the actual TTL of a {@link Ticket}, based on the policy.
@@ -32,7 +32,7 @@ public interface ExpirationPolicy extends Serializable {
      * @param ticketState The snapshot of the current ticket state
      * @return The time to live in seconds. A zero value indicates the time duration is not supported or is inactive.
      */
-    default Long getTimeToLive(final TicketState ticketState) {
+    default Long getTimeToLive(final Ticket ticketState) {
         return getTimeToLive();
     }
 
