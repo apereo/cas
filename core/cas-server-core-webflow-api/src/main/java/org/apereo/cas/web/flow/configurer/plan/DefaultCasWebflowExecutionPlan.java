@@ -21,6 +21,8 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
+    private boolean initialized;
+
     private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>(0);
@@ -47,11 +49,14 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
 
     @Override
     public void execute() {
-        AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
-        AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);
-        webflowConfigurers.forEach(c -> {
-            LOGGER.trace("Registering webflow configurer [{}]", c.getName());
-            c.initialize();
-        });
+        if (!initialized) {
+            AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
+            AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);
+            webflowConfigurers.forEach(c -> {
+                LOGGER.trace("Registering webflow configurer [{}]", c.getName());
+                c.initialize();
+            });
+            initialized = true;
+        }
     }
 }

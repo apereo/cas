@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -33,7 +34,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     public CouchDbConnectorFactory mfaTrustCouchDbFactory(final CasConfigurationProperties casProperties,
                                                           @Qualifier("defaultObjectMapperFactory")
                                                           final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")

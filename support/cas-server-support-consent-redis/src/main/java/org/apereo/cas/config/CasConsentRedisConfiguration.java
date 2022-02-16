@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.RedisConsentRepository;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 
 import lombok.val;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link CasConsentRedisConfiguration}.
@@ -33,7 +33,7 @@ public class CasConsentRedisConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConsentRepository consentRepository(
         @Qualifier("consentRedisTemplate")
-        final RedisTemplate consentRedisTemplate,
+        final CasRedisTemplate consentRedisTemplate,
         final CasConfigurationProperties casProperties) {
         return new RedisConsentRepository(consentRedisTemplate, casProperties.getConsent().getRedis().getScanCount());
     }
@@ -52,7 +52,7 @@ public class CasConsentRedisConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "consentRedisTemplate")
-    public RedisTemplate consentRedisTemplate(
+    public CasRedisTemplate consentRedisTemplate(
         @Qualifier("redisConsentConnectionFactory")
         final RedisConnectionFactory redisConsentConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisConsentConnectionFactory);

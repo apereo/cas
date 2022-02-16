@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
 
@@ -52,7 +52,7 @@ public class RedisTicketRegistryConfiguration {
         @Bean(name = {"redisTemplate", "ticketRedisTemplate"})
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketRedisTemplate")
-        public RedisTemplate<String, Ticket> ticketRedisTemplate(
+        public CasRedisTemplate<String, Ticket> ticketRedisTemplate(
             @Qualifier("redisTicketConnectionFactory")
             final RedisConnectionFactory redisTicketConnectionFactory) {
             return RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory);
@@ -63,7 +63,7 @@ public class RedisTicketRegistryConfiguration {
         public TicketRegistry ticketRegistry(
             final CasConfigurationProperties casProperties,
             @Qualifier("ticketRedisTemplate")
-            final RedisTemplate<String, Ticket> ticketRedisTemplate) {
+            final CasRedisTemplate<String, Ticket> ticketRedisTemplate) {
             val redis = casProperties.getTicket().getRegistry().getRedis();
             val r = new RedisTicketRegistry(ticketRedisTemplate, redis.getScanCount());
             r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));

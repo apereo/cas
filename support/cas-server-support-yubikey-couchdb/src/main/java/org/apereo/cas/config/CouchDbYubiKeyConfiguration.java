@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.CouchDbYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.yubikey.YubiKeyAccountCouchDbRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -64,7 +65,7 @@ public class CouchDbYubiKeyConfiguration {
     public CouchDbConnectorFactory yubikeyCouchDbFactory(final CasConfigurationProperties casProperties,
                                                          @Qualifier("defaultObjectMapperFactory")
                                                          final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbYubikeyAccountRegistry")

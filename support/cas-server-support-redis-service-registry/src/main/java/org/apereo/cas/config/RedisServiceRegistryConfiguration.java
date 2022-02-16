@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "registeredServiceRedisTemplate")
-    public RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(
+    public CasRedisTemplate<String, RegisteredService> registeredServiceRedisTemplate(
         @Qualifier("redisServiceConnectionFactory")
         final RedisConnectionFactory redisServiceConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisServiceConnectionFactory);
@@ -63,7 +63,7 @@ public class RedisServiceRegistryConfiguration {
     public ServiceRegistry redisServiceRegistry(
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("registeredServiceRedisTemplate")
-        final RedisTemplate<String, RegisteredService> registeredServiceRedisTemplate,
+        final CasRedisTemplate<String, RegisteredService> registeredServiceRedisTemplate,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,

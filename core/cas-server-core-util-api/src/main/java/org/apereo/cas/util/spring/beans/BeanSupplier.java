@@ -2,7 +2,7 @@ package org.apereo.cas.util.spring.beans;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Proxy;
@@ -81,7 +81,6 @@ public interface BeanSupplier<T> {
      * @return the bean supplier
      */
     BeanSupplier<T> when(Supplier<Boolean> conditionSupplier);
-
     /**
      * Specify condition for bean supplier to create beans.
      *
@@ -90,6 +89,16 @@ public interface BeanSupplier<T> {
      */
     default BeanSupplier<T> when(final boolean rawValue) {
         return when(() -> rawValue);
+    }
+
+    /**
+     * Combine conditions together.
+     *
+     * @param conditionSupplier the condition supplier
+     * @return the bean supplier
+     */
+    default BeanSupplier<T> and(final Supplier<Boolean> conditionSupplier) {
+        return when(conditionSupplier);
     }
 
     /**
@@ -120,7 +129,7 @@ public interface BeanSupplier<T> {
         @Nonnull
         private final Class<T> clazz;
 
-        private Supplier<Boolean> conditionSupplier = () -> false;
+        private final List<Supplier<Boolean>> conditionSuppliers = new ArrayList<>();
 
         private Supplier<T> beanSupplier;
 
@@ -128,17 +137,24 @@ public interface BeanSupplier<T> {
 
         @Override
         public T get() {
-            if (this.conditionSupplier.get()) {
+            if (!conditionSuppliers.isEmpty() && conditionSuppliers.stream().allMatch(Supplier::get)) {
                 return beanSupplier.get();
             }
             return proxySupplier.get();
         }
 
+        @Override
+        public BeanSupplier<T> alwaysMatch() {
+            return BeanSupplier.super.alwaysMatch();
+        }
+
+        @Override
         public BeanSupplier<T> when(final Supplier<Boolean> conditionSupplier) {
-            this.conditionSupplier = conditionSupplier;
+            this.conditionSuppliers.add(conditionSupplier);
             return this;
         }
 
+        @Override
         public BeanSupplier<T> supply(final Supplier<T> beanSupplier) {
             this.beanSupplier = beanSupplier;
             return this;
@@ -200,10 +216,14 @@ public interface BeanSupplier<T> {
         private final Class<T> clazz;
 
         @Override
+        @SuppressWarnings("unchecked")
         public T get() {
             return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class[]{clazz},
                 (proxy, method, args) -> {
+                    if (method.getName().equals("toString")) {
+                        return "Proxy-" + clazz.getName();
+                    }
                     val returnType = method.getReturnType();
                     return TYPES_AND_VALUES.getOrDefault(returnType, null);
                 });

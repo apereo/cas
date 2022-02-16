@@ -29,7 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "SyncopePersonDirectoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SyncopePersonDirectoryConfiguration {
-    private static final BeanCondition CONDITION = BeanCondition.onProperty("cas.authn.attribute-repository.syncope.url");
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.syncope.url");
 
     @ConditionalOnMissingBean(name = "syncopePersonAttributeDaos")
     @Bean
@@ -40,7 +40,7 @@ public class SyncopePersonDirectoryConfiguration {
         final CasConfigurationProperties casProperties) throws Exception {
 
         return BeanSupplier.of(BeanContainer.class)
-            .when(CONDITION.matches(applicationContext.getEnvironment()))
+            .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val properties = casProperties.getAuthn().getAttributeRepository().getSyncope();
                 val dao = new SyncopePersonAttributeDao(properties);
@@ -48,7 +48,7 @@ public class SyncopePersonDirectoryConfiguration {
                 FunctionUtils.doIfNotNull(properties.getId(), dao::setId);
                 return BeanContainer.of(CollectionUtils.wrapList(dao));
             })
-            .orElse(BeanContainer::empty)
+            .otherwise(BeanContainer::empty)
             .get();
     }
 

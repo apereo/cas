@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnBean(name = "authenticationThrottlingExecutionPlan")
+@ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
 public class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)
@@ -41,7 +41,7 @@ public class OidcThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
         public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override

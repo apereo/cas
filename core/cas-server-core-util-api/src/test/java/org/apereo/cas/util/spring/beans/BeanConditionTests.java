@@ -20,7 +20,7 @@ public class BeanConditionTests {
     public void verifyOperation() {
         val env = new MockEnvironment();
         env.setProperty("cas.property-name.prefix", "value");
-        val condition = BeanCondition.onProperty("cas.property-name.prefix")
+        val condition = BeanCondition.on("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
             .matchIfMissing()
             .given(env)
@@ -32,7 +32,7 @@ public class BeanConditionTests {
     public void verifyBlankValue() {
         val env = new MockEnvironment();
         env.setProperty("cas.property-name.prefix", StringUtils.EMPTY);
-        val condition = BeanCondition.onProperty("cas.property-name.prefix")
+        val condition = BeanCondition.on("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
             .given(env)
             .get();
@@ -42,7 +42,7 @@ public class BeanConditionTests {
     @Test
     public void verifyDefaultValue() {
         val env = new MockEnvironment();
-        val condition = BeanCondition.onProperty("cas.property-name.prefix")
+        val condition = BeanCondition.on("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
             .given(env)
             .get();
@@ -53,7 +53,7 @@ public class BeanConditionTests {
     public void verifyTrueValue() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "TRUE");
-        val condition = BeanCondition.onProperty("cas.property.name")
+        val condition = BeanCondition.on("cas.property.name")
             .isTrue()
             .given(env)
             .get();
@@ -64,7 +64,7 @@ public class BeanConditionTests {
     public void verifyMatchMissing() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
-        val condition = BeanCondition.onProperty("cas.property.other-name")
+        val condition = BeanCondition.on("cas.property.other-name")
             .matchIfMissing()
             .given(env)
             .get();
@@ -75,7 +75,7 @@ public class BeanConditionTests {
     public void verifyMatchMissingFails() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
-        val condition = BeanCondition.onProperty("cas.property.other-name")
+        val condition = BeanCondition.on("cas.property.other-name")
             .given(env)
             .get();
         assertFalse(condition);

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test

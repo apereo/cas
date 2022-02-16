@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.u2f.redis.U2FRedisDeviceRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link U2FRedisConfiguration}.
@@ -36,7 +36,7 @@ public class U2FRedisConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "u2fRedisTemplate")
-    public RedisTemplate u2fRedisTemplate(
+    public CasRedisTemplate u2fRedisTemplate(
         @Qualifier("u2fRedisConnectionFactory")
         final RedisConnectionFactory u2fRedisConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(u2fRedisConnectionFactory);
@@ -58,7 +58,7 @@ public class U2FRedisConfiguration {
     public U2FDeviceRepository u2fDeviceRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("u2fRedisTemplate")
-        final RedisTemplate u2fRedisTemplate,
+        final CasRedisTemplate u2fRedisTemplate,
         @Qualifier("u2fRegistrationRecordCipherExecutor")
         final CipherExecutor u2fRegistrationRecordCipherExecutor) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();

@@ -57,11 +57,11 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
         val principal = authentication.getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
-            LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
+            LOGGER.debug("Acceptable usage policy has been accepted by [{}]", principal.getId());
             return AcceptableUsagePolicyStatus.accepted(principal);
         }
 
-        LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());
+        LOGGER.warn("Acceptable usage policy policy has not been accepted by [{}]", principal.getId());
         return AcceptableUsagePolicyStatus.denied(principal);
     }
 

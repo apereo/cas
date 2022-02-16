@@ -36,7 +36,7 @@ public class CouchbaseClientFactoryTests {
 
     @Test
     public void verifyInit() {
-        val factory = new CouchbaseClientFactory(casProperties.getAuthn().getCouchbase());
+        val factory = new DefaultCouchbaseClientFactory(casProperties.getAuthn().getCouchbase());
         assertNotNull(factory.getConnectionTimeout());
         assertNotNull(factory.getKvTimeout());
         assertNotNull(factory.getProperties());

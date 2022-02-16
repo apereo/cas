@@ -6,6 +6,7 @@ import org.apereo.cas.gauth.credential.RedisGoogleAuthenticatorTokenCredentialRe
 import org.apereo.cas.gauth.token.GoogleAuthenticatorRedisTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -58,7 +58,7 @@ public class GoogleAuthenticatorRedisConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorTemplate")
-    public RedisTemplate redisGoogleAuthenticatorTemplate(
+    public CasRedisTemplate redisGoogleAuthenticatorTemplate(
         @Qualifier("redisGoogleAuthenticatorConnectionFactory")
         final RedisConnectionFactory redisGoogleAuthenticatorConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisGoogleAuthenticatorConnectionFactory);
@@ -72,7 +72,7 @@ public class GoogleAuthenticatorRedisConfiguration {
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("redisGoogleAuthenticatorTemplate")
-        final RedisTemplate redisGoogleAuthenticatorTemplate,
+        final CasRedisTemplate redisGoogleAuthenticatorTemplate,
         final CasConfigurationProperties casProperties) {
         return new RedisGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
             redisGoogleAuthenticatorTemplate,
@@ -85,7 +85,7 @@ public class GoogleAuthenticatorRedisConfiguration {
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("redisGoogleAuthenticatorTemplate")
-        final RedisTemplate redisGoogleAuthenticatorTemplate) {
+        final CasRedisTemplate redisGoogleAuthenticatorTemplate) {
         return new GoogleAuthenticatorRedisTokenRepository(redisGoogleAuthenticatorTemplate,
             casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize(),
             casProperties.getAuthn().getMfa().getGauth().getRedis().getScanCount());

@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.redis.RedisAuthenticationHandler;
 import org.apereo.cas.redis.RedisPersonAttributeDao;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -29,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +66,7 @@ public class RedisAuthenticationConfiguration {
     @Bean(name = {"authenticationRedisTemplate", "redisTemplate"})
     @ConditionalOnMissingBean(name = "authenticationRedisTemplate")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisTemplate authenticationRedisTemplate(
+    public CasRedisTemplate authenticationRedisTemplate(
         @Qualifier("redisAuthenticationConnectionFactory")
         final RedisConnectionFactory redisAuthenticationConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisAuthenticationConnectionFactory);
@@ -75,15 +75,18 @@ public class RedisAuthenticationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "redisAuthenticationHandler")
-    public AuthenticationHandler redisAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                            @Qualifier("redisPrincipalFactory")
-                                                            final PrincipalFactory redisPrincipalFactory,
-                                                            @Qualifier("authenticationRedisTemplate")
-                                                            final RedisTemplate authenticationRedisTemplate,
-                                                            @Qualifier(ServicesManager.BEAN_NAME)
-                                                            final ServicesManager servicesManager) {
+    public AuthenticationHandler redisAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("redisPrincipalFactory")
+        final PrincipalFactory redisPrincipalFactory,
+        @Qualifier("authenticationRedisTemplate")
+        final CasRedisTemplate authenticationRedisTemplate,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val redis = casProperties.getAuthn().getRedis();
-        val handler = new RedisAuthenticationHandler(redis.getName(), servicesManager, redisPrincipalFactory, redis.getOrder(), authenticationRedisTemplate);
+        val handler = new RedisAuthenticationHandler(redis.getName(), servicesManager,
+            redisPrincipalFactory, redis.getOrder(), authenticationRedisTemplate);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(redis.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(redis.getPasswordEncoder(), applicationContext));
         return handler;
@@ -111,7 +114,7 @@ public class RedisAuthenticationConfiguration {
         return redis.stream().filter(r -> StringUtils.isNotBlank(r.getHost())).map(r -> {
             val conn = RedisObjectFactory.newRedisConnectionFactory(r, true, casSslContext);
             val template = RedisObjectFactory.newRedisTemplate(conn);
-            template.afterPropertiesSet();
+            template.initialize();
             val cb = new RedisPersonAttributeDao(template);
             cb.setOrder(r.getOrder());
             FunctionUtils.doIfNotNull(r.getId(), cb::setId);

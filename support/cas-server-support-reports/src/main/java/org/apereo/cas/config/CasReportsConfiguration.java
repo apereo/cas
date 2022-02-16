@@ -65,6 +65,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SpringWebflowEndpoint springWebflowEndpoint(final CasConfigurationProperties casProperties,
                                                        final ConfigurableApplicationContext applicationContext) {
         return new SpringWebflowEndpoint(casProperties, applicationContext);

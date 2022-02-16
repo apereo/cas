@@ -24,7 +24,6 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
@@ -53,8 +52,8 @@ public class RedisObjectFactory {
      * @param connectionFactory the connection factory
      * @return the redis template
      */
-    public static <K, V> RedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
-        val template = new RedisTemplate<K, V>();
+    public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
+        val template = new DefaultCasRedisTemplate<K, V>();
         val string = new StringRedisSerializer();
         val jdk = new JdkSerializationRedisSerializer();
         template.setKeySerializer(string);
@@ -110,11 +109,11 @@ public class RedisObjectFactory {
         cluster.getNodes()
             .stream()
             .filter(nodeConfig -> StringUtils.hasText(nodeConfig.getHost())
-                && nodeConfig.getPort() > 0
-                && StringUtils.hasText(nodeConfig.getType()))
+                                  && nodeConfig.getPort() > 0
+                                  && StringUtils.hasText(nodeConfig.getType()))
             .forEach(nodeConfig -> {
                 LOGGER.trace("Building redis cluster node for [{}]", nodeConfig);
-                
+
                 val nodeBuilder = new RedisNode.RedisNodeBuilder()
                     .listeningAt(nodeConfig.getHost(), nodeConfig.getPort())
                     .promotedAs(RedisNode.NodeType.valueOf(nodeConfig.getType().toUpperCase()));

@@ -2,7 +2,7 @@ package org.apereo.cas.util.spring.beans;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.PropertyResolver;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ public interface BeanCondition {
      * @param name the name
      * @return the bean condition
      */
-    static BeanCondition onProperty(final String name) {
+    static BeanCondition on(final String name) {
         return new PropertyBeanCondition(name);
     }
 
@@ -63,7 +63,7 @@ public interface BeanCondition {
      * @param applicationContext the application context
      * @return the supplier
      */
-    Supplier<Boolean> given(final PropertyResolver applicationContext);
+    Supplier<Boolean> given(PropertyResolver applicationContext);
 
     @RequiredArgsConstructor
     class PropertyBeanCondition implements BeanCondition {

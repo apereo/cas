@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.RedisWebAuthnCredentialRegistration;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link RedisWebAuthnConfiguration}.
@@ -34,7 +34,7 @@ public class RedisWebAuthnConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "webAuthnRedisTemplate")
-    public RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate(
+    public CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate(
         @Qualifier("webAuthnRedisConnectionFactory")
         final RedisConnectionFactory webAuthnRedisConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(webAuthnRedisConnectionFactory);
@@ -53,13 +53,13 @@ public class RedisWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
-                                                                     @Qualifier("webAuthnRedisTemplate")
-                                                                     final RedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate,
-                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("webAuthnRedisTemplate")
+        final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate,
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         return new RedisWebAuthnCredentialRepository(webAuthnRedisTemplate,
-            casProperties,
-            webAuthnCredentialRegistrationCipherExecutor);
+            casProperties, webAuthnCredentialRegistrationCipherExecutor);
     }
 }

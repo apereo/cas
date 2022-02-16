@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -32,7 +33,7 @@ public class CouchbaseTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "ticketRegistryCouchbaseClientFactory")
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val cb = casProperties.getTicket().getRegistry().getCouchbase();
-        return new CouchbaseClientFactory(cb);
+        return new DefaultCouchbaseClientFactory(cb);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

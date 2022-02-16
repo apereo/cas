@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.RedisSamlIdPMetadataGenerator;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link SamlIdPRedisIdPMetadataConfiguration}.
@@ -66,7 +66,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate(
+    public CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate(
         @Qualifier("redisSamlIdPMetadataConnectionFactory")
         final RedisConnectionFactory redisSamlIdPMetadataConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisSamlIdPMetadataConnectionFactory);
@@ -76,7 +76,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
         @Qualifier("redisSamlIdPMetadataTemplate")
-        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
+        final CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
         @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
         return new RedisSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext, redisSamlIdPMetadataTemplate);
@@ -90,7 +90,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
         @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
         final CipherExecutor samlIdPMetadataGeneratorCipherExecutor,
         @Qualifier("redisSamlIdPMetadataTemplate")
-        final RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
+        final CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate,
         final CasConfigurationProperties casProperties) {
         return new RedisSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
             samlIdPMetadataCache,

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
@@ -9,7 +10,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Optional;
 
@@ -25,10 +25,10 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
      */
     public static final String CAS_PREFIX = SamlIdPMetadataDocument.class.getSimpleName() + ':';
 
-    private final transient RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
+    private final transient CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate;
 
     public RedisSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
-                                         final RedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {
+                                         final CasRedisTemplate<String, SamlIdPMetadataDocument> redisTemplate) {
         super(context);
         this.redisTemplate = redisTemplate;
     }

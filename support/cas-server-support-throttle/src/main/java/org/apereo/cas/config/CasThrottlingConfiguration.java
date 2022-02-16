@@ -139,7 +139,7 @@ public class CasThrottlingConfiguration {
     @Configuration(value = "CasThrottlingPlanExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasThrottlingPlanExecutionConfiguration {
-        @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(
@@ -177,7 +177,7 @@ public class CasThrottlingConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan plan, final CasConfigurationProperties casProperties) {
             return new ThrottledSubmissionHandlerEndpoint(casProperties, plan);
         }
@@ -189,7 +189,7 @@ public class CasThrottlingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable throttleSubmissionCleaner(
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan plan) {
             return new InMemoryThrottledSubmissionCleaner(plan);
         }

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -38,7 +38,7 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlRegisteredServiceMetadataResolverTemplate, key, 0).collect(Collectors.toSet());
+        val keys = redisSamlRegisteredServiceMetadataResolverTemplate.keys(key, 0).collect(Collectors.toSet());
         redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
     }
 

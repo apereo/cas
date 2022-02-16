@@ -10,6 +10,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultProfileCouchDbRepository;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 
@@ -44,7 +46,7 @@ public class CouchDbAuthenticationConfiguration {
     public CouchDbConnectorFactory authenticationCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
@@ -53,7 +55,8 @@ public class CouchDbAuthenticationConfiguration {
     public ProfileCouchDbRepository authenticationCouchDbRepository(
         @Qualifier("authenticationCouchDbFactory")
         final CouchDbConnectorFactory authenticationCouchDbFactory, final CasConfigurationProperties casProperties) {
-        return new ProfileCouchDbRepository(authenticationCouchDbFactory.getCouchDbConnector(), casProperties.getAuthn().getCouchDb().isCreateIfNotExists());
+        return new DefaultProfileCouchDbRepository(authenticationCouchDbFactory.getCouchDbConnector(),
+            casProperties.getAuthn().getCouchDb().isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationEventExecutionPlanConfigurer")
