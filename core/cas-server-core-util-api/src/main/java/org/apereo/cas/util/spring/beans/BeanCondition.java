@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.PropertyResolver;
 
+import java.io.Serializable;
 import java.util.function.Supplier;
 
 /**
@@ -41,12 +42,28 @@ public interface BeanCondition {
     BeanCondition withDefaultValue(String value);
 
     /**
+     * Is the property value set to this value?
+     *
+     * @return the bean condition
+     */
+    BeanCondition havingValue(Serializable value);
+
+    /**
+     * Is property value set to true.
+     *
+     * @return the bean condition
+     */
+    default BeanCondition isTrue() {
+        return havingValue("true");
+    }
+
+    /**
      * To supplier supplier.
      *
      * @param applicationContext the application context
      * @return the supplier
      */
-    Supplier<Boolean> matches(final PropertyResolver applicationContext);
+    Supplier<Boolean> given(final PropertyResolver applicationContext);
 
     @RequiredArgsConstructor
     class PropertyBeanCondition implements BeanCondition {
@@ -55,6 +72,8 @@ public interface BeanCondition {
         private boolean matchIfMissing;
 
         private String defaultValue;
+
+        private Serializable havingValue;
 
         @Override
         public BeanCondition matchIfMissing() {
@@ -69,12 +88,21 @@ public interface BeanCondition {
         }
 
         @Override
-        public Supplier<Boolean> matches(final PropertyResolver propertyResolver) {
+        public BeanCondition havingValue(final Serializable value) {
+            this.havingValue = value;
+            return this;
+        }
+
+        @Override
+        public Supplier<Boolean> given(final PropertyResolver propertyResolver) {
             return () -> {
                 if (matchIfMissing && !propertyResolver.containsProperty(this.propertyName)) {
                     return true;
                 }
                 val result = propertyResolver.getProperty(propertyName, defaultValue);
+                if (havingValue != null) {
+                    return havingValue.toString().equalsIgnoreCase(result);
+                }
                 return StringUtils.isNotBlank(result);
             };
         }

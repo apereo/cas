@@ -61,8 +61,8 @@ public interface BeanSupplier<T> {
      *
      * @return the bean supplier
      */
-    default BeanSupplier<T> always() {
-        return when(() -> true);
+    default BeanSupplier<T> alwaysMatch() {
+        return when(true);
     }
 
     /**
@@ -70,8 +70,8 @@ public interface BeanSupplier<T> {
      *
      * @return the bean supplier
      */
-    default BeanSupplier<T> never() {
-        return when(() -> false);
+    default BeanSupplier<T> neverMatch() {
+        return when(false);
     }
 
     /**
@@ -106,7 +106,14 @@ public interface BeanSupplier<T> {
      * @param beanSupplier the bean supplier
      * @return the bean supplier
      */
-    BeanSupplier<T> orElse(Supplier<T> beanSupplier);
+    BeanSupplier<T> otherwise(Supplier<T> beanSupplier);
+
+    /**
+     * Create the proxy bean via a given supplier when the condition fails.
+     *
+     * @return the bean supplier
+     */
+    BeanSupplier<T> otherwiseProxy();
 
     @RequiredArgsConstructor
     class DefaultBeanSupplier<T> implements BeanSupplier<T> {
@@ -124,9 +131,6 @@ public interface BeanSupplier<T> {
             if (this.conditionSupplier.get()) {
                 return beanSupplier.get();
             }
-            if (proxySupplier == null) {
-                proxySupplier = new ProxiedBeanSupplier<>(this.clazz);
-            }
             return proxySupplier.get();
         }
 
@@ -141,9 +145,14 @@ public interface BeanSupplier<T> {
         }
 
         @Override
-        public BeanSupplier<T> orElse(final Supplier<T> beanSupplier) {
+        public BeanSupplier<T> otherwise(final Supplier<T> beanSupplier) {
             this.proxySupplier = beanSupplier;
             return this;
+        }
+
+        @Override
+        public BeanSupplier<T> otherwiseProxy() {
+            return otherwise(new ProxiedBeanSupplier<>(this.clazz));
         }
     }
 
