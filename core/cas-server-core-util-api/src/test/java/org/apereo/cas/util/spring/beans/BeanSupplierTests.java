@@ -27,7 +27,7 @@ public class BeanSupplierTests {
     @Test
     public void verifyBeanSupplied() throws Exception {
         val noOp = BeanSupplier.of(CipherExecutor.class)
-            .always()
+            .alwaysMatch()
             .supply(CipherExecutor::noOp)
             .get();
         assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
@@ -36,18 +36,18 @@ public class BeanSupplierTests {
     @Test
     public void verifyBeanProxiedWithSupplier() throws Exception {
         val noOp = BeanSupplier.of(CipherExecutor.class)
-            .never()
-            .orElse(CipherExecutor::noOp)
+            .neverMatch()
+            .otherwise(CipherExecutor::noOp)
             .get();
         assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
     }
 
     @Test
     public void verifyBeanProxied() throws Exception {
-        val r1 = BeanSupplier.of(CipherExecutor.class).when(false).get();
+        val r1 = BeanSupplier.of(CipherExecutor.class).neverMatch().otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r1));
 
-        val r2 = BeanSupplier.of(DistributedCacheManager.class).get();
+        val r2 = BeanSupplier.of(DistributedCacheManager.class).neverMatch().otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r2));
         assertDoesNotThrow(r2::clear);
         assertDoesNotThrow(r2::close);
@@ -57,11 +57,11 @@ public class BeanSupplierTests {
         assertNotNull(r2.findAll(o -> true));
         assertNull(r2.getName());
 
-        val r3 = BeanSupplier.of(CasRuntimeModuleLoader.class).get();
+        val r3 = BeanSupplier.of(CasRuntimeModuleLoader.class).otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r3));
         assertTrue(r3.load().isEmpty());
 
-        val r4 = BeanSupplier.of(RandomStringGenerator.class).get();
+        val r4 = BeanSupplier.of(RandomStringGenerator.class).otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r4));
         assertNull(r4.getAlgorithm());
         assertNotNull(r4.getNewStringAsBytes(0));

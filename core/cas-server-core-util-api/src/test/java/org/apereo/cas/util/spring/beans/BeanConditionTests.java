@@ -23,7 +23,7 @@ public class BeanConditionTests {
         val condition = BeanCondition.onProperty("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
             .matchIfMissing()
-            .matches(env)
+            .given(env)
             .get();
         assertTrue(condition);
     }
@@ -34,7 +34,7 @@ public class BeanConditionTests {
         env.setProperty("cas.property-name.prefix", StringUtils.EMPTY);
         val condition = BeanCondition.onProperty("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
-            .matches(env)
+            .given(env)
             .get();
         assertFalse(condition);
     }
@@ -44,7 +44,18 @@ public class BeanConditionTests {
         val env = new MockEnvironment();
         val condition = BeanCondition.onProperty("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
-            .matches(env)
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
+    @Test
+    public void verifyTrueValue() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property.name", "TRUE");
+        val condition = BeanCondition.onProperty("cas.property.name")
+            .isTrue()
+            .given(env)
             .get();
         assertTrue(condition);
     }
@@ -55,7 +66,7 @@ public class BeanConditionTests {
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.onProperty("cas.property.other-name")
             .matchIfMissing()
-            .matches(env)
+            .given(env)
             .get();
         assertTrue(condition);
     }
@@ -65,7 +76,7 @@ public class BeanConditionTests {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.onProperty("cas.property.other-name")
-            .matches(env)
+            .given(env)
             .get();
         assertFalse(condition);
     }
