@@ -93,7 +93,9 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
         val transitionSet = actionState.getTransitionSet();
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+        
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED, target));
+        transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SKIP, target));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT,
             CasWebflowConstants.STATE_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
 

@@ -5,6 +5,7 @@ import org.apereo.cas.audit.CouchDbAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -29,10 +30,11 @@ public class CasSupportCouchDbAuditConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
-    public CouchDbConnectorFactory auditCouchDbFactory(final CasConfigurationProperties casProperties,
-                                                       @Qualifier("defaultObjectMapperFactory")
-                                                       final ObjectMapperFactory defaultObjectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory);
+    public CouchDbConnectorFactory auditCouchDbFactory(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("defaultObjectMapperFactory")
+        final ObjectMapperFactory defaultObjectMapperFactory) {
+        return new DefaultCouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")

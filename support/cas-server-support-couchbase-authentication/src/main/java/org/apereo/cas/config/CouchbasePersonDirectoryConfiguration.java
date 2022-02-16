@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -34,7 +34,7 @@ public class CouchbasePersonDirectoryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public IPersonAttributeDao couchbasePersonAttributeDao(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
-        val cb = new CouchbasePersonAttributeDao(couchbase, new CouchbaseClientFactory(couchbase));
+        val cb = new CouchbasePersonAttributeDao(couchbase, new DefaultCouchbaseClientFactory(couchbase));
         cb.setOrder(couchbase.getOrder());
         FunctionUtils.doIfNotNull(couchbase.getId(), cb::setId);
         return cb;

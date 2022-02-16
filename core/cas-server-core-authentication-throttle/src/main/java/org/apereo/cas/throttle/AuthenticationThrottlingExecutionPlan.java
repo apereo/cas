@@ -11,6 +11,10 @@ import java.util.List;
  * @since 5.3.0
  */
 public interface AuthenticationThrottlingExecutionPlan {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationThrottlingExecutionPlan";
 
     /**
      * Register authentication throttle interceptor.

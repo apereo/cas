@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.u2f.storage.U2FCouchDbDeviceRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.u2f.U2FDeviceRegistrationCouchDbRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -36,7 +37,7 @@ public class U2FCouchDbConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultObjectMapperFactory")
         final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")

@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,21 +48,24 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public CouchbaseClientFactory authenticationCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getAuthn().getCouchbase();
-        return new CouchbaseClientFactory(couchbase);
+        return new DefaultCouchbaseClientFactory(couchbase);
     }
 
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationHandler couchbaseAuthenticationHandler(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-                                                                @Qualifier("couchbasePrincipalFactory")
-                                                                final PrincipalFactory couchbasePrincipalFactory,
-                                                                @Qualifier("authenticationCouchbaseClientFactory")
-                                                                final CouchbaseClientFactory authenticationCouchbaseClientFactory,
-                                                                @Qualifier(ServicesManager.BEAN_NAME)
-                                                                final ServicesManager servicesManager) {
+    public AuthenticationHandler couchbaseAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("couchbasePrincipalFactory")
+        final PrincipalFactory couchbasePrincipalFactory,
+        @Qualifier("authenticationCouchbaseClientFactory")
+        final CouchbaseClientFactory authenticationCouchbaseClientFactory,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val couchbase = casProperties.getAuthn().getCouchbase();
-        val handler = new CouchbaseAuthenticationHandler(servicesManager, couchbasePrincipalFactory, authenticationCouchbaseClientFactory, couchbase);
+        val handler = new CouchbaseAuthenticationHandler(servicesManager, couchbasePrincipalFactory,
+            authenticationCouchbaseClientFactory, couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder(), applicationContext));
         return handler;

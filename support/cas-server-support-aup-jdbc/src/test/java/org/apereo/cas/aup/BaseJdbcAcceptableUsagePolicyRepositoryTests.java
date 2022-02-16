@@ -92,7 +92,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     protected DataSource acceptableUsagePolicyDataSource;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     @Getter
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 

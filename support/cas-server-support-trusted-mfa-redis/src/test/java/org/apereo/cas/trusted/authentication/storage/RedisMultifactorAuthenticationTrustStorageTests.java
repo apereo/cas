@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.config.RedisMultifactorAuthenticationTrustConfiguration;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.ZoneOffset;
@@ -23,9 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustStorageTests}.
@@ -46,12 +44,12 @@ public class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMul
 
     @Autowired
     @Qualifier("redisMfaTrustedAuthnTemplate")
-    private RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate;
+    private CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate;
 
     @BeforeEach
     public void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisMfaTrustedAuthnTemplate, key, 0).collect(Collectors.toSet());
+        val keys = redisMfaTrustedAuthnTemplate.keys(key, 0).collect(Collectors.toSet());
         redisMfaTrustedAuthnTemplate.delete(keys);
     }
 

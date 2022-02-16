@@ -256,6 +256,7 @@ public class CasCoreAuditConfiguration {
     public static class CasCoreAuditManagementConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
         @ConditionalOnProperty(prefix = "cas.audit.engine", name = "enabled", havingValue = "true", matchIfMissing = true)
         public AuditTrailManagementAspect auditTrailManagementAspect(

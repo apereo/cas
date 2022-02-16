@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.ticket.registry.CouchDbTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
@@ -35,7 +36,7 @@ public class CouchDbTicketRegistryConfiguration {
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                 @Qualifier("defaultObjectMapperFactory")
                                                                 final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean

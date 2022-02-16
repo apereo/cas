@@ -114,7 +114,7 @@ public class CouchDbAuthenticationHandlerTests {
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
+        couchDbRepository.initialize();
         RequestContextHolder.setRequestAttributes(
             new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
         val profile = new CouchProfile();

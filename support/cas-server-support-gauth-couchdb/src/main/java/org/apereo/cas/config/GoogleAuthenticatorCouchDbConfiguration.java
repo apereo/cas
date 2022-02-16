@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.gauth.credential.GoogleAuthenticatorAccountCouchDbRepository;
 import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.gauth.credential.CouchDbGoogleAuthenticatorTokenCredentialRepository;
@@ -39,7 +40,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory(final CasConfigurationProperties casProperties,
                                                                      @Qualifier("defaultObjectMapperFactory")
                                                                      final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatorAccountRegistry")
@@ -82,7 +83,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory(final CasConfigurationProperties casProperties,
                                                               @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")

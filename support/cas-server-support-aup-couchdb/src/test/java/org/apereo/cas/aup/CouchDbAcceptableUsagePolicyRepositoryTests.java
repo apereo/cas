@@ -56,13 +56,13 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     private ProfileCouchDbRepository couchDbRepository;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @BeforeEach
     public void setUp() {
         aupCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(aupCouchDbFactory.getCouchDbConnector().getDatabaseName());
-        couchDbRepository.initStandardDesignDocument();
+        couchDbRepository.initialize();
     }
 
     @AfterEach

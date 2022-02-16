@@ -43,6 +43,15 @@ public class BeanSupplierTests {
     }
 
     @Test
+    public void verifyBeanSuppliedWithMultipleConditions() throws Exception {
+        val noOp = BeanSupplier.of(CipherExecutor.class)
+            .alwaysMatch()
+            .supply(CipherExecutor::noOp)
+            .get();
+        assertEquals(noOp.getClass(), CipherExecutor.noOp().getClass());
+    }
+
+    @Test
     public void verifyBeanProxied() throws Exception {
         val r1 = BeanSupplier.of(CipherExecutor.class).neverMatch().otherwiseProxy().get();
         assertTrue(BeanSupplier.isProxy(r1));

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.RedisSamlRegisteredServiceMetadataResolver;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link SamlIdPRedisRegisteredServiceMetadataConfiguration}.
@@ -37,7 +37,7 @@ public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
     public SamlRegisteredServiceMetadataResolver redisSamlRegisteredServiceMetadataResolver(
         final CasConfigurationProperties casProperties,
         @Qualifier("redisSamlRegisteredServiceMetadataResolverTemplate")
-        final RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate,
+        final CasRedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate,
         @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
         final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -59,7 +59,7 @@ public class SamlIdPRedisRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "redisSamlRegisteredServiceMetadataResolverTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate(
+    public CasRedisTemplate<String, SamlMetadataDocument> redisSamlRegisteredServiceMetadataResolverTemplate(
         @Qualifier("redisSamlRegisteredServiceMetadataConnectionFactory")
         final RedisConnectionFactory redisSamlRegisteredServiceMetadataConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisSamlRegisteredServiceMetadataConnectionFactory);

@@ -128,7 +128,7 @@ public class CasRestConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override

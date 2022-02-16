@@ -6,11 +6,13 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -28,10 +30,18 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
+    @Audit(action = AuditableActions.AUP_VERIFY,
+        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
+    @Override
+    public Event doExecute(final RequestContext requestContext) {
+        return verify(requestContext);
+    }
+
     /**
      * Verify whether the policy is accepted.
      *
-     * @param context    the context
+     * @param context the context
      * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context) {
@@ -50,19 +60,13 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
             accessResult.throwExceptionIfNeeded();
 
             val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
-                && registeredService.getAcceptableUsagePolicy().isEnabled();
-            if (aupEnabled && !repository.verify(context).isAccepted()) {
+                             && registeredService.getAcceptableUsagePolicy().isEnabled();
+            val res = ObjectUtils.defaultIfNull(aupEnabled ? repository.verify(context) : null,
+                AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
+            if (res.isDenied()) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
             }
         }
         return null;
-    }
-
-    @Audit(action = AuditableActions.AUP_VERIFY,
-        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
-    @Override
-    public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext);
     }
 }

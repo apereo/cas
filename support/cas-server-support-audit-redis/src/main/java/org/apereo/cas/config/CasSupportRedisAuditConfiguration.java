@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 
 import lombok.val;
@@ -17,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link CasSupportRedisAuditConfiguration}.
@@ -34,7 +34,7 @@ public class CasSupportRedisAuditConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailManager redisAuditTrailManager(
         @Qualifier("auditRedisTemplate")
-        final RedisTemplate auditRedisTemplate,
+        final CasRedisTemplate auditRedisTemplate,
         final CasConfigurationProperties casProperties) {
         val redis = casProperties.getAudit().getRedis();
         return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous(), redis.getScanCount());
@@ -54,7 +54,7 @@ public class CasSupportRedisAuditConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "auditRedisTemplate")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisTemplate auditRedisTemplate(
+    public CasRedisTemplate auditRedisTemplate(
         @Qualifier("redisAuditConnectionFactory")
         final RedisConnectionFactory redisAuditConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory);

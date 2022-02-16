@@ -5,6 +5,7 @@ import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.CouchDbConsentRepository;
 import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -33,7 +34,7 @@ public class CasConsentCouchDbConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("defaultObjectMapperFactory")
         final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "consentCouchDbRepository")
@@ -41,7 +42,8 @@ public class CasConsentCouchDbConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConsentDecisionCouchDbRepository consentCouchDbRepository(
         @Qualifier("consentCouchDbFactory")
-        final CouchDbConnectorFactory consentCouchDbFactory, final CasConfigurationProperties casProperties) {
+        final CouchDbConnectorFactory consentCouchDbFactory,
+        final CasConfigurationProperties casProperties) {
         val repository = new ConsentDecisionCouchDbRepository(consentCouchDbFactory.getCouchDbConnector(),
             consentCouchDbFactory.getCouchDbInstance(),
             casProperties.getConsent().getCouchDb().isCreateIfNotExists());

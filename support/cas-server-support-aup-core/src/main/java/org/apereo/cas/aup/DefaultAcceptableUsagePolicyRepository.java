@@ -2,6 +2,7 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -33,7 +34,7 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
         val status = super.verify(requestContext);
-        if (!status.isAccepted()) {
+        if (status.isDenied()) {
             val storageInfo = getKeyAndMap(requestContext);
             val key = storageInfo.getLeft();
             val map = storageInfo.getRight();
@@ -41,7 +42,7 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
             val principal = authentication.getPrincipal();
             if (map.containsKey(key)) {
                 val accepted = (boolean) map.getOrDefault(key, Boolean.FALSE) || isUsagePolicyAcceptedBy(principal);
-                return new AcceptableUsagePolicyStatus(accepted, principal);
+                return new AcceptableUsagePolicyStatus(TriStateBoolean.fromBoolean(accepted), principal);
             }
             return AcceptableUsagePolicyStatus.denied(principal);
         }

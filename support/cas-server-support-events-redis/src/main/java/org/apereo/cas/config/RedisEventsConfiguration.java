@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
@@ -17,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link RedisEventsConfiguration}.
@@ -49,12 +49,11 @@ public class RedisEventsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisEventTemplate")
-    public RedisTemplate redisEventTemplate(
+    public CasRedisTemplate redisEventTemplate(
         @Qualifier("redisEventConnectionFactory")
         final RedisConnectionFactory redisEventConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisEventConnectionFactory);
     }
-
 
     @ConditionalOnMissingBean(name = "redisEventRepositoryFilter")
     @Bean
@@ -65,7 +64,7 @@ public class RedisEventsConfiguration {
     @Bean
     public CasEventRepository casEventRepository(
         @Qualifier("redisEventTemplate")
-        final RedisTemplate redisEventTemplate,
+        final CasRedisTemplate redisEventTemplate,
         @Qualifier("redisEventRepositoryFilter")
         final CasEventRepositoryFilter redisEventRepositoryFilter,
         final CasConfigurationProperties casProperties) {

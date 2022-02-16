@@ -3,13 +3,12 @@ package org.apereo.cas.u2f.redis;
 import org.apereo.cas.adaptors.u2f.storage.BaseU2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -31,20 +30,32 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
      */
     public static final String CAS_U2F_PREFIX = U2FRedisDeviceRepository.class.getSimpleName() + ':';
 
-    private final RedisTemplate<String, U2FDeviceRegistration> redisTemplate;
+    private final CasRedisTemplate<String, U2FDeviceRegistration> redisTemplate;
 
     public U2FRedisDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                    final RedisTemplate<String, U2FDeviceRegistration> redisTemplate,
+                                    final CasRedisTemplate<String, U2FDeviceRegistration> redisTemplate,
                                     final CipherExecutor<Serializable, String> cipherExecutor,
                                     final CasConfigurationProperties casProperties) {
         super(casProperties, requestStorage, cipherExecutor);
         this.redisTemplate = redisTemplate;
     }
 
+    private static String getPatternRedisKey() {
+        return CAS_U2F_PREFIX + '*';
+    }
+
+    private static String buildRedisKeyForRecord(final U2FDeviceRegistration record) {
+        return CAS_U2F_PREFIX + record.getUsername() + ':' + record.getId();
+    }
+
+    private static String buildRedisKeyForUser(final String username) {
+        return CAS_U2F_PREFIX + username + ":*";
+    }
+
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices() {
         val expirationDate = getDeviceExpiration();
-        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey(),
+        val keys = redisTemplate.keys(getPatternRedisKey(),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
         return queryDeviceRegistrations(expirationDate, keys);
     }
@@ -52,7 +63,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<? extends U2FDeviceRegistration> getRegisteredDevices(final String username) {
         val expirationDate = getDeviceExpiration();
-        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForUser(username),
+        val keys = redisTemplate.keys(buildRedisKeyForUser(username),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
         return queryDeviceRegistrations(expirationDate, keys);
     }
@@ -94,18 +105,6 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
         this.redisTemplate.delete(redisKey);
     }
 
-    private static String getPatternRedisKey() {
-        return CAS_U2F_PREFIX + '*';
-    }
-
-    private static String buildRedisKeyForRecord(final U2FDeviceRegistration record) {
-        return CAS_U2F_PREFIX + record.getUsername() + ':' + record.getId();
-    }
-
-    private static String buildRedisKeyForUser(final String username) {
-        return CAS_U2F_PREFIX + username + ":*";
-    }
-
     private Collection<? extends U2FDeviceRegistration> queryDeviceRegistrations(final LocalDate expirationDate,
                                                                                  final Stream<String> keys) {
         return keys
@@ -117,7 +116,7 @@ public class U2FRedisDeviceRepository extends BaseU2FDeviceRepository {
     }
 
     private Stream<String> getRedisKeys() {
-        return RedisUtils.keys(this.redisTemplate, getPatternRedisKey(),
+        return redisTemplate.keys(getPatternRedisKey(),
             casProperties.getAuthn().getMfa().getU2f().getRedis().getScanCount());
     }
 }

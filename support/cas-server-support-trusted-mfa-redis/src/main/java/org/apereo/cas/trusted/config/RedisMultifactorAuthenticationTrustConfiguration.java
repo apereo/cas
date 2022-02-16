@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
@@ -19,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedAuthnTemplate")
-    public RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate(
+    public CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate(
         @Qualifier("redisMfaTrustedConnectionFactory")
         final RedisConnectionFactory redisMfaTrustedConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisMfaTrustedConnectionFactory);
@@ -59,7 +59,7 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("redisMfaTrustedAuthnTemplate")
-        final RedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate,
+        final CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate,
         @Qualifier("mfaTrustRecordKeyGenerator")
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")

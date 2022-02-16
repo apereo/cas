@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.RedisYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link RedisYubiKeyConfiguration}.
@@ -34,7 +34,7 @@ public class RedisYubiKeyConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisYubiKeyTemplate")
-    public RedisTemplate redisYubiKeyTemplate(
+    public CasRedisTemplate redisYubiKeyTemplate(
         @Qualifier("redisYubiKeyConnectionFactory")
         final RedisConnectionFactory redisYubiKeyConnectionFactory) {
         return RedisObjectFactory.newRedisTemplate(redisYubiKeyConnectionFactory);
@@ -55,7 +55,7 @@ public class RedisYubiKeyConfiguration {
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry(
         @Qualifier("redisYubiKeyTemplate")
-        final RedisTemplate redisYubiKeyTemplate,
+        final CasRedisTemplate redisYubiKeyTemplate,
         @Qualifier("yubiKeyAccountValidator")
         final YubiKeyAccountValidator yubiKeyAccountValidator,
         @Qualifier("yubikeyAccountCipherExecutor")
