@@ -63,7 +63,7 @@ public class CasCoreValidationConfiguration {
         public ProxyHandler proxy20Handler(
             @Qualifier("proxy20TicketUniqueIdGenerator")
             final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
-            @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
             final HttpClient httpClient) {
             return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator);
         }

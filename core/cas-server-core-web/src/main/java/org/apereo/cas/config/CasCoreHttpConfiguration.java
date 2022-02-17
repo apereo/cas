@@ -162,10 +162,10 @@ public class CasCoreHttpConfiguration {
                 trustStoreSslSocketFactory, casProperties);
         }
 
-        @ConditionalOnMissingBean(name = "supportsTrustStoreSslSocketFactoryHttpClient")
+        @ConditionalOnMissingBean(name = HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public SimpleHttpClient supportsTrustStoreSslSocketFactoryHttpClient(
+        public HttpClient supportsTrustStoreSslSocketFactoryHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext,
             @Qualifier("hostnameVerifier")

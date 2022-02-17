@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
@@ -38,7 +39,10 @@ public class CasFeatureModuleEnabledConditionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
-    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        CasFeatureModuleFeature1TestConfiguration.class
+    })
     public class Feature1EnabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -52,7 +56,10 @@ public class CasFeatureModuleEnabledConditionTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=false")
-    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        CasFeatureModuleFeature1TestConfiguration.class
+    })
     public class Feature1DisabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -65,7 +72,10 @@ public class CasFeatureModuleEnabledConditionTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        CasFeatureModuleFeature1TestConfiguration.class
+    })
     public class Feature1EnabledUndefinedTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;

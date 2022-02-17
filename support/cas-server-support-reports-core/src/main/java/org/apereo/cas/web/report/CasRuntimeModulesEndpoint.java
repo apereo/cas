@@ -30,10 +30,11 @@ public class CasRuntimeModulesEndpoint extends BaseCasActuatorEndpoint {
      * Report modules.
      *
      * @return the list
+     * @throws Exception the exception
      */
     @ReadOperation
     @Operation(summary = "Get all available CAS runtime module descriptors")
-    public List<CasRuntimeModule> reportModules() {
+    public List<CasRuntimeModule> reportModules() throws Exception {
         return loader.load();
     }
 }

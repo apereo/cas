@@ -22,6 +22,8 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.MessageSanitizationUtils;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -439,17 +441,21 @@ public class CasCoreAuditConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "casAuditTrailExecutionPlanConfigurer")
-        @ConditionalOnProperty(prefix = "cas.audit.slf4j", name = "enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer(
-            final CasConfigurationProperties casProperties) {
-            return plan -> {
-                val slf4j = casProperties.getAudit().getSlf4j();
-                val slf4jManager = new Slf4jLoggingAuditTrailManager();
-                slf4jManager.setUseSingleLine(slf4j.isUseSingleLine());
-                slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
-                plan.registerAuditTrailManager(slf4jManager);
-            };
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
+                .when(BeanCondition.on("cas.audit.slf4j.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> {
+                    val slf4j = casProperties.getAudit().getSlf4j();
+                    val slf4jManager = new Slf4jLoggingAuditTrailManager();
+                    slf4jManager.setUseSingleLine(slf4j.isUseSingleLine());
+                    slf4jManager.setEntrySeparator(slf4j.getSinglelineSeparator());
+                    plan.registerAuditTrailManager(slf4jManager);
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 
