@@ -44,6 +44,7 @@ public interface BeanCondition {
     /**
      * Is the property value set to this value?
      *
+     * @param value the value
      * @return the bean condition
      */
     BeanCondition havingValue(Serializable value);

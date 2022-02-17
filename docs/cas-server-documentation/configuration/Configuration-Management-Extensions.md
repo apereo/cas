@@ -85,8 +85,8 @@ context utilize yours rather than what ships with CAS by default.
 
 <div class="alert alert-info"><strong>Bean Names</strong><p>To correctly define a conditional <code>Bean</code>, 
 you generally need to make sure your own bean definition is created using the same name or identifier as its original equivalent. 
-It is impractical and certainly overwheling to document all runtime bean definitions and their identifiers. So, you will
-need to study the CAS codebase to find the correct configuration classes and bean defnitions to note their name.</p></div>
+It is impractical and certainly overwhelming to document all runtime bean definitions and their identifiers. So, you will
+need to study the CAS codebase to find the correct configuration classes and bean definitions to note their name.</p></div>
 
 ### Exclusions
 
@@ -95,6 +95,28 @@ You can control the list of auto-configuration classes to exclude them in the `c
 ```properties
 spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfiguration
 ```
+     
+While the above allows control over individual auto-configuration classes, in some cases it may be desirable
+to entirely disable a feature altogether by excluding all applicable auto-configuration classes without having to
+identify all of them. This can be done using the following property syntax defined in the `cas.properties` file:
+
+```properties
+CasFeatureModule.[feature].[module].enabled=false|true
+```
+          
+The following features are available to CAS:
+
+| Feature                                                          | 
+|------------------------------------------------------------------|
+| [`AcceptableUsagePolicy`](../webflow/Webflow-Customization.html) |
+| [`PersonDirectory`](../integration/Attribute-Resolution.html)    |
+
+In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the
+actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`.
+
+Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included
+or excluded in the application context. Conditionally inclusion or exclusion of beans generally has consequences when it comes to 
+`@RefreshScope` and [supporting refreshable beans](Configuration-Management-Reload.html).Spring application context will fail to refresh beans that are excluded at initialization/startup time, because there is nothing to refresh to begin with. Refresh requests and scope only work in scenarios where there is an existing reference to a bean in the application context hierarchy that can be refreshed; beans or configuration classes that are skipped during the startup and application context initialization will never be refreshable, because they are not re-created upon refresh requests. In other words, refresh requests only work best when there is a setting or property whose existing value changes from A to B; if there was no A to begin with, or if A is being removed, refresh requests may fall short.
 
 ## CAS Properties
 

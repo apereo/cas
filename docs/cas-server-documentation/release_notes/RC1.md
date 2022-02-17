@@ -52,13 +52,11 @@ minimum system/platform requirements for this release.
 
 The following items are new improvements and enhancements presented in this release.
 
-
 ## Other Stuff
-
 
 ## Library Upgrades
 
-- AspectJ
+- Aspectj
 - Spring Data CosmosDb
 - Spring Cloud AWS
 - Bucket4j
@@ -67,4 +65,8 @@ The following items are new improvements and enhancements presented in this rele
 - Kryo
 - Gson
 - Nimbus OIDC
+- PostgreSQL
+- Jose4j
+- Amazon
+- Okta
 
