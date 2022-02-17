@@ -21,10 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @TestPropertySource(properties ="cas.google-analytics.google-analytics-tracking-id=123456")
-@Import({
-    CasGoogleAnalyticsConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(CasGoogleAnalyticsConfiguration.class)
 @Tag("WebflowConfig")
 public class CasGoogleAnalyticsWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test

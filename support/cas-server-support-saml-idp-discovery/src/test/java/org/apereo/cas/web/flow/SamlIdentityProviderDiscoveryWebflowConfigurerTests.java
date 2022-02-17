@@ -31,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     Pac4jAuthenticationEventExecutionPlanConfiguration.class,
     Pac4jDelegatedAuthenticationConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,
-    SamlIdentityProviderDiscoveryConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    SamlIdentityProviderDiscoveryConfiguration.class
 })
 @Tag("SAML2")
 public class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {

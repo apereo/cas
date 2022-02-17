@@ -27,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     ElectronicFenceConfiguration.class,
-    ElectronicFenceWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    ElectronicFenceWebflowConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowConfig")

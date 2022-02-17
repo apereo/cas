@@ -27,10 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("WebflowActions")
-@Import({
-    CasAccountManagementWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(CasAccountManagementWebflowConfiguration.class)
 public class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired

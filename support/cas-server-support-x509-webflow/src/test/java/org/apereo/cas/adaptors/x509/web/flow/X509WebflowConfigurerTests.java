@@ -32,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     X509CertificateExtractorConfiguration.class,
     X509AuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("X509")
 public class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
