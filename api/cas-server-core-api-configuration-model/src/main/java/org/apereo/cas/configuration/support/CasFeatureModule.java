@@ -18,17 +18,6 @@ import java.lang.reflect.Field;
  */
 public interface CasFeatureModule {
 
-    enum FeatureCatalog {
-        /**
-         * AUP feature.
-         */
-        AcceptableUsagePolicy,
-        /**
-         * Person directory and attribute resolution feature.
-         */
-        PersonDirectory
-    }
-
     private static String getMethodName(final Field field, final String prefix) {
         return prefix
                + field.getName().substring(0, 1).toUpperCase()
@@ -70,5 +59,20 @@ public interface CasFeatureModule {
     @JsonIgnore
     default boolean isUndefined() {
         return !isDefined();
+    }
+
+    enum FeatureCatalog {
+        /**
+         * AUP feature.
+         */
+        AcceptableUsagePolicy,
+        /**
+         * Person directory and attribute resolution feature.
+         */
+        PersonDirectory,
+        /**
+         * U2F MFA.
+         */
+        U2F
     }
 }

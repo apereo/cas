@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @Setter
-public abstract class AbstractDelegateController implements ApplicationContextAware {
+public abstract class AbstractDelegateController implements CasWebController, ApplicationContextAware {
 
     /**
      * Application context.

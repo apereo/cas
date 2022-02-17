@@ -8,6 +8,8 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.validation.AuthenticationPolicyAwareServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
@@ -23,7 +25,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,32 +45,39 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreValidationConfiguration {
-
+    private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
+    
     @Configuration(value = "CasCoreValidationProxyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationProxyConfiguration {
         @ConditionalOnMissingBean(name = "proxy10Handler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
-        public ProxyHandler proxy10Handler() {
-            return new Cas10ProxyHandler();
+        public ProxyHandler proxy10Handler(final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(ProxyHandler.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(Cas10ProxyHandler::new)
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "proxy20Handler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         public ProxyHandler proxy20Handler(
             @Qualifier("proxy20TicketUniqueIdGenerator")
             final UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
-            final HttpClient httpClient) {
-            return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator);
+            final HttpClient httpClient,
+            final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(ProxyHandler.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator))
+                .otherwiseProxy()
+                .get();
         }
     }
-
-
+    
     @Configuration(value = "CasCoreValidationSpecificationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreValidationSpecificationConfiguration {
@@ -102,9 +110,7 @@ public class CasCoreValidationConfiguration {
             final ServicesManager servicesManager) {
             return new Cas20WithoutProxyingValidationSpecification(servicesManager);
         }
-
     }
-
 
     @Configuration(value = "CasCoreValidationExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -122,7 +128,6 @@ public class CasCoreValidationConfiguration {
             return plan;
         }
     }
-
 
     @Configuration(value = "CasCoreValidationAuthorizerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -149,6 +154,5 @@ public class CasCoreValidationConfiguration {
                 authenticationEventExecutionPlan, applicationContext);
         }
     }
-
-
+    
 }
