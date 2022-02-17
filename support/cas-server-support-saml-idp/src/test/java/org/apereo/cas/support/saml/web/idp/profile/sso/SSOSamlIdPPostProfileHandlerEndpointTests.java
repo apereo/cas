@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "management.endpoints.web.exposure.include=*",
     "management.endpoint.samlPostProfileResponse.enabled=true"

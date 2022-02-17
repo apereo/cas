@@ -77,6 +77,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
@@ -506,7 +507,7 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(a, pgt.getAuthentication());
         assertNotNull(ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class));
 
-        assertTrue(ticketRegistry.deleteTicket(tgt.getId()) > 0);
+        await().untilAsserted(() -> assertTrue(ticketRegistry.deleteTicket(tgt.getId()) > 0));
 
         assertNull(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
         assertNull(ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class));

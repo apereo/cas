@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 public class SamlProfileSamlAttributeStatementBuilderTests extends BaseSamlIdPConfigurationTests {
 

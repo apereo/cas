@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlIdentityProviderDiscoveryConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
 })
-@Tag("SAML")
+@Tag("SAML2")
 public class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     public void verifyOperation() {

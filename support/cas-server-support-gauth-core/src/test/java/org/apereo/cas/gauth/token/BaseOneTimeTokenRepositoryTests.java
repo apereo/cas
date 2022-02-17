@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.UUID;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,6 +42,8 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @BeforeEach
     public void initialize() {
         this.userId = RandomUtils.randomAlphabetic(6);
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        await().untilAsserted(() -> assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count()));
     }
 
     @Test

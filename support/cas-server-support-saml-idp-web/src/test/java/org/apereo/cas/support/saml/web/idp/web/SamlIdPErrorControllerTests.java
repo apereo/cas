@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 public class SamlIdPErrorControllerTests {
     @Test
     public void verifyOperation() {

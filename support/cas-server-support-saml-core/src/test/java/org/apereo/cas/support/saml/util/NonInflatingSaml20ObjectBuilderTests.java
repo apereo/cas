@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 public class NonInflatingSaml20ObjectBuilderTests {
     @Autowired

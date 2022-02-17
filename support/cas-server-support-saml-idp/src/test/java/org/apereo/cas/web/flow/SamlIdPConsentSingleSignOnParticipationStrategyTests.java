@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @Import(CasConsentCoreConfiguration.class)
 public class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWebflowTests {
 
