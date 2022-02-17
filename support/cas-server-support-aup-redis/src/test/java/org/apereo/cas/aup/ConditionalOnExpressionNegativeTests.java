@@ -14,19 +14,19 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This class is testing that the conditional expression on the CasAcceptableUsagePolicyRedisConfiguration class works.
- * The positive test is done implicitly by other tests that use the CasAcceptableUsagePolicyRedisConfiguration class.
+ * This class is testing that the conditional expression on
+ * the {@link CasAcceptableUsagePolicyRedisConfiguration} class works.
+ * The positive test is done implicitly by other tests that
+ * use the {@link CasAcceptableUsagePolicyRedisConfiguration} class.
+ *
  * @since 6.4.0
  */
 @Tag("Redis")
 @SpringBootTest(classes = CasAcceptableUsagePolicyRedisConfiguration.class)
-@TestPropertySource(properties = {
-        "cas.acceptable-usage-policy.core.enabled=false",
-        "cas.acceptable-usage-policy.redis.enabled=true"
-})
+@TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.redis.enabled=false")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class ConditionalOnExpressionNegativeTests {
     @Autowired

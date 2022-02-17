@@ -123,6 +123,7 @@ Available drivers are:
 | `org.hibernate.dialect.MariaDB10Dialect`  |
 | `org.hibernate.dialect.MariaDB102Dialect` |
 | `org.hibernate.dialect.MariaDB103Dialect` |
+| `org.hibernate.dialect.MariaDB106Dialect` |
 
 ### Microsoft SQL Server 
 

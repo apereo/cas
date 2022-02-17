@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,16 +18,31 @@ import java.lang.reflect.Field;
  */
 public interface CasFeatureModule {
 
+    enum FeatureCatalog {
+        /**
+         * AUP feature.
+         */
+        AcceptableUsagePolicy,
+        /**
+         * Person directory and attribute resolution feature.
+         */
+        PersonDirectory
+    }
+
+    private static String getMethodName(final Field field, final String prefix) {
+        return prefix
+               + field.getName().substring(0, 1).toUpperCase()
+               + field.getName().substring(1);
+    }
+
     /**
      * Is defined?
      *
      * @return true/false
      */
-    @SneakyThrows
     @JsonIgnore
     default boolean isDefined() {
         val fields = ReflectionUtils.getAllFields(getClass(), field -> field.getAnnotation(RequiredProperty.class) != null);
-        
         return fields
             .stream()
             .allMatch(Unchecked.predicate(field -> {
@@ -56,11 +70,5 @@ public interface CasFeatureModule {
     @JsonIgnore
     default boolean isUndefined() {
         return !isDefined();
-    }
-
-    private static String getMethodName(final Field field, final String prefix) {
-        return prefix
-            + field.getName().substring(0, 1).toUpperCase()
-            + field.getName().substring(1);
     }
 }

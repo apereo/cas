@@ -9,6 +9,7 @@ import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.dialect.MariaDB102Dialect;
 import org.hibernate.dialect.MariaDB103Dialect;
+import org.hibernate.dialect.MariaDB106Dialect;
 import org.hibernate.dialect.MariaDB10Dialect;
 import org.hibernate.dialect.MariaDB53Dialect;
 import org.hibernate.dialect.MariaDBDialect;
@@ -85,6 +86,7 @@ public class GenerateDdlCommand {
         DIALECTS_MAP.put("MARIADB10", MariaDB10Dialect.class.getName());
         DIALECTS_MAP.put("MARIADB102", MariaDB102Dialect.class.getName());
         DIALECTS_MAP.put("MARIADB103", MariaDB103Dialect.class.getName());
+        DIALECTS_MAP.put("MARIADB106", MariaDB106Dialect.class.getName());
 
         DIALECTS_MAP.put("SQLSERVER", SQLServerDialect.class.getName());
         DIALECTS_MAP.put("SQLSERVER2005", SQLServer2005Dialect.class.getName());

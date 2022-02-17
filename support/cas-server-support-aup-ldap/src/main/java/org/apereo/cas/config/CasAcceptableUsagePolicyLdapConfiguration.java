@@ -3,9 +3,11 @@ package org.apereo.cas.config;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Configuration(value = "CasAcceptableUsagePolicyLdapConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.AcceptableUsagePolicy, module = "ldap")
 public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
