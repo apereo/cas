@@ -55,6 +55,22 @@ The following items are new improvements and enhancements presented in this rele
 ## Configuration Refresh
 
 The construction of Spring `@Bean`s managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. Furthermore, modest support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now available to allow multiple competing modules to be present the same web application where they can be toggled on and off va dedicated flags and settings.
+  
+## Integration Tests
+
+Several Docker images used for integration tests are now updated to their latest versions. These include:
+
+- AWS Localstack
+- Apache Cassandra
+- Apache Couchbase
+- AWS DynamoDb
+- InfluxDb
+- MariaDb
+- MongoDb
+- Microsoft SQL Server
+- MySQL
+- PostgreSQL
+- 
 
 ## Other Stuff
 
