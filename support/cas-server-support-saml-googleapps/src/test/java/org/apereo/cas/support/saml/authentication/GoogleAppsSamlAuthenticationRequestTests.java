@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     SamlGoogleAppsConfiguration.class,
     AbstractOpenSamlTests.SharedTestConfiguration.class
 })
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
 

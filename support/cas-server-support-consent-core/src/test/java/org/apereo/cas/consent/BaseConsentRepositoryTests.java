@@ -36,7 +36,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import lombok.val;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -50,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -121,7 +121,7 @@ public abstract class BaseConsentRepositoryTests {
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
         assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
-        Awaitility.await().untilAsserted(() ->
+        await().untilAsserted(() ->
             assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user))));
     }
 

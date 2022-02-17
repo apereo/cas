@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.algs.override-blocked-signature-signing-algorithms=http://www.w3.org/2001/04/xmldsig-more#md5",
     "cas.authn.saml-idp.algs.override-allowed-signature-signing-algorithms=http://www.w3.org/2001/04/xmldsig-more#hmac-md5"

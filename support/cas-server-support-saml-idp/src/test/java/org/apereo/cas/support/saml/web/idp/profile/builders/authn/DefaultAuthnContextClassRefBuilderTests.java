@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 public class DefaultAuthnContextClassRefBuilderTests extends BaseSamlIdPConfigurationTests {
     @Test
     public void verifyOperationByService() {

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @Import(SamlIdPDelegatedAuthenticationConfiguration.class)
 public class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSamlIdPConfigurationTests {
     @Autowired

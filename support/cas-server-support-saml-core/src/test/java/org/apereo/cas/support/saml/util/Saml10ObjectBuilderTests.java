@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("SAML")
+@Tag("SAML1")
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 public class Saml10ObjectBuilderTests {
     @Autowired

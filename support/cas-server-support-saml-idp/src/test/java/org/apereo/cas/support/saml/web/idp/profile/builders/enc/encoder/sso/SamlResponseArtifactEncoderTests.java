@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test

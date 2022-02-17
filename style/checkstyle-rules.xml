@@ -177,6 +177,7 @@
                       org.junit.jupiter.api.Assumptions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
+                      org.awaitility.Awaitility,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
                       org.springframework.test.web.servlet.result.MockMvcResultMatchers,
                       org.springframework.test.web.client.ExpectedCount,
