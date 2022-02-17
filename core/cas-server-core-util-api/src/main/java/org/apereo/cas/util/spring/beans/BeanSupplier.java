@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -81,6 +82,7 @@ public interface BeanSupplier<T> {
      * @return the bean supplier
      */
     BeanSupplier<T> when(Supplier<Boolean> conditionSupplier);
+
     /**
      * Specify condition for bean supplier to create beans.
      *
@@ -176,6 +178,8 @@ public interface BeanSupplier<T> {
     class ProxiedBeanSupplier<T> implements Supplier<T> {
         private static final Map<Class, Object> TYPES_AND_VALUES;
 
+        private static final Map<String, Object> PROXIES = new ConcurrentHashMap<>();
+
         static {
             TYPES_AND_VALUES = new HashMap<>();
             TYPES_AND_VALUES.put(Object[].class, ArrayUtils.EMPTY_OBJECT_ARRAY);
@@ -218,15 +222,16 @@ public interface BeanSupplier<T> {
         @Override
         @SuppressWarnings("unchecked")
         public T get() {
-            return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class[]{clazz},
-                (proxy, method, args) -> {
-                    if (method.getName().equals("toString")) {
-                        return "Proxy-" + clazz.getName();
-                    }
-                    val returnType = method.getReturnType();
-                    return TYPES_AND_VALUES.getOrDefault(returnType, null);
-                });
+            return (T) PROXIES.computeIfAbsent(clazz.getName(),
+                s -> Proxy.newProxyInstance(getClass().getClassLoader(),
+                    new Class[]{clazz},
+                    (proxy, method, args) -> {
+                        if (method.getName().equals("toString")) {
+                            return "Proxy-" + clazz.getName();
+                        }
+                        val returnType = method.getReturnType();
+                        return TYPES_AND_VALUES.getOrDefault(returnType, null);
+                    }));
         }
     }
 }

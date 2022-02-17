@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
@@ -17,6 +17,7 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.validation.ChainingCasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
+import org.apereo.cas.web.CasWebController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.ServiceValidationViewFactory;
 import org.apereo.cas.web.ServiceValidationViewFactoryConfigurer;
@@ -41,7 +42,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -49,10 +49,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.http.MediaType;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
+
+import static org.apereo.cas.util.CollectionUtils.*;
+import static org.apereo.cas.util.spring.beans.BeanSupplier.*;
+import static org.apereo.cas.web.ServiceValidateConfigurationContext.*;
+import static org.springframework.http.MediaType.*;
 
 /**
  * This is {@link CasValidationConfiguration}.
@@ -63,6 +67,7 @@ import java.util.List;
 @Configuration(value = "CasValidationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
+    private static final BeanCondition CONDITION_PROXY_AUTHN = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasValidationViewRegistrationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -168,14 +173,20 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateControllerValidationSpecification")
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("cas20ProtocolValidationSpecification")
-            final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) {
-            val validationChain = new ChainingCasProtocolValidationSpecification();
-            validationChain.addSpecification(cas20ProtocolValidationSpecification);
-            return validationChain;
+            final CasProtocolValidationSpecification cas20ProtocolValidationSpecification) throws Exception {
+            return of(CasProtocolValidationSpecification.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val validationChain = new ChainingCasProtocolValidationSpecification();
+                    validationChain.addSpecification(cas20ProtocolValidationSpecification);
+                    return validationChain;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
@@ -246,7 +257,7 @@ public class CasValidationConfiguration {
             final CasConfigurationProperties casProperties) {
             return casProtocolViewFactory.create(applicationContext,
                 casProperties.getView().getCas2().getSuccess(),
-                MediaType.APPLICATION_XML_VALUE);
+                APPLICATION_XML_VALUE);
         }
 
         @Bean
@@ -260,30 +271,37 @@ public class CasValidationConfiguration {
                 casProperties.getView().getCas2().getFailure());
         }
 
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxyFailureView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas2().getProxy().getFailure(),
-                MediaType.APPLICATION_XML_VALUE);
+            final CasConfigurationProperties casProperties) throws Exception {
+            return of(View.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> casProtocolViewFactory.create(applicationContext,
+                    casProperties.getView().getCas2().getProxy().getFailure(),
+                    APPLICATION_XML_VALUE))
+                .otherwiseProxy()
+                .get();
+
         }
 
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public View cas2ProxySuccessView(
             @Qualifier("casProtocolViewFactory")
             final CasProtocolViewFactory casProtocolViewFactory,
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return casProtocolViewFactory.create(applicationContext,
-                casProperties.getView().getCas2().getProxy().getSuccess(),
-                MediaType.APPLICATION_XML_VALUE);
+            final ConfigurableApplicationContext applicationContext) throws Exception {
+            return of(View.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> casProtocolViewFactory.create(applicationContext,
+                    casProperties.getView().getCas2().getProxy().getSuccess(),
+                    APPLICATION_XML_VALUE))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
@@ -306,7 +324,7 @@ public class CasValidationConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext,
                 casProperties.getView().getCas3().getFailure(),
-                MediaType.APPLICATION_XML_VALUE);
+                APPLICATION_XML_VALUE);
         }
 
         @Bean
@@ -399,9 +417,8 @@ public class CasValidationConfiguration {
     public static class CasValidationControllerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "proxyController")
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ProxyController proxyController(
+        public CasWebController proxyController(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -410,11 +427,16 @@ public class CasValidationConfiguration {
             @Qualifier("cas2ProxySuccessView")
             final View cas2ProxySuccessView,
             @Qualifier("cas2ProxyFailureView")
-            final View cas2ProxyFailureView) {
-            return new ProxyController(cas2ProxySuccessView, cas2ProxyFailureView,
-                centralAuthenticationService, webApplicationServiceFactory, applicationContext);
+            final View cas2ProxyFailureView) throws Exception {
+
+            return of(CasWebController.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> new ProxyController(cas2ProxySuccessView, cas2ProxyFailureView,
+                    centralAuthenticationService, webApplicationServiceFactory, applicationContext))
+                .otherwiseProxy()
+                .get();
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "serviceValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -438,7 +460,7 @@ public class CasValidationConfiguration {
             final CasProtocolValidationSpecification serviceValidateControllerValidationSpecification,
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
+            val context = builder()
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -448,7 +470,7 @@ public class CasValidationConfiguration {
                 .validationAuthorizers(serviceValidationAuthorizers)
                 .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
                 .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(serviceValidateControllerValidationSpecification))
+                .validationSpecifications(wrapSet(serviceValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
                 .build();
             return new ServiceValidateController(context);
@@ -477,7 +499,7 @@ public class CasValidationConfiguration {
             final CasProtocolValidationSpecification legacyValidateControllerValidationSpecification,
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
+            val context = builder()
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -487,7 +509,7 @@ public class CasValidationConfiguration {
                 .validationAuthorizers(serviceValidationAuthorizers)
                 .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
                 .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(legacyValidateControllerValidationSpecification))
+                .validationSpecifications(wrapSet(legacyValidateControllerValidationSpecification))
                 .proxyHandler(proxy10Handler)
                 .build();
             return new LegacyValidateController(context);
@@ -516,7 +538,7 @@ public class CasValidationConfiguration {
             final CasProtocolValidationSpecification proxyValidateControllerValidationSpecification,
             @Qualifier("serviceValidationViewFactory")
             final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
+            val context = builder()
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
@@ -526,7 +548,7 @@ public class CasValidationConfiguration {
                 .validationAuthorizers(serviceValidationAuthorizers)
                 .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
                 .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(proxyValidateControllerValidationSpecification))
+                .validationSpecifications(wrapSet(proxyValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
                 .build();
             return new ProxyValidateController(context);
@@ -535,9 +557,9 @@ public class CasValidationConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateController")
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public V3ProxyValidateController v3ProxyValidateController(
+        public CasWebController v3ProxyValidateController(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
             @Qualifier("serviceValidationAuthorizers")
@@ -556,21 +578,27 @@ public class CasValidationConfiguration {
             @Qualifier("v3ProxyValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification,
             @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) {
-            val context = ServiceValidateConfigurationContext.builder()
-                .authenticationSystemSupport(authenticationSystemSupport)
-                .servicesManager(servicesManager)
-                .centralAuthenticationService(centralAuthenticationService)
-                .argumentExtractor(argumentExtractor)
-                .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
-                .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
-                .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification))
-                .proxyHandler(proxy20Handler)
-                .build();
-            return new V3ProxyValidateController(context);
+            final ServiceValidationViewFactory serviceValidationViewFactory) throws Exception {
+            return of(CasWebController.class)
+                .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val context = builder()
+                        .authenticationSystemSupport(authenticationSystemSupport)
+                        .servicesManager(servicesManager)
+                        .centralAuthenticationService(centralAuthenticationService)
+                        .argumentExtractor(argumentExtractor)
+                        .requestedContextValidator(requestedContextValidator)
+                        .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
+                        .validationAuthorizers(serviceValidationAuthorizers)
+                        .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                        .validationViewFactory(serviceValidationViewFactory)
+                        .validationSpecifications(wrapSet(v3ProxyValidateControllerValidationSpecification))
+                        .proxyHandler(proxy20Handler)
+                        .build();
+                    return new V3ProxyValidateController(context);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
@@ -606,7 +634,7 @@ public class CasValidationConfiguration {
                 .validationAuthorizers(serviceValidationAuthorizers)
                 .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
                 .validationViewFactory(serviceValidationViewFactory)
-                .validationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
+                .validationSpecifications(wrapSet(v3ServiceValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
                 .build();
             return new V3ServiceValidateController(context);
