@@ -12,6 +12,11 @@ import java.net.URL;
 public interface HttpClient {
 
     /**
+     * Bean name for the client implementation that supports CAS trust store.
+     */
+    String BEAN_NAME_HTTPCLIENT_TRUST_STORE = "supportsTrustStoreSslSocketFactoryHttpClient";
+
+    /**
      * Bean name for the client implementation that does not follow redirects.
      */
     String BEAN_NAME_HTTPCLIENT_NO_REDIRECT = "noRedirectHttpClient";

@@ -37,7 +37,7 @@ public class CasAcceptableUsagePolicyRedisConfiguration {
      * Condition to activate AUP.
      */
     private static final BeanCondition CONDITION_AUP_REDIS_ENABLED =
-        BeanCondition.on("cas.acceptable-usage-policy.redis.enabled").isTrue().matchIfMissing();
+        BeanCondition.on("cas.acceptable-usage-policy.redis.enabled").isTrue().evenIfMissing();
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean

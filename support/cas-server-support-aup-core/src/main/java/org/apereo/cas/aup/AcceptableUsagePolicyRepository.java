@@ -19,7 +19,7 @@ public interface AcceptableUsagePolicyRepository extends Serializable {
     /**
      * Condition to activate AUP.
      */
-    BeanCondition CONDITION_AUP_ENABLED = BeanCondition.on("cas.acceptable-usage-policy.core.enabled").isTrue().matchIfMissing();
+    BeanCondition CONDITION_AUP_ENABLED = BeanCondition.on("cas.acceptable-usage-policy.core.enabled").isTrue().evenIfMissing();
 
     /**
      * Default bean name.

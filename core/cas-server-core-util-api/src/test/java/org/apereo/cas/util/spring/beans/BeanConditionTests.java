@@ -22,7 +22,7 @@ public class BeanConditionTests {
         env.setProperty("cas.property-name.prefix", "value");
         val condition = BeanCondition.on("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
-            .matchIfMissing()
+            .evenIfMissing()
             .given(env)
             .get();
         assertTrue(condition);
@@ -65,7 +65,7 @@ public class BeanConditionTests {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.on("cas.property.other-name")
-            .matchIfMissing()
+            .evenIfMissing()
             .given(env)
             .get();
         assertTrue(condition);

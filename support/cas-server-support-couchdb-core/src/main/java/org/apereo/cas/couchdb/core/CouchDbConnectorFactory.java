@@ -17,6 +17,7 @@ public interface CouchDbConnectorFactory {
      * @return the object mapper factory
      */
     ObjectMapperFactory getObjectMapperFactory();
+    
     /**
      * Gets couch db connector.
      *

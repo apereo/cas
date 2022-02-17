@@ -61,7 +61,7 @@ public class BasicDuoSecurityAuthenticationServiceTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+    @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
     private HttpClient httpClient;
 
     @Test

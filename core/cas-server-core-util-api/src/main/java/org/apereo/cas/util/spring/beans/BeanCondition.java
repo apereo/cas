@@ -31,7 +31,7 @@ public interface BeanCondition {
      *
      * @return the bean condition
      */
-    BeanCondition matchIfMissing();
+    BeanCondition evenIfMissing();
 
     /**
      * With default value.
@@ -77,7 +77,7 @@ public interface BeanCondition {
         private Serializable havingValue;
 
         @Override
-        public BeanCondition matchIfMissing() {
+        public BeanCondition evenIfMissing() {
             this.matchIfMissing = true;
             return this;
         }
