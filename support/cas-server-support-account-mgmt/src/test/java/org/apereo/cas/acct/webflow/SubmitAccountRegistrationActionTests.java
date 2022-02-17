@@ -45,8 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasAccountManagementWebflowConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",

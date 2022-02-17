@@ -17,10 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    CasScimConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(CasScimConfiguration.class)
 @TestPropertySource(properties = "cas.scim.target=http://localhost:8218")
 @Tag("SCIM")
 public class ScimWebflowConfigurerTests extends BaseWebflowConfigurerTests {

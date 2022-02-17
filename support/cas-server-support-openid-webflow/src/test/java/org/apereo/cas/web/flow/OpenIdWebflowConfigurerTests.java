@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @deprecated 6.2
  */
 @Import({
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasCoreValidationConfiguration.class,

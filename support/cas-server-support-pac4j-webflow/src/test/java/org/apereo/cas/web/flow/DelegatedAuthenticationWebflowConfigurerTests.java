@@ -23,10 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Import({
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
 public class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
