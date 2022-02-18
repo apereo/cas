@@ -34,7 +34,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -110,14 +109,8 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTime
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "UpigXEQDU1tnxolpXBM8OK8G7/a+goMDTJkQPvxQ");
     }
 
-    @BeforeEach
-    public void initialize() {
-        super.initialize();
-        oneTimeTokenAuthenticatorTokenRepository.removeAll();
-    }
-
     @Test
-    public void verifyExpiredTokens() {
+    public void verifyExpiredTokens() throws Exception {
         val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);

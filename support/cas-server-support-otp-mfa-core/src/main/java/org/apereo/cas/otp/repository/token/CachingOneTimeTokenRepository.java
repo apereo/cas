@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
+public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<OneTimeToken> {
     private final Cache<String, Collection<OneTimeToken>> storage;
 
     @Override

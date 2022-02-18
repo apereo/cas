@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.OneTimeToken;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface OneTimeTokenRepository {
+public interface OneTimeTokenRepository<T extends OneTimeToken> {
 
     /**
      * Clean expired/invalid tokens from the repository.
@@ -21,7 +21,7 @@ public interface OneTimeTokenRepository {
      *
      * @param token the token
      */
-    void store(OneTimeToken token);
+    void store(T token);
 
     /**
      * Determine if the otp for user exists in repository.
@@ -41,7 +41,7 @@ public interface OneTimeTokenRepository {
      * @param otp the opt
      * @return the one time token
      */
-    OneTimeToken get(String uid, Integer otp);
+    T get(String uid, Integer otp);
 
     /**
      * Remove the token.

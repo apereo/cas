@@ -63,7 +63,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         val otp = getRandomOtp();
         var token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp));
+        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp)));
         token = oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp);
         assertTrue(token.getId() > 0);
     }
