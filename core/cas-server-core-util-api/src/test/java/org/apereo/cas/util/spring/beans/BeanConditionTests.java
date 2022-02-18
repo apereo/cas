@@ -17,6 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 public class BeanConditionTests {
     @Test
+    public void verifyExistsOperation() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property.location", "classpath:/x509.crt");
+        val condition = BeanCondition.on("cas.property.location")
+            .exists()
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
+    @Test
     public void verifyOperation() {
         val env = new MockEnvironment();
         env.setProperty("cas.property-name.prefix", "value");

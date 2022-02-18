@@ -73,6 +73,10 @@ public interface CasFeatureModule {
         /**
          * U2F MFA.
          */
-        U2F
+        U2F,
+        /**
+         * YubiKey MFA.
+         */
+        YubiKey
     }
 }

@@ -20,15 +20,17 @@ import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCach
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -77,21 +79,32 @@ public class CasCoreAuthenticationSupportConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "groovyAuthenticationHandlerResolver")
-        @ConditionalOnProperty(name = "cas.authn.core.groovy-authentication-resolution.location")
         public AuthenticationHandlerResolver groovyAuthenticationHandlerResolver(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
-            val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
-            return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager, groovy.getOrder());
+            final ServicesManager servicesManager) throws Exception {
+            return BeanSupplier.of(AuthenticationHandlerResolver.class)
+                .when(BeanCondition.on("cas.authn.core.groovy-authentication-resolution.location").exists()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val groovy = casProperties.getAuthn().getCore().getGroovyAuthenticationResolution();
+                    return new GroovyAuthenticationHandlerResolver(groovy.getLocation(), servicesManager, groovy.getOrder());
+                })
+                .otherwise(AuthenticationHandlerResolver::noOp)
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.authn.policy", name = "source-selection-enabled", havingValue = "true")
-        public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
-            return new ByCredentialSourceAuthenticationHandlerResolver();
+        public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver(
+            final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(AuthenticationHandlerResolver.class)
+                .when(BeanCondition.on("cas.authn.policy.source-selection-enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(ByCredentialSourceAuthenticationHandlerResolver::new)
+                .otherwise(AuthenticationHandlerResolver::noOp)
+                .get();
         }
 
     }

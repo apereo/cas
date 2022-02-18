@@ -250,7 +250,6 @@ public class CasCoreAuditConfiguration {
         public AuditEventRepository inMemoryAuditEventRepository() {
             return new InMemoryAuditEventRepository();
         }
-
     }
 
     @Configuration(value = "CasCoreAuditManagementConfiguration", proxyBeanMethods = false)

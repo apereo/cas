@@ -1,5 +1,7 @@
 package org.apereo.cas.util.spring.beans;
 
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,13 @@ public interface BeanCondition {
     BeanCondition havingValue(Serializable value);
 
     /**
+     * Check of the value is a valid resource and exists.
+     *
+     * @return the bean condition
+     */
+    BeanCondition exists();
+
+    /**
      * Is property value set to true.
      *
      * @return the bean condition
@@ -76,6 +85,8 @@ public interface BeanCondition {
 
         private Serializable havingValue;
 
+        private boolean exists;
+
         @Override
         public BeanCondition evenIfMissing() {
             this.matchIfMissing = true;
@@ -95,6 +106,12 @@ public interface BeanCondition {
         }
 
         @Override
+        public BeanCondition exists() {
+            this.exists = true;
+            return this;
+        }
+
+        @Override
         public Supplier<Boolean> given(final PropertyResolver propertyResolver) {
             return () -> {
                 if (matchIfMissing && !propertyResolver.containsProperty(this.propertyName)) {
@@ -103,6 +120,9 @@ public interface BeanCondition {
                 val result = propertyResolver.getProperty(propertyName, defaultValue);
                 if (havingValue != null) {
                     return havingValue.toString().equalsIgnoreCase(result);
+                }
+                if (exists) {
+                    return ResourceUtils.doesResourceExist(result);
                 }
                 return StringUtils.isNotBlank(result);
             };
