@@ -121,8 +121,8 @@ public class ResourceUtils {
      */
     public static boolean doesResourceExist(final String location) {
         try {
-            getResourceFrom(location);
-            return true;
+            val resource = getResourceFrom(location);
+            return doesResourceExist(resource);
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage());
         }
