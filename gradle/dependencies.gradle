@@ -1061,8 +1061,6 @@ ext.libraries = [
         ],
         javax                   : [
                 dependencies.create("javax.servlet:javax.servlet-api:$javaxServletVersion") {
-                },
-                dependencies.create("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationsVersion") {
                 }
         ],
         javaximpl               : [

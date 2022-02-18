@@ -1,9 +1,7 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +19,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRepository {
+public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
     private static final String KEY_SEPARATOR = ":";
 
     private static final String CAS_PREFIX = GoogleAuthenticatorRedisTokenRepository.class.getSimpleName();
@@ -33,7 +31,7 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     private final long scanCount;
 
     @Override
-    public void store(final OneTimeToken token) {
+    public void store(final GoogleAuthenticatorToken token) {
         val gauthToken = (GoogleAuthenticatorToken) token;
         val redisKey = getGoogleAuthenticatorTokenRedisKey(gauthToken);
         LOGGER.trace("Saving token [{}] using key [{}]", token, redisKey);

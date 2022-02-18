@@ -1,10 +1,9 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -28,35 +26,36 @@ import java.time.ZoneId;
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 @Slf4j
 @RequiredArgsConstructor
-public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository {
+public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
     private final long expireTokensInSeconds;
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
-    private transient EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public void cleanInternal() {
         val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-            + " r WHERE r.issuedDateTime>= :expired")
+                                                   + " r WHERE r.issuedDateTime>= :expired")
             .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
             .executeUpdate();
         LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
     }
 
-    @SneakyThrows
     @Override
-    public void store(final OneTimeToken token) {
-        val gToken = new JpaGoogleAuthenticatorToken();
-        BeanUtils.copyProperties(gToken, token);
-        gToken.setUserId(gToken.getUserId().trim().toLowerCase());
-        this.entityManager.merge(gToken);
+    public void store(final GoogleAuthenticatorToken token) {
+        FunctionUtils.doUnchecked(t -> {
+            val gToken = new JpaGoogleAuthenticatorToken();
+            BeanUtils.copyProperties(gToken, token);
+            gToken.setUserId(gToken.getUserId().trim().toLowerCase());
+            this.entityManager.merge(gToken);
+        });
     }
 
     @Override
     public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         try {
             return this.entityManager.createQuery("SELECT r FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-                + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
+                                                  + " r WHERE r.userId = :userId and r.token = :token", JpaGoogleAuthenticatorToken.class)
                 .setParameter("userId", uid.trim().toLowerCase())
                 .setParameter("token", otp)
                 .getSingleResult();
@@ -69,7 +68,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void remove(final String uid, final Integer otp) {
         val count = this.entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-            + " r WHERE r.userId = :userId and r.token = :token")
+                                                   + " r WHERE r.userId = :userId and r.token = :token")
             .setParameter("userId", uid.trim().toLowerCase())
             .setParameter("token", otp)
             .executeUpdate();
@@ -95,13 +94,13 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void removeAll() {
         this.entityManager.createQuery("DELETE FROM "
-            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
+                                       + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
     }
 
     @Override
     public long count(final String uid) {
         val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM "
-            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
+                                                            + JpaGoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
             .setParameter("userId", uid.trim().toLowerCase())
             .getSingleResult();
         LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);

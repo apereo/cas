@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.token;
 
-import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.couchdb.gauth.token.CouchDbGoogleAuthenticatorToken;
 import org.apereo.cas.couchdb.gauth.token.GoogleAuthenticatorTokenCouchDbRepository;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
@@ -22,18 +21,18 @@ import java.time.ZoneId;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenRepository {
+public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenRepository<GoogleAuthenticatorToken> {
 
     private final GoogleAuthenticatorTokenCouchDbRepository couchDb;
     private final long expireTokensInSeconds;
     
     @Override
-    public void store(final OneTimeToken token) {
+    public void store(final GoogleAuthenticatorToken token) {
         couchDb.add(new CouchDbGoogleAuthenticatorToken(token));
     }
 
     @Override
-    public OneTimeToken get(final String uid, final Integer otp) {
+    public GoogleAuthenticatorToken get(final String uid, final Integer otp) {
         return couchDb.findOneByUidForOtp(uid, otp);
     }
 
