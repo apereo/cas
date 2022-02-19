@@ -8,6 +8,8 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +20,9 @@ import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -151,19 +153,26 @@ public class CasSupportJdbcAuditConfiguration {
     public static class CasSupportJdbcAuditScheduleConfiguration {
 
         @ConditionalOnMissingBean(name = "inspektrAuditTrailCleaner")
-        @ConditionalOnProperty(prefix = "cas.audit.jdbc.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Cleanable inspektrAuditTrailCleaner(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("jdbcAuditTrailManager")
-            final AuditTrailManager jdbcAuditTrailManager) {
-            return new Cleanable() {
-                @Scheduled(initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
-                    fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
-                @Override
-                public void clean() {
-                    jdbcAuditTrailManager.clean();
-                }
-            };
+            final AuditTrailManager jdbcAuditTrailManager) throws Exception {
+            return BeanSupplier.of(Cleanable.class)
+                .when(BeanCondition.on("cas.audit.jdbc.schedule.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> new Cleanable() {
+                    @Scheduled(
+                        initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
+                        fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
+                    @Override
+                    public void clean() {
+                        jdbcAuditTrailManager.clean();
+                    }
+                })
+                .otherwiseProxy()
+                .get();
         }
 
     }

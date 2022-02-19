@@ -29,6 +29,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -38,6 +39,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -127,7 +129,11 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "accountMgmtRegistrationProvisioner")
         public AccountRegistrationProvisioner accountMgmtRegistrationProvisioner(
             final List<AccountRegistrationProvisionerConfigurer> beans) {
-            val configurers = beans.stream().map(AccountRegistrationProvisionerConfigurer::configure).sorted().collect(Collectors.toList());
+            val configurers = beans.stream()
+                .filter(BeanSupplier::isNotProxy)
+                .map(AccountRegistrationProvisionerConfigurer::configure)
+                .sorted()
+                .collect(Collectors.toList());
             return new ChainingAccountRegistrationProvisioner(configurers);
         }
 
@@ -167,18 +173,24 @@ public class CasAccountManagementWebflowConfiguration {
     }
     
     @ConditionalOnClass(PrincipalProvisioner.class)
-    @ConditionalOnProperty(name = "cas.account-registration.provisioning.scim.enabled", havingValue = "true")
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "scim")
     public static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner scimProvisioner) {
-            return () -> new ScimAccountRegistrationProvisioner(scimProvisioner,
-                PrincipalFactoryUtils.newPrincipalFactory());
+            final PrincipalProvisioner scimProvisioner) throws Exception {
+            return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
+                .when(BeanCondition.on("cas.account-registration.provisioning.scim.enabled").isTrue()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> () -> new ScimAccountRegistrationProvisioner(scimProvisioner,
+                    PrincipalFactoryUtils.newPrincipalFactory()))
+                .otherwiseProxy()
+                .get();
         }
     }
     

@@ -1,10 +1,12 @@
 package org.apereo.cas.support.events.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.InfluxDbCasEventRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "influxDb")
 public class CasEventsInfluxDbRepositoryConfiguration {
 
     @Bean

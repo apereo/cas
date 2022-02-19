@@ -431,10 +431,13 @@ public class CasCoreAuditConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {
             val plan = new DefaultAuditTrailExecutionPlan();
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring audit trail execution plan via [{}]", c.getName());
-                c.configureAuditTrailExecutionPlan(plan);
-            });
+            configurers
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .forEach(c -> {
+                    LOGGER.trace("Configuring audit trail execution plan via [{}]", c.getName());
+                    c.configureAuditTrailExecutionPlan(plan);
+                });
             return plan;
         }
 
