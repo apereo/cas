@@ -51,6 +51,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             final CasConfigurationProperties casProperties) throws Exception {
             return BeanSupplier.of(CipherExecutor.class)
                 .when(CONDITION_CLEARPASS.given(applicationContext.getEnvironment()))
+                .and(BeanCondition.on("cas.clearpass.crypto.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> CipherExecutorUtils.newStringCipherExecutor(casProperties.getClearpass().getCrypto(), CacheCredentialsCipherExecutor.class))
                 .otherwise(() -> {
                     LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "

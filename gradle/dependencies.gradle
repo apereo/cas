@@ -1061,6 +1061,8 @@ ext.libraries = [
         ],
         javax                   : [
                 dependencies.create("javax.servlet:javax.servlet-api:$javaxServletVersion") {
+                },
+                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion") {
                 }
         ],
         javaximpl               : [
@@ -2641,12 +2643,11 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
 
                 },
-                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion") {
-
-                }
+                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
         ],
         springbootundertow      : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion")
+                dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion"),
+                dependencies.create("javax.annotation:javax.annotation-api:$javaxAnnotationApiVersion")
         ],
         redis         : [
                 dependencies.create("org.springframework.data:spring-data-redis:$springDataRedisVersion") {

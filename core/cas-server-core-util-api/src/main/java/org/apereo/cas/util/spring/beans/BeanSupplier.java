@@ -50,6 +50,16 @@ public interface BeanSupplier<T> {
     }
 
     /**
+     * Is not proxy class?
+     *
+     * @param result the result
+     * @return the boolean
+     */
+    static boolean isNotProxy(final Object result) {
+        return !isProxy(result);
+    }
+
+    /**
      * Get bean or proxied instance of the bean.
      *
      * @return the t
