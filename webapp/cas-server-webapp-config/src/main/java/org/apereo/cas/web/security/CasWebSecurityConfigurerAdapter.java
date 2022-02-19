@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointPropertie
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.security.authentication.EndpointLdapAuthenticationProvider;
@@ -79,6 +80,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     @Override
     public void configure(final WebSecurity web) {
         val patterns = protocolEndpointWebSecurityConfigurers.stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(ProtocolEndpointWebSecurityConfigurer::getIgnoredEndpoints)
             .flatMap(List<String>::stream)
             .map(endpoint -> StringUtils.prependIfMissing(endpoint, "/").concat("/**"))

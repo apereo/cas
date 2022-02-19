@@ -138,7 +138,7 @@ public class CasAccountManagementWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) throws Exception {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
-                .when(BeanCondition.on("cas.account-registration.provisioning.rest.url").given(applicationContext.getEnvironment()))
+                .when(BeanCondition.on("cas.account-registration.provisioning.rest.url").isUrl().given(applicationContext.getEnvironment()))
                 .supply(() -> () -> {
                     val props = casProperties.getAccountRegistration().getProvisioning().getRest();
                     return new RestfulAccountRegistrationProvisioner(props);

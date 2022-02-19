@@ -99,6 +99,10 @@ public interface CasFeatureModule {
          */
         InterruptNotifications,
         /**
+         * RADIUS MFA.
+         */
+        RadiusMFA,
+        /**
          * WebAuthn MFA.
          */
         WebAuthn
