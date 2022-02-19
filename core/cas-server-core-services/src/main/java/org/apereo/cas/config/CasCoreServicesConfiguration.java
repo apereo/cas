@@ -41,6 +41,8 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.UrlValidator;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -335,24 +337,32 @@ public class CasCoreServicesConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     @AutoConfigureAfter({CasCoreServicesManagerConfiguration.class, CasCoreServiceRegistryConfiguration.class})
-    @ConditionalOnProperty(prefix = "cas.service-registry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     public static class CasCoreServicesSchedulingConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable servicesManagerScheduledLoader(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryExecutionPlan")
             final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager) throws Exception {
 
-            val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-            if (!serviceRegistryExecutionPlan.find(filter).isEmpty()) {
-                LOGGER.trace("Background task to load services is enabled to run every [{}]",
-                    casProperties.getServiceRegistry().getSchedule().getRepeatInterval());
-                return new ServicesManagerScheduledLoader(servicesManager);
-            }
-            LOGGER.trace("Background task to load services is disabled");
-            return ServicesManagerScheduledLoader.noOp();
+            return BeanSupplier.of(Runnable.class)
+                .when(BeanCondition.on("cas.service-registry.schedule.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+                    if (!serviceRegistryExecutionPlan.find(filter).isEmpty()) {
+                        LOGGER.trace("Background task to load services is enabled to run every [{}]",
+                            casProperties.getServiceRegistry().getSchedule().getRepeatInterval());
+                        return new ServicesManagerScheduledLoader(servicesManager);
+                    }
+                    LOGGER.trace("Background task to load services is disabled");
+                    return ServicesManagerScheduledLoader.noOp();
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }

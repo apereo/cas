@@ -105,7 +105,7 @@ public class CasInterruptConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) throws Exception {
         return BeanSupplier.of(InterruptInquiryExecutionPlanConfigurer.class)
-            .when(BeanCondition.on("cas.interrupt.rest.url").given(applicationContext.getEnvironment()))
+            .when(BeanCondition.on("cas.interrupt.rest.url").isUrl().given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerInterruptInquirer(new RestEndpointInterruptInquirer(casProperties.getInterrupt().getRest())))
             .otherwiseProxy()
             .get();

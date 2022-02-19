@@ -22,7 +22,9 @@ import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -204,22 +206,30 @@ public class OidcJwksConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRotationScheduler")
         @Bean
-        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.rotation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = false)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable oidcJsonWebKeystoreRotationScheduler(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
-            return new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService);
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) throws Exception {
+            return BeanSupplier.of(Runnable.class)
+                .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreRevocationScheduler")
         @Bean
-        @ConditionalOnProperty(prefix = "cas.authn.oidc.jwks.revocation.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = false)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
-            return new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService);
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) throws Exception {
+            return BeanSupplier.of(Runnable.class)
+                .when(BeanCondition.on("cas.authn.oidc.jwks.revocation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService))
+                .otherwiseProxy()
+                .get();
         }
 
         @RequiredArgsConstructor

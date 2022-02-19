@@ -2,13 +2,20 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link RadiusTokenAuthenticationComponentSerializationConfiguration}.
@@ -18,12 +25,19 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "RadiusTokenAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(name = "cas.authn.mfa.radius.client.inet-address")
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.RadiusMFA)
 public class RadiusTokenAuthenticationComponentSerializationConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.radius.client.inet-address");
 
     @Bean
     @ConditionalOnMissingBean(name = "radiusTokenComponentSerializationPlanConfigurer")
-    public ComponentSerializationPlanConfigurer radiusTokenComponentSerializationPlanConfigurer() {
-        return plan -> plan.registerSerializableClass(RadiusTokenCredential.class);
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public ComponentSerializationPlanConfigurer radiusTokenComponentSerializationPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext) throws Exception {
+        return BeanSupplier.of(ComponentSerializationPlanConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> plan -> plan.registerSerializableClass(RadiusTokenCredential.class))
+            .otherwiseProxy()
+            .get();
     }
 }

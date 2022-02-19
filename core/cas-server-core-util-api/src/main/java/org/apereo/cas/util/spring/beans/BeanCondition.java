@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.beans;
 
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,13 @@ public interface BeanCondition {
     }
 
     /**
+     * Is value defined as a valid URL?
+     *
+     * @return the bean condition
+     */
+    BeanCondition isUrl();
+
+    /**
      * To supplier supplier.
      *
      * @param applicationContext the application context
@@ -86,6 +94,8 @@ public interface BeanCondition {
         private Serializable havingValue;
 
         private boolean exists;
+
+        private boolean url;
 
         @Override
         public BeanCondition evenIfMissing() {
@@ -112,6 +122,12 @@ public interface BeanCondition {
         }
 
         @Override
+        public BeanCondition isUrl() {
+            this.url = true;
+            return this;
+        }
+
+        @Override
         public Supplier<Boolean> given(final PropertyResolver propertyResolver) {
             return () -> {
                 if (matchIfMissing && !propertyResolver.containsProperty(this.propertyName)) {
@@ -120,6 +136,9 @@ public interface BeanCondition {
                 val result = propertyResolver.getProperty(propertyName, defaultValue);
                 if (havingValue != null) {
                     return havingValue.toString().equalsIgnoreCase(result);
+                }
+                if (url) {
+                    return RegexUtils.find("^https*:\\/\\/.+", result);
                 }
                 if (exists) {
                     return ResourceUtils.doesResourceExist(result);
