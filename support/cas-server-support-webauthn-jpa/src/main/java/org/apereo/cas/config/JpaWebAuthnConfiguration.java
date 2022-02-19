@@ -2,11 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRegistration;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -35,12 +37,14 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class JpaWebAuthnConfiguration {
 
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaWebAuthnTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerWebAuthn(
             @Qualifier("webAuthnEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -81,6 +85,7 @@ public class JpaWebAuthnConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaWebAuthnPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaWebAuthnCredentialRegistration.class.getPackage().getName()));
         }
