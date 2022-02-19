@@ -2,11 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.redis.RedisCasEventRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +29,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @Configuration(value = "RedisEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "redis")
 public class RedisEventsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -62,6 +65,7 @@ public class RedisEventsConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepository casEventRepository(
         @Qualifier("redisEventTemplate")
         final CasRedisTemplate redisEventTemplate,

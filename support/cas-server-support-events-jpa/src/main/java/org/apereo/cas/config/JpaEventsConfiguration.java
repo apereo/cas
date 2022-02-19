@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -10,6 +11,7 @@ import org.apereo.cas.support.events.jpa.JpaCasEvent;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +42,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "jpa")
 @ConditionalOnProperty(prefix = "cas.events.jpa", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class JpaEventsConfiguration {
 

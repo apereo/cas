@@ -137,7 +137,7 @@ public interface BeanCondition {
                 if (havingValue != null) {
                     return havingValue.toString().equalsIgnoreCase(result);
                 }
-                if (url) {
+                if (url && StringUtils.isNotBlank(result)) {
                     return RegexUtils.find("^https*:\\/\\/.+", result);
                 }
                 if (exists) {

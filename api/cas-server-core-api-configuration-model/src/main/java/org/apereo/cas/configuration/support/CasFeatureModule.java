@@ -63,6 +63,18 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Auditing and audit log.
+         */
+        Audit,
+        /**
+         * Authentication events.
+         */
+        Events,
+        /**
+         * Account management and signup.
+         */
+        AccountManagement,
+        /**
          * AUP feature.
          */
         AcceptableUsagePolicy,

@@ -2,10 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +29,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MongoDbEventsConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "mongoDb")
 public class MongoDbEventsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

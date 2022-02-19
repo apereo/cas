@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi.plan;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -24,7 +25,9 @@ public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
 
     @Override
     public void registerAuditTrailManager(final AuditTrailManager manager) {
-        this.auditTrailManagers.add(manager);
+        if (BeanSupplier.isNotProxy(manager)) {
+            this.auditTrailManagers.add(manager);
+        }
     }
 
     @Override

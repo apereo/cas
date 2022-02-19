@@ -43,6 +43,8 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.lock.LockRepository;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,9 +52,9 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -459,17 +461,13 @@ public class CasCoreTicketsConfiguration {
         @Bean(LockRepository.BEAN_NAME)
         @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "false")
-        public LockRepository casTicketRegistryLockRepositoryNoOp() {
-            return LockRepository.noOp();
-        }
-
-        @Bean(LockRepository.BEAN_NAME)
-        @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "true", matchIfMissing = true)
-        public LockRepository casTicketRegistryLockRepositoryDefault() {
-            return LockRepository.asDefault();
+        public LockRepository casTicketRegistryLockRepositoryNoOp(
+            final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(LockRepository.class)
+                .when(BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+                .supply(LockRepository::asDefault)
+                .otherwise(LockRepository::noOp)
+                .get();
         }
     }
 }

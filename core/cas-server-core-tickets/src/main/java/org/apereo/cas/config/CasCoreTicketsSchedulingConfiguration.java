@@ -6,8 +6,10 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.lock.LockRepository;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,9 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -65,14 +67,19 @@ public class CasCoreTicketsSchedulingConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
-    @ConditionalOnProperty(prefix = "cas.ticket.registry.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMatchingHostname(name = "cas.ticket.registry.cleaner.schedule.enabled-on-host")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketRegistryCleanerScheduler ticketRegistryCleanerScheduler(
+    public Runnable ticketRegistryCleanerScheduler(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("ticketRegistryCleaner")
-        final TicketRegistryCleaner ticketRegistryCleaner) {
-        return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
+        final TicketRegistryCleaner ticketRegistryCleaner) throws Exception {
+        return BeanSupplier.of(Runnable.class)
+            .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
+                .evenIfMissing().given(applicationContext.getEnvironment()))
+            .supply(() -> new TicketRegistryCleanerScheduler(ticketRegistryCleaner))
+            .otherwiseProxy()
+            .get();
     }
 
 
@@ -84,17 +91,14 @@ public class CasCoreTicketsSchedulingConfiguration {
      * with transaction semantics of the cleaner.
      */
     @RequiredArgsConstructor
-    public static class TicketRegistryCleanerScheduler {
+    public static class TicketRegistryCleanerScheduler implements Runnable {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
+        @Override
         public void run() {
-            try {
-                this.ticketRegistryCleaner.clean();
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+            FunctionUtils.doAndHandle(unused -> ticketRegistryCleaner.clean());
         }
     }
 }
