@@ -11,10 +11,12 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
@@ -82,7 +84,7 @@ import java.util.Optional;
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnWebAuthnEnabled
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 @Configuration(value = "WebAuthnConfiguration", proxyBeanMethods = false)
 public class WebAuthnConfiguration {
 
@@ -302,6 +304,7 @@ public class WebAuthnConfiguration {
     public static class WebAuthnControllerConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnCredentialRepository")
@@ -309,9 +312,9 @@ public class WebAuthnConfiguration {
             return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository);
         }
 
-
         @ConditionalOnMissingBean(name = "webAuthnController")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebAuthnController webAuthnController(
             @Qualifier("webAuthnServer")
             final WebAuthnServer webAuthnServer) {
@@ -363,6 +366,7 @@ public class WebAuthnConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnProtocolEndpointConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
             @Qualifier("webAuthnCsrfTokenRepository")
             final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {

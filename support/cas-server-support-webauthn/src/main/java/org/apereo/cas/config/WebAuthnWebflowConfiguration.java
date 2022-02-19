@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -48,7 +50,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "WebAuthnWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnWebAuthnEnabled
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
@@ -57,6 +59,7 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnWebflowRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry webAuthnFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
@@ -74,6 +77,7 @@ public class WebAuthnWebflowConfiguration {
     public static class WebAuthnWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -112,9 +116,9 @@ public class WebAuthnWebflowConfiguration {
     @Configuration(value = "WebAuthnWebflowExecutionPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WebAuthnWebflowExecutionPlanConfiguration {
-
         @ConditionalOnMissingBean(name = "webAuthnCasWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
             @Qualifier("webAuthnMultifactorWebflowConfigurer")
             final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
@@ -124,7 +128,6 @@ public class WebAuthnWebflowConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnWebAuthnEnabled
     @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
     @Configuration(value = "WebAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("webAuthnMultifactorWebflowConfigurer")
@@ -132,6 +135,7 @@ public class WebAuthnWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer(
             @Qualifier("webAuthnFlowRegistry")
             final FlowDefinitionRegistry webAuthnFlowRegistry,
@@ -153,6 +157,7 @@ public class WebAuthnWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer webAuthnMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("webAuthnMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer) {
