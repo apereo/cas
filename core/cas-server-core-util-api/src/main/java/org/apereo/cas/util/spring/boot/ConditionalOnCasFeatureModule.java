@@ -33,6 +33,5 @@ public @interface ConditionalOnCasFeatureModule {
      *
      * @return the string
      */
-    String module();
-
+    String module() default "core";
 }

@@ -77,6 +77,10 @@ public interface CasFeatureModule {
         /**
          * YubiKey MFA.
          */
-        YubiKey
+        YubiKey,
+        /**
+         * Electrofence adaptive authentication.
+         */
+        Electrofence
     }
 }
