@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -34,6 +36,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration(value = "ElectronicFenceWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Electrofence)
 public class ElectronicFenceWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
