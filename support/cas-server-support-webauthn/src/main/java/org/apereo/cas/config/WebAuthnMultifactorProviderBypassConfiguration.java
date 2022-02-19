@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.bypass.RegisteredServiceMultifactorAuthenti
 import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 6.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnWebAuthnEnabled
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 @Configuration(value = "WebAuthnMultifactorProviderBypassConfiguration", proxyBeanMethods = false)
 public class WebAuthnMultifactorProviderBypassConfiguration {
 

@@ -81,6 +81,26 @@ public interface CasFeatureModule {
         /**
          * Electrofence adaptive authentication.
          */
-        Electrofence
+        Electrofence,
+        /**
+         * ACME.
+         */
+        ACME,
+        /**
+         * CAPTCHA integrations.
+         */
+        CAPTCHA,
+        /**
+         * LDAP authentication and general integrations.
+         */
+        LDAP,
+        /**
+         * Interrupt notifications.
+         */
+        InterruptNotifications,
+        /**
+         * WebAuthn MFA.
+         */
+        WebAuthn
     }
 }

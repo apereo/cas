@@ -36,6 +36,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -132,27 +134,35 @@ public class CasAccountManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "restfulAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(name = "cas.account-registration.provisioning.rest.url")
         public AccountRegistrationProvisionerConfigurer restfulAccountRegistrationProvisionerConfigurer(
-            final CasConfigurationProperties casProperties) {
-            return () -> {
-                val props = casProperties.getAccountRegistration().getProvisioning().getRest();
-                return new RestfulAccountRegistrationProvisioner(props);
-            };
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
+                .when(BeanCondition.on("cas.account-registration.provisioning.rest.url").given(applicationContext.getEnvironment()))
+                .supply(() -> () -> {
+                    val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+                    return new RestfulAccountRegistrationProvisioner(props);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "groovyAccountRegistrationProvisionerConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(name = "cas.account-registration.provisioning.groovy.location")
         public AccountRegistrationProvisionerConfigurer groovyAccountRegistrationProvisionerConfigurer(
             final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            return () -> {
-                val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
-                return new GroovyAccountRegistrationProvisioner(
-                    new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
-            };
+            final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
+                .when(BeanCondition.on("cas.account-registration.provisioning.groovy.location")
+                    .exists().given(applicationContext.getEnvironment()))
+                .supply(() -> () -> {
+                    val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+                    return new GroovyAccountRegistrationProvisioner(
+                        new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
     
