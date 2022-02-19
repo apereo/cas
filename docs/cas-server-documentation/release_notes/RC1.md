@@ -70,7 +70,8 @@ Several Docker images used for integration tests are now updated to their latest
 - Microsoft SQL Server
 - MySQL
 - PostgreSQL
-- 
+- Spring Data
+- Amazon SDK
 
 ## Other Stuff
 
