@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BeanSupplierTests {
     @Test
     public void verifyRequireInterface() {
-        assertThrows(IllegalArgumentException.class, () -> BeanSupplier.of(BeanSupplierTests.class));
+        assertThrows(IllegalArgumentException.class, () -> BeanSupplier.of(String.class).otherwiseProxy().get());
     }
 
     @Test

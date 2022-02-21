@@ -51,7 +51,7 @@ public class CasEventsReportEndpointTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository casEventRepository;
 
     @Autowired
@@ -74,7 +74,7 @@ public class CasEventsReportEndpointTests {
         applicationContext.publishEvent(event);
         assertFalse(casEventRepository.load().findAny().isEmpty());
 
-        val endpoint = new CasEventsReportEndpoint(casProperties, casEventRepository);
+        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         val result = endpoint.events();
         assertNotNull(result);
         assertFalse(result.isEmpty());

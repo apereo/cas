@@ -175,7 +175,7 @@ public class ElectronicFenceConfiguration {
         public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
+            @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.ip.enabled").isTrue().given(applicationContext.getEnvironment()))
@@ -190,7 +190,7 @@ public class ElectronicFenceConfiguration {
         public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
+            @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.agent.enabled").isTrue().given(applicationContext.getEnvironment()))
@@ -205,7 +205,7 @@ public class ElectronicFenceConfiguration {
         public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
+            @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.date-time.enabled").isTrue().given(applicationContext.getEnvironment()))
@@ -227,7 +227,7 @@ public class ElectronicFenceConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("geoLocationService")
             final GeoLocationService geoLocationService,
-            @Qualifier("casEventRepository")
+            @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.geo-location.enabled").isTrue().given(applicationContext.getEnvironment()))

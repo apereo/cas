@@ -33,10 +33,7 @@ public interface BeanSupplier<T> {
      * @return the bean supplier
      */
     static <T> BeanSupplier<T> of(final Class<T> clazz) {
-        if (clazz.isInterface()) {
-            return new DefaultBeanSupplier<T>(clazz);
-        }
-        throw new IllegalArgumentException("Cannot create bean supplier for non-interface type " + clazz.getSimpleName());
+        return new DefaultBeanSupplier<T>(clazz);
     }
 
     /**
@@ -232,6 +229,9 @@ public interface BeanSupplier<T> {
         @Override
         @SuppressWarnings("unchecked")
         public T get() {
+            if (!clazz.isInterface()) {
+                throw new IllegalArgumentException("Cannot create bean supplier for non-interface type " + clazz.getSimpleName());
+            }
             return (T) PROXIES.computeIfAbsent(clazz.getName(),
                 s -> Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[]{clazz},

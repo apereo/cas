@@ -42,7 +42,7 @@ public class CouchDbCasEventRepositoryTests extends AbstractCasEventRepositoryTe
     private EventCouchDbRepository couchDbRepository;
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
     
     @Autowired

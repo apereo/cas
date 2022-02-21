@@ -53,7 +53,7 @@ public class CasAuthenticationEventListenerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository casEventRepository;
 
     @BeforeEach
