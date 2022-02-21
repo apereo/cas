@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 /**
- * This is {@link DefaultCasAuthenticationEventListener} that attempts to consume CAS events
+ * This is {@link CasAuthenticationAuthenticationEventListener} that attempts to consume CAS events
  * upon various authentication events. Event data is persisted into a repository
  * via {@link CasEventRepository}.
  *
@@ -32,7 +32,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class DefaultCasAuthenticationEventListener implements DefaultCasEventListener {
+public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
 
     @NotNull
     private final CasEventRepository casEventRepository;

@@ -4,10 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
-import org.apereo.cas.support.events.listener.DefaultCasAuthenticationEventListener;
-import org.apereo.cas.support.events.listener.DefaultLoggingCasEventListener;
+import org.apereo.cas.support.events.listener.CasAuthenticationAuthenticationEventListener;
+import org.apereo.cas.support.events.listener.CasAuthenticationEventListener;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
-import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
@@ -40,23 +39,17 @@ public class CasCoreEventsConfiguration {
         @ConditionalOnMissingBean(name = "defaultCasEventListener")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasEventListener defaultCasEventListener(
+        public CasAuthenticationEventListener defaultCasEventListener(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("casEventRepository")
             final CasEventRepository casEventRepository) throws Exception {
-            return BeanSupplier.of(CasEventListener.class)
+            return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultCasAuthenticationEventListener(casEventRepository))
+                .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository))
                 .otherwiseProxy()
                 .get();
         }
 
-        @ConditionalOnMissingBean(name = "loggingCasEventListener")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasEventListener loggingCasEventListener() {
-            return new DefaultLoggingCasEventListener();
-        }
     }
 
     @Configuration(value = "CasCoreEventsWebConfiguration", proxyBeanMethods = false)

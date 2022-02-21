@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.support.events.CasEventsReportEndpointTests;
-import org.apereo.cas.support.events.DefaultCasEventListenerTests;
+import org.apereo.cas.support.events.CasAuthenticationEventListenerTests;
 import org.apereo.cas.support.events.LoggingCasEventListenerTests;
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -14,7 +14,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.2.0
  */
 @SelectClasses({
-    DefaultCasEventListenerTests.class,
+    CasAuthenticationEventListenerTests.class,
     CasEventsReportEndpointTests.class,
     LoggingCasEventListenerTests.class
 })
