@@ -41,7 +41,7 @@ public class CasCoreEventsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasAuthenticationEventListener defaultCasEventListener(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casEventRepository")
+            @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -61,16 +61,15 @@ public class CasCoreEventsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventsReportEndpoint casEventsReportEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
-            final CasEventRepository casEventRepository) {
-            return new CasEventsReportEndpoint(casProperties, casEventRepository);
+            final ConfigurableApplicationContext applicationContext) {
+            return new CasEventsReportEndpoint(casProperties, applicationContext);
         }
     }
 
     @Configuration(value = "CasCoreEventsRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreEventsRepositoryConfiguration {
-        @ConditionalOnMissingBean(name = "casEventRepository")
+        @ConditionalOnMissingBean(name = CasEventRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventRepository casEventRepository(

@@ -25,7 +25,6 @@ import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -195,12 +194,13 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() ->
                     plan -> {
-                        plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER, resourceResolver);
-                        plan.registerAuditActionResolver(AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
-                            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
-                        plan.registerAuditResourceResolver(AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER, resourceResolver);
-                        plan.registerAuditActionResolver(AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
-                            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY));
+                        plan.registerAuditResourceResolver(resourceResolver,
+                            AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER,
+                            AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER);
+                        val resolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED);
+                        plan.registerAuditActionResolvers(resolver,
+                            AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
+                            AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER);
                     })
                 .otherwiseProxy()
                 .get();
