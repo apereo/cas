@@ -3,6 +3,7 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -12,6 +13,14 @@ import org.springframework.scheduling.annotation.Async;
  * @since 6.5.0
  */
 public interface CasConfigurationEventListener extends CasEventListener {
+    /**
+     * Handle event when refresh scope is refreshed.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    void onRefreshScopeRefreshed(RefreshScopeRefreshedEvent event);
 
     /**
      * Handle refresh event when issued to this CAS server locally.
@@ -20,7 +29,7 @@ public interface CasConfigurationEventListener extends CasEventListener {
      */
     @EventListener
     @Async
-    void handleRefreshEvent(EnvironmentChangeEvent event);
+    void onEnvironmentChangedEvent(EnvironmentChangeEvent event);
 
     /**
      * Handle configuration modified event.

@@ -5,14 +5,17 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This is {@link DefaultCasConfigurationEventListener}.
@@ -33,9 +36,15 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     private final ApplicationContext applicationContext;
 
     @Override
-    public void handleRefreshEvent(final EnvironmentChangeEvent event) {
+    public void onEnvironmentChangedEvent(final EnvironmentChangeEvent event) {
         LOGGER.trace("Received event [{}]", event);
         rebind();
+    }
+
+    @Override
+    public void onRefreshScopeRefreshed(final RefreshScopeRefreshedEvent event) {
+        LOGGER.info("Refreshing application context beans eagerly...");
+        initializeBeansEagerly();
     }
 
     @Override
@@ -56,6 +65,12 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
         }
     }
 
+    private void initializeBeansEagerly() {
+        for (val beanName : applicationContext.getBeanDefinitionNames()) {
+            Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
+        }
+    }
+
     private void rebind() {
         LOGGER.info("Refreshing CAS configuration. Stand by...");
         if (configurationPropertiesEnvironmentManager != null) {
@@ -63,5 +78,6 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
         } else {
             CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder, this.applicationContext);
         }
+        initializeBeansEagerly();
     }
 }

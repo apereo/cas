@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
@@ -55,5 +56,7 @@ public class CasConfigurationEventListenerTests {
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new CasConfigurationModifiedEvent(this, true)));
+        assertDoesNotThrow(() -> applicationContext.publishEvent(
+            new RefreshScopeRefreshedEvent()));
     }
 }
