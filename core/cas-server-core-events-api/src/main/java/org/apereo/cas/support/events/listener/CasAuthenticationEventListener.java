@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.Async;
  * @author Hal Deadman
  * @since 6.5.0
  */
-public interface DefaultCasEventListener extends CasEventListener {
+public interface CasAuthenticationEventListener extends CasEventListener {
 
     /**
      * Handle TGT creation event.

@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    DefaultCasEventListenerTests.EventTestConfiguration.class,
+    CasAuthenticationEventListenerTests.EventTestConfiguration.class,
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })

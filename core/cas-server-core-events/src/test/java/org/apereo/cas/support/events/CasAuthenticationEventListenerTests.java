@@ -37,18 +37,18 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultCasEventListenerTests}.
+ * This is {@link CasAuthenticationEventListenerTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    DefaultCasEventListenerTests.EventTestConfiguration.class,
+    CasAuthenticationEventListenerTests.EventTestConfiguration.class,
     CasCoreEventsConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @Tag("Events")
-public class DefaultCasEventListenerTests {
+public class CasAuthenticationEventListenerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

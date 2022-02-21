@@ -53,6 +53,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -183,11 +184,11 @@ public class CasAccountManagementWebflowConfiguration {
         public AccountRegistrationProvisionerConfigurer scimAccountRegistrationProvisionerConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
-            final PrincipalProvisioner scimProvisioner) throws Exception {
+            final ObjectProvider<PrincipalProvisioner> scimProvisioner) throws Exception {
             return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
                 .when(BeanCondition.on("cas.account-registration.provisioning.scim.enabled").isTrue()
                     .given(applicationContext.getEnvironment()))
-                .supply(() -> () -> new ScimAccountRegistrationProvisioner(scimProvisioner,
+                .supply(() -> () -> new ScimAccountRegistrationProvisioner(scimProvisioner.getObject(),
                     PrincipalFactoryUtils.newPrincipalFactory()))
                 .otherwiseProxy()
                 .get();
