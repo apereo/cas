@@ -2,7 +2,9 @@ package org.apereo.cas.adaptors.authy.config.support.authentication;
 
 import org.apereo.cas.adaptors.authy.AuthyTokenCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "AuthyAuthenticationComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Authy)
 public class AuthyAuthenticationComponentSerializationConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

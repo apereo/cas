@@ -11,12 +11,13 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -35,6 +36,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class FileAuthenticationEventExecutionPlanConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.file.filename").exists();
+
     @ConditionalOnMissingBean(name = "filePrincipalFactory")
     @Bean
     public PrincipalFactory filePrincipalFactory() {
@@ -51,31 +54,41 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) {
-        val fileProperties = casProperties.getAuthn().getFile();
-        val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory,
-            fileProperties.getFilename(), fileProperties.getSeparator());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder(), applicationContext));
-        h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
-        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
-
-        return h;
+        final ConfigurableApplicationContext applicationContext) throws Exception {
+        return BeanSupplier.of(AuthenticationHandler.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val fileProperties = casProperties.getAuthn().getFile();
+                val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory,
+                    fileProperties.getFilename(), fileProperties.getSeparator());
+                h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder(), applicationContext));
+                h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
+                h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
+                return h;
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "fileAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    @ConditionalOnProperty(name = "cas.authn.file.filename")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer fileAuthenticationEventExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("fileAuthenticationHandler")
         final AuthenticationHandler fileAuthenticationHandler,
         final CasConfigurationProperties casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> {
-            val file = casProperties.getAuthn().getFile().getFilename();
-            LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler, defaultPrincipalResolver);
-        };
+        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> plan -> {
+                val file = casProperties.getAuthn().getFile().getFilename();
+                LOGGER.debug("Added file-based authentication handler for the target file [{}]", file.getDescription());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler, defaultPrincipalResolver);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "filePasswordPolicyConfiguration")

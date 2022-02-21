@@ -67,6 +67,10 @@ public interface CasFeatureModule {
          */
         Audit,
         /**
+         * Authy MFA.
+         */
+        Authy,
+        /**
          * Authentication events.
          */
         Events,
@@ -111,12 +115,36 @@ public interface CasFeatureModule {
          */
         InterruptNotifications,
         /**
+         * Radius authn.
+         */
+        Radius,
+        /**
          * RADIUS MFA.
          */
         RadiusMFA,
         /**
          * WebAuthn MFA.
          */
-        WebAuthn
+        WebAuthn,
+        /**
+         * Google Auth MFA.
+         */
+        GoogleAuthenticator,
+        /**
+         * Service registry and management.
+         */
+        ServiceRegistry,
+        /**
+         * Surrogate Authn.
+         */
+        SurrogateAuthentication,
+        /**
+         * Authn throttling.
+         */
+        Throttling,
+        /**
+         * Password management.
+         */
+        PasswordManagement
     }
 }

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.radius.RadiusServer;
-import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -97,7 +96,7 @@ public class RadiusConfigurationTests {
 
     @Autowired
     @Qualifier("radiusServer")
-    private AbstractRadiusServer radiusServer;
+    private RadiusServer radiusServer;
 
     @Test
     public void emptyAddress() {

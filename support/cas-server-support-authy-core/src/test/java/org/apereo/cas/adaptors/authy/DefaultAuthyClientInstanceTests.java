@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link AuthyClientInstanceTests}.
+ * This is {@link DefaultAuthyClientInstanceTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("MFAProvider")
-public class AuthyClientInstanceTests {
+public class DefaultAuthyClientInstanceTests {
     @Test
     public void verifyAction() throws Exception {
         val properties = new AuthyMultifactorAuthenticationProperties()
@@ -45,7 +45,7 @@ public class AuthyClientInstanceTests {
         val authy = mock(AuthyApiClient.class);
         when(authy.getUsers()).thenReturn(authyUsers);
 
-        val client = new AuthyClientInstance(authy, properties);
+        val client = new DefaultAuthyClientInstance(authy, properties);
         val user = client.getOrCreateUser(CoreAuthenticationTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("mail", List.of("casuser@example.org"), "phone", List.of("123-456-6789"))));
         assertNotNull(user);

@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.principal.provision.GroovyDelegatedClientUs
 import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.authentication.principal.provision.ScimDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -49,24 +52,37 @@ public class Pac4jAuthenticationProvisioningConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class Pac4jAuthenticationEventExecutionPlanProvisionerConfiguration {
         @Bean
-        @ConditionalOnProperty(name = "cas.authn.pac4j.provisioning.groovy.location")
         @ConditionalOnMissingBean(name = "groovyDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
-            final CasConfigurationProperties casProperties) {
-            val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
-            val script = provisioning.getGroovy().getLocation();
-            return () -> new GroovyDelegatedClientUserProfileProvisioner(script);
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return BeanSupplier.of(Supplier.class)
+                .when(BeanCondition.on("cas.authn.pac4j.provisioning.groovy.location").exists()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
+                    val script = provisioning.getGroovy().getLocation();
+                    return () -> new GroovyDelegatedClientUserProfileProvisioner(script);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
-        @ConditionalOnProperty(name = "cas.authn.pac4j.provisioning.rest.url")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "restDelegatedClientUserProfileProvisioner")
         public Supplier<DelegatedClientUserProfileProvisioner> restDelegatedClientUserProfileProvisioner(
-            final CasConfigurationProperties casProperties) {
-            val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
-            return () -> new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest());
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) throws Exception {
+            return BeanSupplier.of(Supplier.class)
+                .when(BeanCondition.on("cas.authn.pac4j.provisioning.rest.url").isUrl().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val provisioning = casProperties.getAuthn().getPac4j().getProvisioning();
+                    return () -> new RestfulDelegatedClientUserProfileProvisioner(provisioning.getRest());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }

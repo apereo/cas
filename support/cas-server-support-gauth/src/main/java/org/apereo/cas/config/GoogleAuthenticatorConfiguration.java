@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -36,6 +38,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Configuration(value = "GoogleAuthenticatorConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
 public class GoogleAuthenticatorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;

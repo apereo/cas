@@ -1,4 +1,7 @@
-package org.apereo.cas.adaptors.authy;
+package org.apereo.cas;
+
+import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProviderTests;
+import org.apereo.cas.adaptors.authy.DefaultAuthyClientInstanceTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -10,7 +13,7 @@ import org.junit.platform.suite.api.Suite;
  * @since 6.1.0
  */
 @SelectClasses({
-    AuthyClientInstanceTests.class,
+    DefaultAuthyClientInstanceTests.class,
     AuthyMultifactorAuthenticationProviderTests.class
 })
 @Suite

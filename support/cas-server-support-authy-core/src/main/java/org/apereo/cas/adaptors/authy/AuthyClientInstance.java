@@ -1,12 +1,9 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.AuthyMultifactorAuthenticationProperties;
 
 import com.authy.AuthyApiClient;
 import com.authy.api.User;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,12 +13,14 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Getter
-@RequiredArgsConstructor
-public class AuthyClientInstance {
-    private final AuthyApiClient authyClient;
+public interface AuthyClientInstance {
 
-    private final AuthyMultifactorAuthenticationProperties properties;
+    /**
+     * Gets authy client instance.
+     *
+     * @return the authy client
+     */
+    AuthyApiClient getAuthyClient();
 
     /**
      * Gets authy error message.
@@ -29,7 +28,7 @@ public class AuthyClientInstance {
      * @param err the err
      * @return the authy error message
      */
-    public static String getErrorMessage(final com.authy.api.Error err) {
+    static String getErrorMessage(final com.authy.api.Error err) {
         val builder = new StringBuilder(100);
         if (err != null) {
             builder.append("Authy Error");
@@ -52,17 +51,5 @@ public class AuthyClientInstance {
      * @return the or create user
      * @throws Exception the exception
      */
-    public User getOrCreateUser(final Principal principal) throws Exception {
-        val attributes = principal.getAttributes();
-        if (!attributes.containsKey(properties.getMailAttribute())) {
-            throw new IllegalArgumentException("No email address found for " + principal.getId());
-        }
-        if (!attributes.containsKey(properties.getPhoneAttribute())) {
-            throw new IllegalArgumentException("No phone number found for " + principal.getId());
-        }
-
-        val email = attributes.get(properties.getMailAttribute()).get(0).toString();
-        val phone = attributes.get(properties.getPhoneAttribute()).get(0).toString();
-        return authyClient.getUsers().createUser(email, phone, "1");
-    }
+    User getOrCreateUser(Principal principal) throws Exception;
 }
