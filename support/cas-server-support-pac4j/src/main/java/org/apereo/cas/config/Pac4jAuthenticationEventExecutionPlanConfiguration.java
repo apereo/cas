@@ -30,6 +30,7 @@ import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClie
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 
@@ -191,7 +192,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(
             final ObjectProvider<List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
             val results = provisioners.getIfAvailable(() -> CollectionUtils.wrapList(DelegatedClientUserProfileProvisioner::noOp))
-                .stream().map(Supplier::get).collect(Collectors.toList());
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .map(Supplier::get)
+                .collect(Collectors.toList());
             return new ChainingDelegatedClientUserProfileProvisioner(results);
         }
     }

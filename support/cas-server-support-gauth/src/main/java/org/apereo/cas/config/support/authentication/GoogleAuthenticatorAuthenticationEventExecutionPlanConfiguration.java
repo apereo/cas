@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.GoogleAuthenticatorService;
@@ -36,6 +37,9 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -44,12 +48,13 @@ import com.warrenstrange.googleauth.KeyRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.Cleanable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -67,6 +72,7 @@ import java.util.concurrent.TimeUnit;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
 @Configuration(value = "GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
@@ -199,12 +205,18 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
         }
 
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @Bean
-        public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Cleanable googleAuthenticatorTokenRepositoryCleaner(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-            final OneTimeTokenRepository repository) {
-            return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(repository);
+            final OneTimeTokenRepository repository) throws Exception {
+            return BeanSupplier.of(Cleanable.class)
+                .when(BeanCondition.on("cas.authn.mfa.gauth.cleaner.schedule.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(repository))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")

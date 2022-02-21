@@ -106,17 +106,27 @@ CasFeatureModule.[feature].[module].enabled=false|true
           
 The following features are available to CAS:
 
-| Feature                                                                    | 
-|----------------------------------------------------------------------------|
-| [`AcceptableUsagePolicy`](../webflow/Webflow-Customization.html)           |
-| [`PersonDirectory`](../integration/Attribute-Resolution.html)              |
-| [`U2F`](../mfa/FIDO-U2F-Authentication.html)                               |
-| [`YubiKey`](../mfa/YubiKey-Authentication.html)                            |
-| [`Electrofence`](../mfa/Configuring-Adaptive-Authentication.html)          |
-| [`ACME`](../integration/ACME-Integration.html)                             |
-| [`CAPTCHA`](../integration/Configuring-Google-reCAPTCHA.html)              |
-| [`Audits`](../audits/Audits.html)                                          |
-| [`Account Management`](../registration/Account-Registration-Overview.html) |
+| Features                  | 
+|---------------------------|
+| `AcceptableUsagePolicy`   |
+| `ACME`                    |
+| `Audit`                   |
+| `Account Management`      |
+| `Authy`                   |
+| `CAPTCHA`                 |
+| `Electrofence`            |
+| `Events`                  |
+| `GoogleAuthenticator`     |
+| `InterruptNotifications`  |
+| `LDAP`                    |
+| `PersonDirectory`         |
+| `RadiusMFA`               |
+| `ServiceRegistry`         |
+| `SurrogateAuthentication` |
+| `Throttling`              |
+| `U2F`                     |
+| `WebAuthn`                |
+| `YubiKey`                 |
 
 In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the
 actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`. If there is no particular variant or module applicable to the feature, as might be the case for ACME, then the default is considered as `core`.

@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEven
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -51,17 +51,13 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (event.isEligibleForContextRefresh()) {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
-            Collection<String> keys = null;
-            try {
-                keys = contextRefresher.refresh();
+            FunctionUtils.doAndHandle(unused -> {
+                val keys = contextRefresher.refresh();
                 LOGGER.debug("Refreshed the following settings: [{}].", keys);
-            } catch (final Exception e) {
-                LOGGER.trace(e.getMessage(), e);
-            } finally {
                 rebind();
                 LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
                     ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
-            }
+            });
         }
     }
 
@@ -73,11 +69,11 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
 
     private void rebind() {
         LOGGER.info("Refreshing CAS configuration. Stand by...");
-        if (configurationPropertiesEnvironmentManager != null) {
-            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);
-        } else {
-            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder, this.applicationContext);
-        }
+        val ctx = FunctionUtils.doIfNotNull(configurationPropertiesEnvironmentManager,
+                () -> configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(applicationContext),
+                () -> CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(binder, applicationContext))
+            .get();
+        Objects.requireNonNull(ctx);
         initializeBeansEagerly();
     }
 }

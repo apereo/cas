@@ -140,6 +140,7 @@ public class OidcJwksConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaOidcJwksPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(OidcJsonWebKeystoreEntity.class.getPackage().getName()));
         }
@@ -179,14 +180,20 @@ public class OidcJwksConfiguration {
 
     @Configuration(value = "OidcEndpointsJwksGroovyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(name = "cas.authn.oidc.jwks.groovy.location")
     public static class OidcEndpointsJwksGroovyConfiguration {
         @Bean(initMethod = "generate")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcGroovyJsonWebKeystoreGeneratorService(oidc.getJwks().getGroovy().getLocation());
+            return BeanSupplier.of(OidcJsonWebKeystoreGeneratorService.class)
+                .when(BeanCondition.on("cas.authn.oidc.jwks.groovy.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val oidc = casProperties.getAuthn().getOidc();
+                    return new OidcGroovyJsonWebKeystoreGeneratorService(oidc.getJwks().getGroovy().getLocation());
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 

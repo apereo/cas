@@ -59,10 +59,9 @@ public interface BeanSupplier<T> {
     /**
      * Get bean or proxied instance of the bean.
      *
-     * @return the t
-     * @throws Exception the exception
+     * @return the type
      */
-    T get() throws Exception;
+    T get();
 
     /**
      * Always true condition.

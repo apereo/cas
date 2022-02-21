@@ -22,8 +22,12 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -33,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -54,9 +57,10 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnProperty(name = "cas.authn.radius.client.inet-address")
 @Configuration(value = "RadiusConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Radius)
 public class RadiusConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.radius.client.inet-address");
 
     static Set<String> getClientIps(final RadiusClientProperties client) {
         return StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(client.getInetAddress()));
@@ -100,29 +104,43 @@ public class RadiusConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public AbstractRadiusServer radiusServer(final CasConfigurationProperties casProperties,
-                                             @Qualifier(CasSSLContext.BEAN_NAME)
-                                             final CasSSLContext casSslContext) {
-        val radius = casProperties.getAuthn().getRadius();
-        val client = radius.getClient();
-        val server = radius.getServer();
-        val ips = getClientIps(client);
-        return getSingleRadiusServer(client, server, ips.iterator().next(), casSslContext);
+    public RadiusServer radiusServer(final CasConfigurationProperties casProperties,
+                                     final ConfigurableApplicationContext applicationContext,
+                                     @Qualifier(CasSSLContext.BEAN_NAME)
+                                     final CasSSLContext casSslContext) throws Exception {
+        return BeanSupplier.of(RadiusServer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val radius = casProperties.getAuthn().getRadius();
+                val client = radius.getClient();
+                val server = radius.getServer();
+                val ips = getClientIps(client);
+                return getSingleRadiusServer(client, server, ips.iterator().next(), casSslContext);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public BeanContainer<RadiusServer> radiusServers(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) {
-        val radius = casProperties.getAuthn().getRadius();
-        val client = radius.getClient();
-        val server = radius.getServer();
-        val ips = getClientIps(radius.getClient());
-        return BeanContainer.of(ips.stream()
-            .map(ip -> getSingleRadiusServer(client, server, ip, casSslContext))
-            .collect(Collectors.toList()));
+        final CasConfigurationProperties casProperties) throws Exception {
+        return BeanSupplier.of(BeanContainer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val radius = casProperties.getAuthn().getRadius();
+                val client = radius.getClient();
+                val server = radius.getServer();
+                val ips = getClientIps(radius.getClient());
+                return BeanContainer.of(ips.stream()
+                    .map(ip -> getSingleRadiusServer(client, server, ip, casSslContext))
+                    .collect(Collectors.toList()));
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
@@ -138,35 +156,46 @@ public class RadiusConfiguration {
         @Qualifier("radiusPasswordPolicyConfiguration")
         final PasswordPolicyContext radiusPasswordPolicyConfiguration,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) {
-        val radius = casProperties.getAuthn().getRadius();
-        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager,
-            radiusPrincipalFactory, radiusServers.toList(), radius.isFailoverOnException(),
-            radius.isFailoverOnAuthenticationFailure());
-        h.setState(radius.getState());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder(), applicationContext));
-        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
-        h.setPasswordPolicyConfiguration(radiusPasswordPolicyConfiguration);
-        return h;
+        final ServicesManager servicesManager) throws Exception {
+        return BeanSupplier.of(AuthenticationHandler.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val radius = casProperties.getAuthn().getRadius();
+                val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager,
+                    radiusPrincipalFactory, radiusServers.toList(), radius.isFailoverOnException(),
+                    radius.isFailoverOnAuthenticationFailure());
+                h.setState(radius.getState());
+                h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder(), applicationContext));
+                h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
+                h.setPasswordPolicyConfiguration(radiusPasswordPolicyConfiguration);
+                return h;
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("radiusAuthenticationHandler")
         final AuthenticationHandler radiusAuthenticationHandler,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) {
-        return plan -> {
-            val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
-            if (!ips.isEmpty()) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(radiusAuthenticationHandler, defaultPrincipalResolver);
-            } else {
-                LOGGER.warn("No RADIUS address is defined. RADIUS support will be disabled.");
-            }
-        };
+        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> plan -> {
+                val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+                if (!ips.isEmpty()) {
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(radiusAuthenticationHandler, defaultPrincipalResolver);
+                } else {
+                    LOGGER.warn("No RADIUS address is defined. RADIUS support will be disabled.");
+                }
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "radiusPasswordPolicyConfiguration")
@@ -183,23 +212,35 @@ public class RadiusConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("multifactorAuthenticationProviderResolver")
-        final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) {
-        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
+        final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) throws Exception {
+        return BeanSupplier.of(MultifactorAuthenticationTrigger.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties,
+                multifactorAuthenticationProviderResolver, applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
         final MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger,
         @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-        val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
-            radiusAccessChallengedMultifactorAuthenticationTrigger);
-        LOGGER.debug("Activating MFA event resolver based on RADIUS...");
-        initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver);
-        return resolver;
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) throws Exception {
+        return BeanSupplier.of(CasWebflowEventResolver.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
+                    radiusAccessChallengedMultifactorAuthenticationTrigger);
+                LOGGER.debug("Activating MFA event resolver based on RADIUS...");
+                initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver);
+                return resolver;
+            })
+            .otherwiseProxy()
+            .get();
     }
 }

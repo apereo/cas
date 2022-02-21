@@ -15,6 +15,8 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
@@ -31,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -167,15 +170,22 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "deviceFingerprintGeoLocationComponentExtractor")
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.geolocation", name = "enabled", havingValue = "true")
         public DeviceFingerprintComponentManager deviceFingerprintGeoLocationComponentExtractor(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("geoLocationService")
             final ObjectProvider<GeoLocationService> geoLocationService) {
-            val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getGeolocation();
-            val component = new GeoLocationDeviceFingerprintComponentManager(geoLocationService.getObject());
-            component.setOrder(properties.getOrder());
-            return component;
+            return BeanSupplier.of(DeviceFingerprintComponentManager.class)
+                .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled").isTrue()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getGeolocation();
+                    val component = new GeoLocationDeviceFingerprintComponentManager(geoLocationService.getObject());
+                    component.setOrder(properties.getOrder());
+                    return component;
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 }
