@@ -63,6 +63,14 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Authentication and login.
+         */
+        Authentication,
+        /**
+         * MFA.
+         */
+        MultifactorAuthentication,
+        /**
          * Auditing and audit log.
          */
         Audit,
@@ -135,9 +143,17 @@ public interface CasFeatureModule {
          */
         GoogleAuthenticator,
         /**
+         * SCIM Integration.
+         */
+        SCIM,
+        /**
          * Service registry and management.
          */
         ServiceRegistry,
+        /**
+         * Service registry streaming files and services.
+         */
+        ServiceRegistryStreaming,
         /**
          * Surrogate Authn.
          */
@@ -158,6 +174,10 @@ public interface CasFeatureModule {
          * Password history management for history.
          */
         PasswordManagementHistory,
+        /**
+         * Ticket registry operations.
+         */
+        TicketRegistry,
         /**
          * Ticket registry locking operations.
          */

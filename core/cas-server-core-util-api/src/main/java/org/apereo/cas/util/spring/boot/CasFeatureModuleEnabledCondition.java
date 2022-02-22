@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.support.CasFeatureModule;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -15,6 +16,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Slf4j
 public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
     /**
      * Gets property name.
@@ -30,14 +32,21 @@ public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
                                             final AnnotatedTypeMetadata metadata) {
-        val name = metadata.getAnnotationAttributes(ConditionalOnCasFeatureModule.class.getName()).get("feature").toString();
+        val attributes = metadata.getAnnotationAttributes(ConditionalOnCasFeatureModule.class.getName());
+        val name = attributes.get("feature").toString();
+        val module = attributes.get("module").toString();
+        
         val feature = CasFeatureModule.FeatureCatalog.valueOf(name);
-        val module = metadata.getAnnotationAttributes(ConditionalOnCasFeatureModule.class.getName()).get("module").toString();
         val property = getPropertyName(feature, module);
+        LOGGER.trace("Checking for feature module capability via [{}]", property);
         val propertyValue = context.getEnvironment().getProperty(property);
         if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
-            return ConditionOutcome.noMatch("CAS feature module " + feature + '-' + module + " is disabled via " + property);
+            val message = "CAS feature module " + feature + '-' + module + " is disabled via " + property;
+            LOGGER.debug(message);
+            return ConditionOutcome.noMatch(message);
         }
-        return ConditionOutcome.match("CAS feature module " + feature + '-' + module + " is enabled via " + property);
+        val message = "CAS feature module " + feature + '-' + module + " is enabled via " + property;
+        LOGGER.debug(message);
+        return ConditionOutcome.match(message);
     }
 }

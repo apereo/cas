@@ -103,33 +103,40 @@ identify all of them. This can be done using the following property syntax defin
 ```properties
 CasFeatureModule.[feature].[module].enabled=false|true
 ```
-          
+
+<div class="alert alert-info mt-3"><strong>Usage</strong><p>Note that not every single CAS feature may be registered in the <i>Feature Catalog</i> and as such regarded as a standalone feature. The catalog continues to grow throughout the CAS release lifecycle to recognize more modules as grouped distinct features, allowing for a one-shop store to disable or enable a given CAS feature.</p></div>
+
+
 The following features are available to CAS:
 
-| Features                  | 
-|---------------------------|
-| `AcceptableUsagePolicy`   |
-| `ACME`                    |
-| `Audit`                   |
-| `Account Management`      |
-| `Authy`                   |
-| `CAPTCHA`                 |
-| `Consent`                 |
-| `Electrofence`            |
-| `Events`                  |
-| `GoogleAuthenticator`     |
-| `InterruptNotifications`  |
-| `LDAP`                    |
-| `PersonDirectory`         |
-| `RadiusMFA`               |
-| `SamlIdPMetadata`         |
-| `ServiceRegistry`         |
-| `SurrogateAuthentication` |
-| `TicketRegistryLocking`   |
-| `Throttling`              |
-| `U2F`                     |
-| `WebAuthn`                |
-| `YubiKey`                 |
+| Features                    | 
+|-----------------------------|
+| `AcceptableUsagePolicy`     |
+| `ACME`                      |
+| `Account Management`        |
+| `Audit`                     |
+| `Authentication`            |
+| `Authy`                     |
+| `CAPTCHA`                   |
+| `Consent`                   |
+| `Electrofence`              |
+| `Events`                    |
+| `GoogleAuthenticator`       |
+| `InterruptNotifications`    |
+| `LDAP`                      |
+| `MultifactorAuthentication` |
+| `PersonDirectory`           |
+| `RadiusMFA`                 |
+| `SamlIdPMetadata`           |
+| `ServiceRegistry`           |
+| `ServiceRegistryStreaming`  |
+| `SurrogateAuthentication`   |
+| `TicketRegistry`            |
+| `TicketRegistryLocking`     |
+| `Throttling`                |
+| `U2F`                       |
+| `WebAuthn`                  |
+| `YubiKey`                   |
 
 In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the
 actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`. If there is no particular variant or module applicable to the feature, as might be the case for ACME, then the default is considered as `core`.
