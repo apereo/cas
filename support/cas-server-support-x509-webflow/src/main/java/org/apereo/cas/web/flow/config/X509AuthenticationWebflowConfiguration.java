@@ -47,6 +47,7 @@ public class X509AuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer x509WebflowConfigurer(
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowRegistry,
@@ -93,6 +94,7 @@ public class X509AuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer(
         @Qualifier("x509WebflowConfigurer")
@@ -106,6 +108,7 @@ public class X509AuthenticationWebflowConfiguration {
     public static class X509TomcatServletWebServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServletWebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
             final ServerProperties serverProperties,
             final CasConfigurationProperties casProperties) {
@@ -113,6 +116,7 @@ public class X509AuthenticationWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "x509TomcatWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer x509TomcatWebflowExecutionPlanConfigurer(
             @Qualifier("x509TomcatServletWebServiceFactoryWebflowConfigurer")

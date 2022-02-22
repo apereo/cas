@@ -73,14 +73,15 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     }
 
     @Override
-    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service,
+                                                          final CriteriaSet criteriaSet) throws Exception {
         if (gitRepository.pull()) {
             LOGGER.debug("Successfully pulled metadata changes from the remote repository");
         } else {
             LOGGER.warn("Unable to pull changes from the remote repository. Metadata files may be stale.");
         }
-        val metadataFiles = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_METADATA_FILES));
-        val signatureFiles = this.gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_SIGNATURE_FILES));
+        val metadataFiles = gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_METADATA_FILES));
+        val signatureFiles = gitRepository.getObjectsInRepository(new PathRegexPatternTreeFilter(PATTERN_SIGNATURE_FILES));
 
         return metadataFiles
             .stream()
@@ -98,8 +99,8 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
         }
         val metadataLocation = service.getMetadataLocation();
         return metadataLocation != null
-            && (metadataLocation.trim().startsWith("git://")
-            || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
+               && (metadataLocation.trim().startsWith("git://")
+                   || (metadataLocation.trim().startsWith("http") && metadataLocation.trim().endsWith(".git")));
     }
 
     @Override

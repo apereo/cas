@@ -9,6 +9,10 @@ import java.util.Optional;
  * @since 5.3.0
  */
 public interface PasswordlessTokenRepository {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "passwordlessTokenRepository";
 
     /**
      * Create token string.

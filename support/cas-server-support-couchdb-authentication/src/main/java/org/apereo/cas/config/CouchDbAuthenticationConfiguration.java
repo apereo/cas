@@ -61,6 +61,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler")
         final AuthenticationHandler authenticationHandler,

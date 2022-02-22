@@ -47,6 +47,7 @@ public class U2FJpaConfiguration {
     public static class U2FJpaTransactionConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerU2f(
             @Qualifier("u2fEntityManagerFactory")
             final EntityManagerFactory emf) {

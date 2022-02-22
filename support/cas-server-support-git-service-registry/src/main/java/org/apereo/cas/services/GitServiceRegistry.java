@@ -5,6 +5,7 @@ import org.apereo.cas.git.PathRegexPatternTreeFilter;
 import org.apereo.cas.services.locator.GitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.SneakyThrows;
@@ -66,24 +67,26 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            LOGGER.trace("Service id not set. Calculating id based on system time...");
-            registeredService.setId(System.currentTimeMillis());
-        }
+        return Unchecked.supplier(() -> {
+            if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+                LOGGER.trace("Service id not set. Calculating id based on system time...");
+                registeredService.setId(System.currentTimeMillis());
+            }
 
-        val message = "Saved changes to registered service " + registeredService.getName();
-        val result = locateExistingRegisteredServiceFile(registeredService);
-        result.ifPresentOrElse(file -> writeRegisteredServiceToFile(registeredService, file),
-            () -> {
-                val file = registeredServiceLocators.get(0).determine(registeredService,
-                    GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.get(0));
-                writeRegisteredServiceToFile(registeredService, file);
-            });
+            val message = "Saved changes to registered service " + registeredService.getName();
+            val result = locateExistingRegisteredServiceFile(registeredService);
+            result.ifPresentOrElse(file -> writeRegisteredServiceToFile(registeredService, file),
+                () -> {
+                    val file = registeredServiceLocators.get(0).determine(registeredService,
+                        GitRepositoryRegisteredServiceLocator.FILE_EXTENSIONS.get(0));
+                    writeRegisteredServiceToFile(registeredService, file);
+                });
 
-        invokeServiceRegistryListenerPreSave(registeredService);
-        commitAndPush(message);
-        load();
-        return registeredService;
+            invokeServiceRegistryListenerPreSave(registeredService);
+            commitAndPush(message);
+            load();
+            return registeredService;
+        }).get();
     }
 
     @SneakyThrows
@@ -102,14 +105,16 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public void deleteAll() {
-        val currentServices = load();
-        currentServices.stream()
-            .map(this::locateExistingRegisteredServiceFile)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .forEach(Unchecked.consumer(FileUtils::forceDelete));
-        val message = "Deleted registered services from repository";
-        commitAndPush(message);
+        FunctionUtils.doUnchecked(unused -> {
+            val currentServices = load();
+            currentServices.stream()
+                .map(this::locateExistingRegisteredServiceFile)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(Unchecked.consumer(FileUtils::forceDelete));
+            val message = "Deleted registered services from repository";
+            commitAndPush(message);
+        });
     }
 
     @Synchronized
@@ -183,7 +188,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
             .findFirst();
     }
 
-    private void commitAndPush(final String message) {
+    private void commitAndPush(final String message) throws Exception {
         this.gitRepository.commitAll(message);
         if (this.pushChanges) {
             this.gitRepository.push();

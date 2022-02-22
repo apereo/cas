@@ -33,6 +33,7 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory groovyPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -52,11 +53,13 @@ public class GroovyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "groovyResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
-                                                                                                               @Qualifier("groovyResourceAuthenticationHandler")
-                                                                                                               final AuthenticationHandler groovyResourceAuthenticationHandler,
-                                                                                                               @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-                                                                                                               final PrincipalResolver defaultPrincipalResolver) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationEventExecutionPlanConfigurer groovyResourceAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("groovyResourceAuthenticationHandler")
+        final AuthenticationHandler groovyResourceAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getGroovy().getLocation();
             if (file != null) {

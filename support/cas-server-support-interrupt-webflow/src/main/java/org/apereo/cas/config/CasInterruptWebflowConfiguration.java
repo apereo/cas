@@ -44,6 +44,7 @@ public class CasInterruptWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer interruptWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
@@ -104,6 +105,7 @@ public class CasInterruptWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer interruptCasWebflowExecutionPlanConfigurer(
         @Qualifier("interruptWebflowConfigurer")

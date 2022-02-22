@@ -84,6 +84,7 @@ public class InweboWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class InweboWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry inweboFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder,

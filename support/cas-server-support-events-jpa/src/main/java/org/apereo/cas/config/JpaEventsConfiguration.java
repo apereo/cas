@@ -70,8 +70,8 @@ public class JpaEventsConfiguration {
             return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
         }
 
-
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaEventPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaCasEvent.class.getPackage().getName()));
         }
@@ -102,6 +102,7 @@ public class JpaEventsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaEventsTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerEvents(
             @Qualifier("eventsEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -123,6 +124,7 @@ public class JpaEventsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventRepository casEventRepository(
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
