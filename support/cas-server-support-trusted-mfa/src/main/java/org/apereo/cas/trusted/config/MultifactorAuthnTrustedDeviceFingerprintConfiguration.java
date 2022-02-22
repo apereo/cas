@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -132,16 +131,24 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustedDeviceFingerprintCookieConfiguration {
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.device-fingerprint.cookie", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder deviceFingerprintCookieGenerator(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("deviceFingerprintCookieValueManager")
             final CookieValueManager deviceFingerprintCookieValueManager) {
-            val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
-            return new TrustedDeviceCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), deviceFingerprintCookieValueManager);
+            return BeanSupplier.of(CasCookieBuilder.class)
+                .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.cookie.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cookie = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
+                    return new TrustedDeviceCookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie),
+                        deviceFingerprintCookieValueManager);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
 

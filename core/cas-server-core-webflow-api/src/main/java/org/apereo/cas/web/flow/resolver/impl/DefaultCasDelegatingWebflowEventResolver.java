@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -41,7 +42,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
+public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver
+    implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>(0);
 
@@ -106,14 +108,14 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
 
     @Override
     public void addDelegate(final CasWebflowEventResolver r) {
-        if (r != null) {
+        if (r != null && BeanSupplier.isNotProxy(r)) {
             orderedResolvers.add(r);
         }
     }
 
     @Override
     public void addDelegate(final CasWebflowEventResolver r, final int index) {
-        if (r != null) {
+        if (r != null && BeanSupplier.isNotProxy(r)) {
             orderedResolvers.add(index, r);
         }
     }
@@ -131,6 +133,7 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                                                                      final RegisteredService registeredService) {
         return this.orderedResolvers
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(resolver -> {
                 LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
                 return resolver.resolveSingle(context);
