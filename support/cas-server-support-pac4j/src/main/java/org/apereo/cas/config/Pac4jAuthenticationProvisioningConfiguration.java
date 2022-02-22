@@ -13,7 +13,6 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,15 +35,19 @@ public class Pac4jAuthenticationProvisioningConfiguration {
     @Configuration(value = "Pac4jAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(PrincipalProvisioner.class)
-    @ConditionalOnProperty(prefix = "cas.authn.pac4j.provisioning.scim", name = "enabled", havingValue = "true")
     public static class Pac4jAuthenticationScimProvisioningConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jScimDelegatedClientUserProfileProvisioner")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
             final PrincipalProvisioner scimProvisioner) {
-            return () -> new ScimDelegatedClientUserProfileProvisioner(scimProvisioner);
+            return BeanSupplier.of(Supplier.class)
+                .when(BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> () -> new ScimDelegatedClientUserProfileProvisioner(scimProvisioner))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -56,7 +59,7 @@ public class Pac4jAuthenticationProvisioningConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Supplier<DelegatedClientUserProfileProvisioner> groovyDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(Supplier.class)
                 .when(BeanCondition.on("cas.authn.pac4j.provisioning.groovy.location").exists()
                     .given(applicationContext.getEnvironment()))

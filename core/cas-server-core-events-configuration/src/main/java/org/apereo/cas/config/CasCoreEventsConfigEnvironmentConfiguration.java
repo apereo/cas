@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.listener.CasConfigurationEventListener;
 import org.apereo.cas.support.events.listener.DefaultCasConfigurationEventListener;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

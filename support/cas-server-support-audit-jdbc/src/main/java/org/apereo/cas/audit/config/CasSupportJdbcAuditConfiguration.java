@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;

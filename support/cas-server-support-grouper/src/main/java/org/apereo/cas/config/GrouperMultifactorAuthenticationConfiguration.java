@@ -52,6 +52,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "grouperMultifactorAuthenticationTrigger")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationTrigger grouperMultifactorAuthenticationTrigger(
         final CasConfigurationProperties casProperties,
@@ -69,8 +70,10 @@ public class GrouperMultifactorAuthenticationConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "grouperMultifactorAuthenticationWebflowEventResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("grouperMultifactorAuthenticationTrigger")

@@ -10,7 +10,6 @@ import lombok.val;
 import org.eclipse.persistence.config.BatchWriting;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.logging.SessionLog;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;

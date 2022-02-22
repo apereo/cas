@@ -11,7 +11,6 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -17,7 +17,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

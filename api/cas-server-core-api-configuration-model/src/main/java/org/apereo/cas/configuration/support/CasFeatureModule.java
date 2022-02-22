@@ -163,6 +163,10 @@ public interface CasFeatureModule {
          */
         SamlIdPMetadata,
         /**
+         * SAML SP metadata management.
+         */
+        SamlServiceProviderMetadata,
+        /**
          * Authn throttling.
          */
         Throttling,

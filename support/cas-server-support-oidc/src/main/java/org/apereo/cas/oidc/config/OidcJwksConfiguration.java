@@ -22,7 +22,6 @@ import org.apereo.cas.oidc.jwks.rotation.OidcDefaultJsonWebKeystoreRotationServi
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
