@@ -40,6 +40,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "filePrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory filePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -93,6 +94,7 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "filePasswordPolicyConfiguration")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext filePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

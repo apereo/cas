@@ -100,6 +100,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "delegatedCasWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer delegatedCasWebflowExecutionPlanConfigurer(
             @Qualifier("delegatedAuthenticationWebflowConfigurer")
             final CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer) {
@@ -112,6 +113,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
     public static class DelegatedAuthenticationWebflowPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -139,6 +141,7 @@ public class DelegatedAuthenticationWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCasMultifactorWebflowCustomizer")
         public CasMultifactorWebflowCustomizer delegatedAuthenticationCasMultifactorWebflowCustomizer() {
             return new CasMultifactorWebflowCustomizer() {

@@ -139,12 +139,20 @@ public interface CasFeatureModule {
          */
         SurrogateAuthentication,
         /**
+         * SAML IDP metadata management.
+         */
+        SamlIdPMetadata,
+        /**
          * Authn throttling.
          */
         Throttling,
         /**
          * Password management.
          */
-        PasswordManagement
+        PasswordManagement,
+        /**
+         * Ticket registry locking operations.
+         */
+        TicketRegistryLocking
     }
 }

@@ -96,6 +96,7 @@ public class JpaServiceRegistryConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaServicePackagesToScan")
         public BeanContainer<String> jpaServicePackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaRegisteredServiceEntity.class.getPackage().getName()));
@@ -130,6 +131,7 @@ public class JpaServiceRegistryConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaServiceRegistryTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerServiceReg(
             @Qualifier("serviceEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -140,6 +142,7 @@ public class JpaServiceRegistryConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcServiceRegistryTransactionTemplate")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionTemplate jdbcServiceRegistryTransactionTemplate(final CasConfigurationProperties casProperties,
                                                                           final ConfigurableApplicationContext applicationContext) {
             val t = new TransactionTemplate(applicationContext.getBean(JpaServiceRegistry.BEAN_NAME_TRANSACTION_MANAGER, PlatformTransactionManager.class));

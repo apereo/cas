@@ -97,7 +97,7 @@ public class GitRepositoryBuilderTests {
      * @throws IOException IO error
      */
     @Test
-    public void verifyBuildWithHttpClientOptions() throws IOException {
+    public void verifyBuildWithHttpClientOptions() throws Exception {
         val readonlyDeployToken = "ST8hSZUWDs7ujS83EVnk";
         for (BaseGitProperties.HttpClientTypes type : BaseGitProperties.HttpClientTypes.values()) {
             val props = casProperties.getServiceRegistry().getGit();

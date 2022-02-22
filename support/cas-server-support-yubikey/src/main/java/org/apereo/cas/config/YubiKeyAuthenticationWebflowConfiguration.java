@@ -63,6 +63,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class YubiKeyAuthenticationWebflowCoreConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyFlowRegistry")
         public FlowDefinitionRegistry yubikeyFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
@@ -76,6 +77,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowEventResolver")
         public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver(
             @Qualifier("casWebflowConfigurationContext")
@@ -86,6 +88,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "yubikeyMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer(
             @Qualifier("yubikeyFlowRegistry")
             final FlowDefinitionRegistry yubikeyFlowRegistry,
@@ -108,7 +111,6 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @Configuration(value = "YubiKeyAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class YubiKeyAuthenticationWebflowActionConfiguration {
-
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
@@ -153,6 +155,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer yubiMultifactorTrustWebflowConfigurer(
             @Qualifier("yubikeyFlowRegistry")
             final FlowDefinitionRegistry yubikeyFlowRegistry,

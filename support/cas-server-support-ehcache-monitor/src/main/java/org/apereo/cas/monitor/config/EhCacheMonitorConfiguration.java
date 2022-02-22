@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link EhCacheMonitorConfiguration}.
@@ -26,6 +28,7 @@ public class EhCacheMonitorConfiguration {
 
     @ConditionalOnEnabledHealthIndicator("ehcacheHealthIndicator")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HealthIndicator ehcacheHealthIndicator(final CasConfigurationProperties casProperties,
                                                   @Qualifier("ehcacheTicketCacheManager")
                                                   final CacheManager ehcacheTicketCacheManager) {

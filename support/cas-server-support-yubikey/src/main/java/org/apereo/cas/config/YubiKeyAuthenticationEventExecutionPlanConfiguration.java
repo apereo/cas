@@ -165,6 +165,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
                                                                          @Qualifier("yubiKeyAccountRegistry")
                                                                          final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
@@ -194,6 +195,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
                                                                                                         @Qualifier("yubikeyAuthenticationHandler")
                                                                                                         final AuthenticationHandler yubikeyAuthenticationHandler,

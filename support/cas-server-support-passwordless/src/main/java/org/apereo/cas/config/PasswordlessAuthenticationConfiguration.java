@@ -56,7 +56,7 @@ public class PasswordlessAuthenticationConfiguration {
     public AuthenticationHandler passwordlessTokenAuthenticationHandler(
         @Qualifier("passwordlessPrincipalFactory")
         final PrincipalFactory passwordlessPrincipalFactory,
-        @Qualifier("passwordlessTokenRepository")
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
@@ -105,7 +105,7 @@ public class PasswordlessAuthenticationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "passwordlessTokenRepository")
+    @ConditionalOnMissingBean(name = PasswordlessTokenRepository.BEAN_NAME)
     public PasswordlessTokenRepository passwordlessTokenRepository(final CasConfigurationProperties casProperties,
                                                                    @Qualifier("passwordlessCipherExecutor")
                                                                    final CipherExecutor passwordlessCipherExecutor) {

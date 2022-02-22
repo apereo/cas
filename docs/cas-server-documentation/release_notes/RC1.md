@@ -85,6 +85,7 @@ Several Docker images used for integration tests are now updated to their latest
 - Bucket4j
 - MongoDb Driver
 - CosmosDb
+- Spring Security
 - Kryo
 - Gson
 - Nimbus OIDC

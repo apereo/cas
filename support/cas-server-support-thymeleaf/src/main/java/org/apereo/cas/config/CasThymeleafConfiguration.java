@@ -94,6 +94,7 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
     }
@@ -234,6 +235,7 @@ public class CasThymeleafConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThymeleafViewResolver thymeleafViewResolver(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties,
                                                            final ConfigurableApplicationContext applicationContext,
                                                            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {

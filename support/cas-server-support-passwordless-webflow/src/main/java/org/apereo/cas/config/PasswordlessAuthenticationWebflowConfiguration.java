@@ -95,7 +95,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     public Action acceptPasswordlessAuthenticationAction(
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
-        @Qualifier("passwordlessTokenRepository")
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository,
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -119,7 +119,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final CommunicationsManager communicationsManager,
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
-        @Qualifier("passwordlessTokenRepository")
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository) {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository, passwordlessUserAccountStore, communicationsManager,
             casProperties.getAuthn().getPasswordless());

@@ -73,6 +73,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditLogEndpoint auditLogEndpoint(
         @Qualifier("auditTrailExecutionPlan")
         final AuditTrailExecutionPlan auditTrailExecutionPlan,
@@ -82,6 +83,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint(
         @Qualifier("casRuntimeModuleLoader")
         final CasRuntimeModuleLoader casRuntimeModuleLoader,
@@ -91,6 +93,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredServicesEndpoint registeredServicesReportEndpoint(
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -105,6 +108,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -114,6 +118,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
@@ -123,6 +128,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasInfoEndpointContributor casInfoEndpointContributor(
         @Qualifier("casRuntimeModuleLoader")
         final CasRuntimeModuleLoader casRuntimeModuleLoader) {
@@ -131,6 +137,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
@@ -143,6 +150,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
         @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
         final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -153,6 +161,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public StatisticsEndpoint statisticsReportEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,
@@ -162,6 +171,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint(
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver,
@@ -170,6 +180,7 @@ public class CasReportsConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnAvailableEndpoint
     public TicketExpirationPoliciesEndpoint ticketExpirationPoliciesEndpoint(
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -183,6 +194,7 @@ public class CasReportsConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnAvailableEndpoint(endpoint = HttpTraceEndpoint.class)
     public HttpTraceRepository httpTraceRepository() {
         return new InMemoryHttpTraceRepository();
@@ -190,6 +202,7 @@ public class CasReportsConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint(
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,

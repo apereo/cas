@@ -291,6 +291,7 @@ public class WebAuthnConfiguration {
     public static class WebAuthnAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnAuthenticationHandler")

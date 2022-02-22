@@ -56,6 +56,7 @@ public class TokenAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer tokenAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("tokenAuthenticationHandler")
         final AuthenticationHandler tokenAuthenticationHandler,

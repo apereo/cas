@@ -167,14 +167,20 @@ public class OidcJwksConfiguration {
 
     @Configuration(value = "OidcEndpointsJwksRestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(name = "cas.authn.oidc.jwks.rest.url")
     public static class OidcEndpointsJwksRestConfiguration {
         @Bean(initMethod = "generate")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
+            return BeanSupplier.of(OidcJsonWebKeystoreGeneratorService.class)
+                .when(BeanCondition.on("cas.authn.oidc.jwks.rest.url").isUrl().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val oidc = casProperties.getAuthn().getOidc();
+                    return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
+                })
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -231,7 +237,7 @@ public class OidcJwksConfiguration {
         public Runnable oidcJsonWebKeystoreRevocationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) throws Exception {
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.oidc.jwks.revocation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new OidcJsonWebKeystoreRevocationScheduler(oidcJsonWebKeystoreRotationService))

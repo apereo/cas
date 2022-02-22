@@ -121,8 +121,10 @@ The following features are available to CAS:
 | `LDAP`                    |
 | `PersonDirectory`         |
 | `RadiusMFA`               |
+| `SamlIdPMetadata`         |
 | `ServiceRegistry`         |
 | `SurrogateAuthentication` |
+| `TicketRegistryLocking`   |
 | `Throttling`              |
 | `U2F`                     |
 | `WebAuthn`                |

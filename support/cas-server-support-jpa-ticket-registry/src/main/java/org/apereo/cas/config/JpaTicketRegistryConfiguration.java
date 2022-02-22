@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
@@ -14,9 +15,13 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -140,39 +145,61 @@ public class JpaTicketRegistryConfiguration {
 
     @Configuration(value = "JpaTicketRegistryLockingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.ticket.registry.core", name = "enable-locking", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.TicketRegistryLocking, module = "jpa")
     public static class JpaTicketRegistryLockingConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket) {
-            return new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
+            return BeanSupplier.of(org.springframework.integration.jdbc.lock.LockRepository.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockRegistry jdbcLockRegistry(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("jdbcLockRepository")
             final org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository) {
-            return new JdbcLockRegistry(jdbcLockRepository);
+            return BeanSupplier.of(LockRegistry.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new JdbcLockRegistry(jdbcLockRepository))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockRepository casTicketRegistryLockRepository(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("jdbcLockRegistry")
             final LockRegistry jdbcLockRegistry) {
-            return new DefaultLockRepository(jdbcLockRegistry);
+            return BeanSupplier.of(LockRepository.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DefaultLockRepository(jdbcLockRegistry))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
-        IntegrationDataSourceScriptDatabaseInitializer casTicketRegistryLockDataSourceScriptDatabaseInitializer(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        InitializingBean casTicketRegistryLockDataSourceScriptDatabaseInitializer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
             final CloseableDataSource dataSourceTicket,
             final IntegrationProperties properties) {
-            return new IntegrationDataSourceScriptDatabaseInitializer(dataSourceTicket, properties.getJdbc());
+            return BeanSupplier.of(InitializingBean.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new IntegrationDataSourceScriptDatabaseInitializer(dataSourceTicket, properties.getJdbc()))
+                .otherwiseProxy()
+                .get();
         }
     }
 }
