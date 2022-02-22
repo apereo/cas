@@ -24,7 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "CasCoreConfigurationWatchConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreConfigurationWatchConfiguration {
-    @Bean(initMethod = "initialize")
+    @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventListener casConfigurationWatchService(
         @Qualifier("configurationPropertiesEnvironmentManager")

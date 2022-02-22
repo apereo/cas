@@ -60,7 +60,7 @@ public class CasConsentCoreConfiguration {
             @Qualifier("consentDecisionBuilder")
             final ConsentDecisionBuilder consentDecisionBuilder,
             final List<ConsentableAttributeBuilder> builders,
-            @Qualifier("consentRepository")
+            @Qualifier(ConsentRepository.BEAN_NAME)
             final ConsentRepository consentRepository) {
             AnnotationAwareOrderComparator.sortIfNecessary(builders);
             return new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties, builders);
@@ -122,7 +122,7 @@ public class CasConsentCoreConfiguration {
     @Configuration(value = "CasConsentCoreRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreRepositoryConfiguration {
-        @ConditionalOnMissingBean(name = "consentRepository")
+        @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Exception {
@@ -171,7 +171,7 @@ public class CasConsentCoreConfiguration {
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             @Qualifier(ConsentEngine.BEAN_NAME)
             final ConsentEngine consentEngine,
-            @Qualifier("consentRepository")
+            @Qualifier(ConsentRepository.BEAN_NAME)
             final ConsentRepository consentRepository,
             final CasConfigurationProperties casProperties) {
             return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);

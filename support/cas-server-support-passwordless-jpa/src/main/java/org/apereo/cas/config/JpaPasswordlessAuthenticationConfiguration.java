@@ -22,9 +22,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -51,7 +51,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LocalContainerEntityManagerFactoryBean passwordlessEntityManagerFactory(
+        public EntityManagerFactoryInfo passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter")
             final JpaVendorAdapter jpaPasswordlessVendorAdapter,

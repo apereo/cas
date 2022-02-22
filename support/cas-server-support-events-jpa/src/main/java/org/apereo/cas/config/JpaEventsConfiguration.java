@@ -23,9 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -78,7 +78,7 @@ public class JpaEventsConfiguration {
 
         @Lazy
         @Bean
-        public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory(
+        public EntityManagerFactoryInfo eventsEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaEventVendorAdapter")
             final JpaVendorAdapter jpaEventVendorAdapter,

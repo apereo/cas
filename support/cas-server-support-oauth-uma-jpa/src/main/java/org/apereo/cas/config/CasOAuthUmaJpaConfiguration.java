@@ -20,9 +20,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -61,7 +61,7 @@ public class CasOAuthUmaJpaConfiguration {
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean umaEntityManagerFactory(
+        public EntityManagerFactoryInfo umaEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaUmaVendorAdapter")
             final JpaVendorAdapter jpaUmaVendorAdapter,

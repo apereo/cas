@@ -14,6 +14,10 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public interface ConsentRepository extends Serializable {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "consentRepository";
 
     /**
      * Gets consent decision.

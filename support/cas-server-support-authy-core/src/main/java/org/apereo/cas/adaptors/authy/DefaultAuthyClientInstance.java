@@ -8,7 +8,6 @@ import com.authy.api.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link DefaultAuthyClientInstance}.

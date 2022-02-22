@@ -36,7 +36,7 @@ public class DynamoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     }
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
 }

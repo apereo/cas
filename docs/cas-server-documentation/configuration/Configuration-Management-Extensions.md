@@ -114,6 +114,7 @@ The following features are available to CAS:
 | `Account Management`      |
 | `Authy`                   |
 | `CAPTCHA`                 |
+| `Consent`                 |
 | `Electrofence`            |
 | `Events`                  |
 | `GoogleAuthenticator`     |
