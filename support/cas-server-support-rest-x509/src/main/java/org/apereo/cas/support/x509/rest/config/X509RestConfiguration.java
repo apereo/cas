@@ -95,7 +95,7 @@ public class X509RestConfiguration {
                     x509RestRequestHeader.ifAvailable(factory::registerCredentialFactory);
                 }
                 if (bodyAuth) {
-                    x509RestRequestHeader.ifAvailable(factory::registerCredentialFactory);
+                    x509RestMultipartBody.ifAvailable(factory::registerCredentialFactory);
                 }
                 if (tlsClientAuth) {
                     x509RestTlsClientCert.ifAvailable(factory::registerCredentialFactory);
