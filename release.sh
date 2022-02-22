@@ -8,12 +8,12 @@ TIMEOUT=640000
 function build {
     ./gradlew clean --parallel
     echo -e "\n${GREEN}Building CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew assemble -x test -x check --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    ./gradlew assemble -x test -x check -watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
 }
 
 function publish {
     echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
-    ./gradlew publishToSonatype closeAndReleaseStagingRepository --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
+    ./gradlew publishToSonatype closeAndReleaseStagingRepository -watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -Dorg.gradle.internal.http.socketTimeout="${TIMEOUT}" \
       -Dorg.gradle.internal.http.connectionTimeout="${TIMEOUT}"  \
