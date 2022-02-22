@@ -10,6 +10,7 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.OidcDefaultJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreListener;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcGroovyJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
@@ -256,7 +257,7 @@ public class OidcJwksConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcJsonWebKeyStoreListener")
         @Bean
-        public CasEventListener oidcJsonWebKeyStoreListener(
+        public OidcJsonWebKeyStoreListener oidcJsonWebKeyStoreListener(
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcDefaultJsonWebKeystoreCache) {
             return new OidcDefaultJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);

@@ -26,6 +26,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -109,7 +110,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesEventsConfiguration {
 
         @Bean
-        public CasEventListener registeredServicesEventListener(
+        public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

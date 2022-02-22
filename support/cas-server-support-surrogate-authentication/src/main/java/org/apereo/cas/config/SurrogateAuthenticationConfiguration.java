@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
 import org.apereo.cas.authentication.SurrogatePrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipalResolver;
 import org.apereo.cas.authentication.event.DefaultSurrogateAuthenticationEventListener;
+import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalElectionStrategyConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -25,7 +26,6 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
-import org.apereo.cas.util.spring.CasEventListener;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -111,7 +111,7 @@ public class SurrogateAuthenticationConfiguration {
     public static class SurrogateAuthenticationEventsConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
-        public CasEventListener surrogateAuthenticationEventListener(
+        public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             final CasConfigurationProperties casProperties) {

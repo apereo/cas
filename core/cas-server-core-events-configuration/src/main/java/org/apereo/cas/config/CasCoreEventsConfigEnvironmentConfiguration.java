@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
+import org.apereo.cas.support.events.listener.CasConfigurationEventListener;
 import org.apereo.cas.support.events.listener.DefaultCasConfigurationEventListener;
 import org.apereo.cas.util.spring.CasEventListener;
 
@@ -29,7 +30,7 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public CasEventListener casConfigurationEventListener(
+    public CasConfigurationEventListener casConfigurationEventListener(
         @Qualifier("configurationPropertiesEnvironmentManager")
         final CasConfigurationPropertiesEnvironmentManager manager,
         final ConfigurationPropertiesBindingPostProcessor binder,
