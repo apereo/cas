@@ -21,6 +21,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.persistence.TypedQuery;
@@ -49,8 +50,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public EntityManagerFactoryInfo newEntityManagerFactoryBean(final JpaConfigurationContext config,
-                                                                final AbstractJpaProperties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config,
+                                                                              final AbstractJpaProperties jpaProperties) {
         val properties = new Properties();
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());

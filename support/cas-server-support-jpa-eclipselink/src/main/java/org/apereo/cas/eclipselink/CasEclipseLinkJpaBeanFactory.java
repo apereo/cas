@@ -12,6 +12,7 @@ import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.logging.SessionLog;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 
 import javax.persistence.TypedQuery;
@@ -37,8 +38,8 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public EntityManagerFactoryInfo newEntityManagerFactoryBean(final JpaConfigurationContext config,
-                                                                final AbstractJpaProperties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config,
+                                                                              final AbstractJpaProperties jpaProperties) {
         val bean = JpaBeans.newEntityManagerFactoryBean(config);
 
         val map = new HashMap<String, Object>();

@@ -101,6 +101,7 @@ public class OidcJwksConfiguration {
     @ConditionalOnProperty(name = "cas.authn.oidc.jwks.jpa.url")
     public static class OidcEndpointsJwksJpaConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerOidcJwks(
             @Qualifier("oidcJwksEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -110,6 +111,7 @@ public class OidcJwksConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public EntityManagerFactoryInfo oidcJwksEntityManagerFactory(
             @Qualifier("jpaOidcJwksVendorAdapter")
             final JpaVendorAdapter jpaOidcJwksVendorAdapter,
@@ -162,44 +164,6 @@ public class OidcJwksConfiguration {
             LOGGER.info("Managing JWKS via a relational database at [{}]", oidc.getJwks().getJpa().getUrl());
             val transactionTemplate = new TransactionTemplate(transactionManagerOidcJwks);
             return new OidcJpaJsonWebKeystoreGeneratorService(oidc, transactionTemplate);
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksRestConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksRestConfiguration {
-        @Bean(initMethod = "generate")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(OidcJsonWebKeystoreGeneratorService.class)
-                .when(BeanCondition.on("cas.authn.oidc.jwks.rest.url").isUrl().given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val oidc = casProperties.getAuthn().getOidc();
-                    return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
-                })
-                .otherwiseProxy()
-                .get();
-        }
-    }
-
-    @Configuration(value = "OidcEndpointsJwksGroovyConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public static class OidcEndpointsJwksGroovyConfiguration {
-        @Bean(initMethod = "generate")
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
-            final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(OidcJsonWebKeystoreGeneratorService.class)
-                .when(BeanCondition.on("cas.authn.oidc.jwks.groovy.location").exists().given(applicationContext.getEnvironment()))
-                .supply(() -> {
-                    val oidc = casProperties.getAuthn().getOidc();
-                    return new OidcGroovyJsonWebKeystoreGeneratorService(oidc.getJwks().getGroovy().getLocation());
-                })
-                .otherwiseProxy()
-                .get();
         }
     }
 
@@ -321,6 +285,14 @@ public class OidcJwksConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
+            var cond = BeanCondition.on("cas.authn.oidc.jwks.groovy.location").exists().given(applicationContext.getEnvironment());
+            if (cond.get()) {
+                return new OidcGroovyJsonWebKeystoreGeneratorService(oidc.getJwks().getGroovy().getLocation());
+            }
+            cond = BeanCondition.on("cas.authn.oidc.jwks.rest.url").isUrl().given(applicationContext.getEnvironment());
+            if (cond.get()) {
+                return new OidcRestfulJsonWebKeystoreGeneratorService(oidc);
+            }
             return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
         }
     }
