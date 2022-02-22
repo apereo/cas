@@ -81,7 +81,7 @@ public class CasRedisThrottlingConfiguration {
             .supply(() -> new RedisThrottledSubmissionHandlerInterceptorAdapter(authenticationThrottlingConfigurationContext,
                 throttleRedisTemplate,
                 casProperties.getAudit().getRedis().getScanCount()))
-            .otherwiseProxy()
+            .otherwise(ThrottledSubmissionHandlerInterceptor::noOp)
             .get();
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.DefaultCasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.RegisteredService;
@@ -11,13 +12,16 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -29,39 +33,58 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.service-registry.stream.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.ServiceRegistryStreaming)
 @Configuration(value = "CasServicesStreamingConfiguration", proxyBeanMethods = false)
 public class CasServicesStreamingConfiguration {
-
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.stream.core.enabled").isTrue().evenIfMissing();
+    
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasServicesRegistryStreamingEventListener casServicesRegistryStreamingEventListener(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("casRegisteredServiceStreamPublisher")
         final CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
-        return new DefaultCasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher,
-            casRegisteredServiceStreamPublisherIdentifier);
+        return BeanSupplier.of(CasServicesRegistryStreamingEventListener.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> new DefaultCasServicesRegistryStreamingEventListener(casRegisteredServiceStreamPublisher,
+                casRegisteredServiceStreamPublisherIdentifier))
+            .otherwiseProxy()
+            .get();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("registeredServiceDistributedCacheManager")
         final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager,
         @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
         final PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier) {
-        val stream = casProperties.getServiceRegistry().getStream();
-        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager,
-            stream, casRegisteredServiceStreamPublisherIdentifier);
+        return BeanSupplier.of(RegisteredServiceReplicationStrategy.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val stream = casProperties.getServiceRegistry().getStream();
+                return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager,
+                    stream, casRegisteredServiceStreamPublisherIdentifier);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("registeredServiceDistributedCacheManager")
         final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier> registeredServiceDistributedCacheManager) {
-        return new DefaultCasRegisteredServiceStreamPublisher(registeredServiceDistributedCacheManager);
+        return BeanSupplier.of(CasRegisteredServiceStreamPublisher.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> new DefaultCasRegisteredServiceStreamPublisher(registeredServiceDistributedCacheManager))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -9,13 +10,16 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.RedisMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -30,33 +34,47 @@ import java.util.List;
  * @since 6.4.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(value = "RedisMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
+@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "redis")
 public class RedisMultifactorAuthenticationTrustConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.trusted.redis.enabled").isTrue().evenIfMissing();
 
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisMfaTrustedConnectionFactory(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
-        val redis = casProperties.getAuthn().getMfa().getTrusted().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
+        return BeanSupplier.of(RedisConnectionFactory.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val redis = casProperties.getAuthn().getMfa().getTrusted().getRedis();
+                return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "redisMfaTrustedAuthnTemplate")
     public CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisMfaTrustedConnectionFactory")
         final RedisConnectionFactory redisMfaTrustedConnectionFactory) {
-        return RedisObjectFactory.newRedisTemplate(redisMfaTrustedConnectionFactory);
+        return BeanSupplier.of(CasRedisTemplate.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> RedisObjectFactory.newRedisTemplate(redisMfaTrustedConnectionFactory))
+            .otherwiseProxy()
+            .get();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("redisMfaTrustedAuthnTemplate")
         final CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate,
@@ -64,8 +82,12 @@ public class RedisMultifactorAuthenticationTrustConfiguration {
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")
         final CipherExecutor mfaTrustCipherExecutor) {
-        return new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-            mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy,
-            casProperties.getAuthn().getMfa().getTrusted().getRedis().getScanCount());
+        return BeanSupplier.of(MultifactorAuthenticationTrustStorage.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
+                mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy,
+                casProperties.getAuthn().getMfa().getTrusted().getRedis().getScanCount()))
+            .otherwiseProxy()
+            .get();
     }
 }

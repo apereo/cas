@@ -71,6 +71,10 @@ public interface CasFeatureModule {
          */
         MultifactorAuthentication,
         /**
+         * MFA trusted devices.
+         */
+        MultifactorAuthenticationTrustedDevices,
+        /**
          * Auditing and audit log.
          */
         Audit,
@@ -118,6 +122,10 @@ public interface CasFeatureModule {
          * CAPTCHA integrations.
          */
         CAPTCHA,
+        /**
+         * Forgot/reset username.
+         */
+        ForgotUsername,
         /**
          * LDAP authentication and general integrations.
          */
