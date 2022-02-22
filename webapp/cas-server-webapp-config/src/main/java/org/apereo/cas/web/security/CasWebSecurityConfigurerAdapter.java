@@ -95,7 +95,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * allowing CAS' own security configuration to handle protection
      * of endpoints where necessary.
      *
-     * @param web web security
+     * @param http http security
      */
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
