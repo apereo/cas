@@ -43,7 +43,7 @@ public interface BeanSupplier<T> {
      * @return the boolean
      */
     static boolean isProxy(final Object result) {
-        return Proxy.isProxyClass(result.getClass());
+        return result != null && Proxy.isProxyClass(result.getClass()) && result.toString().startsWith("ProxyBean");
     }
 
     /**
@@ -236,7 +236,7 @@ public interface BeanSupplier<T> {
                     new Class[]{clazz},
                     (proxy, method, args) -> {
                         if (method.getName().equals("toString")) {
-                            return "Proxy-" + clazz.getName();
+                            return "ProxyBean-" + clazz.getName();
                         }
                         val returnType = method.getReturnType();
                         return TYPES_AND_VALUES.getOrDefault(returnType, null);

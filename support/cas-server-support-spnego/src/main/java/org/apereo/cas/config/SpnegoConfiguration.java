@@ -15,7 +15,9 @@ import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenti
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
@@ -23,7 +25,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -103,18 +104,24 @@ public class SpnegoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnProperty(prefix = "cas.authn.ntlm", name = "enabled", havingValue = "true")
     public AuthenticationHandler ntlmAuthenticationHandler(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("ntlmPrincipalFactory")
         final PrincipalFactory ntlmPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
-        val ntlmProperties = casProperties.getAuthn().getNtlm();
-        return new NtlmAuthenticationHandler(ntlmProperties.getName(),
-            servicesManager, ntlmPrincipalFactory,
-            ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
-            ntlmProperties.getIncludePattern(), ntlmProperties.getOrder());
+        return BeanSupplier.of(AuthenticationHandler.class)
+            .when(BeanCondition.on("cas.authn.ntlm.enabled").isTrue().given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val ntlmProperties = casProperties.getAuthn().getNtlm();
+                return new NtlmAuthenticationHandler(ntlmProperties.getName(),
+                    servicesManager, ntlmPrincipalFactory,
+                    ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
+                    ntlmProperties.getIncludePattern(), ntlmProperties.getOrder());
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")

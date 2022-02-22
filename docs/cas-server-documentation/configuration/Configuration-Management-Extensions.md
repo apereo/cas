@@ -121,6 +121,7 @@ The following features are available to CAS:
 | `Consent`                     |
 | `Electrofence`                |
 | `Events`                      |
+| `ForgotUsername`              |
 | `GoogleAuthenticator`         |
 | `InterruptNotifications`      |
 | `LDAP`                        |
