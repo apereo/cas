@@ -44,9 +44,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -110,7 +110,7 @@ public class OidcJwksConfiguration {
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean oidcJwksEntityManagerFactory(
+        public EntityManagerFactoryInfo oidcJwksEntityManagerFactory(
             @Qualifier("jpaOidcJwksVendorAdapter")
             final JpaVendorAdapter jpaOidcJwksVendorAdapter,
             @Qualifier("dataSourceOidcJwks")

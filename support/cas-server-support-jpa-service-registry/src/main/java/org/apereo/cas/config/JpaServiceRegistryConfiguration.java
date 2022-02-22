@@ -24,9 +24,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -103,7 +103,7 @@ public class JpaServiceRegistryConfiguration {
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(
+        public EntityManagerFactoryInfo serviceEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
             final DataSource dataSourceService,

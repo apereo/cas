@@ -35,8 +35,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
+import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -78,7 +78,8 @@ public class JpaTicketRegistryConfiguration {
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public EntityManagerFactoryInfo ticketEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")

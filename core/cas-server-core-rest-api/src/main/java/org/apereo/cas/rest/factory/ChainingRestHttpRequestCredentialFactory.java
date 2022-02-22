@@ -3,6 +3,7 @@ package org.apereo.cas.rest.factory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +39,10 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
      * @param factory the factory
      */
     public void registerCredentialFactory(final RestHttpRequestCredentialFactory factory) {
-        this.chain.add(factory);
-        AnnotationAwareOrderComparator.sort(this.chain);
+        if (BeanSupplier.isNotProxy(factory)) {
+            this.chain.add(factory);
+            AnnotationAwareOrderComparator.sort(this.chain);
+        }
     }
 
     @Override

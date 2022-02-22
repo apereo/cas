@@ -87,6 +87,10 @@ public interface CasFeatureModule {
          */
         PersonDirectory,
         /**
+         * Passwordless authN.
+         */
+        PasswordlessAuthn,
+        /**
          * U2F MFA.
          */
         U2F,
@@ -151,8 +155,16 @@ public interface CasFeatureModule {
          */
         PasswordManagement,
         /**
+         * Password history management for history.
+         */
+        PasswordManagementHistory,
+        /**
          * Ticket registry locking operations.
          */
-        TicketRegistryLocking
+        TicketRegistryLocking,
+        /**
+         * Attribute consent management.
+         */
+        Consent
     }
 }

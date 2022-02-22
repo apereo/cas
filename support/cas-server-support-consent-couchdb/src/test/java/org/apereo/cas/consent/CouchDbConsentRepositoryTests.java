@@ -49,7 +49,7 @@ public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     private ConsentDecisionCouchDbRepository couchDbRepository;
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     private ConsentRepository repository;
 
     @BeforeEach

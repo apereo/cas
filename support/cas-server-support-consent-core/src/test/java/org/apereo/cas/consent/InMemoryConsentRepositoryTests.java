@@ -18,6 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 }
