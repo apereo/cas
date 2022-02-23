@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
@@ -50,7 +51,7 @@ public class JdbcPasswordManagementConfiguration {
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource,
             @Qualifier("jdbcPasswordManagementTransactionTemplate")
-            final TransactionTemplate jdbcPasswordManagementTransactionTemplate,
+            final TransactionOperations jdbcPasswordManagementTransactionTemplate,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
             @Qualifier("passwordHistoryService")
@@ -61,7 +62,6 @@ public class JdbcPasswordManagementConfiguration {
                 casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
                 jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
         }
-
     }
 
     @Configuration(value = "JdbcPasswordManagementDataConfiguration", proxyBeanMethods = false)
@@ -88,7 +88,7 @@ public class JdbcPasswordManagementConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
         @Bean
-        public TransactionTemplate jdbcPasswordManagementTransactionTemplate(
+        public TransactionOperations jdbcPasswordManagementTransactionTemplate(
             final CasConfigurationProperties casProperties,
             @Qualifier("jdbcPasswordManagementTransactionManager")
             final PlatformTransactionManager jdbcPasswordManagementTransactionManager) {

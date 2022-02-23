@@ -31,6 +31,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
@@ -83,7 +84,7 @@ public class CasSupportJdbcAuditConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditTransactionTemplate")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TransactionTemplate inspektrAuditTransactionTemplate(
+        public TransactionOperations inspektrAuditTransactionTemplate(
             @Qualifier("inspektrAuditTransactionManager")
             final PlatformTransactionManager inspektrAuditTransactionManager, final CasConfigurationProperties casProperties) {
             val t = new TransactionTemplate(inspektrAuditTransactionManager);
@@ -114,7 +115,7 @@ public class CasSupportJdbcAuditConfiguration {
             @Qualifier("auditCleanupCriteria")
             final WhereClauseMatchCriteria auditCleanupCriteria,
             @Qualifier("inspektrAuditTransactionTemplate")
-            final TransactionTemplate inspektrAuditTransactionTemplate,
+            final TransactionOperations inspektrAuditTransactionTemplate,
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties) {
             val jdbc = casProperties.getAudit().getJdbc();

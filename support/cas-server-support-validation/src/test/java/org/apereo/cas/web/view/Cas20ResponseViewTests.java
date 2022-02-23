@@ -78,9 +78,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
-            .authnContextAttribute("authenticationContext")
             .validationAuthorizers(getServiceValidationAuthorizers())
-            .renewEnabled(true)
             .validationViewFactory(serviceValidationViewFactory)
             .build();
         return new ServiceValidateController(context);

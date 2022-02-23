@@ -12,7 +12,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
     private final OidcProperties oidcProperties;
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     @PersistenceContext(unitName = "oidcJwksEntityManagerFactory")
     private EntityManager entityManager;
