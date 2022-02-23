@@ -28,6 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -176,7 +177,7 @@ public class JpaServiceRegistryConfiguration {
                     mgmr.setEntityManagerFactory(emf);
                     return mgmr;
                 })
-                .otherwiseProxy()
+                .otherwise(PseudoTransactionManager::new)
                 .get();
         }
 

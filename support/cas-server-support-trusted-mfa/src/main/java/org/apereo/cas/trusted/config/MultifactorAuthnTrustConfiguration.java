@@ -122,6 +122,7 @@ public class MultifactorAuthnTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
             return new PseudoPlatformTransactionManager();
         }

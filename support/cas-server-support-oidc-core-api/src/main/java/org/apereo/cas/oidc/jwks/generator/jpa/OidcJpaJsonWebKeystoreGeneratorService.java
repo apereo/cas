@@ -9,6 +9,8 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @EnableTransactionManagement
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Transactional(transactionManager = "transactionManagerOidcJwks")
 public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
     private final OidcProperties oidcProperties;
