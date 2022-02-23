@@ -28,7 +28,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -73,7 +72,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo samlMetadataIdPEntityManagerFactory(
+        public EntityManagerFactory samlMetadataIdPEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataIdPVendorAdapter")
             final JpaVendorAdapter jpaSamlMetadataIdPVendorAdapter,
@@ -82,12 +81,12 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             @Qualifier("jpaSamlMetadataIdPPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataIdPPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataIdPVendorAdapter)
                 .persistenceUnitName("jpaSamlMetadataIdPContext").dataSource(dataSourceSamlMetadataIdP)
                 .packagesToScan(jpaSamlMetadataIdPPackagesToScan.toSet()).build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
         }
     }
 

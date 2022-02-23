@@ -10,10 +10,11 @@ import lombok.val;
 import org.eclipse.persistence.config.BatchWriting;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.logging.SessionLog;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
@@ -37,8 +38,8 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config,
-                                                                              final AbstractJpaProperties jpaProperties) {
+    public FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
+                                                                         final AbstractJpaProperties jpaProperties) {
         val bean = JpaBeans.newEntityManagerFactoryBean(config);
 
         val map = new HashMap<String, Object>();
@@ -49,6 +50,7 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
         map.put(PersistenceUnitProperties.LOGGING_LEVEL, SessionLog.FINE_LABEL);
 
         bean.getJpaPropertyMap().putAll(map);
+        bean.afterPropertiesSet();
         return bean;
     }
 

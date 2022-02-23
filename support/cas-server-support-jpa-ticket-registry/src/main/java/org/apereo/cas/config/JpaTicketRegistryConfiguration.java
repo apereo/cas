@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -79,7 +78,7 @@ public class JpaTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo ticketEntityManagerFactory(
+        public EntityManagerFactory ticketEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
@@ -87,7 +86,7 @@ public class JpaTicketRegistryConfiguration {
             @Qualifier("ticketPackagesToScan")
             final BeanContainer<String> ticketPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
@@ -95,7 +94,7 @@ public class JpaTicketRegistryConfiguration {
                 .dataSource(dataSourceTicket)
                 .packagesToScan(ticketPackagesToScan.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa()).getObject();
         }
     }
 

@@ -20,7 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -80,7 +79,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo mfaTrustedAuthnEntityManagerFactory(
+        public EntityManagerFactory mfaTrustedAuthnEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceMfaTrustedAuthn")
             final DataSource dataSourceMfaTrustedAuthn,
@@ -89,12 +88,13 @@ public class JdbcMultifactorAuthnTrustConfiguration {
             @Qualifier("jpaMfaTrustedAuthnVendorAdapter")
             final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn)
                 .packagesToScan(jpaMfaTrustedAuthnPackagesToScan.toSet())
                 .persistenceUnitName("jpaMfaTrustedAuthnContext")
                 .jpaVendorAdapter(jpaMfaTrustedAuthnVendorAdapter).build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getTrusted().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getMfa().getTrusted().getJpa()).getObject();
         }
 
     }

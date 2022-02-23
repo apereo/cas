@@ -23,7 +23,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -114,7 +113,7 @@ public class GoogleAuthenticatorJpaConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public EntityManagerFactoryInfo googleAuthenticatorEntityManagerFactory(
+        public EntityManagerFactory googleAuthenticatorEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
             final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
@@ -123,14 +122,15 @@ public class GoogleAuthenticatorJpaConfiguration {
             @Qualifier("jpaPackagesToScanGoogleAuthenticator")
             final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)
                 .persistenceUnitName("jpaGoogleAuthenticatorContext")
                 .dataSource(dataSourceGoogleAuthenticator)
                 .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getGauth().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getMfa().getGauth().getJpa()).getObject();
         }
 
     }

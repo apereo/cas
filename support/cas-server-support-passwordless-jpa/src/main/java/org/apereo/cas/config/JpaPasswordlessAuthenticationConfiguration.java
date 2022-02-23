@@ -22,7 +22,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -51,14 +50,14 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo passwordlessEntityManagerFactory(
+        public EntityManagerFactory passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter")
             final JpaVendorAdapter jpaPasswordlessVendorAdapter,
             @Qualifier("passwordlessDataSource")
             final DataSource passwordlessDataSource,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
 
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaPasswordlessVendorAdapter)
@@ -66,7 +65,8 @@ public class JpaPasswordlessAuthenticationConfiguration {
                 .dataSource(passwordlessDataSource)
                 .packagesToScan(jpaPasswordlessPackagesToScan())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getPasswordless().getTokens().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getPasswordless().getTokens().getJpa()).getObject();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

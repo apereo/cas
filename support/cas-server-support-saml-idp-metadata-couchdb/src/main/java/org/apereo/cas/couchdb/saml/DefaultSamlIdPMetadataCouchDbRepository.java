@@ -39,4 +39,9 @@ public class DefaultSamlIdPMetadataCouchDbRepository extends CouchDbRepositorySu
         }
         return getForAll();
     }
+
+    @Override
+    public void initialize() {
+        initStandardDesignDocument();
+    }
 }

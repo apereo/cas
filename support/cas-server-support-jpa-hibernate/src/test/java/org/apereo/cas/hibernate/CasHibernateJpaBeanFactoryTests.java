@@ -54,7 +54,7 @@ public class CasHibernateJpaBeanFactoryTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val adapter = jpaBeanFactory.newJpaVendorAdapter();
         assertNotNull(adapter);
 
@@ -64,7 +64,7 @@ public class CasHibernateJpaBeanFactoryTests {
             .dataSource(dataSource())
             .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .build();
-        assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()));
+        assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()).getObject());
     }
 
     @Entity

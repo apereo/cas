@@ -24,7 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -103,7 +102,7 @@ public class JpaServiceRegistryConfiguration {
         }
 
         @Bean
-        public EntityManagerFactoryInfo serviceEntityManagerFactory(
+        public EntityManagerFactory serviceEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
             final DataSource dataSourceService,
@@ -114,7 +113,7 @@ public class JpaServiceRegistryConfiguration {
             @Qualifier("jpaServicePackagesToScan")
             final BeanContainer<String> jpaServicePackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceService)
                 .persistenceUnitName("jpaServiceRegistryContext")
@@ -122,7 +121,7 @@ public class JpaServiceRegistryConfiguration {
                 .persistenceProvider(jpaServicePersistenceProvider)
                 .packagesToScan(jpaServicePackagesToScan.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa()).getObject();
         }
 
     }

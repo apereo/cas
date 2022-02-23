@@ -21,6 +21,7 @@ import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.errors.TopicExistsException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -120,9 +121,9 @@ public class CasServicesStreamingKafkaConfiguration {
         final NewTopic registeredServiceDistributedCacheKafkaTopic,
         @Qualifier("registeredServiceDistributedKafkaTemplate")
         final KafkaOperations<String, DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate) throws Exception {
-        return BeanSupplier.of(DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>, PublisherIdentifier>.class)
+        return BeanSupplier.of(DistributedCacheManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> {
+            .supply(Unchecked.supplier(() -> {
                 val kafka = casProperties.getServiceRegistry().getStream().getKafka();
                 val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
                 try {
@@ -135,7 +136,7 @@ public class CasServicesStreamingKafkaConfiguration {
                     }
                 }
                 return new RegisteredServiceKafkaDistributedCacheManager(registeredServiceDistributedKafkaTemplate, kafka.getTopic().getName());
-            })
+            }))
             .otherwiseProxy()
             .get();
     }

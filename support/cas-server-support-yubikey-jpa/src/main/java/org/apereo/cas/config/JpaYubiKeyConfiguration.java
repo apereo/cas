@@ -20,7 +20,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -60,7 +59,7 @@ public class JpaYubiKeyConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo yubiKeyEntityManagerFactory(
+        public EntityManagerFactory yubiKeyEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceYubiKey")
             final DataSource dataSourceYubiKey,
@@ -69,14 +68,15 @@ public class JpaYubiKeyConfiguration {
             @Qualifier("jpaYubiKeyVendorAdapter")
             final JpaVendorAdapter jpaYubiKeyVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceYubiKey)
                 .packagesToScan(jpaYubiKeyPackagesToScan.toSet())
                 .persistenceUnitName("jpaYubiKeyRegistryContext")
                 .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getMfa().getYubikey().getJpa()).getObject();
         }
 
     }

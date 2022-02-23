@@ -28,12 +28,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -54,18 +54,18 @@ public class CasSupportJdbcAuditConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory(
+        public EntityManagerFactory inspektrAuditEntityManagerFactory(
             @Qualifier("inspektrAuditTrailDataSource")
             final DataSource inspektrAuditTrailDataSource, final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
                 .persistenceUnitName("jpaInspektrAuditContext")
                 .dataSource(inspektrAuditTrailDataSource)
                 .packagesToScan(CollectionUtils.wrapSet(AuditTrailEntity.class.getPackage().getName()))
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()).getObject();
         }
 
         @ConditionalOnMissingBean(name = "auditCleanupCriteria")

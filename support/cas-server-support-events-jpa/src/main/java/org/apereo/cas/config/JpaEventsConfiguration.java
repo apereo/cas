@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -78,7 +77,7 @@ public class JpaEventsConfiguration {
 
         @Lazy
         @Bean
-        public EntityManagerFactoryInfo eventsEntityManagerFactory(
+        public EntityManagerFactory eventsEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaEventVendorAdapter")
             final JpaVendorAdapter jpaEventVendorAdapter,
@@ -87,14 +86,14 @@ public class JpaEventsConfiguration {
             @Qualifier("jpaEventPackagesToScan")
             final BeanContainer<String> jpaEventPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaEventVendorAdapter)
                 .persistenceUnitName("jpaEventRegistryContext")
                 .dataSource(dataSourceEvent)
                 .packagesToScan(jpaEventPackagesToScan.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getEvents().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getEvents().getJpa()).getObject();
         }
     }
 

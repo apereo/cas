@@ -16,13 +16,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.cfg.Environment;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.spi.PersistenceProvider;
 import java.io.Serializable;
@@ -49,8 +50,8 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
     }
 
     @Override
-    public LocalContainerEntityManagerFactoryBean newEntityManagerFactoryBean(final JpaConfigurationContext config,
-                                                                              final AbstractJpaProperties jpaProperties) {
+    public FactoryBean<EntityManagerFactory> newEntityManagerFactoryBean(final JpaConfigurationContext config,
+                                                                         final AbstractJpaProperties jpaProperties) {
         val properties = new Properties();
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
@@ -85,6 +86,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
 
         val bean = JpaBeans.newEntityManagerFactoryBean(config);
         bean.setJpaProperties(properties);
+        bean.afterPropertiesSet();
         return bean;
     }
 
