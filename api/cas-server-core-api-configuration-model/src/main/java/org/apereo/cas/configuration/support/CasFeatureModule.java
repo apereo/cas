@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.reflections.ReflectionUtils;
 import org.springframework.util.ClassUtils;
@@ -74,6 +75,10 @@ public interface CasFeatureModule {
          * MFA trusted devices.
          */
         MultifactorAuthenticationTrustedDevices,
+        /**
+         * Delegated authn.
+         */
+        DelegatedAuthentication,
         /**
          * Auditing and audit log.
          */

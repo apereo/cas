@@ -104,6 +104,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     public static class JdbcMultifactorAuthnTrustTransactionConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerMfaAuthnTrust(
             @Qualifier("mfaTrustedAuthnEntityManagerFactory")
             final EntityManagerFactory emf) {

@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
+import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionOperations;
@@ -130,7 +131,7 @@ public class JpaTicketRegistryConfiguration {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new JpaTransactionManager(emf))
-                .otherwiseProxy()
+                .otherwise(PseudoTransactionManager::new)
                 .get();
         }
     }

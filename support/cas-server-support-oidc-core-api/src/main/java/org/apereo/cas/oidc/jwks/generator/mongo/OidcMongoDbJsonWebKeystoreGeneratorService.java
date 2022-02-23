@@ -9,8 +9,10 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -24,8 +26,9 @@ import java.util.Optional;
  * @since 6.5.0
  */
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final OidcProperties oidcProperties;
 

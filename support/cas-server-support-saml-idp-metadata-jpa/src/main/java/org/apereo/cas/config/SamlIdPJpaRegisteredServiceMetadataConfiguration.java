@@ -113,6 +113,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPJpaRegisteredServiceMetadataTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerSamlMetadata(
             @Qualifier("samlMetadataEntityManagerFactory")
             final EntityManagerFactory emf) {
