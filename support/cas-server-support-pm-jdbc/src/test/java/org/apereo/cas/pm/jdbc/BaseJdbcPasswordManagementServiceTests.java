@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.sql.DataSource;
 
@@ -100,6 +100,6 @@ public abstract class BaseJdbcPasswordManagementServiceTests {
 
     @Autowired
     @Qualifier("jdbcPasswordManagementTransactionTemplate")
-    protected TransactionTemplate jdbcPasswordManagementTransactionTemplate;
+    protected TransactionOperations jdbcPasswordManagementTransactionTemplate;
 
 }

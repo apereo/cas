@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -54,7 +54,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     private final JpaBeanFactory jpaBeanFactory;
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     private final CasConfigurationProperties casProperties;
 

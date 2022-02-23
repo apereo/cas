@@ -43,7 +43,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -416,9 +415,9 @@ public class CasValidationConfiguration {
     public static class CasValidationControllerConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "proxyController")
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProxyController proxyController(
+            final CasConfigurationProperties casProperties,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
@@ -429,7 +428,8 @@ public class CasValidationConfiguration {
             @Qualifier("cas2ProxyFailureView")
             final View cas2ProxyFailureView) {
             return new ProxyController(cas2ProxySuccessView, cas2ProxyFailureView,
-                centralAuthenticationService, webApplicationServiceFactory, applicationContext);
+                centralAuthenticationService, webApplicationServiceFactory,
+                applicationContext, casProperties);
         }
 
         @Bean
@@ -461,9 +461,8 @@ public class CasValidationConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .argumentExtractor(argumentExtractor)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory)
                 .validationSpecifications(CollectionUtils.wrapSet(serviceValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
@@ -500,9 +499,8 @@ public class CasValidationConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .argumentExtractor(argumentExtractor)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory)
                 .validationSpecifications(CollectionUtils.wrapSet(legacyValidateControllerValidationSpecification))
                 .proxyHandler(proxy10Handler)
@@ -539,9 +537,8 @@ public class CasValidationConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .argumentExtractor(argumentExtractor)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory)
                 .validationSpecifications(CollectionUtils.wrapSet(proxyValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
@@ -549,10 +546,8 @@ public class CasValidationConfiguration {
             return new ProxyValidateController(context);
         }
 
-
         @Bean
         @ConditionalOnMissingBean(name = "v3ProxyValidateController")
-        @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public V3ProxyValidateController v3ProxyValidateController(
             @Qualifier("requestedContextValidator")
@@ -573,16 +568,15 @@ public class CasValidationConfiguration {
             @Qualifier("v3ProxyValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification v3ProxyValidateControllerValidationSpecification,
             @Qualifier("serviceValidationViewFactory")
-            final ServiceValidationViewFactory serviceValidationViewFactory) throws Exception {
+            final ServiceValidationViewFactory serviceValidationViewFactory) {
             val context = ServiceValidateConfigurationContext.builder()
                 .authenticationSystemSupport(authenticationSystemSupport)
                 .servicesManager(servicesManager)
                 .centralAuthenticationService(centralAuthenticationService)
                 .argumentExtractor(argumentExtractor)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory)
                 .validationSpecifications(CollectionUtils.wrapSet(v3ProxyValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
@@ -619,9 +613,8 @@ public class CasValidationConfiguration {
                 .centralAuthenticationService(centralAuthenticationService)
                 .argumentExtractor(argumentExtractor)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(serviceValidationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory)
                 .validationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
                 .proxyHandler(proxy20Handler)
@@ -629,6 +622,5 @@ public class CasValidationConfiguration {
             return new V3ServiceValidateController(context);
         }
     }
-
 
 }

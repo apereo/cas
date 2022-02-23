@@ -72,6 +72,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasServiceRegistryInitializationEventsConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
             @Qualifier("serviceRegistryInitializer")
             final ServiceRegistryInitializer serviceRegistryInitializer) {

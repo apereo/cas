@@ -42,9 +42,7 @@ public class LegacyValidateControllerTests extends AbstractServiceValidateContro
             .argumentExtractor(getArgumentExtractor())
             .proxyHandler(getProxyHandler())
             .requestedContextValidator(new MockRequestedAuthenticationContextValidator())
-            .authnContextAttribute("authenticationContext")
             .validationAuthorizers(new DefaultServiceTicketValidationAuthorizersExecutionPlan())
-            .renewEnabled(true)
             .validationViewFactory(serviceValidationViewFactory)
             .build();
         return new LegacyValidateController(context);

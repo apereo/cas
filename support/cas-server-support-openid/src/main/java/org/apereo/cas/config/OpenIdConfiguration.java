@@ -137,9 +137,8 @@ public class OpenIdConfiguration {
             .argumentExtractor(argumentExtractor)
             .proxyHandler(proxy20Handler)
             .requestedContextValidator(requestedContextValidator)
-            .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
             .validationAuthorizers(validationAuthorizers)
-            .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+            .casProperties(casProperties)
             .validationViewFactory(serviceValidationViewFactory)
             .build();
         return new OpenIdValidateController(context, serverManager);

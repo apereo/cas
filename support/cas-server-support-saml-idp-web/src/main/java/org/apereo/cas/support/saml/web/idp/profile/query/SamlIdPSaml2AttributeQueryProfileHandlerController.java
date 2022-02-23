@@ -22,6 +22,7 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +55,13 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY)
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) throws Exception {
+        val enabled = configurationContext.getCasProperties().getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled();
+        if (!enabled) {
+            LOGGER.warn("SAML2 attribute query profile is not enabled");
+            response.setStatus(HttpStatus.SC_NOT_IMPLEMENTED);
+            return;
+        }
+
         val ctx = decodeSoapRequest(request);
         val query = (AttributeQuery) ctx.getMessage();
         try {

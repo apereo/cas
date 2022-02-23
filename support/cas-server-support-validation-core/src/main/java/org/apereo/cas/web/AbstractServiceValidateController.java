@@ -177,7 +177,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param binder  the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        if (serviceValidateConfigurationContext.isRenewEnabled()) {
+        if (serviceValidateConfigurationContext.getCasProperties().getSso().isRenewAuthnEnabled()) {
             binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
         }
     }
@@ -391,7 +391,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (proxyGrantingTicket != null) {
             modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
-        multifactorProvider.ifPresent(provider -> modelAndView.addObject(serviceValidateConfigurationContext.getAuthnContextAttribute(), provider));
+        multifactorProvider.ifPresent(provider -> modelAndView.addObject(
+            serviceValidateConfigurationContext.getCasProperties().getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), provider));
         val augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         modelAndView.addAllObjects(augmentedModelObjects);
         return modelAndView;
