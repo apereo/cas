@@ -18,7 +18,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -74,12 +73,14 @@ public class CasConsentJdbcConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaConsentPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaConsentDecision.class.getPackage().getName()));
         }
 
         @Bean
-        public EntityManagerFactoryInfo consentEntityManagerFactory(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public EntityManagerFactory consentEntityManagerFactory(
             @Qualifier("jpaConsentVendorAdapter")
             final JpaVendorAdapter jpaConsentVendorAdapter,
             @Qualifier("dataSourceConsent")
@@ -88,14 +89,14 @@ public class CasConsentJdbcConfiguration {
             final BeanContainer<String> jpaConsentPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaConsentVendorAdapter)
                 .persistenceUnitName("jpaConsentContext")
                 .dataSource(dataSourceConsent)
                 .packagesToScan(jpaConsentPackagesToScan.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa()).getObject();
         }
 
     }
@@ -104,6 +105,7 @@ public class CasConsentJdbcConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentJdbcTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerConsent(
             @Qualifier("consentEntityManagerFactory")
             final EntityManagerFactory emf) {

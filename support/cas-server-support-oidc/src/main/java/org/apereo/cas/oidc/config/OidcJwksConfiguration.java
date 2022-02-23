@@ -44,7 +44,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -112,7 +111,7 @@ public class OidcJwksConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo oidcJwksEntityManagerFactory(
+        public EntityManagerFactory oidcJwksEntityManagerFactory(
             @Qualifier("jpaOidcJwksVendorAdapter")
             final JpaVendorAdapter jpaOidcJwksVendorAdapter,
             @Qualifier("dataSourceOidcJwks")
@@ -121,7 +120,7 @@ public class OidcJwksConfiguration {
             final BeanContainer<String> jpaOidcJwksPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaOidcJwksVendorAdapter)
                 .persistenceUnitName("jpaOidcJwksContext")
@@ -129,7 +128,7 @@ public class OidcJwksConfiguration {
                 .packagesToScan(jpaOidcJwksPackagesToScan.toSet())
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getOidc().getJwks().getJpa());
+                casProperties.getAuthn().getOidc().getJwks().getJpa()).getObject();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

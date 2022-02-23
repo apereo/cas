@@ -22,7 +22,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -97,7 +96,7 @@ public class U2FJpaConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "u2fEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactoryInfo u2fEntityManagerFactory(
+        public EntityManagerFactory u2fEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceU2f")
             final DataSource dataSourceU2f,
@@ -106,11 +105,14 @@ public class U2FJpaConfiguration {
             @Qualifier("jpaU2fVendorAdapter")
             final JpaVendorAdapter jpaU2fVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
-            val ctx = JpaConfigurationContext.builder().dataSource(dataSourceU2f)
-                .packagesToScan(jpaU2fPackagesToScan.toSet()).persistenceUnitName("jpaU2fRegistryContext")
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            val ctx = JpaConfigurationContext.builder()
+                .dataSource(dataSourceU2f)
+                .packagesToScan(jpaU2fPackagesToScan.toSet())
+                .persistenceUnitName("jpaU2fRegistryContext")
                 .jpaVendorAdapter(jpaU2fVendorAdapter).build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getU2f().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getMfa().getU2f().getJpa()).getObject();
         }
 
     }

@@ -21,7 +21,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -93,7 +92,7 @@ public class JpaWebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
-        public EntityManagerFactoryInfo webAuthnEntityManagerFactory(
+        public EntityManagerFactory webAuthnEntityManagerFactory(
             @Qualifier("jpaWebAuthnVendorAdapter")
             final JpaVendorAdapter jpaWebAuthnVendorAdapter,
             @Qualifier("dataSourceWebAuthn")
@@ -101,7 +100,7 @@ public class JpaWebAuthnConfiguration {
             final BeanContainer<String> jpaWebAuthnPackagesToScan,
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceWebAuthn)
                 .packagesToScan(jpaWebAuthnPackagesToScan.toSet())
@@ -109,7 +108,7 @@ public class JpaWebAuthnConfiguration {
                 .jpaVendorAdapter(jpaWebAuthnVendorAdapter)
                 .build();
             val jpa = casProperties.getAuthn().getMfa().getWebAuthn().getJpa();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa);
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa).getObject();
         }
 
     }

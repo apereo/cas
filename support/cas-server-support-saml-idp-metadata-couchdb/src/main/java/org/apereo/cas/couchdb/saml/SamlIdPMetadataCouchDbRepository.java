@@ -2,6 +2,8 @@ package org.apereo.cas.couchdb.saml;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import org.ektorp.support.GenericRepository;
+
 import java.util.Optional;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Optional;
  * @author Timur Duehr
  * @since 6.0.0
  */
-public interface SamlIdPMetadataCouchDbRepository {
+public interface SamlIdPMetadataCouchDbRepository extends GenericRepository<CouchDbSamlIdPMetadataDocument> {
 
     /**
      * Get all.
@@ -26,4 +28,9 @@ public interface SamlIdPMetadataCouchDbRepository {
      * @return the for service
      */
     CouchDbSamlIdPMetadataDocument getForService(Optional<SamlRegisteredService> registeredService);
+
+    /**
+     * Initialize.
+     */
+    void initialize();
 }
