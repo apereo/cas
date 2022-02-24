@@ -22,6 +22,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -93,7 +94,7 @@ public class JpaTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public EntityManagerFactory ticketEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> ticketEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
@@ -103,7 +104,7 @@ public class JpaTicketRegistryConfiguration {
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -112,7 +113,7 @@ public class JpaTicketRegistryConfiguration {
                         .dataSource(dataSourceTicket)
                         .packagesToScan(ticketPackagesToScan.toSet())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa()).getObject();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
                 }))
                 .otherwiseProxy()
                 .get();
@@ -226,7 +227,7 @@ public class JpaTicketRegistryConfiguration {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultLockRepository(jdbcLockRegistry))
-                .otherwiseProxy()
+                .otherwise(LockRepository::noOp)
                 .get();
         }
 

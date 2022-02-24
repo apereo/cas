@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.EhCache3TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -193,7 +194,7 @@ public class Ehcache3TicketRegistryConfiguration {
                 registry.setCipherExecutor(cipher);
                 return registry;
             })
-            .otherwiseProxy()
+            .otherwise(DefaultTicketRegistry::new)
             .get();
     }
 

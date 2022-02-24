@@ -1,6 +1,9 @@
 {
   "dependencies": "discovery-profile,pac4j-webflow,oidc,simple-mfa",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",

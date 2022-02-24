@@ -52,13 +52,13 @@ public class CasCoreAuthenticationMetadataConfiguration {
             return BeanSupplier.of(CipherExecutor.class)
                 .when(CONDITION_CLEARPASS.given(applicationContext.getEnvironment()))
                 .and(BeanCondition.on("cas.clearpass.crypto.enabled").isTrue().given(applicationContext.getEnvironment()))
-                .supply(() -> CipherExecutorUtils.newStringCipherExecutor(casProperties.getClearpass().getCrypto(), CacheCredentialsCipherExecutor.class))
-                .otherwise(() -> {
+                .supply(() -> {
                     LOGGER.warn("CAS is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
                                 + "turned off. Consider enabling the crypto configuration in CAS settings "
                                 + "that allow the system to sign & encrypt the captured credential.");
-                    return CipherExecutor.noOp();
+                    return CipherExecutorUtils.newStringCipherExecutor(casProperties.getClearpass().getCrypto(), CacheCredentialsCipherExecutor.class);
                 })
+                .otherwise(CipherExecutor::noOp)
                 .get();
         }
     }

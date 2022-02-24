@@ -50,7 +50,6 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
         map.put(PersistenceUnitProperties.LOGGING_LEVEL, SessionLog.FINE_LABEL);
 
         bean.getJpaPropertyMap().putAll(map);
-        bean.afterPropertiesSet();
         return bean;
     }
 

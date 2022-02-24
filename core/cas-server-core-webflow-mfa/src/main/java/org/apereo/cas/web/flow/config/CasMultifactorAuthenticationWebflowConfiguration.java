@@ -552,8 +552,8 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return casProperties.getAuthn().getMfa().getCore().isProviderSelectionEnabled()
-                ? new SelectiveMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext)
-                : new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext);
+                ? new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext)
+                : new SelectiveMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext);
         }
     }
 

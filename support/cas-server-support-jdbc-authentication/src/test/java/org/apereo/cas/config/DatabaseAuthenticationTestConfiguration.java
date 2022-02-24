@@ -9,6 +9,7 @@ import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +75,7 @@ public class DatabaseAuthenticationTestConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public EntityManagerFactory entityManagerFactory(
+    public FactoryBean<EntityManagerFactory> entityManagerFactory(
         @Qualifier("jpaVendorAdapter")
         final JpaVendorAdapter jpaVendorAdapter,
         @Qualifier("dataSource")
@@ -91,6 +92,6 @@ public class DatabaseAuthenticationTestConfiguration {
         jpaProperties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
         jpaProperties.put("hibernate.jdbc.batch_size", 1);
 
-        return JpaBeans.newEntityManagerFactoryBean(ctx).getObject();
+        return JpaBeans.newEntityManagerFactoryBean(ctx);
     }
 }

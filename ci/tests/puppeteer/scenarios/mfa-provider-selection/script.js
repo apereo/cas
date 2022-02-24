@@ -7,6 +7,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     await page.goto("https://localhost:8443/cas/login?service=https://example.com");
     await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(2000)
     await cas.assertVisibility(page, '#mfa-gauth')
     await cas.assertVisibility(page, '#mfa-yubikey')
     await browser.close();

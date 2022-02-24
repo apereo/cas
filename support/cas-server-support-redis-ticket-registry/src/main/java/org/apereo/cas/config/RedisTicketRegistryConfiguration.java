@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -90,7 +91,7 @@ public class RedisTicketRegistryConfiguration {
                     r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(redis.getCrypto(), "redis"));
                     return r;
                 })
-                .otherwiseProxy()
+                .otherwise(DefaultTicketRegistry::new)
                 .get();
         }
     }
@@ -127,7 +128,7 @@ public class RedisTicketRegistryConfiguration {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultLockRepository(casTicketRegistryRedisLockRegistry))
-                .otherwiseProxy()
+                .otherwise(LockRepository::noOp)
                 .get();
         }
     }

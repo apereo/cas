@@ -458,10 +458,10 @@ public class CasCoreTicketsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreTicketLockingConfiguration {
 
-        @Bean(LockRepository.BEAN_NAME)
+        @Bean
         @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LockRepository casTicketRegistryLockRepositoryNoOp(
+        public LockRepository casTicketRegistryLockRepository(
             final ConfigurableApplicationContext applicationContext) throws Exception {
             return BeanSupplier.of(LockRepository.class)
                 .when(BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))

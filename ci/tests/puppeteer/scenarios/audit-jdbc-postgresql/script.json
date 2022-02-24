@@ -1,11 +1,16 @@
 {
   "dependencies": "audit-jdbc,reports",
   "properties": [
+    "--cas.jdbc.show-sql=true",
+    "--logging.level.org.hibernate=debug",
+    "--logging.level.org.springframework.orm=debug",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.audit.engine.enabled=true",
     "--cas.audit.slf4j.enabled=false",
     
+    "--cas.audit.jdbc.leak-threshold=10000",
     "--cas.audit.jdbc.user=postgres",
     "--cas.audit.jdbc.password=password",
     "--cas.audit.jdbc.driver-class=org.postgresql.Driver",

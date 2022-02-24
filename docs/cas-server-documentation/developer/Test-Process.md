@@ -170,6 +170,7 @@ The following command-line options are supported for test execution:
 | `--headless`, `--h` | Launch the test scenario with a headless browser.
 | `--rerun|--resume|--z` | Launch the test scenario and assume the CAS web application is already running from a previous attempt.
 | `--hbo` | A combination of `--headless` and `--build` where the build is run using an `--offline` Gradle flag.
+| `--bo` | Run with `--build` where the build is then run using an `--offline` Gradle flag.
    
 For example, the `login-success` test scenario may be run using: 
 
