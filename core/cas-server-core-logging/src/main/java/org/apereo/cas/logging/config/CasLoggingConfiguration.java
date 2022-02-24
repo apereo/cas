@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -41,11 +40,11 @@ import java.util.HashMap;
 public class CasLoggingConfiguration {
 
     @ConditionalOnBean(value = TicketRegistry.class)
-    @ConditionalOnProperty(prefix = "cas.logging", name = "mdc-enabled", havingValue = "true", matchIfMissing = true)
     public static class CasMdcLoggingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ThreadContextMDCServletFilter> threadContextMDCServletFilter(
+            final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -58,6 +57,7 @@ public class CasLoggingConfiguration {
             bean.setInitParameters(initParams);
             bean.setName("threadContextMDCServletFilter");
             bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            bean.setEnabled(casProperties.getLogging().isMdcEnabled());
             return bean;
         }
     }

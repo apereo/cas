@@ -23,6 +23,8 @@ import org.apereo.cas.authentication.mfa.trigger.RestEndpointMultifactorAuthenti
 import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -49,7 +51,6 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -542,30 +543,24 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderSelectiveConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.core", name = "provider-selection-enabled", havingValue = "false", matchIfMissing = true)
     public static class CasCoreMultifactorAuthenticationProviderSelectiveConfiguration {
         @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver(
+            final CasConfigurationProperties casProperties,
             @Qualifier("casWebflowConfigurationContext")
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            return new SelectiveMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext);
+            return casProperties.getAuthn().getMfa().getCore().isProviderSelectionEnabled()
+                ? new SelectiveMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext)
+                : new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext);
         }
     }
 
     @Configuration(value = "CasCoreMultifactorAuthenticationProviderCompositeConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.core", name = "provider-selection-enabled", havingValue = "true")
     public static class CasCoreMultifactorAuthenticationProviderCompositeConfiguration {
-        @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
-            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
-            return new CompositeProviderSelectionMultifactorWebflowEventResolver(casWebflowConfigurationContext);
-        }
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.core.provider-selection-enabled").isTrue();
 
         @Bean
         @ConditionalOnMissingBean(name = "compositeProviderSelectionMultifactorWebflowConfigurer")
@@ -577,17 +572,26 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new CompositeProviderSelectionMultifactorWebflowConfigurer(flowBuilderServices,
-                loginFlowRegistry, applicationContext, casProperties);
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new CompositeProviderSelectionMultifactorWebflowConfigurer(flowBuilderServices,
+                    loginFlowRegistry, applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "compositeProviderSelectionCasWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer compositeProviderSelectionCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("compositeProviderSelectionMultifactorWebflowConfigurer")
             final CasWebflowConfigurer compositeProviderSelectionMultifactorWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

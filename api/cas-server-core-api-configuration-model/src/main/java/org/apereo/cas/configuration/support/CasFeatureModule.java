@@ -202,6 +202,10 @@ public interface CasFeatureModule {
         /**
          * Attribute consent management.
          */
-        Consent
+        Consent,
+        /**
+         * OAuth user managed access.
+         */
+        UMA
     }
 }
