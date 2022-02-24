@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -28,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
-    public StatisticsEndpoint(final CentralAuthenticationService centralAuthenticationService,
+    public StatisticsEndpoint(final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
                               final CasConfigurationProperties casProperties) {
         super(casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
@@ -59,18 +60,18 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
         val expiredTgts = new AtomicInteger();
         val expiredSts = new AtomicInteger();
 
-        val tickets = this.centralAuthenticationService.getTickets(ticket -> true);
+        val tickets = this.centralAuthenticationService.getObject().getTickets(ticket -> true);
         tickets.forEach(Unchecked.consumer(ticket -> {
             if (ticket instanceof ServiceTicket) {
                 if (ticket.isExpired()) {
-                    this.centralAuthenticationService.deleteTicket(ticket.getId());
+                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
                     expiredSts.incrementAndGet();
                 } else {
                     unexpiredSts.incrementAndGet();
                 }
             } else {
                 if (ticket.isExpired()) {
-                    this.centralAuthenticationService.deleteTicket(ticket.getId());
+                    this.centralAuthenticationService.getObject().deleteTicket(ticket.getId());
                     expiredTgts.incrementAndGet();
                 } else {
                     unexpiredTgts.incrementAndGet();

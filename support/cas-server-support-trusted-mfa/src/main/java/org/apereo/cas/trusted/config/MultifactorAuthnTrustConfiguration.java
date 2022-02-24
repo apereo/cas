@@ -34,6 +34,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.common.Cleanable;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -92,7 +93,7 @@ public class MultifactorAuthnTrustConfiguration {
             return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
         }
 
-        @ConditionalOnMissingBean(name = "mfaTrustEngine")
+        @ConditionalOnMissingBean(name = MultifactorAuthenticationTrustStorage.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
@@ -156,7 +157,7 @@ public class MultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Cleanable mfaTrustStorageCleaner(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("mfaTrustEngine")
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
             final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.trusted.cleaner.schedule.enabled").isTrue().evenIfMissing()
@@ -193,8 +194,8 @@ public class MultifactorAuthnTrustConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier("mfaTrustEngine")
-            final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
             return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
         }
     }

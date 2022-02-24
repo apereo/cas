@@ -49,7 +49,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                     final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
                                     @Qualifier("deviceFingerprintStrategy")
                                     final DeviceFingerprintStrategy deviceFingerprintStrategy,
-                                    @Qualifier("mfaTrustEngine")
+                                    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                     final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                     @Qualifier("registeredServiceAccessStrategyEnforcer")
                                     final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -65,7 +65,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                        final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
                                        @Qualifier("deviceFingerprintStrategy")
                                        final DeviceFingerprintStrategy deviceFingerprintStrategy,
-                                       @Qualifier("mfaTrustEngine")
+                                       @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                        final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                        @Qualifier("registeredServiceAccessStrategyEnforcer")
                                        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -83,7 +83,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                                   final DeviceFingerprintStrategy deviceFingerprintStrategy,
                                                   @Qualifier("mfaTrustDeviceNamingStrategy")
                                                   final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
-                                                  @Qualifier("mfaTrustEngine")
+                                                  @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                                   final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                                   @Qualifier("registeredServiceAccessStrategyEnforcer")
                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer,

@@ -27,6 +27,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,7 +57,6 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "QRAuthenticationConfiguration", proxyBeanMethods = false)
 public class QRAuthenticationConfiguration {
-
 
     @Configuration(value = "QRAuthenticationServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -165,10 +165,11 @@ public class QRAuthenticationConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
-            final QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository) {
+            final ObjectProvider<QRAuthenticationDeviceRepository> qrAuthenticationDeviceRepository) {
             return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository);
         }
     }
@@ -201,6 +202,7 @@ public class QRAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationControllerConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public QRAuthenticationChannelController qrAuthenticationChannelController(
             @Qualifier("brokerMessagingTemplate")
             final SimpMessagingTemplate template,

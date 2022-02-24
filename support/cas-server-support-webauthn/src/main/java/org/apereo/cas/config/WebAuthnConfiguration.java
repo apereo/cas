@@ -375,7 +375,7 @@ public class WebAuthnConfiguration {
             public WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint(
                 final CasConfigurationProperties casProperties,
                 @Qualifier("webAuthnCredentialRepository")
-                final WebAuthnCredentialRepository webAuthnCredentialRepository) {
+                final ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository) {
                 return new WebAuthnRegisteredDevicesEndpoint(casProperties, webAuthnCredentialRepository);
             }
 

@@ -86,7 +86,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasRuntimeModulesEndpoint casRuntimeModulesEndpoint(
         @Qualifier("casRuntimeModuleLoader")
-        final CasRuntimeModuleLoader casRuntimeModuleLoader,
+        final ObjectProvider<CasRuntimeModuleLoader> casRuntimeModuleLoader,
         final CasConfigurationProperties casProperties) {
         return new CasRuntimeModulesEndpoint(casProperties, casRuntimeModuleLoader);
     }
@@ -111,7 +111,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredAuthenticationHandlersEndpoint registeredAuthenticationHandlersEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new RegisteredAuthenticationHandlersEndpoint(casProperties, authenticationEventExecutionPlan);
     }
@@ -121,7 +121,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RegisteredAuthenticationPoliciesEndpoint registeredAuthenticationPoliciesEndpoint(
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan,
         final CasConfigurationProperties casProperties) {
         return new RegisteredAuthenticationPoliciesEndpoint(casProperties, authenticationEventExecutionPlan);
     }
@@ -140,9 +140,9 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
+        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
         @Qualifier("defaultSingleLogoutRequestExecutor")
-        final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
+        final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
         final CasConfigurationProperties casProperties) {
         return new SingleSignOnSessionsEndpoint(centralAuthenticationService,
             casProperties, defaultSingleLogoutRequestExecutor);
@@ -164,7 +164,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public StatisticsEndpoint statisticsReportEndpoint(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
-        final CentralAuthenticationService centralAuthenticationService,
+        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
         final CasConfigurationProperties casProperties) {
         return new StatisticsEndpoint(centralAuthenticationService, casProperties);
     }
@@ -174,7 +174,7 @@ public class CasReportsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint(
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver,
+        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
         final CasConfigurationProperties casProperties) {
         return new CasResolveAttributesReportEndpoint(casProperties, defaultPrincipalResolver);
     }
@@ -236,7 +236,7 @@ public class CasReportsConfiguration {
         public StatusEndpoint statusEndpoint(
             final ObjectProvider<HealthEndpoint> healthEndpoint,
             final CasConfigurationProperties casProperties) {
-            return new StatusEndpoint(casProperties, healthEndpoint.getIfAvailable());
+            return new StatusEndpoint(casProperties, healthEndpoint);
         }
 
         @Bean

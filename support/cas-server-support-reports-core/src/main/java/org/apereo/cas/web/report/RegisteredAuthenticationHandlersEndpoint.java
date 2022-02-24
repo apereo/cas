@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -28,11 +29,11 @@ import java.util.stream.Collectors;
 @Endpoint(id = "authenticationHandlers", enableByDefault = false)
 public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEndpoint {
 
-    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     public RegisteredAuthenticationHandlersEndpoint(
         final CasConfigurationProperties casProperties,
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
 
         super(casProperties);
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
@@ -47,7 +48,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get collection of available authentication handlers")
     public Collection<AuthenticationHandlerDetails> handle() {
-        return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
+        return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
             .stream()
             .map(handler -> AuthenticationHandlerDetails.builder().name(handler.getName()).order(handler.getOrder()).build())
             .sorted(Comparator.comparing(AuthenticationHandlerDetails::getOrder))
@@ -64,7 +65,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
     @ReadOperation(produces = {
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {
-        return this.authenticationEventExecutionPlan.getAuthenticationHandlers()
+        return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equalsIgnoreCase(name))
             .findFirst()

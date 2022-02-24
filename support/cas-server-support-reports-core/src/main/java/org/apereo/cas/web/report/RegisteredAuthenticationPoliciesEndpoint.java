@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -28,11 +29,11 @@ import java.util.stream.Collectors;
 @Endpoint(id = "authenticationPolicies", enableByDefault = false)
 public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEndpoint {
 
-    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     public RegisteredAuthenticationPoliciesEndpoint(
         final CasConfigurationProperties casProperties,
-        final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
 
         super(casProperties);
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
@@ -47,7 +48,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get available authentication policies")
     public Collection<AuthenticationPolicyDetails> handle() {
-        return this.authenticationEventExecutionPlan.getAuthenticationPolicies()
+        return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()
             .map(policy -> AuthenticationPolicyDetails.builder().name(policy.getName()).order(policy.getOrder()).build())
             .sorted(Comparator.comparing(AuthenticationPolicyDetails::getOrder))
@@ -64,7 +65,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
         ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get available authentication policy by name", parameters = {@Parameter(name = "name", required = true)})
     public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
-        return this.authenticationEventExecutionPlan.getAuthenticationPolicies()
+        return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equals(name))
             .findFirst()

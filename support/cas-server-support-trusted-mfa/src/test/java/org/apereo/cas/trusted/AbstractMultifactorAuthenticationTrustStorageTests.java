@@ -57,7 +57,7 @@ import static org.mockito.Mockito.*;
 @Getter
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
-    @Qualifier("mfaTrustEngine")
+    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
     protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
