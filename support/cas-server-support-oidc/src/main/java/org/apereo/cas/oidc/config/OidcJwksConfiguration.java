@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -145,7 +146,7 @@ public class OidcJwksConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJwksEntityManagerFactory")
-        public EntityManagerFactory oidcJwksEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> oidcJwksEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("jpaOidcJwksVendorAdapter")
             final JpaVendorAdapter jpaOidcJwksVendorAdapter,
@@ -156,7 +157,7 @@ public class OidcJwksConfiguration {
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(EntityManagerFactory.class)
+            return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -166,7 +167,7 @@ public class OidcJwksConfiguration {
                         .packagesToScan(jpaOidcJwksPackagesToScan.toSet())
                         .build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                        casProperties.getAuthn().getOidc().getJwks().getJpa()).getObject();
+                        casProperties.getAuthn().getOidc().getJwks().getJpa());
                 }))
                 .otherwiseProxy()
                 .get();

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.AsciiArtUtils;
@@ -27,17 +28,21 @@ import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.support.AbstractCacheManager;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.event.EventListener;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
@@ -52,7 +57,7 @@ import java.util.Objects;
 @Slf4j
 @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ehcache2")
 public class EhcacheTicketRegistryConfiguration {
-    private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.ehcache.enabled").isTrue();
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.ehcache.enabled").isTrue().evenIfMissing();
 
     private static Ehcache buildCache(final CasConfigurationProperties casProperties,
                                       final TicketDefinition ticketDefinition,
@@ -153,8 +158,16 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ehcacheTicketCacheManager")
-    public EhCacheManagerFactoryBean ehcacheTicketCacheManager(final CasConfigurationProperties casProperties) {
+    public CacheManager ehcacheTicketCacheManager(
+        @Qualifier("ticketRMISynchronousCacheReplicator")
+        final CacheReplicator ticketRMISynchronousCacheReplicator,
+        @Qualifier("ticketCacheBootstrapCacheLoader")
+        final BootstrapCacheLoader ticketCacheBootstrapCacheLoader,
+        @Qualifier(TicketCatalog.BEAN_NAME)
+        final TicketCatalog ticketCatalog,
+        final CasConfigurationProperties casProperties) {
         AsciiArtUtils.printAsciiArtWarning(LOGGER,
             "CAS Integration with ehcache 2.x will be discontinued after CAS 6.2.x. Consider migrating to another type of registry.");
         val cache = casProperties.getTicket().getRegistry().getEhcache();
@@ -171,67 +184,67 @@ public class EhcacheTicketRegistryConfiguration {
 
         bean.setShared(cache.isShared());
         bean.setCacheManagerName(cache.getCacheManagerName());
+        bean.afterPropertiesSet();
+        val ehCacheManager = bean.getObject();
 
-        return bean;
+        val definitions = ticketCatalog.findAll();
+        definitions.forEach(ticketDefn -> {
+            val ehcache = buildCache(casProperties, ticketDefn, ticketRMISynchronousCacheReplicator, ticketCacheBootstrapCacheLoader);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), ticketDefn);
+                val config = ehcache.getCacheConfiguration();
+                LOGGER.debug("[{}].maxEntriesLocalHeap=[{}]", ehcache.getName(), config.getMaxEntriesLocalHeap());
+                LOGGER.debug("[{}].maxEntriesLocalDisk=[{}]", ehcache.getName(), config.getMaxEntriesLocalDisk());
+                LOGGER.debug("[{}].maxEntriesInCache=[{}]", ehcache.getName(), config.getMaxEntriesInCache());
+                LOGGER.debug("[{}].persistenceConfiguration=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getStrategy());
+                LOGGER.debug("[{}].synchronousWrites=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getSynchronousWrites());
+                LOGGER.debug("[{}].timeToLive=[{}]", ehcache.getName(), config.getTimeToLiveSeconds());
+                LOGGER.debug("[{}].timeToIdle=[{}]", ehcache.getName(), config.getTimeToIdleSeconds());
+                LOGGER.debug("[{}].cacheManager=[{}]", ehcache.getName(), ehcache.getCacheManager().getName());
+            }
+            ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
+        });
+        LOGGER.debug("The following caches are available: [{}]", Arrays.toString(ehCacheManager.getCacheNames()));
+        return ehCacheManager;
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistry ticketRegistry(
-        final ConfigurableApplicationContext applicationContext,
-        @Qualifier("ticketRMISynchronousCacheReplicator")
-        final CacheReplicator ticketRMISynchronousCacheReplicator,
-        @Qualifier("ticketCacheBootstrapCacheLoader")
-        final BootstrapCacheLoader ticketCacheBootstrapCacheLoader,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("ehCacheCacheManager")
-        final EhCacheCacheManager manager,
         @Qualifier(TicketCatalog.BEAN_NAME)
-        final TicketCatalog ticketCatalog) {
-
+        final TicketCatalog ticketCatalog,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("ehcacheTicketCacheManager")
+        final CacheManager ehCacheManager) {
         return BeanSupplier.of(TicketRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
-                val ehCacheManager = Objects.requireNonNull(manager.getCacheManager());
                 val crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
-
-                val definitions = ticketCatalog.findAll();
-                definitions.forEach(t -> {
-                    val ehcache = buildCache(casProperties, t, ticketRMISynchronousCacheReplicator, ticketCacheBootstrapCacheLoader);
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
-                        val config = ehcache.getCacheConfiguration();
-                        LOGGER.debug("[{}].maxEntriesLocalHeap=[{}]", ehcache.getName(), config.getMaxEntriesLocalHeap());
-                        LOGGER.debug("[{}].maxEntriesLocalDisk=[{}]", ehcache.getName(), config.getMaxEntriesLocalDisk());
-                        LOGGER.debug("[{}].maxEntriesInCache=[{}]", ehcache.getName(), config.getMaxEntriesInCache());
-                        LOGGER.debug("[{}].persistenceConfiguration=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getStrategy());
-                        LOGGER.debug("[{}].synchronousWrites=[{}]", ehcache.getName(), config.getPersistenceConfiguration().getSynchronousWrites());
-                        LOGGER.debug("[{}].timeToLive=[{}]", ehcache.getName(), config.getTimeToLiveSeconds());
-                        LOGGER.debug("[{}].timeToIdle=[{}]", ehcache.getName(), config.getTimeToIdleSeconds());
-                        LOGGER.debug("[{}].cacheManager=[{}]", ehcache.getName(), ehcache.getCacheManager().getName());
-                    }
-                    ehCacheManager.addDecoratedCacheIfAbsent(ehcache);
-                });
-                manager.initializeCaches();
-                LOGGER.debug("The following caches are available: [{}]", manager.getCacheNames());
                 val registry = new EhCacheTicketRegistry(ticketCatalog, ehCacheManager);
                 registry.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
                 return registry;
             })
-            .otherwiseProxy()
+            .otherwise(DefaultTicketRegistry::new)
             .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public org.springframework.cache.CacheManager ehCacheCacheManager(
+    public AbstractCacheManager ehCacheCacheManager(
         final ConfigurableApplicationContext applicationContext,
+        @Qualifier("ehcacheTicketCacheManager")
         final CacheManager ehcacheTicketCacheManager) {
-        return BeanSupplier.of(org.springframework.cache.CacheManager.class)
+        return BeanSupplier.of(AbstractCacheManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new EhCacheCacheManager(ehcacheTicketCacheManager))
-            .otherwiseProxy()
+            .otherwise(SimpleCacheManager::new)
             .get();
     }
 
+    @EventListener
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) throws Exception {
+        val ehCacheCacheManager = event.getApplicationContext().getBean("ehCacheCacheManager", AbstractCacheManager.class);
+        ehCacheCacheManager.initializeCaches();
+    }
 }

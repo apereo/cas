@@ -2,6 +2,7 @@ package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.monitor.CompositeHealthIndicator;
 import org.apereo.cas.monitor.MongoDbHealthIndicator;
@@ -17,7 +18,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.stream.Collectors;
 
@@ -34,7 +34,7 @@ public class MongoDbMonitoringConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
-    public BeanContainer<MongoOperations> mongoHealthIndicatorTemplate(
+    public BeanContainer<CasMongoOperations> mongoHealthIndicatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -54,7 +54,7 @@ public class MongoDbMonitoringConfiguration {
     public HealthIndicator mongoHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoHealthIndicatorTemplate")
-        final BeanContainer<MongoOperations> mongoHealthIndicatorTemplate) {
+        final BeanContainer<CasMongoOperations> mongoHealthIndicatorTemplate) {
 
         val warn = casProperties.getMonitor().getWarn();
         val results = mongoHealthIndicatorTemplate.toList()

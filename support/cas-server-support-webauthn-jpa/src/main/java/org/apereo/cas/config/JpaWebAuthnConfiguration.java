@@ -14,6 +14,7 @@ import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -92,7 +93,7 @@ public class JpaWebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
-        public EntityManagerFactory webAuthnEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> webAuthnEntityManagerFactory(
             @Qualifier("jpaWebAuthnVendorAdapter")
             final JpaVendorAdapter jpaWebAuthnVendorAdapter,
             @Qualifier("dataSourceWebAuthn")
@@ -108,7 +109,7 @@ public class JpaWebAuthnConfiguration {
                 .jpaVendorAdapter(jpaWebAuthnVendorAdapter)
                 .build();
             val jpa = casProperties.getAuthn().getMfa().getWebAuthn().getJpa();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa).getObject();
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa);
         }
 
     }

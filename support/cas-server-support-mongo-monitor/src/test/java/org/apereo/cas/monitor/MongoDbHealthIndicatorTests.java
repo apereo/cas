@@ -35,7 +35,7 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.Date;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class MongoDbHealthIndicatorTests {
 
     @Autowired
     @Qualifier("mongoHealthIndicatorTemplate")
-    private BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate;
+    private BeanContainer<MongoOperations> mongoHealthIndicatorTemplate;
 
     @BeforeEach
     public void bootstrap() {

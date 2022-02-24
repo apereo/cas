@@ -16,6 +16,7 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -113,7 +114,7 @@ public class GoogleAuthenticatorJpaConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public EntityManagerFactory googleAuthenticatorEntityManagerFactory(
+        public FactoryBean<EntityManagerFactory> googleAuthenticatorEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaGoogleAuthenticatorVendorAdapter")
             final JpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter,
@@ -130,7 +131,7 @@ public class GoogleAuthenticatorJpaConfiguration {
                 .packagesToScan(jpaPackagesToScanGoogleAuthenticator.toSet())
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getMfa().getGauth().getJpa()).getObject();
+                casProperties.getAuthn().getMfa().getGauth().getJpa());
         }
 
     }

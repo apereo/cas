@@ -71,7 +71,7 @@ public class HazelcastZooKeeperConfiguration {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultLockRepository(casTicketRegistryZooKeeperLockRepository))
-                .otherwiseProxy()
+                .otherwise(LockRepository::noOp)
                 .get();
         }
     }

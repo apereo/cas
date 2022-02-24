@@ -64,7 +64,7 @@ public class CasHibernateJpaBeanFactoryTests {
             .dataSource(dataSource())
             .packagesToScan(CollectionUtils.wrapSet(SampleEntity.class.getPackage().getName()))
             .build();
-        assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()).getObject());
+        assertNotNull(jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc()));
     }
 
     @Entity
