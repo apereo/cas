@@ -52,6 +52,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")
     @Bean
     public CasWebApplicationReadyListener casWebApplicationReadyListener() {
         return new CasWebApplicationReady();
