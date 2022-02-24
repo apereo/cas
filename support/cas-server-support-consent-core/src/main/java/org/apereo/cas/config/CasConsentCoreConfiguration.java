@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -167,12 +168,13 @@ public class CasConsentCoreConfiguration {
     public static class CasConsentCoreWebConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             @Qualifier(ConsentEngine.BEAN_NAME)
-            final ConsentEngine consentEngine,
+            final ObjectProvider<ConsentEngine> consentEngine,
             @Qualifier(ConsentRepository.BEAN_NAME)
-            final ConsentRepository consentRepository,
+            final ObjectProvider<ConsentRepository> consentRepository,
             final CasConfigurationProperties casProperties) {
             return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);
         }

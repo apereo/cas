@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -124,9 +125,11 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowEndpointConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
-        public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("u2fDeviceRepository")
-                                                                         final U2FDeviceRepository u2fDeviceRepository) {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public U2FRegisteredDevicesEndpoint u2fRegisteredDevicesEndpoint(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("u2fDeviceRepository")
+            final ObjectProvider<U2FDeviceRepository> u2fDeviceRepository) {
             return new U2FRegisteredDevicesEndpoint(casProperties, u2fDeviceRepository);
         }
     }

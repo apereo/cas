@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -144,7 +145,8 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         when(cas.getTickets(any(Predicate.class))).thenReturn(List.of(new MockTicketGrantingTicket("casuser")));
         when(cas.deleteTicket(anyString())).thenThrow(new RuntimeException());
 
-        val results = new SingleSignOnSessionsEndpoint(cas, casProperties, defaultSingleLogoutRequestExecutor).destroySsoSessions(
+        val results = new SingleSignOnSessionsEndpoint(new DirectObjectProvider<>(cas),
+            casProperties, new DirectObjectProvider<>(defaultSingleLogoutRequestExecutor)).destroySsoSessions(
             SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null,
             0, 1_000,
             new MockHttpServletRequest(), new MockHttpServletResponse());

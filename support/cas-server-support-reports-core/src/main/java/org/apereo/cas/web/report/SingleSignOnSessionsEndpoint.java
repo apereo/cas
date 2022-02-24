@@ -18,6 +18,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -55,13 +56,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
 
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
-    private final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
+    private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
-    public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
-                                        final CasConfigurationProperties casProperties,
-                                        final SingleLogoutRequestExecutor singleLogoutRequestExecutor) {
+    public SingleSignOnSessionsEndpoint(
+        final ObjectProvider<CentralAuthenticationService> centralAuthenticationService,
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
@@ -142,7 +144,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
         final HttpServletResponse response) {
         val sessionsMap = new HashMap<String, Object>(1);
         try {
-            val sloRequests = singleLogoutRequestExecutor.execute(ticketGrantingTicket, request, response);
+            val sloRequests = singleLogoutRequestExecutor.getObject().execute(ticketGrantingTicket, request, response);
             sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
             sessionsMap.put(TICKET_GRANTING_TICKET, ticketGrantingTicket);
             sessionsMap.put("singleLogoutRequests", sloRequests);
@@ -187,7 +189,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
         if (StringUtils.isNotBlank(username)) {
             val sessionsMap = new HashMap<String, Object>(1);
-            val tickets = centralAuthenticationService.getTickets(
+            val tickets = centralAuthenticationService.getObject().getTickets(
                 ticket -> ticket instanceof TicketGrantingTicket
                           && ((TicketGrantingTicket) ticket).getAuthentication().getPrincipal().getId().equalsIgnoreCase(username));
             tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
@@ -292,7 +294,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        return centralAuthenticationService
+        return centralAuthenticationService.getObject()
             .getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired(), from, count);
     }
 

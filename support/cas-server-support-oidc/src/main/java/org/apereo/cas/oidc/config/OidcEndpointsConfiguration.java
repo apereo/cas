@@ -370,7 +370,7 @@ public class OidcEndpointsConfiguration {
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
         }
     }

@@ -49,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.Cleanable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -162,7 +163,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
-            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            final ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry) {
             return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(casProperties, googleAuthenticatorAccountRegistry);
         }
     }

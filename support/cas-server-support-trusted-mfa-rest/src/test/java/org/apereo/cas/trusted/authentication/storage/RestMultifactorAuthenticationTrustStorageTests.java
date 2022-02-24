@@ -66,7 +66,7 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("mfaTrustEngine")
+    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
