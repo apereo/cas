@@ -9,6 +9,7 @@ import org.apereo.cas.util.LdapUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchConnectionValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,22 +55,21 @@ public class LdapMonitorConfiguration {
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("pooledLdapConnectionFactoryHealthIndicatorListFactoryBean")
-        final ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean) throws Exception {
+        final ListFactoryBean factoryBean) throws Exception {
         val ldaps = casProperties.getMonitor().getLdap();
-        val connectionFactoryList = Objects.requireNonNull(pooledLdapConnectionFactoryHealthIndicatorListFactoryBean.getObject());
+        val connectionFactoryList = Objects.requireNonNull(factoryBean.getObject());
         val contributors = new LinkedHashMap<>();
         ldaps.stream()
             .filter(LdapMonitorProperties::isEnabled)
-            .map(ldap -> {
+            .map(Unchecked.function(ldap -> {
                 val executor = Beans.newThreadPoolExecutorFactoryBean(ldap.getPool());
-                executor.afterPropertiesSet();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
                 connectionFactoryList.add(connectionFactory);
                 val healthIndicator = new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
                     connectionFactory, executor.getObject(), new SearchConnectionValidator());
                 val name = StringUtils.defaultIfBlank(ldap.getName(), UUID.randomUUID().toString());
                 return Pair.of(name, healthIndicator);
-            })
+            }))
             .forEach(it -> contributors.put(it.getKey(), it.getValue()));
         return CompositeHealthContributor.fromMap((Map) contributors);
     }

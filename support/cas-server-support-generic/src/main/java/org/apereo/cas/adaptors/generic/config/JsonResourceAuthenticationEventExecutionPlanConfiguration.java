@@ -37,6 +37,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory jsonPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -61,11 +62,13 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "jsonResourceAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
-                                                                                                             @Qualifier("jsonResourceAuthenticationHandler")
-                                                                                                             final AuthenticationHandler jsonResourceAuthenticationHandler,
-                                                                                                             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-                                                                                                             final PrincipalResolver defaultPrincipalResolver) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationEventExecutionPlanConfigurer jsonResourceAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("jsonResourceAuthenticationHandler")
+        final AuthenticationHandler jsonResourceAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {

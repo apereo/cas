@@ -11,8 +11,10 @@ import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasEventsInfluxDbRepositoryConfiguration}.
@@ -26,12 +28,14 @@ import org.springframework.context.annotation.Configuration;
 public class CasEventsInfluxDbRepositoryConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "influxDbEventsConnectionFactory")
     public InfluxDbConnectionFactory influxDbEventsConnectionFactory(final CasConfigurationProperties casProperties) {
         return new InfluxDbConnectionFactory(casProperties.getEvents().getInfluxDb());
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepository casEventRepository(
         @Qualifier("influxDbEventRepositoryFilter")
         final CasEventRepositoryFilter influxDbEventRepositoryFilter,
@@ -42,6 +46,7 @@ public class CasEventsInfluxDbRepositoryConfiguration {
 
     @ConditionalOnMissingBean(name = "influxDbEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter influxDbEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

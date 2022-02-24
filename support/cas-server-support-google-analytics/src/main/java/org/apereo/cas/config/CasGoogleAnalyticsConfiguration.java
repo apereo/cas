@@ -44,6 +44,7 @@ public class CasGoogleAnalyticsConfiguration {
 
     @ConditionalOnMissingBean(name = "casGoogleAnalyticsWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)

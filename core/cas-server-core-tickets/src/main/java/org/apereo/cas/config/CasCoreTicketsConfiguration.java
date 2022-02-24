@@ -441,6 +441,7 @@ public class CasCoreTicketsConfiguration {
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreTicketTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionManagementConfigurer transactionManagementConfigurer(
             @Qualifier("ticketTransactionManager")
             final PlatformTransactionManager ticketTransactionManager) {
@@ -449,6 +450,7 @@ public class CasCoreTicketsConfiguration {
 
         @ConditionalOnMissingBean(name = "ticketTransactionManager")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager ticketTransactionManager() {
             return new PseudoPlatformTransactionManager();
         }

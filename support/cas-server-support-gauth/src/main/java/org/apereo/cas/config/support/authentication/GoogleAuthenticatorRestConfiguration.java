@@ -38,6 +38,7 @@ public class GoogleAuthenticatorRestConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorRestHttpRequestCredentialFactory")
     public RestHttpRequestCredentialFactory googleAuthenticatorRestHttpRequestCredentialFactory() {
         return new GoogleAuthenticatorRestHttpRequestCredentialFactory();

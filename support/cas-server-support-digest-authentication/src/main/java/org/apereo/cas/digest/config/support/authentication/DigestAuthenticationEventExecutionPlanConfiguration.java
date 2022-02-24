@@ -50,6 +50,7 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "digestAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("digestAuthenticationHandler")
         final AuthenticationHandler digestAuthenticationHandler,

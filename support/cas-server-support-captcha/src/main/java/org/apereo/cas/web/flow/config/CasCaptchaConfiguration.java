@@ -42,6 +42,7 @@ public class CasCaptchaConfiguration {
 
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer captchaWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,

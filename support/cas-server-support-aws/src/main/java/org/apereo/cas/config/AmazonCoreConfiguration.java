@@ -6,8 +6,10 @@ import org.apereo.cas.rest.authentication.RestAuthenticationService;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link AmazonCoreConfiguration}.
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 public class AmazonCoreConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnAvailableEndpoint
     public AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint(
         final CasConfigurationProperties casProperties,

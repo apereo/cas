@@ -69,6 +69,7 @@ public class CouchDbEventsConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter couchDbEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

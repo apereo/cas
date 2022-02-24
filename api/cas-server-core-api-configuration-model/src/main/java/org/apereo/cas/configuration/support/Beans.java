@@ -11,6 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
 
@@ -19,6 +20,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 
@@ -38,10 +40,11 @@ public class Beans {
      * @param config the config
      * @return the thread pool executor factory bean
      */
-    public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
+    public static FactoryBean<ExecutorService> newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
         val bean = new ThreadPoolExecutorFactoryBean();
         bean.setMaxPoolSize(config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
+        bean.afterPropertiesSet();
         return bean;
     }
 

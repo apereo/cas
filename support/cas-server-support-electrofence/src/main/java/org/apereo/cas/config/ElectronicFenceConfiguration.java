@@ -241,6 +241,7 @@ public class ElectronicFenceConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceAuditConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("returnValueResourceResolver")

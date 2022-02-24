@@ -68,9 +68,11 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     }
 
     @Bean
-    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties,
-                                                                           @Qualifier("mongoDbGoogleAuthenticatorTemplate")
-                                                                           final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbGoogleAuthenticatorTemplate")
+        final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate, mongo.getTokenCollection(),
             casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());

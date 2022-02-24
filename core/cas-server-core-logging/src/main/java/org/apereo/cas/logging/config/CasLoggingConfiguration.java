@@ -79,7 +79,8 @@ public class CasLoggingConfiguration {
         }
 
         @Bean
-        public ServletListenerRegistrationBean log4jServletContextListener() {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServletListenerRegistrationBean<Log4jServletContextListener> log4jServletContextListener() {
             val bean = new ServletListenerRegistrationBean<Log4jServletContextListener>();
             bean.setEnabled(true);
             bean.setListener(new Log4jServletContextListener());

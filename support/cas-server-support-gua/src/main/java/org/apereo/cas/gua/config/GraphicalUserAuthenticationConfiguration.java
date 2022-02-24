@@ -47,6 +47,7 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "graphicalUserAuthenticationWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
