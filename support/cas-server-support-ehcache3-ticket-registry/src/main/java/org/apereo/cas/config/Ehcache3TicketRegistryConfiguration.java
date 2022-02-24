@@ -156,8 +156,8 @@ public class Ehcache3TicketRegistryConfiguration {
                 val ehcacheProperties = casProperties.getTicket().getRegistry().getEhcache3();
                 val ehcacheProvider = (EhcacheCachingProvider) Caching.getCachingProvider(EhcacheCachingProvider.class.getName());
                 val statisticsAllEnabled = ehcacheProperties.isEnableStatistics() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
-                val managementAllAllEnabled = ehcacheProperties.isEnableManagement() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
-                val jsr107Config = new Jsr107Configuration(null, new HashMap<>(), false, managementAllAllEnabled, statisticsAllEnabled);
+                val managementEnabled = ehcacheProperties.isEnableManagement() ? ConfigurationElementState.ENABLED : ConfigurationElementState.DISABLED;
+                val jsr107Config = new Jsr107Configuration(null, new HashMap<>(), false, managementEnabled, statisticsAllEnabled);
                 val configuration = new DefaultConfiguration(ehcacheProvider.getDefaultClassLoader(), ehcache3CacheManagerConfiguration, jsr107Config);
                 return ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), configuration);
             })
@@ -197,13 +197,6 @@ public class Ehcache3TicketRegistryConfiguration {
             .get();
     }
 
-    /**
-     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
-     * Actuator needs to be exposed in order for this bean to be used.
-     *
-     * @param ehcache3TicketCacheManager JSR107 wrapper of EhCache cache manager to be wrapped by spring cache manager.
-     * @return Spring EhCacheCacheManager that wraps EhCache JSR107 CacheManager
-     */
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public org.springframework.cache.CacheManager ehCacheJCacheCacheManager(

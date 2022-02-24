@@ -13,6 +13,7 @@ import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -62,9 +63,15 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     }
 
     private void initializeBeansEagerly() {
-        for (val beanName : applicationContext.getBeanDefinitionNames()) {
-            Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
-        }
+        FunctionUtils.doUnchecked(unused -> {
+            for (val beanName : applicationContext.getBeanDefinitionNames()) {
+                Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
+            }
+            val servlet = applicationContext.getBean(DispatcherServlet.class);
+            servlet.setApplicationContext(applicationContext);
+            servlet.init();
+        });
+
     }
 
     private void rebind() {

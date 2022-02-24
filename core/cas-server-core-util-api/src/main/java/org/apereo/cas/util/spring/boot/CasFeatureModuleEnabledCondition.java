@@ -26,7 +26,12 @@ public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
      * @return the property name
      */
     static String getPropertyName(final CasFeatureModule.FeatureCatalog feature, final String module) {
-        return CasFeatureModule.class.getSimpleName() + '.' + feature.name() + '.' + module + ".enabled";
+        var name = CasFeatureModule.class.getSimpleName() + '.' + feature.name();
+        if (StringUtils.isNotBlank(module)) {
+            name += '.' + module;
+        }
+        name += ".enabled";
+        return name;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
         val attributes = metadata.getAnnotationAttributes(ConditionalOnCasFeatureModule.class.getName());
         val name = attributes.get("feature").toString();
         val module = attributes.get("module").toString();
-        
+
         val feature = CasFeatureModule.FeatureCatalog.valueOf(name);
         val property = getPropertyName(feature, module);
         LOGGER.trace("Checking for feature module capability via [{}]", property);

@@ -109,39 +109,41 @@ CasFeatureModule.[feature].[module].enabled=false|true
 
 The following features are available to CAS:
 
-| Features                      | 
-|-------------------------------|
-| `AcceptableUsagePolicy`       |
-| `ACME`                        |
-| `Account Management`          |
-| `Audit`                       |
-| `Authentication`              |
-| `Authy`                       |
-| `CAPTCHA`                     |
-| `Consent`                     |
-| `Electrofence`                |
-| `Events`                      |
-| `ForgotUsername`              |
-| `GoogleAuthenticator`         |
-| `InterruptNotifications`      |
-| `LDAP`                        |
-| `MultifactorAuthentication`   |
-| `PersonDirectory`             |
-| `RadiusMFA`                   |
-| `SamlIdPMetadata`             |
-| `SamlServiceProviderMetadata` |
-| `ServiceRegistry`             |
-| `ServiceRegistryStreaming`    |
-| `SurrogateAuthentication`     |
-| `TicketRegistry`              |
-| `TicketRegistryLocking`       |
-| `Throttling`                  |
-| `U2F`                         |
-| `WebAuthn`                    |
-| `YubiKey`                     |
+| Features                                  | 
+|-------------------------------------------|
+| `AcceptableUsagePolicy`                   |
+| `ACME`                                    |
+| `Account Management`                      |
+| `Audit`                                   |
+| `Authentication`                          |
+| `Authy`                                   |
+| `CAPTCHA`                                 |
+| `Consent`                                 |
+| `Consent`                                 |
+| `DelegatedAuthentication`                 |
+| `Events`                                  |
+| `ForgotUsername`                          |
+| `GoogleAuthenticator`                     |
+| `InterruptNotifications`                  |
+| `LDAP`                                    |
+| `MultifactorAuthentication`               |
+| `MultifactorAuthenticationTrustedDevices` |
+| `PersonDirectory`                         |
+| `RadiusMFA`                               |
+| `SamlIdPMetadata`                         |
+| `SamlServiceProviderMetadata`             |
+| `ServiceRegistry`                         |
+| `ServiceRegistryStreaming`                |
+| `SurrogateAuthentication`                 |
+| `TicketRegistry`                          |
+| `TicketRegistryLocking`                   |
+| `Throttling`                              |
+| `U2F`                                     |
+| `WebAuthn`                                |
+| `YubiKey`                                 |
 
 In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the
-actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`. If there is no particular variant or module applicable to the feature, as might be the case for ACME, then the default is considered as `core`.
+actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`.
 
 Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included
 or excluded in the application context. Conditionally inclusion or exclusion of beans generally has consequences when it comes to 

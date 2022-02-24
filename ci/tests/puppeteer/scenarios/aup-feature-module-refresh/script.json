@@ -1,0 +1,15 @@
+{
+  "dependencies": "aup-webflow,events-configuration,reports",
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.audit.engine.enabled=false",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
+  ]
+}

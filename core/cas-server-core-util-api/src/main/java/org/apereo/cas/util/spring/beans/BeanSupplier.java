@@ -26,6 +26,11 @@ import java.util.function.Supplier;
 public interface BeanSupplier<T> {
 
     /**
+     * ToString() prefix.
+     */
+    String PROXY_BEAN_TOSTRING_PREFIX = "ProxyBean-";
+
+    /**
      * Create bean supplier for type.
      *
      * @param <T>   the type parameter
@@ -43,7 +48,8 @@ public interface BeanSupplier<T> {
      * @return the boolean
      */
     static boolean isProxy(final Object result) {
-        return result != null && Proxy.isProxyClass(result.getClass()) && result.toString().startsWith("ProxyBean");
+        return result != null && Proxy.isProxyClass(result.getClass())
+               && result.toString().startsWith(PROXY_BEAN_TOSTRING_PREFIX);
     }
 
     /**
@@ -229,14 +235,14 @@ public interface BeanSupplier<T> {
         @SuppressWarnings("unchecked")
         public T get() {
             if (!clazz.isInterface()) {
-                throw new IllegalArgumentException("Cannot create bean supplier for non-interface type " + clazz.getSimpleName());
+                throw new IllegalArgumentException("Cannot create bean supplier proxy for non-interface type " + clazz.getSimpleName());
             }
             return (T) PROXIES.computeIfAbsent(clazz.getName(),
                 s -> Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[]{clazz},
                     (proxy, method, args) -> {
                         if (method.getName().equals("toString")) {
-                            return "ProxyBean-" + clazz.getName();
+                            return PROXY_BEAN_TOSTRING_PREFIX + clazz.getName();
                         }
                         val returnType = method.getReturnType();
                         return TYPES_AND_VALUES.getOrDefault(returnType, null);

@@ -62,7 +62,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) throws Exception {
+            final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
@@ -176,7 +176,6 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
-
     }
 
     @Configuration(value = "CasAcceptableUsagePolicyWebflowAuditConfiguration", proxyBeanMethods = false)
