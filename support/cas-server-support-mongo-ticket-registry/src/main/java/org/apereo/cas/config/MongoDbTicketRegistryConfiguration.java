@@ -18,7 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -36,7 +36,7 @@ public class MongoDbTicketRegistryConfiguration {
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbTicketRegistryTemplate")
-        final MongoTemplate mongoDbTicketRegistryTemplate,
+        final MongoOperations mongoDbTicketRegistryTemplate,
         @Qualifier("ticketSerializationManager")
         final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
@@ -50,7 +50,7 @@ public class MongoDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbTicketRegistryTemplate(
+    public MongoOperations mongoDbTicketRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {

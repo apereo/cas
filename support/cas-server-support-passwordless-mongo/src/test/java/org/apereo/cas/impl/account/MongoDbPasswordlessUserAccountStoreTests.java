@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class MongoDbPasswordlessUserAccountStoreTests extends BasePasswordlessUs
 
     @Autowired
     @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
-    private MongoTemplate mongoDbTemplate;
+    private MongoOperations mongoDbTemplate;
 
     @Test
     public void verifyAction() {

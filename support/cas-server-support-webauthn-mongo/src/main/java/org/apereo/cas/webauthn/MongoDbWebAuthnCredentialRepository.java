@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,9 +32,9 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
-    public MongoDbWebAuthnCredentialRepository(final MongoTemplate mongoTemplate,
+    public MongoDbWebAuthnCredentialRepository(final MongoOperations mongoTemplate,
                                                final CasConfigurationProperties properties,
                                                final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);

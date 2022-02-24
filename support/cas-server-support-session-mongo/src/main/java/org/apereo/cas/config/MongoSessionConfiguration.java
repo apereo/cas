@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.session.data.mongo.JdkMongoSessionConverter;
@@ -37,8 +38,8 @@ public class MongoSessionConfiguration {
 
     @Bean
     @Primary
-    public MongoTemplate mongoTemplate(final MongoDatabaseFactory factory,
-                                       final MongoConverter converter) {
+    public MongoOperations mongoTemplate(final MongoDatabaseFactory factory,
+                                         final MongoConverter converter) {
         return new MongoTemplate(factory, converter);
     }
 }

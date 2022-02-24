@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -42,7 +42,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
+    public MongoOperations mongoDbGoogleAuthenticatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -61,7 +61,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor, final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbGoogleAuthenticatorTemplate")
-        final MongoTemplate mongoDbGoogleAuthenticatorTemplate) {
+        final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, mongoDbGoogleAuthenticatorTemplate, mongo.getCollection(),
             googleAuthenticatorAccountCipherExecutor);
@@ -70,7 +70,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties,
                                                                            @Qualifier("mongoDbGoogleAuthenticatorTemplate")
-                                                                           final MongoTemplate mongoDbGoogleAuthenticatorTemplate) {
+                                                                           final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         return new GoogleAuthenticatorMongoDbTokenRepository(mongoDbGoogleAuthenticatorTemplate, mongo.getTokenCollection(),
             casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());

@@ -6,7 +6,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
 
-    private final transient MongoTemplate mongoTemplate;
+    private final transient MongoOperations mongoTemplate;
 
     public U2FMongoDbDeviceRepository(final LoadingCache<String, String> requestStorage,
-                                      final MongoTemplate mongoTemplate,
+                                      final MongoOperations mongoTemplate,
                                       final CipherExecutor<Serializable, String> cipherExecutor,
                                       final CasConfigurationProperties casProperties) {
         super(casProperties, requestStorage, cipherExecutor);

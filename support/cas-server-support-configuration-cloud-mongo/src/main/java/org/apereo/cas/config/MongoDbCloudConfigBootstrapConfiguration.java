@@ -8,6 +8,7 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
@@ -29,12 +30,12 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     @Bean
     public PropertySourceLocator mongoDbPropertySourceLocator(
         @Qualifier("mongoDbCloudConfigurationTemplate")
-        final MongoTemplate mongoDbCloudConfigurationTemplate) {
+        final MongoOperations mongoDbCloudConfigurationTemplate) {
         return new MongoDbPropertySourceLocator(mongoDbCloudConfigurationTemplate);
     }
 
     @Bean
-    public MongoTemplate mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
+    public MongoOperations mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val uri = Objects.requireNonNull(environment.getProperty(CAS_CONFIGURATION_MONGODB_URI));
         return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));
     }

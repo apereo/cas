@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link BaseMongoDbSamlMetadataTests}.
@@ -32,7 +32,7 @@ public abstract class BaseMongoDbSamlMetadataTests {
 
     @Autowired
     @Qualifier("mongoDbSamlMetadataResolverTemplate")
-    protected MongoTemplate mongoDbSamlMetadataResolverTemplate;
+    protected MongoOperations mongoDbSamlMetadataResolverTemplate;
 
     @Autowired
     @Qualifier("mongoDbSamlRegisteredServiceMetadataResolver")

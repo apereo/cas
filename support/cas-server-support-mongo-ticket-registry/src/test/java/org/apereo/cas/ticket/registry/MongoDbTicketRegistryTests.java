@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,7 +104,7 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbTicketRegistryTemplate")
-    private MongoTemplate mongoDbTicketRegistryTemplate;
+    private MongoOperations mongoDbTicketRegistryTemplate;
 
     @BeforeEach
     public void before() {

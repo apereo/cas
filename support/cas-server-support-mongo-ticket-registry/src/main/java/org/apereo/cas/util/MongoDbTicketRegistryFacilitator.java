@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class MongoDbTicketRegistryFacilitator {
     private final TicketCatalog ticketCatalog;
 
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final boolean dropCollection;
 

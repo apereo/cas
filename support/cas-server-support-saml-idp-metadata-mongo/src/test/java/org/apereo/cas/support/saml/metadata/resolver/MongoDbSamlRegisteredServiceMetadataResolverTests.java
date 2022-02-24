@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.TestPropertySource;
 
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlMetadataResolverTemplate")
-    private MongoTemplate mongoDbSamlIdPMetadataTemplate;
+    private MongoOperations mongoDbSamlIdPMetadataTemplate;
 
     @BeforeEach
     public void setup() {

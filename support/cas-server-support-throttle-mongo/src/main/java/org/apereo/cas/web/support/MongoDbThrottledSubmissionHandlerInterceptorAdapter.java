@@ -5,7 +5,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final transient MongoTemplate mongoTemplate;
+    private final transient MongoOperations mongoTemplate;
     private final String collectionName;
 
     public MongoDbThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                               final MongoTemplate mongoTemplate,
+                                                               final MongoOperations mongoTemplate,
                                                                final String collectionName) {
         super(configurationContext);
         this.mongoTemplate = mongoTemplate;

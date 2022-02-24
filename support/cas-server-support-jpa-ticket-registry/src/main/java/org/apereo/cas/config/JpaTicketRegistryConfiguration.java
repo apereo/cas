@@ -166,7 +166,7 @@ public class JpaTicketRegistryConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaTicketRegistryTransactionTemplate")
-            final TransactionTemplate jpaTicketRegistryTransactionTemplate,
+            final TransactionOperations jpaTicketRegistryTransactionTemplate,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
