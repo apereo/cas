@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbYubiKeyConfiguration}.
@@ -36,7 +36,7 @@ public class MongoDbYubiKeyConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoTemplate mongoYubiKeyTemplate(
+    public MongoOperations mongoYubiKeyTemplate(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
@@ -55,7 +55,7 @@ public class MongoDbYubiKeyConfiguration {
         @Qualifier("yubikeyAccountCipherExecutor")
         final CipherExecutor yubikeyAccountCipherExecutor,
         @Qualifier("mongoYubiKeyTemplate")
-        final MongoTemplate mongoYubiKeyTemplate,
+        final MongoOperations mongoYubiKeyTemplate,
         final CasConfigurationProperties casProperties) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,

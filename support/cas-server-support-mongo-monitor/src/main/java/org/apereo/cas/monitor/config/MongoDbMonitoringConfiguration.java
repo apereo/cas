@@ -17,7 +17,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.stream.Collectors;
 
@@ -34,7 +34,7 @@ public class MongoDbMonitoringConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "mongoHealthIndicatorTemplate")
-    public BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate(
+    public BeanContainer<MongoOperations> mongoHealthIndicatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -54,12 +54,13 @@ public class MongoDbMonitoringConfiguration {
     public HealthIndicator mongoHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoHealthIndicatorTemplate")
-        final BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate) {
+        final BeanContainer<MongoOperations> mongoHealthIndicatorTemplate) {
 
         val warn = casProperties.getMonitor().getWarn();
         val results = mongoHealthIndicatorTemplate.toList()
             .stream()
-            .map(template -> new MongoDbHealthIndicator(template, warn.getEvictionThreshold(), warn.getThreshold()))
+            .map(template -> new MongoDbHealthIndicator(template,
+                warn.getEvictionThreshold(), warn.getThreshold()))
             .collect(Collectors.toList());
         return new CompositeHealthIndicator(results);
     }

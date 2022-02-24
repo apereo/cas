@@ -2,7 +2,7 @@ package org.apereo.cas.monitor;
 
 import lombok.val;
 import org.bson.Document;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.stream.Collectors;
 
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
-    public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
+    public MongoDbHealthIndicator(final MongoOperations mongoTemplate,
                                   final long evictionThreshold,
                                   final long threshold) {
         super(evictionThreshold, threshold);
@@ -28,8 +28,7 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
         val list = mongoTemplate.getCollectionNames()
             .stream()
             .map(c -> {
-                val db = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase();
-                val stats = db.runCommand(new Document("collStats", c));
+                val stats = mongoTemplate.executeCommand(new Document("collStats", c));
                 return new MongoDbCacheStatistics(stats, c);
             })
             .collect(Collectors.toList());
@@ -39,7 +38,7 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
 
     @Override
     protected String getName() {
-        val dbName = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName();
+        val dbName = String.join(",", mongoTemplate.getCollectionNames());
         return super.getName() + '-' + dbName;
     }
 }

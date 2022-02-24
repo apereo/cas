@@ -78,6 +78,7 @@ public class CasOAuthUmaJpaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public EntityManagerFactory umaEntityManagerFactory(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaUmaVendorAdapter")
             final JpaVendorAdapter jpaUmaVendorAdapter,
@@ -111,6 +112,7 @@ public class CasOAuthUmaJpaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager umaTransactionManager(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("umaEntityManagerFactory")
             final EntityManagerFactory emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)

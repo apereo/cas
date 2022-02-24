@@ -151,7 +151,7 @@ public class MongoDbConnectionFactory {
      * @param collection      The collection to check the indexes of
      * @param indexesToCreate the indexes to create
      */
-    public static void createOrUpdateIndexes(final MongoTemplate mongoTemplate,
+    public static void createOrUpdateIndexes(final MongoOperations mongoTemplate,
                                              final MongoCollection<org.bson.Document> collection,
                                              final List<? extends IndexDefinition> indexesToCreate) {
         val collectionName = collection.getNamespace().getCollectionName();
@@ -282,7 +282,7 @@ public class MongoDbConnectionFactory {
      * @param mongo the mongo properties settings
      * @return the mongo template
      */
-    public MongoTemplate buildMongoTemplate(final BaseMongoDbProperties mongo) {
+    public MongoOperations buildMongoTemplate(final BaseMongoDbProperties mongo) {
         val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }

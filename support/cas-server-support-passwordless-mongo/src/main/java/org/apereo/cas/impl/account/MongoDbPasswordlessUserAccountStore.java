@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.support.passwordless.account.Passwordl
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class MongoDbPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final PasswordlessAuthenticationMongoDbAccountsProperties properties;
 
