@@ -118,6 +118,7 @@ public class InweboAuthenticationConfiguration {
     public static class InweboAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "inweboAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer inweboAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("inweboAuthenticationHandler")
             final AuthenticationHandler inweboAuthenticationHandler,

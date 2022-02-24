@@ -109,6 +109,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesEventsConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -207,6 +208,7 @@ public class CasCoreServicesConfiguration {
     public static class CasCoreServicesListenerConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultServiceRegistryListener")
         public ServiceRegistryListener defaultServiceRegistryListener() {
             return ServiceRegistryListener.noOp();

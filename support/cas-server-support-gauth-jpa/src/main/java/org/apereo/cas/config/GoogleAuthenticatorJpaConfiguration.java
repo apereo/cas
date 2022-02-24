@@ -49,6 +49,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "transactionManagerGoogleAuthenticator")
         public PlatformTransactionManager transactionManagerGoogleAuthenticator(
             @Qualifier("googleAuthenticatorEntityManagerFactory")
@@ -64,6 +65,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaRepositoryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
             @Qualifier("googleAuthenticatorInstance")
@@ -74,6 +76,7 @@ public class GoogleAuthenticatorJpaConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository(final CasConfigurationProperties casProperties) {
             return new GoogleAuthenticatorJpaTokenRepository(casProperties.getAuthn().getMfa().getGauth().getCore().getTimeStepSize());
         }
@@ -97,6 +100,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class GoogleAuthenticatorJpaEntityConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaPackagesToScanGoogleAuthenticator")
         public BeanContainer<String> jpaPackagesToScanGoogleAuthenticator() {
             return BeanContainer.of(CollectionUtils.wrapSet(GoogleAuthenticatorAccount.class.getPackage().getName(),

@@ -39,6 +39,7 @@ public class CouchbaseAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory couchbasePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

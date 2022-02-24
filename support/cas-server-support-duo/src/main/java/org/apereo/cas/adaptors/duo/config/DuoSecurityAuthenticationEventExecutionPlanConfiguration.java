@@ -127,6 +127,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
         public HealthIndicator duoSecurityHealthIndicator(final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityHealthIndicator(applicationContext);
@@ -180,6 +181,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer duoMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -192,8 +194,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
         }
 
-
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer(
             @Qualifier("duoMultifactorWebflowConfigurer")
@@ -229,6 +231,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
         }

@@ -48,6 +48,7 @@ public class CouchbaseTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }

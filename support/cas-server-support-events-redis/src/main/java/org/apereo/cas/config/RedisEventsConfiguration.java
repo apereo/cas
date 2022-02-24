@@ -60,6 +60,7 @@ public class RedisEventsConfiguration {
 
     @ConditionalOnMissingBean(name = "redisEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter redisEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

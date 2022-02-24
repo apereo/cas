@@ -35,6 +35,7 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CosmosDbObjectFactory cosmosDbObjectFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,

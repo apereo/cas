@@ -5,8 +5,10 @@ import org.apereo.cas.MongoDbPropertySourceLocator;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,6 +30,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     public static final String CAS_CONFIGURATION_MONGODB_URI = "cas.spring.cloud.mongo.uri";
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PropertySourceLocator mongoDbPropertySourceLocator(
         @Qualifier("mongoDbCloudConfigurationTemplate")
         final MongoOperations mongoDbCloudConfigurationTemplate) {
@@ -35,6 +38,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoOperations mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val uri = Objects.requireNonNull(environment.getProperty(CAS_CONFIGURATION_MONGODB_URI));
         return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));

@@ -1,12 +1,27 @@
 const puppeteer = require('puppeteer');
 const cas = require('../../cas.js');
 const assert = require("assert");
+const YAML = require("yaml");
+const fs = require("fs");
+const path = require("path");
 
 (async () => {
+    let configFilePath = path.join(__dirname, 'config.yml');
+    const file = fs.readFileSync(configFilePath, 'utf8')
+    const configFile = YAML.parse(file);
+
     const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org")
-    await doLogin(page, "casuser", "paSSw0rd", "casuser@syncope.org")
+    try {
+        const page = await cas.newPage(browser);
+        await updateConfig(configFile, configFilePath, "http://localhost:18080/syncope")
+        await page.waitForTimeout(3000)
+        let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
+        console.log(response)
+        await doLogin(page, "syncopecas", "Mellon", "syncopecas@syncope.org")
+        await doLogin(page, "casuser", "paSSw0rd", "casuser@syncope.org")
+    } finally {
+        await updateConfig(configFile, configFilePath, "")
+    }
     await browser.close();
 })();
 
@@ -22,4 +37,20 @@ async function doLogin(page, uid, psw, email) {
     const attributes = await cas.innerText(page, '#attribute-tab-0 table#attributesTable tbody');
     assert(attributes.includes("syncopeUserAttr_email"))
     assert(attributes.includes(email))
+}
+
+async function updateConfig(configFile, configFilePath, data) {
+    let config = {
+        cas: {
+            authn: {
+                syncope: {
+                    url: data
+                }
+            }
+        }
+    }
+    const newConfig = YAML.stringify(config);
+    console.log(`Updated configuration:\n${newConfig}`);
+    await fs.writeFileSync(configFilePath, newConfig);
+    console.log(`Wrote changes to ${configFilePath}`);
 }

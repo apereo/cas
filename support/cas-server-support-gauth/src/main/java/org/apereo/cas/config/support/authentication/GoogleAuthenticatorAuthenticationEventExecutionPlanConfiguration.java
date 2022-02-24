@@ -129,6 +129,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
         @ConditionalOnMissingBean(name = "googlePrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory googlePrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
@@ -173,6 +174,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public static class GoogleAuthenticatorMultifactorAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAuthenticationHandler")

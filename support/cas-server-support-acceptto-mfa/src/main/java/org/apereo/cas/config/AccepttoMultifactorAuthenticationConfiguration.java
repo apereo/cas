@@ -115,8 +115,10 @@ public class AccepttoMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaAccepttoMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer mfaAccepttoMultifactorWebflowConfigurer(
-            final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("mfaAccepttoAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaAccepttoAuthenticatorFlowRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)

@@ -59,6 +59,7 @@ public class CasCoreUtilConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilContextConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InitializingBean casCoreUtilInitialization(
             @Qualifier("casApplicationContextProvider")
             final ApplicationContextProvider casApplicationContextProvider,

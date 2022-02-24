@@ -315,6 +315,7 @@ public class CasCoreAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreAuditFiltersConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             final CasConfigurationProperties casProperties) {
             val audit = casProperties.getAudit().getEngine();

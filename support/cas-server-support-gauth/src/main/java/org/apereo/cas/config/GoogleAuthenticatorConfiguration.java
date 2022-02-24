@@ -62,6 +62,7 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -79,6 +80,7 @@ public class GoogleAuthenticatorConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer(
             @Qualifier("googleAuthenticatorMultifactorWebflowConfigurer")
@@ -95,6 +97,7 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer(
             @Qualifier("googleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
@@ -112,6 +115,7 @@ public class GoogleAuthenticatorConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer gauthMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("gauthMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer) {

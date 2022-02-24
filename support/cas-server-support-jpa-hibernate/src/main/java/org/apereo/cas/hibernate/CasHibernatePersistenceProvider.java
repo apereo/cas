@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 
 import javax.persistence.EntityManagerFactory;

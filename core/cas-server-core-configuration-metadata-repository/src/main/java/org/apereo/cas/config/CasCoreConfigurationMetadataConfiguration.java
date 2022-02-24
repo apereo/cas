@@ -23,6 +23,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 public class CasCoreConfigurationMetadataConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasConfigurationMetadataServerEndpoint configurationMetadataServerEndpoint(
         @Qualifier("casConfigurationMetadataRepository")
         final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
