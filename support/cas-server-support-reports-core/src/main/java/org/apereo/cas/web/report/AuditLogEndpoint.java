@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -32,9 +33,9 @@ import java.util.stream.Collectors;
 @Endpoint(id = "auditLog", enableByDefault = false)
 public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
 
-    private final AuditTrailExecutionPlan auditTrailManager;
+    private final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
 
-    public AuditLogEndpoint(final AuditTrailExecutionPlan auditTrailManager,
+    public AuditLogEndpoint(final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager,
                             final CasConfigurationProperties casProperties) {
         super(casProperties);
         this.auditTrailManager = auditTrailManager;
@@ -50,20 +51,18 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
     @SuppressWarnings("JavaUtilDate")
     @Operation(summary = "Provide a report of the audit log using a given interval",
         parameters = {@Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H")})
-    public Set<AuditActionContext> getAuditLog(
-        @Selector
-        final String interval) {
+    public Set<AuditActionContext> getAuditLog(@Selector final String interval) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = LocalDate.now(ZoneId.systemDefault())
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
-            return this.auditTrailManager.getAuditRecordsSince(sinceDate);
+            return auditTrailManager.getObject().getAuditRecordsSince(sinceDate);
         }
 
         val duration = Beans.newDuration(interval);
         val sinceTime = new Date(new Date().getTime() - duration.toMillis());
         val days = duration.toDays();
         val sinceDate = LocalDate.now(ZoneId.systemDefault()).minusDays(days + 1);
-        return this.auditTrailManager.getAuditRecordsSince(sinceDate).stream()
+        return auditTrailManager.getObject().getAuditRecordsSince(sinceDate).stream()
             .filter(a -> a.getWhenActionWasPerformed().after(sinceTime))
             .collect(Collectors.toSet());
     }
