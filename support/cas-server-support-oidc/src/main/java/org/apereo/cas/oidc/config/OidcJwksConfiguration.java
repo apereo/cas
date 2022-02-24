@@ -75,6 +75,7 @@ public class OidcJwksConfiguration {
     @ConditionalOnClass(MongoTemplate.class)
     public static class OidcEndpointsJwksMongoDbConfiguration {
         private static final BeanCondition CONDITION_HOST = BeanCondition.on("cas.authn.oidc.jwks.mongo.host");
+
         private static final BeanCondition CONDITION_COLLECTION = BeanCondition.on("cas.authn.oidc.jwks.mongo.collection");
 
 
@@ -154,7 +155,7 @@ public class OidcJwksConfiguration {
             final BeanContainer<String> jpaOidcJwksPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
@@ -371,28 +372,22 @@ public class OidcJwksConfiguration {
                 .get();
         }
 
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @SuppressWarnings("unchecked")
-        @ConditionalOnMissingBean(name = "defaultOidcJsonWebKeystoreGeneratorService")
-        public Supplier<OidcJsonWebKeystoreGeneratorService> defaultOidcJsonWebKeystoreGeneratorService(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
-            val oidc = casProperties.getAuthn().getOidc();
-            return () -> new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
-        }
-
         @Bean(initMethod = "generate")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcJsonWebKeystoreGeneratorService")
         public OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             final List<Supplier<OidcJsonWebKeystoreGeneratorService>> oidsJwksSuppliers) {
             val supplier = oidsJwksSuppliers
                 .stream()
                 .sorted(AnnotationAwareOrderComparator.INSTANCE)
                 .filter(BeanSupplier::isNotProxy)
                 .findFirst()
-                .orElseThrow();
+                .orElse(() -> {
+                    val oidc = casProperties.getAuthn().getOidc();
+                    return new OidcDefaultJsonWebKeystoreGeneratorService(oidc, applicationContext);
+                });
             return supplier.get();
         }
     }
