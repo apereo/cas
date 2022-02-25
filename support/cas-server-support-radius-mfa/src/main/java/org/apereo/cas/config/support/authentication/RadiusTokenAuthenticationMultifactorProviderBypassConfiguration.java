@@ -135,6 +135,7 @@ public class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator radiusPrincipalMultifactorAuthenticationProviderBypass(final CasConfigurationProperties casProperties) {
         val radius = casProperties.getAuthn().getMfa().getRadius();

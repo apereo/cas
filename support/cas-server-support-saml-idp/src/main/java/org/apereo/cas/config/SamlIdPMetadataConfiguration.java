@@ -110,6 +110,7 @@ public class SamlIdPMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataHealthIndicator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnEnabledHealthIndicator("samlRegisteredServiceMetadataHealthIndicator")
         public HealthIndicator samlRegisteredServiceMetadataHealthIndicator(
             @Qualifier("samlRegisteredServiceMetadataResolvers")
@@ -120,6 +121,7 @@ public class SamlIdPMetadataConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public SamlRegisteredServiceCachedMetadataEndpoint samlRegisteredServiceCachedMetadataEndpoint(
             final CasConfigurationProperties casProperties,
@@ -137,6 +139,7 @@ public class SamlIdPMetadataConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public SSOSamlIdPPostProfileHandlerEndpoint ssoSamlPostProfileHandlerEndpoint(
             final CasConfigurationProperties casProperties,

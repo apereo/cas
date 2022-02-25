@@ -79,6 +79,7 @@ public class OpenIdConfiguration {
 
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ResponseBuilder openIdServiceResponseBuilder(final CasConfigurationProperties casProperties,
                                                         @Qualifier("serverManager")
                                                         final ServerManager serverManager,

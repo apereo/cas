@@ -64,6 +64,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
@@ -80,10 +81,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
-    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(final CasConfigurationProperties casProperties,
-                                                                                             @Qualifier("builtClients")
-                                                                                             final Clients builtClients) {
+    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("builtClients")
+        final Clients builtClients) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
         resource.stream().filter(res -> res.getLocation() != null).forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));

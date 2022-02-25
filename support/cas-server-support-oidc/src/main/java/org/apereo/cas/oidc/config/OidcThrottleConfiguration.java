@@ -63,6 +63,7 @@ public class OidcThrottleConfiguration {
     public static class OidcThrottleExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationThrottlingExecutionPlanConfigurer oidcAuthenticationThrottlingExecutionPlanConfigurer(
             @Qualifier("oidcThrottledRequestFilter")
             final ThrottledRequestFilter oidcThrottledRequestFilter) {

@@ -66,6 +66,7 @@ public class JmsTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MessageConverter jacksonJmsMessageTicketRegistryConverter() {
         val converter = new MappingJackson2MessageConverter();
         val mapper = JacksonObjectMapperFactory.builder()

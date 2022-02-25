@@ -43,6 +43,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer wsFederationWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -55,6 +56,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer(
         @Qualifier("wsFederationWebflowConfigurer")

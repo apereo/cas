@@ -104,6 +104,7 @@ public class CasOAuth20WebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20WebflowLogoutConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauth20CasLogoutWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer oauth20CasLogoutWebflowExecutionPlanConfigurer(
             @Qualifier("oauth20LogoutWebflowConfigurer")
@@ -113,6 +114,7 @@ public class CasOAuth20WebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer oauth20LogoutWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowDefinitionRegistry,

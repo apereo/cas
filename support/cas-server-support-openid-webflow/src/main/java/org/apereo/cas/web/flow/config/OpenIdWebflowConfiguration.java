@@ -40,12 +40,14 @@ import org.springframework.webflow.execution.Action;
 public class OpenIdWebflowConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public OpenIdUserNameExtractor defaultOpenIdUserNameExtractor() {
         return new DefaultOpenIdUserNameExtractor();
     }
 
     @ConditionalOnMissingBean(name = "openidWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer openidWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -73,6 +75,7 @@ public class OpenIdWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "openidCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer openidCasWebflowExecutionPlanConfigurer(
         @Qualifier("openidWebflowConfigurer")
