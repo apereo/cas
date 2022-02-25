@@ -84,6 +84,7 @@ public class OidcThrottleConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottledRequestFilter")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledRequestFilter oidcThrottledRequestFilter(
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport) {

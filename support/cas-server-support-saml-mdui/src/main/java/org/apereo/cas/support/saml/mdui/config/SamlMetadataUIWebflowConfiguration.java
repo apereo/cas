@@ -39,6 +39,7 @@ public class SamlMetadataUIWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer samlMetadataUIWebConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -70,6 +71,7 @@ public class SamlMetadataUIWebflowConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlMetadataUICasWebflowExecutionPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer samlMetadataUICasWebflowExecutionPlanConfigurer(
         @Qualifier("samlMetadataUIWebConfigurer")
         final CasWebflowConfigurer samlMetadataUIWebConfigurer) {

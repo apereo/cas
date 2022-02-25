@@ -52,6 +52,7 @@ public class TrustedAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class TrustedAuthenticationWebflowPlanConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer trustedCasWebflowExecutionPlanConfigurer(
             @Qualifier("trustedWebflowConfigurer")

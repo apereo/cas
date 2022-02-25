@@ -88,6 +88,7 @@ public class JdbcPasswordManagementConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionOperations jdbcPasswordManagementTransactionTemplate(
             final CasConfigurationProperties casProperties,
             @Qualifier("jdbcPasswordManagementTransactionManager")

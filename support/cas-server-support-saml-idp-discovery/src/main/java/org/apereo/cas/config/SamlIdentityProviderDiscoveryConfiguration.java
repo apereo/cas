@@ -56,6 +56,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryCasWebflowExecutionPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer(
         @Qualifier("identityProviderDiscoveryWebflowConfigurer")
         final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {

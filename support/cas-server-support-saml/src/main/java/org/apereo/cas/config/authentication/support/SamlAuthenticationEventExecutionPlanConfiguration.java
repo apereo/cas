@@ -8,8 +8,10 @@ import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopu
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlAuthenticationEventExecutionPlanConfiguration}.
@@ -24,12 +26,14 @@ public class SamlAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "samlAuthenticationMetaDataPopulator")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator() {
         return new SamlAuthenticationMetaDataPopulator();
     }
 
     @ConditionalOnMissingBean(name = "samlAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer samlAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("samlAuthenticationMetaDataPopulator")
         final AuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator) {

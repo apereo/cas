@@ -136,6 +136,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -147,6 +148,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer(
         @Qualifier("passwordlessAuthenticationWebflowConfigurer")
         final CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer,

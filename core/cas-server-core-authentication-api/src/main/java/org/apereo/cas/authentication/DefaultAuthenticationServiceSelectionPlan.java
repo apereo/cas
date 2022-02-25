@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,8 +28,10 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public void registerStrategy(final AuthenticationServiceSelectionStrategy strategy) {
-        strategies.add(strategy);
-        AnnotationAwareOrderComparator.sort(this.strategies);
+        if (BeanSupplier.isNotProxy(strategy)) {
+            strategies.add(strategy);
+            AnnotationAwareOrderComparator.sort(this.strategies);
+        }
     }
 
     @Override

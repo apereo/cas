@@ -56,6 +56,7 @@ public class U2FWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class U2FWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "u2fFlowRegistry")
         public FlowDefinitionRegistry u2fFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
@@ -74,6 +75,7 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "u2fMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer u2fMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -111,6 +113,7 @@ public class U2FWebflowConfiguration {
     public static class U2FWebflowExecutionPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "u2fCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer u2fCasWebflowExecutionPlanConfigurer(
             @Qualifier("u2fMultifactorWebflowConfigurer")
@@ -198,6 +201,7 @@ public class U2FWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "u2fMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer(
             @Qualifier("u2fFlowRegistry")
             final FlowDefinitionRegistry u2fFlowRegistry,
@@ -216,6 +220,7 @@ public class U2FWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer u2fMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("u2fMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer u2fMultifactorTrustWebflowConfigurer) {

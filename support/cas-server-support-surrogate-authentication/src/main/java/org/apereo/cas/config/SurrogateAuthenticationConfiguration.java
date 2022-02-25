@@ -111,6 +111,7 @@ public class SurrogateAuthenticationConfiguration {
     public static class SurrogateAuthenticationEventsConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
@@ -237,6 +238,7 @@ public class SurrogateAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolutionExecutionPlanConfigurer surrogatePrincipalResolutionExecutionPlanConfigurer(
             @Qualifier("surrogatePrincipalResolver")
             final PrincipalResolver surrogatePrincipalResolver) {

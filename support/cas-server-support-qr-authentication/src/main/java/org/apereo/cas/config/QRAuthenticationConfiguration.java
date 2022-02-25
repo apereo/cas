@@ -94,6 +94,7 @@ public class QRAuthenticationConfiguration {
     public static class QRAuthenticationWebflowPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "qrAuthenticationCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer qrAuthenticationCasWebflowExecutionPlanConfigurer(
             @Qualifier("qrAuthenticationWebflowConfigurer")
@@ -108,6 +109,7 @@ public class QRAuthenticationConfiguration {
     public static class QRAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer qrAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -124,6 +126,7 @@ public class QRAuthenticationConfiguration {
     public static class QRAuthenticationHandlerPlanConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer qrAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("qrAuthenticationTokenAuthenticationHandler")
             final AuthenticationHandler qrAuthenticationTokenAuthenticationHandler) {
@@ -140,6 +143,7 @@ public class QRAuthenticationConfiguration {
     public static class QRAuthenticationHandlerConfiguration {
         @ConditionalOnMissingBean(name = "qrAuthenticationPrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory qrAuthenticationPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }
@@ -178,6 +182,7 @@ public class QRAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class QRAuthenticationMvcConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebSocketMessageBrokerConfigurer qrAuthenticationWebSocketMessageBrokerConfigurer(
             final CasConfigurationProperties casProperties) {
             return new WebSocketMessageBrokerConfigurer() {

@@ -52,6 +52,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "u2fPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory u2fPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

@@ -33,6 +33,7 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
     public static class SamlIdPAuthenticationServiceSelectionConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPEntityIdValidationServiceSelectionStrategy")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPServiceFactory")
@@ -45,6 +46,7 @@ public class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPAuthenticationServiceSelectionStrategyConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationServiceSelectionStrategyConfigurer samlIdPAuthenticationServiceSelectionStrategyConfigurer(
             @Qualifier("samlIdPEntityIdValidationServiceSelectionStrategy")
             final AuthenticationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy) {

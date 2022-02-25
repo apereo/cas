@@ -27,6 +27,7 @@ public class SamlIdpComponentSerializationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "samlIdPComponentSerializationPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer samlIdPComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(SamlArtifactTicketExpirationPolicy.class);

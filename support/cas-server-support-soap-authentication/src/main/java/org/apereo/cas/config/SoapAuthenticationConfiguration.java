@@ -43,6 +43,7 @@ public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory soapAuthenticationPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -66,6 +67,7 @@ public class SoapAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "soapAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer soapAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("soapAuthenticationAuthenticationHandler")
         final AuthenticationHandler soapAuthenticationAuthenticationHandler,

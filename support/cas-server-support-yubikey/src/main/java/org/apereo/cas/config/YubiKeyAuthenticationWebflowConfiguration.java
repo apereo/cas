@@ -51,6 +51,7 @@ public class YubiKeyAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class YubiKeyAuthenticationWebflowPlanConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer yubikeyCasWebflowExecutionPlanConfigurer(
             @Qualifier("yubikeyMultifactorWebflowConfigurer")

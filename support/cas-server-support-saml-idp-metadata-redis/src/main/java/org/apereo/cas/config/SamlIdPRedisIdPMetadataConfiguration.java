@@ -55,6 +55,7 @@ public class SamlIdPRedisIdPMetadataConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisSamlIdPMetadataConnectionFactory")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisSamlIdPMetadataConnectionFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,

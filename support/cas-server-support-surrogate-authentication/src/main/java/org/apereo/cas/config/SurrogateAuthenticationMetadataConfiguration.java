@@ -8,8 +8,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateAuthenticationMetadataConfiguration}.
@@ -27,6 +29,7 @@ public class SurrogateAuthenticationMetadataConfiguration {
 
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
             return new SurrogateAuthenticationMetaDataPopulator();
         }
@@ -38,6 +41,7 @@ public class SurrogateAuthenticationMetadataConfiguration {
     public static class SurrogateAuthenticationMetadataPlanConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer(
             @Qualifier("surrogateAuthenticationMetadataPopulator")
             final AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator) {
