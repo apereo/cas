@@ -15,7 +15,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     CasApplicationContextInitializerTests.class,
     CasEmbeddedContainerUtilsTests.class,
-    CasWebApplicationConfigurationTests.class,
+    CasWebApplicationConfigurationTests.class
 })
 @Suite
 public class AllCasWebApplicationTestsSuite {
