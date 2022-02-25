@@ -491,6 +491,7 @@ public class SamlIdPEndpointsConfiguration {
     public static class SamlIdPExecutionContextConfiguration {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,

@@ -109,6 +109,7 @@ public class SamlConfiguration {
 
         @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Saml10ObjectBuilder saml10ObjectBuilder(
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {

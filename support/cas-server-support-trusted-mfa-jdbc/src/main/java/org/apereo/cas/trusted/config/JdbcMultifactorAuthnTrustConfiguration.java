@@ -71,6 +71,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaMfaTrustedAuthnPackagesToScan")
         public BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan(final CasConfigurationProperties casProperties) {
             val jpa = casProperties.getAuthn().getMfa().getTrusted().getJpa();

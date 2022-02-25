@@ -48,6 +48,7 @@ public class SwivelConfiguration {
     public static class SwivelWebflowConfiguration {
         @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer swivelMultifactorWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -99,6 +100,7 @@ public class SwivelConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SwivelWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
@@ -116,6 +118,7 @@ public class SwivelConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SwivelWebConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController(
             final CasConfigurationProperties casProperties) {
             val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -129,6 +132,7 @@ public class SwivelConfiguration {
     public static class SwivelWebflowExecutionPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer(
             @Qualifier("swivelMultifactorWebflowConfigurer")
@@ -146,6 +150,7 @@ public class SwivelConfiguration {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -164,6 +169,7 @@ public class SwivelConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer swivelAuthenticationCasWebflowExecutionPlanConfigurer(
             @Qualifier("swivelMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer) {

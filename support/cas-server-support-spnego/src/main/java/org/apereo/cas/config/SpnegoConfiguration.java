@@ -126,6 +126,7 @@ public class SpnegoConfiguration {
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory ntlmPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -149,12 +150,14 @@ public class SpnegoConfiguration {
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory spnegoPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "spnegoAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer spnegoAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("ntlmAuthenticationHandler")
         final ObjectProvider<AuthenticationHandler> ntlmAuthenticationHandler,

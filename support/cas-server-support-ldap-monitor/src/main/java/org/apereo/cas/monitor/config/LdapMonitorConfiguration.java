@@ -17,8 +17,10 @@ import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.CompositeHealthContributor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ import java.util.UUID;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean() {
         val list = new ListFactoryBean() {
             @Override
@@ -51,6 +54,7 @@ public class LdapMonitorConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnEnabledHealthIndicator("pooledLdapConnectionFactoryHealthIndicator")
     public CompositeHealthContributor pooledLdapConnectionFactoryHealthIndicator(
         final CasConfigurationProperties casProperties,

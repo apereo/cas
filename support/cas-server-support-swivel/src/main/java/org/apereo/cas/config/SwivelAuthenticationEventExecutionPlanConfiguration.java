@@ -49,6 +49,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "swivelPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory swivelPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

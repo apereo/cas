@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 public class PasswordlessAuthenticationConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory passwordlessPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -118,6 +119,7 @@ public class PasswordlessAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("passwordlessTokenAuthenticationHandler")
         final AuthenticationHandler passwordlessTokenAuthenticationHandler,

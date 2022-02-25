@@ -117,6 +117,7 @@ public class U2FConfiguration {
 
         @ConditionalOnMissingBean(name = "transactionManagerU2f")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerU2f() {
             return new PseudoPlatformTransactionManager();
         }

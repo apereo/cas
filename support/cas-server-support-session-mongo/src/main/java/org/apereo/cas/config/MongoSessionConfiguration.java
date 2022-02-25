@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -32,12 +34,14 @@ public class MongoSessionConfiguration {
     private static final int DURATION_MINUTES = 15;
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public JdkMongoSessionConverter jdkMongoSessionConverter() {
         return new JdkMongoSessionConverter(Duration.ofMinutes(DURATION_MINUTES));
     }
 
     @Bean
     @Primary
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MongoOperations mongoTemplate(final MongoDatabaseFactory factory,
                                          final MongoConverter converter) {
         return new MongoTemplate(factory, converter);

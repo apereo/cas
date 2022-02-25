@@ -96,6 +96,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
     public static class JpaPasswordlessAuthenticationTransactionConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager passwordlessTransactionManager(
             @Qualifier("passwordlessEntityManagerFactory")
             final EntityManagerFactory emf) {

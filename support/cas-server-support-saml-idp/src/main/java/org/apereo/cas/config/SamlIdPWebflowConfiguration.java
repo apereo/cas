@@ -69,6 +69,7 @@ public class SamlIdPWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "samlIdPWebConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer samlIdPWebConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -141,6 +142,7 @@ public class SamlIdPWebflowConfiguration {
     public static class SamlIdPWebflowMultifactorAuthenticationConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPMultifactorAuthenticationTrigger")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,

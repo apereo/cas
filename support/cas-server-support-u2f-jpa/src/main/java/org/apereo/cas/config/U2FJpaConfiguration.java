@@ -90,6 +90,7 @@ public class U2FJpaConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaU2fPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(U2FDeviceRegistration.class.getPackage().getName()));
         }

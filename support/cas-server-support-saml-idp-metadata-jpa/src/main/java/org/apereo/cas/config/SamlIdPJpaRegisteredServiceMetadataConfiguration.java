@@ -48,6 +48,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     public static class SamlIdPJpaRegisteredServiceMetadataResolverConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
