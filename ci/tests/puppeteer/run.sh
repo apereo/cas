@@ -249,13 +249,18 @@ if [[ "${RERUN}" != "true" ]]; then
   instances=$(jq -j '.instances // 1' < "${config}")
   for (( c = 1; c <= instances; c++ ))
   do
+    export SCENARIO="${scenarioName}"
+    
     initScript=$(jq -j '.initScript // empty' < "${config}")
     initScript="${initScript//\$\{PWD\}/${PWD}}"
     initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
-    [ -n "${initScript}" ] && \
-      printgreen "Initialization script: ${initScript}" && \
-      chmod +x "${initScript}" && \
-      eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
+    scripts=$(echo "$initScript" | tr ',' '\n')
+
+    for script in ${scripts}; do
+      printgreen "Running initialization script: ${script}"
+      chmod +x "${script}"
+      eval "${script}"
+    done
 
     runArgs=$(jq -j '.jvmArgs // empty' < "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"
