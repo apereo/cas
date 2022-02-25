@@ -54,7 +54,9 @@ The following items are new improvements and enhancements presented in this rele
   
 ## Configuration Refresh
 
-The construction of Spring `@Bean`s managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. Furthermore, modest support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now available to allow multiple competing modules to be present the same web application where they can be toggled on and off va dedicated flags and settings.
+The construction of Spring `@Bean`s managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
+
+Furthermore, modest support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now available to allow multiple competing modules to be present the same web application where they can be toggled on and off va dedicated flags and settings. This could previously be handled via excluding specific CAS `@Configuration` classes which was risky and prone to breakage during upgrades as such classes are always considered an implementation detail. Starting with this release candidate, a specific feature can be enabled or disabled via a dedicated setting allowing all configuration modules and components to react accordingly without one having to know the internal details.
   
 ## Integration Tests
 
@@ -67,6 +69,7 @@ Several Docker images used for integration tests are now updated to their latest
 - InfluxDb
 - MariaDb
 - MongoDb
+- Apereo CAS
 - Microsoft SQL Server
 - MySQL
 - PostgreSQL
@@ -74,11 +77,13 @@ Several Docker images used for integration tests are now updated to their latest
 - Amazon SDK
 
 ## Other Stuff
-
+        
+- Server-side automatic redirects used for [delegated authentication](../integration/Delegate-Authentication.html) can now correctly recognize an existing SSO session.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce WAR Overlay projects that take advantage of Gradle's support for BOMs, making it more predictable to handle dependency management issues and conflicts.
 
 ## Library Upgrades
-
+     
+- Spring Boot
 - Aspectj
 - Spring Data CosmosDb
 - Spring Cloud AWS

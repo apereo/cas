@@ -142,12 +142,9 @@ The following features are available to CAS:
 | `WebAuthn`                                |
 | `YubiKey`                                 |
 
-In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the
-actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`.
+In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`.
 
-Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included
-or excluded in the application context. Conditionally inclusion or exclusion of beans generally has consequences when it comes to 
-`@RefreshScope` and [supporting refreshable beans](Configuration-Management-Reload.html).Spring application context will fail to refresh beans that are excluded at initialization/startup time, because there is nothing to refresh to begin with. Refresh requests and scope only work in scenarios where there is an existing reference to a bean in the application context hierarchy that can be refreshed; beans or configuration classes that are skipped during the startup and application context initialization will never be refreshable, because they are not re-created upon refresh requests. In other words, refresh requests only work best when there is a setting or property whose existing value changes from A to B; if there was no A to begin with, or if A is being removed, refresh requests may fall short.
+Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included or excluded in the application context upon initialization and startup. Conditional inclusion or exclusion of beans generally has consequences when it comes to `@RefreshScope` and [supporting refreshable beans](Configuration-Management-Reload.html). Note that feature modules are *not refreshable* at this point; they are processed on startup and will either be included in the assembled application context or skipped entirely, depending on the result of the enforced condition.
 
 ## CAS Properties
 
