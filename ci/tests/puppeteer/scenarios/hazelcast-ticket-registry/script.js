@@ -31,7 +31,7 @@ const cas = require('../../cas.js');
 
 
     await page.goto("https://localhost:8444/cas/login");
-    await cas.assertTicketGrantingCookie(page);
+    await cas.assertTicketGrantingCookie(page, true, "TGCXT");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
 

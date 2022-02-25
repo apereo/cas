@@ -117,10 +117,10 @@ exports.assertInvisibility = async (page, selector) => {
     assert(element == null || await element.boundingBox() == null);
 }
 
-exports.assertTicketGrantingCookie = async (page, present= true) => {
+exports.assertTicketGrantingCookie = async (page, present= true, cookieName = "TGC") => {
     const tgc = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
-        return value.name === "TGC"
+        return value.name === cookieName
     });
     if (present) {
         assert(tgc.length !== 0);

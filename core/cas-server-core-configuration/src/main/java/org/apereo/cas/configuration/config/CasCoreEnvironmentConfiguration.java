@@ -14,10 +14,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 
@@ -54,7 +52,6 @@ public class CasCoreEnvironmentConfiguration {
 
         @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CipherExecutor<String, String> casConfigurationCipherExecutor(
             final Environment environment) {
             return new CasConfigurationJasyptCipherExecutor(environment);
@@ -62,7 +59,6 @@ public class CasCoreEnvironmentConfiguration {
 
         @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
         @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
             @Qualifier("casConfigurationCipherExecutor")
             final CipherExecutor<String, String> casConfigurationCipherExecutor,
