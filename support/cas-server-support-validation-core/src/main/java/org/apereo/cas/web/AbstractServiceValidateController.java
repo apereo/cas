@@ -102,7 +102,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                              final HttpServletResponse response) throws Exception {
         val service = serviceValidateConfigurationContext.getArgumentExtractor().extractService(request);
         val serviceTicketId = Optional.ofNullable(service).map(WebApplicationService::getArtifactId).orElse(null);
         if (service == null || StringUtils.isBlank(serviceTicketId)) {

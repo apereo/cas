@@ -61,11 +61,10 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @Test
     public void verifyCaseInsensitiveUser() {
         val otp = getRandomOtp();
-        var token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
+        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
         oneTimeTokenAuthenticatorTokenRepository.store(token);
         await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp)));
-        token = oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp);
-        assertTrue(token.getId() > 0);
+        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp)));
     }
 
     @Test

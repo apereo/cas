@@ -1,6 +1,8 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.oidc.config.OidcConfiguration,\
   org.apereo.cas.oidc.config.OidcResponseConfiguration,\
   org.apereo.cas.oidc.config.OidcJwksConfiguration,\
+  org.apereo.cas.oidc.config.OidcJwksJpaConfiguration,\
+  org.apereo.cas.oidc.config.OidcJwksMongoDbConfiguration,\
   org.apereo.cas.oidc.config.OidcEndpointsConfiguration,\
   org.apereo.cas.oidc.config.OidcLogoutConfiguration,\
   org.apereo.cas.oidc.config.OidcComponentSerializationConfiguration,\
