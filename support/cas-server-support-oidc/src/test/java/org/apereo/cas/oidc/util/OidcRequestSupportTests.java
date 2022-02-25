@@ -189,4 +189,14 @@ public class OidcRequestSupportTests {
             mock(TicketRegistrySupport.class), issuerService);
         assertFalse(support.isValidIssuerForEndpoint(getContextForEndpoint("logout"), "oidcLogout"));
     }
+
+    @Test
+    public void validateIsValidIssuerForEndpoint() {
+      val issuerService = mock(OidcIssuerService.class);
+      val staticIssuer = "https://cas:8901/cas/oidc";
+      when(issuerService.determineIssuer(any())).thenReturn(staticIssuer);
+      val support = new OidcRequestSupport(mock(CasCookieBuilder.class),
+          mock(TicketRegistrySupport.class), issuerService);
+      assertTrue(support.isValidIssuerForEndpoint(getContextForEndpoint("jwks"), "jwks"));
+    }
 }

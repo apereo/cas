@@ -24,7 +24,8 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -245,9 +246,34 @@ public class OidcRequestSupport {
         val definedIssuer = oidcIssuerService.determineIssuer(Optional.empty());
 
         val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl) || issuerFromRequestUrl.startsWith(definedIssuerWithSlash);
+        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
+            || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
+            || isIssuerPathMatching(issuerFromRequestUrl, definedIssuerWithSlash);
         FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
             o, issuerFromRequestUrl)).accept(definedIssuer);
         return result;
     }
+    
+    /**
+     * Checks if path of issuer from request matches path of issuer defined
+     * 
+     * @param issuerFromRequestUrl the issuer request url
+     * @param definedIssuerWithSlash the issuer defined url
+     * @return true /false
+     */
+    private boolean isIssuerPathMatching(final @NonNull String issuerFromRequestUrl,
+        final @NonNull String definedIssuerWithSlash) {
+      boolean result = false;
+      try {
+        URL urlIssuerFromRequest = new URL(issuerFromRequestUrl);
+        URL urlDefinedIssuer = new URL(definedIssuerWithSlash);
+
+        result = urlIssuerFromRequest.getPath().equalsIgnoreCase(urlDefinedIssuer.getPath());
+      } catch (MalformedURLException e) {
+        throw new IllegalStateException(e.getMessage(), e);
+      }
+
+      return result;
+    }
+    
 }
