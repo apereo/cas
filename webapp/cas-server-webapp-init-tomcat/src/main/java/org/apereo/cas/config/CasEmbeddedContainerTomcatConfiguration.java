@@ -3,8 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.tomcat.CasTomcatServletWebServerFactoryCustomizer;
-import org.apereo.cas.web.CasWebApplicationReady;
-import org.apereo.cas.web.CasWebApplicationReadyListener;
 
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http2.Http2Protocol;
@@ -20,7 +18,6 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * This is {@link CasEmbeddedContainerTomcatConfiguration}.
@@ -33,7 +30,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
 @AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@EnableAsync
 public class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
@@ -50,12 +46,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final ServerProperties serverProperties,
         final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")
-    @Bean
-    public CasWebApplicationReadyListener casWebApplicationReadyListener() {
-        return new CasWebApplicationReady();
     }
 
 }
