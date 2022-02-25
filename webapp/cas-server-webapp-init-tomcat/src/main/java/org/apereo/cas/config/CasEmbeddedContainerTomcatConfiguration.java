@@ -47,5 +47,4 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
     }
-
 }
