@@ -3,7 +3,9 @@
   "properties": [
     "--logging.level.org.apereo.cas=info",
     "--cas.service-registry.core.init-from-json=true",
+
     "--cas.audit.engine.enabled=false",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 

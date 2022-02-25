@@ -23,7 +23,8 @@ const path = require("path");
     try {
         let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
         console.log(response)
-        
+
+        await page.goto("https://localhost:8443/cas/logout");
         await page.goto(url);
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForTimeout(3000)
@@ -65,7 +66,6 @@ async function updateConfig(configFile, configFilePath, data) {
                     }
                 }
             }
-
         }
     }
 

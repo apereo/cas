@@ -1,6 +1,5 @@
 #!/bin/bash
 
-clear
 if [[ -z "${CAS_KEYSTORE}" ]] ; then
   keystore="$PWD"/ci/tests/cas/thekeystore.ignore
   echo -e "Generating keystore for CAS Server at ${keystore}"
@@ -19,7 +18,7 @@ fi
 properties='{
   "logging": {
     "level": {
-      "org.apereo.cas": "trace",
+      "org.apereo.cas": "debug",
       "org.apereo.cas.web.view": "warn",
       "org.apereo.cas.web.support.filters": "warn"
     }

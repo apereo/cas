@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     await cas.screenshot(page);
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
-    await cas.assertTicketGrantingCookie(page, true, "TGCXT");
+    await cas.assertTicketGrantingCookie(page, true, "TGCEXT");
 
     console.log("Start with first application without SSO for CAS server")
     await page.goto("https://localhost:8443/cas/clientredirect?client_name=CASServer&service=https://github.com/apereo/cas");
