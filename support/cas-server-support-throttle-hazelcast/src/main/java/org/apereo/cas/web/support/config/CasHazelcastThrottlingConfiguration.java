@@ -12,8 +12,10 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * Configures a Hazelcast IMap that is used by the InMemory throttling interceptors to store
@@ -30,6 +32,7 @@ public class CasHazelcastThrottlingConfiguration {
     private static final String MAP_KEY = "ipMap";
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "hazelcastThrottleSubmissionMap")
     public ThrottledSubmissionsStore throttleSubmissionMap(
         @Qualifier("casTicketRegistryHazelcastInstance")

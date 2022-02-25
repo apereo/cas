@@ -54,6 +54,7 @@ public class JpaYubiKeyConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaYubiKeyPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName()));
         }
@@ -86,6 +87,7 @@ public class JpaYubiKeyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaYubiKeyTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerYubiKey(
             @Qualifier("yubiKeyEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -93,9 +95,7 @@ public class JpaYubiKeyConfiguration {
             mgmr.setEntityManagerFactory(emf);
             return mgmr;
         }
-
     }
-
 
     @Configuration(value = "JpaYubiKeyRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
