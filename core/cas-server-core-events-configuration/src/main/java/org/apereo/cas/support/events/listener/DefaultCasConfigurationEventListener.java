@@ -63,13 +63,15 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     }
 
     private void initializeBeansEagerly() {
-        FunctionUtils.doUnchecked(unused -> {
+        FunctionUtils.doAndHandle(unused -> {
             for (val beanName : applicationContext.getBeanDefinitionNames()) {
                 Objects.requireNonNull(applicationContext.getBean(beanName).getClass());
             }
-            val servlet = applicationContext.getBean(DispatcherServlet.class);
-            servlet.setApplicationContext(applicationContext);
-            servlet.init();
+            if (applicationContext.containsBean("dispatcherServlet")) {
+                val servlet = applicationContext.getBean(DispatcherServlet.class);
+                servlet.setApplicationContext(applicationContext);
+                servlet.init();
+            }
         });
 
     }
