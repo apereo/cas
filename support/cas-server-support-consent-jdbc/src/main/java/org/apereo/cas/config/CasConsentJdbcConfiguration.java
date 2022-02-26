@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -81,7 +80,7 @@ public class CasConsentJdbcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> consentEntityManagerFactory(
+        public EntityManagerFactory consentEntityManagerFactory(
             @Qualifier("jpaConsentVendorAdapter")
             final JpaVendorAdapter jpaConsentVendorAdapter,
             @Qualifier("dataSourceConsent")
@@ -97,7 +96,7 @@ public class CasConsentJdbcConfiguration {
                 .dataSource(dataSourceConsent)
                 .packagesToScan(jpaConsentPackagesToScan.toSet())
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getConsent().getJpa()).getObject();
         }
 
     }

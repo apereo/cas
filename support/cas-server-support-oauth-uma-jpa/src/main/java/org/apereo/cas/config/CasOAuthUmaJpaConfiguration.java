@@ -16,7 +16,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -78,7 +77,7 @@ public class CasOAuthUmaJpaConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> umaEntityManagerFactory(
+        public EntityManagerFactory umaEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaUmaVendorAdapter")
@@ -89,7 +88,7 @@ public class CasOAuthUmaJpaConfiguration {
             final BeanContainer<String> jpaUmaPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(FactoryBean.class)
+            return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -99,7 +98,7 @@ public class CasOAuthUmaJpaConfiguration {
                         .packagesToScan(jpaUmaPackagesToScan.toSet())
                         .build();
                     return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                        casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa());
+                        casProperties.getAuthn().getOauth().getUma().getResourceSet().getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();

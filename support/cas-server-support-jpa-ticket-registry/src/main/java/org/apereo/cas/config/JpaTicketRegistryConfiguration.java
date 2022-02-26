@@ -22,7 +22,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,7 +93,7 @@ public class JpaTicketRegistryConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> ticketEntityManagerFactory(
+        public EntityManagerFactory ticketEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")
@@ -104,7 +103,7 @@ public class JpaTicketRegistryConfiguration {
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
-            return BeanSupplier.of(FactoryBean.class)
+            return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -113,7 +112,8 @@ public class JpaTicketRegistryConfiguration {
                         .dataSource(dataSourceTicket)
                         .packagesToScan(ticketPackagesToScan.toSet())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getTicket().getRegistry().getJpa());
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                        casProperties.getTicket().getRegistry().getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();

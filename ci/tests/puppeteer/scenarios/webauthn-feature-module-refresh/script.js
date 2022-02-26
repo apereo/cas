@@ -23,17 +23,19 @@ const path = require("path");
     try {
         let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
         console.log(response)
+        await page.waitForTimeout(2000)
 
         await page.goto("https://localhost:8443/cas/logout");
         await page.goto(url);
         await cas.loginWith(page, "casuser", "Mellon");
-        await page.waitForTimeout(3000)
-
+        await page.waitForTimeout(4000)
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
 
+        console.log("Checking for presence of errors...")
         let errorPanel = await page.$('#errorPanel');
         assert(await errorPanel == null);
 
+        console.log("Checking page elements for visibility")
         await cas.assertVisibility(page, '#messages')
         await cas.assertInvisibility(page, '#deviceTable')
         await cas.assertVisibility(page, '#authnButton')
@@ -42,6 +44,7 @@ const path = require("path");
         const baseUrl = "https://localhost:8443/cas/actuator/"
         for (let i = 0; i < endpoints.length; i++) {
             let url = baseUrl + endpoints[i];
+            console.log(`Checking response status from ${url}`)
             const response = await page.goto(url);
             console.log(`${response.status()} ${response.statusText()}`)
             assert(response.ok())
