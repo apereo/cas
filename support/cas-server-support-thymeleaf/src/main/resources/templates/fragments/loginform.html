@@ -324,8 +324,11 @@
 
 
             <span th:if="${loginFormViewable and loginFormEnabled}">
-                    <div th:replace="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')} ? ~{fragments/pmlinks :: pmlinks} : ~{}"/>
+                <span th:remove="tag"
+                      th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
+                    <div th:replace="fragments/pmlinks :: pmlinks"/>
                 </span>
+            </span>
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
