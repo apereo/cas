@@ -96,9 +96,6 @@ public abstract class BaseConsentRepositoryTests {
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
-        /*
-         * Update the decision now that its record is created.
-         */
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
 
@@ -116,11 +113,12 @@ public abstract class BaseConsentRepositoryTests {
         val user = getUser();
         val repo = getRepository("verifyDeleteRecordsForPrincipal");
         repo.deleteAll();
-        var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
+
         decision.setId(200);
-        decision = repo.storeConsentDecision(decision);
-        assertNotNull(decision);
-        assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
+        val result = repo.storeConsentDecision(decision);
+        assertNotNull(result);
+        await().untilAsserted(() -> assertTrue(repo.deleteConsentDecisions(result.getPrincipal())));
         await().untilAsserted(() ->
             assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user))));
     }

@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Configuration(value = "OidcJwksConfiguration", proxyBeanMethods = false)
+@Configuration(value = "OidcJwksJpaConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnClass(JpaBeanFactory.class)
