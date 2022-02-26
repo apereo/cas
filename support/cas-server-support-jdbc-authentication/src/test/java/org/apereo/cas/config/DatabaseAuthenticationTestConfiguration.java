@@ -91,6 +91,8 @@ public class DatabaseAuthenticationTestConfiguration {
         jpaProperties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
         jpaProperties.put("hibernate.jdbc.batch_size", 1);
 
-        return JpaBeans.newEntityManagerFactoryBean(ctx).getObject();
+        val factory = JpaBeans.newEntityManagerFactoryBean(ctx);
+        factory.afterPropertiesSet();
+        return factory.getObject();
     }
 }

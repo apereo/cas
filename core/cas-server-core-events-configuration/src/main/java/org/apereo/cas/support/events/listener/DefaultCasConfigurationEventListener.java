@@ -52,13 +52,11 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
     public void handleConfigurationModifiedEvent(final CasConfigurationModifiedEvent event) {
         if (event.isEligibleForContextRefresh()) {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
-            FunctionUtils.doAndHandle(unused -> {
-                val keys = contextRefresher.refresh();
-                LOGGER.debug("Refreshed the following settings: [{}].", keys);
-                rebind();
-                LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
-                    ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
-            });
+            val keys = contextRefresher.refresh();
+            LOGGER.info("Refreshed the following settings: [{}].", keys);
+            rebind();
+            LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
+                ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
         }
     }
 
