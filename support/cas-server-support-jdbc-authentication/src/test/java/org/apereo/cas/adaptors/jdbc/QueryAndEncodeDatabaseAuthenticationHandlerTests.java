@@ -225,7 +225,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDataba
     public static class DatabaseTestConfiguration {
         @Bean
         public JpaPersistenceProviderContext persistenceProviderContext() {
-            return new JpaPersistenceProviderContext().setIncludeEntityClasses(Set.of(QueryAndEncodeDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
+            return new JpaPersistenceProviderContext().setIncludeEntityClasses(
+                Set.of(QueryAndEncodeDatabaseAuthenticationHandlerTests.UsersTable.class.getName()));
         }
     }
 

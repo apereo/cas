@@ -54,7 +54,7 @@ public class CasEclipseLinkJpaBeanFactoryTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val adapter = jpaBeanFactory.newJpaVendorAdapter();
         assertNotNull(adapter);
 
@@ -64,7 +64,8 @@ public class CasEclipseLinkJpaBeanFactoryTests {
             .persistenceUnitName("sampleContext")
             .jpaVendorAdapter(adapter)
             .build();
-        val bean = jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAudit().getJdbc());
+        val bean = jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+            casProperties.getAudit().getJdbc()).getObject();
         assertNotNull(bean);
     }
 
