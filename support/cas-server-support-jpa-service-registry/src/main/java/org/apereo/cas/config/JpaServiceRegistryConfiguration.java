@@ -19,7 +19,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -132,7 +131,7 @@ public class JpaServiceRegistryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> serviceEntityManagerFactory(
+        public EntityManagerFactory serviceEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService")
@@ -145,7 +144,7 @@ public class JpaServiceRegistryConfiguration {
             final BeanContainer<String> jpaServicePackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) throws Exception {
-            return BeanSupplier.of(FactoryBean.class)
+            return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
                     val ctx = JpaConfigurationContext.builder()
@@ -155,7 +154,7 @@ public class JpaServiceRegistryConfiguration {
                         .persistenceProvider(jpaServicePersistenceProvider)
                         .packagesToScan(jpaServicePackagesToScan.toSet())
                         .build();
-                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa());
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getServiceRegistry().getJpa()).getObject();
                 }))
                 .otherwiseProxy()
                 .get();

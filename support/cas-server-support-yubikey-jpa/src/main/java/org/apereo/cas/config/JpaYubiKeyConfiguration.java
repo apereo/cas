@@ -13,7 +13,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,7 +60,7 @@ public class JpaYubiKeyConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> yubiKeyEntityManagerFactory(
+        public EntityManagerFactory yubiKeyEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceYubiKey")
             final DataSource dataSourceYubiKey,
@@ -78,7 +77,7 @@ public class JpaYubiKeyConfiguration {
                 .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getMfa().getYubikey().getJpa());
+                casProperties.getAuthn().getMfa().getYubikey().getJpa()).getObject();
         }
 
     }

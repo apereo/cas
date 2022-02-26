@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.SCIM)
 public class CasScimConfiguration {
 
-    private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.enabled").isTrue();
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.scim.enabled").isTrue().evenIfMissing();
     
     @Configuration(value = "CasScimWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

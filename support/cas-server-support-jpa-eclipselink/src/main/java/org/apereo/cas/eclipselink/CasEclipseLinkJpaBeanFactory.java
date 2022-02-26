@@ -48,8 +48,8 @@ public class CasEclipseLinkJpaBeanFactory implements JpaBeanFactory {
         map.put(PersistenceUnitProperties.BATCH_WRITING_SIZE, jpaProperties.getBatchSize());
         map.put(PersistenceUnitProperties.BATCH_WRITING, BatchWriting.JDBC);
         map.put(PersistenceUnitProperties.LOGGING_LEVEL, SessionLog.FINE_LABEL);
-
         bean.getJpaPropertyMap().putAll(map);
+        bean.afterPropertiesSet();
         return bean;
     }
 

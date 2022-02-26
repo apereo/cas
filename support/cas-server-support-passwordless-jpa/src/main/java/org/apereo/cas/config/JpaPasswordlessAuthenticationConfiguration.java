@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.val;
 import org.apereo.inspektr.common.Cleanable;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,7 +50,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> passwordlessEntityManagerFactory(
+        public EntityManagerFactory passwordlessEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaPasswordlessVendorAdapter")
             final JpaVendorAdapter jpaPasswordlessVendorAdapter,
@@ -67,7 +66,7 @@ public class JpaPasswordlessAuthenticationConfiguration {
                 .packagesToScan(jpaPasswordlessPackagesToScan())
                 .build();
             return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
-                casProperties.getAuthn().getPasswordless().getTokens().getJpa());
+                casProperties.getAuthn().getPasswordless().getTokens().getJpa()).getObject();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
