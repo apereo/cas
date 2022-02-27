@@ -101,7 +101,7 @@ public class CasCoreUtilConfiguration {
     public static class CasCoreUtilEssentialConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
-        public BeanPostProcessor casBeanValidationPostProcessor() {
+        public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
         }
 
