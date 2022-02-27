@@ -99,6 +99,12 @@ public class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilEssentialConfiguration {
+
+        /**
+         * Create casBeanValidationPostProcessor bean.
+         * Note that {@code BeanPostProcessor} beans should be static.
+         * @return the BeanValidationPostProcessor
+         */
         @Bean
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
         public static BeanPostProcessor casBeanValidationPostProcessor() {
