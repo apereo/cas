@@ -15,7 +15,7 @@ import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration(value = "PasswordManagementForgotUsernameConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.ForgotUsername)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ForgotUsername)
 public class PasswordManagementForgotUsernameConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.forgot-username.enabled").isTrue().evenIfMissing();
@@ -136,7 +136,7 @@ public class PasswordManagementForgotUsernameConfiguration {
 
     }
 
-    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.ForgotUsername, module = "captcha")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ForgotUsername, module = "captcha")
     @Configuration(value = "ForgotUsernameCaptchaConfiguration", proxyBeanMethods = false)
     public static class ForgotUsernameCaptchaConfiguration {
 

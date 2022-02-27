@@ -7,7 +7,7 @@ import org.apereo.cas.impl.account.LdapPasswordlessUserAccountStore;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "LdapPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "ldap")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "ldap")
 public class LdapPasswordlessAuthenticationConfiguration {
 
     @Bean

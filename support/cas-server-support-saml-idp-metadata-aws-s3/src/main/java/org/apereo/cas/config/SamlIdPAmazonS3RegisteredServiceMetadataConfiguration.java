@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SamlIdPAmazonS3RegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.SamlServiceProviderMetadata, module = "amazon-s3")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlServiceProviderMetadata, module = "amazon-s3")
 public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.amazon-s3.bucket-name");
 

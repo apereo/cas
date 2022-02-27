@@ -12,7 +12,7 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableScheduling
 @Configuration(value = "GoogleAuthenticatorRedisConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator, module = "redis")
 public class GoogleAuthenticatorRedisConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.gauth.redis.enabled").isTrue().evenIfMissing();
 

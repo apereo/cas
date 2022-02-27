@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.Bucket4jThrottledRequestExecutor;
 
 import lombok.val;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CasBucket4jThrottlingConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "bucket4j")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Throttling, module = "bucket4j")
 public class CasBucket4jThrottlingConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.throttle.bucket4j.enabled").isTrue().evenIfMissing();
     

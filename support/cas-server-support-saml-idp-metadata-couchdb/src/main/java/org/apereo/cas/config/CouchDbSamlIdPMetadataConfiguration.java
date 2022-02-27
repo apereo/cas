@@ -16,7 +16,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "CouchDbSamlIdPMetadataConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.SamlIdPMetadata, module = "couch-db")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdPMetadata, module = "couch-db")
 public class CouchDbSamlIdPMetadataConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.saml-idp.metadata.couch-db.idp-metadata-enabled").isTrue();
 

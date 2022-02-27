@@ -8,7 +8,7 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.redis.RedisCasEventRepository;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +29,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @Configuration(value = "RedisEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "redis")
 public class RedisEventsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

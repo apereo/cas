@@ -7,7 +7,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.DynamoDbCasEventRepository;
 import org.apereo.cas.support.events.DynamoDbCasEventsFacilitator;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @Configuration(value = "CasEventsInfluxDbRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "dynamoDb")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "dynamoDb")
 public class CasEventsDynamoDbRepositoryConfiguration {
 
     @Bean

@@ -12,7 +12,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -38,7 +38,7 @@ import java.util.Optional;
  */
 @Configuration(value = "RedisServiceRegistryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "redis")
 public class RedisServiceRegistryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.redis.enabled").isTrue().evenIfMissing();
 

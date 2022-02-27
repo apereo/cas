@@ -10,7 +10,7 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.ldaptive.ConnectionFactory;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Configuration(value = "LdapPasswordManagementConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "ldap")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "ldap")
 public class LdapPasswordManagementConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.ldap[0].ldap-url");
 

@@ -8,7 +8,7 @@ import org.apereo.cas.grouper.DefaultGrouperFacade;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationTrigger;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "GrouperMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "grouper")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "grouper")
 public class GrouperMultifactorAuthenticationConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.triggers.grouper.grouper-group-field");

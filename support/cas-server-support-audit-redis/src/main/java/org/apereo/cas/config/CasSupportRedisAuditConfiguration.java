@@ -9,7 +9,7 @@ import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -31,7 +31,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @Configuration(value = "CasSupportRedisAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Audit, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "redis")
 public class CasSupportRedisAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.redis.enabled").isTrue().evenIfMissing();
 

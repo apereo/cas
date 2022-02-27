@@ -8,7 +8,7 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRegistration;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class JpaWebAuthnConfiguration {
 
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)

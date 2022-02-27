@@ -8,7 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Configuration(value = "SurrogateLdapAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "ldap")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication, module = "ldap")
 public class SurrogateLdapAuthenticationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.surrogate.ldap.ldap-url");
 

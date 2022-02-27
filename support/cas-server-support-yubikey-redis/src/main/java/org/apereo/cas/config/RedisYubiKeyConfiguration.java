@@ -11,7 +11,7 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +32,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @Configuration(value = "RedisYubiKeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey, module = "redis")
 public class RedisYubiKeyConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.yubikey.redis.enabled").isTrue().evenIfMissing();
 

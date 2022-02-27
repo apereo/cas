@@ -6,7 +6,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -30,7 +30,7 @@ import java.time.Duration;
 @Configuration(value = "CasEventsMemoryRepositoryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Events, module = "memory")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "memory")
 public class CasEventsInMemoryRepositoryConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;

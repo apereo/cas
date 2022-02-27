@@ -21,7 +21,7 @@ import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.authy.AuthyApiClient;
 import lombok.val;
@@ -47,7 +47,7 @@ import java.net.URL;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Authy)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authy)
 @Configuration(value = "AuthyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.authy.api-key");
