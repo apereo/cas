@@ -11,7 +11,7 @@ import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +52,7 @@ import javax.sql.DataSource;
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "jdbc")
 public class CasSupportJdbcAuditConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.jdbc.url").evenIfMissing();
 

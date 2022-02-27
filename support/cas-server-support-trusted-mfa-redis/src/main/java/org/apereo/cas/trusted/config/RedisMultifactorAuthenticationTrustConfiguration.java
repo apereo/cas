@@ -12,7 +12,7 @@ import org.apereo.cas.trusted.authentication.storage.RedisMultifactorAuthenticat
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "RedisMultifactorAuthenticationTrustConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "redis")
 public class RedisMultifactorAuthenticationTrustConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.trusted.redis.enabled").isTrue().evenIfMissing();
 

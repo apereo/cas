@@ -39,7 +39,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -175,7 +175,7 @@ public class CasAccountManagementWebflowConfiguration {
     @ConditionalOnClass(PrincipalProvisioner.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "scim")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "scim")
     public static class CasAccountManagementScimProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "scimAccountRegistrationProvisionerConfigurer")
         @Bean
@@ -311,7 +311,7 @@ public class CasAccountManagementWebflowConfiguration {
 
     }
 
-    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "captcha")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement, module = "captcha")
     @Configuration(value = "CasAccountManagementRegistrationCaptchaConfiguration", proxyBeanMethods = false)
     public static class CasAccountManagementRegistrationCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.account-registration.google-recaptcha.enabled").isTrue();

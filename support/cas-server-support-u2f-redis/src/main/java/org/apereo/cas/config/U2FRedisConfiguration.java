@@ -10,7 +10,7 @@ import org.apereo.cas.u2f.redis.U2FRedisDeviceRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -34,7 +34,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "U2fRedisConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.U2F, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F, module = "redis")
 public class U2FRedisConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.u2f.redis.enabled").isTrue().evenIfMissing();
 

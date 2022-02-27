@@ -25,7 +25,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -241,7 +241,7 @@ public class PasswordManagementWebflowConfiguration {
     }
 
     @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
-    @ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
     public static class PasswordManagementCaptchaConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.google-recaptcha.enabled").isTrue();
 

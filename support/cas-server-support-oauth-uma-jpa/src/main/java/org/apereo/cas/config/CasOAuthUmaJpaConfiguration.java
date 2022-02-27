@@ -12,7 +12,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -43,7 +43,7 @@ import javax.sql.DataSource;
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
 @EnableTransactionManagement
 @Configuration(value = "CasOAuthUmaJpaConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.UMA, module = "jpa")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.UMA, module = "jpa")
 public class CasOAuthUmaJpaConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.oauth.uma.resource-set.jpa.url");
 

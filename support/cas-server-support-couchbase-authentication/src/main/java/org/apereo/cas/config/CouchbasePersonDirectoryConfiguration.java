@@ -8,7 +8,7 @@ import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CouchbasePersonDirectoryConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "couchbase")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "couchbase")
 public class CouchbasePersonDirectoryConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.couchbase.username-attribute");
 

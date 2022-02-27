@@ -15,7 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.syncope.SyncopeAuthenticationHandler;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.google.common.base.Splitter;
 import lombok.val;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "SyncopeAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "syncope")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "syncope")
 public class SyncopeAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")

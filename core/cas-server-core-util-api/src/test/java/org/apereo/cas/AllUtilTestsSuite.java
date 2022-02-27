@@ -31,7 +31,7 @@ import org.apereo.cas.util.spring.beans.BeanConditionTests;
 import org.apereo.cas.util.spring.beans.BeanContainerTests;
 import org.apereo.cas.util.spring.beans.BeanSupplierTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
-import org.apereo.cas.util.spring.boot.CasFeatureModuleEnabledConditionTests;
+import org.apereo.cas.util.spring.boot.CasFeatureEnabledConditionTests;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostnameTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
@@ -79,7 +79,7 @@ import org.junit.platform.suite.api.Suite;
     HttpRequestUtilsTests.class,
     BeanSupplierTests.class,
     BeanConditionTests.class,
-    CasFeatureModuleEnabledConditionTests.class,
+    CasFeatureEnabledConditionTests.class,
     DefaultMessageDescriptorTests.class,
     RefreshableHandlerInterceptorTests.class,
     WatchableGroovyScriptResourceTests.class,

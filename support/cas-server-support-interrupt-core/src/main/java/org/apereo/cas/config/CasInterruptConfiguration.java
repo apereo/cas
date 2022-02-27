@@ -11,7 +11,7 @@ import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.InterruptCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -37,7 +37,7 @@ import java.util.List;
 @Configuration(value = "CasInterruptConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.InterruptNotifications)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.InterruptNotifications)
 public class CasInterruptConfiguration {
 
     @Bean

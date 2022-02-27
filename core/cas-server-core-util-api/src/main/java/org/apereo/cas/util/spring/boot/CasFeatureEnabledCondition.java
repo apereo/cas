@@ -11,13 +11,13 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * This is {@link CasFeatureModuleEnabledCondition}.
+ * This is {@link CasFeatureEnabledCondition}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @Slf4j
-public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
+public class CasFeatureEnabledCondition extends SpringBootCondition {
     /**
      * Gets property name.
      *
@@ -37,7 +37,7 @@ public class CasFeatureModuleEnabledCondition extends SpringBootCondition {
     @Override
     public ConditionOutcome getMatchOutcome(final ConditionContext context,
                                             final AnnotatedTypeMetadata metadata) {
-        val attributes = metadata.getAnnotationAttributes(ConditionalOnCasFeatureModule.class.getName());
+        val attributes = metadata.getAnnotationAttributes(ConditionalOnFeature.class.getName());
         val name = attributes.get("feature").toString();
         val module = attributes.get("module").toString();
 

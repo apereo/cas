@@ -20,7 +20,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.util.spring.boot.ConditionalOnCasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "RedisAuthenticationConfiguration", proxyBeanMethods = false)
-@ConditionalOnCasFeatureModule(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "redis")
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "redis")
 public class RedisAuthenticationConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.redis.enabled").isTrue().evenIfMissing();
 

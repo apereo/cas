@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is {@link ConditionalOnCasFeatureModules}.
+ * This is {@link ConditionalOnFeatures}.
  *
  * @author Misagh Moayyed
  * @since 6.6.0
@@ -15,11 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-public @interface ConditionalOnCasFeatureModules {
+public @interface ConditionalOnFeatures {
     /**
      * Conditionals grouped together.
      *
      * @return conditionals
      */
-    ConditionalOnCasFeatureModule[] value();
+    ConditionalOnFeature[] value();
 }
