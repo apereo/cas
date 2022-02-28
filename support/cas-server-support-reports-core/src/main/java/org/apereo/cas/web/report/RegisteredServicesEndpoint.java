@@ -81,12 +81,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Handle and produce a list of services from registry")
     @GetMapping(produces = {
-            ActuatorMediaType.V2_JSON,
-            ActuatorMediaType.V3_JSON,
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
-            "application/vnd.cas.services+yaml"
-        })
+        ActuatorMediaType.V2_JSON,
+        ActuatorMediaType.V3_JSON,
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/vnd.cas.services+yaml"
+    })
     public ResponseEntity<String> handle() throws Exception {
         return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.load()));
     }
@@ -100,12 +100,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
-            ActuatorMediaType.V2_JSON,
-            ActuatorMediaType.V3_JSON,
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
-            "application/vnd.cas.services+yaml"
-        })
+        ActuatorMediaType.V2_JSON,
+        ActuatorMediaType.V3_JSON,
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/vnd.cas.services+yaml"
+    })
     public ResponseEntity<String> fetchService(
         @PathVariable
         final String id) throws Exception {
@@ -127,12 +127,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      */
     @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {
-            ActuatorMediaType.V2_JSON,
-            ActuatorMediaType.V3_JSON,
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
-            "application/vnd.cas.services+yaml"
-        })
+        ActuatorMediaType.V2_JSON,
+        ActuatorMediaType.V3_JSON,
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        "application/vnd.cas.services+yaml"
+    })
     public ResponseEntity<String> fetchServicesByType(
         @PathVariable
         final String type) throws Exception {
