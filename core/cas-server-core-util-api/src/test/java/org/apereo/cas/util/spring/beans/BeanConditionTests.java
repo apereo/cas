@@ -16,6 +16,42 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 public class BeanConditionTests {
+
+    @Test
+    public void verifyExpressionLanguageEmbedded() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property1", "time-${#localDateTimeUtc}");
+        val condition = BeanCondition.on("cas.property1")
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
+    @Test
+    public void verifyExpressionLanguagePassing() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property1", "${#localDateTimeUtc}");
+        val condition = BeanCondition.on("cas.property1")
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
+    @Test
+    public void verifyMultipleConditions() {
+        val env = new MockEnvironment();
+        env.setProperty("cas.property1", "value");
+        env.setProperty("cas.property2", "https://github.com");
+        env.setProperty("cas.property3", "classpath:/x509.crt");
+
+        val condition = BeanCondition.on("cas.property1")
+            .and("cas.property2").isUrl()
+            .and("cas.property3").exists()
+            .given(env)
+            .get();
+        assertTrue(condition);
+    }
+
     @Test
     public void verifyExistsOperation() {
         val env = new MockEnvironment();

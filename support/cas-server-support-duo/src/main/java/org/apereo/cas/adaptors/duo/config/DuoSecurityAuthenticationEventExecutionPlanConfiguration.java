@@ -2,12 +2,11 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicator;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProviderFactory;
-import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityAdminApiConfigured;
-import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityPingEndpoint;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityUserAccountStatusEndpoint;
@@ -27,9 +26,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -57,6 +59,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 /**
  * This is {@link DuoSecurityAuthenticationEventExecutionPlanConfiguration}.
  *
@@ -65,22 +68,31 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnDuoSecurityConfigured
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
 @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityAuthenticationEventExecutionConfiguration {
-        private static AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final DuoSecurityAuthenticationHandler authenticationHandler,
-                                                                                          final CasConfigurationProperties casProperties) {
-            return new AuthenticationContextAttributeMetaDataPopulator(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-                authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getId());
+        private static AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(
+            final ConfigurableApplicationContext applicationContext,
+            final DuoSecurityAuthenticationHandler authenticationHandler,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new AuthenticationContextAttributeMetaDataPopulator(
+                    casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+                    authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getId()))
+                .otherwiseProxy()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "duoAuthenticationHandlers")
         public BeanContainer<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers(
+            final ConfigurableApplicationContext applicationContext,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
             final CasConfigurationProperties casProperties,
             @Qualifier("duoPrincipalFactory")
@@ -90,35 +102,47 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
 
-            AnnotationAwareOrderComparator.sort(resolvers);
-            return BeanContainer.of(casProperties.getAuthn()
-                .getMfa()
-                .getDuo()
-                .stream()
-                .map(props -> {
-                    val provider = duoProviderBean.getProvider(props.getId());
-                    return new DuoSecurityAuthenticationHandler(props.getName(),
-                        servicesManager, duoPrincipalFactory, provider, props.getOrder(), resolvers);
+            return BeanSupplier.of(BeanContainer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    AnnotationAwareOrderComparator.sort(resolvers);
+                    return BeanContainer.of(casProperties.getAuthn()
+                        .getMfa()
+                        .getDuo()
+                        .stream()
+                        .map(props -> {
+                            val provider = duoProviderBean.getProvider(props.getId());
+                            return new DuoSecurityAuthenticationHandler(props.getName(),
+                                servicesManager, duoPrincipalFactory, provider, props.getOrder(), resolvers);
+                        })
+                        .sorted(Comparator.comparing(DuoSecurityAuthenticationHandler::getOrder))
+                        .collect(Collectors.toList()));
                 })
-                .sorted(Comparator.comparing(DuoSecurityAuthenticationHandler::getOrder))
-                .collect(Collectors.toList()));
+                .otherwise(BeanContainer::empty)
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("duoAuthenticationHandlers")
             final BeanContainer<DuoSecurityAuthenticationHandler> duoAuthenticationHandlers) {
-            return plan -> {
-                duoAuthenticationHandlers.toList().forEach(dh -> {
-                    plan.registerAuthenticationHandler(dh);
-                    plan.registerAuthenticationMetadataPopulator(duoAuthenticationMetaDataPopulator(dh, casProperties));
-                });
-                plan.registerAuthenticationHandlerResolver(
-                    new ByCredentialTypeAuthenticationHandlerResolver(DuoSecurityCredential.class, DuoSecurityDirectCredential.class));
-            };
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> {
+                    duoAuthenticationHandlers.toList().forEach(dh -> {
+                        plan.registerAuthenticationHandler(dh);
+                        plan.registerAuthenticationMetadataPopulator(
+                            duoAuthenticationMetaDataPopulator(applicationContext, dh, casProperties));
+                    });
+                    plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(
+                        DuoSecurityCredential.class, DuoSecurityDirectCredential.class));
+                })
+                .otherwiseProxy()
+                .get();
         }
 
     }
@@ -130,7 +154,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnEnabledHealthIndicator("duoSecurityHealthIndicator")
         public HealthIndicator duoSecurityHealthIndicator(final ConfigurableApplicationContext applicationContext) {
-            return new DuoSecurityHealthIndicator(applicationContext);
+            return BeanSupplier.of(HealthIndicator.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DuoSecurityHealthIndicator(applicationContext))
+                .otherwiseProxy()
+                .get();
         }
 
     }
@@ -141,14 +169,19 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "duoPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PrincipalFactory duoPrincipalFactory() {
-            return PrincipalFactoryUtils.newPrincipalFactory();
+        public PrincipalFactory duoPrincipalFactory(final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(PrincipalFactory.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(PrincipalFactoryUtils::newPrincipalFactory)
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "duoProviderFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationProviderFactoryBean<DuoSecurityMultifactorAuthenticationProvider, DuoSecurityMultifactorAuthenticationProperties> duoProviderFactory(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
             @Qualifier("httpClient")
@@ -157,9 +190,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator,
             @Qualifier("failureModeEvaluator")
             final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
-            AnnotationAwareOrderComparator.sort(resolvers);
-            return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient, duoSecurityBypassEvaluator,
-                failureModeEvaluator, casProperties, resolvers);
+            return BeanSupplier.of(MultifactorAuthenticationProviderFactoryBean.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    AnnotationAwareOrderComparator.sort(resolvers);
+                    return new DuoSecurityMultifactorAuthenticationProviderFactory(httpClient, duoSecurityBypassEvaluator,
+                        failureModeEvaluator, casProperties, resolvers);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "duoProviderBean")
@@ -189,32 +228,51 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
+                    loginFlowDefinitionRegistry, applicationContext, casProperties,
+                    MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext)))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoMultifactorWebflowConfigurer")
             final CasWebflowConfigurer duoMultifactorWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
-        public Action prepareDuoWebLoginFormAction() {
-            return new DuoSecurityPrepareWebLoginFormAction();
+        public Action prepareDuoWebLoginFormAction(
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(Action.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(DuoSecurityPrepareWebLoginFormAction::new)
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action determineDuoUserAccountAction() {
-            return new DuoSecurityDetermineUserAccountAction();
+        public Action determineDuoUserAccountAction(
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(Action.class)
+                .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(DuoSecurityDetermineUserAccountAction::new)
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -232,13 +290,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext) {
+        public DuoSecurityUserAccountStatusEndpoint duoAccountStatusEndpoint(final CasConfigurationProperties casProperties,
+                                                                             final ConfigurableApplicationContext applicationContext) {
             return new DuoSecurityUserAccountStatusEndpoint(casProperties, applicationContext);
         }
 
         @Bean
         @ConditionalOnAvailableEndpoint
-        @ConditionalOnDuoSecurityAdminApiConfigured
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DuoSecurityAdminApiEndpoint duoAdminApiEndpoint(final CasConfigurationProperties casProperties,
                                                                final ConfigurableApplicationContext applicationContext) {

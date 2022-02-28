@@ -2,14 +2,19 @@ package org.apereo.cas.util.spring.beans;
 
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.PropertyResolver;
 
 import java.io.Serializable;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link BeanCondition}.
@@ -76,6 +81,14 @@ public interface BeanCondition {
     BeanCondition isUrl();
 
     /**
+     * And another condition into the current chan.
+     *
+     * @param name the name
+     * @return the bean condition
+     */
+    BeanCondition and(String name);
+
+    /**
      * To supplier supplier.
      *
      * @param applicationContext the application context
@@ -83,8 +96,8 @@ public interface BeanCondition {
      */
     Supplier<Boolean> given(PropertyResolver applicationContext);
 
-    @RequiredArgsConstructor
-    class PropertyBeanCondition implements BeanCondition {
+    @Data
+    class Condition {
         private final String propertyName;
 
         private boolean matchIfMissing;
@@ -96,55 +109,88 @@ public interface BeanCondition {
         private boolean exists;
 
         private boolean url;
+    }
+
+    @RequiredArgsConstructor
+    class PropertyBeanCondition implements BeanCondition {
+        private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
+
+        private final Deque<Condition> conditionList = new ArrayDeque<>();
+
+        PropertyBeanCondition(final String name) {
+            conditionList.push(new Condition(name));
+        }
+
+        private static String resolvePropertyValue(final PropertyResolver propertyResolver, final Condition condition) {
+            try {
+                val result = propertyResolver.getProperty(condition.getPropertyName(), condition.getDefaultValue());
+                return SpringExpressionLanguageValueResolver.getInstance().resolve(result);
+            } catch (final IllegalArgumentException e) {
+                var placeholder = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+                val matcher = EXPRESSION_PATTERN.matcher(placeholder);
+                if (matcher.find()) {
+                    val match = matcher.group();
+                    val result = SpringExpressionLanguageValueResolver.getInstance().resolve(match);
+                    return placeholder.replaceAll(matcher.pattern().pattern(), result);
+                }
+                return null;
+            }
+        }
 
         @Override
         public BeanCondition evenIfMissing() {
-            this.matchIfMissing = true;
+            conditionList.peek().setMatchIfMissing(true);
             return this;
         }
 
         @Override
         public BeanCondition withDefaultValue(final String value) {
-            this.defaultValue = value;
+            conditionList.peek().setDefaultValue(value);
             return this;
         }
 
         @Override
         public BeanCondition havingValue(final Serializable value) {
-            this.havingValue = value;
+            conditionList.peek().setHavingValue(value);
             return this;
         }
 
         @Override
         public BeanCondition exists() {
-            this.exists = true;
+            conditionList.peek().setExists(true);
             return this;
         }
 
         @Override
         public BeanCondition isUrl() {
-            this.url = true;
+            conditionList.peek().setUrl(true);
+            return this;
+        }
+
+        @Override
+        public BeanCondition and(final String name) {
+            conditionList.push(new Condition(name));
             return this;
         }
 
         @Override
         public Supplier<Boolean> given(final PropertyResolver propertyResolver) {
-            return () -> {
-                if (matchIfMissing && !propertyResolver.containsProperty(this.propertyName)) {
+            return () -> conditionList.stream().allMatch(condition -> {
+                if (condition.isMatchIfMissing() && !propertyResolver.containsProperty(condition.getPropertyName())) {
                     return true;
                 }
-                val result = propertyResolver.getProperty(propertyName, defaultValue);
-                if (havingValue != null) {
-                    return havingValue.toString().equalsIgnoreCase(result);
+                val result = resolvePropertyValue(propertyResolver, condition);
+                if (condition.getHavingValue() != null) {
+                    return condition.getHavingValue().toString().equalsIgnoreCase(result);
                 }
-                if (url && StringUtils.isNotBlank(result)) {
+                if (condition.isUrl() && StringUtils.isNotBlank(result)) {
                     return RegexUtils.find("^https*:\\/\\/.+", result);
                 }
-                if (exists) {
+                if (condition.isExists()) {
                     return ResourceUtils.doesResourceExist(result);
                 }
                 return StringUtils.isNotBlank(result);
-            };
+            });
         }
     }
 }

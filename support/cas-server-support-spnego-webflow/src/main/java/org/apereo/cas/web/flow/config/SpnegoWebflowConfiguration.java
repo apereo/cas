@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -27,6 +29,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration(value = "SpnegoWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SPNEGO)
 public class SpnegoWebflowConfiguration {
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
