@@ -44,8 +44,7 @@ import static org.mockito.Mockito.*;
     SamlIdPAuthenticationServiceSelectionStrategyConfiguration.class,
     SamlIdPMetadataConfiguration.class,
     SamlIdPEndpointsConfiguration.class,
-    SamlIdPWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    SamlIdPWebflowConfiguration.class
 })
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 

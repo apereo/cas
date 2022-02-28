@@ -2,8 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.webauthn.MongoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 
@@ -15,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbWebAuthnConfiguration}.
@@ -25,6 +27,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MongoDbWebAuthnConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -35,7 +38,7 @@ public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoTemplate mongoWebAuthnTemplate(
+    public MongoOperations mongoWebAuthnTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -48,11 +51,12 @@ public class MongoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
-                                                                     @Qualifier("mongoWebAuthnTemplate")
-                                                                     final MongoTemplate mongoWebAuthnTemplate,
-                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoWebAuthnTemplate")
+        final MongoOperations mongoWebAuthnTemplate,
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         return new MongoDbWebAuthnCredentialRepository(mongoWebAuthnTemplate, casProperties, webAuthnCredentialRegistrationCipherExecutor);
     }
 }

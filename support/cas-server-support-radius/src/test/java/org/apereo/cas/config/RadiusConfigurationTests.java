@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.radius.RadiusServer;
-import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -9,7 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
@@ -97,7 +96,7 @@ public class RadiusConfigurationTests {
 
     @Autowired
     @Qualifier("radiusServer")
-    private AbstractRadiusServer radiusServer;
+    private RadiusServer radiusServer;
 
     @Test
     public void emptyAddress() {

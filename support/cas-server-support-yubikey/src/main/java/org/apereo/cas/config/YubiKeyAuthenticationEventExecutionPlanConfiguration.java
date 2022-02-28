@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -124,13 +125,14 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubiKeyAccountRegistry")
-    public YubiKeyAccountRegistry yubiKeyAccountRegistry(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("yubiKeyAccountValidator")
-                                                         final YubiKeyAccountValidator yubiKeyAccountValidator,
-                                                         @Qualifier("yubicoClient")
-                                                         final YubicoClient yubicoClient,
-                                                         @Qualifier("yubikeyAccountCipherExecutor")
-                                                         final CipherExecutor yubikeyAccountCipherExecutor) {
+    public YubiKeyAccountRegistry yubiKeyAccountRegistry(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubiKeyAccountValidator")
+        final YubiKeyAccountValidator yubiKeyAccountValidator,
+        @Qualifier("yubicoClient")
+        final YubicoClient yubicoClient,
+        @Qualifier("yubikeyAccountCipherExecutor")
+        final CipherExecutor yubikeyAccountCipherExecutor) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
@@ -165,23 +167,26 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @ConditionalOnAvailableEndpoint
-    public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("yubiKeyAccountRegistry")
-                                                                         final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubiKeyAccountRegistry")
+        final ObjectProvider<YubiKeyAccountRegistry> yubiKeyAccountRegistry) {
         return new YubiKeyAccountRegistryEndpoint(casProperties, yubiKeyAccountRegistry);
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                      @Qualifier("yubicoClient")
-                                                                                      final YubicoClient yubicoClient,
-                                                                                      @Qualifier("httpClient")
-                                                                                      final HttpClient httpClient,
-                                                                                      @Qualifier("yubikeyBypassEvaluator")
-                                                                                      final MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator,
-                                                                                      @Qualifier("failureModeEvaluator")
-                                                                                      final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+    public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubicoClient")
+        final YubicoClient yubicoClient,
+        @Qualifier("httpClient")
+        final HttpClient httpClient,
+        @Qualifier("yubikeyBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient, httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator);
@@ -194,11 +199,13 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
-                                                                                                        @Qualifier("yubikeyAuthenticationHandler")
-                                                                                                        final AuthenticationHandler yubikeyAuthenticationHandler,
-                                                                                                        @Qualifier("yubikeyAuthenticationMetaDataPopulator")
-                                                                                                        final AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationEventExecutionPlanConfigurer yubikeyAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("yubikeyAuthenticationHandler")
+        final AuthenticationHandler yubikeyAuthenticationHandler,
+        @Qualifier("yubikeyAuthenticationMetaDataPopulator")
+        final AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator) {
         return plan -> {
             val yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {

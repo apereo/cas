@@ -14,9 +14,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -31,7 +33,7 @@ import java.util.List;
  */
 @Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnBean(name = "authenticationThrottlingExecutionPlan")
+@ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
 public class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)
@@ -41,7 +43,7 @@ public class OidcThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
         public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
@@ -61,6 +63,7 @@ public class OidcThrottleConfiguration {
     public static class OidcThrottleExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "oidcAuthenticationThrottlingExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationThrottlingExecutionPlanConfigurer oidcAuthenticationThrottlingExecutionPlanConfigurer(
             @Qualifier("oidcThrottledRequestFilter")
             final ThrottledRequestFilter oidcThrottledRequestFilter) {
@@ -84,6 +87,7 @@ public class OidcThrottleConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottledRequestFilter")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledRequestFilter oidcThrottledRequestFilter(
             @Qualifier("oidcRequestSupport")
             final OidcRequestSupport oidcRequestSupport) {

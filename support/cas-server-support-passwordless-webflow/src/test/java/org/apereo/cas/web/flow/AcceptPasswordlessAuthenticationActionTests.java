@@ -38,7 +38,7 @@ public class AcceptPasswordlessAuthenticationActionTests extends BasePasswordles
     private Action acceptPasswordlessAuthenticationAction;
 
     @Autowired
-    @Qualifier("passwordlessTokenRepository")
+    @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test

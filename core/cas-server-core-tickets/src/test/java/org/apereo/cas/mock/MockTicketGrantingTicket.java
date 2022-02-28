@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -43,7 +42,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(of = "id")
 @SuppressWarnings("JdkObsolete")
-public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
+public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 

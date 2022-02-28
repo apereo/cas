@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.BaseGrouperConfigurationTests;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;

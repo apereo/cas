@@ -11,6 +11,7 @@ const cas = require('../../cas.js');
 
     await cas.assertVisibility(page, '#twitter-link')
     await cas.assertVisibility(page, '#youtube-link')
+    await cas.assertInvisibility(page, '#pmlinks')
 
     const imgs = await page.$$eval('#cas-logo',
         imgs => imgs.map(img => img.getAttribute('src')));

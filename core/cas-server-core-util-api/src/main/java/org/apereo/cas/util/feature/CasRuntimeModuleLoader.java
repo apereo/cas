@@ -15,6 +15,7 @@ public interface CasRuntimeModuleLoader {
      * Load modules.
      *
      * @return the list
+     * @throws Exception the exception
      */
-    List<CasRuntimeModule> load();
+    List<CasRuntimeModule> load() throws Exception;
 }

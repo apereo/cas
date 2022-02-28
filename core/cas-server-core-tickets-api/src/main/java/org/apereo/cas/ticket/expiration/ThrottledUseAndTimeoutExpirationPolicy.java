@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
-import org.apereo.cas.ticket.TicketState;
+
+
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,7 +50,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val currentTime = ZonedDateTime.now(getClock());

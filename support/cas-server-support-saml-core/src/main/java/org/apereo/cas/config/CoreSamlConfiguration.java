@@ -20,10 +20,12 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ public class CoreSamlConfiguration {
     }
 
     @Lazy
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {"shibboleth.VelocityEngine", "velocityEngineFactoryBean", "velocityEngineFactory"})
     @ConditionalOnMissingBean(name = "velocityEngineFactoryBean")
     public VelocityEngine velocityEngineFactoryBean() {
@@ -65,6 +68,7 @@ public class CoreSamlConfiguration {
         return new VelocityEngine(properties);
     }
 
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {OpenSamlConfigBean.DEFAULT_BEAN_NAME, OpenSamlConfigBean.DEFAULT_BEAN_NAME})
     public OpenSamlConfigBean openSamlConfigBean(
         @Qualifier("shibboleth.ParserPool")
@@ -72,6 +76,7 @@ public class CoreSamlConfiguration {
         return new OpenSamlConfigBean(parserPool);
     }
 
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean(name = {"shibboleth.ParserPool", "basicParserPool"}, initMethod = "initialize")
     public BasicParserPool parserPool(final CasConfigurationProperties casProperties) throws Exception {
         val pool = new BasicParserPool();

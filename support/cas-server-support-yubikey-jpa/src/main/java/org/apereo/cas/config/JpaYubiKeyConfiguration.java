@@ -10,7 +10,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -54,12 +53,14 @@ public class JpaYubiKeyConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaYubiKeyPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaYubiKeyAccount.class.getPackage().getName()));
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public EntityManagerFactory yubiKeyEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceYubiKey")
             final DataSource dataSourceYubiKey,
@@ -68,14 +69,15 @@ public class JpaYubiKeyConfiguration {
             @Qualifier("jpaYubiKeyVendorAdapter")
             final JpaVendorAdapter jpaYubiKeyVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceYubiKey)
                 .packagesToScan(jpaYubiKeyPackagesToScan.toSet())
                 .persistenceUnitName("jpaYubiKeyRegistryContext")
                 .jpaVendorAdapter(jpaYubiKeyVendorAdapter)
                 .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getAuthn().getMfa().getYubikey().getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                casProperties.getAuthn().getMfa().getYubikey().getJpa()).getObject();
         }
 
     }
@@ -84,6 +86,7 @@ public class JpaYubiKeyConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaYubiKeyTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerYubiKey(
             @Qualifier("yubiKeyEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -91,9 +94,7 @@ public class JpaYubiKeyConfiguration {
             mgmr.setEntityManagerFactory(emf);
             return mgmr;
         }
-
     }
-
 
     @Configuration(value = "JpaYubiKeyRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)

@@ -23,7 +23,7 @@ properties = {
     "cas.authn.pac4j.saml[0].service-provider-metadata-path=/tmo/sp-metadata.xml",
     "cas.authn.pac4j.saml[0].identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
 })
-@Tag("SAML")
+@Tag("SAML2")
 public class DelegatedSaml2ClientMetadataControllerTests {
     @Autowired
     @Qualifier("delegatedSaml2ClientMetadataController")

@@ -4,8 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -79,8 +79,8 @@ public abstract class BaseSingleSignOnParticipationStrategy implements SingleSig
      * @param ssoRequest the sso request
      * @return the ticket state
      */
-    protected Optional<TicketState> getTicketState(final SingleSignOnParticipationRequest ssoRequest) {
+    protected Optional<Ticket> getTicketState(final SingleSignOnParticipationRequest ssoRequest) {
         val tgtId = getTicketGrantingTicketId(ssoRequest).orElse(StringUtils.EMPTY);
-        return Optional.ofNullable(ticketRegistrySupport.getTicketState(tgtId));
+        return Optional.ofNullable(ticketRegistrySupport.getTicket(tgtId));
     }
 }

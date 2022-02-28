@@ -26,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DigestAuthenticationConfiguration.class,
     DigestAuthenticationComponentSerializationConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
 public class DigestAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

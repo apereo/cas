@@ -20,9 +20,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.mongo.CasMongoOperations;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -35,7 +36,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Date;
 import java.util.Map;
@@ -91,7 +91,7 @@ public class MongoDbHealthIndicatorTests {
 
     @Autowired
     @Qualifier("mongoHealthIndicatorTemplate")
-    private BeanContainer<MongoTemplate> mongoHealthIndicatorTemplate;
+    private BeanContainer<CasMongoOperations> mongoHealthIndicatorTemplate;
 
     @BeforeEach
     public void bootstrap() {

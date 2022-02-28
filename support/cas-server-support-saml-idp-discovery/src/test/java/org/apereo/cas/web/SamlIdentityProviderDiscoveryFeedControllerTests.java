@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @SpringBootTest(classes = {
     BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     SamlIdentityProviderDiscoveryConfiguration.class

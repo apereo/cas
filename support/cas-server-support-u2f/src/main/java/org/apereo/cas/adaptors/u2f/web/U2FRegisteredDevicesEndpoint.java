@@ -8,6 +8,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -26,10 +27,10 @@ import java.util.stream.Collectors;
  */
 @Endpoint(id = "u2fDevices", enableByDefault = false)
 public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
-    private final U2FDeviceRepository u2fDeviceRepository;
+    private final ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
 
     public U2FRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
-                                        final U2FDeviceRepository u2fDeviceRepository) {
+                                        final ObjectProvider<U2FDeviceRepository> u2fDeviceRepository) {
         super(casProperties);
         this.u2fDeviceRepository = u2fDeviceRepository;
     }
@@ -42,9 +43,9 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all registered devices")
     public Collection<? extends U2FDeviceRegistration> fetchAll() {
-        return u2fDeviceRepository.getRegisteredDevices()
+        return u2fDeviceRepository.getObject().getRegisteredDevices()
             .stream()
-            .map(u2fDeviceRepository::decode)
+            .map(u2fDeviceRepository.getObject()::decode)
             .collect(Collectors.toList());
     }
 
@@ -57,9 +58,9 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all registered devices for the user", parameters = {@Parameter(name = "username", required = true)})
     public Collection<? extends U2FDeviceRegistration> fetchBy(@Selector final String username) {
-        return u2fDeviceRepository.getRegisteredDevices(username)
+        return u2fDeviceRepository.getObject().getRegisteredDevices(username)
             .stream()
-            .map(u2fDeviceRepository::decode)
+            .map(u2fDeviceRepository.getObject()::decode)
             .collect(Collectors.toList());
     }
 
@@ -71,8 +72,8 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     @DeleteOperation
     @Operation(summary = "Delete all registered devices", parameters = {@Parameter(name = "username", required = true)})
     public void delete(@Selector final String username) {
-        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
-        registeredDevices.forEach(u2fDeviceRepository::deleteRegisteredDevice);
+        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getObject().getRegisteredDevices(username));
+        registeredDevices.forEach(u2fDeviceRepository.getObject()::deleteRegisteredDevice);
     }
 
     /**
@@ -84,10 +85,10 @@ public class U2FRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     @DeleteOperation
     @Operation(summary = "Delete registered device for username and device")
     public void delete(@Selector final String username, @Selector final Long id) {
-        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getRegisteredDevices(username));
+        val registeredDevices = new ArrayList<>(u2fDeviceRepository.getObject().getRegisteredDevices(username));
         registeredDevices
             .stream()
             .filter(d -> d.getId() == id)
-            .forEach(u2fDeviceRepository::deleteRegisteredDevice);
+            .forEach(u2fDeviceRepository.getObject()::deleteRegisteredDevice);
     }
 }

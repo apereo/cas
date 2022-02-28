@@ -15,8 +15,10 @@ import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfi
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasOAuth20TicketSerializationConfiguration}.
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasOAuth20TicketSerializationConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketSerializationExecutionPlanConfigurer oauthTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new OAuthCodeTicketStringSerializer());

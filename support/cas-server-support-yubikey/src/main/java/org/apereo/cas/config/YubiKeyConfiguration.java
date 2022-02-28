@@ -29,6 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class YubiKeyConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
     public PlatformTransactionManager transactionManagerYubiKey() {
         return new PseudoPlatformTransactionManager();

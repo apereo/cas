@@ -80,7 +80,7 @@ The CAS application packages third party static resources inside the CAS webapp 
 than referencing CDN links so that CAS may be deployed on 
 networks with limited internet access.
 
-The 3rd party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
+The Third party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.
 
 For developers modifying CAS, if adding or modifying a 3rd party library, the steps are:
@@ -106,6 +106,10 @@ Then Reference the entry from `cas_common_messages.properties` in the relevant v
 ```html
 <script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
 ```
+     
+Please note that CAS allows you to use version agnostic URLs for Webjars. Using jQuery as an example, 
+accessing `/webjars/jquery/jquery.min.js` results in `/webjars/jquery/x.y.z/jquery.min.js` 
+where `x.y.z` is the webjar version.
 
 #### Building WebJARs
 

@@ -4,7 +4,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.RootCasException;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -38,7 +37,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
             accountRegTicket = centralAuthenticationService.getTicket(activationToken, TransientSessionTicket.class);
             val token = accountRegTicket.getProperty(AccountRegistrationUtils.PROPERTY_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN, String.class);
             val registrationRequest = accountRegistrationService.validateToken(token);
-            ((TicketState) accountRegTicket).update();
+            accountRegTicket.update();
 
             val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);

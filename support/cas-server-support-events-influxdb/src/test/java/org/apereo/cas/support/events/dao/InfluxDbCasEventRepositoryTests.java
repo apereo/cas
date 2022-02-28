@@ -34,7 +34,7 @@ public class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryT
     private InfluxDbConnectionFactory influxDbEventsConnectionFactory;
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
     @BeforeEach

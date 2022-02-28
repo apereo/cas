@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.surrogate.SurrogateCouchDbAuthenticationSer
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbProfileAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultProfileCouchDbRepository;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.couchdb.surrogate.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
@@ -37,7 +39,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     public CouchDbConnectorFactory surrogateCouchDbFactory(final CasConfigurationProperties casProperties,
                                                            @Qualifier("defaultObjectMapperFactory")
                                                            final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getSurrogate().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "surrogateCouchDbInstance")
@@ -75,22 +77,24 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
                                                                                    @Qualifier("surrogateCouchDbFactory")
                                                                                    final CouchDbConnectorFactory surrogateCouchDbFactory) {
         val couch = casProperties.getAuthn().getSurrogate().getCouchDb();
-        return new ProfileCouchDbRepository(surrogateCouchDbFactory.getCouchDbConnector(), couch.isCreateIfNotExists());
+        return new DefaultProfileCouchDbRepository(surrogateCouchDbFactory.getCouchDbConnector(), couch.isCreateIfNotExists());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSurrogateAuthenticationService")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SurrogateAuthenticationService surrogateAuthenticationService(final CasConfigurationProperties casProperties,
-                                                                         @Qualifier("surrogateAuthorizationProfileCouchDbRepository")
-                                                                         final ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository,
-                                                                         @Qualifier("surrogateAuthorizationCouchDbRepository")
-                                                                         final SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository,
-                                                                         @Qualifier(ServicesManager.BEAN_NAME)
-                                                                         final ServicesManager servicesManager) {
+    public SurrogateAuthenticationService surrogateAuthenticationService(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("surrogateAuthorizationProfileCouchDbRepository")
+        final ProfileCouchDbRepository surrogateAuthorizationProfileCouchDbRepository,
+        @Qualifier("surrogateAuthorizationCouchDbRepository")
+        final SurrogateAuthorizationCouchDbRepository surrogateAuthorizationCouchDbRepository,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         val couchDb = casProperties.getAuthn().getSurrogate().getCouchDb();
         if (couchDb.isProfileBased()) {
-            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository, couchDb.getSurrogatePrincipalsAttribute(), servicesManager);
+            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository,
+                couchDb.getSurrogatePrincipalsAttribute(), servicesManager);
         }
         return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository, servicesManager);
     }

@@ -23,16 +23,19 @@ public interface SamlRegisteredServiceMetadataResolver {
      * @param service     the service
      * @param criteriaSet the criteria set
      * @return the list
+     * @throws Exception the exception
      */
-    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service, CriteriaSet criteriaSet);
+    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service,
+                                                   CriteriaSet criteriaSet) throws Exception;
 
     /**
      * Resolve list.
      *
      * @param service the service
      * @return the collection
+     * @throws Exception the exception
      */
-    default Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+    default Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) throws Exception {
         return resolve(service, new CriteriaSet());
     }
 

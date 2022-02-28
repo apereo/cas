@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.ToString;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ToString
-public abstract class BaseOneTimeTokenRepository implements OneTimeTokenRepository {
+public abstract class BaseOneTimeTokenRepository<T extends OneTimeToken> implements OneTimeTokenRepository<T> {
     @Override
     public final void clean() {
         LOGGER.debug("Starting to clean expiring and previously used google authenticator tokens");

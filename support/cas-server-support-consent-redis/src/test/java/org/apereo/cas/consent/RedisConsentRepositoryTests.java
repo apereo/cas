@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RedisConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @Test

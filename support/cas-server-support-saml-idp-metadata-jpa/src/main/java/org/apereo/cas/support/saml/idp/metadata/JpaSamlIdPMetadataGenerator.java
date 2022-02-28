@@ -14,7 +14,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,13 +29,13 @@ import java.util.Optional;
 @EnableTransactionManagement
 @Transactional(transactionManager = "transactionManagerSamlMetadataIdP")
 public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     @PersistenceContext(unitName = "samlMetadataIdPEntityManagerFactory")
     private transient EntityManager entityManager;
 
     public JpaSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
-                                       final TransactionTemplate transactionTemplate) {
+                                       final TransactionOperations transactionTemplate) {
         super(context);
         this.transactionTemplate = transactionTemplate;
     }

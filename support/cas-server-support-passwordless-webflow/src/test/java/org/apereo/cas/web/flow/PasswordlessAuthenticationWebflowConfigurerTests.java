@@ -35,7 +35,6 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Import({
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     PasswordlessAuthenticationWebflowConfigurerTests.PasswordlessAuthenticationTestConfiguration.class,
     WebMvcAutoConfiguration.class,
     MockMvcAutoConfiguration.class,

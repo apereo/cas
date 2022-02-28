@@ -39,7 +39,7 @@ import java.util.Optional;
 @EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
-public abstract class AbstractTicket implements Ticket, TicketState {
+public abstract class AbstractTicket implements Ticket, AuthenticationAwareTicket, TicketGrantingTicketAwareTicket {
 
     private static final long serialVersionUID = -8506442397878267555L;
 
@@ -136,7 +136,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     protected void updateTicketGrantingTicketState() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
-            val state = TicketState.class.cast(ticketGrantingTicket);
+            val state = Ticket.class.cast(ticketGrantingTicket);
             state.update();
         }
     }

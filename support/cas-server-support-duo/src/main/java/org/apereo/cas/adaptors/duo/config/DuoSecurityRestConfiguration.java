@@ -27,6 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class DuoSecurityRestConfiguration {
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer duoSecurityRestHttpRequestCredentialFactoryConfigurer(
         @Qualifier("duoSecurityRestHttpRequestCredentialFactory")

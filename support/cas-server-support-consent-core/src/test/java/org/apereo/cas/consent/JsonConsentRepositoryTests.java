@@ -13,6 +13,7 @@ import org.springframework.core.io.FileSystemResource;
 import java.io.File;
 import java.util.UUID;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @Test
@@ -38,7 +39,7 @@ public class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
         val decision = repo.storeConsentDecision(BUILDER.build(SVC, REG_SVC, user, ATTR));
         assertNotNull(decision);
         assertTrue(decision.getId() > 0);
-        assertTrue(repo.findConsentDecisions(user).stream().anyMatch(c -> c.getId() == decision.getId()));
+        await().untilAsserted(() -> assertTrue(repo.findConsentDecisions(user).stream().anyMatch(c -> c.getId() == decision.getId())));
     }
 
     @Test

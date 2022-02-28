@@ -8,6 +8,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,9 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationRiskEvaluator}.
@@ -38,14 +40,27 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
     public AuthenticationRiskScore eval(final Authentication authentication,
                                         final RegisteredService service,
                                         final HttpServletRequest request) {
-        if (this.calculators.isEmpty()) {
+
+        val activeCalculators = this.calculators
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
+
+        if (activeCalculators.isEmpty()) {
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
         }
 
-        val scores = new ArrayList<AuthenticationRiskScore>(this.calculators.size());
-        this.calculators.forEach(r -> scores.add(r.calculate(authentication, service, request)));
-        val sum = scores.stream().map(AuthenticationRiskScore::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
-        val score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, RoundingMode.UP);
+        val scores = activeCalculators
+            .stream()
+            .map(r -> r.calculate(authentication, service, request))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        val sum = scores.stream()
+            .map(AuthenticationRiskScore::getScore)
+            .filter(Objects::nonNull)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        val score = sum.divide(BigDecimal.valueOf(activeCalculators.size()), 2, RoundingMode.UP);
         return new AuthenticationRiskScore(score);
     }
 }

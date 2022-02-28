@@ -87,12 +87,14 @@ public class PasswordManagementConfiguration {
     public static class PasswordManagementAuditConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementReturnValueResourceResolver")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditResourceResolver passwordManagementReturnValueResourceResolver() {
             return new ShortenedReturnValueAsStringAuditResourceResolver();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "passwordManagementAuditTrailRecordResolutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("returnValueResourceResolver")
             final AuditResourceResolver returnValueResourceResolver) {

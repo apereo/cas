@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,14 +23,18 @@ public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecu
 
     @Override
     public ServiceRegistryExecutionPlan registerServiceRegistry(final ServiceRegistry registry) {
-        LOGGER.trace("Registering service registry [{}] into the execution plan", registry.getName());
-        serviceRegistries.add(registry);
+        if (BeanSupplier.isNotProxy(registry)) {
+            LOGGER.trace("Registering service registry [{}] into the execution plan", registry.getName());
+            serviceRegistries.add(registry);
+        }
         return this;
     }
 
     @Override
     public Collection<ServiceRegistry> find(final Predicate<ServiceRegistry> typeFilter) {
-        return serviceRegistries.stream()
+        return serviceRegistries
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(typeFilter)
             .collect(Collectors.toList());
     }

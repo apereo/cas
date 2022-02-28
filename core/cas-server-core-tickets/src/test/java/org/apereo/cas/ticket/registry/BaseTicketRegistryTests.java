@@ -77,6 +77,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
@@ -278,22 +279,24 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyAddAndUpdateTicket() throws Exception {
-        TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
+        val tgt = new TicketGrantingTicketImpl(
             ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(tgt);
 
-        tgt = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertNotNull(tgt, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
-        assertTrue(tgt.getServices().isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
+        await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class)));
 
+        val found = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+        assertNotNull(found, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
+        assertTrue(found.getServices().isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
+        
         tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
             NeverExpiresExpirationPolicy.INSTANCE, false, false);
         ticketRegistry.updateTicket(tgt);
 
-        tgt = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
-        assertEquals(Collections.singleton("ST1"), tgt.getServices().keySet());
+        val tgtResult = ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+        assertEquals(Collections.singleton("ST1"), tgtResult.getServices().keySet());
     }
 
     @RepeatedTest(2)
@@ -506,7 +509,7 @@ public abstract class BaseTicketRegistryTests {
         assertEquals(a, pgt.getAuthentication());
         assertNotNull(ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class));
 
-        assertTrue(ticketRegistry.deleteTicket(tgt.getId()) > 0);
+        await().untilAsserted(() -> assertTrue(ticketRegistry.deleteTicket(tgt.getId()) > 0));
 
         assertNull(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
         assertNull(ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class));

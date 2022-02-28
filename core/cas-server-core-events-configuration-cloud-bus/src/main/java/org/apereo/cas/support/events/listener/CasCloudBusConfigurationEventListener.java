@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
  * @author Hal Deadman
  * @since 6.5.0
  */
+@FunctionalInterface
 public interface CasCloudBusConfigurationEventListener extends CasEventListener {
 
     /**

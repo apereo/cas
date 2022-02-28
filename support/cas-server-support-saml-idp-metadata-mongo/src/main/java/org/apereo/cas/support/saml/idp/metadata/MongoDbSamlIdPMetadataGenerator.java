@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.Optional;
 
@@ -19,12 +19,12 @@ import java.util.Optional;
  * @since 6.0.0
  */
 public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator implements InitializingBean {
-    private final transient MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final String collectionName;
 
     public MongoDbSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
-                                           final MongoTemplate mongoTemplate, final String collectionName) {
+                                           final MongoOperations mongoTemplate, final String collectionName) {
         super(samlIdPMetadataGeneratorConfigurationContext);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;

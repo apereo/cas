@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -46,13 +47,10 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    /**
-     * The Registry.
-     */
-    private final YubiKeyAccountRegistry registry;
+    private final ObjectProvider<YubiKeyAccountRegistry> registry;
 
     public YubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
-                                          final YubiKeyAccountRegistry registry) {
+                                          final ObjectProvider<YubiKeyAccountRegistry> registry) {
         super(casProperties);
         this.registry = registry;
     }
@@ -67,7 +65,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Get Yubikey account for username",
         parameters = {@Parameter(name = "username", required = true)})
     public YubiKeyAccount get(@PathVariable final String username) {
-        val result = registry.getAccount(username);
+        val result = registry.getObject().getAccount(username);
         return result.orElse(null);
     }
 
@@ -79,7 +77,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all Yubikey accounts")
     public Collection<? extends YubiKeyAccount> load() {
-        return registry.getAccounts();
+        return registry.getObject().getAccounts();
     }
 
     /**
@@ -90,7 +88,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete Yubikey account for username", parameters = {@Parameter(name = "username", required = true)})
     public void delete(@PathVariable final String username) {
-        registry.delete(username);
+        registry.getObject().delete(username);
     }
 
     /**
@@ -99,7 +97,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete all Yubikey accounts")
     public void deleteAll() {
-        registry.deleteAll();
+        registry.getObject().deleteAll();
     }
 
     /**
@@ -111,7 +109,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export all Yubikey accounts as a zip file")
     public ResponseEntity<Resource> export() {
-        val accounts = registry.getAccounts();
+        val accounts = registry.getObject().getAccounts();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
                 val acct = (YubiKeyAccount) entry;
@@ -141,7 +139,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
         val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyAccount>() {
         });
         LOGGER.trace("Storing account: [{}]", account);
-        registry.save(account);
+        registry.getObject().save(account);
         return HttpStatus.CREATED;
     }
 }

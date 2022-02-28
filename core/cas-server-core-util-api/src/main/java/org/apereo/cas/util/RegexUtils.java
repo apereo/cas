@@ -140,7 +140,7 @@ public class RegexUtils {
      * @return true/false
      */
     public static boolean find(final String pattern, final String string) {
-        return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+        return StringUtils.isNotBlank(string) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
     }
 
 }

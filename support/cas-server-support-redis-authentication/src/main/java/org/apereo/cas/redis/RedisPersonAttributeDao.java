@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -13,7 +14,6 @@ import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.CaseInsensitiveNamedPersonImpl;
 import org.apereo.services.persondir.support.IUsernameAttributeProvider;
 import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -34,7 +34,7 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
     @Setter
     private IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
-    private final RedisTemplate redisTemplate;
+    private final CasRedisTemplate redisTemplate;
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
         val entries = (Set<? extends Map.Entry<String, ?>>) personAttributesMap.entrySet();

@@ -30,8 +30,8 @@ public class DefaultTicketRegistrySupportTests {
         val tgt = new MockTicketGrantingTicket("casuser", Map.of("name", List.of("CAS")));
         registry.addTicket(tgt);
         val support = new DefaultTicketRegistrySupport(registry);
-        assertNotNull(support.getTicketState(tgt.getId()));
-        assertNull(support.getTicketState(null));
+        assertNotNull(support.getTicket(tgt.getId()));
+        assertNull(support.getTicket(null));
         assertNull(support.getAuthenticationFrom(null));
         assertFalse(support.getPrincipalAttributesFrom(tgt.getId()).isEmpty());
 

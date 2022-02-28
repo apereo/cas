@@ -90,7 +90,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                        final OAuth20ResponseTypes responseType,
                                        final OAuth20GrantTypes grantType) {
         val authentication = accessToken.getAuthentication();
-        val principal = this.getConfigurationContext().getProfileScopeToAttributesFilter()
+        val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
             .filter(accessToken.getService(), authentication.getPrincipal(), service, accessToken);
         LOGGER.debug("Principal to use to build th ID token is [{}]", principal);
 

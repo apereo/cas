@@ -2,11 +2,13 @@ package org.apereo.cas.config.pm;
 
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
@@ -33,6 +36,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "JdbcPasswordManagementConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "jdbc")
 public class JdbcPasswordManagementConfiguration {
 
     @Configuration(value = "JdbcPasswordManagementServiceConfiguration", proxyBeanMethods = false)
@@ -47,7 +51,7 @@ public class JdbcPasswordManagementConfiguration {
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource,
             @Qualifier("jdbcPasswordManagementTransactionTemplate")
-            final TransactionTemplate jdbcPasswordManagementTransactionTemplate,
+            final TransactionOperations jdbcPasswordManagementTransactionTemplate,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
             @Qualifier("passwordHistoryService")
@@ -58,7 +62,6 @@ public class JdbcPasswordManagementConfiguration {
                 casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
                 jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
         }
-
     }
 
     @Configuration(value = "JdbcPasswordManagementDataConfiguration", proxyBeanMethods = false)
@@ -76,6 +79,7 @@ public class JdbcPasswordManagementConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JdbcPasswordManagementTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager jdbcPasswordManagementTransactionManager(
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource) {
@@ -84,7 +88,8 @@ public class JdbcPasswordManagementConfiguration {
 
         @ConditionalOnMissingBean(name = "jdbcPasswordManagementTransactionTemplate")
         @Bean
-        public TransactionTemplate jdbcPasswordManagementTransactionTemplate(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TransactionOperations jdbcPasswordManagementTransactionTemplate(
             final CasConfigurationProperties casProperties,
             @Qualifier("jdbcPasswordManagementTransactionManager")
             final PlatformTransactionManager jdbcPasswordManagementTransactionManager) {

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHibernateJpaConfiguration.class,
     JpaServiceRegistryConfiguration.class
 })
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "cas.service-registry.jpa.ddl-auto=create-drop",
     "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"

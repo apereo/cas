@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 public class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");

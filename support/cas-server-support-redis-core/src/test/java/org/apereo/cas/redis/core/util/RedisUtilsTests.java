@@ -41,12 +41,12 @@ public class RedisUtilsTests {
         val connection = RedisObjectFactory.newRedisConnectionFactory(casProperties.getAudit().getRedis(), true,
             CasSSLContext.disabled());
         val template = RedisObjectFactory.<String, Object>newRedisTemplate(Objects.requireNonNull(connection));
-        template.afterPropertiesSet();
+        template.initialize();
         val redisKeyPrefix = "CAS_TEST:";
         val keySize = 10;
         val scanCount = 1000;
         IntStream.range(0, keySize).forEach(i -> template.boundValueOps(redisKeyPrefix + i).set("TEST"));
-        val keys = RedisUtils.keys(template, redisKeyPrefix + '*', scanCount);
+        val keys = template.keys(redisKeyPrefix + '*', scanCount);
         assertEquals(keySize, keys.count());
     }
 }

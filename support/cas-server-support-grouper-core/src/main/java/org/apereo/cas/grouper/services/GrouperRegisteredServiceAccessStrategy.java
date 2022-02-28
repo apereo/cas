@@ -1,5 +1,6 @@
 package org.apereo.cas.grouper.services;
 
+import org.apereo.cas.grouper.DefaultGrouperFacade;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
@@ -90,6 +91,6 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
         if (!this.configProperties.isEmpty()) {
             GrouperClientConfig.retrieveConfig().propertiesThreadLocalOverrideMap().putAll(this.configProperties);
         }
-        return new GrouperFacade().getGroupsForSubjectId(principal);
+        return new DefaultGrouperFacade().getGroupsForSubjectId(principal);
     }
 }

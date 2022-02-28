@@ -9,25 +9,22 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
-import com.hazelcast.query.extractor.ValueCollector;
-import com.hazelcast.query.extractor.ValueExtractor;
-import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
 import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
 import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
 import java.time.Duration;
-import java.util.Optional;
 
 /**
  * This is {@link HazelcastSessionConfiguration}.
@@ -53,6 +50,7 @@ public class HazelcastSessionConfiguration {
      * @return the hazelcast instance
      */
     @Bean(destroyMethod = "shutdown")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties,
                                                final HazelcastSessionProperties hazelcastSessionProperties,
                                                final SessionProperties sessionProperties,
@@ -81,13 +79,5 @@ public class HazelcastSessionConfiguration {
         }
         HazelcastConfigurationFactory.setConfigMap(mapConfig, hazelcastInstance.getConfig());
         return hazelcastInstance;
-    }
-
-    @NoArgsConstructor
-    public static class HazelcastSessionPrincipalNameExtractor implements ValueExtractor<MapSession, String> {
-        public void extract(final MapSession target, final String argument, final ValueCollector collector) {
-            Optional.ofNullable(target.getAttribute(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME))
-                .ifPresent(collector::addObject);
-        }
     }
 }

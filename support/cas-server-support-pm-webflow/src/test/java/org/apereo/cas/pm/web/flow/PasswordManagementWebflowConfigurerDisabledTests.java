@@ -39,8 +39,7 @@ import static org.mockito.Mockito.*;
 @Import({
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
-    PasswordManagementForgotUsernameConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    PasswordManagementForgotUsernameConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.security-questions-enabled=false",

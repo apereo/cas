@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -27,10 +27,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
-    private final transient MongoTemplate mongoTemplate;
+    private final transient MongoOperations mongoTemplate;
     private final String collectionName;
 
-    public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName, final boolean asynchronous) {
+    public MongoDbAuditTrailManager(final MongoOperations mongoTemplate, final String collectionName, final boolean asynchronous) {
         super(asynchronous);
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;

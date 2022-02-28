@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,7 +34,7 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = 3833747698242303540L;
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         return false;
     }
 

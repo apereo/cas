@@ -51,6 +51,7 @@ public class CasBasicAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -68,6 +69,7 @@ public class CasBasicAuthenticationConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "basicCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer basicCasWebflowExecutionPlanConfigurer(
         @Qualifier("basicAuthenticationWebflowConfigurer")

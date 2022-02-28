@@ -42,8 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
-    CasAccountManagementWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasAccountManagementWebflowConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",

@@ -21,7 +21,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystemException;
 
@@ -81,7 +80,7 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
     }
 
     @Test
-    public void verifyResolver() throws IOException {
+    public void verifyResolver() throws Exception {
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
@@ -103,7 +102,7 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
 
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() {
+            public void execute() throws Exception {
                 resolver.resolve(null, null);
                 resolver.saveOrUpdate(null);
             }

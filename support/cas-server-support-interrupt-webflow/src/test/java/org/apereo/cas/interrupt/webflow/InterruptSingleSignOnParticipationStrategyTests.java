@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt.webflow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
+import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
@@ -27,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    InterruptWebflowConfigurerTests.SharedTestConfiguration.class
+    InterruptWebflowConfigurerTests.SharedTestConfiguration.class,
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class
 }, properties = "cas.interrupt.json.location=classpath:/interrupt.json")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class InterruptSingleSignOnParticipationStrategyTests {

@@ -1,18 +1,8 @@
 package org.apereo.cas.couchbase.core;
 
-import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 
-import com.couchbase.client.core.env.IoConfig;
-import com.couchbase.client.core.env.NetworkResolution;
-import com.couchbase.client.core.env.SeedNode;
-import com.couchbase.client.core.env.TimeoutConfig;
-import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Cluster;
-import com.couchbase.client.java.ClusterOptions;
-import com.couchbase.client.java.env.ClusterEnvironment;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetOptions;
 import com.couchbase.client.java.kv.GetResult;
@@ -20,19 +10,12 @@ import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
-import com.couchbase.client.java.query.QueryScanConsistency;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -47,22 +30,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
-@Getter
-public class CouchbaseClientFactory {
-    private final BaseCouchbaseProperties properties;
-
-    private Cluster cluster;
-
-    /**
-     * Instantiates a new Couchbase client factory.
-     *
-     * @param properties the properties
-     */
-    public CouchbaseClientFactory(final BaseCouchbaseProperties properties) {
-        this.properties = properties;
-        initializeCluster();
-    }
+public interface CouchbaseClientFactory {
 
     /**
      * Collect attributes from entity map.
@@ -71,8 +39,8 @@ public class CouchbaseClientFactory {
      * @param filter          the filter
      * @return the map
      */
-    public static Map<String, List<Object>> collectAttributesFromEntity(final JsonObject couchbaseEntity,
-                                                                        final Predicate<String> filter) {
+    static Map<String, List<Object>> collectAttributesFromEntity(final JsonObject couchbaseEntity,
+                                                                 final Predicate<String> filter) {
         return couchbaseEntity.getNames()
             .stream()
             .filter(filter)
@@ -81,70 +49,51 @@ public class CouchbaseClientFactory {
     }
 
     /**
-     * Inverse of connectBucket, shuts down the client, cancelling connection
-     * task if not completed.
+     * Shutdown.
      */
-    @SneakyThrows
-    public void shutdown() {
-        if (this.cluster != null) {
-            LOGGER.debug("Disconnecting from Couchbase cluster");
-            this.cluster.disconnect();
-        }
-    }
+    void shutdown();
 
     /**
      * Gets connection timeout.
      *
      * @return the connection timeout
      */
-    public Duration getConnectionTimeout() {
-        return Beans.newDuration(properties.getConnectionTimeout());
-    }
+    Duration getConnectionTimeout();
 
     /**
      * Gets idle connection timeout.
      *
      * @return the idle connection timeout
      */
-    public Duration getIdleConnectionTimeout() {
-        return Beans.newDuration(properties.getIdleConnectionTimeout());
-    }
+    Duration getIdleConnectionTimeout();
 
     /**
      * Gets search timeout.
      *
      * @return the search timeout
      */
-    public Duration getSearchTimeout() {
-        return Beans.newDuration(properties.getSearchTimeout());
-    }
+    Duration getSearchTimeout();
 
     /**
      * Gets query timeout.
      *
      * @return the query timeout
      */
-    public Duration getQueryTimeout() {
-        return Beans.newDuration(properties.getQueryTimeout());
-    }
+    Duration getQueryTimeout();
 
     /**
      * Gets view timeout.
      *
      * @return the view timeout
      */
-    public Duration getViewTimeout() {
-        return Beans.newDuration(properties.getViewTimeout());
-    }
+    Duration getViewTimeout();
 
     /**
      * Gets kv timeout.
      *
      * @return the kv timeout
      */
-    public Duration getKvTimeout() {
-        return Beans.newDuration(properties.getKvTimeout());
-    }
+    Duration getKvTimeout();
 
     /**
      * Count long.
@@ -152,9 +101,7 @@ public class CouchbaseClientFactory {
      * @param query the query
      * @return the long
      */
-    public long count(final String query) {
-        return count(query, Optional.empty());
-    }
+    long count(String query);
 
     /**
      * Count long.
@@ -163,29 +110,16 @@ public class CouchbaseClientFactory {
      * @param parameters the parameters
      * @return the long
      */
-    public long count(final String query, final Optional<JsonObject> parameters) {
-        val formattedQuery = String.format("SELECT count(*) as count FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = QueryOptions.queryOptions()
-            .readonly(true)
-            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
-        parameters.ifPresent(options::parameters);
-        val result = executeQuery(options, formattedQuery);
-        return result.rowsAsObject().get(0).getLong("count");
-    }
+    long count(String query, Optional<JsonObject> parameters);
 
     /**
-     * Query with parameters.
+     * Select query result.
      *
      * @param query      the query
      * @param parameters the parameters
      * @return the query result
      */
-    public QueryResult select(final String query, final Optional<JsonObject> parameters) {
-        val formattedQuery = String.format("SELECT * FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = QueryOptions.queryOptions().scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
-        parameters.ifPresent(options::parameters);
-        return executeQuery(options, formattedQuery);
-    }
+    QueryResult select(String query, Optional<JsonObject> parameters);
 
     /**
      * Select query result.
@@ -194,9 +128,7 @@ public class CouchbaseClientFactory {
      * @param options the options
      * @return the query result
      */
-    public QueryResult select(final String query, final QueryOptions options) {
-        return select(query, options, true);
-    }
+    QueryResult select(String query, QueryOptions options);
 
     /**
      * Select query result.
@@ -206,81 +138,58 @@ public class CouchbaseClientFactory {
      * @param includeResultsInBucket the include results in bucket
      * @return the query result
      */
-    public QueryResult select(final String query,
-                              final QueryOptions options,
-                              final boolean includeResultsInBucket) {
-        val formattedQuery = String.format("SELECT %s* FROM `%s` WHERE %s",
-            includeResultsInBucket ? StringUtils.EMPTY : properties.getBucket() + '.',
-            properties.getBucket(), query);
-        return executeQuery(options, formattedQuery);
-    }
+    QueryResult select(String query,
+                       QueryOptions options,
+                       boolean includeResultsInBucket);
 
     /**
-     * Query and get a result by username.
+     * Select query result.
      *
-     * @param statement the query
-     * @return the n1ql query result
+     * @param statement the statement
+     * @return the query result
      */
-    public QueryResult select(final String statement) {
-        return select(statement, Optional.empty());
-    }
+    QueryResult select(String statement);
 
     /**
-     * Remove and return query result.
+     * Remove query result.
      *
      * @param query      the query
      * @param parameters the parameters
      * @return the query result
      */
-    public QueryResult remove(final String query, final Optional<JsonObject> parameters) {
-        val formattedQuery = String.format("DELETE FROM `%s` WHERE %s", properties.getBucket(), query);
-        val options = QueryOptions.queryOptions()
-            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()));
-        parameters.ifPresent(options::parameters);
-        return executeQuery(options, formattedQuery);
-    }
+    QueryResult remove(String query, Optional<JsonObject> parameters);
 
     /**
-     * Remove and return query result.
+     * Remove query result.
      *
      * @param query the query
      * @return the query result
      */
-    public QueryResult remove(final String query) {
-        return remove(query, Optional.empty());
-    }
+    QueryResult remove(String query);
 
     /**
-     * Remove all and return query result.
+     * Remove all query result.
      *
      * @return the query result
      */
-    public QueryResult removeAll() {
-        return remove("1=1", Optional.empty());
-    }
+    QueryResult removeAll();
 
     /**
-     * Bucket upsert default collection.
+     * Bucket upsert default collection mutation result.
      *
      * @param content the content
      * @return the mutation result
      */
-    public MutationResult bucketUpsertDefaultCollection(final String content) {
-        val id = UUID.randomUUID().toString();
-        val document = JsonObject.fromJson(content);
-        return bucketUpsertDefaultCollection(id, document);
-    }
+    MutationResult bucketUpsertDefaultCollection(String content);
 
     /**
-     * Bucket upsert default collection.
+     * Bucket upsert default collection mutation result.
      *
      * @param id       the id
      * @param document the document
      * @return the mutation result
      */
-    public MutationResult bucketUpsertDefaultCollection(final String id, final Object document) {
-        return bucketUpsertDefaultCollection(id, document, UpsertOptions.upsertOptions());
-    }
+    MutationResult bucketUpsertDefaultCollection(String id, Object document);
 
     /**
      * Bucket upsert default collection mutation result.
@@ -290,36 +199,23 @@ public class CouchbaseClientFactory {
      * @param options  the options
      * @return the mutation result
      */
-    public MutationResult bucketUpsertDefaultCollection(final String id, final Object document,
-                                                        final UpsertOptions options) {
-        val bucket = this.cluster.bucket(properties.getBucket());
-        return bucket.defaultCollection().upsert(id, document, options);
-    }
+    MutationResult bucketUpsertDefaultCollection(String id, Object document,
+                                                 UpsertOptions options);
 
     /**
-     * Bucket remove from default collection.
+     * Bucket remove from default collection optional.
      *
      * @param id the id
-     * @return the mutation result
+     * @return the optional
      */
-    public Optional<MutationResult> bucketRemoveFromDefaultCollection(final String id) {
-        val bucket = this.cluster.bucket(properties.getBucket());
-        try {
-            return Optional.of(bucket.defaultCollection().remove(id));
-        } catch (final DocumentNotFoundException e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return Optional.empty();
-    }
+    Optional<MutationResult> bucketRemoveFromDefaultCollection(String id);
 
     /**
      * Gets bucket.
      *
      * @return the bucket
      */
-    public String getBucket() {
-        return properties.getBucket();
-    }
+    String getBucket();
 
     /**
      * Bucket get get result.
@@ -327,9 +223,7 @@ public class CouchbaseClientFactory {
      * @param id the id
      * @return the get result
      */
-    public GetResult bucketGet(final String id) {
-        return bucketGet(id, GetOptions.getOptions());
-    }
+    GetResult bucketGet(String id);
 
     /**
      * Bucket get get result.
@@ -338,57 +232,22 @@ public class CouchbaseClientFactory {
      * @param options the options
      * @return the get result
      */
-    public GetResult bucketGet(final String id, final GetOptions options) {
-        try {
-            val bucket = cluster.bucket(properties.getBucket());
-            return bucket.defaultCollection().get(id, options);
-        } catch (final DocumentNotFoundException e) {
-            LoggingUtils.warn(LOGGER, e);
-        }
-        return null;
-    }
+    GetResult bucketGet(String id, GetOptions options);
 
-    private void initializeCluster() {
-        shutdown();
-        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", properties.getAddresses());
+    /**
+     * Execute query query result.
+     *
+     * @param options        the options
+     * @param formattedQuery the formatted query
+     * @return the query result
+     */
+    QueryResult executeQuery(QueryOptions options,
+                             String formattedQuery);
 
-        val env = ClusterEnvironment
-            .builder()
-            .maxNumRequestsInRetry(properties.getMaxNumRequestsInRetry())
-            .timeoutConfig(TimeoutConfig
-                .connectTimeout(getConnectionTimeout())
-                .kvTimeout(getKvTimeout())
-                .queryTimeout(getQueryTimeout())
-                .searchTimeout(getSearchTimeout())
-                .viewTimeout(getViewTimeout()))
-            .ioConfig(IoConfig
-                .idleHttpConnectionTimeout(getIdleConnectionTimeout())
-                .maxHttpConnections(properties.getMaxHttpConnections())
-                .networkResolution(NetworkResolution.AUTO))
-            .build();
-
-        val listOfNodes = properties.getAddresses()
-            .stream()
-            .map(SeedNode::create)
-            .collect(Collectors.toSet());
-
-        val options = ClusterOptions
-            .clusterOptions(properties.getClusterUsername(), properties.getClusterPassword())
-            .environment(env);
-        this.cluster = Cluster.connect(listOfNodes, options);
-    }
-
-    private QueryResult executeQuery(final QueryOptions options,
-                                     final String formattedQuery) {
-        LOGGER.trace("Executing query [{}]", formattedQuery);
-        options
-            .scanConsistency(QueryScanConsistency.valueOf(properties.getScanConsistency()))
-            .timeout(getConnectionTimeout())
-            .scanWait(Beans.newDuration(properties.getScanWaitTimeout()));
-        if (properties.getMaxParallelism() > 0) {
-            options.maxParallelism(properties.getMaxParallelism());
-        }
-        return cluster.query(formattedQuery, options);
-    }
+    /**
+     * Gets cluster.
+     *
+     * @return the cluster
+     */
+    Cluster getCluster();
 }
-

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("SAML")
+@Tag("SAMLLogout")
 public class SamlCompliantLogoutMessageCreatorTests {
     private static final String CONST_TEST_URL = "https://google.com";
 

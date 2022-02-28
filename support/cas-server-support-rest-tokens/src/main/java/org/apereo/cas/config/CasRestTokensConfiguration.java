@@ -12,8 +12,10 @@ import org.apereo.cas.tokens.JwtTicketGrantingTicketResourceEntityResponseFactor
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasRestTokensConfiguration}.
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasRestTokensConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory(
         @Qualifier("tokenTicketBuilder")
         final TokenTicketBuilder tokenTicketBuilder) {
@@ -33,6 +36,7 @@ public class CasRestTokensConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceTicketResourceEntityResponseFactoryConfigurer restTokenServiceTicketResourceEntityResponseFactoryConfigurer(
         @Qualifier(CentralAuthenticationService.BEAN_NAME)
         final CentralAuthenticationService centralAuthenticationService,

@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.config.CasHibernateJpaConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.config.OidcJwksJpaConfiguration;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.jpa.ddl-auto=create-drop",
     "cas.authn.oidc.jwks.jpa.url=jdbc:hsqldb:mem:cas-hsql-database"
 })
-@Import(CasHibernateJpaConfiguration.class)
+@Import({OidcJwksJpaConfiguration.class, CasHibernateJpaConfiguration.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 public class OidcJpaJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {

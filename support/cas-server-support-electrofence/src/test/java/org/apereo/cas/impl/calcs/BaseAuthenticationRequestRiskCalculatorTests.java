@@ -71,7 +71,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     protected CasEventRepository casEventRepository;
 
     @Autowired

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 )
 public class DomainServicesManagerConfigurationTests {
     @Autowired
-    @Qualifier("domainServicesManagerExecutionPlanConfigurer")
+    @Qualifier("defaultServicesManagerExecutionPlanConfigurer")
     private ServicesManagerExecutionPlanConfigurer domainServicesManagerExecutionPlanConfigurer;
 
     @Test

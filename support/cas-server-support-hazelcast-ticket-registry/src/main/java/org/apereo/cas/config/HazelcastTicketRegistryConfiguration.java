@@ -54,8 +54,9 @@ public class HazelcastTicketRegistryConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
     @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean(name = "casTicketRegistryHazelcastInstance")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HazelcastInstance casTicketRegistryHazelcastInstance(
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
@@ -73,6 +74,7 @@ public class HazelcastTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }

@@ -25,6 +25,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("Events")
 public class InMemoryCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 }

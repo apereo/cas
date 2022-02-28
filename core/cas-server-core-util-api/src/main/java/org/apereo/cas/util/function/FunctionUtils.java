@@ -260,7 +260,21 @@ public class FunctionUtils {
             }
         };
     }
-    
+
+    /**
+     * Do and handle.
+     *
+     * @param <R>      the type parameter
+     * @param function the function
+     */
+    public static <R> void doAndHandle(final CheckedConsumer<R> function) {
+        try {
+            function.accept(null);
+        } catch (final Throwable e) {
+            LoggingUtils.warn(LOGGER, e);
+        }
+    }
+
     /**
      * Do and handle supplier.
      *

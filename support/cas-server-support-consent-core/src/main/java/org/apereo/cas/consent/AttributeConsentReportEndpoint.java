@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -47,13 +48,13 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final ConsentRepository consentRepository;
+    private final ObjectProvider<ConsentRepository> consentRepository;
 
-    private final ConsentEngine consentEngine;
+    private final ObjectProvider<ConsentEngine> consentEngine;
 
     public AttributeConsentReportEndpoint(final CasConfigurationProperties casProperties,
-                                          final ConsentRepository consentRepository,
-                                          final ConsentEngine consentEngine) {
+                                          final ObjectProvider<ConsentRepository> consentRepository,
+                                          final ObjectProvider<ConsentEngine> consentEngine) {
         super(casProperties);
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
@@ -72,13 +73,13 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         final String principal) {
         val result = new HashSet<Map<String, Object>>();
         LOGGER.debug("Fetching consent decisions for principal [{}]", principal);
-        val consentDecisions = this.consentRepository.findConsentDecisions(principal);
+        val consentDecisions = this.consentRepository.getObject().findConsentDecisions(principal);
         LOGGER.debug("Resolved consent decisions for principal [{}]: [{}]", principal, consentDecisions);
 
         consentDecisions.forEach(d -> {
             val map = new HashMap<String, Object>();
             map.put("decision", d);
-            map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(d));
+            map.put("attributes", this.consentEngine.getObject().resolveConsentableAttributesFrom(d));
             result.add(map);
         });
         return result;
@@ -93,7 +94,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export consent decisions as a zip file")
     public ResponseEntity<Resource> export() {
-        val accounts = consentRepository.findConsentDecisions();
+        val accounts = consentRepository.getObject().findConsentDecisions();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
                 val acct = (ConsentDecision) entry;
@@ -123,7 +124,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         val decision = MAPPER.readValue(requestBody, new TypeReference<ConsentDecision>() {
         });
         LOGGER.trace("Storing account: [{}]", decision);
-        consentRepository.storeConsentDecision(decision);
+        consentRepository.getObject().storeConsentDecision(decision);
         return HttpStatus.CREATED;
     }
 
@@ -143,7 +144,7 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         @PathVariable
         final long decisionId) {
         LOGGER.debug("Deleting consent decision for principal [{}].", principal);
-        return this.consentRepository.deleteConsentDecision(decisionId, principal);
+        return this.consentRepository.getObject().deleteConsentDecision(decisionId, principal);
     }
 
     /**
@@ -158,6 +159,6 @@ public class AttributeConsentReportEndpoint extends BaseCasActuatorEndpoint {
         @PathVariable
         final String principal) {
         LOGGER.debug("Deleting all consent decisions for principal [{}].", principal);
-        return this.consentRepository.deleteConsentDecisions(principal);
+        return this.consentRepository.getObject().deleteConsentDecisions(principal);
     }
 }

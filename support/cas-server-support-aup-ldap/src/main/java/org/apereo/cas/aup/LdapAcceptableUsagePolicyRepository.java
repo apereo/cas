@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
         var status = super.verify(requestContext);
-        if (!status.isAccepted()) {
+        if (status.isDenied()) {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             return aupProperties.getLdap()
                 .stream()
@@ -63,7 +64,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                         .stream()
                         .anyMatch(value -> value.equalsIgnoreCase(getAcceptedAttributeValue()));
                 })
-                .map(result -> new AcceptableUsagePolicyStatus(result, status.getPrincipal()))
+                .map(result -> new AcceptableUsagePolicyStatus(TriStateBoolean.fromBoolean(result), status.getPrincipal()))
                 .orElseGet(() -> AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
         }
         return status;

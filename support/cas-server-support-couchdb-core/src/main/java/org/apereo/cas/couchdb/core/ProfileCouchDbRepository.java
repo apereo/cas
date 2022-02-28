@@ -1,8 +1,6 @@
 package org.apereo.cas.couchdb.core;
 
-import org.ektorp.CouchDbConnector;
-import org.ektorp.support.CouchDbRepositorySupport;
-import org.ektorp.support.View;
+import org.ektorp.support.GenericRepository;
 
 /**
  * This is {@link ProfileCouchDbRepository}.
@@ -10,28 +8,25 @@ import org.ektorp.support.View;
  * @author Timur Duehr
  * @since 6.0.0
  */
-public class ProfileCouchDbRepository extends CouchDbRepositorySupport<CouchDbProfileDocument> {
-    public ProfileCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
-        super(CouchDbProfileDocument.class, db, "pac4j", createIfNotExists);
-    }
+public interface ProfileCouchDbRepository<T> extends GenericRepository<T> {
+    /**
+     * Find by username.
+     *
+     * @param username the username
+     * @return the couch db profile document
+     */
+    CouchDbProfileDocument findByUsername(String username);
 
     /**
-     * Find profile by username.
-     * @param username to be searched for
-     * @return profile found
+     * Find by linked id.
+     *
+     * @param linkedId the linked id
+     * @return the couch db profile document
      */
-    @View(name = "by_username", map = "function(doc) { if(doc.username){ emit(doc.username, doc) } }")
-    public CouchDbProfileDocument findByUsername(final String username) {
-        return queryView("by_username", username).stream().findFirst().orElse(null);
-    }
+    CouchDbProfileDocument findByLinkedId(String linkedId);
 
     /**
-     * Find profile by linkedid.
-     * @param linkedid to be searched for
-     * @return profile found
+     * Initialize.
      */
-    @View(name = "by_linkedid", map = "function(doc) { if(doc.linkedid){ emit(doc.linkedid, doc) } }")
-    public CouchDbProfileDocument findByLinkedid(final String linkedid) {
-        return queryView("by_linkedid", linkedid).stream().findFirst().orElse(null);
-    }
+    void initialize();
 }

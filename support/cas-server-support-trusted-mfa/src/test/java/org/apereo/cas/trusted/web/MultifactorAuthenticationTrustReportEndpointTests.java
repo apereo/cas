@@ -30,7 +30,7 @@ public class MultifactorAuthenticationTrustReportEndpointTests extends AbstractC
     private MultifactorAuthenticationTrustReportEndpoint endpoint;
 
     @Autowired
-    @Qualifier("mfaTrustEngine")
+    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Test

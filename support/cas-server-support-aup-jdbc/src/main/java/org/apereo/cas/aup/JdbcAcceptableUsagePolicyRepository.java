@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.aup.JdbcAcceptableUsagePolicyP
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.sql.DataSource;
@@ -32,14 +33,14 @@ import javax.sql.DataSource;
 public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final transient JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final AcceptableUsagePolicyProperties aupProperties,
                                                final DataSource dataSource,
-                                               final TransactionTemplate transactionTemplate) {
+                                               final TransactionOperations transactionTemplate) {
         super(ticketRegistrySupport, aupProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
@@ -48,7 +49,7 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
         var status = super.verify(requestContext);
-        if (!status.isAccepted()) {
+        if (status.isDenied()) {
             val jdbc = aupProperties.getJdbc();
             val aupColumnName = getAcceptableUsagePolicyColumnName(jdbc);
             val sql = String.format(jdbc.getSqlSelect(), aupColumnName, jdbc.getTableName(), jdbc.getPrincipalIdColumn());
@@ -57,7 +58,8 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LOGGER.debug("Executing search query [{}] for principal [{}]", sql, principalId);
             return this.transactionTemplate.execute(action -> {
                 val acceptedFlag = this.jdbcTemplate.queryForObject(sql, String.class, principalId);
-                return new AcceptableUsagePolicyStatus(BooleanUtils.toBoolean(acceptedFlag), status.getPrincipal());
+                return new AcceptableUsagePolicyStatus(
+                    TriStateBoolean.fromBoolean(BooleanUtils.toBoolean(acceptedFlag)), status.getPrincipal());
             });
         }
         return status;
@@ -111,11 +113,11 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         }
         if (pIdAttributeValues.size() > 1) {
             LOGGER.warn("Principal attribute [{}] was found, but its value [{}] is multi-valued. "
-                + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
+                        + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
         }
         if (principalId.isEmpty()) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but it is either empty"
-                + " or multi-valued with an empty element");
+                                            + " or multi-valued with an empty element");
         }
         return principalId;
     }

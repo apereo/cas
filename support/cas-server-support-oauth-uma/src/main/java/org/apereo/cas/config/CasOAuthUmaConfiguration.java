@@ -69,7 +69,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 /**
  * This is {@link CasOAuthUmaConfiguration}.
  *
@@ -79,8 +78,7 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasOAuthUmaConfiguration", proxyBeanMethods = false)
 public class CasOAuthUmaConfiguration {
-
-
+    
     @Configuration(value = "CasOAuthUmaTokenConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuthUmaTokenConfiguration {
@@ -106,6 +104,7 @@ public class CasOAuthUmaConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaResourceSetRepository")
         public ResourceSetRepository umaResourceSetRepository() {
             return new DefaultResourceSetRepository();
@@ -224,8 +223,10 @@ public class CasOAuthUmaConfiguration {
     public static class CasOAuthUmaDiscoveryConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
-        public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(final CasConfigurationProperties casProperties) {
+        public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory(
+            final CasConfigurationProperties casProperties) {
             return new UmaServerDiscoverySettingsFactory(casProperties);
         }
     }

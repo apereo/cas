@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+
+
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -42,7 +44,7 @@ public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPoli
     private int order;
 
     @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
         LOGGER.trace("Calculating SSO participation criteria for [{}]", ticketState);
         if (timeValue <= 0) {
             return true;
@@ -73,5 +75,5 @@ public abstract class BaseDateTimeRegisteredServiceSingleSignOnParticipationPoli
      * @return the zoned date time
      */
     @JsonIgnore
-    protected abstract ZonedDateTime determineInitialDateTime(RegisteredService registeredService, TicketState ticketState);
+    protected abstract ZonedDateTime determineInitialDateTime(RegisteredService registeredService, AuthenticationAwareTicket ticketState);
 }

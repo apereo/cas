@@ -141,6 +141,7 @@ public class CasCoreLogoutConfiguration {
 
         @ConditionalOnMissingBean(name = "defaultSingleLogoutMessageCreator")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
             return new DefaultSingleLogoutMessageCreator();
         }

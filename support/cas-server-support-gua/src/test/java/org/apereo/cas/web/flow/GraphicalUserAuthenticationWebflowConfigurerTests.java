@@ -18,10 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    GraphicalUserAuthenticationConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(GraphicalUserAuthenticationConfiguration.class)
 @TestPropertySource(properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
 @Tag("WebflowConfig")
 public class GraphicalUserAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

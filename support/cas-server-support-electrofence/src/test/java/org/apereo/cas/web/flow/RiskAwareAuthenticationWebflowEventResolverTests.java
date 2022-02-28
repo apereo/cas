@@ -39,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationConfiguration.class,
     CasMultifactorAuthenticationWebflowConfiguration.class,
     ElectronicFenceConfiguration.class,
-    ElectronicFenceWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    ElectronicFenceWebflowConfiguration.class
 })
 @Tag("WebflowEvents")
 @TestPropertySource(properties = {

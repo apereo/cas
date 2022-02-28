@@ -6,13 +6,16 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 /**
@@ -26,7 +29,8 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration {
     @Bean
-    public BaseTicketCatalogConfigurer casSimpleMultifactorAuthenticationTicketCatalogConfigurer(
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketCatalogConfigurer casSimpleMultifactorAuthenticationTicketCatalogConfigurer(
         @Qualifier("casSimpleMultifactorAuthenticationTicketExpirationPolicy")
         final ExpirationPolicyBuilder casSimpleMultifactorAuthenticationTicketExpirationPolicy) {
         return new BaseTicketCatalogConfigurer() {

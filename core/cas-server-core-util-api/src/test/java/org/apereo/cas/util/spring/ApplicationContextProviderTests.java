@@ -1,5 +1,7 @@
 package org.apereo.cas.util.spring;
 
+import org.apereo.cas.util.spring.beans.BeanContainer;
+
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

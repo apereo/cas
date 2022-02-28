@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.config.CasScimConfiguration;
 import org.apereo.cas.config.Pac4jAuthenticationProvisioningConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,8 +13,8 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -27,23 +28,21 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@SpringBootTest(
-    classes = {
-        RefreshAutoConfiguration.class,
-        CasScimConfiguration.class,
-        Pac4jAuthenticationProvisioningConfiguration.class
-    },
-    properties = {
-        "cas.scim.target=http://localhost:9666/scim/v2",
-        "cas.scim.enabled=false",
-        "cas.scim.version=2",
-        "cas.scim.username=scim-user",
-        "cas.scim.password=changeit",
-        "cas.authn.pac4j.provisioning.scim.enabled=true"
-    })
 @Tag("SCIM")
 @EnabledIfPortOpen(port = 9666)
-public class ScimDelegatedClientUserProfileProvisionerTests {
+@Import({
+    CasScimConfiguration.class,
+    Pac4jAuthenticationProvisioningConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.scim.target=http://localhost:9666/scim/v2",
+    "cas.scim.enabled=false",
+    "cas.scim.version=2",
+    "cas.scim.username=scim-user",
+    "cas.scim.password=changeit",
+    "cas.authn.pac4j.provisioning.scim.enabled=true"
+})
+public class ScimDelegatedClientUserProfileProvisionerTests extends BaseCasCoreTests {
     @Autowired
     @Qualifier("pac4jScimDelegatedClientUserProfileProvisioner")
     private Supplier<DelegatedClientUserProfileProvisioner> pac4jScimDelegatedClientUserProfileProvisioner;

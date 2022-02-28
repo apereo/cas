@@ -40,8 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasSupportActionsConfiguration.class,
     PasswordManagementConfiguration.class,
     PasswordManagementWebflowConfiguration.class,
-    PasswordManagementForgotUsernameConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    PasswordManagementForgotUsernameConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.pm.forgot-username.google-recaptcha.enabled=true",

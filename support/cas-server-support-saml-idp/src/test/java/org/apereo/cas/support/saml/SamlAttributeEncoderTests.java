@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Tag("SAML")
+@Tag("SAML1")
 public class SamlAttributeEncoderTests {
     @Test
     public void verifyAction() {

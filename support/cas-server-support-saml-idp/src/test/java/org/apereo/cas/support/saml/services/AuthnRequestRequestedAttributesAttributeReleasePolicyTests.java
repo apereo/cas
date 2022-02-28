@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "cas.session-replication.cookie.auto-configure-cookie-path=true",
     "cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",

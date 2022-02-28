@@ -47,6 +47,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public InitializingBean acceptUsersAuthenticationInitializingBean(final CasConfigurationProperties casProperties) {
         return () -> {
             val accept = casProperties.getAuthn().getAccept();

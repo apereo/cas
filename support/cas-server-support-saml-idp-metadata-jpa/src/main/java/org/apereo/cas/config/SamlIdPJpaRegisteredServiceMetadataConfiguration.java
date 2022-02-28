@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -10,7 +11,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -38,6 +39,7 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlServiceProviderMetadata, module = "jpa")
 public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
 
     @Configuration(value = "SamlIdPJpaRegisteredServiceMetadataResolverConfiguration", proxyBeanMethods = false)
@@ -45,6 +47,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     public static class SamlIdPJpaRegisteredServiceMetadataResolverConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "jpaSamlRegisteredServiceMetadataResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver(
             final CasConfigurationProperties casProperties,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -88,7 +91,8 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
         }
 
         @Bean
-        public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public EntityManagerFactory samlMetadataEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaSamlMetadataVendorAdapter")
             final JpaVendorAdapter jpaSamlMetadataVendorAdapter,
@@ -97,12 +101,12 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
             @Qualifier("jpaSamlMetadataPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter)
                 .persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)
                 .packagesToScan(jpaSamlMetadataPackagesToScan.toSet()).build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa());
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, idp.getJpa()).getObject();
         }
     }
 
@@ -110,6 +114,7 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlIdPJpaRegisteredServiceMetadataTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerSamlMetadata(
             @Qualifier("samlMetadataEntityManagerFactory")
             final EntityManagerFactory emf) {

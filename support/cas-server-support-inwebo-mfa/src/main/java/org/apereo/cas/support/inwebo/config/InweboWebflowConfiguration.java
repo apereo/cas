@@ -84,6 +84,7 @@ public class InweboWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class InweboWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry inweboFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
             final FlowBuilder flowBuilder,
@@ -101,6 +102,7 @@ public class InweboWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class InweboWebflowExecutionPlanConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "inweboCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer inweboCasWebflowExecutionPlanConfigurer(
             @Qualifier("inweboMultifactorWebflowConfigurer")
@@ -191,6 +193,7 @@ public class InweboWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer inweboMultifactorTrustCasWebflowExecutionPlanConfigurer(
             @Qualifier("inweboMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer) {

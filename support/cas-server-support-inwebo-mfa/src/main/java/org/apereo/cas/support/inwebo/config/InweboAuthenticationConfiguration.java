@@ -40,6 +40,7 @@ public class InweboAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "inweboPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory inweboPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -104,6 +105,7 @@ public class InweboAuthenticationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "inweboAuthenticationDeviceMetadataPopulator")
         public AuthenticationMetaDataPopulator inweboAuthenticationDeviceMetadataPopulator() {
             return new InweboAuthenticationDeviceMetadataPopulator();
@@ -116,6 +118,7 @@ public class InweboAuthenticationConfiguration {
     public static class InweboAuthenticationPlanConfiguration {
         @ConditionalOnMissingBean(name = "inweboAuthenticationEventExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer inweboAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("inweboAuthenticationHandler")
             final AuthenticationHandler inweboAuthenticationHandler,

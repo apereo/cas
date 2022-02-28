@@ -27,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasMultifactorAuthenticationWebflowConfiguration.class,
     SpnegoConfiguration.class,
     SpnegoWebflowConfiguration.class,
-    SpnegoWebflowActionsConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    SpnegoWebflowActionsConfiguration.class
 })
 @Tag("Spnego")
 @TestPropertySource(properties = {

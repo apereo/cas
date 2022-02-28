@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -25,11 +25,12 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private final transient MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
     private final String collectionName;
 
     public MongoDbSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
-                                                        final OpenSamlConfigBean configBean, final MongoTemplate mongoTemplate) {
+                                                        final OpenSamlConfigBean configBean,
+                                                        final MongoOperations mongoTemplate) {
         super(samlIdPProperties, configBean);
         this.collectionName = samlIdPProperties.getMetadata().getMongo().getCollection();
         this.mongoTemplate = mongoTemplate;

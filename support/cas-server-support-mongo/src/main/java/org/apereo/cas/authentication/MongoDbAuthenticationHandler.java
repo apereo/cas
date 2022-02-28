@@ -10,7 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -27,14 +27,14 @@ import java.util.List;
  */
 @Slf4j
 public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final MongoDbAuthenticationProperties properties;
 
     public MongoDbAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                         final PrincipalFactory principalFactory,
                                         final MongoDbAuthenticationProperties properties,
-                                        final MongoTemplate mongoTemplate) {
+                                        final MongoOperations mongoTemplate) {
         super(name, servicesManager, principalFactory, properties.getOrder());
         this.mongoTemplate = mongoTemplate;
         this.properties = properties;

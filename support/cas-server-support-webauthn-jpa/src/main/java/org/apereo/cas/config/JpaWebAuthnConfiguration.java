@@ -2,11 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRegistration;
 import org.apereo.cas.webauthn.JpaWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -21,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -35,12 +36,14 @@ import javax.sql.DataSource;
  */
 @Configuration(value = "JpaWebAuthnConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class JpaWebAuthnConfiguration {
 
     @Configuration(value = "JpaWebAuthnTransactionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaWebAuthnTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerWebAuthn(
             @Qualifier("webAuthnEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -81,13 +84,15 @@ public class JpaWebAuthnConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<String> jpaWebAuthnPackagesToScan() {
             return BeanContainer.of(CollectionUtils.wrapSet(JpaWebAuthnCredentialRegistration.class.getPackage().getName()));
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnEntityManagerFactory")
-        public LocalContainerEntityManagerFactoryBean webAuthnEntityManagerFactory(
+        public EntityManagerFactory webAuthnEntityManagerFactory(
             @Qualifier("jpaWebAuthnVendorAdapter")
             final JpaVendorAdapter jpaWebAuthnVendorAdapter,
             @Qualifier("dataSourceWebAuthn")
@@ -95,7 +100,7 @@ public class JpaWebAuthnConfiguration {
             final BeanContainer<String> jpaWebAuthnPackagesToScan,
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceWebAuthn)
                 .packagesToScan(jpaWebAuthnPackagesToScan.toSet())
@@ -103,7 +108,7 @@ public class JpaWebAuthnConfiguration {
                 .jpaVendorAdapter(jpaWebAuthnVendorAdapter)
                 .build();
             val jpa = casProperties.getAuthn().getMfa().getWebAuthn().getJpa();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa);
+            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, jpa).getObject();
         }
 
     }

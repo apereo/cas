@@ -243,6 +243,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcConfirmView")
         public View oidcConfirmView(final ConfigurableApplicationContext applicationContext,
                                     @Qualifier("casProtocolViewFactory")
@@ -370,7 +371,7 @@ public class OidcEndpointsConfiguration {
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
         }
     }
@@ -381,6 +382,7 @@ public class OidcEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer(
             @Qualifier("oidcWebflowConfigurer")
             final CasWebflowConfigurer oidcWebflowConfigurer,
@@ -422,6 +424,7 @@ public class OidcEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer oidcWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowDefinitionRegistry,

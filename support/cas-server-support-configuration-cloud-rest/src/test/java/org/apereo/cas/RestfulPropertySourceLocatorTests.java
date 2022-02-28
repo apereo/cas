@@ -34,7 +34,9 @@ public class RestfulPropertySourceLocatorTests {
     @Test
     public void verifyBadParsing() {
         val environment = new MockEnvironment();
-        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:8021");
+        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:8021");
+        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");
+        environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-password", "password");
         val loc = new RestfulPropertySourceLocator();
         try (val webServer = new MockWebServer(8021,
             new ByteArrayResource("@@".getBytes(UTF_8), "Output"), OK)) {

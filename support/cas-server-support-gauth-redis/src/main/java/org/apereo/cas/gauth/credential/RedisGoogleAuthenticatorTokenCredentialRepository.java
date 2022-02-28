@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,17 +31,22 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
 
     private static final String CAS_PREFIX = RedisGoogleAuthenticatorTokenCredentialRepository.class.getSimpleName();
 
-    private final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
+    private final CasRedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
 
     private final long scanCount;
 
-    public RedisGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                             final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
-                                                             final CipherExecutor<String, String> tokenCredentialCipher,
-                                                             final long scanCount) {
+    public RedisGoogleAuthenticatorTokenCredentialRepository(
+        final IGoogleAuthenticator googleAuthenticator,
+        final CasRedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final long scanCount) {
         super(tokenCredentialCipher, googleAuthenticator);
         this.template = template;
         this.scanCount = scanCount;
+    }
+
+    private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
+        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername().trim().toLowerCase() + KEY_SEPARATOR + account.getId();
     }
 
     @Override
@@ -142,19 +146,15 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
         return keys.count();
     }
 
-    private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
-        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername().trim().toLowerCase() + KEY_SEPARATOR + account.getId();
-    }
-
     private Stream<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
         val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + id;
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key, this.scanCount);
+        return template.keys(key, this.scanCount);
     }
 
     private Stream<String> getGoogleAuthenticatorTokenKeys() {
         val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
         LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key, this.scanCount);
+        return template.keys(key, this.scanCount);
     }
 }

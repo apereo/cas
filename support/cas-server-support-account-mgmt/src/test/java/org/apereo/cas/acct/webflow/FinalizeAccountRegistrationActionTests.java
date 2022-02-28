@@ -39,8 +39,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowActions")
 @Import({
     CasAccountManagementWebflowConfiguration.class,
-    FinalizeAccountRegistrationActionTests.FinalizeAccountRegistrationActionTestConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    FinalizeAccountRegistrationActionTests.FinalizeAccountRegistrationActionTestConfiguration.class
 })
 public class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
     @Autowired

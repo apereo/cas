@@ -76,6 +76,16 @@ while (( "$#" )); do
     shift 1
     printyellow "Skipping execution of test scenario while in dry-run mode."
     ;;
+  --bo)
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
+  --ho)
+    export HEADLESS="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    shift 1;
+    ;;
   --hbo)
     export HEADLESS="true"
     REBUILD="true"
@@ -244,13 +254,18 @@ if [[ "${RERUN}" != "true" ]]; then
   instances=$(jq -j '.instances // 1' < "${config}")
   for (( c = 1; c <= instances; c++ ))
   do
+    export SCENARIO="${scenarioName}"
+    
     initScript=$(jq -j '.initScript // empty' < "${config}")
     initScript="${initScript//\$\{PWD\}/${PWD}}"
     initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
-    [ -n "${initScript}" ] && \
-      printgreen "Initialization script: ${initScript}" && \
-      chmod +x "${initScript}" && \
-      eval "export SCENARIO=${scenarioName}"; eval "${initScript}"
+    scripts=$(echo "$initScript" | tr ',' '\n')
+
+    for script in ${scripts}; do
+      printgreen "Running initialization script: ${script}"
+      chmod +x "${script}"
+      eval "${script}"
+    done
 
     runArgs=$(jq -j '.jvmArgs // empty' < "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"

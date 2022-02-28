@@ -14,7 +14,7 @@ import org.apereo.cas.support.wsfederation.services.WSFederationAuthenticationSe
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
@@ -53,6 +53,7 @@ public class WsFederationAuthenticationConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationAuthenticationServiceRegistryExecutionPlanConfigurer")
         public ServiceRegistryExecutionPlanConfigurer wsFederationAuthenticationServiceRegistryExecutionPlanConfigurer(
             final CasConfigurationProperties casProperties,
@@ -89,6 +90,7 @@ public class WsFederationAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class WsFederationAuthenticationControllerConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WsFederationNavigationController wsFederationNavigationController(
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,

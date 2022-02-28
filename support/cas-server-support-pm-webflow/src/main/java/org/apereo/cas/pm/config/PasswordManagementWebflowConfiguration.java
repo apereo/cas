@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -22,6 +23,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.CaptchaActivationStrategy;
 import org.apereo.cas.web.CaptchaValidator;
 import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
@@ -39,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -119,6 +122,7 @@ public class PasswordManagementWebflowConfiguration {
     public static class PasswordManagementWebflowBaseConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer passwordManagementWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -131,6 +135,7 @@ public class PasswordManagementWebflowConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
             @Qualifier("passwordManagementWebflowConfigurer")
@@ -235,9 +240,10 @@ public class PasswordManagementWebflowConfiguration {
 
     }
 
-    @ConditionalOnProperty(prefix = "cas.authn.pm.google-recaptcha", name = "enabled", havingValue = "true")
     @Configuration(value = "PasswordManagementCaptchaConfiguration", proxyBeanMethods = false)
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "captcha")
     public static class PasswordManagementCaptchaConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pm.google-recaptcha.enabled").isTrue();
 
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -249,49 +255,83 @@ public class PasswordManagementWebflowConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val configurer = new PasswordManagementCaptchaWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
-            configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 1);
-            return configurer;
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val configurer = new PasswordManagementCaptchaWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry, applicationContext, casProperties);
+                    configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 1);
+                    return configurer;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "passwordResetValidateCaptchaAction")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public Action passwordResetValidateCaptchaAction(final CasConfigurationProperties casProperties,
-                                                         @Qualifier("passwordResetCaptchaActivationStrategy")
-                                                         final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy) {
-            val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), passwordResetCaptchaActivationStrategy);
+        public Action passwordResetValidateCaptchaAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("passwordResetCaptchaActivationStrategy")
+            final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy) {
+            return BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
+                    return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), passwordResetCaptchaActivationStrategy);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "passwordResetCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy(@Qualifier(ServicesManager.BEAN_NAME)
-                                                                                final ServicesManager servicesManager) {
-            return new DefaultCaptchaActivationStrategy(servicesManager);
+        public CaptchaActivationStrategy passwordResetCaptchaActivationStrategy(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return BeanSupplier.of(CaptchaActivationStrategy.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DefaultCaptchaActivationStrategy(servicesManager))
+                .otherwiseProxy()
+                .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT_CAPTCHA)
         public Action passwordResetInitializeCaptchaAction(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("passwordResetCaptchaActivationStrategy")
             final CaptchaActivationStrategy passwordResetCaptchaActivationStrategy,
             final CasConfigurationProperties casProperties) {
-            val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
-            return new InitializeCaptchaAction(passwordResetCaptchaActivationStrategy,
-                requestContext -> WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha),
-                recaptcha);
+            return BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
+                    return new InitializeCaptchaAction(passwordResetCaptchaActivationStrategy,
+                        requestContext -> WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha),
+                        recaptcha);
+                })
+                .otherwiseProxy()
+                .get();
+
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementCaptchaWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCaptchaWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("passwordManagementCaptchaWebflowConfigurer")
             final CasWebflowConfigurer cfg) {
-            return plan -> plan.registerWebflowConfigurer(cfg);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(cfg))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

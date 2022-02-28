@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     TrustedAuthenticationWebflowConfiguration.class,
     TrustedAuthenticationComponentSerializationConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
 public class TrustedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigurerTests {

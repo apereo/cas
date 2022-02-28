@@ -55,7 +55,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
     @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
-        repository.initStandardDesignDocument();
+        repository.initialize();
 
         val profile = new CouchDbProfileDocument();
         profile.setUsername("casuser");

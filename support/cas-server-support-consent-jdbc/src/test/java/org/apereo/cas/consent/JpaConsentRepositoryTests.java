@@ -40,7 +40,7 @@ public class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
     private static final int COUNT = 1000;
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @Test

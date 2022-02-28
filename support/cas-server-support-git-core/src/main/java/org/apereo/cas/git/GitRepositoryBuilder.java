@@ -197,7 +197,7 @@ public class GitRepositoryBuilder {
                 .collect(Collectors.toList()));
         }
         LOGGER.debug("Cloning repository to [{}] with branch [{}]", this.repositoryDirectory, this.activeBranch);
-        return new GitRepository(cloneCommand.call(), credentialsProviders,
+        return new DefaultGitRepository(cloneCommand.call(), credentialsProviders,
             transportCallback, this.timeoutInSeconds, this.signCommits);
     }
 
@@ -208,7 +208,7 @@ public class GitRepositoryBuilder {
         git.checkout()
             .setName(this.activeBranch)
             .call();
-        return new GitRepository(git, this.credentialsProviders, transportCallback,
+        return new DefaultGitRepository(git, this.credentialsProviders, transportCallback,
             this.timeoutInSeconds, this.signCommits);
     }
 }

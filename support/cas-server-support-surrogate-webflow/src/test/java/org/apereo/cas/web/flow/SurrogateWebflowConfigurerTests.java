@@ -46,8 +46,7 @@ public class SurrogateWebflowConfigurerTests {
         CasMultifactorAuthenticationWebflowConfiguration.class,
         SurrogateAuthenticationConfiguration.class,
         SurrogateAuthenticationAuditConfiguration.class,
-        SurrogateAuthenticationWebflowConfiguration.class,
-        BaseWebflowConfigurerTests.SharedTestConfiguration.class
+        SurrogateAuthenticationWebflowConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

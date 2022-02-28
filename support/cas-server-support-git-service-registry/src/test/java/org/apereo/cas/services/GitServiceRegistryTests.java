@@ -142,7 +142,7 @@ import static org.mockito.Mockito.*;
     }
 
     @Test
-    public void verifyPullFails() {
+    public void verifyPullFails() throws Exception {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));

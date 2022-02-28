@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
@@ -15,7 +15,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -38,12 +37,12 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     @BeforeEach
     public void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlRegisteredServiceMetadataResolverTemplate, key, 0).collect(Collectors.toSet());
+        val keys = redisSamlRegisteredServiceMetadataResolverTemplate.keys(key, 0).collect(Collectors.toSet());
         redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys);
     }
 
     @Test
-    public void verifyResolver() throws IOException {
+    public void verifyResolver() throws Exception {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -62,7 +61,7 @@ public class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSa
     }
 
     @Test
-    public void verifyFailsResolver() throws IOException {
+    public void verifyFailsResolver() throws Exception {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
