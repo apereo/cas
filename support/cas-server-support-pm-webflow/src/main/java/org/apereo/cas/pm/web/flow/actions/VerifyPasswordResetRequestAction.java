@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -51,7 +50,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
         var passwordResetTicket = (TransientSessionTicket) null;
         try {
             passwordResetTicket = centralAuthenticationService.getTicket(transientTicket, TransientSessionTicket.class);
-            TicketState.class.cast(passwordResetTicket).update();
+            passwordResetTicket.update();
 
             val token = passwordResetTicket.getProperties().get(PasswordManagementWebflowUtils.FLOWSCOPE_PARAMETER_NAME_TOKEN).toString();
             val username = passwordManagementService.parseToken(token);

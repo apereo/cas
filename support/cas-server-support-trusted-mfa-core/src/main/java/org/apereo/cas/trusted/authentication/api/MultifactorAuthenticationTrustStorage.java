@@ -12,6 +12,10 @@ import java.util.Set;
  * @since 5.0.0
  */
 public interface MultifactorAuthenticationTrustStorage {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "mfaTrustEngine";
 
     /**
      * Remove records that are expired by date.

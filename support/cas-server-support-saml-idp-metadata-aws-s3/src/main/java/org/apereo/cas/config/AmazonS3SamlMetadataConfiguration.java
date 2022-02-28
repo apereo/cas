@@ -28,7 +28,8 @@ public class AmazonS3SamlMetadataConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public S3Client amazonS3Client(final CasConfigurationProperties casProperties) {
         val amz = casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3();
-        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(), amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
+        val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
+            amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
         val builder = S3Client.builder();
         AmazonClientConfigurationBuilder.prepareClientBuilder(builder, credentials, amz);
         return builder.build();

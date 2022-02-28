@@ -103,6 +103,7 @@ public class OidcLogoutConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcLogoutExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LogoutExecutionPlanConfigurer oidcLogoutExecutionPlanConfigurer(
             @Qualifier("oidcSingleLogoutServiceMessageHandler")
             final SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler) {

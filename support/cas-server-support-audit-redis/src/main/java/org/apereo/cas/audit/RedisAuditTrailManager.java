@@ -1,7 +1,7 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -32,16 +31,25 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
      */
     public static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
 
-    private final RedisTemplate redisTemplate;
+    private final CasRedisTemplate redisTemplate;
 
     private final long scanCount;
 
-    public RedisAuditTrailManager(final RedisTemplate redisTemplate,
+    public RedisAuditTrailManager(final CasRedisTemplate redisTemplate,
                                   final boolean asynchronous,
                                   final long scanCount) {
         super(asynchronous);
         this.redisTemplate = Objects.requireNonNull(redisTemplate);
         this.scanCount = scanCount;
+    }
+
+    @SuppressWarnings("JavaUtilDate")
+    private static String getAuditRedisKey(final AuditActionContext context) {
+        return CAS_AUDIT_CONTEXT_PREFIX + context.getWhenActionWasPerformed().getTime();
+    }
+
+    private static String getPatternAuditRedisKey() {
+        return CAS_AUDIT_CONTEXT_PREFIX + '*';
     }
 
     @Override
@@ -69,15 +77,6 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     private Stream<String> getAuditRedisKeys() {
-        return RedisUtils.keys(this.redisTemplate, getPatternAuditRedisKey(), this.scanCount);
-    }
-
-    @SuppressWarnings("JavaUtilDate")
-    private static String getAuditRedisKey(final AuditActionContext context) {
-        return CAS_AUDIT_CONTEXT_PREFIX + context.getWhenActionWasPerformed().getTime();
-    }
-
-    private static String getPatternAuditRedisKey() {
-        return CAS_AUDIT_CONTEXT_PREFIX + '*';
+        return redisTemplate.keys(getPatternAuditRedisKey(), this.scanCount);
     }
 }

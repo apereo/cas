@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -60,7 +61,7 @@ public class CasConsentCoreConfiguration {
             @Qualifier("consentDecisionBuilder")
             final ConsentDecisionBuilder consentDecisionBuilder,
             final List<ConsentableAttributeBuilder> builders,
-            @Qualifier("consentRepository")
+            @Qualifier(ConsentRepository.BEAN_NAME)
             final ConsentRepository consentRepository) {
             AnnotationAwareOrderComparator.sortIfNecessary(builders);
             return new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties, builders);
@@ -122,7 +123,7 @@ public class CasConsentCoreConfiguration {
     @Configuration(value = "CasConsentCoreRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasConsentCoreRepositoryConfiguration {
-        @ConditionalOnMissingBean(name = "consentRepository")
+        @ConditionalOnMissingBean(name = ConsentRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) throws Exception {
@@ -167,12 +168,13 @@ public class CasConsentCoreConfiguration {
     public static class CasConsentCoreWebConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             @Qualifier(ConsentEngine.BEAN_NAME)
-            final ConsentEngine consentEngine,
-            @Qualifier("consentRepository")
-            final ConsentRepository consentRepository,
+            final ObjectProvider<ConsentEngine> consentEngine,
+            @Qualifier(ConsentRepository.BEAN_NAME)
+            final ObjectProvider<ConsentRepository> consentRepository,
             final CasConfigurationProperties casProperties) {
             return new AttributeConsentReportEndpoint(casProperties, consentRepository, consentEngine);
         }

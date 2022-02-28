@@ -84,6 +84,23 @@ public class DefaultEncodedTicket implements EncodedTicket {
 
     @Override
     @JsonIgnore
+    public ZonedDateTime getLastTimeUsed() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public ZonedDateTime getPreviousTimeUsed() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public void update() {
+    }
+
+    @Override
+    @JsonIgnore
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }

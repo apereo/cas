@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.CasEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.Closeable;
@@ -25,7 +26,7 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasConfigurationWatchService implements Closeable, CasEventListener {
+public class CasConfigurationWatchService implements Closeable, CasEventListener, InitializingBean {
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
 
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
@@ -51,6 +52,11 @@ public class CasConfigurationWatchService implements Closeable, CasEventListener
     public void initialize() {
         watchConfigurationDirectoryIfNeeded();
         watchConfigurationFileIfNeeded();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initialize();
     }
 
     private void watchConfigurationFileIfNeeded() {

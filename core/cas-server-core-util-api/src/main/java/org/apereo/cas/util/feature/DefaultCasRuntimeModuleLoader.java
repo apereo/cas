@@ -1,7 +1,6 @@
 package org.apereo.cas.util.feature;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -21,8 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultCasRuntimeModuleLoader implements CasRuntimeModuleLoader {
     @Override
-    @SneakyThrows
-    public List<CasRuntimeModule> load() {
+    public List<CasRuntimeModule> load() throws Exception {
         val loader = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
         return Arrays.stream(loader.getResources("classpath*:/git.properties"))
             .map(Unchecked.function(PropertiesLoaderUtils::loadProperties))

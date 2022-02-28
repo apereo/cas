@@ -43,6 +43,7 @@ public class ViewProperties implements Serializable {
      * after a successful login or logout event.
      * For logout redirects, this setting is closely
      * related to and requires {@link LogoutProperties#isFollowServiceRedirects()}.
+     * This URL must be registered i the CAS server's service registry.
      */
     private String defaultRedirectUrl;
 

@@ -38,6 +38,7 @@ public class HazelcastMonitorConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public DisposableBean hazelcastMonitorDisposableBean(
         @Qualifier("casTicketRegistryHazelcastInstance")
         final HazelcastInstance casTicketRegistryHazelcastInstance) {

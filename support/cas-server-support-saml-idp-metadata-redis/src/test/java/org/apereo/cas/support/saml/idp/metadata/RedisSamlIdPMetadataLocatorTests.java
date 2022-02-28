@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.BaseRedisSamlMetadataTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
@@ -36,12 +36,12 @@ public class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests
 
     @Autowired
     @Qualifier("redisSamlIdPMetadataTemplate")
-    protected RedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate;
+    protected CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate;
 
     @BeforeEach
     public void setup() {
         val key = RedisSamlIdPMetadataLocator.CAS_PREFIX + '*';
-        val keys = RedisUtils.keys(redisSamlIdPMetadataTemplate, key, 0).collect(Collectors.toSet());
+        val keys = redisSamlIdPMetadataTemplate.keys(key, 0).collect(Collectors.toSet());
         redisSamlIdPMetadataTemplate.delete(keys);
     }
 

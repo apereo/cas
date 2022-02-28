@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.model.TriStateBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -75,7 +75,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
     }
 
     @Override
-    public boolean shouldParticipateInSso(final RegisteredService registeredService, final TicketState ticketState) {
+    public boolean shouldParticipateInSso(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
         return policies.stream()
             .allMatch(p -> p.shouldParticipateInSso(registeredService, ticketState));
     }

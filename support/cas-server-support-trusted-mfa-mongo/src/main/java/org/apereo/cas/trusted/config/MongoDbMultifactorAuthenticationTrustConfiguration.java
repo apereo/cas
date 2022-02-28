@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
@@ -36,8 +36,8 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoTemplate mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
-                                                      @Qualifier(CasSSLContext.BEAN_NAME)
+    public MongoOperations mongoMfaTrustedAuthnTemplate(final CasConfigurationProperties casProperties,
+                                                        @Qualifier(CasSSLContext.BEAN_NAME)
                                                       final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getMfa().getTrusted().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
@@ -51,7 +51,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoMfaTrustedAuthnTemplate")
-        final MongoTemplate mongoMfaTrustedAuthnTemplate,
+        final MongoOperations mongoMfaTrustedAuthnTemplate,
         @Qualifier("mfaTrustRecordKeyGenerator")
         final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
         @Qualifier("mfaTrustCipherExecutor")

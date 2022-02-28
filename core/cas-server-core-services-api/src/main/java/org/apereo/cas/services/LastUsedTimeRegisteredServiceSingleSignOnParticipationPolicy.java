@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
+
+
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -32,7 +34,7 @@ public class LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy extend
     }
 
     @Override
-    protected ZonedDateTime determineInitialDateTime(final RegisteredService registeredService, final TicketState ticketState) {
+    protected ZonedDateTime determineInitialDateTime(final RegisteredService registeredService, final AuthenticationAwareTicket ticketState) {
         return ticketState.getLastTimeUsed();
     }
 }

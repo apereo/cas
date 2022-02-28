@@ -147,6 +147,7 @@ public class OidcConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcServiceRegistryListener")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryListener oidcServiceRegistryListener(
             @Qualifier("oidcAttributeReleasePolicyFactory")
             final OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory) {
@@ -745,6 +746,7 @@ public class OidcConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory(
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,

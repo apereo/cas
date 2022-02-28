@@ -6,11 +6,13 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
+import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -44,8 +46,10 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
      * accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context) {
+        val authentication = WebUtils.getAuthentication(context);
+        val res = ObjectUtils.defaultIfNull(repository.verify(context),
+            AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
 
-        val res = repository.verify(context);
         WebUtils.putPrincipal(context, res.getPrincipal());
         WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
 
@@ -53,7 +57,6 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
         val registeredService = WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
-            val authentication = WebUtils.getAuthentication(context);
             val service = WebUtils.getService(context);
             val audit = AuditableContext.builder()
                 .service(service)
@@ -70,8 +73,14 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
             }
         }
 
-        return res.isAccepted()
-            ? eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED)
-            : eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+        switch (res.getStatus()) {
+            case TRUE:
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+            case FALSE:
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+            case UNDEFINED:
+            default:
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+        }
     }
 }

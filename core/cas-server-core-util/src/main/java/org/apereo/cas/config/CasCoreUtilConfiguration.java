@@ -59,6 +59,7 @@ public class CasCoreUtilConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilContextConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InitializingBean casCoreUtilInitialization(
             @Qualifier("casApplicationContextProvider")
             final ApplicationContextProvider casApplicationContextProvider,
@@ -99,9 +100,15 @@ public class CasCoreUtilConfiguration {
     @Configuration(value = "CasCoreUtilEssentialConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasCoreUtilEssentialConfiguration {
+
+        /**
+         * Create casBeanValidationPostProcessor bean.
+         * Note that {@code BeanPostProcessor} beans should be static.
+         * @return the BeanValidationPostProcessor
+         */
         @Bean
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
-        public BeanPostProcessor casBeanValidationPostProcessor() {
+        public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
         }
 

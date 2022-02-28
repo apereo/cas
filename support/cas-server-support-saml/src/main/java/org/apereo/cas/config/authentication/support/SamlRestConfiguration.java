@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SamlRestConfiguration}.
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlRestConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactory")
     public ServiceTicketResourceEntityResponseFactory samlRestServiceTicketResourceEntityResponseFactory(
         @Qualifier("samlServiceTicketUniqueIdGenerator")
@@ -33,6 +36,7 @@ public class SamlRestConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlRestServiceTicketResourceEntityResponseFactoryConfigurer")
     public ServiceTicketResourceEntityResponseFactoryConfigurer samlRestServiceTicketResourceEntityResponseFactoryConfigurer(
         @Qualifier("samlRestServiceTicketResourceEntityResponseFactory")

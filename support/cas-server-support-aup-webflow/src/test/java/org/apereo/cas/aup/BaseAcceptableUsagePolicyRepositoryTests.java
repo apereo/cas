@@ -118,14 +118,14 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         val c = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, c);
 
-        assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
+        assertTrue(getAcceptableUsagePolicyRepository().verify(context).isDenied());
         assertTrue(getAcceptableUsagePolicyRepository().submit(context));
         if (hasLiveUpdates()) {
             assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
         }
     }
     
-    protected UsernamePasswordCredential getCredential(final String actualPrincipalId) {
+    protected static UsernamePasswordCredential getCredential(final String actualPrincipalId) {
         return CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
     }
 

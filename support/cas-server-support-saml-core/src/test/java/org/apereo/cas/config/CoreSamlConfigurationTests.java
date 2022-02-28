@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
 @EnableScheduling
-@Tag("SAML")
+@Tag("SAML2")
 public class CoreSamlConfigurationTests {
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")

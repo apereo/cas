@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,9 +29,6 @@ public class CouchDbSamlIdPFactoryConfiguration {
     public CouchDbConnectorFactory samlMetadataCouchDbFactory(final CasConfigurationProperties casProperties,
                                                               @Qualifier("defaultObjectMapperFactory")
                                                               final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getAuthn()
-            .getSamlIdp()
-            .getMetadata()
-            .getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory);
     }
 }

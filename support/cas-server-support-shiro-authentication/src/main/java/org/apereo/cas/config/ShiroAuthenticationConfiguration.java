@@ -36,6 +36,7 @@ public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory shiroPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -62,6 +63,7 @@ public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer shiroAuthenticationEventExecutionPlanConfigurer(
         final CasConfigurationProperties casProperties,
         @Qualifier("shiroAuthenticationHandler")
@@ -81,6 +83,7 @@ public class ShiroAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "shiroPasswordPolicyConfiguration")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext shiroPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

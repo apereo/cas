@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -45,10 +46,10 @@ import java.util.Objects;
 @RestControllerEndpoint(id = "webAuthnDevices", enableByDefault = false)
 @Slf4j
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
-    private final WebAuthnCredentialRepository registrationStorage;
+    private final ObjectProvider<WebAuthnCredentialRepository> registrationStorage;
 
     public WebAuthnRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
-                                             final WebAuthnCredentialRepository registrationStorage) {
+                                             final ObjectProvider<WebAuthnCredentialRepository> registrationStorage) {
         super(casProperties);
         this.registrationStorage = registrationStorage;
     }
@@ -64,7 +65,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     public Collection<? extends CredentialRegistration> fetch(
         @PathVariable
         final String username) {
-        return registrationStorage.getRegistrationsByUsername(username);
+        return registrationStorage.getObject().getRegistrationsByUsername(username);
     }
 
     /**
@@ -85,7 +86,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
-        return registrationStorage.addRegistrationByUsername(username, registration);
+        return registrationStorage.getObject().addRegistrationByUsername(username, registration);
     }
 
     /**
@@ -99,7 +100,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     public void delete(
         @PathVariable
         final String username) {
-        registrationStorage.removeAllRegistrations(username);
+        registrationStorage.getObject().removeAllRegistrations(username);
     }
 
     /**
@@ -118,8 +119,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
         @PathVariable
         final String credentialId) throws Exception {
         val ba = ByteArray.fromBase64Url(credentialId);
-        registrationStorage.getRegistrationByUsernameAndCredentialId(username, ba)
-            .ifPresent(registration -> registrationStorage.removeRegistrationByUsername(username, registration));
+        registrationStorage.getObject().getRegistrationByUsernameAndCredentialId(username, ba)
+            .ifPresent(registration -> registrationStorage.getObject().removeRegistrationByUsername(username, registration));
     }
 
     /**
@@ -131,7 +132,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Export device registrations as a zip file")
     @ResponseBody
     public ResponseEntity<Resource> export() {
-        val resource = CompressionUtils.toZipFile(registrationStorage.stream(),
+        val resource = CompressionUtils.toZipFile(registrationStorage.getObject().stream(),
             Unchecked.function(entry -> {
                 val acct = CredentialRegistration.class.cast(entry);
                 val ba = acct.getCredential().getCredentialId().getBase64Url();
@@ -162,7 +163,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
             .readValue(requestBody, new TypeReference<CredentialRegistration>() {
             });
         LOGGER.trace("Storing account: [{}]", account);
-        registrationStorage.addRegistrationByUsername(account.getUsername(), account);
+        registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
         return HttpStatus.CREATED;
     }
 }

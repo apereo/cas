@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
@@ -17,7 +18,14 @@ import java.util.function.Consumer;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
+@Accessors(chain = true)
 public class ConsumerExecutionAction implements Action {
+    /**
+     * Consumer action that does nothing and returns null, effectively being a no-op.
+     */
+    public static final Action NONE = new ConsumerExecutionAction(ctx -> {
+    });
+
     private final Consumer<RequestContext> task;
 
     @Setter

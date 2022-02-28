@@ -100,6 +100,7 @@ public class AccepttoMultifactorAuthenticationEventExecutionPlanConfiguration {
     public static class AccepttoMultifactorAuthenticationEventExecutionPlanPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "casAccepttoMultifactorPrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory casAccepttoMultifactorPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }

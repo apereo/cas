@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.UUID;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -41,6 +42,8 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @BeforeEach
     public void initialize() {
         this.userId = RandomUtils.randomAlphabetic(6);
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
+        await().untilAsserted(() -> assertEquals(0, oneTimeTokenAuthenticatorTokenRepository.count()));
     }
 
     @Test
@@ -58,11 +61,10 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @Test
     public void verifyCaseInsensitiveUser() {
         val otp = getRandomOtp();
-        var token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
+        val token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId.toUpperCase());
         oneTimeTokenAuthenticatorTokenRepository.store(token);
-        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp));
-        token = oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp);
-        assertTrue(token.getId() > 0);
+        await().untilAsserted(() -> assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId.toLowerCase(), otp)));
+        await().untilAsserted(() -> assertNotNull(oneTimeTokenAuthenticatorTokenRepository.get(userId.toLowerCase(), otp)));
     }
 
     @Test

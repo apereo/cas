@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -30,6 +32,7 @@ public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrate
                                                 final HttpServletResponse response) {
         return deviceFingerprintComponentManagers
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .map(component -> component.extractComponent(principal, request, response))
             .filter(Optional::isPresent)

@@ -5,6 +5,7 @@ import org.apereo.cas.audit.CouchbaseAuditTrailManager;
 import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -29,7 +30,7 @@ public class CasSupportCouchbaseAuditConfiguration {
     @Bean
     public CouchbaseClientFactory auditsCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val cb = casProperties.getAudit().getCouchbase();
-        return new CouchbaseClientFactory(cb);
+        return new DefaultCouchbaseClientFactory(cb);
     }
 
     @Bean

@@ -24,8 +24,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +47,7 @@ public class X509AuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer x509WebflowConfigurer(
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowRegistry,
@@ -93,6 +94,7 @@ public class X509AuthenticationWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "x509CasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer x509CasWebflowExecutionPlanConfigurer(
         @Qualifier("x509WebflowConfigurer")
@@ -106,13 +108,15 @@ public class X509AuthenticationWebflowConfiguration {
     public static class X509TomcatServletWebServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryCustomizer")
         @Bean
-        public ServletWebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebServerFactoryCustomizer x509TomcatServletWebServiceFactoryCustomizer(
             final ServerProperties serverProperties,
             final CasConfigurationProperties casProperties) {
             return new X509TomcatServletWebServiceFactoryCustomizer(serverProperties, casProperties);
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "x509TomcatWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer x509TomcatWebflowExecutionPlanConfigurer(
             @Qualifier("x509TomcatServletWebServiceFactoryWebflowConfigurer")
@@ -122,6 +126,7 @@ public class X509AuthenticationWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "x509TomcatServletWebServiceFactoryWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowRegistry,

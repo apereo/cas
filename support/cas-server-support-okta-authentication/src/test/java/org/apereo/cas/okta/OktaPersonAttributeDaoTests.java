@@ -3,7 +3,7 @@ package org.apereo.cas.okta;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.OktaPersonDirectoryConfiguration;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import com.okta.sdk.client.Client;
 import com.okta.sdk.resource.user.User;

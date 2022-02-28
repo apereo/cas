@@ -38,6 +38,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "cloudDirectoryPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory cloudDirectoryPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }

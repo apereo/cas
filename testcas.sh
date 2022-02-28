@@ -252,8 +252,17 @@ while (( "$#" )); do
             metadata|md|samlmetadata)
                 task+="testSAMLMetadata "
                 ;;
-            saml|saml2)
+            saml1)
+                task+="testSAML1 "
+                ;;
+            saml2)
+                task+="testSAML2 "
+                ;;
+            saml)
                 task+="testSAML "
+                ;;
+            samllogout)
+                task+="testSAMLLogout "
                 ;;
             jmx|jmx)
                 task+="testJMX "

@@ -5,6 +5,7 @@ import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,8 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
 
     public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                   final AcceptableUsagePolicyProperties properties,
-                                                  final ProfileCouchDbRepository couchDb, final int conflictRetries) {
+                                                  final ProfileCouchDbRepository couchDb,
+                                                  final int conflictRetries) {
         super(ticketRegistrySupport, properties);
         this.couchDb = couchDb;
         this.conflictRetries = conflictRetries;
@@ -40,7 +42,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
     @Override
     public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) {
         var status = super.verify(requestContext);
-        if (!status.isAccepted()) {
+        if (status.isDenied()) {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val profile = couchDb.findByUsername(principal.getId());
             var accepted = false;
@@ -49,9 +51,9 @@ public class CouchDbAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
                 accepted = CollectionUtils.firstElement(values).map(value -> (Boolean) value).orElse(Boolean.FALSE);
             }
             if (accepted) {
-                LOGGER.debug("Usage policy has been accepted by [{}]", profile.getUsername());
+                LOGGER.debug("Acceptable usage policy has been accepted by [{}]", profile.getUsername());
             }
-            status = new AcceptableUsagePolicyStatus(accepted, status.getPrincipal());
+            status = new AcceptableUsagePolicyStatus(TriStateBoolean.fromBoolean(accepted), status.getPrincipal());
         }
         return status;
     }

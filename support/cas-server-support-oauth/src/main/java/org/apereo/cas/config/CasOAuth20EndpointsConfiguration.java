@@ -108,6 +108,7 @@ public class CasOAuth20EndpointsConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
@@ -124,6 +125,7 @@ public class CasOAuth20EndpointsConfiguration {
     public static class CasOAuth20EndpointSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauth20ProtocolEndpointConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
                 @Override

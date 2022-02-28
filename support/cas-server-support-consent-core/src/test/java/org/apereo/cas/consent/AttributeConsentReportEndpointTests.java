@@ -40,7 +40,7 @@ public class AttributeConsentReportEndpointTests extends AbstractCasEndpointTest
     private AttributeConsentReportEndpoint attributeConsentReportEndpoint;
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     private ConsentRepository consentRepository;
 
     @Autowired

@@ -94,7 +94,7 @@ public class UrlResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @Test
-    public void verifyResolverWithProtocol() {
+    public void verifyResolverWithProtocol() throws Exception {
         try (val webServer = new MockWebServer(9155, new ClassPathResource("sample-metadata.xml"), HttpStatus.OK)) {
             webServer.start();
             val props = new SamlIdPProperties();

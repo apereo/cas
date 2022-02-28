@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Tag("SAML")
+@Tag("SAMLLogout")
 @TestPropertySource(properties =
     "cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=http://www.w3.org/2001/10/xml-exc-c14n#"
 )

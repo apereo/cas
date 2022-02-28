@@ -8,7 +8,7 @@ import org.apereo.cas.util.cache.MappableDistributedCacheManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
@@ -24,12 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RegisteredServiceKafkaDistributedCacheManager extends
     MappableDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
 
-    private final KafkaTemplate<String, DistributedCacheObject<RegisteredService>> kafkaTemplate;
+    private final KafkaOperations<String, DistributedCacheObject<RegisteredService>> kafkaTemplate;
 
     private final String topic;
 
     public RegisteredServiceKafkaDistributedCacheManager(
-        final KafkaTemplate<String, DistributedCacheObject<RegisteredService>> kafkaTemplate, final String topic) {
+        final KafkaOperations<String, DistributedCacheObject<RegisteredService>> kafkaTemplate, final String topic) {
         super(new ConcurrentHashMap<>());
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;

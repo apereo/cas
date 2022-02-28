@@ -35,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import({
     CasAccountManagementWebflowConfiguration.class,
-    CasAccountManagementWebflowConfiguration.CasAccountManagementRegistrationCaptchaConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasAccountManagementWebflowConfiguration.CasAccountManagementRegistrationCaptchaConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.account-registration.core.crypto.enabled=false",

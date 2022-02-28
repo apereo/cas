@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.monitor.JdbcDataSourceHealthIndicator;
 
 import lombok.val;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -15,7 +16,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +31,8 @@ import java.util.concurrent.ExecutorService;
 public class CasJdbcMonitorConfiguration {
 
     @Bean
-    public ThreadPoolExecutorFactoryBean pooledJdbcMonitorExecutorService(final CasConfigurationProperties casProperties) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public FactoryBean<ExecutorService> pooledJdbcMonitorExecutorService(final CasConfigurationProperties casProperties) {
         return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
     }
 

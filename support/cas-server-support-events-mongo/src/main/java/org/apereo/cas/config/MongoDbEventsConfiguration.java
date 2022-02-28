@@ -2,10 +2,12 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbEventsConfiguration}, defines certain beans via configuration
@@ -27,6 +29,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MongoDbEventsConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "mongoDb")
 public class MongoDbEventsConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -38,8 +41,8 @@ public class MongoDbEventsConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "mongoEventsTemplate")
-    public MongoTemplate mongoEventsTemplate(final CasConfigurationProperties casProperties,
-                                             @Qualifier(CasSSLContext.BEAN_NAME)
+    public MongoOperations mongoEventsTemplate(final CasConfigurationProperties casProperties,
+                                               @Qualifier(CasSSLContext.BEAN_NAME)
                                              final CasSSLContext casSslContext) {
         val mongo = casProperties.getEvents().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
@@ -62,7 +65,7 @@ public class MongoDbEventsConfiguration {
         @Qualifier("mongoEventRepositoryFilter")
         final CasEventRepositoryFilter mongoEventRepositoryFilter,
         @Qualifier("mongoEventsTemplate")
-        final MongoTemplate mongoEventsTemplate) {
+        final MongoOperations mongoEventsTemplate) {
         val mongo = casProperties.getEvents().getMongo();
         return new MongoDbCasEventRepository(mongoEventRepositoryFilter, mongoEventsTemplate, mongo.getCollection());
     }

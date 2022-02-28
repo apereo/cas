@@ -95,7 +95,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
     public Action acceptPasswordlessAuthenticationAction(
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
-        @Qualifier("passwordlessTokenRepository")
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository,
         @Qualifier("adaptiveAuthenticationPolicy")
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -119,7 +119,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
         final CommunicationsManager communicationsManager,
         @Qualifier("passwordlessUserAccountStore")
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
-        @Qualifier("passwordlessTokenRepository")
+        @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
         final PasswordlessTokenRepository passwordlessTokenRepository) {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository, passwordlessUserAccountStore, communicationsManager,
             casProperties.getAuthn().getPasswordless());
@@ -136,6 +136,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
@@ -147,6 +148,7 @@ public class PasswordlessAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer passwordlessCasWebflowExecutionPlanConfigurer(
         @Qualifier("passwordlessAuthenticationWebflowConfigurer")
         final CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer,

@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yubico.u2f.U2F;
@@ -20,9 +22,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -115,6 +117,7 @@ public class U2FConfiguration {
 
         @ConditionalOnMissingBean(name = "transactionManagerU2f")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerU2f() {
             return new PseudoPlatformTransactionManager();
         }
@@ -126,12 +129,16 @@ public class U2FConfiguration {
     public static class U2FCleanerConfiguration {
         @ConditionalOnMissingBean(name = "u2fDeviceRepositoryCleanerScheduler")
         @Bean
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.u2f.cleaner.schedule",
-            name = "enabled", havingValue = "true", matchIfMissing = true)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable u2fDeviceRepositoryCleanerScheduler(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("u2fDeviceRepository")
-            final U2FDeviceRepository storage) {
-            return new U2FDeviceRepositoryCleanerScheduler(storage);
+            final U2FDeviceRepository storage) throws Exception {
+            return BeanSupplier.of(Runnable.class)
+                .when(BeanCondition.on("cas.authn.mfa.u2f.cleaner.schedule.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+                .supply(() -> new U2FDeviceRepositoryCleanerScheduler(storage))
+                .otherwiseProxy()
+                .get();
         }
 
     }

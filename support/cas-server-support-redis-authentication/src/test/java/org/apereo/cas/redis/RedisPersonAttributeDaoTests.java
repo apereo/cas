@@ -96,7 +96,7 @@ public class RedisPersonAttributeDaoTests {
         val redis = casProperties.getAuthn().getAttributeRepository().getRedis().get(0);
         val conn = RedisObjectFactory.newRedisConnectionFactory(redis, true, CasSSLContext.disabled());
         val template = RedisObjectFactory.newRedisTemplate(conn);
-        template.afterPropertiesSet();
+        template.initialize();
         val attr = new HashMap<String, List<Object>>();
         attr.put("name", CollectionUtils.wrapList("John", "Jon"));
         attr.put("age", CollectionUtils.wrapList("42"));

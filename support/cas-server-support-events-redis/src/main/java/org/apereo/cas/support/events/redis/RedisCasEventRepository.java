@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events.redis;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -29,12 +28,12 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
 
     private static final String CAS_PREFIX = RedisCasEventRepository.class.getSimpleName();
 
-    private final RedisTemplate<String, CasEvent> template;
+    private final CasRedisTemplate<String, CasEvent> template;
 
     private final long scanCount;
 
     public RedisCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
-                                   final RedisTemplate<String, CasEvent> redisTemplate,
+                                   final CasRedisTemplate<String, CasEvent> redisTemplate,
                                    final long scanCount) {
         super(eventRepositoryFilter);
         this.template = redisTemplate;
@@ -127,6 +126,6 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
     private Stream<String> getKeys(final String type, final String principal, final String timestamp) {
         val key = getKey(type, principal, timestamp);
         LOGGER.trace("Fetching records based on key [{}]", key);
-        return RedisUtils.keys(this.template, key, this.scanCount);
+        return template.keys(key, this.scanCount);
     }
 }

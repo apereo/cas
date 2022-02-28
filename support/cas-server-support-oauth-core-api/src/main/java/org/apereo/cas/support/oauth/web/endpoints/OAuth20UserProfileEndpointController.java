@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import lombok.extern.slf4j.Slf4j;
@@ -105,8 +104,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
      * @throws Exception the exception
      */
     protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {
-        val accessTokenState = TicketState.class.cast(accessTokenTicket);
-        accessTokenState.update();
+        accessTokenTicket.update();
         if (accessTokenTicket.isExpired()) {
             getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
         } else {

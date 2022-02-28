@@ -383,6 +383,7 @@ public class X509AuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory x509PrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -437,6 +438,7 @@ public class X509AuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer(
         @Qualifier("x509SerialNumberPrincipalResolver")
         final PrincipalResolver x509SerialNumberPrincipalResolver,

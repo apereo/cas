@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
@@ -43,7 +43,7 @@ public class CouchbaseAuthenticationHandlerTests {
     @Test
     public void verify() throws Exception {
         val props = casProperties.getAuthn().getCouchbase();
-        val factory = new CouchbaseClientFactory(props);
+        val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
@@ -58,7 +58,7 @@ public class CouchbaseAuthenticationHandlerTests {
     @Test
     public void verifyBadEncoding() {
         val props = casProperties.getAuthn().getCouchbase();
-        val factory = new CouchbaseClientFactory(props);
+        val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         handler.setPasswordEncoder(new SCryptPasswordEncoder());
@@ -69,7 +69,7 @@ public class CouchbaseAuthenticationHandlerTests {
     @Test
     public void verifyBadRecord() {
         val props = casProperties.getAuthn().getCouchbase();
-        val factory = new CouchbaseClientFactory(props);
+        val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         handler.setPasswordEncoder(new SCryptPasswordEncoder());
@@ -80,7 +80,7 @@ public class CouchbaseAuthenticationHandlerTests {
     @Test
     public void verifyMissingUser() {
         val props = casProperties.getAuthn().getCouchbase();
-        val factory = new CouchbaseClientFactory(props);
+        val factory = new DefaultCouchbaseClientFactory(props);
         val handler = new CouchbaseAuthenticationHandler(mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), factory, props);
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-missing", "Mellon");

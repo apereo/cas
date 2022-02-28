@@ -45,7 +45,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
     @Getter
     public class DefaultTests extends BaseAcceptableUsagePolicyRepositoryTests {
         @Autowired
-        @Qualifier("acceptableUsagePolicyRepository")
+        @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
         @Test
@@ -116,7 +116,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
 
-            assertFalse(repo.verify(context).isAccepted());
+            assertTrue(repo.verify(context).isDenied());
             assertTrue(repo.submit(context));
             assertTrue(repo.verify(context).isAccepted());
         }
@@ -124,7 +124,8 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
         private MockRequestContext getRequestContext() {
             val context = new MockRequestContext();
             val request = new MockHttpServletRequest();
-            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request,
+                new MockHttpServletResponse()));
             return context;
         }
 
@@ -143,7 +144,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests {
     public class MissingStatusAttributeTests extends BaseAcceptableUsagePolicyRepositoryTests {
 
         @Autowired
-        @Qualifier("acceptableUsagePolicyRepository")
+        @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
         protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
         @Test

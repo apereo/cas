@@ -16,7 +16,9 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -54,49 +55,69 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Configuration(value = "CasCoreAuthenticationHandlersProxyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.sso", name = "proxy-authn-enabled", havingValue = "true", matchIfMissing = true)
     public static class CasCoreAuthenticationHandlersProxyConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.sso.proxy-authn-enabled").isTrue().evenIfMissing();
+
         @Bean
+        @ConditionalOnMissingBean(name = "proxyAuthenticationHandler")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler proxyAuthenticationHandler(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier("proxyPrincipalFactory")
             final PrincipalFactory proxyPrincipalFactory,
-            @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
-            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
-            return new HttpBasedServiceCredentialsAuthenticationHandler(null,
-                servicesManager, proxyPrincipalFactory, Integer.MIN_VALUE,
-                supportsTrustStoreSslSocketFactoryHttpClient);
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
+            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
+            return BeanSupplier.of(AuthenticationHandler.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new HttpBasedServiceCredentialsAuthenticationHandler(null,
+                    servicesManager, proxyPrincipalFactory, Integer.MIN_VALUE,
+                    supportsTrustStoreSslSocketFactoryHttpClient))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PrincipalFactory proxyPrincipalFactory() {
-            return PrincipalFactoryUtils.newPrincipalFactory();
+        public PrincipalFactory proxyPrincipalFactory(final ConfigurableApplicationContext applicationContext) throws Exception {
+            return BeanSupplier.of(PrincipalFactory.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(PrincipalFactoryUtils::newPrincipalFactory)
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "proxyPrincipalResolver")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver proxyPrincipalResolver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("proxyPrincipalFactory")
-            final PrincipalFactory proxyPrincipalFactory) {
-            return new ProxyingPrincipalResolver(proxyPrincipalFactory);
+            final PrincipalFactory proxyPrincipalFactory) throws Exception {
+            return BeanSupplier.of(PrincipalResolver.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new ProxyingPrincipalResolver(proxyPrincipalFactory))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("proxyAuthenticationHandler")
             final AuthenticationHandler proxyAuthenticationHandler,
             @Qualifier("proxyPrincipalResolver")
-            final PrincipalResolver proxyPrincipalResolver) {
-            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler, proxyPrincipalResolver);
+            final PrincipalResolver proxyPrincipalResolver) throws Exception {
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler, proxyPrincipalResolver))
+                .otherwiseProxy()
+                .get();
         }
-
     }
 
     @Configuration(value = "CasCoreAuthenticationHandlersAcceptConfiguration", proxyBeanMethods = false)

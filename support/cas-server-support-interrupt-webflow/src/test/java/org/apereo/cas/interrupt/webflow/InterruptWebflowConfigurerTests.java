@@ -33,8 +33,7 @@ public class InterruptWebflowConfigurerTests {
     })
     @Import({
         CasInterruptConfiguration.class,
-        CasInterruptWebflowConfiguration.class,
-        BaseWebflowConfigurerTests.SharedTestConfiguration.class
+        CasInterruptWebflowConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

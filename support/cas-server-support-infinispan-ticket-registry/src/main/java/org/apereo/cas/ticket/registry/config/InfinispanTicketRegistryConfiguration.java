@@ -46,6 +46,7 @@ public class InfinispanTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public EmbeddedCacheManager cacheManager(final CasConfigurationProperties casProperties) throws Exception {
         val loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
         return new DefaultCacheManager(loc.getInputStream());

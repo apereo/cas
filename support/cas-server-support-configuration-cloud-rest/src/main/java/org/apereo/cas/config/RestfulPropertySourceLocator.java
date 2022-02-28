@@ -61,8 +61,8 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
                 return new PropertiesPropertySource(getClass().getSimpleName(), props);
             }
 
-            val basicAuthUsername = getPropertyFromEnvironment(environment, "basicAuthUsername");
-            val basicAuthPassword = getPropertyFromEnvironment(environment, "basicAuthPassword");
+            val basicAuthUsername = getPropertyFromEnvironment(environment, "basic-auth-username");
+            val basicAuthPassword = getPropertyFromEnvironment(environment, "basic-auth-password");
 
             val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             val method = StringUtils.defaultIfBlank(getPropertyFromEnvironment(environment, "method"), HttpMethod.GET.name());

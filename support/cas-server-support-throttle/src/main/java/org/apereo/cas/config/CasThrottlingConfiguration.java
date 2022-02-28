@@ -21,6 +21,7 @@ import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -129,6 +130,7 @@ public class CasThrottlingConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "httpPostMethodThrottlingRequestFilter")
         public ThrottledRequestFilter httpPostMethodThrottlingRequestFilter() {
             return ThrottledRequestFilter.httpPost();
@@ -139,7 +141,7 @@ public class CasThrottlingConfiguration {
     @Configuration(value = "CasThrottlingPlanExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasThrottlingPlanExecutionConfiguration {
-        @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlan")
+        @ConditionalOnMissingBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(
@@ -176,9 +178,10 @@ public class CasThrottlingConfiguration {
     public static class CasThrottlingWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
-            @Qualifier("authenticationThrottlingExecutionPlan")
-            final AuthenticationThrottlingExecutionPlan plan, final CasConfigurationProperties casProperties) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan, final CasConfigurationProperties casProperties) {
             return new ThrottledSubmissionHandlerEndpoint(casProperties, plan);
         }
     }
@@ -189,7 +192,7 @@ public class CasThrottlingConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Runnable throttleSubmissionCleaner(
-            @Qualifier("authenticationThrottlingExecutionPlan")
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final AuthenticationThrottlingExecutionPlan plan) {
             return new InMemoryThrottledSubmissionCleaner(plan);
         }

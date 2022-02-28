@@ -40,6 +40,7 @@ public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationServiceSelectionStrategyConfigurer oauth20AuthenticationServiceSelectionStrategyConfigurer(
         @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy) {

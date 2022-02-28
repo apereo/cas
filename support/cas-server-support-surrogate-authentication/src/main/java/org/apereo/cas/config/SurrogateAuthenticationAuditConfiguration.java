@@ -37,6 +37,7 @@ public class SurrogateAuthenticationAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationAuditPrincipalConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateAuditPrincipalIdProvider")
         public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
             return new SurrogateAuditPrincipalIdProvider();
@@ -66,6 +67,7 @@ public class SurrogateAuthenticationAuditConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateEligibilitySelectionAuditResourceResolver")
         public AuditResourceResolver surrogateEligibilitySelectionAuditResourceResolver() {
             return new SurrogateEligibilitySelectionAuditResourceResolver();
@@ -77,6 +79,7 @@ public class SurrogateAuthenticationAuditConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SurrogateAuthenticationAuditPlanConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer surrogateAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("surrogateEligibilityVerificationAuditResourceResolver")

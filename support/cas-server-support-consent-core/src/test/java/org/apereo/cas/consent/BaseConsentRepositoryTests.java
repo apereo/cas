@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -95,9 +96,6 @@ public abstract class BaseConsentRepositoryTests {
         decision.setId(100);
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
-        /*
-         * Update the decision now that its record is created.
-         */
         decision = repo.storeConsentDecision(decision);
         assertNotNull(decision);
 
@@ -115,12 +113,14 @@ public abstract class BaseConsentRepositoryTests {
         val user = getUser();
         val repo = getRepository("verifyDeleteRecordsForPrincipal");
         repo.deleteAll();
-        var decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, user, ATTR);
+
         decision.setId(200);
-        decision = repo.storeConsentDecision(decision);
-        assertNotNull(decision);
-        assertTrue(repo.deleteConsentDecisions(decision.getPrincipal()));
-        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user)));
+        val result = repo.storeConsentDecision(decision);
+        assertNotNull(result);
+        await().untilAsserted(() -> assertTrue(repo.deleteConsentDecisions(result.getPrincipal())));
+        await().untilAsserted(() ->
+            assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(user))));
     }
 
     protected String getUser() {

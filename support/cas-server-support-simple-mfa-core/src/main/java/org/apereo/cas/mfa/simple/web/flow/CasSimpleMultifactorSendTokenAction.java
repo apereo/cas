@@ -160,6 +160,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      * @param token the token
      */
     protected void addOrUpdateToken(final CasSimpleMultifactorAuthenticationTicket token) {
+        token.update();
         FunctionUtils.doAndHandle(ticket -> {
             LOGGER.debug("Updating existing token [{}] to registry", token.getId());
             val trackingToken = centralAuthenticationService.getTicket(ticket.getId());

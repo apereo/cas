@@ -85,8 +85,8 @@ context utilize yours rather than what ships with CAS by default.
 
 <div class="alert alert-info"><strong>Bean Names</strong><p>To correctly define a conditional <code>Bean</code>, 
 you generally need to make sure your own bean definition is created using the same name or identifier as its original equivalent. 
-It is impractical and certainly overwheling to document all runtime bean definitions and their identifiers. So, you will
-need to study the CAS codebase to find the correct configuration classes and bean defnitions to note their name.</p></div>
+It is impractical and certainly overwhelming to document all runtime bean definitions and their identifiers. So, you will
+need to study the CAS codebase to find the correct configuration classes and bean definitions to note their name.</p></div>
 
 ### Exclusions
 
@@ -95,6 +95,56 @@ You can control the list of auto-configuration classes to exclude them in the `c
 ```properties
 spring.autoconfigure.exclude=org.apereo.cas.custom.config.SomethingConfiguration
 ```
+     
+While the above allows control over individual auto-configuration classes, in some cases it may be desirable
+to entirely disable a feature altogether by excluding all applicable auto-configuration classes without having to
+identify all of them. This can be done using the following property syntax defined in the `cas.properties` file:
+
+```properties
+CasFeatureModule.[feature].[module].enabled=false|true
+```
+
+<div class="alert alert-info mt-3"><strong>Usage</strong><p>Note that not every single CAS feature may be registered in the <i>Feature Catalog</i> and as such regarded as a standalone feature. The catalog continues to grow throughout the CAS release lifecycle to recognize more modules as grouped distinct features, allowing for a one-shop store to disable or enable a given CAS feature.</p></div>
+
+
+The following features are available to CAS:
+
+| Features                                  | 
+|-------------------------------------------|
+| `AcceptableUsagePolicy`                   |
+| `ACME`                                    |
+| `Account Management`                      |
+| `Audit`                                   |
+| `Authentication`                          |
+| `Authy`                                   |
+| `CAPTCHA`                                 |
+| `Consent`                                 |
+| `Consent`                                 |
+| `DelegatedAuthentication`                 |
+| `Events`                                  |
+| `ForgotUsername`                          |
+| `GoogleAuthenticator`                     |
+| `InterruptNotifications`                  |
+| `LDAP`                                    |
+| `MultifactorAuthentication`               |
+| `MultifactorAuthenticationTrustedDevices` |
+| `PersonDirectory`                         |
+| `RadiusMFA`                               |
+| `SamlIdPMetadata`                         |
+| `SamlServiceProviderMetadata`             |
+| `ServiceRegistry`                         |
+| `ServiceRegistryStreaming`                |
+| `SurrogateAuthentication`                 |
+| `TicketRegistry`                          |
+| `TicketRegistryLocking`                   |
+| `Throttling`                              |
+| `U2F`                                     |
+| `WebAuthn`                                |
+| `YubiKey`                                 |
+
+In this construct, `module` refers to the particular variant and implementation of the feature, typically taken after the actual dependency/module name. For example, if `AcceptableUsagePolicy` can be [supported via JDBC](../webflow/Webflow-Customization-AUP-JDBC.html), then module variant to enable or disable this feature would be `jdbc`.
+
+Note that the above setting enforces conditional access to the auto-configuration class where a whole suite of `@Bean`s would be included or excluded in the application context upon initialization and startup. Conditional inclusion or exclusion of beans generally has consequences when it comes to `@RefreshScope` and [supporting refreshable beans](Configuration-Management-Reload.html). Note that feature modules are *not refreshable* at this point; they are processed on startup and will either be included in the assembled application context or skipped entirely, depending on the result of the enforced condition.
 
 ## CAS Properties
 

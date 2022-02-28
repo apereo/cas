@@ -5,14 +5,14 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
@@ -39,43 +39,36 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-
             val metadataFile = metadataResource.getFile();
             val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ArrayList<>(0);
-    }
-
-    @SneakyThrows
-    private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource, final File metadataFile) {
-        if (metadataFile.isDirectory()) {
-            return new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
-        }
-        return new InMemoryResourceMetadataResolver(metadataResource, configBean);
+        }, (CheckedFunction<Throwable, Collection<? extends MetadataResolver>>) throwable -> new ArrayList<>(0)).get();
     }
 
     @Override
     public boolean supports(final SamlRegisteredService service) {
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return false;
+        }, throwable -> false).get();
     }
 
     @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service);
+    }
+
+    private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource,
+                                                         final File metadataFile) throws Exception {
+        if (metadataFile.isDirectory()) {
+            return new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
+        }
+        return new InMemoryResourceMetadataResolver(metadataResource, configBean);
     }
 }

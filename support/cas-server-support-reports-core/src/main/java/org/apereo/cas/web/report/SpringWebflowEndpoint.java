@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -206,11 +207,13 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Get Spring webflow report using an optional flow id",
         parameters = {@Parameter(name = "flowId"), @Parameter(name = "stateId")})
     public Map<?, ?> getReport(
-        @Nullable
-        final String flowId,
-        @Nullable
-        final String stateId) {
+        @Nullable final String flowId,
+        @Nullable final String stateId) {
         val jsonMap = new LinkedHashMap<String, Object>();
+
+        val executionPlan = applicationContext.getBean(CasWebflowExecutionPlan.BEAN_NAME, CasWebflowExecutionPlan.class);
+        executionPlan.execute();
+        
         val map = applicationContext.getBeansOfType(FlowDefinitionRegistry.class);
 
         map.forEach((k, value) -> Arrays.stream(value.getFlowDefinitionIds())

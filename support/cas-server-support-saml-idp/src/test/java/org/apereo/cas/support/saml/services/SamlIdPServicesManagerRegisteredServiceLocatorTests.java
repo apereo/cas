@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @author Hayden Sartoris
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @SuppressWarnings("InlineFormatString")
 public class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPConfigurationTests {
     private static final String SAML_AUTHN_REQUEST1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest "

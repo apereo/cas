@@ -7,7 +7,7 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,14 +35,14 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
      */
     public static final String BEAN_NAME_TRANSACTION_MANAGER = "transactionManagerServiceReg";
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 
     public JpaServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                              final TransactionTemplate transactionTemplate) {
+                              final TransactionOperations transactionTemplate) {
         super(applicationContext, serviceRegistryListeners);
         this.transactionTemplate = transactionTemplate;
     }

@@ -697,6 +697,7 @@ public class SamlIdPConfiguration {
     public static class SamlIdPAuditConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlResponseAuditPrincipalIdProvider")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
             return new SamlResponseAuditPrincipalIdProvider();
         }

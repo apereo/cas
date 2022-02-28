@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.RedisAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
@@ -36,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -93,7 +93,7 @@ public class RedisAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("authenticationRedisTemplate")
-    private RedisTemplate authenticationRedisTemplate;
+    private CasRedisTemplate authenticationRedisTemplate;
 
     @BeforeEach
     public void initialize() {

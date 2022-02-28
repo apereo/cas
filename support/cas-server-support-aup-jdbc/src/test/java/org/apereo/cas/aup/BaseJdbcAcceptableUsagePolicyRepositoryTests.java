@@ -41,7 +41,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -92,7 +92,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
     protected DataSource acceptableUsagePolicyDataSource;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     @Getter
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
@@ -102,7 +102,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
 
     @Autowired
     @Qualifier("jdbcAcceptableUsagePolicyTransactionTemplate")
-    protected TransactionTemplate jdbcAcceptableUsagePolicyTransactionTemplate;
+    protected TransactionOperations jdbcAcceptableUsagePolicyTransactionTemplate;
     
     protected String determinePrincipalId(final String actualPrincipalId, final Map<String, List<Object>> profileAttributes) {
         val aupProperties = casProperties.getAcceptableUsagePolicy();

@@ -71,6 +71,7 @@ public class TrustedAuthenticationConfiguration {
     public static class TrustedAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalFactory trustedPrincipalFactory() {
             return PrincipalFactoryUtils.newPrincipalFactory();
         }

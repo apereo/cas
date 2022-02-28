@@ -1,7 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
@@ -10,7 +10,6 @@ import com.yubico.data.CredentialRegistration;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -32,12 +31,12 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
      */
     public static final String CAS_WEB_AUTHN_PREFIX = RedisWebAuthnCredentialRepository.class.getSimpleName() + ':';
 
-    private final RedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate;
+    private final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate;
 
     private final long scanCount;
 
     public RedisWebAuthnCredentialRepository(
-        final RedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate,
+        final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> redisTemplate,
         final CasConfigurationProperties properties,
         final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);
@@ -47,13 +46,13 @@ public class RedisWebAuthnCredentialRepository extends BaseWebAuthnCredentialRep
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        val keys = RedisUtils.keys(this.redisTemplate, buildRedisKeyForRecord(username), this.scanCount);
+        val keys = redisTemplate.keys(buildRedisKeyForRecord(username), this.scanCount);
         return toCredentialRegistrationsAsStream(keys).collect(Collectors.toSet());
     }
 
     @Override
     public Stream<CredentialRegistration> stream() {
-        val keys = RedisUtils.keys(this.redisTemplate, getPatternRedisKey(), this.scanCount);
+        val keys = redisTemplate.keys(getPatternRedisKey(), this.scanCount);
         return toCredentialRegistrationsAsStream(keys);
     }
 

@@ -20,7 +20,6 @@ public interface SamlRegisteredServiceMetadataResolutionPlan {
      */
     void registerMetadataResolver(SamlRegisteredServiceMetadataResolver clazz);
 
-
     /**
      * Gets registered resolvers.
      *
