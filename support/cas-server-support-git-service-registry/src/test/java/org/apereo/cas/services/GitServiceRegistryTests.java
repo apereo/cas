@@ -122,11 +122,8 @@ import static org.mockito.Mockito.*;
         }
     }
 
-    /**
-     * Verify that a malformed json file is not preventing the remaining valid json files from being loaded
-     */
     @Test
-    public void verifyMalformedJsonFile() throws IOException {
+    public void verifyMalformedJsonFile() throws Exception {
         val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
 
         FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", RegexRegisteredService.FRIENDLY_NAME,

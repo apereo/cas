@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -51,19 +51,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     
     private final transient PrettyPrinter prettyPrinter;
 
-    /**
-     * Instantiates a new Registered service json serializer.
-     * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
-     */
     protected AbstractJacksonBackedStringSerializer() {
         this(new DefaultPrettyPrinter());
     }
 
-    /**
-     * Instantiates a new Registered service json serializer.
-     *
-     * @param prettyPrinter the pretty printer
-     */
     protected AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
         this.prettyPrinter = prettyPrinter;
@@ -74,28 +65,29 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    @SneakyThrows
     public T from(final String json) {
         val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
         return readObjectFromString(jsonString);
     }
 
     @Override
-    @SneakyThrows
     public T from(final File json) {
-        val string = isJsonFormat()
-            ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
-            : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
-        return readObjectFromString(string);
+        return FunctionUtils.doAndHandle(() -> {
+            val string = isJsonFormat()
+                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+                : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
+            return readObjectFromString(string);
+        }, throwable -> null).get();
     }
 
     @Override
-    @SneakyThrows
     public T from(final Reader json) {
-        val string = isJsonFormat()
-            ? JsonValue.readHjson(json).toString()
-            : String.join("\n", IOUtils.readLines(json));
-        return readObjectFromString(string);
+        return FunctionUtils.doAndHandle(() -> {
+            val string = isJsonFormat()
+                ? JsonValue.readHjson(json).toString()
+                : String.join("\n", IOUtils.readLines(json));
+            return readObjectFromString(string);
+        }, throwable -> null).get();
     }
 
     @Override
@@ -104,10 +96,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    @SneakyThrows
     public T from(final InputStream json) {
-        val jsonString = readJsonFrom(json);
-        return readObjectFromString(jsonString);
+        return FunctionUtils.doAndHandle(() -> {
+            val jsonString = readJsonFrom(json);
+            return readObjectFromString(jsonString);
+        }, throwable -> null).get();
     }
 
     /**
@@ -124,57 +117,61 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    @SneakyThrows
     public void to(final OutputStream out, final T object) {
-        try (val writer = new StringWriter()) {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
-            val hjsonString = isJsonFormat()
-                ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
-                : writer.toString();
-            IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
-        }
+        FunctionUtils.doUnchecked(unused -> {
+            try (val writer = new StringWriter()) {
+                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+                val hjsonString = isJsonFormat()
+                    ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
+                    : writer.toString();
+                IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
+            }
+        });
     }
 
     @Override
-    @SneakyThrows
     public void to(final Writer out, final T object) {
-        try (val writer = new StringWriter()) {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+        FunctionUtils.doUnchecked(unused -> {
+            try (val writer = new StringWriter()) {
+                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
-            if (isJsonFormat()) {
-                val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
-                JsonValue.readHjson(writer.toString()).writeTo(out, opt);
-            } else {
-                IOUtils.write(writer.toString(), out);
-            }
-        }
-    }
-
-    @Override
-    @SneakyThrows
-    public void to(final File out, final T object) {
-        try (val writer = new StringWriter()) {
-            this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
-
-            if (isJsonFormat()) {
-                try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
+                if (isJsonFormat()) {
                     val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
-                    JsonValue.readHjson(writer.toString()).writeTo(fileWriter, opt);
-                    fileWriter.flush();
+                    JsonValue.readHjson(writer.toString()).writeTo(out, opt);
+                } else {
+                    IOUtils.write(writer.toString(), out);
                 }
-            } else {
-                FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
             }
-        }
+        });
     }
 
     @Override
-    @SneakyThrows
+    public void to(final File out, final T object) {
+        FunctionUtils.doUnchecked(unused -> {
+            try (val writer = new StringWriter()) {
+                this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
+
+                if (isJsonFormat()) {
+                    try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
+                        val opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
+                        JsonValue.readHjson(writer.toString()).writeTo(fileWriter, opt);
+                        fileWriter.flush();
+                    }
+                } else {
+                    FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
+                }
+            }
+        });
+    }
+
+    @Override
     public String toString(final T object) {
-        try (val writer = new StringWriter()) {
-            to(writer, object);
-            return writer.toString();
-        }
+        return FunctionUtils.doUnchecked(() -> {
+            try (val writer = new StringWriter()) {
+                to(writer, object);
+                return writer.toString();
+            }
+        });
     }
 
     /**
