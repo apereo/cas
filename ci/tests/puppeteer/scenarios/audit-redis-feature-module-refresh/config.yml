@@ -1,0 +1,4 @@
+cas:
+  audit:
+    redis:
+      enabled: false
