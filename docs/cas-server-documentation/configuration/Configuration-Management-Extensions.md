@@ -132,6 +132,7 @@ The following features are available to CAS:
 | `RadiusMFA`                               |
 | `SamlIdPMetadata`                         |
 | `SamlServiceProviderMetadata`             |
+| `SPNEGO`                                  |
 | `ServiceRegistry`                         |
 | `ServiceRegistryStreaming`                |
 | `SurrogateAuthentication`                 |

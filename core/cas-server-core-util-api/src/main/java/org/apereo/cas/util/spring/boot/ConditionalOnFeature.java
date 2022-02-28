@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  * @since 6.5.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Documented
 @Repeatable(ConditionalOnFeatures.class)
 @Conditional(CasFeatureEnabledCondition.class)

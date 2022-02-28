@@ -23,7 +23,8 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider, P extends BaseMultifactorAuthenticationProviderProperties>
+public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenticationProvider, P
+    extends BaseMultifactorAuthenticationProviderProperties>
     implements InitializingBean {
 
     private final MultifactorAuthenticationProviderFactoryBean<T, P> providerFactory;

@@ -1,16 +1,20 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import org.apereo.cas.adaptors.duo.config.cond.ConditionalOnDuoSecurityConfigured;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.rest.DuoSecurityRestHttpRequestCredentialFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -23,22 +27,32 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "DuoSecurityRestConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnDuoSecurityConfigured
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
 @ConditionalOnClass(value = RestHttpRequestCredentialFactoryConfigurer.class)
 public class DuoSecurityRestConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactoryConfigurer")
     public RestHttpRequestCredentialFactoryConfigurer duoSecurityRestHttpRequestCredentialFactoryConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("duoSecurityRestHttpRequestCredentialFactory")
         final RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory) {
-        return factory -> factory.registerCredentialFactory(duoSecurityRestHttpRequestCredentialFactory);
+        return BeanSupplier.of(RestHttpRequestCredentialFactoryConfigurer.class)
+            .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> factory -> factory.registerCredentialFactory(duoSecurityRestHttpRequestCredentialFactory))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory() {
-        return new DuoSecurityRestHttpRequestCredentialFactory();
+    public RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory(
+        final ConfigurableApplicationContext applicationContext) {
+        return BeanSupplier.of(RestHttpRequestCredentialFactory.class)
+            .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
+            .supply(DuoSecurityRestHttpRequestCredentialFactory::new)
+            .otherwiseProxy()
+            .get();
     }
 }

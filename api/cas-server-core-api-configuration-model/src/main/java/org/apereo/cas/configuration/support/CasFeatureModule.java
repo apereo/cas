@@ -103,6 +103,10 @@ public interface CasFeatureModule {
          */
         PersonDirectory,
         /**
+         * SPNEGO authentication.
+         */
+        SPNEGO,
+        /**
          * Passwordless authN.
          */
         PasswordlessAuthn,
