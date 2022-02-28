@@ -80,14 +80,9 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Handle and produce a list of services from registry")
-    @GetMapping(consumes = {
-        ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
-        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
-        "application/vnd.cas.services+yaml"
-    },
-        produces = {
-            ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
+    @GetMapping(produces = {
+            ActuatorMediaType.V2_JSON,
+            ActuatorMediaType.V3_JSON,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
             "application/vnd.cas.services+yaml"
@@ -104,14 +99,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
-    @GetMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
-        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
-        consumes = {
-            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+    @GetMapping(path = "{id}", produces = {
             ActuatorMediaType.V2_JSON,
             ActuatorMediaType.V3_JSON,
-            "application/vnd.cas.services+yaml",
-            MediaType.APPLICATION_JSON_VALUE
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            "application/vnd.cas.services+yaml"
         })
     public ResponseEntity<String> fetchService(
         @PathVariable
@@ -133,14 +126,12 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Fetch services by their type")
-    @GetMapping(path = "type/{type}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
-        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
-        consumes = {
-            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+    @GetMapping(path = "type/{type}", produces = {
             ActuatorMediaType.V2_JSON,
             ActuatorMediaType.V3_JSON,
-            "application/vnd.cas.services+yaml",
-            MediaType.APPLICATION_JSON_VALUE
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            "application/vnd.cas.services+yaml"
         })
     public ResponseEntity<String> fetchServicesByType(
         @PathVariable
@@ -157,8 +148,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
      * @throws Exception the exception
      */
     @Operation(summary = "Delete registered service by id")
-    @DeleteMapping(path = "{id}", produces = {ActuatorMediaType.V2_JSON, ActuatorMediaType.V3_JSON,
-        "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE},
+    @DeleteMapping(path = "{id}",
         consumes = {
             MediaType.APPLICATION_OCTET_STREAM_VALUE,
             ActuatorMediaType.V2_JSON,
