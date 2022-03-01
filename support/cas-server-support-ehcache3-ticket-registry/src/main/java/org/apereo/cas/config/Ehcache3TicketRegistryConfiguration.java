@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.services.ChainingServicesManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -40,13 +42,16 @@ import org.ehcache.jsr107.config.Jsr107Configuration;
 import org.ehcache.spi.service.ServiceCreationConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.event.EventListener;
 
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -200,6 +205,7 @@ public class Ehcache3TicketRegistryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @DependsOn("ticketRegistry")
     public org.springframework.cache.CacheManager ehCacheJCacheCacheManager(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("ehcache3TicketCacheManager")
@@ -210,6 +216,13 @@ public class Ehcache3TicketRegistryConfiguration {
             .otherwiseProxy()
             .get();
     }
+
+//    @EventListener
+//    public void refreshWhenReady(final ApplicationReadyEvent event) {
+//        val cacheManager = event.getApplicationContext().getBean("ehCacheJCacheCacheManager",
+//            org.springframework.cache.CacheManager.class);
+//        cacheManager.ini();
+//    }
 
     private static class CasCacheEventListener implements CacheEventListener<String, Ticket> {
 
