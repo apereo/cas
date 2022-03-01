@@ -2,9 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -40,6 +42,7 @@ import java.util.function.Supplier;
  */
 @Configuration(value = "SamlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
 public class SamlIdentityProviderDiscoveryConfiguration {
 
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")

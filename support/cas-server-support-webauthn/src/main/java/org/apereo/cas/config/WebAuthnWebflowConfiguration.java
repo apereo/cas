@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -56,7 +55,8 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class WebAuthnWebflowConfiguration {
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
-    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled").isTrue().evenIfMissing();
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled")
+        .isTrue().evenIfMissing();
     
     @Configuration(value = "WebAuthnWebflowRegistryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -154,11 +154,13 @@ public class WebAuthnWebflowConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.web-authn")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "webauthn")
     @Configuration(value = "WebAuthnMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("webAuthnMultifactorWebflowConfigurer")
     public static class WebAuthnMultifactorTrustConfiguration {
-
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.trusted-device-enabled")
+            .isTrue().evenIfMissing();
+        
         @ConditionalOnMissingBean(name = "webAuthnMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -172,7 +174,8 @@ public class WebAuthnWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(WebAuthnWebflowConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(WebAuthnMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(
                         flowBuilderServices,
@@ -195,7 +198,8 @@ public class WebAuthnWebflowConfiguration {
             @Qualifier("webAuthnMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(WebAuthnWebflowConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(WebAuthnMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(webAuthnMultifactorTrustWebflowConfigurer))
                 .otherwiseProxy()
                 .get();

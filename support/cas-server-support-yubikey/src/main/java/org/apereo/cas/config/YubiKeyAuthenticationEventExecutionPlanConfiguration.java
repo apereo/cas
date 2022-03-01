@@ -24,9 +24,11 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +61,7 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey)
 @Configuration(value = "YubikeyAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 

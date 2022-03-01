@@ -1,6 +1,7 @@
 package org.apereo.cas.support.inwebo.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorTrustWebflowConfigurer;
@@ -9,8 +10,10 @@ import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationA
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateAction;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -165,10 +168,12 @@ public class InweboWebflowConfiguration {
      * The Inwebo multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.inwebo")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "inwebo")
     @Configuration(value = "InweboMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("inweboMultifactorWebflowConfigurer")
     public static class InweboMultifactorTrustConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.inwebo.trusted-device-enabled")
+            .isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "inweboMultifactorTrustWebflowConfigurer")
         @Bean
@@ -182,22 +187,33 @@ public class InweboWebflowConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry,
-                inweboFlowRegistry,
-                applicationContext,
-                casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry,
+                        inweboFlowRegistry,
+                        applicationContext,
+                        casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+                    return cfg;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer inweboMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("inweboMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer inweboMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(inweboMultifactorTrustWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(inweboMultifactorTrustWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

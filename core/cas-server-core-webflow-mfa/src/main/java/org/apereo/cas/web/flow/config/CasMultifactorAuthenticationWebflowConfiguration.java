@@ -311,7 +311,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrigger adaptiveMultifactorAuthenticationTrigger(
-            @Qualifier("geoLocationService")
+            @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {

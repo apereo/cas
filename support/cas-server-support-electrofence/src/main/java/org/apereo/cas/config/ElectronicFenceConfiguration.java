@@ -215,7 +215,7 @@ public class ElectronicFenceConfiguration {
         }
     }
 
-    @ConditionalOnBean(name = "geoLocationService")
+    @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
     @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceGeoLocationConfiguration {
@@ -225,7 +225,7 @@ public class ElectronicFenceConfiguration {
         public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("geoLocationService")
+            @Qualifier(GeoLocationService.BEAN_NAME)
             final GeoLocationService geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository) throws Exception {
