@@ -20,8 +20,6 @@ def run(Object[] args) {
         return PasswordlessUserAccount.builder()
                 .username("nouserinfo")
                 .name("CAS")
-                .email("casuser@example.org")
-                .phone("123-456-7890")
                 .requestPassword(true)
                 .build()
     }
