@@ -25,7 +25,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
      * @param module  the module
      * @return the property name
      */
-    static String getPropertyName(final CasFeatureModule.FeatureCatalog feature, final String module) {
+    public static String getPropertyName(final CasFeatureModule.FeatureCatalog feature, final String module) {
         var name = CasFeatureModule.class.getSimpleName() + '.' + feature.name();
         if (StringUtils.isNotBlank(module)) {
             name += '.' + module;
