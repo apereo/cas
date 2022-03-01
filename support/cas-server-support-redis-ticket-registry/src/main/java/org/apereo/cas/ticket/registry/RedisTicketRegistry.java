@@ -1,13 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -27,9 +26,33 @@ import java.util.stream.Stream;
 public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
-    private final RedisTemplate<String, Ticket> client;
+    private final CasRedisTemplate<String, Ticket> client;
 
     private final long scanCount;
+
+    /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout
+     */
+    private static Long getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        if (ttl > Integer.MAX_VALUE) {
+            return (long) Integer.MAX_VALUE;
+        } else if (ttl <= 0) {
+            return 1L;
+        }
+        return ttl;
+    }
+
+    private static String getTicketRedisKey(final String ticketId) {
+        return CAS_TICKET_PREFIX + ticketId;
+    }
+
+    private static String getPatternTicketRedisKey() {
+        return CAS_TICKET_PREFIX + '*';
+    }
 
     @Override
     @SuppressWarnings("java:S2583")
@@ -124,35 +147,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
-     * If not time out value is specified, expire the ticket immediately.
-     *
-     * @param ticket the ticket
-     * @return timeout
-     */
-    private static Long getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive();
-        if (ttl > Integer.MAX_VALUE) {
-            return (long) Integer.MAX_VALUE;
-        } else if (ttl <= 0) {
-            return 1L;
-        }
-        return ttl;
-    }
-
-    private static String getTicketRedisKey(final String ticketId) {
-        return CAS_TICKET_PREFIX + ticketId;
-    }
-
-    private static String getPatternTicketRedisKey() {
-        return CAS_TICKET_PREFIX + '*';
-    }
-
-    /**
      * Get a stream of all CAS-related keys from Redis DB.
      *
      * @return stream of all CAS-related keys from Redis DB
      */
     private Stream<String> getKeysStream() {
-        return RedisUtils.keys(this.client, getPatternTicketRedisKey(), this.scanCount);
+        return client.keys(getPatternTicketRedisKey(), this.scanCount);
     }
 }

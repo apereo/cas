@@ -8,7 +8,7 @@ import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComp
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanContainer;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -59,21 +61,24 @@ public class DatabaseAuthenticationTestConfiguration {
     private JpaPersistenceProviderContext persistenceProviderContext;
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public DataSource dataSource() {
         return JpaBeans.newDataSource(databaseDriverClassName, databaseUser, databasePassword, this.databaseUrl + databaseName);
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public JpaVendorAdapter jpaVendorAdapter() {
         return jpaBeanFactory.newJpaVendorAdapter();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public EntityManagerFactory entityManagerFactory(
         @Qualifier("jpaVendorAdapter")
         final JpaVendorAdapter jpaVendorAdapter,
         @Qualifier("dataSource")
-        final DataSource dataSource) {
+        final DataSource dataSource) throws Exception {
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(jpaVendorAdapter)
             .persistenceUnitName("databaseAuthnContext")
@@ -86,6 +91,8 @@ public class DatabaseAuthenticationTestConfiguration {
         jpaProperties.put("hibernate.hbm2ddl.auto", this.hbm2ddl);
         jpaProperties.put("hibernate.jdbc.batch_size", 1);
 
-        return JpaBeans.newEntityManagerFactoryBean(ctx);
+        val factory = JpaBeans.newEntityManagerFactoryBean(ctx);
+        factory.afterPropertiesSet();
+        return factory.getObject();
     }
 }

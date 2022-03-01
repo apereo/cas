@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.trusted.authentication.DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
@@ -11,6 +12,7 @@ import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDevi
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +32,7 @@ import org.springframework.webflow.execution.Action;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MultifactorAuthnTrustWebflowConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
 public class MultifactorAuthnTrustWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustedDeviceBypassEvaluator")
@@ -49,7 +52,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                     final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
                                     @Qualifier("deviceFingerprintStrategy")
                                     final DeviceFingerprintStrategy deviceFingerprintStrategy,
-                                    @Qualifier("mfaTrustEngine")
+                                    @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                     final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                     @Qualifier("registeredServiceAccessStrategyEnforcer")
                                     final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -65,7 +68,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                        final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
                                        @Qualifier("deviceFingerprintStrategy")
                                        final DeviceFingerprintStrategy deviceFingerprintStrategy,
-                                       @Qualifier("mfaTrustEngine")
+                                       @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                        final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                        @Qualifier("registeredServiceAccessStrategyEnforcer")
                                        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
@@ -83,7 +86,7 @@ public class MultifactorAuthnTrustWebflowConfiguration {
                                                   final DeviceFingerprintStrategy deviceFingerprintStrategy,
                                                   @Qualifier("mfaTrustDeviceNamingStrategy")
                                                   final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
-                                                  @Qualifier("mfaTrustEngine")
+                                                  @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
                                                   final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                                   @Qualifier("registeredServiceAccessStrategyEnforcer")
                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer,

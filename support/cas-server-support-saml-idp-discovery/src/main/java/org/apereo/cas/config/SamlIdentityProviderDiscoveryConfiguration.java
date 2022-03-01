@@ -2,9 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.DelegatedAuthenticationAccessStrategyHelper;
 import org.apereo.cas.web.SamlIdentityProviderDiscoveryFeedController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -40,6 +42,7 @@ import java.util.function.Supplier;
  */
 @Configuration(value = "SamlIdentityProviderDiscoveryConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
 public class SamlIdentityProviderDiscoveryConfiguration {
 
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryWebflowConfigurer")
@@ -56,6 +59,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "identityProviderDiscoveryCasWebflowExecutionPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer identityProviderDiscoveryCasWebflowExecutionPlanConfigurer(
         @Qualifier("identityProviderDiscoveryWebflowConfigurer")
         final CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer) {
@@ -63,6 +67,7 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public SamlIdentityProviderDiscoveryFeedController identityProviderDiscoveryFeedController(
         @Qualifier("samlIdentityProviderEntityParser")
         final Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser, final CasConfigurationProperties casProperties,
@@ -79,10 +84,12 @@ public class SamlIdentityProviderDiscoveryConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "samlIdentityProviderEntityParser")
-    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(final CasConfigurationProperties casProperties,
-                                                                                             @Qualifier("builtClients")
-                                                                                             final Clients builtClients) {
+    public Supplier<List<SamlIdentityProviderEntityParser>> samlIdentityProviderEntityParser(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("builtClients")
+        final Clients builtClients) {
         val parsers = new ArrayList<SamlIdentityProviderEntityParser>();
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
         resource.stream().filter(res -> res.getLocation() != null).forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));

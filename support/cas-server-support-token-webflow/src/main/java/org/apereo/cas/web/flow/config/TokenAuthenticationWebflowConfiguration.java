@@ -37,6 +37,7 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "tokenWebflowConfigurer")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer tokenWebflowConfigurer(
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,

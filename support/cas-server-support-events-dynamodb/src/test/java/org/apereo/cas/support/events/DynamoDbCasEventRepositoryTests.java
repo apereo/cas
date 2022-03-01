@@ -38,7 +38,7 @@ public class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryT
     }
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
     @Autowired

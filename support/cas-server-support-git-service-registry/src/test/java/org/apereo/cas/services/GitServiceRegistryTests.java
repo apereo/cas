@@ -39,6 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ import static org.mockito.Mockito.*;
 @Tag("FileSystem")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
+    public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -122,7 +123,23 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
     }
 
     @Test
-    public void verifyPullFails() {
+    public void verifyMalformedJsonFile() throws Exception {
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
+
+        FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", RegexRegisteredService.FRIENDLY_NAME,
+            "malformed-1.json").normalize().toFile(), "{\"@class\":\"xxxx\"", StandardCharsets.UTF_8);
+        gitRepositoryInstance.commitAll("Malformed json file");
+
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        newServiceRegistry.save(svc);
+
+        val size = newServiceRegistry.load().size();
+        assertEquals(1, size);
+    }
+
+    @Test
+    public void verifyPullFails() throws Exception {
         val gitRepository = mock(GitRepository.class);
         when(gitRepository.getObjectsInRepository()).thenThrow(new JGitInternalException("error"));
         when(gitRepository.getObjectsInRepository(any())).thenThrow(new JGitInternalException("error"));

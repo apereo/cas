@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -36,6 +39,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Configuration(value = "GoogleAuthenticatorConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.GoogleAuthenticator)
 public class GoogleAuthenticatorConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 100;
@@ -59,6 +63,7 @@ public class GoogleAuthenticatorConfiguration {
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -76,6 +81,7 @@ public class GoogleAuthenticatorConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "googleCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer googleCasWebflowExecutionPlanConfigurer(
             @Qualifier("googleAuthenticatorMultifactorWebflowConfigurer")
@@ -85,13 +91,17 @@ public class GoogleAuthenticatorConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.gauth.core")
     @Configuration(value = "GauthMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("googleAuthenticatorMultifactorWebflowConfigurer")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "gauth")
     public static class GoogleAuthenticatorMultifactorTrustConfiguration {
+
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.gauth.trusted-device-enabled")
+            .isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer(
             @Qualifier("googleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
@@ -101,18 +111,30 @@ public class GoogleAuthenticatorConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val cfg = new GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cfg = new GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+                    return cfg;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer gauthMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("gauthMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(gauthMultifactorTrustWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(gauthMultifactorTrustWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

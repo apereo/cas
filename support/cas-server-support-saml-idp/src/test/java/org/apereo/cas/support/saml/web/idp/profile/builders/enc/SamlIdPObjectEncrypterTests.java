@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
 public class SamlIdPObjectEncrypterTests extends BaseSamlIdPConfigurationTests {
     @Test

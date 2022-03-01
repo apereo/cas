@@ -74,23 +74,13 @@ function showGeoPosition(position) {
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(() => {
         let location = self.document.location;
-        let hash = decodeURIComponent(location.hash);
-
-        if (hash !== undefined && hash != '' && hash.indexOf('#') === -1) {
-            hash = `#${hash}`;
-        }
 
         let action = $('#fm1').attr('action');
         if (action === undefined) {
             action = location.href;
         } else {
-            let qidx = location.href.indexOf('?');
-            if (qidx !== -1) {
-                let queryParams = location.href.substring(qidx);
-                action += queryParams;
-            }
+            action += location.search + location.hash;
         }
-        action += hash;
         $('#fm1').attr('action', action);
 
     });

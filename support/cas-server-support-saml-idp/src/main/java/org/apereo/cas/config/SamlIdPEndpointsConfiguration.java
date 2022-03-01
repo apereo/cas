@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPCoreProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -55,6 +56,7 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -77,7 +79,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -98,6 +99,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.SamlIdP)
 @Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
 public class SamlIdPEndpointsConfiguration {
 
@@ -218,7 +220,6 @@ public class SamlIdPEndpointsConfiguration {
             return new SamlIdPSaml1ArtifactResolutionProfileHandlerController(samlProfileHandlerConfigurationContext);
         }
 
-        @ConditionalOnProperty(prefix = "cas.authn.saml-idp.core", name = "attribute-query-profile-enabled", havingValue = "true")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPSaml2AttributeQueryProfileHandlerController saml2AttributeQueryProfileHandlerController(
@@ -493,6 +494,7 @@ public class SamlIdPEndpointsConfiguration {
     public static class SamlIdPExecutionContextConfiguration {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext(
             @Qualifier("authenticationAttributeReleasePolicy")
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,

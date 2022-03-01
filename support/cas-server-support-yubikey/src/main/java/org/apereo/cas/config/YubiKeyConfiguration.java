@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.yubikey.YubikeyAccountCipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,9 +28,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration(value = "YubikeyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey)
 public class YubiKeyConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "transactionManagerYubiKey")
     public PlatformTransactionManager transactionManagerYubiKey() {
         return new PseudoPlatformTransactionManager();

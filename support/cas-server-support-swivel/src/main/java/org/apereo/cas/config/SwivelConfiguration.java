@@ -6,8 +6,11 @@ import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorTrustedDeviceWeb
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.swivel.web.flow.rest.SwivelTuringImageGeneratorController;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -48,6 +51,7 @@ public class SwivelConfiguration {
     public static class SwivelWebflowConfiguration {
         @ConditionalOnMissingBean(name = "swivelMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer swivelMultifactorWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -99,6 +103,7 @@ public class SwivelConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SwivelWebflowRegistryConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
@@ -116,6 +121,7 @@ public class SwivelConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SwivelWebConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController(
             final CasConfigurationProperties casProperties) {
             val swivel = casProperties.getAuthn().getMfa().getSwivel();
@@ -129,6 +135,7 @@ public class SwivelConfiguration {
     public static class SwivelWebflowExecutionPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "swivelCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer swivelCasWebflowExecutionPlanConfigurer(
             @Qualifier("swivelMultifactorWebflowConfigurer")
@@ -139,13 +146,16 @@ public class SwivelConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.swivel")
     @Configuration(value = "SwivelMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("swivelMultifactorWebflowConfigurer")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "swivel")
     public static class SwivelMultifactorTrustConfiguration {
-
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.swivel.trusted-device-enabled")
+            .isTrue().evenIfMissing();
+        
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer(
             @Qualifier("swivelAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry swivelAuthenticatorFlowRegistry,
@@ -155,19 +165,31 @@ public class SwivelConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val cfg = new SwivelMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry,
-                swivelAuthenticatorFlowRegistry, applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cfg = new SwivelMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry,
+                        swivelAuthenticatorFlowRegistry, applicationContext, casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+                    return cfg;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer swivelAuthenticationCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("swivelMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

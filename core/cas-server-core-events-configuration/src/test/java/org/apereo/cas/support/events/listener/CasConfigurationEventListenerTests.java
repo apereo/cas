@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Set;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreConfigurationWatchConfiguration.class,
     CasCoreBootstrapStandaloneConfiguration.class,
     CasCoreEnvironmentConfiguration.class,
+
+    DispatcherServletAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
     "spring.application.name=cas",
@@ -55,5 +59,7 @@ public class CasConfigurationEventListenerTests {
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new CasConfigurationModifiedEvent(this, true)));
+        assertDoesNotThrow(() -> applicationContext.publishEvent(
+            new RefreshScopeRefreshedEvent()));
     }
 }

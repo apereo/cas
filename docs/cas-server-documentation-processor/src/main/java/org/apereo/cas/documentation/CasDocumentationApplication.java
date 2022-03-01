@@ -7,6 +7,8 @@ import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
+import org.apereo.cas.util.spring.boot.CasFeatureEnabledCondition;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.cli.DefaultParser;
@@ -49,6 +51,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,27 +72,38 @@ public class CasDocumentationApplication {
 
     public static void main(final String[] args) throws Exception {
         var options = new Options();
+        
         var dt = new Option("d", "data", true, "Data directory");
         dt.setRequired(true);
         options.addOption(dt);
+
         var ver = new Option("v", "version", true, "Project version");
         ver.setRequired(true);
         options.addOption(ver);
+
         var root = new Option("r", "root", true, "Project root directory");
         root.setRequired(true);
         options.addOption(root);
+
         var ft = new Option("f", "filter", true, "Property filter pattern");
         ft.setRequired(false);
         options.addOption(ft);
+
         var act = new Option("a", "actuators", true, "Generate data for actuator endpoints");
         act.setRequired(false);
         options.addOption(act);
+
         var tp = new Option("tp", "thirdparty", true, "Generate data for third party");
         tp.setRequired(false);
         options.addOption(tp);
+
         var sp = new Option("sp", "serviceproperties", true, "Generate data for registered services properties");
         sp.setRequired(false);
         options.addOption(sp);
+
+        var feats = new Option("ft", "features", true, "Generate data for feature toggles and descriptors");
+        feats.setRequired(false);
+        options.addOption(feats);
 
         new HelpFormatter().printHelp("CAS Documentation", options);
         var cmd = new DefaultParser().parse(options, args);
@@ -122,7 +136,7 @@ public class CasDocumentationApplication {
                     groups.put(property.getModule(), values);
                 }
             });
-        
+
         var dataPath = new File(dataDirectory, projectVersion);
         if (dataPath.exists()) {
             FileUtils.deleteQuietly(dataPath);
@@ -151,6 +165,11 @@ public class CasDocumentationApplication {
         if (StringUtils.equalsIgnoreCase("true", actuators)) {
             exportActuatorEndpoints(dataPath);
         }
+
+        var features = cmd.getOptionValue("features", "true");
+        if (StringUtils.equalsIgnoreCase("true", features)) {
+            exportFeatureToggles(dataPath);
+        }
     }
 
     private static String cleanDescription(final CasReferenceProperty property) {
@@ -161,6 +180,45 @@ public class CasDocumentationApplication {
             .replace("}}", "[%s]</code>")
             .replace("}", "</code>")
             .replace("[%s]", "}");
+    }
+
+    private static void exportFeatureToggles(final File dataPath) throws Exception {
+        var parentPath = new File(dataPath, "features");
+        if (parentPath.exists()) {
+            FileUtils.deleteQuietly(parentPath);
+        }
+        parentPath.mkdirs();
+
+        var urls = new ArrayList<>(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE));
+        var reflections = new Reflections(new ConfigurationBuilder().setUrls(urls));
+        var subTypes = reflections.getTypesAnnotatedWith(ConditionalOnFeature.class, true);
+        var properties = new ArrayList<Map<?, ?>>();
+
+        var allToggleProps = new HashSet<String>();
+        subTypes.forEach(clazz -> {
+            var features = clazz.getAnnotationsByType(ConditionalOnFeature.class);
+            Arrays.stream(features).forEach(feature -> {
+                var propName = CasFeatureEnabledCondition.getPropertyName(feature.feature(), feature.module());
+                if (!allToggleProps.contains(propName)) {
+                    allToggleProps.add(propName);
+
+                    var map = new LinkedHashMap<>();
+                    map.put("type", clazz.getName());
+                    map.put("feature", feature.feature());
+                    if (StringUtils.isNotBlank(feature.module())) {
+                        map.put("module", feature.module());
+                    }
+                    
+                    map.put("property", propName);
+                    properties.add(map);
+                }
+            });
+        });
+
+        if (!properties.isEmpty()) {
+            var configFile = new File(parentPath, "config.yml");
+            CasConfigurationMetadataCatalog.export(configFile, properties);
+        }
     }
 
     private static void exportActuatorEndpoints(final File dataPath) throws Exception {
@@ -480,7 +538,7 @@ public class CasDocumentationApplication {
             if (operation.parameters().length == 0 && paramCount > 0) {
                 for (var i = 0; i < method.getParameterTypes().length; i++) {
                     var parameter = method.getParameters()[i];
-                    
+
                     var pathAnn = parameter.getAnnotation(PathVariable.class);
                     if (pathAnn != null) {
                         var paramData = new LinkedHashMap<String, Object>();

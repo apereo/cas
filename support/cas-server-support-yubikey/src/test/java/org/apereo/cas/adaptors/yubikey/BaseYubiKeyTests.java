@@ -41,8 +41,10 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link BaseYubiKeyTests}.
@@ -103,6 +105,7 @@ public abstract class BaseYubiKeyTests {
         private static final String BAD_TOKEN = "123456";
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public YubiKeyAccountValidator yubiKeyAccountValidator() {
             return (uid, token) -> !token.equals(BAD_TOKEN);
         }

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import org.apereo.cas.redis.core.util.RedisUtils;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryListener;
@@ -13,7 +13,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -32,19 +31,31 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
 
-    private final RedisTemplate<String, RegisteredService> template;
+    private final CasRedisTemplate<String, RegisteredService> template;
 
     private final long scanCount;
 
     public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                final RedisTemplate<String, RegisteredService> template,
+                                final CasRedisTemplate<String, RegisteredService> template,
                                 final Collection<ServiceRegistryListener> serviceRegistryListeners,
                                 final long scanCount) {
         super(applicationContext, serviceRegistryListeners);
         this.template = template;
         this.scanCount = scanCount;
     }
-                          
+
+    private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
+        return getRegisteredServiceRedisKey(registeredService.getId());
+    }
+
+    private static String getRegisteredServiceRedisKey(final long id) {
+        return CAS_SERVICE_PREFIX + id;
+    }
+
+    private static String getPatternRegisteredServiceRedisKey() {
+        return CAS_SERVICE_PREFIX + '*';
+    }
+
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
@@ -107,19 +118,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
         return ops.get();
     }
 
-    private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
-        return getRegisteredServiceRedisKey(registeredService.getId());
-    }
-
-    private static String getRegisteredServiceRedisKey(final long id) {
-        return CAS_SERVICE_PREFIX + id;
-    }
-
-    private static String getPatternRegisteredServiceRedisKey() {
-        return CAS_SERVICE_PREFIX + '*';
-    }
-
     private Stream<String> getRegisteredServiceKeys() {
-        return RedisUtils.keys(this.template, getPatternRegisteredServiceRedisKey(), this.scanCount);
+        return template.keys(getPatternRegisteredServiceRedisKey(), this.scanCount);
     }
 }

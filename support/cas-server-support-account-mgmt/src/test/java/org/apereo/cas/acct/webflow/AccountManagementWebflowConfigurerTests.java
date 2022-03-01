@@ -30,10 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Import({
-    CasAccountManagementWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(CasAccountManagementWebflowConfiguration.class)
 @Tag("WebflowConfig")
 public class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test

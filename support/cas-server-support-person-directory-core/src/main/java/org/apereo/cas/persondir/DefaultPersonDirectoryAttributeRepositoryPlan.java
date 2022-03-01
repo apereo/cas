@@ -1,5 +1,7 @@
 package org.apereo.cas.persondir;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +31,19 @@ public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDire
 
     @Override
     public void registerAttributeRepository(final IPersonAttributeDao repository) {
-        if (LOGGER.isTraceEnabled()) {
-            val name = AopUtils.isAopProxy(repository)
-                ? AopUtils.getTargetClass(repository).getSimpleName()
-                : repository.getClass().getSimpleName();
-            LOGGER.trace("Registering attribute repository [{}] into the person directory plan", name);
+        if (BeanSupplier.isNotProxy(repository)) {
+            if (LOGGER.isTraceEnabled()) {
+                val name = AopUtils.isAopProxy(repository)
+                    ? AopUtils.getTargetClass(repository).getSimpleName()
+                    : repository.getClass().getSimpleName();
+                LOGGER.trace("Registering attribute repository [{}] into the person directory plan", name);
+            }
+            attributeRepositoryCustomizers.stream()
+                .sorted(Comparator.comparing(PersonDirectoryAttributeRepositoryCustomizer::getOrder))
+                .filter(cust -> cust.supports(repository))
+                .forEach(cust -> cust.customize(repository));
+            attributeRepositories.add(repository);
         }
-        attributeRepositoryCustomizers.stream()
-            .sorted(Comparator.comparing(PersonDirectoryAttributeRepositoryCustomizer::getOrder))
-            .filter(cust -> cust.supports(repository))
-            .forEach(cust -> cust.customize(repository));
-        attributeRepositories.add(repository);
     }
 
     @Override

@@ -34,7 +34,7 @@ public class HazelcastSessionConfigurationTests {
     @Test
     public void verifyOperation() {
         assertNotNull(hazelcastInstance);
-        val extractor = new HazelcastSessionConfiguration.HazelcastSessionPrincipalNameExtractor();
+        val extractor = new HazelcastSessionPrincipalNameExtractor();
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {

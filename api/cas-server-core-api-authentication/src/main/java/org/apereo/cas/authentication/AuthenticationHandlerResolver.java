@@ -22,6 +22,27 @@ public interface AuthenticationHandlerResolver extends Ordered {
     Logger LOGGER = LoggerFactory.getLogger(AuthenticationHandlerResolver.class);
 
     /**
+     * NoOp authentication handler resolver.
+     *
+     * @return the authentication handler resolver
+     */
+    static AuthenticationHandlerResolver noOp() {
+        return new AuthenticationHandlerResolver() {
+            @Override
+            public boolean supports(final Set<AuthenticationHandler> handlers,
+                                    final AuthenticationTransaction transaction) {
+                return false;
+            }
+
+            @Override
+            public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
+                                                      final AuthenticationTransaction transaction) {
+                return new LinkedHashSet<>();
+            }
+        };
+    }
+
+    /**
      * Resolve set of authentication handlers.
      *
      * @param candidateHandlers the candidate handlers

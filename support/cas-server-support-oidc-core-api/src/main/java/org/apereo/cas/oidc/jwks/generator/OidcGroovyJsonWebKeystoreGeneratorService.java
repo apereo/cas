@@ -5,6 +5,8 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
  * @since 6.5.0
  */
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
     private final WatchableGroovyScriptResource watchableScript;
 

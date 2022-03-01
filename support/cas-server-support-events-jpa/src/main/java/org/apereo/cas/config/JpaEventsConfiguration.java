@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -9,21 +10,23 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.jpa.JpaCasEvent;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -40,8 +43,9 @@ import javax.sql.DataSource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 @Configuration(value = "JpaEventsConfiguration", proxyBeanMethods = false)
-@ConditionalOnProperty(prefix = "cas.events.jpa", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "jpa")
 public class JpaEventsConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.events.jpa.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "JpaEventsDataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -49,10 +53,15 @@ public class JpaEventsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "dataSourceEvent")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public DataSource dataSourceEvent(final CasConfigurationProperties casProperties) {
-            return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
+        public DataSource dataSourceEvent(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(DataSource.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> JpaBeans.newDataSource(casProperties.getEvents().getJpa()))
+                .otherwiseProxy()
+                .get();
         }
-
     }
 
     @Configuration(value = "JpaEventsEntityConfiguration", proxyBeanMethods = false)
@@ -61,21 +70,31 @@ public class JpaEventsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter jpaEventVendorAdapter(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory) {
-            return jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc());
+            return BeanSupplier.of(JpaVendorAdapter.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> jpaBeanFactory.newJpaVendorAdapter(casProperties.getJdbc()))
+                .otherwiseProxy()
+                .get();
         }
 
-
         @Bean
-        public BeanContainer<String> jpaEventPackagesToScan() {
-            return BeanContainer.of(CollectionUtils.wrapSet(JpaCasEvent.class.getPackage().getName()));
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public BeanContainer<String> jpaEventPackagesToScan(final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(BeanContainer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> BeanContainer.of(CollectionUtils.wrapSet(JpaCasEvent.class.getPackage().getName())))
+                .otherwiseProxy()
+                .get();
         }
 
-        @Lazy
         @Bean
-        public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory(
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public EntityManagerFactory eventsEntityManagerFactory(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("jpaEventVendorAdapter")
             final JpaVendorAdapter jpaEventVendorAdapter,
@@ -84,14 +103,21 @@ public class JpaEventsConfiguration {
             @Qualifier("jpaEventPackagesToScan")
             final BeanContainer<String> jpaEventPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) {
-            val ctx = JpaConfigurationContext.builder()
-                .jpaVendorAdapter(jpaEventVendorAdapter)
-                .persistenceUnitName("jpaEventRegistryContext")
-                .dataSource(dataSourceEvent)
-                .packagesToScan(jpaEventPackagesToScan.toSet())
-                .build();
-            return jpaBeanFactory.newEntityManagerFactoryBean(ctx, casProperties.getEvents().getJpa());
+            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            return BeanSupplier.of(EntityManagerFactory.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(Unchecked.supplier(() -> {
+                    val ctx = JpaConfigurationContext.builder()
+                        .jpaVendorAdapter(jpaEventVendorAdapter)
+                        .persistenceUnitName("jpaEventRegistryContext")
+                        .dataSource(dataSourceEvent)
+                        .packagesToScan(jpaEventPackagesToScan.toSet())
+                        .build();
+                    return jpaBeanFactory.newEntityManagerFactoryBean(ctx,
+                        casProperties.getEvents().getJpa()).getObject();
+                }))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -99,6 +125,7 @@ public class JpaEventsConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class JpaEventsTransactionConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerEvents(
             @Qualifier("eventsEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -120,6 +147,7 @@ public class JpaEventsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventRepository casEventRepository(
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,

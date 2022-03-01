@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -14,6 +15,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20RevocationEndpointContr
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,7 @@ import java.util.List;
  */
 @Configuration(value = "CasOAuth20EndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
 public class CasOAuth20EndpointsConfiguration {
 
     @Configuration(value = "CasOAuth20EndpointControllersConfiguration", proxyBeanMethods = false)
@@ -108,6 +111,7 @@ public class CasOAuth20EndpointsConfiguration {
 
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
@@ -124,6 +128,7 @@ public class CasOAuth20EndpointsConfiguration {
     public static class CasOAuth20EndpointSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oauth20ProtocolEndpointConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<Void> oauth20ProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
                 @Override

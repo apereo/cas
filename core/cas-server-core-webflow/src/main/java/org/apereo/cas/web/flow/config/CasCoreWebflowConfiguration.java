@@ -28,6 +28,8 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.ChainingSingleSignOnParticipationStrategy;
@@ -58,7 +60,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -86,7 +87,6 @@ import java.util.List;
 @Slf4j
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasCoreWebflowConfiguration {
-
 
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -240,12 +240,15 @@ public class CasCoreWebflowConfiguration {
         @ConditionalOnMissingBean(name = "groovyCasWebflowAuthenticationExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(name = "cas.authn.errors.groovy.location")
         public CasWebflowExceptionHandler<Exception> groovyCasWebflowAuthenticationExceptionHandler(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) {
-            return new GroovyCasWebflowAuthenticationExceptionHandler(
-                casProperties.getAuthn().getErrors().getGroovy().getLocation(), applicationContext);
+            final CasConfigurationProperties casProperties) throws Exception {
+            return BeanSupplier.of(CasWebflowExceptionHandler.class)
+                .when(BeanCondition.on("cas.authn.errors.groovy.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> new GroovyCasWebflowAuthenticationExceptionHandler(
+                    casProperties.getAuthn().getErrors().getGroovy().getLocation(), applicationContext))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "defaultCasWebflowAuthenticationExceptionHandler")

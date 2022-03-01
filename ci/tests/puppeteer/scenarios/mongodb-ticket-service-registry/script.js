@@ -18,6 +18,7 @@ const cas = require('../../cas.js');
             assert(res.data.components.mongo.status !== null);
             assert(res.data.components.mongo.details !== null);
 
+            
             let details = res.data.components.mongo.details["MongoDbHealthIndicator-ticket-registry"]
             assert(details.name === "MongoDbHealthIndicator-ticket-registry");
             assert(details.proxyGrantingTicketsCache !== null);

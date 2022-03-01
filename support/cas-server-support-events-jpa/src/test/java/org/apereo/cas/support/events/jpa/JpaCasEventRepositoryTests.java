@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Tag("JDBC")
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
     @Override

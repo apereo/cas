@@ -16,7 +16,9 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -64,15 +66,15 @@ public class CasConfigurationServerWebApplication {
     }
 
     /**
-     * CAS configuration server web security configurer.
+     * Cas configuration server web security configurer adapter.
      *
      * @param serverProperties the server properties
      * @return the web security configurer adapter
      */
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
         return new WebSecurityConfigurerAdapter() {
-
             @Override
             protected void configure(final HttpSecurity http) throws Exception {
                 val path = serverProperties.getServlet().getContextPath();

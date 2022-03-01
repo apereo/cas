@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
@@ -9,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.MongoDbTicketRegistryFacilitator;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +20,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -28,6 +30,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MongoTicketRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "mongo")
 public class MongoDbTicketRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -36,7 +39,7 @@ public class MongoDbTicketRegistryConfiguration {
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog, final CasConfigurationProperties casProperties,
         @Qualifier("mongoDbTicketRegistryTemplate")
-        final MongoTemplate mongoDbTicketRegistryTemplate,
+        final MongoOperations mongoDbTicketRegistryTemplate,
         @Qualifier("ticketSerializationManager")
         final TicketSerializationManager ticketSerializationManager) {
         val mongo = casProperties.getTicket().getRegistry().getMongo();
@@ -50,7 +53,7 @@ public class MongoDbTicketRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbTicketRegistryTemplate(
+    public MongoOperations mongoDbTicketRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {

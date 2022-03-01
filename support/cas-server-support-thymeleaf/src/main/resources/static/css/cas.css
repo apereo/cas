@@ -3,6 +3,7 @@
 :root {
     --cas-theme-primary: #153e50;
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
+    --cas-theme-button-bg: #26418f;
     --cas-theme-primary-light: #006d85;
     --cas-theme-secondary: #74C163;
     --cas-theme-success: var(--cas-theme-secondary);
@@ -386,18 +387,27 @@ button.close {
     color: var(--cas-theme-primary, #153e50);
 }
 
+.mdc-button {
+    background-color: var(--cas-theme-primary, #153E50);
+}
+
 .mdc-button--raised:not(:disabled) {
     margin-right: 5px;
-    background-color: var(--mdc-theme-primary, #153E50);
+    border-radius: 12px 4px;
+    background-color: var(--cas-theme-primary, #153E50);
+    height: 45px;
+    width: 120px;
 }
 
 .mdc-button--raised.mdc-button-twitter:not(:disabled) {
     background-color: #55acee;
+    border-radius: 12px 4px;
     background-color: var(--cas-theme-twitter-color, #55acee);
 }
 
 .mdc-button--raised.mdc-button-vimeo:not(:disabled) {
     background-color: #1ab7ea;
+    border-radius: 12px 4px;
     background-color: var(--cas-theme-vimeo-color, #1ab7ea);
 }
 

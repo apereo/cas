@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 5.2.9
  */
-@Tag("SAML")
+@Tag("SAML2")
 public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dG"

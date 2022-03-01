@@ -96,6 +96,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public static class CasSimpleMultifactorAuthenticationPlanConfiguration {
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer mfaSimpleCasWebflowExecutionPlanConfigurer(
             @Qualifier("mfaSimpleMultifactorWebflowConfigurer")
@@ -109,6 +110,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     public static class CasSimpleMultifactorAuthenticationBaseConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer(
             @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
@@ -131,6 +133,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
@@ -191,6 +194,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasSimpleMultifactorAuthenticationTicketSerializationConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketSerializationExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketSerializationExecutionPlanConfigurer() {
             return plan -> {
                 plan.registerTicketSerializer(new CasSimpleMultifactorAuthenticationTicketStringSerializer());
@@ -230,6 +234,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTrustWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer(
             @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
@@ -250,6 +255,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration {
 
         @ConditionalOnMissingBean(name = "casSimpleMultifactorTrustWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer casSimpleMultifactorTrustWebflowExecutionPlanConfigurer(
             @Qualifier("mfaSimpleMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer) {

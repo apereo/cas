@@ -3,20 +3,25 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
+import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,10 +39,12 @@ import org.springframework.webflow.execution.Action;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnBean(name = "consentRepository")
-@ConditionalOnProperty(prefix = "cas.consent.core", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnBean(name = ConsentRepository.BEAN_NAME)
 @Configuration(value = "CasConsentWebflowConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Consent)
 public class CasConsentWebflowConfiguration {
+
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
 
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -58,9 +65,13 @@ public class CasConsentWebflowConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(ConsentActivationStrategy.BEAN_NAME)
             final ConsentActivationStrategy consentActivationStrategy) {
-            return new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore,
-                applicationContext,
-                consentActivationStrategy);
+            return BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new CheckConsentRequiredAction(servicesManager, authenticationRequestServiceSelectionStrategies,
+                    consentEngine, casProperties, attributeDefinitionStore,
+                    applicationContext, consentActivationStrategy))
+                .otherwise(() -> ConsumerExecutionAction.NONE)
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "confirmConsentAction")
@@ -77,7 +88,12 @@ public class CasConsentWebflowConfiguration {
             final ConsentEngine consentEngine,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies, consentEngine, casProperties, attributeDefinitionStore, applicationContext);
+            return BeanSupplier.of(Action.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies,
+                    consentEngine, casProperties, attributeDefinitionStore, applicationContext))
+                .otherwise(() -> ConsumerExecutionAction.NONE)
+                .get();
         }
     }
 
@@ -87,6 +103,7 @@ public class CasConsentWebflowConfiguration {
 
         @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer consentWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
@@ -94,15 +111,26 @@ public class CasConsentWebflowConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                    applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "consentCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer consentCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("consentWebflowConfigurer")
             final CasWebflowConfigurer consentWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(consentWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(consentWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
     CoreWsSecuritySecurityTokenTicketConfiguration.class,
     CoreWsSecurityIdentityProviderConfiguration.class,
     CoreWsSecurityIdentityProviderWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     CoreWsSecurityIdentityProviderComponentSerializationConfiguration.class
 })
 @TestPropertySource(properties = {

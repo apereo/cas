@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -27,18 +27,19 @@ import java.util.ArrayList;
  */
 @Slf4j
 public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private final RedisTemplate redisTemplate;
+    private final CasRedisTemplate redisTemplate;
 
     public RedisAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                       final PrincipalFactory principalFactory, final Integer order,
-                                      final RedisTemplate redisTemplate) {
+                                      final CasRedisTemplate redisTemplate) {
         super(name, servicesManager, principalFactory, order);
         this.redisTemplate = redisTemplate;
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        final String originalPassword) throws GeneralSecurityException {
         val account = (RedisUserAccount) redisTemplate.opsForValue().get(credential.getUsername());
         if (account == null) {
             throw new AccountNotFoundException();

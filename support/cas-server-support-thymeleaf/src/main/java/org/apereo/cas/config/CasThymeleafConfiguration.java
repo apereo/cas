@@ -83,7 +83,8 @@ public class CasThymeleafConfiguration {
         return new MimeType(type, parameters).toString();
     }
 
-    private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver, final ThymeleafProperties thymeleafProperties) {
+    private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver,
+                                                      final ThymeleafProperties thymeleafProperties) {
         resolver.setCacheable(thymeleafProperties.isCache());
         resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());
         resolver.setCheckExistence(thymeleafProperties.isCheckTemplateLocation());
@@ -94,6 +95,7 @@ public class CasThymeleafConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
     }
@@ -234,6 +236,7 @@ public class CasThymeleafConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ThymeleafViewResolver thymeleafViewResolver(final SpringTemplateEngine springTemplateEngine, final ThymeleafProperties thymeleafProperties,
                                                            final ConfigurableApplicationContext applicationContext,
                                                            final List<CasThymeleafViewResolverConfigurer> thymeleafViewResolverConfigurers) {

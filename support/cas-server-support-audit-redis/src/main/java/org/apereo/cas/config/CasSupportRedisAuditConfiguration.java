@@ -4,20 +4,24 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.redis.core.RedisObjectFactory;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * This is {@link CasSupportRedisAuditConfiguration}.
@@ -27,44 +31,71 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration(value = "CasSupportRedisAuditConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.audit.redis", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Audit, module = "redis")
 public class CasSupportRedisAuditConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.audit.redis.enabled").isTrue().evenIfMissing();
+
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditTrailManager")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailManager redisAuditTrailManager(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("auditRedisTemplate")
-        final RedisTemplate auditRedisTemplate,
-        final CasConfigurationProperties casProperties) {
-        val redis = casProperties.getAudit().getRedis();
-        return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous(), redis.getScanCount());
+        final CasRedisTemplate auditRedisTemplate,
+        final CasConfigurationProperties casProperties) throws Exception {
+        return BeanSupplier.of(AuditTrailManager.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val redis = casProperties.getAudit().getRedis();
+                return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous(), redis.getScanCount());
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisAuditConnectionFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RedisConnectionFactory redisAuditConnectionFactory(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) {
-        val redis = casProperties.getAudit().getRedis();
-        return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
+        final CasConfigurationProperties casProperties) throws Exception {
+        return BeanSupplier.of(RedisConnectionFactory.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val redis = casProperties.getAudit().getRedis();
+                return RedisObjectFactory.newRedisConnectionFactory(redis, casSslContext);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "auditRedisTemplate")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public RedisTemplate auditRedisTemplate(
+    public CasRedisTemplate auditRedisTemplate(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisAuditConnectionFactory")
-        final RedisConnectionFactory redisAuditConnectionFactory) {
-        return RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory);
+        final RedisConnectionFactory redisAuditConnectionFactory) throws Exception {
+        return BeanSupplier.of(CasRedisTemplate.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "redisAuditTrailExecutionPlanConfigurer")
     public AuditTrailExecutionPlanConfigurer redisAuditTrailExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisAuditTrailManager")
-        final AuditTrailManager redisAuditTrailManager) {
-        return plan -> plan.registerAuditTrailManager(redisAuditTrailManager);
+        final AuditTrailManager redisAuditTrailManager) throws Exception {
+        return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> plan -> plan.registerAuditTrailManager(redisAuditTrailManager))
+            .otherwiseProxy()
+            .get();
     }
 }

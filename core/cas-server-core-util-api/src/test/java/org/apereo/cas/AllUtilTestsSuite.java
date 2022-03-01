@@ -23,12 +23,15 @@ import org.apereo.cas.util.scripting.WatchableGroovyScriptResourceTests;
 import org.apereo.cas.util.serialization.MessageSanitizationUtilsTests;
 import org.apereo.cas.util.serialization.SerializationUtilsTests;
 import org.apereo.cas.util.spring.ApplicationContextProviderTests;
-import org.apereo.cas.util.spring.BeanContainerTests;
 import org.apereo.cas.util.spring.ConvertersTests;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptorTests;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolatorTests;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolverTests;
+import org.apereo.cas.util.spring.beans.BeanConditionTests;
+import org.apereo.cas.util.spring.beans.BeanContainerTests;
+import org.apereo.cas.util.spring.beans.BeanSupplierTests;
 import org.apereo.cas.util.spring.boot.BeanDefinitionStoreFailureAnalyzerTests;
+import org.apereo.cas.util.spring.boot.CasFeatureEnabledConditionTests;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostnameTests;
 import org.apereo.cas.util.spring.boot.DefaultCasBannerTests;
 import org.apereo.cas.util.ssl.CompositeX509KeyManagerTests;
@@ -74,6 +77,9 @@ import org.junit.platform.suite.api.Suite;
     CompositeX509TrustManagerTests.class,
     CompositeX509KeyManagerTests.class,
     HttpRequestUtilsTests.class,
+    BeanSupplierTests.class,
+    BeanConditionTests.class,
+    CasFeatureEnabledConditionTests.class,
     DefaultMessageDescriptorTests.class,
     RefreshableHandlerInterceptorTests.class,
     WatchableGroovyScriptResourceTests.class,

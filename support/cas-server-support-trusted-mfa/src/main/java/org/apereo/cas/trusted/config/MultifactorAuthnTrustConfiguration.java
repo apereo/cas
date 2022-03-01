@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorCoreProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -21,6 +22,9 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.util.spring.boot.ConditionalOnMatchingHostname;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -29,14 +33,16 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.common.Cleanable;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -56,6 +62,7 @@ import java.time.temporal.ChronoUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @Configuration(value = "MultifactorAuthnTrustConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
 public class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
@@ -89,7 +96,7 @@ public class MultifactorAuthnTrustConfiguration {
             return MultifactorAuthenticationTrustedDeviceNamingStrategy.random();
         }
 
-        @ConditionalOnMissingBean(name = "mfaTrustEngine")
+        @ConditionalOnMissingBean(name = MultifactorAuthenticationTrustStorage.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustStorage mfaTrustEngine(
@@ -119,6 +126,7 @@ public class MultifactorAuthnTrustConfiguration {
 
         @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
             return new PseudoPlatformTransactionManager();
         }
@@ -147,22 +155,27 @@ public class MultifactorAuthnTrustConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustSchedulerConfiguration {
         @ConditionalOnMatchingHostname(name = "cas.authn.mfa.trusted.cleaner.schedule.enabled-on-host")
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.trusted.cleaner.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
-            @Qualifier("mfaTrustEngine")
+        public Cleanable mfaTrustStorageCleaner(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
             final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-            return new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine);
+            return BeanSupplier.of(Cleanable.class)
+                .when(BeanCondition.on("cas.authn.mfa.trusted.cleaner.schedule.enabled").isTrue().evenIfMissing()
+                    .given(applicationContext.getEnvironment()))
+                .supply(() -> new MultifactorAuthenticationTrustStorageCleaner(mfaTrustEngine))
+                .otherwiseProxy()
+                .get();
         }
-
     }
 
     @Configuration(value = "MultifactorAuthnTrustAuditConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustAuditConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer casMfaTrustAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("ticketCreationActionResolver")
             final AuditActionResolver ticketCreationActionResolver,
@@ -181,10 +194,11 @@ public class MultifactorAuthnTrustConfiguration {
     public static class MultifactorAuthnTrustWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustReportEndpoint mfaTrustedDevicesReportEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier("mfaTrustEngine")
-            final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
             return new MultifactorAuthenticationTrustReportEndpoint(casProperties, mfaTrustEngine);
         }
     }

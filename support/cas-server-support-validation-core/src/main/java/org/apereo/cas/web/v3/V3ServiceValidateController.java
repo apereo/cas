@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class V3ServiceValidateController extends AbstractServiceValidateController {
 
-    public V3ServiceValidateController(final ServiceValidateConfigurationContext serviceValidateConfigurationContext) {
-        super(serviceValidateConfigurationContext);
+    public V3ServiceValidateController(final ServiceValidateConfigurationContext ctx) {
+        super(ctx);
     }
 
     /**

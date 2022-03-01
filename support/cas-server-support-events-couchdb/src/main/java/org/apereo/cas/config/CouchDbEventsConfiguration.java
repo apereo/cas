@@ -1,11 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
+import org.apereo.cas.couchdb.core.DefaultCouchDbConnectorFactory;
 import org.apereo.cas.couchdb.events.EventCouchDbRepository;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.CouchDbCasEventRepository;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
@@ -26,6 +29,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CouchDbEventsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Events, module = "couchDb")
 public class CouchDbEventsConfiguration {
 
     @ConditionalOnMissingBean(name = "couchDbEventRepository")
@@ -47,7 +51,7 @@ public class CouchDbEventsConfiguration {
     public CouchDbConnectorFactory eventCouchDbFactory(final CasConfigurationProperties casProperties,
                                                        @Qualifier("defaultObjectMapperFactory")
                                                        final ObjectMapperFactory objectMapperFactory) {
-        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory);
+        return new DefaultCouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory);
     }
 
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")
@@ -57,12 +61,15 @@ public class CouchDbEventsConfiguration {
         @Qualifier("couchDbEventRepository")
         final EventCouchDbRepository eventCouchDbRepository,
         @Qualifier("couchDbEventRepositoryFilter")
-        final CasEventRepositoryFilter couchDbEventRepositoryFilter, final CasConfigurationProperties casProperties) {
-        return new CouchDbCasEventRepository(couchDbEventRepositoryFilter, eventCouchDbRepository, casProperties.getEvents().getCouchDb().isAsynchronous());
+        final CasEventRepositoryFilter couchDbEventRepositoryFilter,
+        final CasConfigurationProperties casProperties) {
+        return new CouchDbCasEventRepository(couchDbEventRepositoryFilter,
+            eventCouchDbRepository, casProperties.getEvents().getCouchDb().isAsynchronous());
     }
 
     @ConditionalOnMissingBean(name = "couchDbEventRepositoryFilter")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasEventRepositoryFilter couchDbEventRepositoryFilter() {
         return CasEventRepositoryFilter.noOp();
     }

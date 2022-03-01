@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.webauthn.DynamoDbWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.DynamoDbWebAuthnFacilitator;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
@@ -25,6 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "DynamoDbWebAuthnConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.WebAuthn)
 public class DynamoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -39,9 +42,10 @@ public class DynamoDbWebAuthnConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "dynamoDbWebAuthnFacilitator")
-    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator(final CasConfigurationProperties casProperties,
-                                                                   @Qualifier("amazonDynamoDbWebAuthnClient")
-                                                                   final DynamoDbClient amazonDynamoDbWebAuthnClient) {
+    public DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("amazonDynamoDbWebAuthnClient")
+        final DynamoDbClient amazonDynamoDbWebAuthnClient) {
         val db = casProperties.getAuthn().getMfa().getWebAuthn().getDynamoDb();
         val f = new DynamoDbWebAuthnFacilitator(db, amazonDynamoDbWebAuthnClient);
         if (!db.isPreventTableCreationOnStartup()) {
@@ -52,11 +56,12 @@ public class DynamoDbWebAuthnConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public WebAuthnCredentialRepository webAuthnCredentialRepository(final CasConfigurationProperties casProperties,
-                                                                     @Qualifier("dynamoDbWebAuthnFacilitator")
-                                                                     final DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator,
-                                                                     @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-                                                                     final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
+    public WebAuthnCredentialRepository webAuthnCredentialRepository(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("dynamoDbWebAuthnFacilitator")
+        final DynamoDbWebAuthnFacilitator dynamoDbWebAuthnFacilitator,
+        @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         return new DynamoDbWebAuthnCredentialRepository(casProperties, webAuthnCredentialRegistrationCipherExecutor, dynamoDbWebAuthnFacilitator);
     }
 }

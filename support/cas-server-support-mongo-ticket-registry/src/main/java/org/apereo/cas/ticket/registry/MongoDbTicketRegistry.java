@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -57,10 +56,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      */
     private static Date getExpireAt(final Ticket ticket) {
         val expirationPolicy = ticket.getExpirationPolicy();
-        val ttl = ticket instanceof TicketState
-            ? expirationPolicy.getTimeToLive((TicketState) ticket)
-            : expirationPolicy.getTimeToLive();
-
+        val ttl = expirationPolicy.getTimeToLive(ticket);
         if (ttl < 1 || ttl == Long.MAX_VALUE) {
             LOGGER.trace("Expiration date is undefined for ttl value [{}]", ttl);
             return null;

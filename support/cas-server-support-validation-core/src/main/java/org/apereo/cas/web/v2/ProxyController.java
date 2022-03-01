@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
@@ -60,11 +61,13 @@ public class ProxyController extends AbstractDelegateController {
 
     private final ApplicationContext context;
 
+    private final CasConfigurationProperties properties;
+
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);
-        return targetService != null && StringUtils.hasText(proxyGrantingTicket);
+        return properties.getSso().isProxyAuthnEnabled() && targetService != null && StringUtils.hasText(proxyGrantingTicket);
     }
 
     @Override

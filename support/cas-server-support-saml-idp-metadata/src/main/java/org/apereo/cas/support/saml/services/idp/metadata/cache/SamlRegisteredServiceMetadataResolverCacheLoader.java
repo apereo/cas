@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
@@ -61,10 +62,10 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
                 LOGGER.trace("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
                 return r.supports(service);
             })
-            .map(r -> {
+            .map(Unchecked.function(r -> {
                 LOGGER.trace("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
                 return r.resolve(service, cacheKey.getCriteriaSet());
-            })
+            }))
             .forEach(metadataResolvers::addAll);
 
         if (metadataResolvers.isEmpty()) {

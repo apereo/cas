@@ -5,9 +5,11 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuth20AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "CasOAuth20AuthenticationServiceSelectionStrategyConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OAuth)
 public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
@@ -40,6 +43,7 @@ public class CasOAuth20AuthenticationServiceSelectionStrategyConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationServiceSelectionStrategyConfigurer oauth20AuthenticationServiceSelectionStrategyConfigurer(
         @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy) {

@@ -61,7 +61,7 @@ public class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected RestConsentRepositoryStorage storage;
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @BeforeEach

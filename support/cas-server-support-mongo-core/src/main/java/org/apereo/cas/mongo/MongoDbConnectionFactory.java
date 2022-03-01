@@ -36,7 +36,6 @@ import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -151,7 +150,7 @@ public class MongoDbConnectionFactory {
      * @param collection      The collection to check the indexes of
      * @param indexesToCreate the indexes to create
      */
-    public static void createOrUpdateIndexes(final MongoTemplate mongoTemplate,
+    public static void createOrUpdateIndexes(final MongoOperations mongoTemplate,
                                              final MongoCollection<org.bson.Document> collection,
                                              final List<? extends IndexDefinition> indexesToCreate) {
         val collectionName = collection.getNamespace().getCollectionName();
@@ -282,9 +281,9 @@ public class MongoDbConnectionFactory {
      * @param mongo the mongo properties settings
      * @return the mongo template
      */
-    public MongoTemplate buildMongoTemplate(final BaseMongoDbProperties mongo) {
+    public CasMongoOperations buildMongoTemplate(final BaseMongoDbProperties mongo) {
         val mongoDbFactory = mongoDbFactory(buildMongoDbClient(mongo), mongo);
-        return new MongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
+        return new DefaultCasMongoTemplate(mongoDbFactory, mappingMongoConverter(mongoDbFactory));
     }
 
     protected Collection<String> getMappingBasePackages() {

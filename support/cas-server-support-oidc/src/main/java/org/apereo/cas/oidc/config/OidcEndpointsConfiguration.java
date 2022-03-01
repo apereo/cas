@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
@@ -35,6 +36,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.UrlValidator;
@@ -87,6 +89,7 @@ import java.util.Optional;
  */
 @Configuration(value = "OidcEndpointsConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 public class OidcEndpointsConfiguration {
 
     @Configuration(value = "OidcEndpointsMultifactorAuthenticationConfiguration", proxyBeanMethods = false)
@@ -243,6 +246,7 @@ public class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcConfirmView")
         public View oidcConfirmView(final ConfigurableApplicationContext applicationContext,
                                     @Qualifier("casProtocolViewFactory")
@@ -370,7 +374,7 @@ public class OidcEndpointsConfiguration {
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
         }
     }
@@ -381,6 +385,7 @@ public class OidcEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcCasWebflowExecutionPlanConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer oidcCasWebflowExecutionPlanConfigurer(
             @Qualifier("oidcWebflowConfigurer")
             final CasWebflowConfigurer oidcWebflowConfigurer,
@@ -422,6 +427,7 @@ public class OidcEndpointsConfiguration {
 
         @ConditionalOnMissingBean(name = "oidcWebflowConfigurer")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer oidcWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry logoutFlowDefinitionRegistry,

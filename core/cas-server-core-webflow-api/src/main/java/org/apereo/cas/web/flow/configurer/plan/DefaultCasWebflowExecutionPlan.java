@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer.plan;
 
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
@@ -21,6 +22,8 @@ import java.util.List;
 @Getter
 @Slf4j
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
+    private boolean initialized;
+
     private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
 
     private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>(0);
@@ -29,29 +32,38 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {
-        LOGGER.trace("Registering webflow configurer [{}]", cfg.getName());
-        this.webflowConfigurers.add(cfg);
+        if (BeanSupplier.isNotProxy(cfg)) {
+            LOGGER.trace("Registering webflow configurer [{}]", cfg.getName());
+            this.webflowConfigurers.add(cfg);
+        }
     }
 
     @Override
     public void registerWebflowInterceptor(final HandlerInterceptor interceptor) {
-        LOGGER.trace("Registering webflow interceptor [{}]", interceptor.getClass().getSimpleName());
-        this.webflowInterceptors.add(interceptor);
+        if (BeanSupplier.isNotProxy(interceptor)) {
+            LOGGER.trace("Registering webflow interceptor [{}]", interceptor.getClass().getSimpleName());
+            this.webflowInterceptors.add(interceptor);
+        }
     }
 
     @Override
     public void registerWebflowLoginContextProvider(final CasWebflowLoginContextProvider provider) {
-        LOGGER.trace("Registering webflow login context provider [{}]", provider.getName());
-        this.webflowLoginContextProviders.add(provider);
+        if (BeanSupplier.isNotProxy(provider)) {
+            LOGGER.trace("Registering webflow login context provider [{}]", provider.getName());
+            this.webflowLoginContextProviders.add(provider);
+        }
     }
 
     @Override
     public void execute() {
-        AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
-        AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);
-        webflowConfigurers.forEach(c -> {
-            LOGGER.trace("Registering webflow configurer [{}]", c.getName());
-            c.initialize();
-        });
+        if (!initialized) {
+            AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
+            AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);
+            webflowConfigurers.forEach(c -> {
+                LOGGER.trace("Registering webflow configurer [{}]", c.getName());
+                c.initialize();
+            });
+            initialized = true;
+        }
     }
 }

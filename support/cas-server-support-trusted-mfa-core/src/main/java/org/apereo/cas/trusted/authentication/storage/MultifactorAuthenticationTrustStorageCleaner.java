@@ -6,6 +6,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.inspektr.common.Cleanable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class MultifactorAuthenticationTrustStorageCleaner {
+public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
     private final MultifactorAuthenticationTrustStorage storage;
 
-    /**
-     * Clean up expired records.
-     */
+    @Override
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {

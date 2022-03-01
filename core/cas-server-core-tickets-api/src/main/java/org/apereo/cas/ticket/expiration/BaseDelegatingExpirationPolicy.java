@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket.expiration;
 
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -68,7 +71,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         val match = getExpirationPolicyFor(ticketState);
         if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
@@ -87,8 +90,8 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @return The TTL for the relevant expiration policy
      */
     @Override
-    public Long getTimeToLive(final TicketState ticketState) {
-        val match = getExpirationPolicyFor(ticketState);
+    public Long getTimeToLive(final Ticket ticketState) {
+        val match = getExpirationPolicyFor((AuthenticationAwareTicket) ticketState);
         if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
@@ -117,7 +120,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @param ticketState the ticket state
      * @return the expiration policy for
      */
-    protected Optional<ExpirationPolicy> getExpirationPolicyFor(final TicketState ticketState) {
+    protected Optional<ExpirationPolicy> getExpirationPolicyFor(final AuthenticationAwareTicket ticketState) {
         val name = getExpirationPolicyNameFor(ticketState);
         LOGGER.trace("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {
@@ -135,6 +138,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @param ticketState the ticket state
      * @return the expiration policy name for
      */
-    protected abstract String getExpirationPolicyNameFor(TicketState ticketState);
+    protected abstract String getExpirationPolicyNameFor(AuthenticationAwareTicket ticketState);
 
 }

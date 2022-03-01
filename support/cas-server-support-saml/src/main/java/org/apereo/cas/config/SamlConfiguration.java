@@ -109,6 +109,7 @@ public class SamlConfiguration {
 
         @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Saml10ObjectBuilder saml10ObjectBuilder(
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean) {
@@ -168,6 +169,7 @@ public class SamlConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SamlWebSecurityConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ProtocolEndpointWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer() {
             return new ProtocolEndpointWebSecurityConfigurer<>() {
 
@@ -184,6 +186,7 @@ public class SamlConfiguration {
     public static class SamlWebConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateEndpoint samlValidateEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("samlResponseBuilder")
@@ -204,6 +207,7 @@ public class SamlConfiguration {
         }
 
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateController samlValidateController(
             final CasConfigurationProperties casProperties,
             @Qualifier("serviceValidationViewFactory")
@@ -232,9 +236,8 @@ public class SamlConfiguration {
                 .argumentExtractor(argumentExtractor)
                 .proxyHandler(proxy20Handler)
                 .requestedContextValidator(requestedContextValidator)
-                .authnContextAttribute(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())
                 .validationAuthorizers(validationAuthorizers)
-                .renewEnabled(casProperties.getSso().isRenewAuthnEnabled())
+                .casProperties(casProperties)
                 .validationViewFactory(serviceValidationViewFactory).build();
             return new SamlValidateController(context);
         }

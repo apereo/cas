@@ -32,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     X509CertificateExtractorConfiguration.class,
     X509AuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @Tag("WebflowConfig")
 @TestPropertySource(properties = {

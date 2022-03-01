@@ -38,6 +38,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPrincipalFactory")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalFactory rejectUsersPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
@@ -62,11 +63,13 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer(final CasConfigurationProperties casProperties,
-                                                                                                            @Qualifier("rejectUsersAuthenticationHandler")
-                                                                                                            final AuthenticationHandler rejectUsersAuthenticationHandler,
-                                                                                                            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-                                                                                                            final PrincipalResolver defaultPrincipalResolver) {
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthenticationEventExecutionPlanConfigurer rejectUsersAuthenticationEventExecutionPlanConfigurer(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("rejectUsersAuthenticationHandler")
+        final AuthenticationHandler rejectUsersAuthenticationHandler,
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        final PrincipalResolver defaultPrincipalResolver) {
         return plan -> {
             val users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
@@ -78,6 +81,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @ConditionalOnMissingBean(name = "rejectPasswordPolicyConfiguration")
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PasswordPolicyContext rejectPasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }

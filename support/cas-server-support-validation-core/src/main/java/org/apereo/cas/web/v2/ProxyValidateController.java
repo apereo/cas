@@ -22,17 +22,12 @@ public class ProxyValidateController extends AbstractServiceValidateController {
         super(serviceValidateConfigurationContext);
     }
 
-    /**
-     * Handle model and view.
-     *
-     * @param request  the request
-     * @param response the response
-     * @return the model and view
-     * @throws Exception the exception
-     */
     @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
     @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return super.handleRequestInternal(request, response);
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                              final HttpServletResponse response) throws Exception {
+        return getServiceValidateConfigurationContext().getCasProperties().getSso().isProxyAuthnEnabled()
+            ? super.handleRequestInternal(request, response)
+            : null;
     }
 }

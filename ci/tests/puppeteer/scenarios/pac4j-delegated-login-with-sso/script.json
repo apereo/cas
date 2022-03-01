@@ -3,7 +3,9 @@
   "properties": [
     "--logging.level.org.apereo.cas=info",
     "--cas.service-registry.core.init-from-json=true",
+
     "--cas.audit.engine.enabled=false",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
@@ -13,5 +15,5 @@
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CASServer"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
 }

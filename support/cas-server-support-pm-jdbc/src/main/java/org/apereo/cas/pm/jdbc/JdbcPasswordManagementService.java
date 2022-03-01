@@ -19,7 +19,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -38,7 +38,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -46,7 +46,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties,
                                          @NonNull final DataSource dataSource,
-                                         @NonNull final TransactionTemplate transactionTemplate,
+                                         @NonNull final TransactionOperations transactionTemplate,
                                          final PasswordHistoryService passwordHistoryService,
                                          final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);

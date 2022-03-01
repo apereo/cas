@@ -18,7 +18,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbServiceRegistryTemplate(
+    public MongoOperations mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -57,7 +57,7 @@ public class MongoDbServiceRegistryConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceRegistry mongoDbServiceRegistry(
         @Qualifier("mongoDbServiceRegistryTemplate")
-        final MongoTemplate mongoDbServiceRegistryTemplate,
+        final MongoOperations mongoDbServiceRegistryTemplate,
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {

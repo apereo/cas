@@ -9,7 +9,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -23,13 +23,13 @@ import java.util.Optional;
  */
 @Slf4j
 public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
-    private final transient MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
     private final String collectionName;
 
     public MongoDbSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                          final Cache<String, SamlIdPMetadataDocument> metadataCache,
-                                         final MongoTemplate mongoTemplate,
+                                         final MongoOperations mongoTemplate,
                                          final String collectionName) {
         super(metadataCipherExecutor, metadataCache);
         this.mongoTemplate = mongoTemplate;

@@ -2,7 +2,9 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -23,7 +25,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
 
     private static final long serialVersionUID = -5552830592634074877L;
 
-    private final boolean accepted;
+    private final TriStateBoolean status;
 
     private final Principal principal;
 
@@ -36,7 +38,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @return the acceptable usage policy status
      */
     public static AcceptableUsagePolicyStatus accepted(final Principal principal) {
-        return new AcceptableUsagePolicyStatus(true, principal);
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.TRUE, principal);
     }
 
     /**
@@ -46,7 +48,17 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @return the acceptable usage policy status
      */
     public static AcceptableUsagePolicyStatus denied(final Principal principal) {
-        return new AcceptableUsagePolicyStatus(false, principal);
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.FALSE, principal);
+    }
+
+    /**
+     * Factory method. Indicate AUP has been skipped with unknown/undefined status.
+     *
+     * @param principal the principal
+     * @return the acceptable usage policy status
+     */
+    public static AcceptableUsagePolicyStatus skipped(final Principal principal) {
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.UNDEFINED, principal);
     }
 
     /**
@@ -131,5 +143,25 @@ public class AcceptableUsagePolicyStatus implements Serializable {
             return this.properties.get(name);
         }
         return defaultValues;
+    }
+
+    /**
+     * Is accepted status.
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isAccepted() {
+        return status != null && this.status.isTrue();
+    }
+
+    /**
+     * Is denied status.
+     *
+     * @return the boolean
+     */
+    @JsonIgnore
+    public boolean isDenied() {
+        return status != null && this.status.isFalse();
     }
 }

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Tag("SAML")
+@Tag("Web")
 public class WebUtilTests {
 
     @Test

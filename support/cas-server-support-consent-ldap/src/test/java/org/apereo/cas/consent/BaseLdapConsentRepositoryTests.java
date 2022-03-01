@@ -67,7 +67,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     protected CasConfigurationProperties casProperties;
     
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 
     @Override

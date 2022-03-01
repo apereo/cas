@@ -10,8 +10,10 @@ import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasConsentLdapConfiguration}.
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasConsentLdapConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ConsentRepository consentRepository(
         final CasConfigurationProperties casProperties,
         @Qualifier("consentLdapConnectionFactory")
@@ -33,6 +36,7 @@ public class CasConsentLdapConfiguration {
     }
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "consentLdapConnectionFactory")
     public ConnectionFactory consentLdapConnectionFactory(final CasConfigurationProperties casProperties) {
         val ldap = casProperties.getConsent().getLdap();

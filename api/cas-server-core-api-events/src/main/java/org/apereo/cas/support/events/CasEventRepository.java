@@ -12,6 +12,10 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 public interface CasEventRepository {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "casEventRepository";
 
     /**
      * Gets event repository filter.

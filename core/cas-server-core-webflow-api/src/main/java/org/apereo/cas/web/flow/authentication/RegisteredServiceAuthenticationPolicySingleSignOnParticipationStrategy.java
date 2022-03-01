@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
@@ -32,11 +32,12 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
     private final ConfigurableApplicationContext applicationContext;
 
-    public RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(final ServicesManager servicesManager,
-                                                                                  final TicketRegistrySupport ticketRegistrySupport,
-                                                                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                                                                                  final AuthenticationEventExecutionPlan executionPlan,
-                                                                                  final ConfigurableApplicationContext applicationContext) {
+    public RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(
+        final ServicesManager servicesManager,
+        final TicketRegistrySupport ticketRegistrySupport,
+        final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+        final AuthenticationEventExecutionPlan executionPlan,
+        final ConfigurableApplicationContext applicationContext) {
         super(servicesManager, ticketRegistrySupport, serviceSelectionStrategy);
         this.authenticationEventExecutionPlan = executionPlan;
         this.applicationContext = applicationContext;
@@ -61,7 +62,9 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
 
         val ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
-            val authentication = getTicketState(ssoRequest).map(TicketState::getAuthentication).orElseThrow();
+            val authentication = getTicketState(ssoRequest)
+                .map(AuthenticationAwareTicket.class::cast)
+                .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
             AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
             if (authentication != null) {
                 val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()

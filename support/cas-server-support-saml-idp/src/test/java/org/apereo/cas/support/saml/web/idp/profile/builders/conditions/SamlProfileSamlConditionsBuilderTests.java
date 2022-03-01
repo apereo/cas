@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.response.skew-allowance=0",
     "cas.saml-core.skew-allowance=3000"

@@ -22,7 +22,7 @@ public class InMemoryPasswordlessTokenRepositoryTests extends BasePasswordlessUs
     private static final String CAS_USER = "casuser";
 
     @Autowired
-    @Qualifier("passwordlessTokenRepository")
+    @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
     private PasswordlessTokenRepository repository;
 
     @Test

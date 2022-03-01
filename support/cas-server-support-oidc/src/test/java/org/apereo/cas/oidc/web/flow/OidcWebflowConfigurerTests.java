@@ -58,8 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasOAuth20ThrottleConfiguration.class,
     CasOAuth20WebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @TestPropertySource(properties = {
     "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",

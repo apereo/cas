@@ -42,6 +42,7 @@ publishDocs=true
 buildDocs=true
 serve=false
 clone=true
+buildFeatures=true
 
 while (("$#")); do
   case "$1" in
@@ -89,6 +90,10 @@ while (("$#")); do
     serviceProps=$2
     shift 2
     ;;
+  --features)
+    buildFeatures=$2
+    shift 2
+    ;;
   *)
     shift
     ;;
@@ -114,6 +119,7 @@ printgreen "Publish: \t${publishDocs}"
 printgreen "Filter: \t${propFilter}"
 printgreen "Actuators: \t${actuators}"
 printgreen "Third Party: \t${thirdParty}"
+printgreen "Features: \t${buildFeatures}"
 printgreen "Ruby Version: \t$(ruby -v)"
 echo "-------------------------------------------------------"
 
@@ -167,7 +173,7 @@ if [[ $generateData == "true" ]]; then
   chmod +x ${docgen}
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter...\n"
-  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" -f "$propFilter" -a "$actuators" -tp "$thirdParty" -sp "$serviceProps"
+  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" -f "$propFilter" -a "$actuators" -tp "$thirdParty" -sp "$serviceProps" -ft "$buildFeatures"
   printgreen "Generated documentation data at $PWD/gh-pages/_data/$dataDir...\n"
 else
   printgreen "Skipping documentation data generation...\n"

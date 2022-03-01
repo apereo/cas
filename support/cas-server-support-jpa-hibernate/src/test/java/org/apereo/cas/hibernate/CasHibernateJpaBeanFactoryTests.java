@@ -54,7 +54,7 @@ public class CasHibernateJpaBeanFactoryTests {
     }
 
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val adapter = jpaBeanFactory.newJpaVendorAdapter();
         assertNotNull(adapter);
 

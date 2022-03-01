@@ -53,12 +53,10 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
             createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
 
-            val sendSimpleToken = createActionState(flow, "sendSimpleToken",
-                createEvaluateAction("mfaSimpleMultifactorSendTokenAction"));
+            val sendSimpleToken = createActionState(flow, "sendSimpleToken", "mfaSimpleMultifactorSendTokenAction");
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_UNAVAILABLE);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-
-
+            
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             val propertiesToBind = CollectionUtils.wrapList("token");
             val binder = createStateBinderConfiguration(propertiesToBind);
@@ -69,6 +67,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+            
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND, "sendSimpleToken",
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 

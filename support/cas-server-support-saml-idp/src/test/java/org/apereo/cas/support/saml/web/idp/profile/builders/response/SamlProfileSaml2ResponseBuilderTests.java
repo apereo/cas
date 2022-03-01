@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"

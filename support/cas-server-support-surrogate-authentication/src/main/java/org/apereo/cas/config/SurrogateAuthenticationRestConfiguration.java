@@ -8,8 +8,10 @@ import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateAuthenticationRestConfiguration}.
@@ -32,6 +34,7 @@ public class SurrogateAuthenticationRestConfiguration {
      * @return configurer instance
      */
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactoryConfigurer restHttpRequestCredentialFactoryConfigurer(
         @Qualifier("surrogateAuthenticationService")
         final SurrogateAuthenticationService surrogateAuthenticationService, final CasConfigurationProperties casProperties) {

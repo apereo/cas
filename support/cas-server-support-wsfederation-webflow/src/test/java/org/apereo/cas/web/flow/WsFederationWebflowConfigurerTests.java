@@ -29,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WsFedAuthenticationEventExecutionPlanConfiguration.class,
     WsFederationAuthenticationWebflowConfiguration.class,
     CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasMultifactorAuthenticationWebflowConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed[0].identity-provider-url=https://example.org/adfs/ls/",

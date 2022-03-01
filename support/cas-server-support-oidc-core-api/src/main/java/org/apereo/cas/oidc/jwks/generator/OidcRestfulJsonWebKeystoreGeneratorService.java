@@ -11,6 +11,8 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
@@ -28,6 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
     private final OidcProperties oidcProperties;
 

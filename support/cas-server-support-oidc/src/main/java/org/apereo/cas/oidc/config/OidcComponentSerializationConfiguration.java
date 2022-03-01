@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.config;
 
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
@@ -14,11 +15,14 @@ import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributePro
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link OidcComponentSerializationConfiguration}.
@@ -28,10 +32,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "OidcComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 public class OidcComponentSerializationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcTicketSerializationExecutionPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketSerializationExecutionPlanConfigurer oidcTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer());
@@ -42,6 +48,7 @@ public class OidcComponentSerializationConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "oidcComponentSerializationPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer oidcComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class);

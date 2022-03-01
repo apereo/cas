@@ -48,7 +48,6 @@ dependencies {
     if (!rootProject.publishFlag) {
         runtimeOnly libraries.springbootdevtools
     }
-
 }
 
 

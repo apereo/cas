@@ -16,7 +16,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
  * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
@@ -30,11 +30,12 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver(final CasConfigurationProperties casProperties,
-                                                                                              @Qualifier("mongoDbSamlMetadataResolverTemplate")
-                                                                                              final MongoTemplate mongoDbSamlMetadataResolverTemplate,
-                                                                                              @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-                                                                                              final OpenSamlConfigBean openSamlConfigBean) {
+    public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("mongoDbSamlMetadataResolverTemplate")
+        final MongoOperations mongoDbSamlMetadataResolverTemplate,
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, mongoDbSamlMetadataResolverTemplate);
     }
@@ -42,9 +43,10 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoTemplate mongoDbSamlMetadataResolverTemplate(final CasConfigurationProperties casProperties,
-                                                             @Qualifier(CasSSLContext.BEAN_NAME)
-                                                             final CasSSLContext casSslContext) {
+    public MongoOperations mongoDbSamlMetadataResolverTemplate(
+        final CasConfigurationProperties casProperties,
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext) {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);

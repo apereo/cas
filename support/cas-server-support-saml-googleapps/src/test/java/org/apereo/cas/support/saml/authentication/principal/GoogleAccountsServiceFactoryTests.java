@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-apps.public-key-location=classpath:DSAPublicKey01.key",
     "cas.google-apps.private-key-location=classpath:DSAPrivateKey01.key"
 })
-@Tag("SAML")
+@Tag("SAML2")
 @Deprecated(since = "6.2.0")
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired

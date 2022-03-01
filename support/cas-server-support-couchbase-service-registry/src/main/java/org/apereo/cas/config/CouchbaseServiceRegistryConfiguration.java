@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.couchbase.core.DefaultCouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -39,7 +40,7 @@ public class CouchbaseServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "serviceRegistryCouchbaseClientFactory")
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory(final CasConfigurationProperties casProperties) {
         val couchbase = casProperties.getServiceRegistry().getCouchbase();
-        return new CouchbaseClientFactory(couchbase);
+        return new DefaultCouchbaseClientFactory(couchbase);
     }
 
     @Bean

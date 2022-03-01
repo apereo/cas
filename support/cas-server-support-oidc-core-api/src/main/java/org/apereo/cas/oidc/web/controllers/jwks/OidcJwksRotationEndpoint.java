@@ -7,6 +7,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @RestControllerEndpoint(id = "oidcJwks", enableByDefault = false)
 public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
-    private final OidcJsonWebKeystoreRotationService rotationService;
+    private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;
 
     public OidcJwksRotationEndpoint(final CasConfigurationProperties casProperties,
-                                    final OidcJsonWebKeystoreRotationService rotationService) {
+                                    final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService) {
         super(casProperties);
         this.rotationService = rotationService;
     }
@@ -38,7 +39,7 @@ public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
     @GetMapping(path = "/rotate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rotate keys in the keystore forcefully")
     public ResponseEntity<String> handleRotation() throws Exception {
-        val rotation = rotationService.rotate();
+        val rotation = rotationService.getObject().rotate();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);
     }
@@ -52,7 +53,7 @@ public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
     @GetMapping(path = "/revoke", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Revoke keys in the keystore forcefully")
     public ResponseEntity<String> handleRevocation() throws Exception {
-        val rotation = rotationService.revoke();
+        val rotation = rotationService.getObject().revoke();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);
     }

@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 public class GoogleMapsGeoLocationServiceTests {
     @Autowired
-    @Qualifier("geoLocationService")
+    @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;
 
     @Test

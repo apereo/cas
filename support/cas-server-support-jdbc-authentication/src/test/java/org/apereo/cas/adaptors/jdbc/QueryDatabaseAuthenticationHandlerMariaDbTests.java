@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "database.driver-class=org.mariadb.jdbc.Driver",
     "database.name=mysql",
     "database.url=jdbc:mariadb://localhost:3306/",
-    "database.dialect=org.hibernate.dialect.MariaDB103Dialect"
+    "database.dialect=org.hibernate.dialect.MariaDB106Dialect"
 })
 @EnabledIfPortOpen(port = 3306)
 @Tag("MariaDb")

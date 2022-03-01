@@ -5,6 +5,7 @@ import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -22,10 +23,10 @@ import java.util.stream.Collectors;
 @Endpoint(id = "throttles", enableByDefault = false)
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint {
 
-    private final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan;
+    private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
 
     public ThrottledSubmissionHandlerEndpoint(final CasConfigurationProperties casProperties,
-        final AuthenticationThrottlingExecutionPlan executionPlan) {
+        final ObjectProvider<AuthenticationThrottlingExecutionPlan> executionPlan) {
         super(casProperties);
         this.authenticationThrottlingExecutionPlan = executionPlan;
     }
@@ -33,7 +34,7 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint 
     @ReadOperation
     @Operation(summary = "Get throttled authentication records")
     public List getRecords() {
-        return (List) authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
+        return (List) authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
             .stream()
             .map(entry -> (ThrottledSubmissionHandlerInterceptor) entry)
             .filter(Objects::nonNull)

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -40,10 +41,11 @@ import java.util.Objects;
 @RestControllerEndpoint(id = "gauthCredentialRepository", enableByDefault = false)
 @Slf4j
 public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCasActuatorEndpoint {
-    private final OneTimeTokenCredentialRepository repository;
+    private final ObjectProvider<OneTimeTokenCredentialRepository> repository;
 
-    public GoogleAuthenticatorTokenCredentialRepositoryEndpoint(final CasConfigurationProperties casProperties,
-                                                                final OneTimeTokenCredentialRepository repository) {
+    public GoogleAuthenticatorTokenCredentialRepositoryEndpoint(
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<OneTimeTokenCredentialRepository> repository) {
         super(casProperties);
         this.repository = repository;
     }
@@ -56,8 +58,10 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Load and get all accounts for the user", parameters = {@Parameter(name = "username", required = true)})
-    public Collection<? extends OneTimeTokenAccount> get(@PathVariable final String username) {
-        return repository.get(username);
+    public Collection<? extends OneTimeTokenAccount> get(
+        @PathVariable
+        final String username) {
+        return repository.getObject().get(username);
     }
 
     /**
@@ -68,7 +72,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Load and get all accounts")
     public Collection<? extends OneTimeTokenAccount> load() {
-        return repository.load();
+        return repository.getObject().load();
     }
 
     /**
@@ -78,8 +82,10 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      */
     @DeleteMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete account for the user", parameters = {@Parameter(name = "username", required = true)})
-    public void delete(@PathVariable final String username) {
-        repository.delete(username);
+    public void delete(
+        @PathVariable
+        final String username) {
+        repository.getObject().delete(username);
     }
 
     /**
@@ -88,7 +94,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete all accounts")
     public void deleteAll() {
-        repository.deleteAll();
+        repository.getObject().deleteAll();
     }
 
     /**
@@ -100,7 +106,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @ResponseBody
     @Operation(summary = "Export accounts as a zip file")
     public ResponseEntity<Resource> exportAccounts() {
-        val accounts = repository.load();
+        val accounts = repository.getObject().load();
         val serializer = new GoogleAuthenticatorAccountSerializer();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
@@ -131,7 +137,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
         val serializer = new GoogleAuthenticatorAccountSerializer();
         val account = serializer.from(requestBody);
         LOGGER.trace("Storing account: [{}]", account);
-        repository.save(account);
+        repository.getObject().save(account);
         return HttpStatus.CREATED;
     }
 

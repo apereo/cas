@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
@@ -27,7 +28,7 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
     private static final long serialVersionUID = -2735975347698196127L;
 
     @Override
-    protected String getExpirationPolicyNameFor(final TicketState ticketState) {
+    protected String getExpirationPolicyNameFor(final AuthenticationAwareTicket ticketState) {
         val attributes = ticketState.getAuthentication().getAttributes();
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
             && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {

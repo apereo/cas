@@ -10,6 +10,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -23,6 +24,9 @@ import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -30,7 +34,6 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,6 +53,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Configuration(value = "ElectronicFenceConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Electrofence)
 public class ElectronicFenceConfiguration {
 
     @Configuration(value = "ElectronicFenceMitigatorConfiguration", proxyBeanMethods = false)
@@ -70,7 +74,6 @@ public class ElectronicFenceConfiguration {
             }
             return new DefaultAuthenticationRiskMitigator(multifactorAuthenticationContingencyPlan);
         }
-
     }
 
     @Configuration(value = "ElectronicFenceEvaluatorConfiguration", proxyBeanMethods = false)
@@ -166,55 +169,71 @@ public class ElectronicFenceConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceCalculatorConfiguration {
 
-        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.ip", name = "enabled", havingValue = "true", matchIfMissing = false)
         @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
-            final CasEventRepository casEventRepository) {
-            return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.ip.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
         }
 
-        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.agent", name = "enabled", havingValue = "true", matchIfMissing = false)
         @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
-            final CasEventRepository casEventRepository) {
-            return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.agent.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.date-time", name = "enabled", havingValue = "true", matchIfMissing = false)
         public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casEventRepository")
-            final CasEventRepository casEventRepository) {
-            return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties);
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.date-time.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
         }
     }
 
-    @ConditionalOnBean(name = "geoLocationService")
+    @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
     @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnProperty(prefix = "cas.authn.adaptive.risk.geo-location", name = "enabled", havingValue = "true", matchIfMissing = false)
     public static class ElectronicFenceGeoLocationConfiguration {
         @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("geoLocationService")
+            @Qualifier(GeoLocationService.BEAN_NAME)
             final GeoLocationService geoLocationService,
-            @Qualifier("casEventRepository")
-            final CasEventRepository casEventRepository) {
-            return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository, casProperties, geoLocationService);
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.geo-location.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository, casProperties, geoLocationService))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -222,6 +241,7 @@ public class ElectronicFenceConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class ElectronicFenceAuditConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")
         public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer(
             @Qualifier("returnValueResourceResolver")

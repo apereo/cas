@@ -2,8 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public interface TicketRegistrySupport {
      * @param ticketId the ticket id
      * @return the ticket state
      */
-    TicketState getTicketState(String ticketId);
+    Ticket getTicket(String ticketId);
 
     /**
      * Retrieve a valid Principal object identified by the provided TGT SSO token.

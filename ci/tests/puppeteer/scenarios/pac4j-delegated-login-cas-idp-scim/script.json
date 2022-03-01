@@ -32,5 +32,5 @@
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+  "initScript": "${PWD}/ci/tests/scim/run-scim-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh"
 }

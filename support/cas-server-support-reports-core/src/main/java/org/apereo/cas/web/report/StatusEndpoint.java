@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.health.HealthEndpoint;
@@ -29,10 +30,10 @@ import java.util.Map;
 @Endpoint(id = "status", enableByDefault = false)
 @Deprecated(since ="6.2.0")
 public class StatusEndpoint extends BaseCasActuatorEndpoint {
-    private final HealthEndpoint healthEndpoint;
+    private final ObjectProvider<HealthEndpoint> healthEndpoint;
 
     public StatusEndpoint(final CasConfigurationProperties casProperties,
-                          final HealthEndpoint healthEndpoint) {
+                          final ObjectProvider<HealthEndpoint> healthEndpoint) {
         super(casProperties);
         this.healthEndpoint = healthEndpoint;
     }
@@ -46,13 +47,13 @@ public class StatusEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Provides CAS server's health status", deprecated = true)
     public Map<String, Object> handle() {
         val model = new LinkedHashMap<String, Object>();
-        if (healthEndpoint == null) {
+        if (healthEndpoint.getIfAvailable() == null) {
             model.put("status", HttpStatus.OK.value());
             model.put("description", HttpStatus.OK.name());
             LOGGER.info("Health endpoint is undefined/disabled. No health indicators may be consulted to query for health data "
                 + "and the status results are always going to be [{}]", model);
         } else {
-            val health = this.healthEndpoint.health();
+            val health = this.healthEndpoint.getObject().health();
             val status = health.getStatus();
 
             if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
