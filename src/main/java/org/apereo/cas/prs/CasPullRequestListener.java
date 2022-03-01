@@ -90,15 +90,27 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
+        if (pr.isDraft() || pr.isWorkInProgress()) {
+            log.info("Pull request {} is a work-in-progress", pr);
+            return;
+        }
+
         val files = repository.getPullRequestFiles(pr);
+
         val modifiesJava = files.stream().anyMatch(file ->
             !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
-        if (modifiesJava) {
+
+        val modifiesUI = files.stream().anyMatch(file ->
+            file.getFilename().endsWith(".css") ||
+            file.getFilename().endsWith(".html") ||
+            file.getFilename().endsWith(".js"));
+
+        if (modifiesJava || modifiesUI) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
                                                            || file.getFilename().matches(".*puppeteer.*scenarios.*script.*"));
             if (!hasTests) {
                 var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
-                if (!isCommitter && !pr.isDraft() && !pr.isWorkInProgress()) {
+                if (!isCommitter) {
                     log.info("Pull request {} does not have any tests", pr);
                     if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_NEEDS_TESTS)) {
                         repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_NEEDS_TESTS);
