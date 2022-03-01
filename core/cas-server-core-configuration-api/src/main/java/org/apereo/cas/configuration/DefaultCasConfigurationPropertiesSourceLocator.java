@@ -11,7 +11,9 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,8 +21,11 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
+import static org.springframework.core.env.StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;
 
 /**
  * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
@@ -45,9 +50,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     /**
      * Adding items to composite property source which contains
      * property sources processed in order, first one wins.
-     * First Priority: Configuration files in config dir,
+     * First Priority: System properties and environment variables,
+     * Second Priority: Configuration files in config dir,
      * profiles override non-profiles, last profile overrides first
-     * Second Priority: {@code classpath:/application.yml}
+     * Third Priority: {@code classpath:/application.yml}
      *
      * @param environment    the environment
      * @param resourceLoader the resource loader
@@ -56,6 +62,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     @Override
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource("casCompositePropertySource");
+        compositePropertySource.addPropertySource(loadEnvironmentAndSystemProperties());
         val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory(environment);
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config != null && config.isDirectory() && config.exists()) {
@@ -166,6 +173,23 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         }));
 
         return composite;
+    }
+
+    /**
+     * Returns a system property composed of environment variables and system properties.
+     *
+     * <p>Properties present in system properties will
+     * take precedence over those in environment variables,
+     * similarly to spring boot behaviour.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private PropertySource<?> loadEnvironmentAndSystemProperties() {
+        CompositePropertySource environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
+        environmentAndSystemProperties.addPropertySource(
+            new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
+        environmentAndSystemProperties.addPropertySource(
+            new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
+        return environmentAndSystemProperties;
     }
 
     private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader,
