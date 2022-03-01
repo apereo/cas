@@ -60,7 +60,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("ipAddressIntelligenceService")
             final IPAddressIntelligenceService ipAddressIntelligenceService,
-            @Qualifier("geoLocationService")
+            @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService) {
             return new DefaultAdaptiveAuthenticationPolicy(geoLocationService.getIfAvailable(),
                 ipAddressIntelligenceService, casProperties.getAuthn().getAdaptive());

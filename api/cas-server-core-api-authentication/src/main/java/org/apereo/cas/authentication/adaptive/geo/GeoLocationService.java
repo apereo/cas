@@ -9,6 +9,10 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 public interface GeoLocationService {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "geoLocationService";
 
     /**
      * Find a geo location based on an address.

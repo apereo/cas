@@ -2,7 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @Configuration(value = "YubikeyComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.YubiKey)
 public class YubiKeyComponentSerializationConfiguration {
 
     @Bean

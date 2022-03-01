@@ -15,7 +15,9 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import com.yubico.u2f.U2F;
 import lombok.val;
@@ -35,17 +37,19 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @since 5.1.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
 @Configuration(value = "U2fAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                              @Qualifier("u2fAuthenticationHandler")
-                                                                              final AuthenticationHandler u2fAuthenticationHandler,
-                                                                              @Qualifier("u2fMultifactorAuthenticationProvider")
-                                                                              final MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider) {
+    public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fAuthenticationHandler")
+        final AuthenticationHandler u2fAuthenticationHandler,
+        @Qualifier("u2fMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, u2fAuthenticationHandler, u2fMultifactorAuthenticationProvider.getId());
     }

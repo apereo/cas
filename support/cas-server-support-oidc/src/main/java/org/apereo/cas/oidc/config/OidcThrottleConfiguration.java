@@ -1,11 +1,13 @@
 package org.apereo.cas.oidc.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
@@ -34,6 +36,7 @@ import java.util.List;
 @Configuration(value = "OidcThrottleConfiguration", proxyBeanMethods = false)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 public class OidcThrottleConfiguration {
 
     @Configuration(value = "OidcThrottleWebMvcConfiguration", proxyBeanMethods = false)

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.config;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.trusted.util.cipher.CookieDeviceFingerprintComponentCipherExecutor;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintComponentManager;
 import org.apereo.cas.trusted.web.flow.fingerprint.CookieDeviceFingerprintComponentManager;
@@ -17,6 +18,7 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.CookieUtils;
@@ -49,6 +51,7 @@ import java.util.List;
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
 public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Configuration(value = "MultifactorAuthnTrustedDeviceFingerprintComponentConfiguration", proxyBeanMethods = false)
@@ -189,7 +192,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     }
 
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-    @ConditionalOnBean(name = "geoLocationService")
+    @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
     @Configuration(value = "MultifactorAuthnTrustedDeviceGeoLocationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class MultifactorAuthnTrustedDeviceGeoLocationConfiguration {
@@ -199,7 +202,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         public DeviceFingerprintComponentManager deviceFingerprintGeoLocationComponentExtractor(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("geoLocationService")
+            @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService) {
             return BeanSupplier.of(DeviceFingerprintComponentManager.class)
                 .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled").isTrue()

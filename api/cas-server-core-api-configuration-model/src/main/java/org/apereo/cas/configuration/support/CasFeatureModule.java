@@ -175,6 +175,10 @@ public interface CasFeatureModule {
          */
         SurrogateAuthentication,
         /**
+         * SAML IDP.
+         */
+        SamlIdP,
+        /**
          * SAML IDP metadata management.
          */
         SamlIdPMetadata,
@@ -182,6 +186,14 @@ public interface CasFeatureModule {
          * SAML SP metadata management.
          */
         SamlServiceProviderMetadata,
+        /**
+         * OAuth.
+         */
+        OAuth,
+        /**
+         * OIDC.
+         */
+        OpenIDConnect,
         /**
          * Authn throttling.
          */

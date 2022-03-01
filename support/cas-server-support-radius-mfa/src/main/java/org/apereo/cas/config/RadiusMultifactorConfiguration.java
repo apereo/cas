@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustedDeviceWeb
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -164,10 +163,12 @@ public class RadiusMultifactorConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.radius")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "radius")
     @Configuration(value = "RadiusMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("radiusMultifactorWebflowConfigurer")
     public static class RadiusMultifactorTrustConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.radius.trusted-device-enabled")
+            .isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfigurer")
         @Bean
@@ -180,9 +181,10 @@ public class RadiusMultifactorConfiguration {
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) throws Exception {
+            final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(RadiusMultifactorConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(RadiusMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
                         loginFlowDefinitionRegistry, radiusFlowRegistry,
@@ -200,9 +202,10 @@ public class RadiusMultifactorConfiguration {
         public CasWebflowExecutionPlanConfigurer radiusMultifactorTrustCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusMultifactorTrustConfigurer")
-            final CasWebflowConfigurer radiusMultifactorTrustConfigurer) throws Exception {
+            final CasWebflowConfigurer radiusMultifactorTrustConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(RadiusMultifactorConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(RadiusMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(radiusMultifactorTrustConfigurer))
                 .otherwiseProxy()
                 .get();

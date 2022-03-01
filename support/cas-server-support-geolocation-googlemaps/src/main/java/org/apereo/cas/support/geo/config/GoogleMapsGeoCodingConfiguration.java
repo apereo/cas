@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleMapsGeoCodingConfiguration {
 
-    @ConditionalOnMissingBean(name = "geoLocationService")
+    @ConditionalOnMissingBean(name = GeoLocationService.BEAN_NAME)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public GeoLocationService geoLocationService(final CasConfigurationProperties casProperties) {

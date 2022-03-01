@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustedDeviceWebfl
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
-import org.apereo.cas.trusted.config.ConditionalOnMultifactorTrustedDevicesEnabled;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -159,10 +158,12 @@ public class AuthyConfiguration {
     }
 
     @ConditionalOnClass(value = MultifactorAuthnTrustConfiguration.class)
-    @ConditionalOnMultifactorTrustedDevicesEnabled(prefix = "cas.authn.mfa.authy")
     @Configuration(value = "AuthyMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("authyMultifactorWebflowConfigurer")
+    @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "authy")
     public static class AuthyMultifactorTrustConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.authy.trusted-device-enabled")
+            .isTrue().evenIfMissing();
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
@@ -176,23 +177,36 @@ public class AuthyConfiguration {
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            val cfg = new AuthyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry,
-                authyAuthenticatorFlowRegistry,
-                applicationContext,
-                casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(AuthyConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(AuthyMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cfg = new AuthyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
+                        loginFlowDefinitionRegistry,
+                        authyAuthenticatorFlowRegistry,
+                        applicationContext,
+                        casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+                    return cfg;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "authyMultifactorTrustCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer authyMultifactorTrustCasWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("authyMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(AuthyConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .and(AuthyMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }
