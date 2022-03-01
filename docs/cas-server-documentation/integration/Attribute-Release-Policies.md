@@ -88,6 +88,26 @@ and optionally exclude attributes from the final collection.
 }
 ```
 
+### Return Static
+
+Return static attributes to the service with values hard-coded in the service definition.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.LinkedHashMap",
+      "permissions": [ "java.util.ArrayList", [ "read", "write", "admin" ] ]
+    }
+  }
+}
+```
+
 ### Deny All
 
 Never ever return principal attributes to applications. Note that this policy
