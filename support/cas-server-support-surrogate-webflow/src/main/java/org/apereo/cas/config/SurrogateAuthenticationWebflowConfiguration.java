@@ -26,6 +26,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -57,6 +58,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnClass(DuoSecurityAuthenticationService.class)
         @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
         public CasMultifactorWebflowCustomizer surrogateCasMultifactorWebflowCustomizer(
             final ConfigurableApplicationContext applicationContext) {
@@ -89,6 +91,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
         @Bean
         @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnClass(DuoSecurityAuthenticationService.class)
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
@@ -184,6 +187,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication, module = "duo")
+    @ConditionalOnClass(DuoSecurityAuthenticationService.class)
     public static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer")
