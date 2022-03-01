@@ -78,6 +78,8 @@ Several Docker images used for integration tests are now updated to their latest
 - PostgreSQL
 - Spring Data
 - Amazon SDK
+- Apache Log4j
+- Hazelcast
    
 ## HAL Explorer
  
