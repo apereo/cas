@@ -21,7 +21,7 @@ public class RandomUtilsTests {
     public void beforeEach() {
         System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, StringUtils.EMPTY);
     }
-    
+
     @Test
     public void verifyUnknownAlg() {
         System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, "bad-algorithm");
@@ -73,12 +73,12 @@ public class RandomUtilsTests {
     @Test
     public void verifyValidation() {
         assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextDouble(10, 1));
-        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextDouble(-1, -1));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextDouble(-1, -1));
 
-        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextInt(10, 1));
-        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextInt(-1, -1));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextInt(10, 1));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextInt(-1, -1));
 
-        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextLong(10, 1));
-        assertThrows(IllegalArgumentException.class, () ->RandomUtils.nextLong(-1, -1));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextLong(10, 1));
+        assertThrows(IllegalArgumentException.class, () -> RandomUtils.nextLong(-1, -1));
     }
 }
