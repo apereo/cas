@@ -37,7 +37,7 @@ const YAML = require("yaml");
         await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
             'Content-Type': 'application/json'
         }, res => {
-            assert(res.data.length === 2);
+            assert(res.data.length >= 1);
         }, error => {
             throw(error);
         })
