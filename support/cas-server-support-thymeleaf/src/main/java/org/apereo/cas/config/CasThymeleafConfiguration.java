@@ -83,7 +83,8 @@ public class CasThymeleafConfiguration {
         return new MimeType(type, parameters).toString();
     }
 
-    private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver, final ThymeleafProperties thymeleafProperties) {
+    private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver,
+                                                      final ThymeleafProperties thymeleafProperties) {
         resolver.setCacheable(thymeleafProperties.isCache());
         resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());
         resolver.setCheckExistence(thymeleafProperties.isCheckTemplateLocation());

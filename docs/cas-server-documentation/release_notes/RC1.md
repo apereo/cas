@@ -114,6 +114,7 @@ The collection of end-to-end browser tests based on Puppeteer continue to grow t
 - Kryo
 - Gson
 - Nimbus OIDC
+- Apache Tomcat
 - PostgreSQL
 - Jose4j
 - Amazon
