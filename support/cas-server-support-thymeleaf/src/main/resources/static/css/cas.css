@@ -395,8 +395,6 @@ button.close {
     margin-right: 5px;
     border-radius: 12px 4px;
     background-color: var(--cas-theme-primary, #153E50);
-    height: 45px;
-    width: 120px;
 }
 
 .mdc-button--raised.mdc-button-twitter:not(:disabled) {
