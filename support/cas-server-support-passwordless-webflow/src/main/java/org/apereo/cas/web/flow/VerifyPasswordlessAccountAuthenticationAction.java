@@ -30,14 +30,15 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BaseCasWebflo
             return error();
         }
         val user = account.get();
+        if (user.isRequestPassword()) {
+            WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+        }
         if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-        if (user.isRequestPassword()) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
-        }
         return success();
     }
 }
