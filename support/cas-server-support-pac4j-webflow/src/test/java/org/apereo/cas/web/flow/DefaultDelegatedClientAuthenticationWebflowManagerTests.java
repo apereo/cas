@@ -47,7 +47,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
@@ -86,7 +85,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
     private JEEContext context;
 
     private MockRequestContext requestContext;
@@ -187,7 +186,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_FORCE_AUTHN.getPropertyName(),
             new DefaultRegisteredServiceProperty("true")));
         servicesManager.save(registeredService);
-        
+
         httpServletRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
         val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, pair.getLeft());
