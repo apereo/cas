@@ -46,6 +46,7 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         System.setProperty("spring.profiles.active", CasConfigurationPropertiesSourceLocator.PROFILE_STANDALONE + ",dev");
         System.setProperty("cas.standalone.configuration-directory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configuration-file", "src/test/resources/standalone.properties");
+        System.setProperty("test.overriden-by-system-property", "from-system-properties");
     }
 
     @Autowired
@@ -104,5 +105,14 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         val loader = configurationPropertiesLoaderFactory.getLoader(
             resourceLoader.getResource("classpath:/badyaml.yml"), "test");
         assertThrows(YAMLException.class, loader::load);
+    }
+
+    @Test
+    public void verifySystemPropertiesOverrideCasConfiguration() {
+        val source = casCoreBootstrapPropertySourceLocator.locate(environment);
+        assertTrue(source instanceof CompositePropertySource);
+
+        val composite = (CompositePropertySource) source;
+        assertEquals("from-system-properties", composite.getProperty("test.overriden-by-system-property"));
     }
 }
