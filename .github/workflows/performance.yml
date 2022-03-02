@@ -163,7 +163,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: JMeter Performance Tests
-        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }}
-
+      - name: JMeter CAS Performance Tests
+        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} cas
+      - name: JMeter OIDC Performance Tests
+        run: ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} oidc
 ##########################################################################

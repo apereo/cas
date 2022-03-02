@@ -41,7 +41,7 @@ def printSpotbugsReportToConsole(File file) {
             }
             def msg = "\n$bugsFound Spotbugs rule violation(s) were found. See the report at: $file"
             ansi.red msg
-            if (!providers.systemProperty("ignoreFindbugsFailures").forUseAtConfigurationTime().present) {
+            if (!providers.systemProperty("ignoreFindbugsFailures").present) {
                 throw new GradleException(msg)
             }
         } else {

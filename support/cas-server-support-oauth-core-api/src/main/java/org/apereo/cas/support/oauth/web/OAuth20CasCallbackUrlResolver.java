@@ -59,6 +59,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
         val builder = new URIBuilder(url);
 
         addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
+        addUrlParameter(context, builder, OAuth20Constants.SCOPE);
         addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
         addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
         addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);

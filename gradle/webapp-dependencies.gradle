@@ -27,7 +27,7 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
 
-    def casModules = providers.systemProperty("casModules").forUseAtConfigurationTime().getOrNull()
+    def casModules = providers.systemProperty("casModules").getOrNull()
     if (casModules != null) {
         def dependencies = casModules.split(",")
         dependencies.each {

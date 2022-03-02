@@ -15,13 +15,13 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="ThreadCount" elementType="Argument">
             <stringProp name="Argument.name">ThreadCount</stringProp>
-            <stringProp name="Argument.value">20</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Number of Threads</stringProp>
           </elementProp>
           <elementProp name="Duration" elementType="Argument">
             <stringProp name="Argument.name">Duration</stringProp>
-            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.value">15</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
@@ -33,18 +33,13 @@
           </elementProp>
           <elementProp name="IdPHost" elementType="Argument">
             <stringProp name="Argument.name">IdPHost</stringProp>
-            <stringProp name="Argument.value">https://cas.example.org</stringProp>
+            <stringProp name="Argument.value">https://localhost:8443</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">The main URL of your CAS Instance</stringProp>
           </elementProp>
-          <elementProp name="IdPPort" elementType="Argument">
-            <stringProp name="Argument.name">IdPPort</stringProp>
-            <stringProp name="Argument.value">443</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="startupDelay" elementType="Argument">
             <stringProp name="Argument.name">startupDelay</stringProp>
-            <stringProp name="Argument.value">5</stringProp>
+            <stringProp name="Argument.value">10</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">in seconds</stringProp>
           </elementProp>
@@ -63,7 +58,7 @@
           <elementProp name="SpState" elementType="Argument">
             <stringProp name="Argument.name">SpState</stringProp>
             <stringProp name="Argument.value">123456</stringProp>
-            <stringProp name="Argument.desc">CSRF variable</stringProp>
+            <stringProp name="Argument.desc">State variable</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="SpClientName" elementType="Argument">
@@ -84,22 +79,24 @@
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Secret shared between CAS and SP</stringProp>
           </elementProp>
+          <elementProp name="Scopes" elementType="Argument">
+            <stringProp name="Argument.name">Scopes</stringProp>
+            <stringProp name="Argument.value">openid email profile</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="User" elementType="Argument">
+            <stringProp name="Argument.name">User</stringProp>
+            <stringProp name="Argument.value">casuser</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Password" elementType="Argument">
+            <stringProp name="Argument.name">Password</stringProp>
+            <stringProp name="Argument.value">Mellon</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
         <stringProp name="TestPlan.comments">Environment Variables that will need to be updated</stringProp>
       </Arguments>
-      <hashTree/>
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Get Users/Passwords" enabled="true">
-        <stringProp name="filename">C:/jmeter/cas_users.csv</stringProp>
-        <stringProp name="fileEncoding"></stringProp>
-        <stringProp name="variableNames">User,Password</stringProp>
-        <stringProp name="delimiter">,</stringProp>
-        <boolProp name="quotedData">false</boolProp>
-        <boolProp name="recycle">true</boolProp>
-        <boolProp name="stopThread">false</boolProp>
-        <stringProp name="shareMode">shareMode.all</stringProp>
-        <stringProp name="TestPlan.comments">No Spaces between User, comma, and Password fields!!</stringProp>
-        <boolProp name="ignoreFirstLine">false</boolProp>
-      </CSVDataSet>
       <hashTree/>
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies"/>
@@ -122,7 +119,7 @@
       </ConfigTestElement>
       <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="OAuth - Authorization Code Login Method in CAS" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
@@ -268,8 +265,7 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/authorize?scope=${__urlencode(openid profile)}&amp;response_type=code&amp;
-          client_id=${SpClientId}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
+          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/authorize?scope=${__urlencode(${Scopes})}&amp;response_type=code&amp;client_id=${SpClientId}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -368,7 +364,7 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/login?service=${__urlencode(${IdPHost}/cas/oauth2.0/callbackAuthorize?client_name=${SpClientName}&amp;client_id=${SpClientId}&amp;redirect_uri=${SpRedirectUri})}</stringProp>
+          <stringProp name="HTTPSampler.path">${IdPHost}/cas/login?service=${__urlencode(${IdPHost}/cas/oauth2.0/callbackAuthorize?scope=${__urlencode(${Scopes})}&amp;client_name=${SpClientName}&amp;client_id=${SpClientId}&amp;redirect_uri=${SpRedirectUri})}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -411,7 +407,7 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oauth2.0/callbackAuthorize?client_name=${SpClientName}&amp;ticket=${Ticket}&amp;client_id=${SpClientId}&amp;response_type=code&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
+          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oauth2.0/callbackAuthorize?scope=${__urlencode(${Scopes})}&amp;client_name=${SpClientName}&amp;ticket=${Ticket}&amp;client_id=${SpClientId}&amp;response_type=code&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -455,7 +451,7 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/authorize?response_type=${SpResponseType}&amp;client_id=${SpClientId}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
+          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/authorize?scope=${__urlencode(${Scopes})}&amp;response_type=${SpResponseType}&amp;client_id=${SpClientId}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -500,7 +496,7 @@
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/token?grant_type=authorization_code&amp;client_id=${SpClientId}&amp;code=${Code}&amp;client_secret=${SpClientSecret}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
+          <stringProp name="HTTPSampler.path">${IdPHost}/cas/oidc/token?scope=${__urlencode(${Scopes})}&amp;grant_type=authorization_code&amp;client_id=${SpClientId}&amp;code=${Code}&amp;client_secret=${SpClientSecret}&amp;redirect_uri=${__urlencode(${SpRedirectUri})}</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
