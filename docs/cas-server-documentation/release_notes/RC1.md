@@ -60,7 +60,11 @@ The construction of Spring `@Bean`s managed via auto-configuration classes has b
 Modest support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now available to allow multiple competing modules to be present the same web application where they can be toggled on and off va dedicated flags and settings. This could previously be handled via excluding specific CAS `@Configuration` classes which was risky and prone to breakage during upgrades as such classes are always considered an implementation detail. Starting with this release candidate, a specific feature can be enabled or disabled via a dedicated setting allowing all configuration modules and components to react accordingly without one having to know the internal details.
 
 Please note that feature toggles are not yet supported by all CAS modules; this is a large effort and will likely require several more releases before this capability is finalized.
-  
+    
+## OpenID Connect JMeter Perfomance Testing
+
+[JMeter scripts](../high_availability/Performance-Testing-JMeter.html) used to run performance tests for CAS running as an [OpenID Connect Provider](../authentication/OIDC-Authentication.html) are now integrated with the CAS CI system to ensure the test script and the funcationality under test continues to run smoothly. 
+
 ## Integration Tests
 
 Several Docker images used for integration tests are now updated to their latest versions. These include:
@@ -91,9 +95,9 @@ managed via the [HAL Explorer](https://github.com/toedter/hal-explorer:
 As part of this change, CAS allows one to use version agnostic URLs for webjars. Using jQuery as an example, 
 adding `/webjars/jquery/jquery.min.js` results in `/webjars/jquery/x.y.z/jquery.min.js` where `x.y.z` is the webjar version.
 
-### Testing Strategy
+## Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `250` test scenarios and we'll continue to add more in the coming releases.
+The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `250` test scenarios and we'll continue to add more in the coming releases. Test coverage has also slightly improved and at now stands at `93%`. 
 
 ## Other Stuff
         
