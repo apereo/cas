@@ -27,10 +27,12 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -261,7 +263,16 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
 
         val properties = ticket.getProperties();
         webContext.setRequestAttribute(themeParamName, properties.get(themeParamName));
-        webContext.setRequestAttribute(localParamName, properties.get(localParamName));
+
+        val localeValue = properties.get(localParamName);
+        Optional.ofNullable(localeValue)
+            .ifPresent(locale -> {
+                webContext.setRequestAttribute(localParamName, locale);
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                    .ifPresent(localeResolver -> localeResolver.setLocale(request, response, new Locale(locale.toString())));
+            });
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
         return service;
     }
