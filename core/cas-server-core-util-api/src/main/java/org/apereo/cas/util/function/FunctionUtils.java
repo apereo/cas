@@ -314,10 +314,13 @@ public class FunctionUtils {
             return false;
         }
     }
+
     /**
      * Do unchecked.
      *
+     * @param <T>      the type parameter
      * @param consumer the consumer
+     * @return the t
      */
     public static <T> T doUnchecked(final CheckedSupplier<T> consumer) {
         return Unchecked.supplier(consumer).get();

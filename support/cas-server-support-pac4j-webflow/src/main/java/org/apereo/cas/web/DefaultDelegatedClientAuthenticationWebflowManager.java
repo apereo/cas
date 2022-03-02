@@ -27,10 +27,12 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -248,7 +250,8 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
      * @param ticket         the ticket
      * @return the service
      */
-    protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
+    protected Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext,
+                                                            final WebContext webContext,
                                                             final TransientSessionTicket ticket) {
         val service = ticket.getService();
         LOGGER.trace("Restoring requested service [{}] back in the authentication flow", service);
@@ -261,7 +264,17 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
 
         val properties = ticket.getProperties();
         webContext.setRequestAttribute(themeParamName, properties.get(themeParamName));
-        webContext.setRequestAttribute(localParamName, properties.get(localParamName));
+
+        val localeValue = properties.get(localParamName);
+        Optional.ofNullable(localeValue)
+            .ifPresent(locale -> {
+                webContext.setRequestAttribute(localParamName, locale);
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+                    .ifPresent(localeResolver -> localeResolver.setLocale(request, response, new Locale(locale.toString())));
+            });
+
         webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, properties.get(CasProtocolConstants.PARAMETER_METHOD));
         return service;
     }
@@ -314,11 +327,11 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     /**
      * Gets the delegated client id for a specific client type.
      *
-     * @param webContext the web context
-     * @param client the client
-     * @param clientId the client id
+     * @param webContext  the web context
+     * @param client      the client
+     * @param clientId    the client id
      * @param clientClass the client class
-     * @param key the key for the session store
+     * @param key         the key for the session store
      * @return the retrieved or existing client id
      */
     protected String getDelegatedClientIdFromSessionStore(final WebContext webContext, final Client client, final String clientId,

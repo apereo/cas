@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     await cas.assertTicketGrantingCookie(page, true, "TGCEXT");
 
     console.log("Start with first application without SSO for CAS server")
-    await page.goto("https://localhost:8443/cas/clientredirect?client_name=CASServer&service=https://github.com/apereo/cas");
+    await page.goto("https://localhost:8443/cas/clientredirect?locale=de&client_name=CASServer&service=https://github.com/apereo/cas");
     await page.waitForTimeout(1000)
     await cas.assertTicketParameter(page);
 
@@ -22,6 +22,7 @@ const cas = require('../../cas.js');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
     await cas.assertTicketGrantingCookie(page);
+    await cas.assertInnerText(page, '#content div h2', "Anmeldung erfolgreich");
 
     await browser.close();
 })();

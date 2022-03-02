@@ -61,6 +61,10 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         }
     }
 
+    private static boolean isLocaleConfigured(final HttpServletRequest request) {
+        return request.getAttribute(Locale.class.getName()) == null;
+    }
+
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
@@ -89,13 +93,10 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
         if (request.getLocale() != null && isLocaleConfigured(request)) {
             val match = supportedFlows.stream().anyMatch(flowId -> requestUrl.contains('/' + flowId));
             if (match) {
-                configureLocale(request, response, request.getLocale());
+                val locale = RequestContextUtils.getLocale(request);
+                configureLocale(request, response, locale);
             }
         }
         return true;
-    }
-
-    private static boolean isLocaleConfigured(final HttpServletRequest request) {
-        return request.getAttribute(Locale.class.getName()) == null;
     }
 }
