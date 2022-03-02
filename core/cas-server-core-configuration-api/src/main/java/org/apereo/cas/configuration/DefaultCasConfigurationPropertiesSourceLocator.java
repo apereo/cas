@@ -13,6 +13,7 @@ import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -24,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
-import static org.springframework.core.env.StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;
 
 /**
  * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
@@ -176,19 +175,17 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     /**
-     * Returns a system property composed of environment variables and system properties.
+     * Returns a property source composed of system properties and environment variables.
      *
-     * <p>Properties present in system properties will
-     * take precedence over those in environment variables,
-     * similarly to spring boot behaviour.
+     * System properties take precedence over environment variables (similarly to spring boot behaviour).
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private PropertySource<?> loadEnvironmentAndSystemProperties() {
-        CompositePropertySource environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
+    private static PropertySource<?> loadEnvironmentAndSystemProperties() {
+        val environmentAndSystemProperties = new CompositePropertySource("environmentAndSystemProperties");
         environmentAndSystemProperties.addPropertySource(
-            new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
+            new PropertiesPropertySource(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
         environmentAndSystemProperties.addPropertySource(
-            new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
+            new SystemEnvironmentPropertySource(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
         return environmentAndSystemProperties;
     }
 
