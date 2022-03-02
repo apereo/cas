@@ -78,6 +78,7 @@ public enum CasLabels {
     LABEL_OAUTH2_PROTOCOL("OAuth2 Protocol", "introspection|oauth|client_id|client_secret|pkce|uma|access\\s+token|refresh\\s+token"),
     LABEL_OPENID_CONNECT_PROTOCOL("OpenID Connect Protocol", "oidc|idtoken|client_id|introspection|client_secret|pkce|openid\\sconnect|access\\s+token|refresh\\s+token"),
     LABEL_OPENID_PROTOCOL("OpenID Protocol"),
+    LABEL_PASSWORDLESS("Passwordless", "passwordless|webauthn"),
     LABEL_PAC4J("Pac4J"),
     LABEL_PASSWORD_ENCODING("Password Encoding", "password encoder|\\bbcrypt\\b"),
     LABEL_PASSWORD_MANAGEMENT("Password Management", "password (change|reset)|\\bpm\\b|(change|reset) password"),
