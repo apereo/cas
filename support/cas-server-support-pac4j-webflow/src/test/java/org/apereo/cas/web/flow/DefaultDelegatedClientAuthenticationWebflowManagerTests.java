@@ -45,12 +45,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -147,15 +151,19 @@ public class DefaultDelegatedClientAuthenticationWebflowManagerTests {
 
     @Test
     public void verifyCasStoreOperation() throws Exception {
+        val localeResolver = new SessionLocaleResolver();
+        httpServletRequest.setAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE, localeResolver);
         val config = new CasConfiguration();
         config.setLoginUrl("https://example.org/login");
         val client = new CasClient();
         client.setConfiguration(config);
+        httpServletRequest.addParameter("locale", "de");
         val ticket = delegatedClientAuthenticationWebflowManager.store(context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
         assertNotNull(service);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
+        assertEquals(Locale.GERMAN, localeResolver.resolveLocale(httpServletRequest));
     }
 
     @Test

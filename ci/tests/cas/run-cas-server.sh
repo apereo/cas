@@ -39,7 +39,8 @@ properties='{
 }'
 
 properties=$(echo "$properties" | tr -d '[:space:]')
-echo -e "CAS properties are:\n${properties}"
+echo -e "CAS properties are:\n"
+echo "${properties}" | jq
 
 docker stop casserver || true && docker rm casserver || true
 echo -e "Mapping CAS keystore in Docker container to ${CAS_KEYSTORE}"
