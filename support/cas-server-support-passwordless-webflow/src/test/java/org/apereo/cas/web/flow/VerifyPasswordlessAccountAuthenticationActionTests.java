@@ -68,6 +68,12 @@ public class VerifyPasswordlessAccountAuthenticationActionTests extends BasePass
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
     }
 
+    @Test
+    public void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Exception {
+        val context = getRequestContext("needs-password-user-without-email-or-phone");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
+    }
+
     private static RequestContext getRequestContext(final String username) {
         val request = new MockHttpServletRequest();
         val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
