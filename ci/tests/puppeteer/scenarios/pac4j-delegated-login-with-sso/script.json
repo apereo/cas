@@ -1,7 +1,6 @@
 {
   "dependencies": "pac4j-webflow",
   "properties": [
-    "--logging.level.org.apereo.cas=info",
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.audit.engine.enabled=false",
