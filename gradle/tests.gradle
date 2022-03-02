@@ -138,7 +138,7 @@ test {
 
 tasks.withType(Test) {
     scanForTestClasses = false
-    ignoreFailures = providers.systemProperty("ignoreTestFailures").forUseAtConfigurationTime().present
+    ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
     doFirst {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
@@ -183,7 +183,7 @@ tasks.withType(Test) {
         events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
 
-        def verbose = providers.systemProperty("verbose").forUseAtConfigurationTime().present
+        def verbose = providers.systemProperty("verbose").present
 
         showStandardStreams = verbose
         showExceptions = verbose
@@ -216,7 +216,7 @@ Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.
             }
         }
     }
-    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {
         retry {
             maxRetries = 3
@@ -239,7 +239,7 @@ def shouldTest(Project project, String category) {
     if (!foundTest) {
         logger.debug "No tests with category ${category} found for ${project.name}"
     }
-    return !providers.systemProperty("skipTests").forUseAtConfigurationTime().present && foundTest && hasTestsOfCategory(project, category)
+    return !providers.systemProperty("skipTests").present && foundTest && hasTestsOfCategory(project, category)
 }
 
 def hasTestsOfCategory(Project project, String category) {

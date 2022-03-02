@@ -1,5 +1,5 @@
 description = "Apereo CAS Core Configuration Model"
-def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetadataGen").forUseAtConfigurationTime().present
+def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetadataGen").present
 
 sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs
 

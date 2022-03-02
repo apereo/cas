@@ -17,7 +17,7 @@ sourceSets {
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/webapp-dependencies.gradle")
 
-def buildScript = providers.systemProperty("buildScript").forUseAtConfigurationTime().getOrNull()
+def buildScript = providers.systemProperty("buildScript").getOrNull()
 if (buildScript?.trim() && file(buildScript).exists()) {
     ansi.green "Applying build script ${buildScript}"
     apply from: file(buildScript)

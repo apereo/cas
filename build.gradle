@@ -39,30 +39,30 @@ buildscript {
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
 
-    repositoryUsername = providers.systemProperty("repositoryUsername").forUseAtConfigurationTime().getOrNull()
-    repositoryPassword = providers.systemProperty("repositoryPassword").forUseAtConfigurationTime().getOrNull()
+    repositoryUsername = providers.systemProperty("repositoryUsername").getOrNull()
+    repositoryPassword = providers.systemProperty("repositoryPassword").getOrNull()
 
-    publishSnapshots = providers.systemProperty("publishSnapshots").forUseAtConfigurationTime().present
-    publishReleases = providers.systemProperty("publishReleases").forUseAtConfigurationTime().present
+    publishSnapshots = providers.systemProperty("publishSnapshots").present
+    publishReleases = providers.systemProperty("publishReleases").present
 
     publishFlag = publishSnapshots || publishReleases
 
-    publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").forUseAtConfigurationTime().present
+    publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").present
 
-    skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").forUseAtConfigurationTime().present
-    skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present
+    skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
+    skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
 
-    skipArtifactSigning = providers.systemProperty("skipArtifactSigning").forUseAtConfigurationTime().present
+    skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
 
-    enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").forUseAtConfigurationTime().present
+    enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend")
-            .forUseAtConfigurationTime().getOrElse("false") == "true" ? "y" : "n"
+            .getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag
-            || providers.systemProperty("generateGitProperties").forUseAtConfigurationTime().present
+            || providers.systemProperty("generateGitProperties").present
     generateTimestamps = publishFlag
-        || providers.systemProperty("generateTimestamps").forUseAtConfigurationTime().present
+        || providers.systemProperty("generateTimestamps").present
 
-    ci = System.getenv("CI") || providers.systemProperty("CI").forUseAtConfigurationTime().present
+    ci = System.getenv("CI") || providers.systemProperty("CI").present
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
@@ -109,12 +109,12 @@ if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
-if (!providers.systemProperty("skipSonarqube").forUseAtConfigurationTime().present) {
+if (!providers.systemProperty("skipSonarqube").present) {
     apply plugin: "org.sonarqube"
 
     sonarqube {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
-        def token = providers.systemProperty("SONARCLOUD_TOKEN").forUseAtConfigurationTime()
+        def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
         properties {
             property "sonar.host.url", "https://sonarcloud.io"
@@ -177,7 +177,7 @@ allprojects {
         apply plugin: "maven"
     }
 
-    def skipRetry = providers.systemProperty('skipTestRetry').forUseAtConfigurationTime().present
+    def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {
         apply plugin: "org.gradle.test-retry"
     }
@@ -229,7 +229,7 @@ allprojects {
 
     javadoc {
         options.addBooleanOption('html5', true)
-        failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
+        failOnError = providers.systemProperty("ignoreJavadocFailures").present
         excludes = ['**/generated/**', '**/com/duosecurity/**']
     }
 
@@ -474,7 +474,7 @@ subprojects {
         }
     }
 
-    if (!providers.systemProperty("skipCheckstyle").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
+    if (!providers.systemProperty("skipCheckstyle").present && projectShouldBePublished(project)) {
         apply plugin: "checkstyle"
         checkstyle {
             configProperties = [
@@ -488,7 +488,7 @@ subprojects {
         }
     }
 
-    if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
+    if (!providers.systemProperty("skipSpotbugs").present && projectShouldBePublished(project)) {
         apply from: rootProject.file("gradle/spotbugs.gradle")
     }
 
@@ -535,12 +535,12 @@ subprojects {
 
         annotationProcessor libraries.springindexer
 
-        if (!providers.systemProperty("skipSpotbugs").forUseAtConfigurationTime().present && projectShouldBePublished(project)) {
+        if (!providers.systemProperty("skipSpotbugs").present && projectShouldBePublished(project)) {
             spotbugsPlugins libraries.findbugscontrib
             spotbugsPlugins libraries.findbugssec
         }
 
-        if (!providers.systemProperty("skipErrorProneCompiler").forUseAtConfigurationTime().present) {
+        if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
             errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
@@ -560,7 +560,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
         destinationDir = new File(buildDir, "javadoc")
         classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
         options.addBooleanOption('html5', true)
-        failOnError = providers.systemProperty("ignoreJavadocFailures").forUseAtConfigurationTime().present
+        failOnError = providers.systemProperty("ignoreJavadocFailures").present
     }
 
     task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
