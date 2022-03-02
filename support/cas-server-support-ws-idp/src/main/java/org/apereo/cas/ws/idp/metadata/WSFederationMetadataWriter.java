@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.fediz.core.FedizConstants;
 import org.apache.cxf.fediz.core.util.CertsUtils;
 import org.apache.cxf.fediz.core.util.SignatureUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
@@ -23,11 +24,6 @@ import org.w3c.dom.Document;
 import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
-import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;
-import static org.apache.cxf.fediz.core.FedizConstants.WS_ADDRESSING_NS;
-import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
 
 /**
  * This is {@link WSFederationMetadataWriter}.
@@ -55,15 +51,15 @@ public class WSFederationMetadataWriter {
         val writer = new W3CDOMStreamWriter();
         writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
         val referenceID = IDGenerator.generateID("_");
-        writer.writeStartElement("md", "EntityDescriptor", SAML2_METADATA_NS);
+        writer.writeStartElement("md", "EntityDescriptor", FedizConstants.SAML2_METADATA_NS);
         writer.writeAttribute("ID", referenceID);
         val idpEntityId = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
         writer.writeAttribute("entityID", idpEntityId);
-        writer.writeNamespace("md", SAML2_METADATA_NS);
-        writer.writeNamespace("fed", WS_FEDERATION_NS);
-        writer.writeNamespace("wsa", WS_ADDRESSING_NS);
-        writer.writeNamespace("auth", WS_FEDERATION_NS);
-        writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
+        writer.writeNamespace("md", FedizConstants.SAML2_METADATA_NS);
+        writer.writeNamespace("fed", FedizConstants.WS_FEDERATION_NS);
+        writer.writeNamespace("wsa", FedizConstants.WS_ADDRESSING_NS);
+        writer.writeNamespace("auth", FedizConstants.WS_FEDERATION_NS);
+        writer.writeNamespace("xsi", FedizConstants.SCHEMA_INSTANCE_NS);
         val stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.BASE_ENDPOINT_STS).concat(wsfedIdp.getIdp().getRealmName());
         writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
         writer.writeEndElement();
@@ -76,10 +72,10 @@ public class WSFederationMetadataWriter {
 
     private static void writeFederationMetadata(final XMLStreamWriter writer, final String idpEntityId,
                                                 final String ststUrl, final Crypto crypto) throws Exception {
-        writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
-        writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
-        writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);
-        writer.writeStartElement(StringUtils.EMPTY, "KeyDescriptor", SAML2_METADATA_NS);
+        writer.writeStartElement("md", "RoleDescriptor", FedizConstants.WS_FEDERATION_NS);
+        writer.writeAttribute(FedizConstants.SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
+        writer.writeAttribute("protocolSupportEnumeration", FedizConstants.WS_FEDERATION_NS);
+        writer.writeStartElement(StringUtils.EMPTY, "KeyDescriptor", FedizConstants.SAML2_METADATA_NS);
         writer.writeAttribute("use", "signing");
         writer.writeStartElement(StringUtils.EMPTY, "KeyInfo", "http://www.w3.org/2000/09/xmldsig#");
         writer.writeStartElement(StringUtils.EMPTY, "X509Data", "http://www.w3.org/2000/09/xmldsig#");
@@ -93,23 +89,23 @@ public class WSFederationMetadataWriter {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writer.writeStartElement("fed", "SecurityTokenServiceEndpoint", WS_FEDERATION_NS);
-        writer.writeStartElement("wsa", "EndpointReference", WS_ADDRESSING_NS);
-        writer.writeStartElement("wsa", "Address", WS_ADDRESSING_NS);
+        writer.writeStartElement("fed", "SecurityTokenServiceEndpoint", FedizConstants.WS_FEDERATION_NS);
+        writer.writeStartElement("wsa", "EndpointReference", FedizConstants.WS_ADDRESSING_NS);
+        writer.writeStartElement("wsa", "Address", FedizConstants.WS_ADDRESSING_NS);
         writer.writeCharacters(ststUrl);
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writer.writeStartElement("fed", "PassiveRequestorEndpoint", WS_FEDERATION_NS);
-        writer.writeStartElement("wsa", "EndpointReference", WS_ADDRESSING_NS);
-        writer.writeStartElement("wsa", "Address", WS_ADDRESSING_NS);
+        writer.writeStartElement("fed", "PassiveRequestorEndpoint", FedizConstants.WS_FEDERATION_NS);
+        writer.writeStartElement("wsa", "EndpointReference", FedizConstants.WS_ADDRESSING_NS);
+        writer.writeStartElement("wsa", "Address", FedizConstants.WS_ADDRESSING_NS);
         writer.writeCharacters(idpEntityId);
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-        writer.writeStartElement("fed", "ClaimTypesOffered", WS_FEDERATION_NS);
+        writer.writeStartElement("fed", "ClaimTypesOffered", FedizConstants.WS_FEDERATION_NS);
         Arrays.stream(WSFederationClaims.values()).forEach(Unchecked.consumer(claim -> {
-            writer.writeStartElement("auth", "ClaimType", WS_FEDERATION_NS);
+            writer.writeStartElement("auth", "ClaimType", FedizConstants.WS_FEDERATION_NS);
             writer.writeAttribute("Uri", claim.getUri());
             writer.writeAttribute("Optional", "true");
             writer.writeEndElement();

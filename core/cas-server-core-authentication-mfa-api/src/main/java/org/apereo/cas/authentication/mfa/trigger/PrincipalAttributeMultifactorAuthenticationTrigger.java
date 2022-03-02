@@ -30,8 +30,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.springframework.util.StringUtils.*;
-
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationTrigger}.
  *
@@ -139,7 +137,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
-        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
+        val attributeNames = org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
             (attributeValue, provider) -> attributeValue != null && provider.matches(attributeValue));
@@ -161,7 +159,7 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
         val provider = providers.iterator().next();
         LOGGER.trace("Found a single multifactor provider [{}] in the application context", provider);
-        val attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa()
+        val attributeNames = org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeNameTriggers());
         return multifactorAuthenticationProviderResolver.resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
             (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalPrincipalAttributeValueRegex));

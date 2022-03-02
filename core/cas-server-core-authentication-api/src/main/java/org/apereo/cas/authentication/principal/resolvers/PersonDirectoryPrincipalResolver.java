@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -134,7 +133,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             val values = ((List<Object>) CollectionUtils.toCollection(attrValue, ArrayList.class))
                 .stream()
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .collect(Collectors.toList());
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
             convertedAttributes.put(key, values);
         });

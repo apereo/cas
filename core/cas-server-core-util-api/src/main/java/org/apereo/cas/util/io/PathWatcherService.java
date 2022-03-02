@@ -12,6 +12,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -19,7 +20,6 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * Control watch operations on paths and files as a service.
@@ -29,7 +29,11 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 @Slf4j
 public class PathWatcherService implements WatcherService, Runnable, Closeable, DisposableBean {
-    private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
+    private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{
+        StandardWatchEventKinds.ENTRY_CREATE,
+        StandardWatchEventKinds.ENTRY_DELETE,
+        StandardWatchEventKinds.ENTRY_MODIFY
+    };
 
     private final WatchService watcher;
 
@@ -121,11 +125,11 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
             val file = fullPath.toFile();
 
             LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
-            if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
+            if (eventName.equals(StandardWatchEventKinds.ENTRY_CREATE.name()) && file.exists()) {
                 onCreate.accept(file);
-            } else if (eventName.equals(ENTRY_DELETE.name())) {
+            } else if (eventName.equals(StandardWatchEventKinds.ENTRY_DELETE.name())) {
                 onDelete.accept(file);
-            } else if (eventName.equals(ENTRY_MODIFY.name()) && file.exists()) {
+            } else if (eventName.equals(StandardWatchEventKinds.ENTRY_MODIFY.name()) && file.exists()) {
                 onModify.accept(file);
             }
         }));

@@ -26,6 +26,9 @@
         <module name="AvoidNoArgumentSuperConstructorCall">
             <property name="severity" value="error"/>
         </module>
+        <module name="AvoidStaticImport">
+            <property name="severity" value="error"/>
+        </module>
         <module name="UnnecessarySemicolonAfterTypeMemberDeclaration">
             <property name="severity" value="error"/>
         </module>

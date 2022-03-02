@@ -27,10 +27,9 @@ import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-
-import static java.nio.charset.StandardCharsets.*;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -78,7 +77,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @return byte[] representation of #secret
      */
     private static byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
-        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
+        return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

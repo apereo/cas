@@ -28,9 +28,6 @@ import java.nio.file.Files;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
-import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
-
 /**
  * Utility class to assist with resource operations.
  *
@@ -61,10 +58,10 @@ public class ResourceUtils {
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
             return new UrlResource(location);
         }
-        if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
-            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
+        if (location.toLowerCase().startsWith(org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            return new ClassPathResource(location.substring(org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX.length()));
         }
-        return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
+        return new FileSystemResource(StringUtils.remove(location, org.springframework.util.ResourceUtils.FILE_URL_PREFIX));
     }
 
     /**
@@ -272,7 +269,7 @@ public class ResourceUtils {
      * @return true/false
      */
     public static boolean isFile(final String resource) {
-        return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
+        return StringUtils.isNotBlank(resource) && resource.startsWith(org.springframework.util.ResourceUtils.FILE_URL_PREFIX);
     }
 
     /**

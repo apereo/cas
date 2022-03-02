@@ -5,8 +5,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOpt
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import static org.jooq.lambda.Unchecked.*;
+import org.jooq.lambda.Unchecked;
 
 /**
  * This is {@link CipherExecutorUtils}.
@@ -28,7 +27,7 @@ public class CipherExecutorUtils {
     public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(
         final EncryptionJwtSigningJwtCryptographyProperties crypto,
         final Class<T> cipherClass) {
-        return supplier(() -> {
+        return Unchecked.supplier(() -> {
             val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
                 String.class, int.class, int.class);
             val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
@@ -52,7 +51,7 @@ public class CipherExecutorUtils {
     public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(
         final EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto,
         final Class<T> cipherClass) {
-        return supplier(() -> {
+        return Unchecked.supplier(() -> {
             val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
                 String.class, boolean.class, boolean.class, int.class, int.class);
             val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),

@@ -22,6 +22,7 @@
     <suppress id="useLombokValForFinalVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
     <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
 
+    <suppress checks="AvoidStaticImport" files=".*[\\/]src[\\/]test[\\/]"/>
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="IllegalCatch" files="(.*Aspect)\.java"/>
     <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>

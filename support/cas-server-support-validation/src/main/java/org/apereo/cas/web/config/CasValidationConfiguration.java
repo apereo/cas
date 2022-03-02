@@ -50,11 +50,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
-
-import static org.springframework.http.MediaType.*;
 
 /**
  * This is {@link CasValidationConfiguration}.
@@ -256,7 +255,7 @@ public class CasValidationConfiguration {
             final CasConfigurationProperties casProperties) {
             return casProtocolViewFactory.create(applicationContext,
                 casProperties.getView().getCas2().getSuccess(),
-                APPLICATION_XML_VALUE);
+                MediaType.APPLICATION_XML_VALUE);
         }
 
         @Bean
@@ -281,7 +280,7 @@ public class CasValidationConfiguration {
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
                 .supply(() -> casProtocolViewFactory.create(applicationContext,
                     casProperties.getView().getCas2().getProxy().getFailure(),
-                    APPLICATION_XML_VALUE))
+                    MediaType.APPLICATION_XML_VALUE))
                 .otherwiseProxy()
                 .get();
         }
@@ -297,7 +296,7 @@ public class CasValidationConfiguration {
                 .when(CONDITION_PROXY_AUTHN.given(applicationContext.getEnvironment()))
                 .supply(() -> casProtocolViewFactory.create(applicationContext,
                     casProperties.getView().getCas2().getProxy().getSuccess(),
-                    APPLICATION_XML_VALUE))
+                    MediaType.APPLICATION_XML_VALUE))
                 .otherwiseProxy()
                 .get();
         }
@@ -322,7 +321,7 @@ public class CasValidationConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             return casProtocolViewFactory.create(applicationContext,
                 casProperties.getView().getCas3().getFailure(),
-                APPLICATION_XML_VALUE);
+                MediaType.APPLICATION_XML_VALUE);
         }
 
         @Bean

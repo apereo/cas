@@ -19,14 +19,13 @@ import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import static org.springframework.util.ResourceUtils.*;
 
 /**
  * This is {@link CasCoreConfigurationUtils}.
@@ -114,7 +113,7 @@ public final class CasCoreConfigurationUtils {
         public void serialize(final Resource value, final JsonGenerator jgen,
                               final SerializerProvider provider) throws IOException {
             if (value instanceof ClassPathResource) {
-                jgen.writeString(CLASSPATH_URL_PREFIX + value.getFilename());
+                jgen.writeString(ResourceUtils.CLASSPATH_URL_PREFIX + value.getFilename());
             } else {
                 jgen.writeString(value.getURI().toString());
             }

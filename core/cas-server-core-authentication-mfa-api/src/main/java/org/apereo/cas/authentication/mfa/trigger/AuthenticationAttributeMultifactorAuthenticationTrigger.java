@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.*;
-
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationTrigger}.
  *
@@ -53,7 +51,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
 
         val mfa = casProperties.getAuthn().getMfa().getTriggers().getAuthentication();
         val globalAuthenticationAttributeValueRegex = mfa.getGlobalAuthenticationAttributeValueRegex();
-        val attributeNames = commaDelimitedListToSet(mfa.getGlobalAuthenticationAttributeNameTriggers());
+        val attributeNames = org.springframework.util.StringUtils.commaDelimitedListToSet(mfa.getGlobalAuthenticationAttributeNameTriggers());
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");

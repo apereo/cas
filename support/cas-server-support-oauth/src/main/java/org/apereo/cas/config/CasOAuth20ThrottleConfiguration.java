@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
@@ -41,8 +42,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apereo.cas.support.oauth.OAuth20Constants.*;
-
 /**
  * This is {@link CasOAuth20ThrottleConfiguration}.
  *
@@ -69,7 +68,7 @@ public class CasOAuth20ThrottleConfiguration {
                 public void addInterceptors(final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan ->
                         plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
-                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*"))));
+                            .order(0).addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*"))));
                 }
             };
         }
@@ -112,7 +111,7 @@ public class CasOAuth20ThrottleConfiguration {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
                     registry.addInterceptor(oauthHandlerInterceptorAdapter.getObject())
-                        .order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                        .order(1).addPathPatterns(OAuth20Constants.BASE_OAUTH20_URL.concat("/*"));
                 }
             };
         }
