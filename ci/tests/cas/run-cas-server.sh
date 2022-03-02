@@ -15,6 +15,9 @@ else
   echo -e "Found existing CAS keystore at ${CAS_KEYSTORE}"
 fi
 
+# We need to rename the TGC cookie so it does not conflict with
+# the CAS server running under tests. The CAS server in this container
+# and the one launched from sources cannot both issue a cookie named TGC.
 properties='{
   "logging": {
     "level": {
@@ -39,7 +42,7 @@ properties='{
 }'
 
 properties=$(echo "$properties" | tr -d '[:space:]')
-echo -e "CAS properties are:\n"
+echo -e "***************************\nCAS properties\n***************************"
 echo "${properties}" | jq
 
 docker stop casserver || true && docker rm casserver || true
