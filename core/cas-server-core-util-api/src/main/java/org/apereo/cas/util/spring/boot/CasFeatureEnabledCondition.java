@@ -40,13 +40,13 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         val attributes = metadata.getAnnotationAttributes(ConditionalOnFeature.class.getName());
         val name = attributes.get("feature").toString();
         val module = attributes.get("module").toString();
-        
+
         val feature = CasFeatureModule.FeatureCatalog.valueOf(name);
         val property = getPropertyName(feature, module);
         LOGGER.trace("Checking for feature module capability via [{}]", property);
         val propertyValue = context.getEnvironment().getProperty(property);
         if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
-            val message = "CAS feature " + property  + " is disabled.";
+            val message = "CAS feature " + property + " is disabled.";
             LOGGER.trace(message);
             return ConditionOutcome.noMatch(message);
         }
