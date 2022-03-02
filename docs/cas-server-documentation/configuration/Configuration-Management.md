@@ -53,9 +53,9 @@ are considered in the following order:
 1. Command line arguments, starting with `--` (e.g. `--server.port=9000`)
 2. Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment variable/system property)
 3. JNDI attributes from `java:comp/env`.
-4. Java System properties.
+4. Configuration files (i.e. `application.properties|yml`) indicated by the [configuration server](#configuration-server) and profile.
 5. OS environment variables.
-6. Configuration files (i.e. `application.properties|yml`) indicated by the [configuration server](#configuration-server) and profile.
+6. Java System properties.
 
 <div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
 the CAS configuration, you should configure access
