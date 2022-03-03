@@ -8,6 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -19,13 +20,13 @@ import java.util.function.Supplier;
 public class RefreshableHandlerInterceptor implements HandlerInterceptor {
     private ObjectProvider<? extends HandlerInterceptor> delegate;
 
-    private Supplier<List<HandlerInterceptor>> delegateSupplier;
+    private Supplier<List<? extends HandlerInterceptor>> delegateSupplier;
 
     public RefreshableHandlerInterceptor(final ObjectProvider<? extends HandlerInterceptor> delegate) {
         this.delegate = delegate;
     }
 
-    public RefreshableHandlerInterceptor(final Supplier<List<HandlerInterceptor>> delegate) {
+    public RefreshableHandlerInterceptor(final Supplier<List<? extends HandlerInterceptor>> delegate) {
         this.delegateSupplier = delegate;
     }
 
@@ -49,9 +50,9 @@ public class RefreshableHandlerInterceptor implements HandlerInterceptor {
         getHandlerInterceptors().forEach(Unchecked.consumer(i -> i.afterCompletion(request, response, handler, ex)));
     }
 
-    private List<HandlerInterceptor> getHandlerInterceptors() {
+    private List<? extends HandlerInterceptor> getHandlerInterceptors() {
         if (this.delegate != null) {
-            return List.of(delegate.getObject());
+            return Optional.ofNullable(delegate.getIfAvailable()).map(List::of).orElseGet(List::of);
         }
         return this.delegateSupplier.get();
     }

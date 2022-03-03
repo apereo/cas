@@ -68,11 +68,12 @@ public class CasOAuth20ThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    val handler = new RefreshableHandlerInterceptor(
-                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
-                    registry.addInterceptor(handler)
-                        .order(0)
-                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        registry.addInterceptor(handler)
+                            .order(0)
+                            .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                    });
                 }
             };
         }
