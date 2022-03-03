@@ -7,17 +7,18 @@ import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.pac4j.core.context.JEEContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -44,17 +45,18 @@ public class OidcThrottleConfiguration {
     public static class OidcThrottleWebMvcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcThrottleWebMvcConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oidcThrottleWebMvcConfigurer(
-            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    val interceptors = authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors();
-                    interceptors.forEach(handler -> registry.addInterceptor(handler)
+                    val handler = new RefreshableHandlerInterceptor(
+                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
+                    registry.addInterceptor(handler)
                         .order(0)
-                        .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL + "/**"));
+                        .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL + "/**");
                 }
             };
         }

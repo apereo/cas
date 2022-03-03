@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurity
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -67,9 +68,11 @@ public class CasOAuth20ThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    authenticationThrottlingExecutionPlan.ifAvailable(plan ->
-                        plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
-                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*"))));
+                    val handler = new RefreshableHandlerInterceptor(
+                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
+                    registry.addInterceptor(handler)
+                        .order(0)
+                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
                 }
             };
         }
@@ -111,8 +114,11 @@ public class CasOAuth20ThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    registry.addInterceptor(oauthHandlerInterceptorAdapter.getObject())
-                        .order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                    val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
+                    registry
+                        .addInterceptor(handler)
+                        .order(1)
+                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
                 }
             };
         }

@@ -28,6 +28,7 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.ProtocolEndpointWebSecurityConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -36,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -132,13 +134,16 @@ public class CasRestConfiguration {
         @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
                     LOGGER.debug("Activating authentication throttling for REST endpoints...");
-                    authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors()
-                        .forEach(handler -> registry.addInterceptor(handler).order(0).addPathPatterns("/v1/**"));
+                    val handler = new RefreshableHandlerInterceptor(
+                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
+                    registry.addInterceptor(handler)
+                        .order(0)
+                        .addPathPatterns("/v1/**");
                 }
             };
         }
