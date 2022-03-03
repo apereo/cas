@@ -138,12 +138,13 @@ public class CasRestConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    LOGGER.debug("Activating authentication throttling for REST endpoints...");
-                    val handler = new RefreshableHandlerInterceptor(
-                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
-                    registry.addInterceptor(handler)
-                        .order(0)
-                        .addPathPatterns("/v1/**");
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        LOGGER.debug("Activating authentication throttling for REST endpoints...");
+                        registry.addInterceptor(handler)
+                            .order(0)
+                            .addPathPatterns("/v1/**");
+                    });
                 }
             };
         }
