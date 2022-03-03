@@ -119,7 +119,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
      */
     protected boolean sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
                                                        final RequestContext requestContext) {
-        val parameters = CollectionUtils.<String, Object>wrap("email", query.getEmail());
+        val parameters = CollectionUtils.<String, Object>wrap("username", query.getUsername());
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
