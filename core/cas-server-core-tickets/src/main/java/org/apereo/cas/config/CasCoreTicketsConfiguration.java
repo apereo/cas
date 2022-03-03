@@ -64,7 +64,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 import java.util.List;
 import java.util.Map;
@@ -440,14 +439,6 @@ public class CasCoreTicketsConfiguration {
     @EnableTransactionManagement
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     public static class CasCoreTicketTransactionConfiguration {
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TransactionManagementConfigurer transactionManagementConfigurer(
-            @Qualifier("ticketTransactionManager")
-            final PlatformTransactionManager ticketTransactionManager) {
-            return () -> ticketTransactionManager;
-        }
-
         @ConditionalOnMissingBean(name = "ticketTransactionManager")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
