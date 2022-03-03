@@ -53,7 +53,7 @@ The following items are new improvements and enhancements presented in this rele
   
 ## Configuration Refresh Requests
 
-The construction of Spring `@Bean`s managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
+The construction of Spring beans (as defined by the `@Bean` annotation) managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
 
 ## Feature Toggles
 
@@ -61,9 +61,9 @@ Modest support for [feature toggles](../configuration/Configuration-Management-E
 
 Please note that feature toggles are not yet supported by all CAS modules; this is a large effort and will likely require several more releases before this capability is finalized.
     
-## OpenID Connect JMeter Perfomance Testing
+## OpenID Connect JMeter Performance Testing
 
-[JMeter scripts](../high_availability/Performance-Testing-JMeter.html) used to run performance tests for CAS running as an [OpenID Connect Provider](../authentication/OIDC-Authentication.html) are now integrated with the CAS CI system to ensure the test script and the funcationality under test continues to run smoothly. 
+[JMeter scripts](../high_availability/Performance-Testing-JMeter.html) used to run performance tests for CAS running as an [OpenID Connect Provider](../authentication/OIDC-Authentication.html) are now integrated with the CAS CI system to ensure the test script and the functionality under test continues to run smoothly. 
 
 ## Integration Tests
 
@@ -97,12 +97,15 @@ adding `/webjars/jquery/jquery.min.js` results in `/webjars/jquery/x.y.z/jquery.
 
 ## Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `250` test scenarios and we'll continue to add more in the coming releases. Test coverage has also slightly improved and at now stands at `93%`. 
+The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `250` test scenarios and we'll continue to add more in the coming releases. Test coverage has also slightly improved and now stands at `93%`. 
 
 ## Other Stuff
-        
+      
+- Minor fixes to how `locale` changes are remembered and tracked across different browser sessions.  
+- System properties and environment variables can now override properties that are found in CAS configuration files.
 - Internal rewiring of CAS components, bean processors and event listeners to improve support for building native images.
 - Server-side automatic redirects used for [delegated authentication](../integration/Delegate-Authentication.html) can now correctly recognize an existing SSO session.
+- Internal improvements to the Gradle build to remove deprecated elements, in early preparation for Gradle 9.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce WAR Overlay projects that take advantage of Gradle's support for BOMs, making it more predictable to handle dependency management issues and conflicts.
 
 ## Library Upgrades
