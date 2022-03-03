@@ -30,6 +30,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@SuppressWarnings("ConditionalOnProperty")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false", matchIfMissing = true)
 @Configuration(value = "CasCoreBootstrapStandaloneConfiguration", proxyBeanMethods = false)
 public class CasCoreBootstrapStandaloneConfiguration {

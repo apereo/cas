@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.impl.account.MongoDbPasswordlessUserAccountStore;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +26,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  */
 @Configuration(value = "MongoDbPasswordlessAuthenticationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "mongo")
 public class MongoDbPasswordlessAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "mongoDbPasswordlessAuthenticationTemplate")

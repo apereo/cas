@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(value = "ConditionalDataSourceAutoConfiguration", proxyBeanMethods = false)
 @ConditionalOnProperty(name = "spring.datasource.url")
+@SuppressWarnings("ConditionalOnProperty")
 @ImportAutoConfiguration(DataSourceAutoConfiguration.class)
 public class ConditionalDataSourceAutoConfiguration {
 }

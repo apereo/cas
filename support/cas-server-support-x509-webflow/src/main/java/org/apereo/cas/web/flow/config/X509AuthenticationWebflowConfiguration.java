@@ -102,6 +102,7 @@ public class X509AuthenticationWebflowConfiguration {
         return plan -> plan.registerWebflowConfigurer(x509WebflowConfigurer);
     }
 
+    @SuppressWarnings("ConditionalOnProperty")
     @Configuration(value = "X509TomcatServletWebServiceFactoryConfiguration", proxyBeanMethods = false)
     @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @ConditionalOnProperty(value = "cas.authn.x509.webflow.port")
