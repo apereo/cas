@@ -120,7 +120,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --no-daemon build -x test -x javadoc -x check --parallel --max-workers=8
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
           name: binary-artifacts
