@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
 public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("mfaBypassAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
     private Action mfaBypassAction;
 
     @Autowired

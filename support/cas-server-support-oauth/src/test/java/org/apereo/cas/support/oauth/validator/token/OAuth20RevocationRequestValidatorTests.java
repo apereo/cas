@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -28,19 +29,12 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20RevocationRequestValidatorTests {
+public class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
 
     private TicketRegistry ticketRegistry;
-    private OAuth20TokenRequestValidator validator;
 
-    private void registerTicket(final String name) {
-        val oauthCode = mock(OAuth20RefreshToken.class);
-        when(oauthCode.getId()).thenReturn(name);
-        when(oauthCode.isExpired()).thenReturn(false);
-        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
-        when(ticketRegistry.getTicket(eq(name))).thenReturn(oauthCode);
-    }
+    private OAuth20TokenRequestValidator validator;
 
     @BeforeEach
     public void before() {
@@ -93,7 +87,7 @@ public class OAuth20RevocationRequestValidatorTests {
         HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertTrue(this.validator.validate(new JEEContext(request, response)));
-        
+
         request.removeHeader("Authorization");
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
@@ -104,5 +98,13 @@ public class OAuth20RevocationRequestValidatorTests {
         HttpUtils.createBasicAuthHeaders(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID, RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertFalse(this.validator.validate(new JEEContext(request, response)));
+    }
+
+    private void registerTicket(final String name) {
+        val oauthCode = mock(OAuth20RefreshToken.class);
+        when(oauthCode.getId()).thenReturn(name);
+        when(oauthCode.isExpired()).thenReturn(false);
+        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        when(ticketRegistry.getTicket(eq(name))).thenReturn(oauthCode);
     }
 }

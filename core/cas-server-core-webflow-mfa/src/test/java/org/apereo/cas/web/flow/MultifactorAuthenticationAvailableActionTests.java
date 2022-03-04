@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 public class MultifactorAuthenticationAvailableActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("mfaAvailableAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
     private Action mfaAvailableAction;
 
     @Test

@@ -507,21 +507,21 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "mfaAvailableAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         public Action mfaAvailableAction() {
             return new MultifactorAuthenticationAvailableAction();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "mfaBypassAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
         public Action mfaBypassAction() {
             return new MultifactorAuthenticationBypassAction();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "mfaFailureAction")
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
         public Action mfaFailureAction() {
             return new MultifactorAuthenticationFailureAction();
         }
