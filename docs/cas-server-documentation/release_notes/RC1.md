@@ -51,7 +51,7 @@ minimum system/platform requirements for this release.
 
 The following items are new improvements and enhancements presented in this release.
   
-## Configuration Refresh Requests
+## Refresh Requests
 
 The construction of Spring beans (as defined by the `@Bean` annotation) managed via auto-configuration classes has been enhanced to support [*configurtion refresh* requests](../configuration/Configuration-Management-Reload.html) specially when beans are activated conditionally using a property value via the likes of `@ConditionalOnProperty`. This allows a bean to remain in a disabled state using a JDK dynamic proxy so that it can later on be replaced with a real implementation when/if configuration is refreshed. 
 
@@ -61,7 +61,7 @@ Modest support for [feature toggles](../configuration/Configuration-Management-E
 
 Please note that feature toggles are not yet supported by all CAS modules; this is a large effort and will likely require several more releases before this capability is finalized.
     
-## OpenID Connect JMeter Performance Testing
+## OpenID Connect - JMeter Performance Testing
 
 [JMeter scripts](../high_availability/Performance-Testing-JMeter.html) used to run performance tests for CAS running as an [OpenID Connect Provider](../authentication/OIDC-Authentication.html) are now integrated with the CAS CI system to ensure the test script and the functionality under test continues to run smoothly. 
 
@@ -88,7 +88,7 @@ Several Docker images used for integration tests are now updated to their latest
 ## HAL Explorer
  
 Actuator endpoints exposed to or controlled by CAS can now be observed and 
-managed via the [HAL Explorer](https://github.com/toedter/hal-explorer:
+managed via the [HAL Explorer](https://github.com/toedter/hal-explorer):
 
 ![](https://user-images.githubusercontent.com/1205228/155877447-c993b3d6-1e14-4dc8-8154-662d53ee2206.png)
 
@@ -97,7 +97,11 @@ adding `/webjars/jquery/jquery.min.js` results in `/webjars/jquery/x.y.z/jquery.
 
 ## Testing Strategy
 
-The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `250` test scenarios and we'll continue to add more in the coming releases. Test coverage has also slightly improved and now stands at `93%`. 
+The collection of end-to-end browser tests based on Puppeteer continue to grow to add additional scenarios. At this point, there are approximately `255` test scenarios and we'll continue to add more in the coming releases. Test coverage has also slightly improved and now stands at `93%`. 
+ 
+## Static Attribute Release Policy
+
+A special [attribute release policy](../integration/Attribute-Release-Policies.html) is now available to authorize the release of static attributes to applications. Using this policy, static attribute values no longer need to be constructed at the attribute repository level, and their definition can be confined within the context of the application bound to receive attributes.
 
 ## Other Stuff
       
