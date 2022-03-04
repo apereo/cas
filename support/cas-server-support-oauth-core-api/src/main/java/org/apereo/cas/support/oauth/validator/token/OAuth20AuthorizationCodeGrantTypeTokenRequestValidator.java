@@ -51,7 +51,9 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
         if (valid) {
             val token = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
-            if (token == null || token.isExpired()) {
+            val removedToken = token == null || token.isExpired();
+            val removeRelatedAccessTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
+            if (removedToken && removeRelatedAccessTokens) {
                 LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
                 val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
                     ticket instanceof OAuth20AccessToken
