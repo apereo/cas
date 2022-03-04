@@ -1,16 +1,20 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.NeverAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,58 +41,104 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
-@Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
-public class MultifactorAuthenticationBypassActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
-    @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
-    private Action mfaBypassAction;
-
-    @Autowired
-    private ConfigurableApplicationContext configurableApplicationContext;
-
-    @Test
-    public void verifyOperations() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-
-        val service = RegisteredServiceTestUtils.getRegisteredService();
-        servicesManager.save(service);
-        WebUtils.putRegisteredService(context, service);
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-
-        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
-            .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
-
-        provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
-        WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
-
-        val transition = mock(Transition.class);
-        when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
-        context.setCurrentTransition(transition);
-        var event = mfaBypassAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
-
-        when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        context.setCurrentTransition(transition);
-        event = mfaBypassAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_NO, event.getId());
-
-        val eval = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
-        when(eval.shouldMultifactorAuthenticationProviderExecute(any(), any(), any(), any())).thenReturn(Boolean.FALSE);
-        provider.setBypassEvaluator(eval);
-        event = mfaBypassAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
-    }
-
+public class MultifactorAuthenticationBypassActionTests {
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public MultifactorAuthenticationProvider dummyProvider() {
             return new TestMultifactorAuthenticationProvider();
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
+    public class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
+        private Action mfaBypassAction;
+
+        @Autowired
+        private ConfigurableApplicationContext configurableApplicationContext;
+
+        @Test
+        public void verifyOperations() throws Exception {
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+            val service = RegisteredServiceTestUtils.getRegisteredService();
+            servicesManager.save(service);
+            WebUtils.putRegisteredService(context, service);
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+
+            val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+            configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
+                .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
+
+            provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+
+            val transition = mock(Transition.class);
+            when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
+            context.setCurrentTransition(transition);
+            var event = mfaBypassAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
+
+            when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            context.setCurrentTransition(transition);
+            event = mfaBypassAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_NO, event.getId());
+
+            val eval = mock(MultifactorAuthenticationProviderBypassEvaluator.class);
+            when(eval.shouldMultifactorAuthenticationProviderExecute(any(), any(), any(), any())).thenReturn(Boolean.FALSE);
+            provider.setBypassEvaluator(eval);
+            event = mfaBypassAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
+        }
+    }
+
+    @Nested
+    @SuppressWarnings("ClassCanBeStatic")
+    @Import(MultifactorAuthenticationBypassActionTests.MultifactorAuthenticationTestConfiguration.class)
+    public class FailureModeBypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
+        private Action mfaBypassAction;
+
+        @Autowired
+        private ConfigurableApplicationContext configurableApplicationContext;
+
+        @Test
+        public void verifyOperations() throws Exception {
+            val context = new MockRequestContext();
+            val request = new MockHttpServletRequest();
+            val response = new MockHttpServletResponse();
+            context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+            val service = RegisteredServiceTestUtils.getRegisteredService();
+            val policy = new DefaultRegisteredServiceMultifactorPolicy();
+            policy.setFailureMode(MultifactorAuthenticationProviderFailureModes.OPEN);
+            service.setMultifactorPolicy(policy);
+            servicesManager.save(service);
+            WebUtils.putRegisteredService(context, service);
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+
+            val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+            provider.setAvailable(false);
+            configurableApplicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class)
+                .forEach((key, value) -> ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, value, key));
+            provider.setBypassEvaluator(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.getInstance());
+            provider.setFailureModeEvaluator(new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
+            WebUtils.putMultifactorAuthenticationProviderIdIntoFlowScope(context, provider);
+
+            val transition = mock(Transition.class);
+            when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            context.setCurrentTransition(transition);
+            val event = mfaBypassAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
         }
     }
 }
