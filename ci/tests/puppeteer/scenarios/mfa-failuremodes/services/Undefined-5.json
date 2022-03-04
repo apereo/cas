@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^https://httpbin.org/anything/undefined",
+  "name": "Undefined",
+  "id": 5,
+  "description": "Undefined Service",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-yubikey" ] ],
+    "failureMode" : "UNDEFINED"
+  }
+}
