@@ -39,4 +39,10 @@ public class OAuthCodeProperties implements Serializable {
      * backing ticket registry implementation.
      */
     private String storageName = "oauthCodesCache";
+
+    /**
+     * Remove the related access tokens when trying to use a code
+     * which is expired or no longer exists.
+     */
+    private boolean removeRelatedAccessTokens = true;
 }
