@@ -55,35 +55,9 @@ To learn more, [please see this guide](Configuring-Multifactor-Authentication-Tr
 Each multifactor provider is equipped with options to allow for MFA 
 bypass. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-Bypass.html).
 
-## Failure Modes Selection
+## Failure Modes
 
-CAS will consult the current configuration in the event that the provider 
-being requested is unreachable to determine how to proceed.  
-The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
-
-- Registered Service Multifactor Authentication Policy
-- Multifactor Authentication Provider Configuration
-- Global Multifactor Authentication Configuration  
-
-If no actionable failure mode is encountered the user will be shown a generic "Authentication Failed" message.
-
-### Failure Mode by Registered Service
-
-Set as part of the `multifactorPolicy` which will override a failure a mode set at any other location.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
-  "id" : 100,
-  "multifactorPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
-    "failureMode" : "CLOSED"
-  }
-}
-```
-
+CAS will consult the current configuration in the event that the provider being requested is unreachable to determine how to proceed. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-FailureModes.html).
 
 ## Multiple Provider Selection
 
