@@ -157,7 +157,7 @@ jobs:
           name: ${{ matrix.category }}
           verbose: false
       - name: "Upload Coverage Report"
-        uses: "actions/upload-artifact@v2"
+        uses: "actions/upload-artifact@v3"
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
