@@ -21,7 +21,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderAuthenticationMetadataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -76,7 +76,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         @Qualifier("yubikeyMultifactorAuthenticationProvider")
         final MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new MultifactorAuthenticationProviderAuthenticationMetadataPopulator(authenticationContextAttribute,
+        return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             yubikeyMultifactorAuthenticationProvider, servicesManager);
     }
 
