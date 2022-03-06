@@ -44,5 +44,5 @@ public class OAuthCodeProperties implements Serializable {
      * Remove the related access tokens when trying to use a code
      * which is expired or no longer exists.
      */
-    private boolean removeRelatedAccessTokens = true;
+    private boolean removeRelatedAccessTokens;
 }
