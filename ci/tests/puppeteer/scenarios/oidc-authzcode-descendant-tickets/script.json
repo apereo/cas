@@ -11,6 +11,7 @@
     "--cas.authn.oauth.code.time-to-kill-in-seconds=60",
     "--cas.authn.oauth.code.number-of-uses=10",
 
+    "--cas.authn.oauth.code.remove-related-access-tokens=true",
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
