@@ -1086,13 +1086,16 @@ public class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "defaultOAuthCodeFactory")
         public OAuth20CodeFactory defaultOAuthCodeFactory(
+            @Qualifier("protocolTicketCipherExecutor")
+            final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier("oAuthCodeIdGenerator")
             final UniqueTicketIdGenerator oAuthCodeIdGenerator,
             @Qualifier("oAuthCodeExpirationPolicy")
             final ExpirationPolicyBuilder oAuthCodeExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator, oAuthCodeExpirationPolicy, servicesManager);
+            return new OAuth20DefaultOAuthCodeFactory(oAuthCodeIdGenerator,
+                oAuthCodeExpirationPolicy, servicesManager, protocolTicketCipherExecutor);
         }
     }
 
