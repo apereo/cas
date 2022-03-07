@@ -26,7 +26,9 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
@@ -252,7 +254,8 @@ public class JpaTicketRegistryCleanerTests {
         val builder = mock(ExpirationPolicyBuilder.class);
         when(builder.buildTicketExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
 
-        return new OAuth20DefaultOAuthCodeFactory(builder, servicesManager)
+        return new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
+            builder, servicesManager, CipherExecutor.noOpOfStringToString())
             .create(RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"),
                 CollectionUtils.wrapSet("1", "2"), "code-challenge",

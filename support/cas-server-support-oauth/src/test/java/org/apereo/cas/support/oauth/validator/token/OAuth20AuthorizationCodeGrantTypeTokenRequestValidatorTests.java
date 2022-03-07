@@ -22,6 +22,8 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -237,7 +239,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             }
         };
 
-        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
+        val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
+            mock(ServicesManager.class), CipherExecutor.noOpOfStringToString())
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",
