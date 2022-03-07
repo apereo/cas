@@ -56,6 +56,19 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, "#token");
 
     await page.goto(`https://localhost:8443/cas/logout`);
+    service = "https://httpbin.org/anything/undefined"
+    await cas.logg("Checking UNDEFINED failure mode");
+    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(1000)
+    ticket = await cas.assertTicketParameter(page)
+    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
+    await cas.logg(body)
+    json = JSON.parse(body.toString());
+    authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.attributes.bypassMultifactorAuthentication[0] === true)
+    assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey")
+    assert(authenticationSuccess.attributes.authenticationContext[0] === "mfa-yubikey")
 
     await browser.close();
 })();
