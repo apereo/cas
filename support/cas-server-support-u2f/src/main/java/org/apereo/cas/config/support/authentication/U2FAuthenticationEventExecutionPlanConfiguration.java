@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,6 +41,19 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.U2F)
 @Configuration(value = "U2fAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 public class U2FAuthenticationEventExecutionPlanConfiguration {
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "u2fMultifactorProviderAuthenticationMetadataPopulator")
+    public AuthenticationMetaDataPopulator u2fMultifactorProviderAuthenticationMetadataPopulator(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider) {
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+        return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+            u2fMultifactorAuthenticationProvider, servicesManager);
+    }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -64,27 +78,30 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "u2fAuthenticationHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuthenticationHandler u2fAuthenticationHandler(final CasConfigurationProperties casProperties,
-                                                          @Qualifier("u2fPrincipalFactory")
-                                                          final PrincipalFactory u2fPrincipalFactory,
-                                                          @Qualifier("u2fService")
-                                                          final U2F u2fService,
-                                                          @Qualifier(ServicesManager.BEAN_NAME)
-                                                          final ServicesManager servicesManager,
-                                                          @Qualifier("u2fDeviceRepository")
-                                                          final U2FDeviceRepository u2fDeviceRepository) {
+    public AuthenticationHandler u2fAuthenticationHandler(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fPrincipalFactory")
+        final PrincipalFactory u2fPrincipalFactory,
+        @Qualifier("u2fService")
+        final U2F u2fService,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("u2fDeviceRepository")
+        final U2FDeviceRepository u2fDeviceRepository) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
-        return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory, u2fDeviceRepository, u2fService, u2f.getOrder());
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager,
+            u2fPrincipalFactory, u2fDeviceRepository, u2fService, u2f.getOrder());
     }
 
     @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider(final CasConfigurationProperties casProperties,
-                                                                                  @Qualifier("u2fBypassEvaluator")
-                                                                                  final MultifactorAuthenticationProviderBypassEvaluator u2fBypassEvaluator,
-                                                                                  @Qualifier("failureModeEvaluator")
-                                                                                  final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+    public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("u2fBypassEvaluator")
+        final MultifactorAuthenticationProviderBypassEvaluator u2fBypassEvaluator,
+        @Qualifier("failureModeEvaluator")
+        final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator);
@@ -99,6 +116,8 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("u2fMultifactorProviderAuthenticationMetadataPopulator")
+        final AuthenticationMetaDataPopulator u2fMultifactorProviderAuthenticationMetadataPopulator,
         @Qualifier("u2fAuthenticationHandler")
         final AuthenticationHandler u2fAuthenticationHandler,
         @Qualifier("u2fAuthenticationMetaDataPopulator")
@@ -106,6 +125,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             plan.registerAuthenticationHandler(u2fAuthenticationHandler);
             plan.registerAuthenticationMetadataPopulator(u2fAuthenticationMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(u2fMultifactorProviderAuthenticationMetadataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(U2FTokenCredential.class));
         };
     }

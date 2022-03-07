@@ -121,6 +121,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwise(BeanContainer::empty)
                 .get();
         }
+        
 
         @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
         @Bean

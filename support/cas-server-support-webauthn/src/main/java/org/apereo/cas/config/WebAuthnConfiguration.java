@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -266,6 +267,20 @@ public class WebAuthnConfiguration {
     public static class WebAuthnMetadataConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "webAuthnMultifactorProviderAuthenticationMetadataPopulator")
+        public AuthenticationMetaDataPopulator webAuthnMultifactorProviderAuthenticationMetadataPopulator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("webAuthnMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
+            val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                webAuthnMultifactorAuthenticationProvider, servicesManager);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "webAuthnAuthenticationMetaDataPopulator")
         public AuthenticationMetaDataPopulator webAuthnAuthenticationMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
@@ -294,6 +309,8 @@ public class WebAuthnConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer webAuthnAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier("webAuthnMultifactorProviderAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator webAuthnMultifactorProviderAuthenticationMetadataPopulator,
             @Qualifier("webAuthnAuthenticationHandler")
             final AuthenticationHandler webAuthnAuthenticationHandler,
             @Qualifier("webAuthnAuthenticationMetaDataPopulator")
@@ -303,6 +320,7 @@ public class WebAuthnConfiguration {
                 .supply(() -> plan -> {
                     plan.registerAuthenticationHandler(webAuthnAuthenticationHandler);
                     plan.registerAuthenticationMetadataPopulator(webAuthnAuthenticationMetaDataPopulator);
+                    plan.registerAuthenticationMetadataPopulator(webAuthnMultifactorProviderAuthenticationMetadataPopulator);
                     plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(WebAuthnCredential.class));
                 })
                 .otherwiseProxy()
