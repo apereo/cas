@@ -86,13 +86,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
         this.servicesManager.save(supportingService, nonSupportingService, promiscuousService);
 
         val context = OAuth20ConfigurationContext.builder()
+            .casProperties(casProperties)
             .servicesManager(this.servicesManager)
             .sessionStore(JEESessionStore.INSTANCE)
             .ticketRegistry(this.ticketRegistry)
             .centralAuthenticationService(centralAuthenticationService)
             .webApplicationServiceServiceFactory(serviceFactory)
             .registeredServiceAccessStrategyEnforcer(
-                new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()))
+                new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties))
             .build();
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }
