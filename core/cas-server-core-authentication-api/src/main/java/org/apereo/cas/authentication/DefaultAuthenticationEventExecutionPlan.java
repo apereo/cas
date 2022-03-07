@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,45 +52,57 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public void registerAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
-        LOGGER.trace("Registering metadata populator [{}] into the execution plan", populator);
-        authenticationMetaDataPopulatorList.add(populator);
+        if (BeanSupplier.isNotProxy(populator)) {
+            LOGGER.trace("Registering metadata populator [{}] into the execution plan", populator);
+            authenticationMetaDataPopulatorList.add(populator);
+        }
     }
 
     @Override
     public void registerAuthenticationPostProcessor(final AuthenticationPostProcessor processor) {
-        LOGGER.debug("Registering authentication post processor [{}] into the execution plan", processor);
-        authenticationPostProcessors.add(processor);
+        if (BeanSupplier.isNotProxy(processor)) {
+            LOGGER.debug("Registering authentication post processor [{}] into the execution plan", processor);
+            authenticationPostProcessors.add(processor);
+        }
     }
 
     @Override
     public void registerAuthenticationPreProcessor(final AuthenticationPreProcessor processor) {
-        LOGGER.debug("Registering authentication pre processor [{}] into the execution plan", processor);
-        authenticationPreProcessors.add(processor);
+        if (BeanSupplier.isNotProxy(processor)) {
+            LOGGER.debug("Registering authentication pre processor [{}] into the execution plan", processor);
+            authenticationPreProcessors.add(processor);
+        }
     }
 
     @Override
     public void registerAuthenticationMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
-        populators.forEach(this::registerAuthenticationMetadataPopulator);
+        populators.stream().filter(BeanSupplier::isNotProxy).forEach(this::registerAuthenticationMetadataPopulator);
     }
 
     @Override
     public void registerAuthenticationPolicy(final AuthenticationPolicy authenticationPolicy) {
-        this.authenticationPolicies.add(authenticationPolicy);
+        if (BeanSupplier.isNotProxy(authenticationPolicy)) {
+            this.authenticationPolicies.add(authenticationPolicy);
+        }
     }
 
     @Override
     public void registerAuthenticationPolicies(final Collection<AuthenticationPolicy> authenticationPolicy) {
-        this.authenticationPolicies.addAll(authenticationPolicy);
+        this.authenticationPolicies.addAll(authenticationPolicy.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList()));
     }
 
     @Override
     public void registerAuthenticationHandlerResolver(final AuthenticationHandlerResolver handlerResolver) {
-        this.authenticationHandlerResolvers.add(handlerResolver);
+        if (BeanSupplier.isNotProxy(handlerResolver)) {
+            this.authenticationHandlerResolvers.add(handlerResolver);
+        }
     }
 
     @Override
     public void registerAuthenticationPolicyResolver(final AuthenticationPolicyResolver policyResolver) {
-        this.authenticationPolicyResolvers.add(policyResolver);
+        if (BeanSupplier.isNotProxy(policyResolver)) {
+            this.authenticationPolicyResolvers.add(policyResolver);
+        }
     }
 
     @Override
@@ -97,23 +111,24 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler, final PrincipalResolver principalResolver) {
-        if (principalResolver == null) {
-            LOGGER.trace("Registering handler [{}] with no principal resolver into the execution plan", handler.getName());
-        } else {
-            LOGGER.trace("Registering handler [{}] principal resolver [{}] into the execution plan", handler.getName(), principalResolver.getName());
+    public void registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler,
+                                                                   final PrincipalResolver principalResolver) {
+        if (BeanSupplier.isNotProxy(handler)) {
+            LOGGER.trace("Registering handler [{}] with [{}] principal resolver into the execution plan",
+                handler.getName(), Optional.ofNullable(principalResolver).map(PrincipalResolver::getName).orElse("no"));
+            this.authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
         }
-        this.authenticationHandlerPrincipalResolverMap.put(handler, principalResolver);
     }
 
     @Override
     public void registerAuthenticationHandlerWithPrincipalResolvers(final Collection<AuthenticationHandler> handlers,
                                                                     final PrincipalResolver principalResolver) {
-        handlers.forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
+        handlers.stream().filter(BeanSupplier::isNotProxy).forEach(h -> registerAuthenticationHandlerWithPrincipalResolver(h, principalResolver));
     }
 
     @Override
-    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers, final List<PrincipalResolver> principalResolver) {
+    public void registerAuthenticationHandlerWithPrincipalResolvers(final List<AuthenticationHandler> handlers,
+                                                                    final List<PrincipalResolver> principalResolver) {
         if (handlers.size() != principalResolver.size()) {
             LOGGER.error("Total number of authentication handlers must match the number of provided principal resolvers");
             return;
@@ -130,6 +145,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
 
         val resolvedHandlers = handlerResolvers.stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
             .flatMap(Set::stream)
@@ -199,7 +215,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
         val handlerResolvers = getAuthenticationPolicyResolvers(transaction);
         LOGGER.debug("Authentication policy resolvers for this transaction are [{}]", handlerResolvers);
-        
+
         val list = getAuthenticationPolicies();
         val resolvedPolicies = handlerResolvers.stream()
             .filter(r -> r.supports(transaction))
