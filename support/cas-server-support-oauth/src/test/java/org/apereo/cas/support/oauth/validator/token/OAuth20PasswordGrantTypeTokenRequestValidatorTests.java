@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -74,8 +73,9 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
             .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
             .centralAuthenticationService(centralAuthenticationService)
             .ticketRegistry(ticketRegistry)
+            .casProperties(casProperties)
             .registeredServiceAccessStrategyEnforcer(
-                new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()))
+                new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties))
             .sessionStore(JEESessionStore.INSTANCE)
             .build();
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
