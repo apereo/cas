@@ -92,6 +92,20 @@ public class InweboAuthenticationConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class InweboAuthenticationMetadataConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "inweboMultifactorProviderAuthenticationMetadataPopulator")
+        public AuthenticationMetaDataPopulator inweboMultifactorProviderAuthenticationMetadataPopulator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("inweboMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider inweboMultifactorAuthenticationProvider) {
+            val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                inweboMultifactorAuthenticationProvider, servicesManager);
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "inweboAuthenticationMetaDataPopulator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationMetaDataPopulator inweboAuthenticationMetaDataPopulator(
@@ -120,6 +134,8 @@ public class InweboAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer inweboAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("inweboMultifactorProviderAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator inweboMultifactorProviderAuthenticationMetadataPopulator,
             @Qualifier("inweboAuthenticationHandler")
             final AuthenticationHandler inweboAuthenticationHandler,
             @Qualifier("inweboAuthenticationMetaDataPopulator")
@@ -129,7 +145,9 @@ public class InweboAuthenticationConfiguration {
             return plan -> {
                 plan.registerAuthenticationHandler(inweboAuthenticationHandler);
                 plan.registerAuthenticationMetadataPopulators(
-                    CollectionUtils.wrapList(inweboAuthenticationMetaDataPopulator, inweboAuthenticationDeviceMetadataPopulator));
+                    CollectionUtils.wrapList(inweboAuthenticationMetaDataPopulator,
+                        inweboMultifactorProviderAuthenticationMetadataPopulator,
+                        inweboAuthenticationDeviceMetadataPopulator));
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(InweboCredential.class));
             };
         }
