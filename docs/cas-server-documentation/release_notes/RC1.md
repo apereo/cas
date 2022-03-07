@@ -125,6 +125,8 @@ A special [attribute release policy](../integration/Attribute-Release-Policies.h
 - Kryo
 - Gson
 - Nimbus OIDC
+- Groovy
+- Thymeleaf Dialect
 - Apache Tomcat
 - PostgreSQL
 - Jose4j
