@@ -8,6 +8,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,19 +33,22 @@ import java.util.Objects;
 @Setter
 public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20TokenRequestValidator {
     private final ServicesManager servicesManager;
+
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
+    private final OAuth20RequestParameterResolver requestParameterResolver;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean validate(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
         if (!OAuth20Utils.checkResponseTypes(responseType, OAuth20ResponseTypes.values())) {
             LOGGER.warn("Response type [{}] is not supported.", responseType);
             return false;
         }
 
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         try {
@@ -53,14 +57,14 @@ public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20Tok
             LOGGER.warn("Registered service access is not allowed for service definition for client id [{}]", clientId);
             return false;
         }
-        return OAuth20Utils.isAuthorizedResponseTypeForService(context, Objects.requireNonNull(registeredService));
+        return requestParameterResolver.isAuthorizedResponseTypeForService(context, Objects.requireNonNull(registeredService));
     }
 
     @Override
     public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
+        val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        val clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
             && StringUtils.isNotBlank(clientId);

@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 
 import lombok.val;
@@ -52,7 +51,7 @@ public class OidcUserProfileDataCreatorTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
         val claims = "\"userinfo\": {\"given_name\": {\"essential\": true}}";
         request.addParameter(OAuth20Constants.CLAIMS, claims);
-        val result = OAuth20Utils.parseRequestClaims(context);
+        val result = oauthRequestParameterResolver.resolveRequestClaims(context);
 
         val accessToken = getAccessToken();
         when(accessToken.getClaims()).thenReturn(result);

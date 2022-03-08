@@ -76,7 +76,8 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
         }
 
         val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+        val clientId = getConfigurationContext().getRequestParameterResolver()
+            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
         val registeredService = getRegisteredServiceByClientId(clientId);
 
         if (OAuth20Utils.doesServiceNeedAuthentication(registeredService)) {

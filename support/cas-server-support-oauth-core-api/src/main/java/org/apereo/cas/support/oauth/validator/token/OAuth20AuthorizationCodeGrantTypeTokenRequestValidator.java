@@ -38,8 +38,10 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
         val clientId = uProfile.getId();
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI);
-        val code = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE);
+        val redirectUri = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI);
+        val code = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE);
 
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
@@ -51,17 +53,18 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
         if (valid) {
             val token = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
-            val removedToken = (token == null || token.isExpired())
-                               && getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
-            if (removedToken) {
-                LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
-                val accessTokensByCode = getConfigurationContext().getCentralAuthenticationService().getTickets(ticket ->
-                    ticket instanceof OAuth20AccessToken
-                    && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
-                accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
-                    LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
-                    getConfigurationContext().getCentralAuthenticationService().deleteTicket(ticket);
-                }));
+            val removeTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
+            if (token == null || token.isExpired()) {
+                if (removeTokens) {
+                    LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
+                    val accessTokensByCode = getConfigurationContext().getCentralAuthenticationService().getTickets(ticket ->
+                        ticket instanceof OAuth20AccessToken
+                        && StringUtils.equalsIgnoreCase(((OAuth20AccessToken) ticket).getToken(), code.get()));
+                    accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
+                        LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
+                        getConfigurationContext().getCentralAuthenticationService().deleteTicket(ticket);
+                    }));
+                }
                 LOGGER.warn("Request OAuth code [{}] is not found or has expired", code.get());
                 return false;
             }

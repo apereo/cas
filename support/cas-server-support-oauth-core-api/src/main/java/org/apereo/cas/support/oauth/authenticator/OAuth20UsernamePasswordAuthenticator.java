@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
@@ -45,13 +46,15 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
     private final SessionStore sessionStore;
 
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
     @Override
     public void validate(final Credentials credentials, final WebContext webContext,
                          final SessionStore sessionStore) throws CredentialsException {
         try {
             val upc = (UsernamePasswordCredentials) credentials;
             val casCredential = new UsernamePasswordCredential(upc.getUsername(), upc.getPassword());
-            val clientIdAndSecret = OAuth20Utils.getClientIdAndClientSecret(webContext, this.sessionStore);
+            val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(webContext, this.sessionStore);
             if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
                 throw new CredentialsException("No client credentials could be identified in this request");
             }

@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -47,6 +48,11 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     /**
+     * Request parameter resolver.
+     */
+    protected final OAuth20RequestParameterResolver requestParameterResolver;
+
+    /**
      * Pre-validate an Authorization request.
      *
      * @param context the context
@@ -79,7 +85,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @return the response type from request
      */
     protected String getResponseTypeFromRequest(final WebContext context) {
-        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+        return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
     }
 
     /**
@@ -89,7 +95,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @return the redirect uri from request
      */
     protected String getRedirectUriFromRequest(final WebContext context) {
-        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
+        return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
     }
 
     /**
@@ -99,7 +105,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
      * @return the client id from request
      */
     protected String getClientIdFromRequest(final WebContext context) {
-        return OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        return requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
     }
 
     /**

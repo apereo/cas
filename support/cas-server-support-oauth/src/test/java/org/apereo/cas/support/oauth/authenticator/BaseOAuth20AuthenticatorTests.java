@@ -38,6 +38,7 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -85,6 +86,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+    protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")

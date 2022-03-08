@@ -38,7 +38,8 @@ public class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Test
         
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
-        profileManager = new OAuth20ClientIdAwareProfileManager(context, oauthDistributedSessionStore, servicesManager);
+        profileManager = new OAuth20ClientIdAwareProfileManager(context, oauthDistributedSessionStore,
+            servicesManager, oauthRequestParameterResolver);
     }
 
     @Test

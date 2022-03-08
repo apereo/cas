@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.web.UrlValidator;
 
 import lombok.val;
@@ -25,9 +26,13 @@ import java.util.Optional;
  * @since 6.3.0
  */
 public class OidcSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogoutServiceLogoutUrlBuilder {
+    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
+
     public OidcSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
-                                                   final UrlValidator urlValidator) {
+                                                   final UrlValidator urlValidator,
+                                                   final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
         super(servicesManager, urlValidator);
+        this.oauthRequestParameterResolver = oauthRequestParameterResolver;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class OidcSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogoutSer
                                        final Optional<HttpServletResponse> response) {
         return requestOpt.map(request -> {
             val webContext = new JEEContext(request, response.get());
-            val clientId = OAuth20Utils.getRequestParameter(webContext, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+            val clientId = oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
             if (StringUtils.isNotBlank(clientId)) {
                 val foundService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
                 return supports(foundService, service, requestOpt);
