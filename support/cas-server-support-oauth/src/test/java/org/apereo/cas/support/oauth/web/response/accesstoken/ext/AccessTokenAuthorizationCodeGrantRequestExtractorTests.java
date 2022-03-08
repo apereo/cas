@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -96,6 +99,31 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends Abst
 
         val context = new JEEContext(request, response);
         assertThrows(InvalidTicketException.class, () -> extractor.extract(context));
+    }
+
+    @Test
+    public void verifyScopes() throws Exception {
+        val request = new MockHttpServletRequest();
+        request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
+        request.addParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        request.addParameter(OAuth20Constants.SCOPE, "test1 test2");
+
+        val service = getRegisteredService(REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
+        service.setGenerateRefreshToken(true);
+        servicesManager.save(service);
+
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val code = addCodeWithScopes(principal, service, List.of("test1", "test3"));
+        ticketRegistry.addTicket(code.getTicketGrantingTicket());
+        request.addParameter(OAuth20Constants.CODE, code.getId());
+
+        val response = new MockHttpServletResponse();
+        val extractor = new AccessTokenAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+
+        val context = new JEEContext(request, response);
+        val accessTokenRequestContext = extractor.extract(context);
+        assertEquals(Set.of("test1"), accessTokenRequestContext.getScopes());
     }
 
     @Test

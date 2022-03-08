@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.scopes.ScopeResolver;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -131,6 +132,8 @@ public class OAuth20ConfigurationContext {
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     private final OAuth20ClientSecretValidator clientSecretValidator;
+
+    private final ScopeResolver scopeResolver;
 
     /**
      * Gets ticket granting ticket.

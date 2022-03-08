@@ -111,7 +111,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
                                                         final OAuth20Token token,
                                                         final WebContext context) {
         val scopes = new TreeSet<>(requestedScopes);
-        scopes.addAll(token.getScopes());
+        scopes.retainAll(token.getScopes());
         return scopes;
     }
 

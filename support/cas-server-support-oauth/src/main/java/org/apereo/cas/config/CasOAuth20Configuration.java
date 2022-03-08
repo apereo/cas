@@ -35,6 +35,9 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttribut
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.scopes.CompositeScopeResolver;
+import org.apereo.cas.support.oauth.scopes.DefaultOAuth20ScopeResolver;
+import org.apereo.cas.support.oauth.scopes.ScopeResolver;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
@@ -225,6 +228,26 @@ public class CasOAuth20Configuration {
         }
     }
 
+    @Configuration(value = "CasOAuth20ScopesConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    public static class CasOAuth20ScopesConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauthScopeResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ScopeResolver oauthScopeResolver() {
+            return new DefaultOAuth20ScopeResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultScopeResolver")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CompositeScopeResolver defaultScopeResolver(final List<ScopeResolver> scopeResolvers) {
+            scopeResolvers.sort(AnnotationAwareOrderComparator.INSTANCE);
+            return new CompositeScopeResolver(scopeResolvers);
+        }
+    }
+
     @Configuration(value = "CasOAuth20ContextConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ContextConfiguration {
@@ -285,7 +308,9 @@ public class CasOAuth20Configuration {
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
             @Qualifier("oauthTokenGenerator")
-            final OAuth20TokenGenerator oauthTokenGenerator) {
+            final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier("defaultScopeResolver")
+            final ScopeResolver defaultScopeResolver) {
             return OAuth20ConfigurationContext.builder()
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .applicationContext(applicationContext)
@@ -317,6 +342,7 @@ public class CasOAuth20Configuration {
                 .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders)
                 .oauthRequestValidators(oauthAuthorizationRequestValidators)
                 .clientSecretValidator(oauth20ClientSecretValidator)
+                .scopeResolver(defaultScopeResolver)
                 .build();
         }
     }
@@ -365,11 +391,13 @@ public class CasOAuth20Configuration {
             final OAuth20AccessTokenFactory defaultAccessTokenFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("defaultScopeResolver")
+            final ScopeResolver defaultScopeResolver,
             final CasConfigurationProperties casProperties) {
             return new OAuth20DefaultTokenGenerator(
                 defaultAccessTokenFactory, defaultDeviceTokenFactory,
                 defaultDeviceUserCodeFactory, defaultRefreshTokenFactory,
-                centralAuthenticationService, casProperties);
+                centralAuthenticationService, defaultScopeResolver, casProperties);
         }
 
 

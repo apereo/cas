@@ -54,6 +54,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.scopes.ScopeResolver;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
@@ -134,6 +135,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -276,6 +278,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultScopeResolver")
+    protected ScopeResolver defaultScopeResolver;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -519,8 +525,18 @@ public abstract class AbstractOAuth20Tests {
         return addCodeWithChallenge(principal, registeredService, null, null);
     }
 
+    protected OAuth20Code addCodeWithScopes(final Principal principal, final OAuthRegisteredService registeredService,
+                                            final Collection<String> scopes) throws Exception {
+        return addCodeWithChallengeAndScopes(principal, registeredService, null, null, scopes);
+    }
+
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
                                                final String codeChallenge, final String codeChallengeMethod) throws Exception {
+        return addCodeWithChallengeAndScopes(principal, registeredService, codeChallenge, codeChallengeMethod, new ArrayList<>());
+    }
+
+    protected OAuth20Code addCodeWithChallengeAndScopes(final Principal principal, final OAuthRegisteredService registeredService,
+        final String codeChallenge, final String codeChallengeMethod, final Collection<String> scopes) throws Exception {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
@@ -529,7 +545,7 @@ public abstract class AbstractOAuth20Tests {
         this.ticketRegistry.addTicket(tgt);
 
         val code = oAuthCodeFactory.create(service, authentication,
-            tgt, new ArrayList<>(),
+            tgt, scopes,
             codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);

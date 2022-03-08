@@ -39,6 +39,7 @@ import org.apereo.cas.oidc.profile.OidcUserProfileSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileViewRenderer;
 import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
+import org.apereo.cas.oidc.scopes.OidcScopeResolver;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
@@ -64,6 +65,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientPro
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.scopes.ScopeResolver;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -740,6 +742,13 @@ public class OidcConfiguration {
         public OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory(
             final CasConfigurationProperties casProperties) {
             return new DefaultOidcAttributeReleasePolicyFactory(casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcScopeResolver")
+        public ScopeResolver oidcScopeResolver(final CasConfigurationProperties casProperties) {
+            return new OidcScopeResolver(casProperties);
         }
 
         @Bean

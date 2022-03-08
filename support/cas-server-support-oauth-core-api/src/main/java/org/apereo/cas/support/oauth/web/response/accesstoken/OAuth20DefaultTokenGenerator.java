@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.scopes.ScopeResolver;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
@@ -71,6 +72,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * The CAS service.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
+
+    /**
+     * The scope resolver.
+     */
+    protected final ScopeResolver scopeResolver;
 
     /**
      * CAS configuration settings.
@@ -169,7 +175,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .newInstance(holder.getAuthentication())
             .setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC))
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
-            .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
+            .addAttribute(OAuth20Constants.SCOPE, scopeResolver.resolveRequestScopes(holder))
             .addAttribute(OAuth20Constants.CLIENT_ID, clientId);
 
         val requestedClaims = holder.getClaims().getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>());
@@ -179,7 +185,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         LOGGER.debug("Creating access token for [{}]", holder);
         val ticketGrantingTicket = holder.getTicketGrantingTicket();
         val accessToken = this.accessTokenFactory.create(holder.getService(),
-            authentication, ticketGrantingTicket, holder.getScopes(),
+            authentication, ticketGrantingTicket, this.scopeResolver.resolveRequestScopes(holder),
             Optional.ofNullable(holder.getToken()).map(Ticket::getId).orElse(null),
             clientId, holder.getClaims(),
             holder.getResponseType(), holder.getGrantType());
@@ -265,7 +271,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
             responseHolder.getAuthentication(),
             responseHolder.getTicketGrantingTicket(),
-            responseHolder.getScopes(),
+            scopeResolver.resolveRequestScopes(responseHolder),
             responseHolder.getRegisteredService().getClientId(),
             accessToken.getId(),
             responseHolder.getClaims(),
