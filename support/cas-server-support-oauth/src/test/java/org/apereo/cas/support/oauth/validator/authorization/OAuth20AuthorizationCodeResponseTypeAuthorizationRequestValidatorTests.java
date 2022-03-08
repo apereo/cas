@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("OAuth")
-public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests {
+public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
     private static ServicesManager getServicesManager(final StaticApplicationContext applicationContext) {
         val context = ServicesManagerConfigurationContext.builder()
             .serviceRegistry(new InMemoryServiceRegistry(applicationContext))
@@ -49,10 +49,11 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         return new DefaultServicesManager(context);
     }
 
-    private static OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
+    private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
+            new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties),
+            oauthRequestParameterResolver);
     }
 
     private static OAuthRegisteredService buildRegisteredService(final ServicesManager serviceManager) {

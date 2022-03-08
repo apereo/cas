@@ -17,6 +17,7 @@ import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestUriResponseBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationCodeAuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
@@ -148,11 +149,13 @@ public class OidcResponseConfiguration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService) {
             return new OidcPushedAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-                centralAuthenticationService);
+                centralAuthenticationService, oauthRequestParameterResolver);
         }
     }
 

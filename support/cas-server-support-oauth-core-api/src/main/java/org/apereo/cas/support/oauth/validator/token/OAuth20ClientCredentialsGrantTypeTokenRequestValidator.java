@@ -22,7 +22,8 @@ public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAut
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
+        val grantType = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);
     }

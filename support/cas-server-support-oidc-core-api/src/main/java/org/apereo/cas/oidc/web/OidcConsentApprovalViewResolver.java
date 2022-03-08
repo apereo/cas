@@ -8,7 +8,7 @@ import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,15 @@ import java.util.Map;
 @Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
     private final CentralAuthenticationService centralAuthenticationService;
+    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties,
                                            final SessionStore sessionStore,
-                                           final CentralAuthenticationService centralAuthenticationService) {
+                                           final CentralAuthenticationService centralAuthenticationService,
+                                           final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
         super(casProperties, sessionStore);
         this.centralAuthenticationService = centralAuthenticationService;
+        this.oauthRequestParameterResolver = oauthRequestParameterResolver;
     }
 
     @Override
@@ -70,8 +73,8 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
             val supportedScopes = new HashSet<>(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
             supportedScopes.retainAll(oidcRegisteredService.getScopes());
 
-            val requestedScopes = OAuth20Utils.getRequestedScopes(webContext);
-            val userInfoClaims = OAuth20Utils.parseUserInfoRequestClaims(webContext);
+            val requestedScopes = oauthRequestParameterResolver.resolveRequestedScopes(webContext);
+            val userInfoClaims = oauthRequestParameterResolver.resolveUserInfoRequestClaims(webContext);
             webContext.getRequestParameter(OidcConstants.REQUEST_URI).ifPresent(Unchecked.consumer(uri -> {
                 val authzRequest = centralAuthenticationService.getTicket(uri, OidcPushedAuthorizationRequest.class);
                 val uriFactory = (OidcPushedAuthorizationRequestFactory) centralAuthenticationService.getTicketFactory().get(OidcPushedAuthorizationRequest.class);

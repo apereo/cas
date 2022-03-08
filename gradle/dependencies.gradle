@@ -2865,7 +2865,8 @@ ext.libraries = [
                     exclude(group: "org.apache.curator", module: "curator-framework")
                     exclude(group: "org.apache.curator", module: "curator-client")
                     exclude(group: "com.google.guava", module: "guava")
-
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("org.apache.curator:curator-recipes:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
@@ -2883,9 +2884,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.springframework.integration:spring-integration-zookeeper:$springIntegrationVersion") {
+                    exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.curator", module: "curator-recipes")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         springcloudconsul       : [

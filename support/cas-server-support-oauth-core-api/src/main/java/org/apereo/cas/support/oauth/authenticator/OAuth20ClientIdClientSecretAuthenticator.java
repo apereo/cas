@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -55,6 +56,9 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     private final TicketRegistry ticketRegistry;
 
     private final PrincipalResolver principalResolver;
+
+    @Getter
+    private final OAuth20RequestParameterResolver requestParameterResolver;
 
     @Override
     public void validate(final Credentials credentials, final WebContext webContext,

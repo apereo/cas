@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
@@ -87,6 +88,8 @@ public class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
             final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -103,7 +106,8 @@ public class CasOAuth20ThrottleConfiguration {
                 accessTokenGrantRequestExtractors,
                 servicesManager,
                 oauthDistributedSessionStore,
-                oauthAuthorizationRequestValidators);
+                oauthAuthorizationRequestValidators,
+                oauthRequestParameterResolver);
         }
 
         @Bean

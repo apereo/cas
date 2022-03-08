@@ -1,15 +1,11 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -17,14 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidatorTests}.
@@ -34,6 +30,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
+    @Autowired
+    @Qualifier("oauthPasswordGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;
 
     private OAuthRegisteredService supportingService;
@@ -44,7 +42,6 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
 
     @BeforeEach
     public void before() {
-        val serviceManager = mock(ServicesManager.class);
         supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
@@ -62,23 +59,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends Abstract
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.SHARED_SECRET);
-
-        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
-            supportingService, nonSupportingService, promiscuousService));
-        when(serviceManager.getAllServicesOfType(any())).thenReturn(CollectionUtils.wrapList(
-            supportingService, nonSupportingService, promiscuousService));
-
-        val context = OAuth20ConfigurationContext.builder()
-            .servicesManager(serviceManager)
-            .webApplicationServiceServiceFactory(new WebApplicationServiceFactory())
-            .centralAuthenticationService(centralAuthenticationService)
-            .ticketRegistry(ticketRegistry)
-            .casProperties(casProperties)
-            .registeredServiceAccessStrategyEnforcer(
-                new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties))
-            .sessionStore(JEESessionStore.INSTANCE)
-            .build();
-        this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(context);
+        servicesManager.deleteAll();
+        servicesManager.save(supportingService, nonSupportingService, promiscuousService);
     }
 
     @Test
