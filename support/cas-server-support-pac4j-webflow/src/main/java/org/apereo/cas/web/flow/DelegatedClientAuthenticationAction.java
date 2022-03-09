@@ -35,7 +35,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -149,8 +148,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 populateContextWithClientCredential(client, webContext, context);
                 return super.doExecute(context);
             }
-
-            produceDelegatedAuthenticationClientsForContext(context, response);
+            produceDelegatedAuthenticationClientsForContext(context);
         } catch (final HttpAction e) {
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
@@ -179,11 +177,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     /**
      * Produce delegated authentication clients for context.
      *
-     * @param context  the context
-     * @param response the response
+     * @param context the context
      */
-    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context,
-                                                                   final HttpServletResponse response) {
+    protected void produceDelegatedAuthenticationClientsForContext(final RequestContext context) {
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
         LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
         WebUtils.createCredential(context);
@@ -192,14 +189,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         }
         configContext.getDelegatedClientIdentityProviderConfigurationPostProcessor().process(context, providers);
 
-        providers
-            .stream()
-            .filter(provider -> provider.getAutoRedirectType() == DelegationAutoRedirectTypes.SERVER)
-            .findFirst()
-            .ifPresent(Unchecked.consumer(provider -> {
-                LOGGER.debug("Redirecting to [{}]", provider.getRedirectUrl());
-                response.sendRedirect(provider.getRedirectUrl());
-            }));
+        if (!singleSignOnSessionExists(context)) {
+            providers
+                .stream()
+                .filter(provider -> provider.getAutoRedirectType() == DelegationAutoRedirectTypes.SERVER)
+                .findFirst()
+                .ifPresent(Unchecked.consumer(provider -> {
+                    LOGGER.debug("Redirecting to [{}]", provider.getRedirectUrl());
+                    response.sendRedirect(provider.getRedirectUrl());
+                }));
+        }
     }
 
     @Override
