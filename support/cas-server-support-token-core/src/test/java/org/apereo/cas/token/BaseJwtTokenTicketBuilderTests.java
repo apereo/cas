@@ -80,6 +80,10 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     protected CipherExecutor tokenCipherExecutor;
 
     @Autowired
+    @Qualifier("tokenTicketJwtBuilder")
+    protected JwtBuilder tokenTicketJwtBuilder;
+
+    @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
