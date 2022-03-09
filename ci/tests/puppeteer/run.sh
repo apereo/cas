@@ -161,7 +161,7 @@ if [[ "${CI}" == "true" ]]; then
   printgreen "DEBUG flag is turned off while running CI"
   DEBUG=""
   printgreen "Gradle daemon is turned off while running CI"
-  DAEMON="--no-daemon"
+  DAEMON="--daemon"
 fi
 
 if [[ "${RERUN}" == "true" ]]; then

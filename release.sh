@@ -46,7 +46,7 @@ echo -e "\t\tsigning.keyId=YOUR_KEY_ID"
 echo -e "\t\tsigning.password=YOUR_KEY_PASSWORD"
 echo -e "\t\tsigning.secretKeyRingFile=/path/to/.gnupg/secring.gpg"
 echo -e "\t- Disable the Gradle daemon and parallel processing via '~/.gradle/gradle.properties':"
-echo -e "\t\torg.gradle.daemon=false"
+echo -e "\t\torg.gradle.daemon=true"
 echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 

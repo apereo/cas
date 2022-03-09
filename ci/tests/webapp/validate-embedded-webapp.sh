@@ -62,7 +62,7 @@ testUrl() {
 echo "Building CAS server web application with ${webAppServerType}"
 ./gradlew :webapp:cas-server-webapp-"${webAppServerType}":build \
   -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel
+  --daemon --build-cache --configure-on-demand --parallel
 
 mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*-SNAPSHOT.war \
 webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war

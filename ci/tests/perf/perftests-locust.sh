@@ -2,7 +2,7 @@
 
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel "
+gradleBuildOptions="--build-cache --configure-on-demand --daemon --parallel "
 webAppServerType="$1"
 
 echo -e "***********************************************"

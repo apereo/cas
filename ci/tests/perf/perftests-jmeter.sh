@@ -16,7 +16,7 @@ function printgreen() {
 jmeterVersion=5.4.3
 gradle="./gradlew "
 gradleBuild=""
-gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 "
+gradleBuildOptions="--build-cache --configure-on-demand --daemon --parallel --max-workers=8 "
 webAppServerType="$1"
 testCategory="${2:-cas}"
 
