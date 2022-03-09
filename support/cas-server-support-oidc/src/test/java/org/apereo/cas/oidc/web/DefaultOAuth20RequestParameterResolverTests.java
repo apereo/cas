@@ -52,9 +52,8 @@ public class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTes
 
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, List.class);
+        val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, String.class);
         assertFalse(scope.isEmpty());
         assertTrue(scope.get().contains("openid"));
-        assertTrue(scope.get().contains("profile"));
     }
 }
