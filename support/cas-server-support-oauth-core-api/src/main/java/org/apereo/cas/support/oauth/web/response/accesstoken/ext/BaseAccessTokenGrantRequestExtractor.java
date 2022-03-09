@@ -19,5 +19,5 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class BaseAccessTokenGrantRequestExtractor implements AccessTokenGrantRequestExtractor {
-    private final OAuth20ConfigurationContext oAuthConfigurationContext;
+    private final OAuth20ConfigurationContext configurationContext;
 }

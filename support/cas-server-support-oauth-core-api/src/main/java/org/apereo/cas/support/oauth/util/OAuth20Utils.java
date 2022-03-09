@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuth20Token;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -23,13 +22,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.hjson.JsonValue;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
@@ -39,16 +33,10 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -116,102 +104,6 @@ public class OAuth20Utils {
             .filter(predicate)
             .findFirst()
             .orElse(null);
-    }
-
-    /**
-     * Gets attributes.
-     *
-     * @param attributes the attributes
-     * @param context    the context
-     * @return the attributes
-     */
-    public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final WebContext context) {
-        return attributes
-            .stream()
-            .map(name -> {
-                val values = getRequestParameter(context, name)
-                    .map(value -> Arrays.stream(value.split(" ")).collect(Collectors.toSet()))
-                    .orElseGet(Set::of);
-                return Pair.of(name, values);
-            })
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-    }
-
-    /**
-     * Gets authorization parameter.
-     *
-     * @param context the context
-     * @param name    the name
-     * @return the authorization parameter
-     */
-    public static Optional<String> getRequestParameter(final WebContext context,
-                                                       final String name) {
-        return getRequestParameter(context, name, String.class);
-    }
-
-    /**
-     * Gets request parameter.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param name    the name
-     * @param clazz   the clazz
-     * @return the request parameter
-     */
-    public static <T> Optional<T> getRequestParameter(final WebContext context,
-                                                      final String name,
-                                                      final Class<T> clazz) {
-        return context.getRequestParameter(OAuth20Constants.REQUEST)
-            .map(Unchecked.function(jwtRequest -> getJwtRequestParameter(jwtRequest, name, clazz)))
-            .or(() -> {
-                val values = context.getRequestParameters().get(name);
-                if (values != null && values.length > 0) {
-                    if (clazz.isArray()) {
-                        return Optional.<T>of(clazz.cast(values));
-                    }
-                    if (Collection.class.isAssignableFrom(clazz)) {
-                        return Optional.<T>of(clazz.cast(CollectionUtils.wrapArrayList(values)));
-                    }
-                    return Optional.<T>of(clazz.cast(values[0]));
-                }
-                return Optional.<T>empty();
-            });
-    }
-
-    /**
-     * Gets jwt request parameter.
-     *
-     * @param <T>        the type parameter
-     * @param jwtRequest the jwt request
-     * @param name       the name
-     * @param clazz      the clazz
-     * @return the jwt request parameter
-     * @throws Exception the exception
-     */
-    public static <T> T getJwtRequestParameter(final String jwtRequest, final String name,
-                                               final Class<T> clazz) throws Exception {
-        val jwt = JwtBuilder.parse(jwtRequest);
-        if (clazz.isArray()) {
-            return clazz.cast(jwt.getStringArrayClaim(name));
-        }
-        if (Collection.class.isAssignableFrom(clazz)) {
-            return clazz.cast(jwt.getStringListClaim(name));
-        }
-        return clazz.cast(jwt.getStringClaim(name));
-    }
-
-    /**
-     * Gets requested scopes.
-     *
-     * @param context the context
-     * @return the requested scopes
-     */
-    public static Collection<String> getRequestedScopes(final WebContext context) {
-        val map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
-        if (map == null || map.isEmpty()) {
-            return new ArrayList<>(0);
-        }
-        return new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
     }
 
     /**
@@ -291,56 +183,6 @@ public class OAuth20Utils {
                || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
-    /**
-     * Gets response type.
-     *
-     * @param context the context
-     * @return the response type
-     */
-    public static OAuth20ResponseTypes getResponseType(final WebContext context) {
-        val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val type = Arrays.stream(OAuth20ResponseTypes.values())
-            .filter(t -> t.getType().equalsIgnoreCase(responseType))
-            .findFirst()
-            .orElse(OAuth20ResponseTypes.CODE);
-        LOGGER.debug("OAuth response type is [{}]", type);
-        return type;
-    }
-
-    /**
-     * Gets grant type.
-     *
-     * @param context the context
-     * @return the grant type
-     */
-    public static OAuth20GrantTypes getGrantType(final WebContext context) {
-        val grantType = getRequestParameter(context, OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val type = Arrays.stream(OAuth20GrantTypes.values())
-            .filter(t -> t.getType().equalsIgnoreCase(grantType))
-            .findFirst()
-            .orElse(OAuth20GrantTypes.NONE);
-        LOGGER.debug("OAuth grant type is [{}]", type);
-        return type;
-    }
-
-    /**
-     * Gets response mode type.
-     *
-     * @param context the context
-     * @return the response type
-     */
-    public static OAuth20ResponseModeTypes getResponseModeType(final WebContext context) {
-        val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val type = Arrays.stream(OAuth20ResponseModeTypes.values())
-            .filter(t -> t.getType().equalsIgnoreCase(responseType))
-            .findFirst()
-            .orElse(OAuth20ResponseModeTypes.NONE);
-        LOGGER.debug("OAuth response type is [{}]", type);
-        return type;
-    }
 
     /**
      * Check the grant type against an expected grant type.
@@ -375,75 +217,8 @@ public class OAuth20Utils {
         return expectedType.getType().equalsIgnoreCase(type);
     }
 
-    /**
-     * Is authorized response type for service?
-     *
-     * @param context           the context
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedResponseTypeForService(final WebContext context, final OAuthRegisteredService registeredService) {
-        if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
-            val responseType = getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
-            if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
-                return true;
-            }
-            LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
-                responseType, registeredService.getSupportedResponseTypes());
-            return false;
-        }
 
-        LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
-                    + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-                    + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
-        return true;
-    }
 
-    /**
-     * Is authorized grant type for service?
-     *
-     * @param grantType         the grant type
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedGrantTypeForService(final String grantType,
-                                                          final OAuthRegisteredService registeredService) {
-        if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
-            LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
-            return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
-        }
-
-        LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-                    + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-                    + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
-        return true;
-    }
-
-    /**
-     * Is authorized grant type for service?
-     *
-     * @param context           the context
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedGrantTypeForService(final WebContext context, final OAuthRegisteredService registeredService) {
-        val grantType = getRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
-        return isAuthorizedGrantTypeForService(grantType, registeredService);
-    }
-
-    /**
-     * Parse request scopes set.
-     *
-     * @param context the context
-     * @return the set
-     */
-    public static Set<String> parseRequestScopes(final WebContext context) {
-        val parameterValues = getRequestParameter(context, OAuth20Constants.SCOPE);
-        if (parameterValues.isEmpty()) {
-            return new HashSet<>(0);
-        }
-        return CollectionUtils.wrapSet(parameterValues.get().split(" "));
-    }
 
     /**
      * Gets service request header if any.
@@ -533,21 +308,6 @@ public class OAuth20Utils {
     }
 
     /**
-     * Parse request claims map.
-     *
-     * @param context the context
-     * @return the map
-     * @throws Exception the exception
-     */
-    public static Map<String, Map<String, Object>> parseRequestClaims(final WebContext context) throws Exception {
-        val claims = getRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(claims)) {
-            return new HashMap<>(0);
-        }
-        return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
-    }
-
-    /**
      * Parse user info request claims set.
      *
      * @param token the token
@@ -557,38 +317,6 @@ public class OAuth20Utils {
         return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
     }
 
-    /**
-     * Parse user info request claims set.
-     *
-     * @param context the context
-     * @return the set
-     * @throws Exception the exception
-     */
-    public static Set<String> parseUserInfoRequestClaims(final WebContext context) throws Exception {
-        val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>(0)).keySet();
-    }
-
-    /**
-     * Gets client id and client secret.
-     *
-     * @param webContext   the web context
-     * @param sessionStore the session store
-     * @return the client id and client secret
-     */
-    public static Pair<String, String> getClientIdAndClientSecret(final WebContext webContext, final SessionStore sessionStore) {
-        val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(webContext, sessionStore);
-        if (upcResult.isPresent()) {
-            val upc = (UsernamePasswordCredentials) upcResult.get();
-            return Pair.of(upc.getUsername(), upc.getPassword());
-        }
-        val clientId = getRequestParameter(webContext, OAuth20Constants.CLIENT_ID)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = getRequestParameter(webContext, OAuth20Constants.CLIENT_SECRET)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return Pair.of(clientId, clientSecret);
-    }
 
     /**
      * Gets authenticated user profile.

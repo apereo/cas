@@ -141,7 +141,7 @@ tasks.withType(Test) {
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
     doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 8)
         if (maxParallelForks != 2) {
             logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
         }

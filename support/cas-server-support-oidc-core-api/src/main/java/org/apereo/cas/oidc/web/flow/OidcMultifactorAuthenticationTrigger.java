@@ -12,7 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -52,28 +52,9 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
     private final ApplicationContext applicationContext;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
+    private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
-    private static String getAuthenticationClassReference(final HttpServletRequest request,
-                                                          final HttpServletResponse response) {
-        val context = new JEEContext(request, response);
-        val acr = OAuth20Utils.getRequestParameter(context, OAuth20Constants.ACR_VALUES).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(acr)) {
-            val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-            if (StringUtils.isNotBlank(serviceParam)) {
-                val queryParams = Unchecked.supplier(
-                    () -> new URIBuilder(UriComponentsBuilder.fromUriString(serviceParam).toUriString()).getQueryParams()).get();
-                val parameter = queryParams
-                    .stream()
-                    .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
-                    .findFirst();
-                if (parameter.isPresent()) {
-                    return EncodingUtils.urlDecode(parameter.get().getValue());
-                }
-            }
-        }
-        return EncodingUtils.urlDecode(acr);
-    }
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -104,5 +85,26 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             .stream()
             .filter(v -> mappedAcrValues.contains(v.getId()))
             .findAny();
+    }
+
+    private String getAuthenticationClassReference(final HttpServletRequest request,
+                                                   final HttpServletResponse response) {
+        val context = new JEEContext(request, response);
+        val acr = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.ACR_VALUES).orElse(StringUtils.EMPTY);
+        if (StringUtils.isBlank(acr)) {
+            val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+            if (StringUtils.isNotBlank(serviceParam)) {
+                val queryParams = Unchecked.supplier(
+                    () -> new URIBuilder(UriComponentsBuilder.fromUriString(serviceParam).toUriString()).getQueryParams()).get();
+                val parameter = queryParams
+                    .stream()
+                    .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
+                    .findFirst();
+                if (parameter.isPresent()) {
+                    return EncodingUtils.urlDecode(parameter.get().getValue());
+                }
+            }
+        }
+        return EncodingUtils.urlDecode(acr);
     }
 }

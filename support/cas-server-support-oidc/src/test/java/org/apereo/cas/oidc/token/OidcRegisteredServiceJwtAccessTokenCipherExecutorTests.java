@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +26,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    public void verifyOperationGlobally() throws Exception {
+        val service = getOidcRegisteredService("whatever");
+        service.setJwks(null);
+        service.setClientId(UUID.randomUUID().toString());
+        
+        assertTrue(oidcRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
+        val at = getAccessToken();
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        assertNotNull(encoded);
+        val header = SignedJWT.parse(encoded).getHeader();
+        assertNotNull(header.getAlgorithm());
+        val decoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
+        assertNotNull(decoded);
+        assertEquals(at.getId(), decoded);
+    }
+
+
+    @Test
+    public void verifyOperationByService() throws Exception {
         val service = getOidcRegisteredService("whatever");
         assertTrue(oidcRegisteredServiceJwtAccessTokenCipherExecutor.supports(service));
         val at = getAccessToken();

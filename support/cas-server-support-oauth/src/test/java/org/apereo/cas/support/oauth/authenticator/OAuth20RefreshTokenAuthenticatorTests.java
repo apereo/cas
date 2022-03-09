@@ -34,7 +34,7 @@ public class OAuth20RefreshTokenAuthenticatorTests extends BaseOAuth20Authentica
         authenticator = new OAuth20RefreshTokenAuthenticator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()), ticketRegistry,
             new OAuth20RegisteredServiceCipherExecutor(),
-            defaultPrincipalResolver);
+            defaultPrincipalResolver, oauthRequestParameterResolver);
     }
 
     @RetryingTest(3)

@@ -17,17 +17,19 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -61,12 +63,13 @@ import java.util.Optional;
     "org.apereo.cas.services.YamlServiceRegistry"
 })
 @ConditionalOnBean(ServicesManager.class)
-@ConditionalOnProperty(prefix = "cas.service-registry.core", name = "init-from-json", havingValue = "true")
 @Slf4j
 @EnableAspectJAutoProxy
 @EnableAsync
 @AutoConfigureAfter(CasCoreServicesConfiguration.class)
 public class CasServiceRegistryInitializationConfiguration {
+
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.service-registry.core.init-from-json").isTrue();
 
     @Configuration(value = "CasServiceRegistryInitializationEventsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -74,9 +77,14 @@ public class CasServiceRegistryInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryInitializerEventListener serviceRegistryInitializerConfigurationEventListener(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceRegistryInitializer")
             final ServiceRegistryInitializer serviceRegistryInitializer) {
-            return new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer);
+            return BeanSupplier.of(ServiceRegistryInitializerEventListener.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DefaultServiceRegistryInitializerEventListener(serviceRegistryInitializer))
+                .otherwiseProxy()
+                .get();
         }
     }
 
@@ -86,13 +94,18 @@ public class CasServiceRegistryInitializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceRegistryInitializer serviceRegistryInitializer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("embeddedJsonServiceRegistry")
             final ServiceRegistry embeddedJsonServiceRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry) {
-            return new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager);
+            return BeanSupplier.of(ServiceRegistryInitializer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> new DefaultServiceRegistryInitializer(embeddedJsonServiceRegistry, serviceRegistry, servicesManager))
+                .otherwiseProxy()
+                .get();
         }
 
     }
@@ -126,22 +139,33 @@ public class CasServiceRegistryInitializationConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
-            val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
-            val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
-                Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
-            if (!(location instanceof ClassPathResource) && casProperties.getServiceRegistry().getJson().isWatcherEnabled()) {
-                registry.enableDefaultWatcherService();
-            }
-            return registry;
+            return BeanSupplier.of(ServiceRegistry.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(Unchecked.supplier(() -> {
+                    val location = getServiceRegistryInitializerServicesDirectoryResource(casProperties, applicationContext);
+                    val registry = new EmbeddedResourceBasedServiceRegistry(applicationContext, location,
+                        Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new), WatcherService.noOp());
+                    if (!(location instanceof ClassPathResource) && casProperties.getServiceRegistry().getJson().isWatcherEnabled()) {
+                        registry.enableDefaultWatcherService();
+                    }
+                    return registry;
+                }))
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "embeddedJsonServiceRegistryExecutionPlanConfigurer")
         public ServiceRegistryExecutionPlanConfigurer embeddedJsonServiceRegistryExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("embeddedJsonServiceRegistry")
             final ServiceRegistry embeddedJsonServiceRegistry) {
-            return plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry);
+            return BeanSupplier.of(ServiceRegistryExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerServiceRegistry(embeddedJsonServiceRegistry))
+                .otherwiseProxy()
+                .get();
         }
     }
 

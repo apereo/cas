@@ -64,6 +64,6 @@ public class ClientCredential implements Credential {
             }
             return this.userProfile.getId();
         }
-        return NOT_YET_AUTHENTICATED + UUID.randomUUID().toString();
+        return NOT_YET_AUTHENTICATED + UUID.randomUUID();
     }
 }

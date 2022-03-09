@@ -35,7 +35,8 @@ public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authen
             authenticationSystemSupport,
             servicesManager, serviceFactory,
             new OAuth20RegisteredServiceCipherExecutor(),
-            JEESessionStore.INSTANCE);
+            JEESessionStore.INSTANCE,
+            oauthRequestParameterResolver);
     }
 
     @Test

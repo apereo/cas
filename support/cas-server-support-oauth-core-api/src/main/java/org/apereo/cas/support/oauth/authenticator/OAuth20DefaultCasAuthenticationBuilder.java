@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,11 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
     protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
     /**
+     * Resolver to locate request parameters.
+     */
+    protected final OAuth20RequestParameterResolver requestParameterResolver;
+
+    /**
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
@@ -89,14 +95,14 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>(0));
 
-        val scopes = OAuth20Utils.getRequestedScopes(context);
+        val scopes = requestParameterResolver.resolveRequestedScopes(context);
         val state = context.getRequestParameter(OAuth20Constants.STATE)
             .map(String::valueOf)
-            .or(() -> OAuth20Utils.getRequestParameter(context, OAuth20Constants.STATE))
+            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE))
             .orElse(StringUtils.EMPTY);
         val nonce = context.getRequestParameter(OAuth20Constants.NONCE)
             .map(String::valueOf)
-            .or(() -> OAuth20Utils.getRequestParameter(context, OAuth20Constants.NONCE))
+            .or(() -> requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.NONCE))
             .orElse(StringUtils.EMPTY);
         LOGGER.debug("OAuth [{}] is [{}], and [{}] is [{}]", OAuth20Constants.STATE, state, OAuth20Constants.NONCE, nonce);
 

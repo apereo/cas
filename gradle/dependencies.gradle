@@ -480,30 +480,30 @@ ext.libraries = [
         findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion") {
         },
         groovy                  : [
-                dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-jsr223:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-json:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-json:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-xml:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-xml:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-datetime:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-datetime:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-templates:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-templates:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-sql:$groovyVersion") {
+                dependencies.create("org.apache.groovy:groovy-sql:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                 },
-                dependencies.create("org.codehaus.groovy:groovy-groovysh:$groovyVersion") {
-                    exclude(group: "org.codehaus.groovy", module: "groovy-swing")
-                    exclude(group: "org.codehaus.groovy", module: "groovy-console")
+                dependencies.create("org.apache.groovy:groovy-groovysh:$groovyVersion") {
+                    exclude(group: "org.apache.groovy", module: "groovy-swing")
+                    exclude(group: "org.apache.groovy", module: "groovy-console")
                 }
         ],
         grouper                 : dependencies.create("edu.internet2.middleware.grouper:grouperClient:$grouperVersion") {
@@ -2865,7 +2865,8 @@ ext.libraries = [
                     exclude(group: "org.apache.curator", module: "curator-framework")
                     exclude(group: "org.apache.curator", module: "curator-client")
                     exclude(group: "com.google.guava", module: "guava")
-
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create("org.apache.curator:curator-recipes:$curatorVersion") {
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
@@ -2883,9 +2884,12 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create("org.springframework.integration:spring-integration-zookeeper:$springIntegrationVersion") {
+                    exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.curator", module: "curator-recipes")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         springcloudconsul       : [

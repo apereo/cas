@@ -34,6 +34,7 @@ import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
@@ -100,11 +101,14 @@ public class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcMultifactorAuthenticationTrigger")
         public MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("multifactorAuthenticationProviderResolver")
             final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver, applicationContext);
+            return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver,
+                applicationContext, oauthRequestParameterResolver);
         }
 
     }
@@ -169,6 +173,8 @@ public class OidcEndpointsConfiguration {
             final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
             @Qualifier("requiresAuthenticationDynamicRegistrationInterceptor")
             final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
@@ -182,7 +188,8 @@ public class OidcEndpointsConfiguration {
                 accessTokenGrantRequestExtractors,
                 servicesManager,
                 oauthDistributedSessionStore,
-                oauthRequestValidators);
+                oauthRequestValidators,
+                oauthRequestParameterResolver);
         }
     }
 

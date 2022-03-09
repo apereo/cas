@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 
 /**
@@ -17,8 +18,10 @@ public class OAuth20TokenResponseTypeAuthorizationRequestValidator extends OAuth
     public OAuth20TokenResponseTypeAuthorizationRequestValidator(
         final ServicesManager servicesManager,
         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-        final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final OAuth20RequestParameterResolver requestParameterResolver) {
+        super(servicesManager, webApplicationServiceServiceFactory,
+            registeredServiceAccessStrategyEnforcer, requestParameterResolver);
     }
 
     @Override

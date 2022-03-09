@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.services.DynamoDbServiceRegistry;
 import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -32,13 +34,15 @@ import java.util.Optional;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "DynamoDbServiceRegistryConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "hazelcast")
 public class DynamoDbServiceRegistryConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(final CasConfigurationProperties casProperties,
-                                                                                 @Qualifier("amazonDynamoDbServiceRegistryClient")
-                                                                                 final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
+    public DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("amazonDynamoDbServiceRegistryClient")
+        final DynamoDbClient amazonDynamoDbServiceRegistryClient) {
         val db = casProperties.getServiceRegistry().getDynamoDb();
         return new DynamoDbServiceRegistryFacilitator(db, amazonDynamoDbServiceRegistryClient);
     }
@@ -46,10 +50,11 @@ public class DynamoDbServiceRegistryConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "dynamoDbServiceRegistry")
-    public ServiceRegistry dynamoDbServiceRegistry(final ConfigurableApplicationContext applicationContext,
-                                                   final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
-                                                   @Qualifier("dynamoDbServiceRegistryFacilitator")
-                                                   final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
+    public ServiceRegistry dynamoDbServiceRegistry(
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        @Qualifier("dynamoDbServiceRegistryFacilitator")
+        final DynamoDbServiceRegistryFacilitator dynamoDbServiceRegistryFacilitator) {
         return new DynamoDbServiceRegistry(applicationContext, dynamoDbServiceRegistryFacilitator,
             Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
     }
