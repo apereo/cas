@@ -111,6 +111,7 @@ A special [attribute release policy](../integration/Attribute-Release-Policies.h
 - Server-side automatic redirects used for [delegated authentication](../integration/Delegate-Authentication.html) can now correctly recognize an existing SSO session.
 - Internal improvements to the Gradle build to remove deprecated elements, in early preparation for Gradle 9.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce WAR Overlay projects that take advantage of Gradle's support for BOMs, making it more predictable to handle dependency management issues and conflicts.
+- [OpenID Connect support](../protocol/OIDC-Protocol.html) for handling signed authentication requests using the `request` parameter is now included.
 
 ## Library Upgrades
      
