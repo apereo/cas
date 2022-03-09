@@ -39,6 +39,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -119,6 +120,25 @@ public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
         if (gitDir.exists()) {
             PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
         }
+    }
+
+    /**
+     * Verify that a malformed json file is not preventing the remaining valid json files from being loaded
+     */
+    @Test
+    public void verifyMalformedJsonFile() throws IOException {
+        val gitDir = new File(FileUtils.getTempDirectory(), GitServiceRegistryProperties.DEFAULT_CAS_SERVICE_REGISTRY_NAME);
+
+        FileUtils.write(Paths.get(gitDir.getAbsolutePath(), "svc-cfg", RegexRegisteredService.FRIENDLY_NAME,
+            "malformed-1.json").normalize().toFile(), "{\"@class\":\"xxxx\"", StandardCharsets.UTF_8);
+        gitRepositoryInstance.commitAll("Malformed json file");
+
+        val svc = buildRegisteredServiceInstance(RandomUtils.nextLong(), RegexRegisteredService.class);
+        svc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+        newServiceRegistry.save(svc);
+
+        val size = newServiceRegistry.load().size();
+        assertEquals(1, size);
     }
 
     @Test
