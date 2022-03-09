@@ -55,7 +55,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
 ##########################################################################
   cache:
@@ -76,7 +76,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/checkout@v3
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies
@@ -117,7 +117,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
@@ -149,7 +149,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v2
         with:

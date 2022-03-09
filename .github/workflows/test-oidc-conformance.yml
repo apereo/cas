@@ -53,7 +53,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
   ##########################################################################
 
@@ -77,7 +77,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
       - uses: actions/cache@v2
         with:
