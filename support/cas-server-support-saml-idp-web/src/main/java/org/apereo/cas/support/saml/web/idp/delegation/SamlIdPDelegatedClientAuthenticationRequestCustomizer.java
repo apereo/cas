@@ -38,42 +38,37 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
 
     @Override
     public void customize(final IndirectClient client, final WebContext webContext) {
-        val authnRequestResult = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class)
+        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
+                sessionStore, openSamlConfigBean, AuthnRequest.class)
             .map(Pair::getLeft)
             .map(AuthnRequest.class::cast);
 
-        authnRequestResult.ifPresent(authnRequest -> {
-            LOGGER.debug("Retrieved the SAML2 authentication request from [{}]", SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
+        result.ifPresent(authnRequest -> {
+            LOGGER.debug("Retrieved the SAML2 authentication request from [{}]",
+                SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
             if (authnRequest.isForceAuthn()) {
-                webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+                customizeForceAuthnRequest(client, webContext, authnRequest);
             }
             if (authnRequest.isPassive()) {
-                webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+                customizePassiveAuthnRequest(client, webContext);
             }
-            val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
-            if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
-                && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
-                val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
-                    .map(XSURI::getURI)
-                    .collect(Collectors.toList());
-                webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
-                webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE,
-                    requestedAuthnContext.getComparison().name());
-            }
+            customizeAuthnContextClass(client, webContext, authnRequest);
         });
     }
 
     @Override
     public boolean isAuthorized(final JEEContext webContext, final IndirectClient client,
                                 final WebApplicationService currentService) {
-        val result = SamlIdPUtils.retrieveSamlRequest(webContext, sessionStore, openSamlConfigBean, AuthnRequest.class);
+        val result = SamlIdPUtils.retrieveSamlRequest(webContext,
+            sessionStore, openSamlConfigBean, AuthnRequest.class);
         if (result.isEmpty()) {
             LOGGER.trace("No SAML2 authentication request found in session store");
             return true;
         }
 
         val authnRequest = (AuthnRequest) result.get().getLeft();
-        LOGGER.trace("Retrieved the SAML2 authentication request from [{}]", SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
+        LOGGER.trace("Retrieved the SAML2 authentication request from [{}]",
+            SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
 
         val idpList = authnRequest.getScoping() != null ? authnRequest.getScoping().getIDPList() : null;
         val idpEntries = idpList != null && idpList.getIDPEntrys() != null ? idpList.getIDPEntrys() : List.<IDPEntry>of();
@@ -92,5 +87,29 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     @Override
     public boolean supports(final IndirectClient client, final WebContext webContext) {
         return client instanceof SAML2Client;
+    }
+
+    protected void customizeAuthnContextClass(final IndirectClient client, final WebContext webContext,
+                                              final AuthnRequest authnRequest) {
+
+        val requestedAuthnContext = authnRequest.getRequestedAuthnContext();
+        if (requestedAuthnContext != null && requestedAuthnContext.getAuthnContextClassRefs() != null
+            && !requestedAuthnContext.getAuthnContextClassRefs().isEmpty()) {
+            val refs = requestedAuthnContext.getAuthnContextClassRefs().stream()
+                .map(XSURI::getURI)
+                .collect(Collectors.toList());
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_AUTHN_CONTEXT_CLASS_REFS, refs);
+            webContext.setRequestAttribute(SAML2ConfigurationContext.REQUEST_ATTR_COMPARISON_TYPE,
+                requestedAuthnContext.getComparison().name());
+        }
+    }
+
+    protected void customizePassiveAuthnRequest(final IndirectClient client, final WebContext webContext) {
+        webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true);
+    }
+
+    protected void customizeForceAuthnRequest(final IndirectClient client, final WebContext webContext,
+                                              final AuthnRequest authnRequest) {
+        webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
     }
 }

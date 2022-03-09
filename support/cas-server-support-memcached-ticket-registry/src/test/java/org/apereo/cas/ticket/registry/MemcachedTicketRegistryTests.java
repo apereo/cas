@@ -19,6 +19,8 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
@@ -92,7 +94,8 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() throws Exception {
-        val factory = new OAuth20DefaultOAuthCodeFactory(neverExpiresExpirationPolicyBuilder(), servicesManager);
+        val factory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
+            neverExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString());
         val code = factory.create(RegisteredServiceTestUtils.getService(),
             CoreAuthenticationTestUtils.getAuthentication(),
             new MockTicketGrantingTicket("casuser"),

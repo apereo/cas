@@ -31,7 +31,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+        val grantType = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
@@ -65,14 +65,14 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
         val clientId = getRegisteredServiceIdentifierFromRequest(context);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }
 
     @Override
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
-        return OAuth20Utils.getClientIdAndClientSecret(context, getOAuthConfigurationContext().getSessionStore()).getLeft();
+        return getConfigurationContext().getRequestParameterResolver().resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
     }
 
     /**

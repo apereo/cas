@@ -28,6 +28,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -76,6 +77,7 @@ public class CasCoreLogoutConfiguration {
                     LOGGER.trace("Configuring single logout url builder [{}]", builder.getName());
                     return builder;
                 })
+                .filter(BeanSupplier::isNotProxy)
                 .map(SingleLogoutServiceLogoutUrlBuilder.class::cast)
                 .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
                 .collect(Collectors.toList());

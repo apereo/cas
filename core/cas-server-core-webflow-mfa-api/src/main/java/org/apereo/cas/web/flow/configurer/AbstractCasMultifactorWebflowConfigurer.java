@@ -37,13 +37,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer implements CasMultifactorWebflowConfigurer {
-
-    private static final String MFA_CHECK_AVAILABLE_BEAN_ID = "mfaAvailableAction";
-
-    private static final String MFA_CHECK_BYPASS_BEAN_ID = "mfaBypassAction";
-
-    private static final String MFA_CHECK_FAILURE_BEAN_ID = "mfaFailureAction";
+public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer
+    implements CasMultifactorWebflowConfigurer {
 
     private static final String LOG_MESSAGE_TRANSITION_ID = "Locating transition id [{}] to process multifactor authentication for state [{}]...";
 
@@ -273,9 +268,12 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private void registerMultifactorProviderFailureAction(final Flow flow, final Flow mfaFlow) {
         if (flow != null) {
-            val failureAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_FAILURE, MFA_CHECK_FAILURE_BEAN_ID);
-            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
-            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val failureAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_FAILURE,
+                CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE);
+            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE,
+                CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
+            createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS,
+                CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
             LOGGER.trace("Adding end state [{}] with transition to flow [{}] for MFA",
                 CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, flow.getId());
@@ -288,19 +286,21 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     }
 
     private void registerMultifactorProviderAvailableAction(final Flow mfaFlow, final String targetStateId) {
-        val availableAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE, MFA_CHECK_AVAILABLE_BEAN_ID);
+        val availableAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE,
+            CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE);
         if (mfaFlow.containsState(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH)) {
-            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
+            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES,
+                CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
         } else {
             createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, targetStateId);
         }
-        createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.TRANSITION_ID_MFA_FAILURE);
+        createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_MFA_FAILURE);
     }
 
     private void registerMultifactorProviderBypassAction(final Flow mfaFlow) {
         val bypassAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS,
-            createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
+            CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS);
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE);
-        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_SUCCESS);
     }
 }

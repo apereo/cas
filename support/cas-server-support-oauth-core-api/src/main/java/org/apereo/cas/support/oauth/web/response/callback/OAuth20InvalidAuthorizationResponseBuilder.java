@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,12 @@ import java.util.Map;
 public class OAuth20InvalidAuthorizationResponseBuilder {
     private final ServicesManager servicesManager;
 
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
     /**
      * Build string.
      *
-     * @param context  the context
+     * @param context the context
      * @return the view response
      */
     public ModelAndView build(final JEEContext context) {
@@ -85,7 +88,7 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
                                                   final String clientId, final String redirectUrl,
                                                   final Map<String, String> parameters) {
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        val responseType = OAuth20Utils.getResponseModeType(context);
+        val responseType = requestParameterResolver.resolveResponseModeType(context);
         if (OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType)) {
             val model = new LinkedHashMap<String, Object>();
             model.put("originalUrl", redirectUrl);

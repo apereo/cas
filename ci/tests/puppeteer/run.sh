@@ -86,6 +86,11 @@ while (( "$#" )); do
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
     ;;
+  --hr)
+    export HEADLESS="true"
+    RERUN="true"
+    shift 1;
+    ;;
   --hbo)
     export HEADLESS="true"
     REBUILD="true"

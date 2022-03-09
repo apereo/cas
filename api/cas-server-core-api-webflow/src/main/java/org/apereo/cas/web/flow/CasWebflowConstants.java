@@ -335,7 +335,7 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
 
     /**
-     * State to determine the MFA failure mode and what action to take.
+     * Transition to determine the MFA failure mode and what action to take.
      */
     String TRANSITION_ID_MFA_FAILURE = "mfaFailure";
 
@@ -1470,5 +1470,18 @@ public interface CasWebflowConstants {
      * Action id 'wsFederationClientRedirectAction'.
      */
     String ACTION_ID_WS_FEDERATION_REDIRECT = "wsFederationClientRedirectAction";
+
+    /**
+     * Action id 'mfaAvailableAction'.
+     */
+    String ACTION_ID_MFA_CHECK_AVAILABLE = "mfaAvailableAction";
+    /**
+     * Action id 'mfaBypassAction'.
+     */
+    String ACTION_ID_MFA_CHECK_BYPASS = "mfaBypassAction";
+    /**
+     * Action id 'mfaFailureAction'.
+     */
+    String ACTION_ID_MFA_CHECK_FAILURE = "mfaFailureAction";
 
 }

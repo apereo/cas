@@ -7,6 +7,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -44,8 +46,10 @@ public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidato
 
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
         when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
-        val v = new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
+        val v = new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
+            serviceManager, new WebApplicationServiceFactory(),
+            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()),
+            new DefaultOAuth20RequestParameterResolver(mock(JwtBuilder.class)));
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

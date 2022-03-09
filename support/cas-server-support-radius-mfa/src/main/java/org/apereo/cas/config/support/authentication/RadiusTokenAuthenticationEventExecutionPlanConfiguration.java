@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -169,6 +170,20 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "radiusMultifactorProviderAuthenticationMetadataPopulator")
+        public AuthenticationMetaDataPopulator radiusMultifactorProviderAuthenticationMetadataPopulator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("radiusMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider) {
+            val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                radiusMultifactorAuthenticationProvider, servicesManager);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "radiusAuthenticationMetaDataPopulator")
         public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
@@ -197,6 +212,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier("radiusMultifactorProviderAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator radiusMultifactorProviderAuthenticationMetadataPopulator,
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenAuthenticationHandler")
             final AuthenticationHandler radiusTokenAuthenticationHandler,
@@ -210,6 +227,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
                     if (StringUtils.isNotBlank(client.getInetAddress())) {
                         plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler);
                         plan.registerAuthenticationMetadataPopulator(radiusAuthenticationMetaDataPopulator);
+                        plan.registerAuthenticationMetadataPopulator(radiusMultifactorProviderAuthenticationMetadataPopulator);
                         plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(RadiusTokenCredential.class));
                     }
                 })

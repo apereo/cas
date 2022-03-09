@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.val;
@@ -22,7 +21,8 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
 
     @Override
     public boolean supports(final WebContext context) {
-        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
+        val challenge = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }
 
@@ -35,7 +35,8 @@ public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtract
     protected AccessTokenRequestContext extractInternal(
         final WebContext context,
         final AccessTokenRequestContext.AccessTokenRequestContextBuilder builder) {
-        val challenge = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
+        val challenge = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return builder.codeVerifier(challenge).build();
     }
 }

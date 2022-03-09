@@ -9,8 +9,6 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
     
-    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
-
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(2000);
 
@@ -20,12 +18,8 @@ const path = require('path');
     await cas.click(page, "li #SAML2Client")
     await page.waitForNavigation();
 
-    await page.waitForTimeout(5000)
-    await cas.loginWith(page, "morty", "panic");
-    await page.waitForTimeout(3000)
-
-    await cas.click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(5000)
+    await cas.loginWith(page, "user1", "password");
+    await page.waitForTimeout(2000)
 
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

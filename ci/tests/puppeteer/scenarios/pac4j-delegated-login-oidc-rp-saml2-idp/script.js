@@ -10,8 +10,6 @@ const path = require('path');
     await page.goto("https://localhost:8443/cas/login");
     await page.waitForTimeout(1000)
 
-    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/sp-metadata.xml'));
-
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
@@ -23,17 +21,14 @@ const path = require('path');
 
     await cas.assertVisibility(page, 'li #SAML2Client')
     await cas.click(page, "li #SAML2Client")
-    await page.waitForTimeout(6000)
-
-    await cas.loginWith(page, "morty", "panic");
     await page.waitForTimeout(3000)
 
-    await cas.click(page, "input[name='_eventId_proceed']")
-    await page.waitForTimeout(3000)
+    await cas.loginWith(page, "user1", "password");
+    await page.waitForTimeout(2000)
 
     console.log("Checking for page URL...")
     console.log(await page.url())
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(2000)
 
     console.log("Allowing release of scopes and claims...")
     console.log(await page.url())
@@ -47,7 +42,7 @@ const path = require('path');
     assert(result.searchParams.has("scope"));
 
     await cas.click(page, "#allow")
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(3000)
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
     console.log(page.url());

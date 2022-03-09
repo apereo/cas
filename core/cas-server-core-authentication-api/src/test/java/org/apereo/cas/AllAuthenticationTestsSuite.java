@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.DefaultPrincipalFactoryTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPostProcessorTests;
 import org.apereo.cas.authentication.GroovyAuthenticationPreProcessorTests;
 import org.apereo.cas.authentication.GroovyPrincipalFactoryTests;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderMetadataPopulatorTests;
 import org.apereo.cas.authentication.OneTimeTokenAccountTests;
 import org.apereo.cas.authentication.OneTimeTokenTests;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactoryTests;
@@ -80,6 +81,7 @@ import org.junit.platform.suite.api.Suite;
     NullPrincipalTests.class,
     EchoingPrincipalResolverTests.class,
     DefaultAuthenticationHandlerExecutionResultTests.class,
+    MultifactorAuthenticationProviderMetadataPopulatorTests.class,
     OneTimeTokenTests.class,
     CasSSLContextTests.class,
     DefaultAuthenticationHandlerResolverTests.class,

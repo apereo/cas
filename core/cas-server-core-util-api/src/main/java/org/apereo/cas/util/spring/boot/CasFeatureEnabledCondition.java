@@ -46,11 +46,11 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
         LOGGER.trace("Checking for feature module capability via [{}]", property);
         val propertyValue = context.getEnvironment().getProperty(property);
         if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
-            val message = "CAS feature " + property + " is disabled.";
+            val message = "CAS feature " + property + " is set to false.";
             LOGGER.trace(message);
             return ConditionOutcome.noMatch(message);
         }
-        val message = "CAS feature " + property + " is enabled.";
+        val message = "CAS feature " + property + " is set to true.";
         LOGGER.debug(message);
         return ConditionOutcome.match(message);
     }

@@ -206,7 +206,7 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
         };
         console.log(`Contacting ${url} via ${method}`)
         const handler = (res) => {
-            console.log(`Response status code: ${res.statusCode}`)
+            console.log(`Response status code: ${colors.green(res.statusCode)}`)
             if (statusCode > 0) {
                 assert(res.statusCode === statusCode);
             }

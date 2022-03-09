@@ -45,7 +45,6 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
 
     @BeforeEach
     public void before() throws Exception {
-        servicesManager.deleteAll();
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
@@ -64,9 +63,8 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends Abst
             RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
             RequestValidatorTestUtils.SHARED_SECRET);
 
-        servicesManager.save(supportingService);
-        servicesManager.save(nonSupportingService);
-        servicesManager.save(promiscuousService);
+        servicesManager.deleteAll();
+        servicesManager.save(supportingService, nonSupportingService, promiscuousService);
 
         registerTicket(SUPPORTING_TICKET, RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         registerTicket(NON_SUPPORTING_TICKET, RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
