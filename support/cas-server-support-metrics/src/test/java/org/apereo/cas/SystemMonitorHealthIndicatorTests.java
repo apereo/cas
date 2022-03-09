@@ -6,6 +6,7 @@ import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
@@ -44,11 +45,11 @@ public class SystemMonitorHealthIndicatorTests {
 
     @Autowired
     @Qualifier("metricsEndpoint")
-    private MetricsEndpoint metrics;
+    private ObjectProvider<MetricsEndpoint> metricsEndpoint;
     
     @Test
     public void verifyObserveOk() {
-        val monitor = new SystemMonitorHealthIndicator(metrics, 10);
+        val monitor = new SystemMonitorHealthIndicator(metricsEndpoint, 10);
         val status = monitor.health().getStatus();
         assertEquals(Status.UP, status);
     }
