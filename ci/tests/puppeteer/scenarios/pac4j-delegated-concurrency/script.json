@@ -13,5 +13,5 @@
   ],
   "loadScript": "./ci/tests/puppeteer/scenarios/pac4j-delegated-concurrency/test.js",
   "samplesRequested": 1,
-  "concurrencyRequested": 50
+  "concurrencyRequested": 25
 }

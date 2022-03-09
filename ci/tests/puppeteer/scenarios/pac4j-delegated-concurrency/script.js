@@ -12,9 +12,7 @@ const paramOptions = {
     samplesRequested: config.samplesRequested,
     concurrencyRequested: config.concurrencyRequested
 }
-const loadtest = async () => {
-    return await startPuppeteerLoadTest(paramOptions);
-}
+const loadtest = async () => await startPuppeteerLoadTest(paramOptions)
 
 loadtest().then(results => {
     console.log(JSON.stringify(results, null, 2))
