@@ -15,7 +15,7 @@ fi
 if [[ -z "${SP_ENTITY_ID}" ]]; then
   export SP_ENTITY_ID="cas:apereo:pac4j:saml"
 else
-  echo -e "Found existing ACS service at ${SP_ENTITY_ID}"
+  echo -e "Found existing SP entity id at ${SP_ENTITY_ID}"
 fi
 
 docker stop simplesamlphp-idp || true && docker rm simplesamlphp-idp || true

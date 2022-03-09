@@ -30,11 +30,11 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
 
     @Override
     public String build(final SamlProfileBuilderContext context) {
-        if (StringUtils.isNotBlank(context.getRegisteredService().getRequiredAuthenticationContextClass())) {
+        val requiredClass = context.getRegisteredService().getRequiredAuthenticationContextClass();
+        if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
-                context.getRegisteredService().getRequiredAuthenticationContextClass(),
-                context.getRegisteredService().getName());
-            return context.getRegisteredService().getRequiredAuthenticationContextClass();
+                requiredClass, context.getRegisteredService().getName());
+            return requiredClass;
         }
 
         val defClass = StringUtils.defaultIfBlank(
