@@ -85,9 +85,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
                 .filter(key -> key.getKey() != null).collect(Collectors.toList());
             return Optional.of(new JsonWebKeySet(keys).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
         }
-
         jwks = Objects.requireNonNull(defaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(issuer, OidcJsonWebKeyUsage.SIGNING)));
+        if (jwks.isEmpty()) {
+            LOGGER.warn("No signing key could be found for issuer " + issuer);
+            return Optional.empty();
+        }
         return Optional.of(jwks.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
     }
 
