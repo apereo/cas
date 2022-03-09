@@ -1,18 +1,18 @@
 #!/bin/bash
 
-if [[ -z "${SP_SLO_SERVICE}" ]] ; then
+if [[ -z "${SP_SLO_SERVICE}" ]]; then
   export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client&logoutendpoint=true"
 else
   echo -e "Found existing SLO service at ${SP_SLO_SERVICE}"
 fi
 
-if [[ -z "${SP_ACS_SERVICE}" ]] ; then
+if [[ -z "${SP_ACS_SERVICE}" ]]; then
   export SP_ACS_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client"
 else
   echo -e "Found existing ACS service at ${SP_ACS_SERVICE}"
 fi
 
-if [[ -z "${SP_ENTITY_ID}" ]] ; then
+if [[ -z "${SP_ENTITY_ID}" ]]; then
   export SP_ENTITY_ID="cas:apereo:pac4j:saml"
 else
   echo -e "Found existing ACS service at ${SP_ENTITY_ID}"

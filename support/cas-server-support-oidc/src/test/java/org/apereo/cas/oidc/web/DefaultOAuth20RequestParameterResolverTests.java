@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OIDC")
+@SuppressWarnings("JavaUtilDate")
 public class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     @Test
     public void verifySignedJwtWithClientId() {
