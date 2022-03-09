@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -104,22 +105,16 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
      * @return the event
      */
     protected Event locateUserAndProcess(final RequestContext requestContext, final PasswordManagementQuery query) {
-        if (sendForgotUsernameEmailToAccount(query, requestContext)) {
-            return success();
-        }
-        return getErrorEvent("username.failed", "Failed to send the username to the given email address", requestContext);
+        val result = sendForgotUsernameEmailToAccount(query, requestContext);
+        return FunctionUtils.doIf(result.isSuccess(),
+                () -> success(result),
+                () -> getErrorEvent("username.failed", "Cannot send the username to given email address", requestContext))
+            .get();
     }
-
-    /**
-     * Send forgot username email to account.
-     *
-     * @param query          the query
-     * @param requestContext the request context
-     * @return the boolean
-     */
-    protected boolean sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
-                                                       final RequestContext requestContext) {
-        val parameters = CollectionUtils.<String, Object>wrap("username", query.getUsername());
+    
+    protected EmailCommunicationResult sendForgotUsernameEmailToAccount(final PasswordManagementQuery query,
+                                                                        final RequestContext requestContext) {
+        val parameters = CollectionUtils.wrap("username", query.getUsername(), "email", query.getEmail());
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);

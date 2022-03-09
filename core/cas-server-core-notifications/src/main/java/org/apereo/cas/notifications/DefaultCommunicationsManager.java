@@ -2,6 +2,7 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
@@ -59,10 +60,10 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     }
 
     @Override
-    public boolean email(final Principal principal,
-                         final String attribute,
-                         final EmailProperties emailProperties,
-                         final String body) {
+    public EmailCommunicationResult email(final Principal principal,
+                                          final String attribute,
+                                          final EmailProperties emailProperties,
+                                          final String body) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
             val to = getFirstAttributeByName(principal, attribute);
             if (to.isPresent()) {
@@ -70,14 +71,13 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
             }
         }
         LOGGER.debug("Email attribute [{}] cannot be found or no configuration for email provider is defined", attribute);
-        return false;
+        return EmailCommunicationResult.builder().body(body).build();
     }
 
     @Override
-    public boolean email(final EmailProperties emailProperties, final String to, final String body) {
+    public EmailCommunicationResult email(final EmailProperties emailProperties, final String to, final String body) {
         try {
             LOGGER.trace("Attempting to send email [{}] to [{}]", body, to);
-
             if (!isMailSenderDefined() || emailProperties.isUndefined() || StringUtils.isBlank(to)) {
                 throw new IllegalAccessException("Could not send email; from/to/subject/text or email settings are undefined.");
             }
@@ -105,11 +105,11 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
                 helper.setBcc(emailProperties.getBcc());
             }
             this.mailSender.send(message);
-            return true;
+            return EmailCommunicationResult.builder().success(true).to(to).body(body).build();
         } catch (final Exception ex) {
             LoggingUtils.error(LOGGER, ex);
         }
-        return false;
+        return EmailCommunicationResult.builder().to(to).body(body).build();
     }
 
     @Override
@@ -134,7 +134,7 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
         }
         return this.smsSender.send(from, to, text);
     }
-    
+
     @Override
     public boolean validate() {
         if (!isMailSenderDefined()) {
