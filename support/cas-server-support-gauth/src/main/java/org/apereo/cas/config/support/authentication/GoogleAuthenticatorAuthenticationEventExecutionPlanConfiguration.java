@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -153,6 +154,19 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 googleAuthenticatorMultifactorAuthenticationProvider.getId());
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorProviderAuthenticationMetadataPopulator")
+        public AuthenticationMetaDataPopulator googleAuthenticatorMultifactorProviderAuthenticationMetadataPopulator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+            val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                googleAuthenticatorMultifactorAuthenticationProvider, servicesManager);
+        }
     }
 
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebConfiguration", proxyBeanMethods = false)
@@ -176,6 +190,8 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer googleAuthenticatorAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("googleAuthenticatorMultifactorProviderAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator googleAuthenticatorMultifactorProviderAuthenticationMetadataPopulator,
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAuthenticationHandler")
             final AuthenticationHandler googleAuthenticatorAuthenticationHandler,
@@ -185,6 +201,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getCore().getIssuer())) {
                     plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler);
                     plan.registerAuthenticationMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator);
+                    plan.registerAuthenticationMetadataPopulator(googleAuthenticatorMultifactorProviderAuthenticationMetadataPopulator);
                     plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));
                 }
             };

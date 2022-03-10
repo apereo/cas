@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -162,7 +163,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
             val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
-            if (sendEmail || sendSms) {
+            if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
         } else {
@@ -172,12 +173,6 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
     }
 
-    /**
-     * Build password management query.
-     *
-     * @param requestContext the request context
-     * @return the password management query
-     */
     protected PasswordManagementQuery buildPasswordManagementQuery(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = request.getParameter(REQUEST_PARAMETER_USERNAME);
@@ -215,16 +210,16 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
      * @param requestContext the request context
      * @return true /false
      */
-    protected boolean sendPasswordResetEmailToAccount(final String username, final String to, final String url,
-                                                      final RequestContext requestContext) {
+    protected EmailCommunicationResult sendPasswordResetEmailToAccount(final String username, final String to,
+                                                                       final String url,
+                                                                       final RequestContext requestContext) {
+        val reset = casProperties.getAuthn().getPm().getReset().getMail();
+        val parameters = CollectionUtils.<String, Object>wrap("url", url);
         if (StringUtils.isNotBlank(to)) {
-            val reset = casProperties.getAuthn().getPm().getReset().getMail();
-            val parameters = CollectionUtils.<String, Object>wrap("url", url);
             val credential = new BasicIdentifiableCredential();
             credential.setId(username);
             val person = principalResolver.resolve(credential);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
-
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val text = EmailMessageBodyBuilder.builder()
                 .properties(reset)
@@ -235,7 +230,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.debug("Sending password reset URL [{}] via email to [{}] for username [{}]", url, to, username);
             return this.communicationsManager.email(reset, to, text);
         }
-        return false;
+        return EmailCommunicationResult.builder().success(false).to(to).build();
     }
 
     /**

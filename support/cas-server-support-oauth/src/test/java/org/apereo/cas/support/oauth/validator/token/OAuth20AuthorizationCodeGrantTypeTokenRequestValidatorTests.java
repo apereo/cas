@@ -3,9 +3,7 @@ package org.apereo.cas.support.oauth.validator.token;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -15,22 +13,24 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20DefaultCasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeExpirationPolicy;
 import org.apereo.cas.ticket.code.OAuth20DefaultOAuthCodeFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -54,6 +54,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
 
     private OAuth20Code promiscuousServiceTicket;
 
+    @Autowired
+    @Qualifier("oauthAuthorizationCodeGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;
 
     @BeforeEach
@@ -82,15 +84,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
 
         this.servicesManager.deleteAll();
         this.servicesManager.save(supportingService, nonSupportingService, promiscuousService);
-
-        val context = OAuth20ConfigurationContext.builder()
-            .servicesManager(this.servicesManager)
-            .sessionStore(JEESessionStore.INSTANCE)
-            .ticketRegistry(this.ticketRegistry)
-            .webApplicationServiceServiceFactory(serviceFactory)
-            .registeredServiceAccessStrategyEnforcer(new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()))
-            .build();
-        this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(context);
     }
 
     @Test
@@ -219,7 +212,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             PrincipalFactoryUtils.newPrincipalFactory(),
             new WebApplicationServiceFactory(),
             new DefaultOAuth20ProfileScopeToAttributesFilter(),
-            new CasConfigurationProperties());
+            oauthRequestParameterResolver,
+            casProperties);
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
         val expirationPolicy = new ExpirationPolicyBuilder() {
             private static final long serialVersionUID = 3911344031977989503L;
@@ -235,7 +229,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests extends
             }
         };
 
-        val oauthCode = new OAuth20DefaultOAuthCodeFactory(expirationPolicy, mock(ServicesManager.class))
+        val oauthCode = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(), expirationPolicy,
+            mock(ServicesManager.class), CipherExecutor.noOpOfStringToString())
             .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
                 new MockTicketGrantingTicket("casuser"), new HashSet<>(),
                 null, null, "clientid12345",

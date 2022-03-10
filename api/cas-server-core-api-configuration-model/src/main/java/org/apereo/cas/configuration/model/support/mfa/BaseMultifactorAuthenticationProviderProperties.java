@@ -114,7 +114,11 @@ public abstract class BaseMultifactorAuthenticationProviderProperties implements
         /**
          * The default one indicating that no failure mode is set at all.
          */
-        UNDEFINED
-    }
+        UNDEFINED;
 
+        public boolean isAllowedToBypass() {
+            return this == MultifactorAuthenticationProviderFailureModes.OPEN
+                   || this == MultifactorAuthenticationProviderFailureModes.PHANTOM;
+        }
+    }
 }

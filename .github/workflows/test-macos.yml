@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
+      - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cancel-previous-runs]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -59,7 +59,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
   ##########################################################################
 
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [initialize]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -81,8 +81,8 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
-      - uses: actions/checkout@v2
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
+      - uses: actions/checkout@v3
       - name: Download Dependencies
         run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
       - uses: actions/cache@v2
@@ -99,7 +99,7 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -129,7 +129,7 @@ jobs:
     name: ${{ matrix.category }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -143,7 +143,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
         shell: bash
       - uses: actions/cache@v2
         with:

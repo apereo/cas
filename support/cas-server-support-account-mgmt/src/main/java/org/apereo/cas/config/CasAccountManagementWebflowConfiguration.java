@@ -78,6 +78,7 @@ import java.util.stream.Collectors;
  */
 @Configuration(value = "CasAccountManagementWebflowConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.AccountManagement)
 public class CasAccountManagementWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "accountMgmtCipherExecutor")

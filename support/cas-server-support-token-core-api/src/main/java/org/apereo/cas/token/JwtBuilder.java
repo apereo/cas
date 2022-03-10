@@ -8,12 +8,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -97,20 +99,25 @@ public class JwtBuilder {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(svc);
         });
 
-        if (service.isPresent()) {
-            val registeredService = service.get();
-            LOGGER.trace("Locating service specific signing and encryption keys for [{}] in service registry", registeredService);
-            if (registeredServiceCipherExecutor.supports(registeredService)) {
-                LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
-                return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+        val jwt = JWTParser.parse(jwtJson);
+        if (jwt instanceof SignedJWT) {
+            if (service.isPresent()) {
+                val registeredService = service.get();
+                LOGGER.trace("Locating service signing and encryption keys for [{}]", registeredService.getServiceId());
+                if (registeredServiceCipherExecutor.supports(registeredService)) {
+                    LOGGER.trace("Decoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+                    return parse(registeredServiceCipherExecutor.decode(jwtJson, Optional.of(registeredService)));
+                }
             }
-        }
 
-        if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.trace("Decoding JWT based on default global keys");
-            return parse(defaultTokenCipherExecutor.decode(jwtJson));
+            return FunctionUtils.doIf(defaultTokenCipherExecutor.isEnabled(),
+                () -> {
+                    LOGGER.trace("Decoding JWT based on default global keys");
+                    return parse(defaultTokenCipherExecutor.decode(jwtJson));
+                }, () -> {
+                    throw new IllegalArgumentException("Unable to validate JWT signature");
+                }).get();
         }
-
         return parse(jwtJson);
     }
 
@@ -199,6 +206,5 @@ public class JwtBuilder {
 
         @Builder.Default
         private Optional<RegisteredService> registeredService = Optional.empty();
-
     }
 }

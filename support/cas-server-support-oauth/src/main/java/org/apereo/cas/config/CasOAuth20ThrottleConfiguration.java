@@ -7,10 +7,12 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.OAuth20TicketGrantingTicketAwareSecurityLogic;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -67,9 +69,12 @@ public class CasOAuth20ThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    authenticationThrottlingExecutionPlan.ifAvailable(plan ->
-                        plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler)
-                            .order(0).addPathPatterns(BASE_OAUTH20_URL.concat("/*"))));
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        registry.addInterceptor(handler)
+                            .order(0)
+                            .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                    });
                 }
             };
         }
@@ -83,6 +88,8 @@ public class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
             final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -99,7 +106,8 @@ public class CasOAuth20ThrottleConfiguration {
                 accessTokenGrantRequestExtractors,
                 servicesManager,
                 oauthDistributedSessionStore,
-                oauthAuthorizationRequestValidators);
+                oauthAuthorizationRequestValidators,
+                oauthRequestParameterResolver);
         }
 
         @Bean
@@ -111,8 +119,11 @@ public class CasOAuth20ThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(final InterceptorRegistry registry) {
-                    registry.addInterceptor(oauthHandlerInterceptorAdapter.getObject())
-                        .order(1).addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
+                    val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
+                    registry
+                        .addInterceptor(handler)
+                        .order(1)
+                        .addPathPatterns(BASE_OAUTH20_URL.concat("/*"));
                 }
             };
         }

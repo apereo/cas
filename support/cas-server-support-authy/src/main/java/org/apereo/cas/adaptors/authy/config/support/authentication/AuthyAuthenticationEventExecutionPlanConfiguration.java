@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -130,6 +131,20 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "authyMultifactorProviderAuthenticationMetadataPopulator")
+    public AuthenticationMetaDataPopulator authyMultifactorProviderAuthenticationMetadataPopulator(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("authyAuthenticatorMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider authyMultifactorAuthenticationProvider) {
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+        return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+            authyMultifactorAuthenticationProvider, servicesManager);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -164,6 +179,8 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
+        @Qualifier("authyMultifactorProviderAuthenticationMetadataPopulator")
+        final AuthenticationMetaDataPopulator authyMultifactorProviderAuthenticationMetadataPopulator,
         @Qualifier("authyAuthenticationHandler")
         final AuthenticationHandler authyAuthenticationHandler,
         @Qualifier("authyAuthenticationMetaDataPopulator")
@@ -173,6 +190,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             .supply(() -> plan -> {
                 plan.registerAuthenticationHandler(authyAuthenticationHandler);
                 plan.registerAuthenticationMetadataPopulator(authyAuthenticationMetaDataPopulator);
+                plan.registerAuthenticationMetadataPopulator(authyMultifactorProviderAuthenticationMetadataPopulator);
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AuthyTokenCredential.class));
             })
             .otherwiseProxy()

@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.AccessLevel;
@@ -52,20 +53,10 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         return false;
     }
 
-    /**
-     * Is grant type supported service.
-     *
-     * @param registeredService the registered service
-     * @param type              the type
-     * @return true/false
-     */
-    protected static boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
-        return OAuth20Utils.isAuthorizedGrantTypeForService(type, registeredService);
-    }
-
     @Override
     public boolean validate(final WebContext context) {
-        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
+        val grantType = configurationContext.getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
@@ -80,6 +71,23 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
         val uProfile = profile.get();
         return validateInternal(context, grantType, manager, uProfile);
+    }
+
+    @Override
+    public boolean supports(final WebContext context) {
+        val grantType = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
+        return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
+    }
+
+    /**
+     * Is grant type supported service.
+     *
+     * @param registeredService the registered service
+     * @param type              the type
+     * @return true/false
+     */
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+        return OAuth20RequestParameterResolver.isAuthorizedGrantTypeForService(type, registeredService);
     }
 
     /**
@@ -104,10 +112,4 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * @return the grant type
      */
     protected abstract OAuth20GrantTypes getGrantType();
-
-    @Override
-    public boolean supports(final WebContext context) {
-        val grantType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE);
-        return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
-    }
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -65,7 +66,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
             val url = createAccountRegistrationActivationUrl(registrationRequest);
             val sendEmail = sendAccountRegistrationActivationEmail(registrationRequest, url, requestContext);
             val sendSms = sendAccountRegistrationActivationSms(registrationRequest, url);
-            if (sendEmail || sendSms) {
+            if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
         } catch (final Exception e) {
@@ -100,9 +101,9 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
      * @param requestContext      the request context
      * @return the boolean
      */
-    protected boolean sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
-                                                             final String url,
-                                                             final RequestContext requestContext) {
+    protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
+                                                                              final String url,
+                                                                              final RequestContext requestContext) {
         if (StringUtils.isNotBlank(registrationRequest.getEmail())) {
             val emailProps = casProperties.getAccountRegistration().getMail();
             val parameters = CollectionUtils.<String, Object>wrap("url", url);
@@ -115,7 +116,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .produce();
             return communicationsManager.email(emailProps, registrationRequest.getEmail(), text);
         }
-        return false;
+        return EmailCommunicationResult.builder().success(false).build();
     }
 
     /**

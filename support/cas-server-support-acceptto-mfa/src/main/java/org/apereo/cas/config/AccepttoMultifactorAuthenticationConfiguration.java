@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -183,6 +184,8 @@ public class AccepttoMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer casAccepttoAuthenticationQRCodeEventExecutionPlanConfigurer(
+            @Qualifier("casAccepttoMultifactorProviderAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator casAccepttoMultifactorProviderAuthenticationMetadataPopulator,
             @Qualifier("casAccepttoQRCodeAuthenticationHandler")
             final AuthenticationHandler casAccepttoQRCodeAuthenticationHandler,
             @Qualifier("casAccepttoQRCodeAuthenticationMetaDataPopulator")
@@ -192,6 +195,7 @@ public class AccepttoMultifactorAuthenticationConfiguration {
             return plan -> {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(casAccepttoQRCodeAuthenticationHandler, defaultPrincipalResolver);
                 plan.registerAuthenticationMetadataPopulator(casAccepttoQRCodeAuthenticationMetaDataPopulator);
+                plan.registerAuthenticationMetadataPopulator(casAccepttoMultifactorProviderAuthenticationMetadataPopulator);
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AccepttoEmailCredential.class));
             };
         }
@@ -216,9 +220,23 @@ public class AccepttoMultifactorAuthenticationConfiguration {
     @Configuration(value = "AccepttoMultifactorAuthenticationMetadataConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class AccepttoMultifactorAuthenticationMetadataConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casAccepttoMultifactorProviderAuthenticationMetadataPopulator")
+        public AuthenticationMetaDataPopulator casAccepttoMultifactorProviderAuthenticationMetadataPopulator(
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("casAccepttoMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider casAccepttoMultifactorAuthenticationProvider) {
+            val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+            return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                casAccepttoMultifactorAuthenticationProvider, servicesManager);
+        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casAccepttoQRCodeAuthenticationMetaDataPopulator")
         public AuthenticationMetaDataPopulator casAccepttoQRCodeAuthenticationMetaDataPopulator(
             final CasConfigurationProperties casProperties,
             @Qualifier("casAccepttoQRCodeAuthenticationHandler")

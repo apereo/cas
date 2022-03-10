@@ -8,6 +8,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.validator.authorization.BaseOAuth20AuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
@@ -26,8 +27,10 @@ public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20Authoriz
         final ServicesManager servicesManager,
         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
         final AuditableExecution registeredServiceAccessStrategyEnforcer,
-        final CentralAuthenticationService centralAuthenticationService) {
-        super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
+        final CentralAuthenticationService centralAuthenticationService,
+        final OAuth20RequestParameterResolver requestParameterResolver) {
+        super(servicesManager, webApplicationServiceServiceFactory,
+            registeredServiceAccessStrategyEnforcer, requestParameterResolver);
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

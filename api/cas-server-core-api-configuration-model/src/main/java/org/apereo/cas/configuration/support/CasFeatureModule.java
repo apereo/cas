@@ -221,6 +221,14 @@ public interface CasFeatureModule {
         /**
          * OAuth user managed access.
          */
-        UMA
+        UMA,
+        /**
+         * REST Protocol.
+         */
+        RestProtocol,
+        /**
+         * Reports.
+         */
+        Reports
     }
 }

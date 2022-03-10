@@ -51,6 +51,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
 
     private final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators;
 
+    private final ObjectProvider<OAuth20RequestParameterResolver> requestParameterResolver;
+
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
@@ -75,7 +77,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      * @return true/false
      */
     protected boolean clientNeedAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore.getObject()).getLeft();
+        val clientId = requestParameterResolver.getObject()
+            .resolveClientIdAndClientSecret(new JEEContext(request, response), this.sessionStore.getObject()).getLeft();
         if (clientId.isEmpty()) {
             return true;
         }

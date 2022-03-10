@@ -300,6 +300,7 @@ layout: null
         *   [Entity Id](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-EntityId.html)
         *   [Custom](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Triggers-Custom.html)
     *   [Bypass](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-Bypass.html)
+    *   [Failure Modes](/cas/{{ version }}/mfa/Configuring-Multifactor-Authentication-FailureModes.html)
     *   [Trusted Devices](#mfatrusteddevices)
         *   [Overview](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication.html)
         *   [Bypass](/cas/{{ version }}/mfa/Multifactor-TrustedDevice-Authentication-Bypass.html)

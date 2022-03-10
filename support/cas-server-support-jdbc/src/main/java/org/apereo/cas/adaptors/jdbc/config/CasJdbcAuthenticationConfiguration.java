@@ -20,9 +20,11 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticat
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -48,13 +50,15 @@ import java.util.HashSet;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@ConditionalOnFeature(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "jdbc")
 @Configuration(value = "CasJdbcAuthenticationConfiguration", proxyBeanMethods = false)
 public class CasJdbcAuthenticationConfiguration {
-    private static AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties b,
-                                                                                       final PasswordPolicyContext config,
-                                                                                       final ConfigurableApplicationContext applicationContext,
-                                                                                       final PrincipalFactory jdbcPrincipalFactory,
-                                                                                       final ServicesManager servicesManager) {
+    private static AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(
+        final SearchJdbcAuthenticationProperties b,
+        final PasswordPolicyContext config,
+        final ConfigurableApplicationContext applicationContext,
+        final PrincipalFactory jdbcPrincipalFactory,
+        final ServicesManager servicesManager) {
         val h = new SearchModeSearchDatabaseAuthenticationHandler(b, servicesManager, jdbcPrincipalFactory, JpaBeans.newDataSource(b));
         configureJdbcAuthenticationHandler(h, config, b, applicationContext);
         return h;

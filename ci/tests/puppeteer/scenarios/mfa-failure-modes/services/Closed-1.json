@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId": "^https://httpbin.org/anything/closed",
+  "name": "Closed",
+  "id": 1,
+  "description": "Closed Service",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-yubikey" ] ],
+    "failureMode" : "CLOSED"
+  }
+}

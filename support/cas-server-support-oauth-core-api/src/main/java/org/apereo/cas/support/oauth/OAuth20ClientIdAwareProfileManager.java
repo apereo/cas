@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,10 +31,15 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
 
     private final ServicesManager servicesManager;
 
-    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore,
-                                              final ServicesManager servicesManager) {
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
+    public OAuth20ClientIdAwareProfileManager(final WebContext context,
+                                              final SessionStore sessionStore,
+                                              final ServicesManager servicesManager,
+                                              final OAuth20RequestParameterResolver requestParameterResolver) {
         super(context, sessionStore);
         this.servicesManager = servicesManager;
+        this.requestParameterResolver = requestParameterResolver;
     }
 
     @Override
@@ -65,10 +71,10 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
     }
 
     private String getClientIdFromRequest() {
-        var clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        var clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(clientId)) {
-            val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+            val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
             val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
             clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;

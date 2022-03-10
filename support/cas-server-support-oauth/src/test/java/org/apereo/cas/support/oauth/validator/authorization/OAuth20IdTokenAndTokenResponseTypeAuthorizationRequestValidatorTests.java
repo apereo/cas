@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests {
+public class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
     @Test
     public void verifySupports() throws Exception {
         val serviceManager = mock(ServicesManager.class);
@@ -45,7 +45,7 @@ public class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTest
         when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
         when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
         val v = new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(serviceManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()));
+            new RegisteredServiceAccessStrategyAuditableEnforcer(casProperties), oauthRequestParameterResolver);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

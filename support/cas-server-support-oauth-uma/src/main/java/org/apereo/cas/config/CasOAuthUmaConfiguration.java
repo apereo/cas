@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -118,7 +119,17 @@ public class CasOAuthUmaConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "umaTokenSigningAndEncryptionService")
+        public OAuth20TokenSigningAndEncryptionService umaTokenSigningAndEncryptionService(
+            final CasConfigurationProperties casProperties) {
+            return new UmaRequestingPartyTokenSigningService(casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaConfigurationContext umaConfigurationContext(
+            @Qualifier("umaTokenSigningAndEncryptionService")
+            final OAuth20TokenSigningAndEncryptionService umaTokenSigningAndEncryptionService,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
@@ -140,11 +151,7 @@ public class CasOAuthUmaConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier("umaResourceSetRepository")
             final ResourceSetRepository umaResourceSetRepository,
-            final CasConfigurationProperties casProperties) {
-
-            val uma = casProperties.getAuthn().getOauth().getUma();
-            val jwks = uma.getRequestingPartyToken().getJwksFile().getLocation();
-            val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getCore().getIssuer());
+            final CasConfigurationProperties casProperties) throws Exception {
 
             return UmaConfigurationContext.builder()
                 .applicationContext(applicationContext)
@@ -158,7 +165,7 @@ public class CasOAuthUmaConfiguration {
                 .ticketRegistry(ticketRegistry)
                 .centralAuthenticationService(centralAuthenticationService)
                 .umaResourceSetRepository(umaResourceSetRepository)
-                .idTokenSigningAndEncryptionService(signingService)
+                .idTokenSigningAndEncryptionService(umaTokenSigningAndEncryptionService)
                 .ticketFactory(ticketFactory)
                 .build();
         }

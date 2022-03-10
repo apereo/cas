@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 
@@ -50,9 +49,12 @@ public abstract class BaseOAuth20AuthorizationResponseBuilder<T extends OAuth20C
         final WebContext context, final Authentication authentication,
         final Service service, final OAuthRegisteredService registeredService) {
         return Optional.of(OAuth20AuthorizationRequest.builder()
-            .clientId(OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY))
+            .clientId(configurationContext.getRequestParameterResolver()
+                .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY))
             .url(context.getRequestURL())
-            .responseType(OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
-            .grantType(OAuth20Utils.getRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
+            .responseType(configurationContext.getRequestParameterResolver()
+                .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY))
+            .grantType(configurationContext.getRequestParameterResolver()
+                .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY)));
     }
 }

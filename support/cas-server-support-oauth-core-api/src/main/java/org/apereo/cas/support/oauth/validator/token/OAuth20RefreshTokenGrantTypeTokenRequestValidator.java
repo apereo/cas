@@ -33,8 +33,10 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
 
-        val clientId = OAuth20Utils.getClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
-        val refreshTokenResult = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
+        val clientId = getConfigurationContext().getRequestParameterResolver()
+            .resolveClientIdAndClientSecret(context, getConfigurationContext().getSessionStore()).getLeft();
+        val refreshTokenResult = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
         if (refreshTokenResult.isEmpty() || clientId.isEmpty()) {
             return false;
         }

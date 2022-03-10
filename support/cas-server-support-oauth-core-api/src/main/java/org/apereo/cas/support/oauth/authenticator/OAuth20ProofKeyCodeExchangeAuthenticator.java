@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
@@ -37,9 +38,10 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
                                                     final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                     final TicketRegistry ticketRegistry,
                                                     final CipherExecutor<Serializable, String> registeredServiceCipherExecutor,
-                                                    final PrincipalResolver principalResolver) {
+                                                    final PrincipalResolver principalResolver,
+                                                    final OAuth20RequestParameterResolver requestParameterResolver) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-            registeredServiceCipherExecutor, ticketRegistry, principalResolver);
+            registeredServiceCipherExecutor, ticketRegistry, principalResolver, requestParameterResolver);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context,
                                        final SessionStore sessionStore) {
-        val clientSecret = OAuth20Utils.getClientIdAndClientSecret(context, sessionStore).getRight();
+        val clientSecret = getRequestParameterResolver().resolveClientIdAndClientSecret(context, sessionStore).getRight();
 
         if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, getRegisteredServiceCipherExecutor())) {
             throw new CredentialsException("Client Credentials provided is not valid for service: " + registeredService.getName());

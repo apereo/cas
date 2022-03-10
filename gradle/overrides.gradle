@@ -76,7 +76,7 @@ configurations.all {
                 if (requested.group == "org.apache.logging.log4j")  {
                     details.useVersion("${log4jVersion}")
                 }
-                if (requested.group == "org.codehaus.groovy")  {
+                if (requested.group == "org.apache.groovy")  {
                     details.useVersion("${groovyVersion}")
                 }
                 if (requested.group == "com.zaxxer")  {

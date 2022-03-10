@@ -8,13 +8,13 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -64,7 +64,6 @@ public class CasCoreMonitorConfiguration {
         return () -> Health.up().build();
     }
 
-    @ConditionalOnBean(name = "metricsEndpoint")
     @Configuration(value = "SystemHealthIndicatorConfiguration", proxyBeanMethods = false)
     public static class SystemHealthIndicatorConfiguration {
         @ConditionalOnMissingBean(name = "systemHealthIndicator")
@@ -74,7 +73,7 @@ public class CasCoreMonitorConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HealthIndicator systemHealthIndicator(
             @Qualifier("metricsEndpoint")
-            final MetricsEndpoint metricsEndpoint,
+            final ObjectProvider<MetricsEndpoint> metricsEndpoint,
             final CasConfigurationProperties casProperties) {
             val warnLoad = casProperties.getMonitor().getLoad().getWarn();
             return new SystemMonitorHealthIndicator(metricsEndpoint, warnLoad.getThreshold());

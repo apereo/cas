@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
+      - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
@@ -52,7 +52,7 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -66,7 +66,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
 ##########################################################################
   
@@ -76,7 +76,7 @@ jobs:
     outputs:
       scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -105,7 +105,7 @@ jobs:
     name: ${{matrix.scenario}}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -123,7 +123,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh
+        run: chmod -R +x ./ci/**/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests

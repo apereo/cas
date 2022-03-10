@@ -63,11 +63,11 @@ public class CommunicationsManagerTests {
         props.setReplyTo("bcc1@example.org");
 
         val body = EmailMessageBodyBuilder.builder().properties(props).build().produce();
-        assertTrue(communicationsManager.email(props, "sample@example.org", body));
+        assertTrue(communicationsManager.email(props, "sample@example.org", body).isSuccess());
         val p = mock(Principal.class);
         when(p.getId()).thenReturn("casuser");
         when(p.getAttributes()).thenReturn(CollectionUtils.wrap("email", List.of("cas@example.org")));
-        assertTrue(communicationsManager.email(p, "email", props, body));
+        assertTrue(communicationsManager.email(p, "email", props, body).isSuccess());
     }
 
     @Test
@@ -83,14 +83,14 @@ public class CommunicationsManagerTests {
         props.setFrom("cas@example.org");
         val body = EmailMessageBodyBuilder.builder().properties(props)
             .parameters(Map.of("k1", "param1", "k2", "param2")).build().produce();
-        assertTrue(communicationsManager.email(props, "sample@example.org", body));
+        assertTrue(communicationsManager.email(props, "sample@example.org", body).isSuccess());
     }
 
     @Test
     public void verifyMailNoAtr() {
         assertTrue(communicationsManager.isMailSenderDefined());
         assertFalse(communicationsManager.email(mock(Principal.class), "bad-attribute",
-            new EmailProperties(), StringUtils.EMPTY));
+            new EmailProperties(), StringUtils.EMPTY).isSuccess());
     }
 
     @Test

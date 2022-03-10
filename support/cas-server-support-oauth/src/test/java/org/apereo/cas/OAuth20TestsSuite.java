@@ -29,8 +29,9 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenExceptionTests;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeExceptionTests;
-import org.apereo.cas.support.oauth.web.CSRFCookieTests;
+import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolverTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenSecurityLogicTests;
+import org.apereo.cas.support.oauth.web.OAuth20CSRFCookieTests;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolverTests;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapterTests;
 import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
@@ -169,7 +170,8 @@ import org.junit.platform.suite.api.Suite;
     OAuth20InvalidAuthorizationResponseBuilderTests.class,
     OAuth20TicketGrantingTicketAwareSecurityLogicTests.class,
     OAuth20RegisteredServiceJwtAccessTokenCipherExecutorTests.class,
-    CSRFCookieTests.class,
+    OAuth20CSRFCookieTests.class,
+    DefaultOAuth20RequestParameterResolverTests.class,
     OAuth20LogoutDontReplicateSessionTests.class,
     OAuth20LogoutReplicateSessionTests.class,
     OAuth20AccessTokenSecurityLogicTests.class
