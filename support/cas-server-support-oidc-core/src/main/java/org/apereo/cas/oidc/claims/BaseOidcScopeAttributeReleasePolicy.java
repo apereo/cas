@@ -63,6 +63,13 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
                 val value = resolvedAttributes.get(mappedAttr);
                 LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
                 return Pair.of(claim, value);
+            } else if (resolvedAttributes.containsKey(claim)) {
+                val value = resolvedAttributes.get(claim);
+                LOGGER.debug("CAS is unable to find the attribute [{}] that is mapped to claim [{}]. "
+                             + "However, since resolved attributes [{}] already contain this claim, "
+                             + "CAS will use [{}] with value(s) [{}]",
+                    mappedAttr, claim, resolvedAttributes, claim, value);
+                return Pair.of(claim, value);
             } else {
                 LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet "
                             + "resolved attributes [{}] do not contain attribute [{}]",

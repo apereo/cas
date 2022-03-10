@@ -225,7 +225,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             })
             .collect(Collectors.toCollection(ArrayList::new));
 
-        getConfigurationContext().getIdTokenClaimCollector().collect(claims, attribute, collectionValues);
+        getConfigurationContext().getIdTokenClaimCollector().collect(claims, claimName, collectionValues);
     }
 
     /**
