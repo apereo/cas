@@ -4,12 +4,14 @@ import org.apereo.cas.adaptors.swivel.SwivelAuthenticationHandler;
 import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.swivel.SwivelTokenCredential;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,14 +39,30 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
-    public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator(final CasConfigurationProperties casProperties,
-                                                                                 @Qualifier("swivelAuthenticationHandler")
-                                                                                 final SwivelAuthenticationHandler swivelAuthenticationHandler,
-                                                                                 @Qualifier("swivelMultifactorAuthenticationProvider")
-                                                                                 final MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider) {
+    @ConditionalOnMissingBean(name = "swivelMultifactorProviderAuthenticationMetadataPopulator")
+    public AuthenticationMetaDataPopulator swivelMultifactorProviderAuthenticationMetadataPopulator(
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        final CasConfigurationProperties casProperties,
+        @Qualifier("swivelMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, swivelAuthenticationHandler, swivelMultifactorAuthenticationProvider.getId());
+        return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+            swivelMultifactorAuthenticationProvider, servicesManager);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "swivelAuthenticationMetaDataPopulator")
+    public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator(
+        final CasConfigurationProperties casProperties,
+        @Qualifier("swivelAuthenticationHandler")
+        final AuthenticationHandler swivelAuthenticationHandler,
+        @Qualifier("swivelMultifactorAuthenticationProvider")
+        final MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider) {
+        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+            swivelAuthenticationHandler, swivelMultifactorAuthenticationProvider.getId());
     }
 
     @ConditionalOnMissingBean(name = "swivelPrincipalFactory")
@@ -57,7 +75,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "swivelAuthenticationHandler")
-    public SwivelAuthenticationHandler swivelAuthenticationHandler(
+    public AuthenticationHandler swivelAuthenticationHandler(
         final CasConfigurationProperties casProperties,
         @Qualifier("swivelPrincipalFactory")
         final PrincipalFactory swivelPrincipalFactory,
@@ -90,13 +108,16 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer(
+        @Qualifier("swivelMultifactorProviderAuthenticationMetadataPopulator")
+        final AuthenticationMetaDataPopulator swivelMultifactorProviderAuthenticationMetadataPopulator,
         @Qualifier("swivelAuthenticationHandler")
-        final SwivelAuthenticationHandler swivelAuthenticationHandler,
+        final AuthenticationHandler swivelAuthenticationHandler,
         @Qualifier("swivelAuthenticationMetaDataPopulator")
         final AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator) {
         return plan -> {
             plan.registerAuthenticationHandler(swivelAuthenticationHandler);
             plan.registerAuthenticationMetadataPopulator(swivelAuthenticationMetaDataPopulator);
+            plan.registerAuthenticationMetadataPopulator(swivelMultifactorProviderAuthenticationMetadataPopulator);
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(SwivelTokenCredential.class));
         };
     }

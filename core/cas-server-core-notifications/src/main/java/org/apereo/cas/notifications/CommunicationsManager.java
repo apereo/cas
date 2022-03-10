@@ -2,6 +2,7 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 
 /**
  * This is {@link CommunicationsManager}.
@@ -53,9 +54,9 @@ public interface CommunicationsManager {
      * @param attribute       the email attribute
      * @param emailProperties the email properties
      * @param body            the body
-     * @return true /false
+     * @return the result
      */
-    boolean email(Principal principal,
+    EmailCommunicationResult email(Principal principal,
                   String attribute,
                   EmailProperties emailProperties,
                   String body);
@@ -66,9 +67,9 @@ public interface CommunicationsManager {
      * @param emailProperties the email properties
      * @param to              the to
      * @param body            the body
-     * @return true/false
+     * @return the result
      */
-    boolean email(EmailProperties emailProperties, String to, String body);
+    EmailCommunicationResult email(EmailProperties emailProperties, String to, String body);
 
     /**
      * Sms.

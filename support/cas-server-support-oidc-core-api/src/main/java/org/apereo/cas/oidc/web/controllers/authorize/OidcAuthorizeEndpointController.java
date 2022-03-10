@@ -49,7 +49,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
             return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.FORBIDDEN);
         }
 
-        val scopes = OAuth20Utils.getRequestedScopes(webContext);
+        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestedScopes(webContext);
         if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
                         + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",

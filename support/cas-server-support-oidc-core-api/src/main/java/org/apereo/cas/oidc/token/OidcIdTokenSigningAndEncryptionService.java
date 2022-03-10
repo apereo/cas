@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,12 +44,6 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
         return svc.getIdTokenSigningAlg();
     }
 
-    /**
-     * Should sign token for service?
-     *
-     * @param svc the svc
-     * @return true/false
-     */
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService svc) {
         if (svc instanceof OidcRegisteredService) {
@@ -102,9 +97,15 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
         if (service instanceof OidcRegisteredService) {
             val svc = OidcRegisteredService.class.cast(service);
             val jsonWebKey = getJsonWebKeyForEncryption(svc);
-            return encryptToken(svc.getIdTokenEncryptionAlg(), svc.getIdTokenEncryptionEncoding(),
+            return encryptToken(svc.getIdTokenEncryptionAlg(),
+                svc.getIdTokenEncryptionEncoding(),
                 jsonWebKey.getKeyId(), jsonWebKey.getPublicKey(), innerJwt);
         }
         return innerJwt;
+    }
+
+    @Override
+    public List<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+        return this.discoverySettings.getIdTokenSigningAlgValuesSupported();
     }
 }

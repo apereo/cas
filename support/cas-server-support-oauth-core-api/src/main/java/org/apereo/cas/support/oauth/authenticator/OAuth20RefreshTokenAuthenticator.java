@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -39,9 +40,10 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
                                             final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                             final TicketRegistry ticketRegistry,
                                             final CipherExecutor<Serializable, String> registeredServiceCipherExecutor,
-                                            final PrincipalResolver principalResolver) {
+                                            final PrincipalResolver principalResolver,
+                                            final OAuth20RequestParameterResolver requestParameterResolver) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
-            registeredServiceCipherExecutor, ticketRegistry, principalResolver);
+            registeredServiceCipherExecutor, ticketRegistry, principalResolver, requestParameterResolver);
     }
 
     @Override

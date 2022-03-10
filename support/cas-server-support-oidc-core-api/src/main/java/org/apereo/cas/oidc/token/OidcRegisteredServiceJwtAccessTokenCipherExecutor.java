@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
@@ -55,6 +56,14 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
      */
     protected final OidcIssuerService oidcIssuerService;
 
+    private static PublicJsonWebKey toJsonWebKey(final String key) throws Exception {
+        val details = EncodingUtils.parseJsonWebKey(key);
+        if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
+            return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().get(0);
+        }
+        return (PublicJsonWebKey) EncodingUtils.newJsonWebKey(key);
+    }
+
     @Override
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
         if (!isSigningEnabledForRegisteredService(registeredService)) {
@@ -67,7 +76,16 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         val oidcRegisteredService = OidcRegisteredService.class.cast(registeredService);
         val issuer = oidcIssuerService.determineIssuer(Optional.of(oidcRegisteredService));
         LOGGER.trace("Using issuer [{}] to determine JWKS from default keystore cache", issuer);
-        val jwks = Objects.requireNonNull(defaultJsonWebKeystoreCache.get(
+        var jwks = Objects.requireNonNull(serviceJsonWebKeystoreCache.get(
+            new OidcJsonWebKeyCacheKey(oidcRegisteredService, OidcJsonWebKeyUsage.SIGNING)));
+        if (jwks.isPresent()) {
+            val jsonWebKey = jwks.get();
+            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+            val keys = jsonWebKey.getJsonWebKeys().stream()
+                .filter(key -> key.getKey() != null).collect(Collectors.toList());
+            return Optional.of(new JsonWebKeySet(keys).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+        }
+        jwks = Objects.requireNonNull(defaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey(issuer, OidcJsonWebKeyUsage.SIGNING)));
         if (jwks.isEmpty()) {
             LOGGER.warn("No signing key could be found for issuer " + issuer);
@@ -110,14 +128,6 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
         return result;
     }
 
-    private static PublicJsonWebKey toJsonWebKey(final String key) throws Exception {
-        val details = EncodingUtils.parseJsonWebKey(key);
-        if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
-            return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().get(0);
-        }
-        return (PublicJsonWebKey) EncodingUtils.newJsonWebKey(key);
-    }
-
     @Override
     protected JwtTicketCipherExecutor createCipherExecutorInstance(
         final String encryptionKey,
@@ -134,7 +144,16 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             }
             if (EncodingUtils.isJsonWebKey(signingKey)) {
                 val jsonWebKey = toJsonWebKey(signingKey);
-                cipher.setSigningKey(jsonWebKey.getPrivateKey());
+
+                /**
+                 * Use the private key as the primary key to handle signing operations.
+                 * The private key may also be used for validating signed objects.
+                 * If the private key is not found, in the case where the keystore only contains a public
+                 * key, then use the public key as the primary signing key, turning this cipher into one
+                 * that can only verify signed objects, which would be useful when processing signed
+                 * request objects that are sent by the RP, which has the only copy of the private key.
+                 */
+                cipher.setSigningKey(ObjectUtils.defaultIfNull(jsonWebKey.getPrivateKey(), jsonWebKey.getKey()));
                 cipher.setSigningWebKey(jsonWebKey);
             }
         }).accept(cipher);
@@ -151,6 +170,7 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     @Getter
     private class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor {
         private JsonWebKey signingWebKey;
+
         private JsonWebKey encryptionWebKey;
 
         InternalJwtAccessTokenCipherExecutor(final String encryptionKey, final String signingKey) {
@@ -160,16 +180,18 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
         @Override
         protected byte[] sign(final byte[] value, final Key signingKey) {
-            if (signingWebKey != null) {
-                val kid = signingWebKey.getKeyId();
-                if (StringUtils.isNotBlank(kid)) {
-                    getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
-                }
-                val alg = StringUtils.defaultIfBlank(signingWebKey.getAlgorithm(),
-                    getSigningAlgorithmFor(signingWebKey.getKey()));
-                getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
-            }
-            return super.sign(value, signingKey);
+            return Optional.ofNullable(this.signingWebKey)
+                .map(key -> {
+                    val kid = key.getKeyId();
+                    if (StringUtils.isNotBlank(kid)) {
+                        getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
+                    }
+                    val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
+                        getSigningAlgorithmFor(key.getKey()));
+                    getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                    return super.signWith(value, alg, signingKey);
+                })
+                .orElseGet(() -> super.sign(value, signingKey));
         }
 
         @Override
@@ -198,7 +220,11 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().get(0);
             LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
             if (jsonWebKey.getPrivateKey() == null) {
-                LOGGER.warn("JSON web key used to sign the token has no associated private key");
+                LOGGER.info("JSON web key used to encrypt the token has no associated private key, "
+                            + "when operating on service [{}] with client id [{}]. Operations that deal "
+                            + "with JWT encryption/decryption may not be functional, until a private "
+                            + "key can be loaded for JSON web key [{}]",
+                    svc.getServiceId(), svc.getClientId(), jsonWebKey.getKeyId());
                 return null;
             }
             return jsonWebKey.getPrivateKey();

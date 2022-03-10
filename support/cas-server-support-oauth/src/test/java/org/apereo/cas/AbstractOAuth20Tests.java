@@ -55,8 +55,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
@@ -286,6 +286,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("defaultDeviceTokenFactory")
     protected OAuth20DeviceTokenFactory defaultDeviceTokenFactory;
+
+    @Autowired
+    @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+    protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Autowired
     @Qualifier("defaultDeviceUserCodeFactory")
@@ -664,7 +668,7 @@ public abstract class AbstractOAuth20Tests {
             .grantType(grantType)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
-            .claims(OAuth20Utils.parseRequestClaims(new JEEContext(mockRequest, mockResponse)))
+            .claims(oauthRequestParameterResolver.resolveRequestClaims(new JEEContext(mockRequest, mockResponse)))
             .build();
 
         val generatedToken = oauthTokenGenerator.generate(holder);

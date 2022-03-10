@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -23,10 +22,9 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
     protected Event doExecute(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
         val failureMode = provider.getFailureModeEvaluator().evaluate(service, provider);
-
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
-
-        if (failureMode == BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN) {
+        if (failureMode.isAllowedToBypass()) {
+            LOGGER.debug("Failure mode [{}] is allowed to bypass multifactor authentication", failureMode);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
 

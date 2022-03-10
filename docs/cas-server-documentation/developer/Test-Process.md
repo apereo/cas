@@ -162,15 +162,16 @@ The following command-line options are supported for test execution:
 |-----------------------------------+---------------------------------------------------------+
 | `--scenario`                      | The scenario name, typically modeled after the folder name that contains the test
 | `--install-puppeteer`, `--install`, `--i` | Install or update Puppeteer node modules.
-| `--debug`, `--d`  | Launch the CAS web application with remote debugging enabled.
-| `--debug-port`, `--port` | Specify the remote debugging port, typically `5000`.
+| `--debug`, `--d`                  | Launch the CAS web application with remote debugging enabled.
+| `--debug-port`, `--port`          | Specify the remote debugging port, typically `5000`.
 | `--debug-suspend`, `--suspend`, `--s` | Suspend the CAS web application on startup until a debugger session connects.
-| `--rebuild`, `--r`, `--build` | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
-| `--dry-run`, `--y` | Launch the CAS web application configured in the test without actually running the test.
-| `--headless`, `--h` | Launch the test scenario with a headless browser.
-| `--rerun|--resume|--z` | Launch the test scenario and assume the CAS web application is already running from a previous attempt.
-| `--hbo` | A combination of `--headless` and `--build` where the build is run using an `--offline` Gradle flag.
-| `--bo` | Run with `--build` where the build is then run using an `--offline` Gradle flag.
+| `--rebuild`, `--r`, `--build`     | Rebuild the CAS web application, and disregard previously-built WAR artifacts.
+| `--dry-run`, `--y`                | Launch the CAS web application configured in the test without actually running the test.
+| `--headless`, `--h`               | Launch the test scenario with a headless browser.
+| `--rerun`, `--resume`, `--z`      | Launch and assume the CAS is already running from a previous attempt.
+| `--hbo`                           | A combination of `--headless` and `--build` and Gradle's `--offline`.
+| `--bo`                            | Run with `--build` where the build is then run using an `--offline` Gradle flag.
+| `--hr`                            | A combination of `--headless` and `--resume`.
    
 For example, the `login-success` test scenario may be run using: 
 

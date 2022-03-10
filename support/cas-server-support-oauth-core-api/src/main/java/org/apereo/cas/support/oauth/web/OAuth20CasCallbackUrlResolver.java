@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,25 +28,7 @@ import java.util.Optional;
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
 
-    @SneakyThrows
-    private static Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
-        val value = OAuth20Utils.getRequestParameter(context, name)
-            .or(Unchecked.supplier(() -> {
-                val builderContext = new URIBuilder(context.getFullRequestURL());
-                return builderContext.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equalsIgnoreCase(name))
-                    .map(NameValuePair::getValue)
-                    .findFirst();
-            }));
-        return value.map(v -> new BasicNameValuePair(name, v));
-    }
-
-    private static void addUrlParameter(final WebContext context, final URIBuilder builder, final String parameterName) {
-        val parameter = getQueryParameter(context, parameterName);
-        parameter.ifPresent(basicNameValuePair ->
-            builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
-    }
+    private final OAuth20RequestParameterResolver requestParameterResolver;
 
     @Override
     @SneakyThrows
@@ -85,5 +66,26 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
      */
     protected List<String> getIncludeParameterNames() {
         return new ArrayList<>(0);
+    }
+
+    @SneakyThrows
+    private Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {
+        val value = requestParameterResolver.resolveRequestParameter(context, name)
+            .or(Unchecked.supplier(() -> {
+                val builderContext = new URIBuilder(context.getFullRequestURL());
+                return builderContext.getQueryParams()
+                    .stream()
+                    .filter(p -> p.getName().equalsIgnoreCase(name))
+                    .map(NameValuePair::getValue)
+                    .findFirst();
+            }));
+        return value.map(v -> new BasicNameValuePair(name, v));
+    }
+
+    private void addUrlParameter(final WebContext context, final URIBuilder builder,
+                                 final String parameterName) {
+        val parameter = getQueryParameter(context, parameterName);
+        parameter.ifPresent(basicNameValuePair ->
+            builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
     }
 }

@@ -52,6 +52,35 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         this.scopeType = scopeType;
     }
 
+    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        val attributeToScopeClaimMapper =
+            applicationContext.getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME, OidcAttributeToScopeClaimMapper.class);
+        LOGGER.debug("Attempting to process claim [{}]", claim);
+        if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
+            val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
+            if (resolvedAttributes.containsKey(mappedAttr)) {
+                val value = resolvedAttributes.get(mappedAttr);
+                LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
+                return Pair.of(claim, value);
+            } else if (resolvedAttributes.containsKey(claim)) {
+                val value = resolvedAttributes.get(claim);
+                LOGGER.debug("CAS is unable to find the attribute [{}] that is mapped to claim [{}]. "
+                             + "However, since resolved attributes [{}] already contain this claim, "
+                             + "CAS will use [{}] with value(s) [{}]",
+                    mappedAttr, claim, resolvedAttributes, claim, value);
+                return Pair.of(claim, value);
+            } else {
+                LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet "
+                            + "resolved attributes [{}] do not contain attribute [{}]",
+                    claim, mappedAttr, resolvedAttributes, mappedAttr);
+            }
+        }
+        val value = resolvedAttributes.get(claim);
+        LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
+        return Pair.of(claim, value);
+    }
+
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> attributes) {
@@ -68,38 +97,18 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
         val properties = applicationContext.getBean(CasConfigurationProperties.class);
         val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
-        
+
         val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
-                + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
+                     + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
             getAllowedAttributes(), getScopeType(), supportedClaims, allowedClaims);
-        allowedClaims.stream()
+        allowedClaims
+            .stream()
             .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
             .filter(p -> p.getValue() != null)
             .forEach(p -> attributesToRelease.put(p.getKey(), CollectionUtils.toCollection(p.getValue(), ArrayList.class)));
         return attributesToRelease;
-    }
-
-    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, List<Object>> resolvedAttributes) {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val attributeToScopeClaimMapper =
-            applicationContext.getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME, OidcAttributeToScopeClaimMapper.class);
-        LOGGER.debug("Attempting to process claim [{}]", claim);
-        if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
-            val mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
-            if (resolvedAttributes.containsKey(mappedAttr)) {
-                val value = resolvedAttributes.get(mappedAttr);
-                LOGGER.debug("Found mapped attribute [{}] with value [{}] for claim [{}]", mappedAttr, value, claim);
-                return Pair.of(claim, value);
-            } else {
-                LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet resolved attributes [{}] do not contain this attribute",
-                    claim, mappedAttr, resolvedAttributes);
-            }
-        }
-        val value = resolvedAttributes.get(claim);
-        LOGGER.debug("No mapped attribute is defined for claim [{}]; Used [{}] to locate value [{}]", claim, claim, value);
-        return Pair.of(claim, value);
     }
 
     @Override

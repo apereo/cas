@@ -79,7 +79,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             }
         }
 
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID)
+        val clientId = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val registeredService = getRegisteredServiceByClientId(clientId);
@@ -271,14 +271,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             val tgt = getConfigurationContext().fetchTicketGrantingTicketFrom(context);
             payloadBuilder = payloadBuilder.ticketGrantingTicket(tgt);
         }
-        val redirectUri = OAuth20Utils.getRequestParameter(context, OAuth20Constants.REDIRECT_URI)
+        val redirectUri = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
             .map(String::valueOf)
             .orElse(StringUtils.EMPTY);
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf)
             .orElseGet(OAuth20GrantTypes.AUTHORIZATION_CODE::getType)
             .toUpperCase();
-        val scopes = OAuth20Utils.parseRequestScopes(context);
+        val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val codeChallengeMethod = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD)
@@ -286,13 +286,13 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .toUpperCase();
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());
-        val claims = OAuth20Utils.parseRequestClaims(context);
+        val claims = getConfigurationContext().getRequestParameterResolver().resolveRequestClaims(context);
         val holder = payloadBuilder
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
-            .grantType(OAuth20Utils.getGrantType(context))
-            .responseType(OAuth20Utils.getResponseType(context))
+            .grantType(getConfigurationContext().getRequestParameterResolver().resolveGrantType(context))
+            .responseType(getConfigurationContext().getRequestParameterResolver().resolveResponseType(context))
             .codeChallenge(codeChallenge)
             .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
@@ -300,7 +300,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .redirectUri(redirectUri)
             .userProfile(userProfile)
             .claims(claims)
-            .responseMode(OAuth20Utils.getResponseModeType(context))
+            .responseMode(getConfigurationContext().getRequestParameterResolver().resolveResponseModeType(context))
             .build();
         context.getRequestParameters().keySet()
             .forEach(key -> context.getRequestParameter(key).ifPresent(value -> holder.getParameters().put(key, value)));

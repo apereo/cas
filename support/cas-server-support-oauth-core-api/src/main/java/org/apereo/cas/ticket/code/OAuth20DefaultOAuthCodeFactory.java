@@ -12,9 +12,11 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +30,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
 
     /**
@@ -45,9 +48,10 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
      */
     protected final ServicesManager servicesManager;
 
-    public OAuth20DefaultOAuthCodeFactory(final ExpirationPolicyBuilder<OAuth20Code> expirationPolicy, final ServicesManager servicesManager) {
-        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy, servicesManager);
-    }
+    /**
+     * Cipher to sign/encrypt codes, if enabled.
+     */
+    protected final CipherExecutor<String, String> cipherExecutor;
 
     @Override
     public OAuth20Code create(final Service service,
@@ -62,8 +66,16 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final OAuth20GrantTypes grantType) {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
-        val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
-        val oauthCode = new OAuth20DefaultCode(codeId, service, authentication,
+        val codeId = oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
+
+        val codeIdToUse = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
+            LOGGER.trace("Attempting to encode OAuth code [{}]", codeId);
+            val encoded = cipherExecutor.encode(codeId);
+            LOGGER.debug("Encoded OAuth code [{}]", encoded);
+            return encoded;
+        }, () -> codeId).get();
+
+        val oauthCode = new OAuth20DefaultCode(codeIdToUse, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);

@@ -65,6 +65,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
@@ -297,11 +298,14 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OidcCallbackAuthorizeViewResolver(servicesManager, oauthAuthorizationModelAndViewBuilder);
+            return new OidcCallbackAuthorizeViewResolver(servicesManager,
+                oauthAuthorizationModelAndViewBuilder, oauthRequestParameterResolver);
         }
 
         @Bean
@@ -328,13 +332,15 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConsentApprovalViewResolver consentApprovalViewResolver(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
             final CasConfigurationProperties casProperties) {
             return new OidcConsentApprovalViewResolver(casProperties,
-                oauthDistributedSessionStore, centralAuthenticationService);
+                oauthDistributedSessionStore, centralAuthenticationService, oauthRequestParameterResolver);
         }
     }
 
@@ -605,11 +611,14 @@ public class OidcConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcServerDiscoverySettingsFactory")
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
             return (OidcConfigurationContext) OidcConfigurationContext.builder()
                 .discoverySettings(oidcServerDiscoverySettings)
+                .requestParameterResolver(oauthRequestParameterResolver)
                 .issuerService(oidcIssuerService)
                 .ticketFactory(ticketFactory)
                 .idTokenClaimCollector(oidcIdTokenClaimCollector)
@@ -683,8 +692,10 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCasCallbackUrlResolver")
         public UrlResolver casCallbackUrlResolver(
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final CasConfigurationProperties casProperties) {
-            return new OidcCasCallbackUrlResolver(casProperties);
+            return new OidcCasCallbackUrlResolver(casProperties, oauthRequestParameterResolver);
         }
 
         @Bean

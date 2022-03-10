@@ -21,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -46,6 +48,22 @@ public class RefreshableHandlerInterceptorTests {
         val request = new MockHttpServletRequest();
 
         val proxy = new RefreshableHandlerInterceptor(localeChangeHandlerInterceptor);
+        proxy.preHandle(request, response, new Object());
+        assertNotNull(request.getAttribute("preHandle"));
+
+        proxy.postHandle(request, response, new Object(), null);
+        assertNotNull(request.getAttribute("postHandle"));
+
+        proxy.afterCompletion(request, response, null, new RuntimeException());
+        assertNotNull(request.getAttribute("afterCompletion"));
+    }
+
+    @Test
+    public void verifySupplierOperation() throws Exception {
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+
+        val proxy = new RefreshableHandlerInterceptor(() -> List.of(localeChangeHandlerInterceptor.getObject()));
         proxy.preHandle(request, response, new Object());
         assertNotNull(request.getAttribute("preHandle"));
 

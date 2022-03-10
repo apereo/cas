@@ -67,6 +67,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
@@ -152,6 +153,10 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
 
     protected static final String TGT_ID = "TGT-0";
+
+    @Autowired
+    @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+    protected OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
     @Autowired
     @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)

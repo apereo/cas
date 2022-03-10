@@ -18,6 +18,8 @@ async function fetchCode(page, acr, params) {
 
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
+    await cas.screenshot(page);
+    await page.waitForTimeout(1000)
     await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();

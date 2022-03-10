@@ -27,17 +27,19 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
     @Override
     public AccessTokenRequestContext extract(final WebContext context) {
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        val clientId = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getOAuthConfigurationContext().getServicesManager(), clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val deviceCode = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CODE).orElse(StringUtils.EMPTY);
-        val service = getOAuthConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
+        val deviceCode = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE).orElse(StringUtils.EMPTY);
+        val service = getConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = getOAuthConfigurationContext().getAuthenticationBuilder().build(new AnonymousProfile(),
+        val authentication = getConfigurationContext().getAuthenticationBuilder().build(new AnonymousProfile(),
             registeredService, context, service);
 
         val audit = AuditableContext.builder()
@@ -45,7 +47,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
             .registeredService(registeredService)
             .authentication(authentication)
             .build();
-        val accessResult = getOAuthConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         return AccessTokenRequestContext.builder()
@@ -61,8 +63,10 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
     @Override
     public boolean supports(final WebContext context) {
-        val responseType = OAuth20Utils.getRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
-        val clientId = OAuth20Utils.getRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
+        val responseType = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
+        val clientId = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)
             && StringUtils.isNotBlank(clientId);
     }

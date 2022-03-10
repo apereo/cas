@@ -126,7 +126,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             .stream()
             .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent())
             .min(Comparator.comparing(JsonWebKey::getKeyId))
-            .orElseThrow(() -> new IllegalArgumentException("Unable to locate JSON web key for encryption that is marked as current"));
+            .orElseThrow(() -> new IllegalArgumentException("Cannot locate current JSON web key for encryption"));
         LOGGER.debug("Found JSON web key to encrypt the token: [{}]", jsonWebKey);
         Objects.requireNonNull(jsonWebKey.getKey(), "JSON web key used to encrypt the token has no associated public key");
         return (PublicJsonWebKey) jsonWebKey;

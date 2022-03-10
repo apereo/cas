@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactoryBea
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
+import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -75,16 +76,23 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class DuoSecurityAuthenticationEventExecutionConfiguration {
-        private static AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(
+        private static BeanContainer<AuthenticationMetaDataPopulator> duoAuthenticationMetaDataPopulator(
             final ConfigurableApplicationContext applicationContext,
             final DuoSecurityAuthenticationHandler authenticationHandler,
             final CasConfigurationProperties casProperties) {
-            return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
+            return BeanSupplier.of(BeanContainer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new AuthenticationContextAttributeMetaDataPopulator(
-                    casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
-                    authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getId()))
-                .otherwiseProxy()
+                .supply(() -> {
+                    val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
+                    val p1 = new AuthenticationContextAttributeMetaDataPopulator(
+                        casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+                        authenticationHandler, authenticationHandler.getMultifactorAuthenticationProvider().getId());
+                    val p2 = new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
+                        authenticationHandler.getMultifactorAuthenticationProvider(),
+                        applicationContext.getBean(ServicesManager.class, ServicesManager.class));
+                    return BeanContainer.of(p1, p2);
+                })
+                .otherwise(BeanContainer::empty)
                 .get();
         }
 
@@ -106,9 +114,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     AnnotationAwareOrderComparator.sort(resolvers);
-                    return BeanContainer.of(casProperties.getAuthn()
-                        .getMfa()
-                        .getDuo()
+                    return BeanContainer.of(casProperties.getAuthn().getMfa().getDuo()
                         .stream()
                         .map(props -> {
                             val provider = duoProviderBean.getProvider(props.getId());
@@ -121,6 +127,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .otherwise(BeanContainer::empty)
                 .get();
         }
+
 
         @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
         @Bean
@@ -135,8 +142,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .supply(() -> plan -> {
                     duoAuthenticationHandlers.toList().forEach(dh -> {
                         plan.registerAuthenticationHandler(dh);
-                        plan.registerAuthenticationMetadataPopulator(
-                            duoAuthenticationMetaDataPopulator(applicationContext, dh, casProperties));
+                        val populators = duoAuthenticationMetaDataPopulator(applicationContext, dh, casProperties);
+                        plan.registerAuthenticationMetadataPopulators(populators.toList());
                     });
                     plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(
                         DuoSecurityCredential.class, DuoSecurityDirectCredential.class));
