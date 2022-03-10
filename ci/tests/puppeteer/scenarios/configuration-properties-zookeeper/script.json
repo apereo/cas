@@ -5,11 +5,10 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
 
-    "spring.cloud.zookeeper.enabled=true",
-    "spring.cloud.zookeeper.config.watcher.enabled=true",
-    "spring.cloud.zookeeper.config.enabled=true",
-    "spring.cloud.zookeeper.connect-string=localhost:2181",
-    "spring.cloud.zookeeper.enabled=true"
+    "--spring.cloud.zookeeper.config.watcher.enabled=true",
+    "--spring.cloud.zookeeper.config.enabled=true",
+    "--spring.cloud.zookeeper.connect-string=localhost:2181",
+    "--spring.cloud.zookeeper.enabled=true"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
