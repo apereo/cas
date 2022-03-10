@@ -38,7 +38,8 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutorNoCacheTests exten
         val serviceCache = mock(LoadingCache.class);
         when(serviceCache.get(any())).thenReturn(Optional.empty());
 
-        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache, serviceCache, OidcIssuerService.immutable(id));
+        val cipher = new OidcRegisteredServiceJwtAccessTokenCipherExecutor(defaultCache,
+            serviceCache, OidcIssuerService.immutable(id));
 
         val service = getOidcRegisteredService("whatever");
         assertTrue(cipher.getSigningKey(service).isEmpty());

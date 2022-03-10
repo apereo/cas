@@ -5,6 +5,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -122,7 +123,12 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] signWith(final byte[] value, final String algHeaderValue, final Key key) {
-        return EncodingUtils.signJws(key, value, algHeaderValue, this.customHeaders);
+        return JsonWebTokenSigner.builder()
+            .key(key)
+            .headers(this.customHeaders)
+            .algorithm(algHeaderValue)
+            .build()
+            .sign(value);
     }
 
     /**

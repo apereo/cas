@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +13,13 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
-import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
-import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
 
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -388,7 +386,12 @@ public class EncodingUtils {
      * @return the byte []
      */
     public static byte[] signJwsHMACSha512(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA512, headers);
+        return JsonWebTokenSigner.builder()
+            .key(key)
+            .headers(headers)
+            .algorithm(AlgorithmIdentifiers.HMAC_SHA512)
+            .build()
+            .sign(value);
     }
 
     /**
@@ -400,7 +403,12 @@ public class EncodingUtils {
      * @return the byte [ ]
      */
     public static byte[] signJwsHMACSha256(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.HMAC_SHA256, headers);
+        return JsonWebTokenSigner.builder()
+            .key(key)
+            .headers(headers)
+            .algorithm(AlgorithmIdentifiers.HMAC_SHA256)
+            .build()
+            .sign(value);
     }
 
     /**
@@ -412,64 +420,12 @@ public class EncodingUtils {
      * @return the byte []
      */
     public static byte[] signJwsRSASha512(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512, headers);
-    }
-
-    /**
-     * Sign jws string.
-     *
-     * @param claims               the claims
-     * @param jsonWebKey           the json web key
-     * @param algorithmHeaderValue the algorithm header value
-     * @param headers              the headers
-     * @return the string
-     */
-    public static String signJws(final JwtClaims claims,
-                                 final PublicJsonWebKey jsonWebKey,
-                                 final String algorithmHeaderValue,
-                                 final Map<String, Object> headers) {
-        return Unchecked.supplier(() -> {
-            val jws = new JsonWebSignature();
-            val jsonClaims = claims.toJson();
-            jws.setPayload(jsonClaims);
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-            jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-            jws.setHeader("typ", "JWT");
-            headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
-            if (jsonWebKey != null) {
-                jws.setKey(jsonWebKey.getPrivateKey());
-                if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
-                    jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
-                }
-                jws.setAlgorithmHeaderValue(StringUtils.defaultString(algorithmHeaderValue, AlgorithmIdentifiers.NONE));
-            }
-            LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
-                jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
-            return jws.getCompactSerialization();
-        }).get();
-    }
-
-    /**
-     * Sign jws.
-     *
-     * @param key            the key
-     * @param value          the value
-     * @param algHeaderValue the alg header value
-     * @param headers        the headers
-     * @return the byte [ ]
-     */
-    public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue,
-                                 final Map<String, Object> headers) {
-        return Unchecked.supplier(() -> {
-            val base64 = EncodingUtils.encodeUrlSafeBase64(value);
-            val jws = new JsonWebSignature();
-            jws.setEncodedPayload(base64);
-            jws.setAlgorithmHeaderValue(algHeaderValue);
-            jws.setKey(key);
-            jws.setHeader("typ", "JWT");
-            headers.forEach((k, v) -> jws.setHeader(k, v.toString()));
-            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
-        }).get();
+        return JsonWebTokenSigner.builder()
+            .key(key)
+            .headers(headers)
+            .algorithm(AlgorithmIdentifiers.RSA_USING_SHA512)
+            .build()
+            .sign(value);
     }
 
     /**

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -84,6 +85,11 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
                    && !StringUtils.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
         }
         return false;
+    }
+
+    @Override
+    public List<String> getAllowedSigningAlgorithms(final OAuthRegisteredService svc) {
+        return this.discoverySettings.getUserInfoSigningAlgValuesSupported();
     }
 
     @Override

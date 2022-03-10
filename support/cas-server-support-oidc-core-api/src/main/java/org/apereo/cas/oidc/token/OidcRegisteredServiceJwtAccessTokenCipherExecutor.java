@@ -119,6 +119,10 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
             val keys = jsonWebKey.getJsonWebKeys().stream()
                 .filter(key -> key.getKey() != null).collect(Collectors.toList());
+            if (keys.isEmpty()) {
+                LOGGER.warn("No valid JSON web keys used to sign the token can be found");
+                return Optional.empty();
+            }
             return Optional.of(new JsonWebKeySet(keys).toJson());
         }
         return result;
@@ -176,16 +180,18 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
 
         @Override
         protected byte[] sign(final byte[] value, final Key signingKey) {
-            if (signingWebKey != null) {
-                val kid = signingWebKey.getKeyId();
-                if (StringUtils.isNotBlank(kid)) {
-                    getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
-                }
-                val alg = StringUtils.defaultIfBlank(signingWebKey.getAlgorithm(),
-                    getSigningAlgorithmFor(signingWebKey.getKey()));
-                getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
-            }
-            return super.sign(value, signingKey);
+            return Optional.ofNullable(this.signingWebKey)
+                .map(key -> {
+                    val kid = key.getKeyId();
+                    if (StringUtils.isNotBlank(kid)) {
+                        getCustomHeaders().put(JsonWebKey.KEY_ID_PARAMETER, kid);
+                    }
+                    val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
+                        getSigningAlgorithmFor(key.getKey()));
+                    getCustomHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
+                    return super.signWith(value, alg, signingKey);
+                })
+                .orElseGet(() -> super.sign(value, signingKey));
         }
 
         @Override

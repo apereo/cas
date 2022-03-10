@@ -112,6 +112,7 @@ A special [attribute release policy](../integration/Attribute-Release-Policies.h
 - Internal improvements to the Gradle build to remove deprecated elements, in early preparation for Gradle 9.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce WAR Overlay projects that take advantage of Gradle's support for BOMs, making it more predictable to handle dependency management issues and conflicts.
 - [OpenID Connect support](../protocol/OIDC-Protocol.html) for handling signed authentication requests using the `request` parameter is now included.
+- Signing [OpenID Connect support](../protocol/OIDC-Protocol.html) ID tokens or profile payloads can now correctly filter signing algorithms based on CAS configuration. 
 
 ## Library Upgrades
      
@@ -127,6 +128,7 @@ A special [attribute release policy](../integration/Attribute-Release-Policies.h
 - Gson
 - Nimbus OIDC
 - Groovy
+- Gradle
 - Thymeleaf Dialect
 - Apache Tomcat
 - PostgreSQL
