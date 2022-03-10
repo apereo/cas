@@ -57,6 +57,8 @@ public class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_NAME = "name";
 
+    private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
+
     private static class MockOAuthRegisteredService extends OAuthRegisteredService {
         private static final long serialVersionUID = 8152953800891665827L;
     }
@@ -147,10 +149,12 @@ public class OidcIdTokenGeneratorServiceTests {
             when(tgt.getServices()).thenReturn(CollectionUtils.wrap("service", service));
 
             val phoneValues = List.of("123456789", "4805553241");
+            val customAttribute = "test";
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap(
                 OIDC_CLAIM_EMAIL, List.of("casuser@example.org"),
                 OIDC_CLAIM_PHONE_NUMBER, phoneValues,
                 "color", List.of("yellow"),
+                "custom-attribute", customAttribute,
                 OIDC_CLAIM_NAME, List.of("casuser")));
 
             var authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
@@ -176,9 +180,11 @@ public class OidcIdTokenGeneratorServiceTests {
             assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
             assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
             assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
+            assertTrue(claims.hasClaim(OIDC_CLAIM_PREFERRED_USERNAME));
             assertEquals("casuser@example.org", claims.getStringClaimValue(OIDC_CLAIM_EMAIL));
             assertEquals("casuser", claims.getStringClaimValue(OIDC_CLAIM_NAME));
             assertEquals(phoneValues, claims.getStringListClaimValue(OIDC_CLAIM_PHONE_NUMBER));
+            assertEquals(customAttribute, claims.getStringClaimValue(OIDC_CLAIM_PREFERRED_USERNAME));
         }
 
         @Test
