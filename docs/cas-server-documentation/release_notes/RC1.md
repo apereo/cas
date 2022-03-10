@@ -58,7 +58,7 @@ The construction of Spring beans (as defined by the `@Bean` annotation) managed 
 
 Modest support for [feature toggles](../configuration/Configuration-Management-Extensions.html) is now available to allow multiple competing modules to be present the same web application where they can be toggled on and off va dedicated flags and settings. This could previously be handled via excluding specific CAS `@Configuration` classes which was risky and prone to breakage during upgrades as such classes are always considered an implementation detail. Starting with this release candidate, a specific feature can be enabled or disabled via a dedicated setting allowing all configuration modules and components to react accordingly without one having to know the internal details.
 
-Please note that feature toggles are not yet supported by all CAS modules; this is a large effort and will likely require several more releases before this capability is finalized.
+Please note that feature toggles are not yet supported by all CAS modules; this is a large effort and will likely require several more releases before this capability is finalized. Also, remember that feature toggles do require a restart.
     
 ### OpenID Connect - JMeter Performance Testing
 
@@ -112,7 +112,7 @@ A special [attribute release policy](../integration/Attribute-Release-Policies.h
 - Internal improvements to the Gradle build to remove deprecated elements, in early preparation for Gradle 9.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now able to produce WAR Overlay projects that take advantage of Gradle's support for BOMs, making it more predictable to handle dependency management issues and conflicts.
 - [OpenID Connect support](../protocol/OIDC-Protocol.html) for handling signed authentication requests using the `request` parameter is now included.
-- Signing [OpenID Connect support](../protocol/OIDC-Protocol.html) ID tokens or profile payloads can now correctly filter signing algorithms based on CAS configuration. 
+- Signing [OpenID Connect](../protocol/OIDC-Protocol.html) ID tokens or profile payloads can now correctly filter signing algorithms based on CAS configuration. 
 
 ## Library Upgrades
      
