@@ -75,7 +75,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             val value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
-            LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
+            LOGGER.info("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                         + "provide the user attribute the service expects. "
                         + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
                         + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
