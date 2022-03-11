@@ -53,6 +53,12 @@ exports.clickLast = async (page, button) => {
     }, button);
 }
 
+exports.innerHTML = async (page, selector) => {
+    let text = await page.$eval(selector, el => el.innerHTML.trim());
+    console.log(`HTML for selector [${selector}] is: [${text}]`);
+    return text;
+}
+
 exports.innerText = async (page, selector) => {
     let text = await page.$eval(selector, el => el.innerText.trim());
     console.log(`Text for selector [${selector}] is: [${text}]`);
