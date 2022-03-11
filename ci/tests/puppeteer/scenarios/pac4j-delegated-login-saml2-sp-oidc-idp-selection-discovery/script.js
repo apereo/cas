@@ -31,14 +31,10 @@ async function startWithCasSp(page) {
 
 async function startWithSamlSp(page) {
     await page.goto("https://localhost:8443/cas/logout");
-    await cas.uploadSamlMetadata(page, path.join(__dirname, '/saml-md/idp-metadata.xml'));
-    await page.goto("https://samltest.id/start-idp-test/");
-    await cas.type(page, 'input[name=\'entityID\']', "https://cas.apereo.org/saml/idp");
-    await page.waitForTimeout(1000)
-    await cas.click(page, "input[type='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(1000)
 
+    await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await page.waitForTimeout(1000)
+    
     await cas.assertVisibility(page, '#selectProviderButton')
     await cas.submitForm(page, "#providerDiscoveryForm")
     await page.waitForTimeout(1000)
@@ -47,8 +43,13 @@ async function startWithSamlSp(page) {
     await page.waitForTimeout(2000)
     await cas.loginWith(page, "info@fawnoos.com", "QFkN&d^bf9vhS3KS49",
         "#okta-signin-username", "#okta-signin-password");
-    await page.waitForSelector('div.entry-content p', {visible: true});
-    await cas.assertInnerTextStartsWith(page, "div.entry-content p", "Your browser has completed the full SAML 2.0 round-trip");
+
+    await page.waitForSelector('#table_with_attributes', {visible: true});
+    await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
+    await cas.assertVisibility(page, "#table_with_attributes");
+    let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
+    console.log(authData);
+    
     await page.goto("https://localhost:8443/cas/login");
     await cas.assertTicketGrantingCookie(page);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
