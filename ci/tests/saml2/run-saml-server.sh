@@ -25,8 +25,10 @@ openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -nodes -out /tmp/saml.crt -keyout /tmp/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
 
-if [[ ! -z "${IDP_ENTITYID}" ]]; then
-echo "Using IDP entity ID ${IDP_ENTITYID}"
+if [[ -z "${IDP_ENTITYID}" ]]; then
+  export IDP_ENTITYID="https://cas.apereo.org/saml/idp"
+else
+  echo -e "Found existing IDP entity id at ${IDP_ENTITYID}"
 fi
 
 docker run --name=simplesamlphp-idp -p 9443:8080 \

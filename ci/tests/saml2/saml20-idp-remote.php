@@ -1,5 +1,5 @@
 <?php
-$idp_entityId = $_ENV['IDP_ENTITYID'] ?? 'https://cas.apereo.org/saml/idp';
+$idp_entityId = $_ENV['IDP_ENTITYID'];
 $idp_signingCert = $_ENV['IDP_SIGNING_CERTIFICATE'] ?? '';
 $idp_encryptionCert = $_ENV['IDP_ENCRYPTION_CERTIFICATE'] ?? '';
 
