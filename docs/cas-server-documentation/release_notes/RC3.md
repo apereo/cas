@@ -21,8 +21,7 @@ and financially support the project at a capacity that best suits your deploymen
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
 maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
 ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and
-operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option
-to consider.
+operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 

@@ -21,8 +21,7 @@ and financially support the project at a capacity that best suits your deploymen
 sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
 maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will
 ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs and
-operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option
-to consider.
+operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
 
 ## Get Involved
 
@@ -44,14 +43,16 @@ cas.version=6.6.0-RC2
 ```
 
 <div class="alert alert-info">
-<strong>System Requirements</strong><br/>There are no changes to the 
-minimum system/platform requirements for this release.
+<strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
 </div>
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
+ 
+### Integration Tests
 
+SAMl2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
 
 ## Other Stuff
 
