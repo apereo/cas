@@ -1,5 +1,8 @@
 {
   "dependencies": "oidc,pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.audit.engine.enabled=false",
     
