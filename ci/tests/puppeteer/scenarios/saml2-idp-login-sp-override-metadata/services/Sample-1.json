@@ -1,13 +1,11 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "https://samltest.id/.+",
+  "serviceId" : "http://localhost:9443/simplesaml.*",
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,
-  "metadataLocation" : "https://samltest.id/saml/sp",
+  "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   }
 }
-
-

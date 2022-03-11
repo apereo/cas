@@ -25,12 +25,17 @@ openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -nodes -out /tmp/saml.crt -keyout /tmp/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
 
+if [[ ! -z "${IDP_ENTITYID}" ]]; then
+echo "Using IDP entity ID ${IDP_ENTITYID}"
+fi
+
 docker run --name=simplesamlphp-idp -p 9443:8080 \
   -e SIMPLESAMLPHP_SP_ENTITY_ID="${SP_ENTITY_ID}" \
   -e SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE="${SP_ACS_SERVICE}" \
   -e SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE="${SP_SLO_SERVICE}" \
   -e IDP_ENCRYPTION_CERTIFICATE="${IDP_ENCRYPTION_CERTIFICATE}" \
   -e IDP_SIGNING_CERTIFICATE="${IDP_SIGNING_CERTIFICATE}" \
+  -e IDP_ENTITYID="${IDP_ENTITYID}" \
   -v /tmp/saml.crt:/var/www/simplesamlphp/cert/saml.crt \
   -v /tmp/saml.pem:/var/www/simplesamlphp/cert/saml.pem \
   -v $PWD/ci/tests/saml2/saml20-idp-remote.php:/var/www/simplesamlphp/metadata/saml20-idp-remote.php \

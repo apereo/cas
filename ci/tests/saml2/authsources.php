@@ -16,6 +16,6 @@ $config = [
       'saml:SP',
       'privatekey' => 'saml.pem',
       'certificate' => 'saml.crt',
-      'idp' => 'https://cas.apereo.org/saml/idp'
+      'idp' => $_ENV['IDP_ENTITYID'] ?? 'https://cas.apereo.org/saml/idp'
  ],
 ];

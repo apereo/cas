@@ -55,7 +55,7 @@ while (( "$#" )); do
       INSTALL_PUPPETEER="true"
       shift 1
       ;;
-  --debug|--d)
+  --debug|--d|--g)
     DEBUG="true"
     shift 1
     ;;
@@ -67,14 +67,13 @@ while (( "$#" )); do
     DEBUG_SUSPEND="y"
     shift 1
     ;;
-  --rebuild|--r|--build)
+  --rebuild|--build|--b)
     REBUILD="true"
     shift 1
     ;;
   --dry-run|--y)
     DRYRUN="true"
     shift 1
-    printyellow "Skipping execution of test scenario while in dry-run mode."
     ;;
   --bo)
     REBUILD="true"
@@ -101,8 +100,21 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --rerun|--resume|--z)
+  --rerun|--resume|--r)
     RERUN="true"
+    shift 1;
+    ;;
+  --bogy)
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
+    DEBUG="true"
+    shift 1;
+    ;;
+  --boy)
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
     shift 1;
     ;;
   --noclear|--nc)
@@ -171,6 +183,10 @@ fi
 
 if [[ "${RERUN}" == "true" ]]; then
   REBUILD="false"
+fi
+
+if [[ "${DRYRUN}" == "true" ]]; then
+  printyellow "Skipping execution of test scenario while in dry-run mode."
 fi
 
 #echo "Installing jq"

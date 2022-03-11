@@ -386,19 +386,6 @@ exports.decodeJwt = async (token, complete = false) => {
     return decoded;
 }
 
-exports.uploadSamlMetadata = async (page, metadata) => {
-    await page.goto("https://samltest.id/upload.php");
-    console.log(`Uploading metadata file ${metadata} to ${await page.url()}`);
-    await page.waitForTimeout(1000)
-    const fileElement = await page.$("input[type=file]");
-    console.log(`Metadata file: ${metadata}`);
-    await fileElement.uploadFile(metadata);
-    await page.waitForTimeout(1000)
-    await this.click(page, "input[name='submit']")
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
-}
-
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
     console.log(`Fetching Bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
