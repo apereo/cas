@@ -14,6 +14,8 @@ $config = [
  ),
  'default-sp' => [
       'saml:SP',
+      'privatekey' => 'saml.pem',
+      'certificate' => 'saml.crt',
       'idp' => 'https://cas.apereo.org/saml/idp'
  ],
 ];
