@@ -17,7 +17,6 @@ on:
 
 jobs:
   cancel-previous-runs:
-    if: ${{ (github.event_name == 'push' }}
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:

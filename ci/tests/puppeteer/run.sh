@@ -316,6 +316,16 @@ if [[ "${RERUN}" != "true" ]]; then
   done
 
   printgreen "\nReady!"
+  readyScript=$(jq -j '.readyScript // empty' < "${config}")
+  readyScript="${readyScript//\$\{PWD\}/${PWD}}"
+  readyScript="${readyScript//\$\{SCENARIO\}/${scenarioName}}"
+  scripts=$(echo "$readyScript" | tr ',' '\n')
+
+  for script in ${scripts}; do
+    printgreen "Running ready script: ${script}"
+    chmod +x "${script}"
+    eval "${script}"
+  done
 fi
 
 RC=-1
