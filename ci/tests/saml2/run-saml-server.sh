@@ -21,9 +21,13 @@ fi
 docker stop simplesamlphp-idp || true && docker rm simplesamlphp-idp || true
 echo -e "Running SAML2 IdP with SP entity id ${SP_ENTITY_ID} and SP ACS service ${SP_ACS_SERVICE} on port 9443"
 
+echo "Creating private key and certificate for SP metadata"
 openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -nodes -out /tmp/saml.crt -keyout /tmp/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
+
+ls /tmp/saml.crt
+ls /tmp/saml.pem
 
 if [[ -z "${IDP_ENTITYID}" ]]; then
   export IDP_ENTITYID="https://cas.apereo.org/saml/idp"
