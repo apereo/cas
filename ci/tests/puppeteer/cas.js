@@ -84,11 +84,8 @@ exports.uploadImage = async (imagePath) => {
     if (clientId !== null && clientId !== undefined) {
         const client = new ImgurClient({clientId: clientId});
         console.log(`Uploading image ${imagePath}`);
-        const response = await client.upload({
-            image: imagePath,
-            title: 'CAS',
-            description: 'CAS Screenshot'
-        });
+        client.on('uploadProgress', (progress) => console.log(progress));
+        const response = await client.upload(imagePath);
         console.log(response);
     }
 }
