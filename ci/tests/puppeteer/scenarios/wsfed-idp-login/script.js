@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 async function cleanUp(spDir) {
     await cas.logg("Stopping SP process...");
-    await cas.stopGretty(spDir);
+    await cas.stopSamlSp(spDir);
 }
 
 (async () => {

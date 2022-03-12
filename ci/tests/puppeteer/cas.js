@@ -292,45 +292,37 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.getGradleCmd = async () => {
+exports.runGradle = async(workdir, opts = []) => {
     let gradleCmd = './gradlew';
     if (operativeSystemModule.type() === 'Windows_NT') {
         gradleCmd = 'gradlew.bat';
     }
-    return gradleCmd;
+    const exec = spawn(gradleCmd, opts, {cwd: spDir});
+    await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
+    exec.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    exec.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+    return exec;
 }
 
 exports.launchWsFedSp = async (spDir, opts = []) => {
     let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
     args = args.concat(opts);
     await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    let gradleCmd = await this.getGradleCmd()
-    const exec = spawn(gradleCmd, args, {cwd: spDir});
-    await this.logg(`Spawned process ID: ${exec.pid}`);
-    exec.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
-    exec.stderr.on('data', (data) => {
-        console.error(data.toString());
-    });
+    const exec = this.runGradle(spDir, args);
     exec.on('exit', (code) => {
-        console.log(`Child process exited with code ${code}`);
+        console.log(`WSFED SP Child process exited with code ${code}`);
     });
     return exec;
 }
 
-exports.stopGretty = async (gradleDir, deleteDir= true) => {
+exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
     let args = ['appStop', '-q', '--no-daemon'];
-    await this.logg(`Stopping gretty in ${gradleDir} with ${args}`);
-    let gradleCmd = await this.getGradleCmd()
-    const exec = spawn(gradleCmd, args, {cwd: gradleDir});
-    await this.logg(`Launched stop gretty process ID: ${exec.pid}`);
-    exec.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
-    exec.stderr.on('data', (data) => {
-        console.error(data.toString());
-    });
+    await this.logg(`Stopping samlsp gretty process in ${gradleDir} with ${args}`);
+    const exec = this.runGradle(gradleDir, args);
     exec.on('exit', (code) => {
         console.log(`Stopped child process exited with code ${code}`);
         if (deleteDir) {
@@ -349,35 +341,21 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
         `-Dsp.sslKeystorePath=${keystorePath}`];
     args = args.concat(samlOpts);
     await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    let gradleCmd = await this.getGradleCmd()
-    const exec = spawn(gradleCmd, args, {cwd: samlSpDir});
-    await this.logg(`Spawned process ID: ${exec.pid}`);
-    exec.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
-    exec.stderr.on('data', (data) => {
-        console.error(data.toString());
-    });
+    const exec = this.runGradle(samlSpDir, args);
     exec.on('exit', (code) => {
         console.log(`Child process exited with code ${code}`);
     });
     return exec;
 }
 
-exports.stopActuator = async (baseUrl) => {
-    let args = ['-k', '-X', 'POST', `${baseUrl}/actuator/shutdown`];
-    await this.logg(`Stopping boot app via shutdown actuator with ${args}`);
-    const exec = spawn("curl", args);
-    exec.stdout.on('data', (data) => {
-        console.log(data.toString());
-    });
-    exec.stderr.on('data', (data) => {
-        console.error(data.toString());
-    });
-    exec.on('exit', (code) => {
-        console.log(`Curl ran to invoke shutdown actuator and exited with code ${code}`);
-    });
-    return exec;
+exports.shutdownCas = async (baseUrl) => {
+    await this.logg(`Stopping CAS via shutdown actuator`);
+    const response = await this.doRequest(`${baseUrl}/actuator/shutdown`,
+        "POST", {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        });
+    return JSON.parse(response)
 }
 
 exports.assertInnerTextStartsWith = async (page, selector, value) => {

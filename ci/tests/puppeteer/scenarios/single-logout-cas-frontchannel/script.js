@@ -26,6 +26,6 @@ const assert = require('assert');
     url = await page.url()
     console.log(`Page url: ${url}`)
     assert(url.startsWith("https://localhost:8443/cas/login?service="));
-    await cas.stopActuator("https://localhost:8444");
+    await cas.shutdownCas("https://localhost:8444");
     await browser.close();
 })();

@@ -91,9 +91,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Download Dependencies
-        run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
-          ./gradlew :webapp:cas-server-webapp-tomcat:build -DskipNestedConfigMetadataGen=true -x check -x javadoc --configure-on-demand --parallel --no-daemon -DcasModules="core" --no-watch-fs --max-workers=8
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon downloadDependencies --parallel --refresh-dependencies --max-workers=8
       - id: print-scenarios
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios
