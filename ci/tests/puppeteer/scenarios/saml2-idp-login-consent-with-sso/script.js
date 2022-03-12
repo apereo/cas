@@ -4,11 +4,12 @@ const cas = require('../../cas.js');
 const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch(cas.browserOptions());
-    const page = await cas.newPage(browser);
 
     console.log("Removing previous consent decisions for casuser");
     await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
+
+    const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
     console.log("Establishing SSO session...");
     await page.goto("https://localhost:8443/cas/login", {waitUntil: 'networkidle2'});
