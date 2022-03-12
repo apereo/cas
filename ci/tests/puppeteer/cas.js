@@ -82,10 +82,10 @@ exports.inputValue = async (page, selector) => {
 exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
-        console.log(`Uploading image ${imagePath}`);
         const client = new ImgurClient({clientId: clientId});
+        console.log(`Uploading image ${imagePath}`);
         const response = await client.upload(imagePath);
-        await this.logg(response.data);
+        await this.logg(response);
     }
 }
 
@@ -407,7 +407,9 @@ exports.screenshot = async (page) => {
     let index = Math.floor(Math.random() * 10000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     try {
-        await page.screenshot({path: filePath, fullPage: true});
+        console.log(`Attempting to take a screenshot and save at ${filePath}`)
+        await page.setViewport({width: 1000, height: 1000});
+        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
         await this.logg(`Screenshot saved at ${filePath}`);
         await this.uploadImage(filePath);
     } catch (e)  {
