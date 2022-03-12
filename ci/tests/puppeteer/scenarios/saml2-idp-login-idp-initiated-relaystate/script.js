@@ -23,7 +23,7 @@ async function unsolicited(page, target) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
 
-    await page.goto("https://localhost:8443/cas/login");
+    await page.goto("https://localhost:8443/cas/login", {waitUntil: 'networkidle2'});
     await cas.loginWith(page, "casuser", "Mellon");
 
     await unsolicited(page, "https://apereo.github.io");

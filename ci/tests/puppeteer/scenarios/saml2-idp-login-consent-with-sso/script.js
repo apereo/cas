@@ -11,7 +11,7 @@ const assert = require("assert");
     await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
 
     console.log("Establishing SSO session...");
-    await page.goto("https://localhost:8443/cas/login");
+    await page.goto("https://localhost:8443/cas/login", {waitUntil: 'networkidle2'});
     await cas.loginWith(page, "casuser", "Mellon");
 
     let entityId = "https://httpbin.org/shibboleth";
@@ -32,8 +32,8 @@ const assert = require("assert");
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
-    await page.waitForTimeout(1000)
-
+    await page.waitForTimeout(2000)
+    await cas.screenshot(page);
     await page.waitForSelector('#table_with_attributes', {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");
