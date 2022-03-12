@@ -25,7 +25,13 @@ echo "Creating private key and certificate for SP metadata"
 openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -nodes -out /tmp/saml.crt -keyout /tmp/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
-  
+
+echo "SP certificate..."
+cat /tmp/saml.crt
+
+echo "SP private key..."
+cat /tmp/saml.pem
+
 if [[ -z "${IDP_ENTITYID}" ]]; then
   export IDP_ENTITYID="https://cas.apereo.org/saml/idp"
 else

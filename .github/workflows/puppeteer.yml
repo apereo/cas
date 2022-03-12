@@ -23,7 +23,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
-  SCENARIO_REGEX: "saml2-idp-login-encrypted" # Use this to limit which tests run
+  SCENARIO_REGEX: "saml2-idp-login.*" # Use this to limit which tests run
 
 on:
   push:
@@ -125,8 +125,8 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
         run: chmod -R +x ./ci/**/*.sh
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
         run: ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
