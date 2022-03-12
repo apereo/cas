@@ -52,10 +52,15 @@ The following items are new improvements and enhancements presented in this rele
  
 ### Integration Tests
 
-SAMl2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
+SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
 
 ## Other Stuff
 
 
 ## Library Upgrades
-
+      
+- Infinispan
+- Netty
+- TextMagic
+- Nimbus
+- Spring Data Azure
