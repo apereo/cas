@@ -50,7 +50,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 1
     steps:
-      - uses: styfle/cancel-workflow-action@0.8.0
+      - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
 
@@ -58,9 +58,9 @@ jobs:
     needs: [cancel-previous-runs]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -72,7 +72,7 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize
-        run: ls ./ci && chmod -R 777 ./ci/*.sh && ./ci/init-build.sh
+        run: ls ./ci && chmod -R +x ./ci/**/*.sh && ./ci/init-build.sh
 
   ##########################################################################
   
@@ -83,9 +83,9 @@ jobs:
     outputs:
       scenarios: ${{ steps.get-scenarios.outputs.scenarios }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -136,9 +136,9 @@ jobs:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: 'temurin'
@@ -155,7 +155,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: Initialize
-        run: chmod -R 777 ./ci/*.sh
+        run: chmod -R +x ./ci/**/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
       - name: Run Tests
