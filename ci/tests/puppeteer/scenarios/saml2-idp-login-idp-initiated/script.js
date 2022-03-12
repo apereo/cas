@@ -12,9 +12,9 @@ const cas = require('../../cas.js');
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     console.log(`Navigating to ${url}`);
     await page.goto(url);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(4000)
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));

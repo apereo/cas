@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     try {
         await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
-        await page.waitForTimeout(20000)
+        await page.waitForTimeout(2000)
         await cas.screenshot(page);
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForTimeout(2000)
