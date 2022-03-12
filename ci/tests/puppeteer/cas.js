@@ -85,8 +85,11 @@ exports.uploadImage = async (imagePath) => {
         const client = new ImgurClient({clientId: clientId});
         console.log(`Uploading image ${imagePath}`);
         client.on('uploadProgress', (progress) => console.log(progress));
-        const response = await client.upload(imagePath);
-        console.log(response);
+        const response = await client.upload({
+            image: fs.createReadStream(imagePath),
+            type: 'stream',
+        });
+        console.log(response.data.link);
     }
 }
 
