@@ -108,7 +108,7 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
             rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
                 scenarios += it.getName()
             }
-            println(groovy.json.JsonOutput.toJson(scenarios.take))
+            println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
 }
