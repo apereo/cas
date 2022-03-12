@@ -267,11 +267,6 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-  BUILD_CACHE=""
-  if [[ "$GRADLE_BUILDCACHE_PSW" != "" || "$CI" != "true" ]]; then
-    BUILD_CACHE="--build-cache"
-  fi
-
   printcyan "Launching build in background to make observing slow builds easier"
   targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
@@ -279,7 +274,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   fi
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
-      -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc ${BUILD_CACHE} --configure-on-demand --parallel \
+      -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=${MAX_WORKERS} ${BUILDFLAGS}")
   echo $buildcmd
   $buildcmd > build.log 2>&1 &
@@ -331,7 +326,6 @@ fi
 if [[ "${RERUN}" != "true" ]]; then
   serverPort=8443
   processIds=()
-  echo "Getting instances"
   instances=$(jq -j '.instances // 1' "${config}")
   if [[ ! -z "$instances" ]]; then
     echo "Found instances: ${instances}"
@@ -340,8 +334,6 @@ if [[ "${RERUN}" != "true" ]]; then
   do
     export SCENARIO="${scenarioName}"
 
-    initScript=$(jq -j '.initScript // empty' < "${config}")
-    echo "Getting init script"
     initScript=$(jq -j '.initScript // empty' "${config}")
     initScript="${initScript//\$\{PWD\}/${PWD}}"
     initScript="${initScript//\$\{SCENARIO\}/${scenarioName}}"
@@ -357,16 +349,13 @@ if [[ "${RERUN}" != "true" ]]; then
       fi
     done
 
-    echo "Getting run args"
     runArgs=$(jq -j '.jvmArgs // empty' "${config}")
     runArgs="${runArgs//\$\{PWD\}/${PWD}}"
     runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
     [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
-    echo "Getting properties"
     properties=$(jq -j '.properties // empty | join(" ")' "${config}")
 
-    echo "Getting instance filter"
     filter=".instance$c.properties // empty | join(\" \")"
     echo "$filter" > $TMPDIR/filter.jq
     properties="$properties $(cat $config | jq -j -f $TMPDIR/filter.jq)"

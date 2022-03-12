@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 
 async function cleanUp(samlSpDir) {
     console.log("Killing SAML2 SP process...");
-    await cas.stopGretty(samlSpDir);
+    await cas.stopSamlSp(samlSpDir);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
 }
 
