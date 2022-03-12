@@ -412,7 +412,7 @@ exports.screenshot = async (page) => {
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     try {
         console.log(`Attempting to take a screenshot and save at ${filePath}`)
-        await page.setViewport({width: 1000, height: 1000});
+        await page.setViewport({width: 1920, height: 1080});
         await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
         await this.logg(`Screenshot saved at ${filePath}`);
         await this.uploadImage(filePath);
