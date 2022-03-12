@@ -4,13 +4,14 @@ const cas = require('../../cas.js');
 
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
+    const page = await cas.newPage(browser);
     try {
-        const page = await cas.newPage(browser);
         await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp", {waitUntil: 'networkidle2'});
         await page.waitForTimeout(2000)
         await cas.screenshot(page);
         await cas.loginWith(page, "casuser", "Mellon");
 
+        await cas.screenshot(page);
         await page.waitForSelector('#table_with_attributes', {visible: true});
         await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
         await cas.assertVisibility(page, "#table_with_attributes");
@@ -19,6 +20,7 @@ const cas = require('../../cas.js');
         console.log(authData);
 
     } finally {
+        await cas.screenshot(page);
         await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     }
     await browser.close();
