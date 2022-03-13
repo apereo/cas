@@ -249,10 +249,8 @@ if [[ ! -f "$casWebApplicationFile" ]]; then
   REBUILD="true"
 fi
 
-echo "Getting dependencies"
 dependencies=$(jq -j '.dependencies' "${config}")
 
-echo "Getting build script"
 buildScript=$(jq -j '.buildScript // empty' "${config}")
 BUILD_SCRIPT=""
 if [[ -n "${buildScript}" ]]; then
@@ -372,7 +370,6 @@ if [[ "${RERUN}" != "true" ]]; then
     runArgs="${runArgs} -noverify -XX:TieredStopAtLevel=1 "
     printf "\nLaunching CAS instance #%s with properties [%s], run arguments [%s] and dependencies [%s]\n" "${c}" "${properties}" "${runArgs}" "${dependencies}"
 
-    echo "Getting SPRING_APPLICATION_JSON"
     springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
     [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
 
