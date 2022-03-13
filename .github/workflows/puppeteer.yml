@@ -104,7 +104,7 @@ jobs:
         os: [ubuntu-latest]
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios)}}
     name: ${{matrix.scenario}}
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
