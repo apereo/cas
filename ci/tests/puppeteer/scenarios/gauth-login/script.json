@@ -1,9 +1,0 @@
-{
-  "dependencies": "gauth",
-  "properties": [
-    "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
-    "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true"
-  ]
-}

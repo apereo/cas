@@ -1,6 +1,0 @@
-{
-  "dependencies": "core",
-  "properties": [
-    "--cas.sso.allow-missing-service-parameter=false"
-  ]
-}

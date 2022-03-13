@@ -1,7 +1,0 @@
-{
-  "dependencies": "core",
-  "properties": [
-    "--cas.access-strategy.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Strategy.groovy",
-    "--cas.service-registry.core.init-from-json=true"
-  ]
-}

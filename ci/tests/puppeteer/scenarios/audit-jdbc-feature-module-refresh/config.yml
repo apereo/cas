@@ -1,4 +1,0 @@
-cas:
-  audit:
-    jdbc:
-      url: ""

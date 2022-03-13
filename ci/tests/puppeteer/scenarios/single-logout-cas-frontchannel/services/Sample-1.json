@@ -1,7 +1,0 @@
-{
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId": "^https://localhost:8444.*",
-  "id": 1,
-  "name": "Sample",
-  "logoutType" : "FRONT_CHANNEL"
-}

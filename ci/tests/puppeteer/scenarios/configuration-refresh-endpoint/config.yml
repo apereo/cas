@@ -1,4 +1,0 @@
-cas:
-  authn:
-    accept:
-      users: casuser::p@$$word

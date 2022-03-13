@@ -1,6 +1,0 @@
-cas:
-  authn:
-    mfa:
-      web-authn:
-        core:
-          enabled: false

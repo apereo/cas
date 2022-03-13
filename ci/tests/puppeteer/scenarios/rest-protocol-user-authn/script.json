@@ -1,7 +1,0 @@
-{
-  "dependencies": "rest",
-  "properties": [
-    "--cas.audit.engine.enabled=false",
-    "--cas.service-registry.core.init-from-json=true"
-  ]
-}
