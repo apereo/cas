@@ -292,7 +292,7 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.runGradle = async(workdir, opts = [], exitFunc = {}) => {
+exports.runGradle = async(workdir, opts = [], exitFunc) => {
     let gradleCmd = './gradlew';
     if (operativeSystemModule.type() === 'Windows_NT') {
         gradleCmd = 'gradlew.bat';
