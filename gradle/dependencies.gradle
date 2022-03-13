@@ -1027,7 +1027,6 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "com.github.ben-manes.caffein", module: "caffein")
-
                 }
         ],
         inspektr                : [
