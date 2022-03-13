@@ -166,5 +166,5 @@ jobs:
           echo systemProp.org.gradle.internal.http.socketTimeout=60000 >> gradle.properties
           echo systemProp.org.gradle.internal.repository.max.retries=10 >> gradle.properties
           echo systemProp.org.gradle.internal.repository.initial.backoff=500 >> gradle.properties
-          ./ci/tests/puppeteer/run.sh --dep-cache-days 10 --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################

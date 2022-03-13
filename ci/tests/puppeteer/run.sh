@@ -48,7 +48,6 @@ DAEMON=""
 BUILDFLAGS=""
 DRYRUN=""
 CLEAR="true"
-MAX_WORKERS="8"
 
 while (( "$#" )); do
   case "$1" in
@@ -101,14 +100,6 @@ while (( "$#" )); do
     REBUILD="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
     shift 1;
-    ;;
-  --max-workers|--mw)
-    MAX_WORKERS="$2"
-    shift 2
-    ;;
-  --dep-cache-days|--dcd)
-    BUILDFLAGS="${BUILDFLAGS} -PdependencyCacheDays=$2"
-    shift 2
     ;;
   --headless|--h)
     export HEADLESS="true"
@@ -273,7 +264,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
       -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
-      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=${MAX_WORKERS} ${BUILDFLAGS}")
+      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" -PdependencyCacheDays=10 --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   echo $buildcmd
   $buildcmd > build.log 2>&1 &
   pid=$!

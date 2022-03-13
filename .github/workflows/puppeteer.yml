@@ -135,5 +135,5 @@ jobs:
         shell: bash
         run: |
           export RUNNER_OS=${{ runner.os }}
-          ./ci/tests/puppeteer/run.sh --dep-cache-days 10 --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
