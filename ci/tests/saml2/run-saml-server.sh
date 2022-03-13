@@ -27,9 +27,11 @@ openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
 
 echo "SP certificate..."
+chmod 777 ${PWD}/saml.crt
 cat ${PWD}/saml.crt
 
 echo "SP private key..."
+chmod 777 ${PWD}/saml.pem
 cat ${PWD}/saml.pem
 
 if [[ -z "${IDP_ENTITYID}" ]]; then
