@@ -25,15 +25,17 @@ const path = require("path");
         console.log(`Navigating to ${url}`);
         let s = await performance.now();
         await page.goto(url);
+        await page.waitForTimeout(2000);
+        await cas.screenshot(page);
         let e = await performance.now();
         let duration = (e - s) / 1000;
         console.log(`Request took ${duration} seconds.`)
 
-        if (count > 1 && duration > 10) {
+        if (count > 1 && duration > 12) {
             throw `Request took longer than expected:${duration}`;
         }
-        
-        await page.waitForTimeout(1000);
+
+        await page.waitForTimeout(2000);
         await cas.assertVisibility(page, '#username')
         await cas.assertVisibility(page, '#password')
         count++;
