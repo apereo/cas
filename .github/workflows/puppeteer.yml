@@ -23,7 +23,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 11
   NODE_CURRENT: '16'
-  SCENARIO_REGEX: "saml2-idp-login-encrypted.*" # Use this to limit which tests run
+  SCENARIO_REGEX: "saml2-idp-login.*" # Use this to limit which tests run
 
 on:
   push:
