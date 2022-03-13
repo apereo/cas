@@ -1,8 +1,0 @@
----
-test:
-  dir:
-    app: dirAppYml
-    cas: dirAppYml
-  file: dirAppYml
-  profile: dirAppYml
-  overriden-by-system-property: from-application-yml

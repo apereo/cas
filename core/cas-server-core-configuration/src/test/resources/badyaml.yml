@@ -1,6 +1,0 @@
-# duplicate keys to force exception
-server:
-  port: 9999
-
-server:
-  port: 9999
