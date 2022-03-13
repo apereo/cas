@@ -1,7 +1,0 @@
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "https://app.example.org/.+",
-  "name" : "ExampleApp",
-  "id" : 1,
-  "requiredHandlers" : [ "java.util.HashSet", [ "DatabaseAuthenticationHandler", "DatabaseAuthenticationHandler2" ] ]
-}

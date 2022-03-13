@@ -1,1 +1,0 @@
-org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.AmazonS3BucketsCloudConfigBootstrapConfiguration

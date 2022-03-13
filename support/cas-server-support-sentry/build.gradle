@@ -1,4 +1,0 @@
-description = "Apereo CAS Sentry Monitoring and Tracking Support"
-dependencies {
-    implementation libraries.sentry
-}
