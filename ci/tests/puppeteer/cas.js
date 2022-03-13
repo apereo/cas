@@ -292,12 +292,12 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         });
 }
 
-exports.runGradle = async(workdir, opts = []) => {
+exports.runGradle = async(workdir, opts = [], exitFunc = {}) => {
     let gradleCmd = './gradlew';
     if (operativeSystemModule.type() === 'Windows_NT') {
         gradleCmd = 'gradlew.bat';
     }
-    const exec = spawn(gradleCmd, opts, {cwd: spDir});
+    const exec = spawn(gradleCmd, opts, {cwd: workdir});
     await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
     exec.stdout.on('data', (data) => {
         console.log(data.toString());
@@ -305,6 +305,7 @@ exports.runGradle = async(workdir, opts = []) => {
     exec.stderr.on('data', (data) => {
         console.error(data.toString());
     });
+    exec.on('exit', exitFunc)
     return exec;
 }
 
@@ -312,25 +313,21 @@ exports.launchWsFedSp = async (spDir, opts = []) => {
     let args = ['build', 'appStart', '-q', '-x', 'test', '--no-daemon', `-Dsp.sslKeystorePath=${process.env.CAS_KEYSTORE}`];
     args = args.concat(opts);
     await this.logg(`Launching WSFED SP in ${spDir} with ${args}`);
-    const exec = this.runGradle(spDir, args);
-    exec.on('exit', (code) => {
+    return this.runGradle(spDir, args, (code) => {
         console.log(`WSFED SP Child process exited with code ${code}`);
     });
-    return exec;
 }
 
 exports.stopSamlSp = async (gradleDir, deleteDir= true) => {
     let args = ['appStop', '-q', '--no-daemon'];
     await this.logg(`Stopping samlsp gretty process in ${gradleDir} with ${args}`);
-    const exec = this.runGradle(gradleDir, args);
-    exec.on('exit', (code) => {
+    return this.runGradle(gradleDir, args, (code) => {
         console.log(`Stopped child process exited with code ${code}`);
         if (deleteDir) {
             this.sleep(30000);
             this.removeDirectory(gradleDir);
         }
     });
-    return exec;
 }
 
 exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
@@ -341,11 +338,9 @@ exports.launchSamlSp = async (idpMetadataPath, samlSpDir, samlOpts = []) => {
         `-Dsp.sslKeystorePath=${keystorePath}`];
     args = args.concat(samlOpts);
     await this.logg(`Launching SAML2 SP in ${samlSpDir} with ${args}`);
-    const exec = this.runGradle(samlSpDir, args);
-    exec.on('exit', (code) => {
+    return this.runGradle(samlSpDir, args, (code) => {
         console.log(`Child process exited with code ${code}`);
     });
-    return exec;
 }
 
 exports.shutdownCas = async (baseUrl) => {
