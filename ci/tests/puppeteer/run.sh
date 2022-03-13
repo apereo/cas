@@ -388,10 +388,10 @@ if [[ "${RERUN}" != "true" ]]; then
   rm "$PWD"/ci/tests/puppeteer/overlay/thekeystore
   rm -Rf "$PWD"/ci/tests/puppeteer/overlay
 
-#  if [[ "${CI}" == "true" ]]; then
-#    docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
-#    docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
-#  fi
+  if [[ "${CI}" == "true" ]]; then
+    docker stop $(docker container ls -aq) >/dev/null 2>&1 || true
+    docker rm $(docker container ls -aq) >/dev/null 2>&1 || true
+  fi
 fi
 printgreen "Bye!\n"
 exit $RC
