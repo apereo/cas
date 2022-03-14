@@ -2,7 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.model.TriStateBoolean;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -17,6 +19,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,6 +72,35 @@ public class ReturnAllAttributeReleasePolicyTests {
         assertEquals(1, results.size());
         assertFalse(results.containsKey("cn"));
         assertTrue(results.containsKey("uid"));
+    }
+
+    @Test
+    public void verifyExcludedServicesFromConsent() {
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("cn", List.of("CommonName"), "uid", List.of("casuser")));
+
+        val consentPolicy = new DefaultRegisteredServiceConsentPolicy();
+        consentPolicy.setIncludeOnlyAttributes(Set.of("cn"));
+        consentPolicy.setStatus(TriStateBoolean.TRUE);
+        consentPolicy.setExcludedServices(Set.of("https://.+"));
+        policy.setConsentPolicy(consentPolicy);
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .build();
+        val results = policy.getAttributes(releasePolicyContext);
+        assertTrue(results.containsKey("cn"));
+        assertTrue(results.containsKey("uid"));
+
+        val consented = policy.getConsentableAttributes(releasePolicyContext);
+        assertTrue(consented.containsKey("cn"));
+        assertTrue(consented.containsKey("uid"));
     }
 
 }

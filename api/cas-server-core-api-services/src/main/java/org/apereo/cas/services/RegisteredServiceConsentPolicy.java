@@ -30,6 +30,17 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
     }
 
     /**
+     * Gets excluded services from this policy.
+     * Useful when the policy is applied to a service definition
+     * that is considered an aggregate of many other applications.
+     *
+     * @return the excluded services
+     */
+    default Set<String> getExcludedServices() {
+        return null;
+    }
+
+    /**
      * Gets excluded attributes.
      * Excludes the set of specified attributes from consent.
      *

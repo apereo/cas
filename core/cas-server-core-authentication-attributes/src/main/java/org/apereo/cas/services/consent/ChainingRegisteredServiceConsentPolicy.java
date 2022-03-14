@@ -81,6 +81,16 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
 
     @Override
     @JsonIgnore
+    public Set<String> getExcludedServices() {
+        return this.policies
+            .stream()
+            .map(RegisteredServiceConsentPolicy::getExcludedServices)
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    @JsonIgnore
     public Set<String> getIncludeOnlyAttributes() {
         return this.policies
             .stream()

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttribu
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -96,7 +97,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .ifPresent(repository -> repository.update(context.getPrincipal().getId(), availableAttributes, context.getRegisteredService()));
             LOGGER.trace("Updating principal attributes repository cache for [{}] with [{}]", context.getPrincipal().getId(), availableAttributes);
 
-            LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), context.getPrincipal().getId());
+            LOGGER.trace("Calling attribute policy [{}] to process attributes for [{}]",
+                getClass().getSimpleName(), context.getPrincipal().getId());
             val policyAttributes = getAttributesInternal(context, availableAttributes);
             LOGGER.debug("Attribute policy [{}] allows release of [{}] for [{}]",
                 getClass().getSimpleName(), policyAttributes, context.getPrincipal().getId());
@@ -115,7 +117,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             }
             LOGGER.trace("Adding policy attributes to the released set of attributes");
             attributesToRelease.putAll(policyAttributes);
-            insertPrincipalIdAsAttributeIfNeeded(context.getPrincipal(), attributesToRelease, context.getService(), context.getRegisteredService());
+            insertPrincipalIdAsAttributeIfNeeded(context.getPrincipal(),
+                attributesToRelease, context.getService(), context.getRegisteredService());
             if (getAttributeFilter() != null) {
                 LOGGER.debug("Invoking attribute filter [{}] on the final set of attributes", getAttributeFilter());
                 return getAttributeFilter().filter(attributesToRelease);
@@ -131,28 +134,35 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) {
         val attributes = getAttributes(context);
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
-        if (this.consentPolicy != null) {
-            LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, context.getService());
-            val excludedAttributes = consentPolicy.getExcludedAttributes();
-            if (excludedAttributes != null && !excludedAttributes.isEmpty()) {
-                excludedAttributes.forEach(attributes::remove);
-                LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
-            } else {
-                LOGGER.debug("No attributes are defined per the consent policy to be excluded from the consentable attributes");
-            }
-            val includeOnlyAttributes = consentPolicy.getIncludeOnlyAttributes();
-            if (includeOnlyAttributes != null && !includeOnlyAttributes.isEmpty()) {
-                attributes.keySet().retainAll(includeOnlyAttributes);
-                LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
-            } else {
-                LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes");
-            }
-        } else {
-            LOGGER.debug("No consent policy is defined for service [{}]. "
-                         + "Using the collection of attributes released for consent", context.getService());
-        }
-        LOGGER.debug("Finalized set of consentable attributes are [{}]", attributes);
-        return attributes;
+
+        val results = Optional.ofNullable(this.consentPolicy)
+            .filter(policy -> policy.getExcludedServices() == null
+                              || policy.getExcludedServices().stream().noneMatch(ex -> RegexUtils.find(ex, context.getService().getId())))
+            .map(policy -> {
+                LOGGER.debug("Activating consent policy [{}] for service [{}]", policy, context.getService());
+                val excludedAttributes = policy.getExcludedAttributes();
+                if (excludedAttributes != null && !excludedAttributes.isEmpty()) {
+                    excludedAttributes.forEach(attributes::remove);
+                    LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
+                } else {
+                    LOGGER.debug("No attributes are defined per the consent policy to be excluded from the consentable attributes");
+                }
+                val includeOnlyAttributes = policy.getIncludeOnlyAttributes();
+                if (includeOnlyAttributes != null && !includeOnlyAttributes.isEmpty()) {
+                    attributes.keySet().retainAll(includeOnlyAttributes);
+                    LOGGER.debug("Consentable attributes after force-including attributes are [{}]", attributes);
+                } else {
+                    LOGGER.debug("No attributes are defined per the consent policy to forcefully be included in the consentable attributes");
+                }
+                return attributes;
+            })
+            .orElseGet(() -> {
+                LOGGER.debug("No consent policy is defined for service [{}]. "
+                             + "Using the collection of attributes released for consent", context.getService());
+                return attributes;
+            });
+        LOGGER.debug("Finalized set of consentable attributes are [{}]", results);
+        return results;
     }
 
     /**
