@@ -108,14 +108,15 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
             rootProject.file("ci/tests/puppeteer/scenarios").eachDirMatch(~scenarioMatchPattern) {
                 scenarios += it.getName()
             }
+            Collections.sort(scenarios)
             if (project.hasProperty("puppeteerScenariosFrom") && project.hasProperty("puppeteerScenariosTo")) {
-                def start = Integer.parseInt(project.puppeteerScenariosFrom) - 1
+                def start = Integer.parseInt(project.puppeteerScenariosFrom)
                 def to = Integer.parseInt(project.puppeteerScenariosTo)
                 if (to > scenarios.size())
                     to = scenarios.size()
                 scenarios = scenarios.subList(start, to)
             }
-            Collections.sort(scenarios)
+//            println scenarios.size()
             println(groovy.json.JsonOutput.toJson(scenarios))
         }
     }
