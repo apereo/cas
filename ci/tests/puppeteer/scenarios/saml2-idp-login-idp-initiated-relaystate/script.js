@@ -12,8 +12,7 @@ async function unsolicited(page, target) {
 
     console.log(`Navigating to ${url}`);
     await page.goto(url);
-    await page.waitForNavigation();
-
+    await page.waitForTimeout(3000)
     const result = await page.url()
     console.log(`Page url: ${result}`)
     assert(result.includes(target));
@@ -23,15 +22,15 @@ async function unsolicited(page, target) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await browser.newPage();
 
-    await page.goto("https://localhost:8443/cas/login", {waitUntil: 'networkidle2'});
-    await page.waitForTimeout(1000)
+    await page.goto("https://localhost:8443/cas/login");
+    await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
 
     await unsolicited(page, "https://apereo.github.io");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
 
     await unsolicited(page, "https://github.com/apereo/cas");
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();
 })();
