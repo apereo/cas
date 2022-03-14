@@ -127,8 +127,10 @@ jobs:
         run: chmod -R +x ./ci/**/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
-      - name: Run Tests (1-256)
-        run: ./ci/tests/puppeteer/run.sh -PpuppeteerScenariosFrom=1 -PpuppeteerScenariosTo=256 --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
-      - name: Run Tests (256-512)
-        run: ./ci/tests/puppeteer/run.sh -PpuppeteerScenariosFrom=256 -PpuppeteerScenariosTo=512 --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Tests (0-255)
+        run: ./ci/tests/puppeteer/run.sh -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255 --scenario
+        $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Tests (255-511)
+        run: ./ci/tests/puppeteer/run.sh -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511 --scenario
+        $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
