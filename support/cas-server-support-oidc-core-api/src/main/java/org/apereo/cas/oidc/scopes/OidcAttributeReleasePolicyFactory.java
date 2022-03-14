@@ -53,7 +53,8 @@ public interface OidcAttributeReleasePolicyFactory {
      * @return the collection
      */
     default Set<OidcCustomScopeAttributeReleasePolicy> from(final Map<String, String> userDefinedScopes) {
-        return userDefinedScopes.entrySet()
+        return userDefinedScopes
+            .entrySet()
             .stream()
             .map(k -> custom(k.getKey(), k.getValue()))
             .collect(Collectors.toSet());

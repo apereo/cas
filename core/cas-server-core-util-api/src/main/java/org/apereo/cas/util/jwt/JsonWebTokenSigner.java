@@ -33,7 +33,7 @@ public class JsonWebTokenSigner {
     /**
      * Allow all algorithms except none.
      */
-    public static final List<String> ALGORITHM_ALL_EXCEPT_NONE = List.of("*");
+    public static final Set<String> ALGORITHM_ALL_EXCEPT_NONE = Set.of("*");
 
     @Builder.Default
     private final String keyId = UUID.randomUUID().toString();

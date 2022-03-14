@@ -71,6 +71,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 return principal;
             }
 
+            scopes.retainAll(casProperties.getAuthn().getOidc().getDiscovery().getScopes());
+            LOGGER.debug("Collection of scopes filtered based on discovery settings are [{}]", scopes);
+
             val oidcService = (OidcRegisteredService) registeredService;
             val attributes = getAttributesAllowedForService(scopes, principal, service, oidcService, accessToken);
             LOGGER.debug("Collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
@@ -82,14 +85,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
-    /**
-     * Filter attributes by access token requested claims.
-     *
-     * @param oidcService the oidc service
-     * @param accessToken the access token
-     * @param principal   the principal
-     * @param attributes  the attributes
-     */
     protected void filterAttributesByAccessTokenRequestedClaims(final OidcRegisteredService oidcService,
                                                                 final OAuth20AccessToken accessToken,
                                                                 final Principal principal,
@@ -101,7 +96,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         }
 
         val principalAttributes = accessToken.getTicketGrantingTicket().getAuthentication().getPrincipal().getAttributes();
-        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]", userInfo, principalAttributes);
+        LOGGER.debug("Requested user-info claims [{}] are compared against principal attributes [{}]",
+            userInfo, principalAttributes);
+
         userInfo
             .stream()
             .filter(principalAttributes::containsKey)
