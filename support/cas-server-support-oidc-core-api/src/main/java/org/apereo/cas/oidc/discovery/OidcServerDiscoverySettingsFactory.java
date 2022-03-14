@@ -10,6 +10,7 @@ import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,42 +35,55 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
 
         val discovery = new OidcServerDiscoverySettings(issuerService.determineIssuer(Optional.empty()));
 
-        discovery.setClaimsSupported(discoveryConfig.getClaims());
-        discovery.setScopesSupported(discoveryConfig.getScopes());
-        discovery.setResponseTypesSupported(discoveryConfig.getResponseTypesSupported());
-        discovery.setSubjectTypesSupported(discoveryConfig.getSubjectTypes());
-        discovery.setClaimTypesSupported(discoveryConfig.getClaimTypesSupported());
-        discovery.setIntrospectionSupportedAuthenticationMethods(discoveryConfig.getIntrospectionSupportedAuthenticationMethods());
-        discovery.setGrantTypesSupported(discoveryConfig.getGrantTypesSupported());
-        discovery.setTokenEndpointAuthMethodsSupported(discoveryConfig.getTokenEndpointAuthMethodsSupported());
+        discovery.setClaimsSupported(new LinkedHashSet<>(discoveryConfig.getClaims()));
+        discovery.setScopesSupported(new LinkedHashSet<>(discoveryConfig.getScopes()));
+        discovery.setResponseTypesSupported(new LinkedHashSet<>(discoveryConfig.getResponseTypesSupported()));
+        discovery.setSubjectTypesSupported(new LinkedHashSet<>(discoveryConfig.getSubjectTypes()));
+        discovery.setClaimTypesSupported(new LinkedHashSet<>(discoveryConfig.getClaimTypesSupported()));
+        discovery.setIntrospectionSupportedAuthenticationMethods(
+            new LinkedHashSet<>(discoveryConfig.getIntrospectionSupportedAuthenticationMethods()));
+        discovery.setGrantTypesSupported(new LinkedHashSet<>(discoveryConfig.getGrantTypesSupported()));
+        discovery.setTokenEndpointAuthMethodsSupported(
+            new LinkedHashSet<>(discoveryConfig.getTokenEndpointAuthMethodsSupported()));
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
 
-        discovery.setIdTokenSigningAlgValuesSupported(discoveryConfig.getIdTokenSigningAlgValuesSupported());
-        discovery.setIdTokenEncryptionAlgValuesSupported(discoveryConfig.getIdTokenEncryptionAlgValuesSupported());
-        discovery.setIdTokenEncryptionEncodingValuesSupported(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported());
+        discovery.setIdTokenSigningAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIdTokenSigningAlgValuesSupported()));
+        discovery.setIdTokenEncryptionAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionAlgValuesSupported()));
+        discovery.setIdTokenEncryptionEncodingValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported()));
 
         discovery.setBackchannelLogoutSupported(oidc.getLogout().isBackchannelLogoutSupported());
         discovery.setFrontchannelLogoutSupported(oidc.getLogout().isFrontchannelLogoutSupported());
 
-        discovery.setUserInfoSigningAlgValuesSupported(discoveryConfig.getUserInfoSigningAlgValuesSupported());
-        discovery.setUserInfoEncryptionAlgValuesSupported(discoveryConfig.getUserInfoEncryptionAlgValuesSupported());
-        discovery.setUserInfoEncryptionEncodingValuesSupported(discoveryConfig.getUserInfoEncryptionEncodingValuesSupported());
-
-        discovery.setCodeChallengeMethodsSupported(discoveryConfig.getCodeChallengeMethodsSupported());
+        discovery.setUserInfoSigningAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
+        discovery.setUserInfoEncryptionAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getUserInfoEncryptionAlgValuesSupported()));
+        discovery.setUserInfoEncryptionEncodingValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getUserInfoEncryptionEncodingValuesSupported()));
+        discovery.setCodeChallengeMethodsSupported(
+            new LinkedHashSet<>(discoveryConfig.getCodeChallengeMethodsSupported()));
 
         discovery.setRequirePushedAuthorizationRequests(discoveryConfig.isRequirePushedAuthorizationRequests());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(discoveryConfig.getRequestObjectSigningAlgValuesSupported());
-        discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported());
-        discovery.setRequestObjectEncryptionEncodingValuesSupported(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported());
-        discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
-        discovery.setAcrValuesSupported(discoveryConfig.getAcrValuesSupported());
+        discovery.setRequestObjectSigningAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));
+        discovery.setRequestObjectEncryptionAlgValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported()));
+        discovery.setRequestObjectEncryptionEncodingValuesSupported(
+            new LinkedHashSet<>(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported()));
+        discovery.setAuthorizationResponseIssuerParameterSupported(
+            discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
+        discovery.setAcrValuesSupported(new LinkedHashSet<>(discoveryConfig.getAcrValuesSupported()));
         if (discoveryConfig.getAcrValuesSupported().isEmpty()) {
-            val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values()
+            val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext)
+                .values()
                 .stream()
                 .map(MultifactorAuthenticationProvider::getId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
             discovery.setAcrValuesSupported(providers);
         }
         return discovery;

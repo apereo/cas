@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link OidcServerDiscoverySettings}.
@@ -24,61 +25,61 @@ public class OidcServerDiscoverySettings {
     private final String issuer;
 
     @JsonProperty("scopes_supported")
-    private List<String> scopesSupported;
+    private Set<String> scopesSupported;
 
     @JsonProperty("response_types_supported")
-    private List<String> responseTypesSupported;
+    private Set<String> responseTypesSupported;
 
     @JsonProperty("subject_types_supported")
-    private List<String> subjectTypesSupported;
+    private Set<String> subjectTypesSupported;
 
     @JsonProperty("claim_types_supported")
-    private List<String> claimTypesSupported;
+    private Set<String> claimTypesSupported;
 
     @JsonProperty("claims_supported")
-    private List<String> claimsSupported;
+    private Set<String> claimsSupported;
 
     @JsonProperty("grant_types_supported")
-    private List<String> grantTypesSupported;
+    private Set<String> grantTypesSupported;
 
     @JsonProperty("id_token_signing_alg_values_supported")
-    private List<String> idTokenSigningAlgValuesSupported;
+    private Set<String> idTokenSigningAlgValuesSupported;
 
     @JsonProperty("id_token_encryption_alg_values_supported")
-    private List<String> idTokenEncryptionAlgValuesSupported;
+    private Set<String> idTokenEncryptionAlgValuesSupported;
 
     @JsonProperty("id_token_encryption_enc_values_supported")
-    private List<String> idTokenEncryptionEncodingValuesSupported;
+    private Set<String> idTokenEncryptionEncodingValuesSupported;
 
     @JsonProperty("userinfo_signing_alg_values_supported")
-    private List<String> userInfoSigningAlgValuesSupported;
+    private Set<String> userInfoSigningAlgValuesSupported;
 
     @JsonProperty("userinfo_encryption_alg_values_supported")
-    private List<String> userInfoEncryptionAlgValuesSupported;
+    private Set<String> userInfoEncryptionAlgValuesSupported;
 
     @JsonProperty("userinfo_encryption_enc_values_supported")
-    private List<String> userInfoEncryptionEncodingValuesSupported;
+    private Set<String> userInfoEncryptionEncodingValuesSupported;
 
     @JsonProperty("acr_values_supported")
-    private List<String> acrValuesSupported;
+    private Set<String> acrValuesSupported;
 
     @JsonProperty("request_object_signing_alg_values_supported")
-    private List<String> requestObjectSigningAlgValuesSupported;
+    private Set<String> requestObjectSigningAlgValuesSupported;
 
     @JsonProperty("request_object_encryption_alg_values_supported")
-    private List<String> requestObjectEncryptionAlgValuesSupported;
+    private Set<String> requestObjectEncryptionAlgValuesSupported;
 
     @JsonProperty("request_object_encryption_enc_values_supported")
-    private List<String> requestObjectEncryptionEncodingValuesSupported;
+    private Set<String> requestObjectEncryptionEncodingValuesSupported;
 
     @JsonProperty("introspection_endpoint_auth_methods_supported")
-    private List<String> introspectionSupportedAuthenticationMethods;
+    private Set<String> introspectionSupportedAuthenticationMethods;
 
     @JsonProperty("token_endpoint_auth_methods_supported")
-    private List<String> tokenEndpointAuthMethodsSupported;
+    private Set<String> tokenEndpointAuthMethodsSupported;
 
     @JsonProperty("code_challenge_methods_supported")
-    private List<String> codeChallengeMethodsSupported;
+    private Set<String> codeChallengeMethodsSupported;
 
     @JsonProperty("claims_parameter_supported")
     private boolean claimsParameterSupported = true;

@@ -54,20 +54,6 @@ public class EncodingUtilsTests {
     }
 
     @Test
-    public void verifyKeyForJwtEncryption() {
-        val secret = EncodingUtils.generateJsonWebKey(256);
-        val key = EncodingUtils.generateJsonWebKey(secret);
-        val value = "ThisValue";
-        val found = EncodingUtils.encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0));
-        val jwt = EncodingUtils.decryptJwtValue(key, found);
-        assertEquals(value, jwt);
-        assertThrows(IllegalArgumentException.class, () ->
-            EncodingUtils.encryptValueAsJwt(key, null, KeyManagementAlgorithmIdentifiers.DIRECT,
-                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, "kidValue", new HashMap<>(0)));
-    }
-
-    @Test
     public void verifyAesKeyForJwtEncryption() {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = EncodingUtils.generateJsonWebKey(secret);
