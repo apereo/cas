@@ -20,6 +20,7 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
@@ -114,6 +115,7 @@ import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeature;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -870,6 +872,7 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthAuthorizationCodeResponseTypeRequestValidator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -878,14 +881,20 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
-                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+            val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+            return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
+                .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
+                .supply(() -> new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(servicesManager,
+                    webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -894,14 +903,22 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager,
-                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+            val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+            return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
+                .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.CODE.getType()))
+                .supply(() -> {
+                    return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager,
+                        webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "oauthTokenResponseTypeRequestValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthTokenResponseTypeRequestValidator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -910,14 +927,21 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager,
-                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+            
+            val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+            return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
+                .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.TOKEN.getType()))
+                .supply(() -> new OAuth20TokenResponseTypeAuthorizationRequestValidator(servicesManager,
+                    webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "oauthIdTokenResponseTypeRequestValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -926,14 +950,20 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager,
-                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+            val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+            return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
+                .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.ID_TOKEN.getType()))
+                .supply(() -> new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager,
+                    webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "oauthIdTokenAndTokenResponseTypeRequestValidator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizationRequestValidator oauthIdTokenAndTokenResponseTypeRequestValidator(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -942,8 +972,13 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager,
-                webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver);
+            val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
+            return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
+                .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.IDTOKEN_TOKEN.getType()))
+                .supply(() -> new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager,
+                    webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer, oauthRequestParameterResolver))
+                .otherwiseProxy()
+                .get();
         }
     }
 

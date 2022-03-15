@@ -76,6 +76,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
+    @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=mfa-dummy")
     public class WithMultifactorProvidersTests extends AbstractOidcTests {
         @Test
         public void verifyNoAcr() {

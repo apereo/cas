@@ -63,8 +63,10 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
         val acr = getAuthenticationClassReference(request, response);
-        if (StringUtils.isBlank(acr)) {
-            LOGGER.debug("No ACR provided in the authentication request");
+        val supportedAcrValues = casProperties.getAuthn().getOidc().getDiscovery().getAcrValuesSupported();
+        if (StringUtils.isBlank(acr) || !supportedAcrValues.contains(acr)) {
+            LOGGER.debug("No ACR provided in the authentication request, or ACR is not "
+                         + "supported via supported ACR values in CAS configuration, [{}]", supportedAcrValues);
             return Optional.empty();
         }
         val values = List.of(org.springframework.util.StringUtils.delimitedListToStringArray(acr, " "));
@@ -90,7 +92,8 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
     private String getAuthenticationClassReference(final HttpServletRequest request,
                                                    final HttpServletResponse response) {
         val context = new JEEContext(request, response);
-        val acr = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.ACR_VALUES).orElse(StringUtils.EMPTY);
+        val acr = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.ACR_VALUES)
+            .orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(acr)) {
             val serviceParam = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
             if (StringUtils.isNotBlank(serviceParam)) {

@@ -97,8 +97,12 @@ exports.loginWith = async (page, user, password,
                            usernameField = "#username",
                            passwordField = "#password") => {
     console.log(`Logging in with ${user} and ${password}`);
+    await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
+
+    await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password);
+    
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
 }
