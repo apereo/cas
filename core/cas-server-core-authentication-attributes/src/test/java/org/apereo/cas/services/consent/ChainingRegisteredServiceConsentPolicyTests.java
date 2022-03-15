@@ -65,6 +65,6 @@ public class ChainingRegisteredServiceConsentPolicyTests {
             new DefaultRegisteredServiceConsentPolicy().setExcludedServices(Set.of("application2"))));
         assertTrue(chain.getStatus().isTrue());
         assertEquals(2, chain.getExcludedServices().size());
-        assertTrue(chain.getExcludedAttributes().contains("application1"));
+        assertTrue(chain.getExcludedServices().contains("application1"));
     }
 }
