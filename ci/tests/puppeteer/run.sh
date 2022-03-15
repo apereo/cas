@@ -168,6 +168,7 @@ if [[ "${dockerRequired}" == "true" ]]; then
   fi
   if [[ $dockerInstalled -ne 0 ]] ; then
     echo "Not running test because init script requires docker"
+    exit 0
   fi
 fi
 
@@ -264,7 +265,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   buildcmd=$(printf '%s' \
       "./gradlew :webapp:cas-server-webapp-${project}:build \
       -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
-      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" -PdependencyCacheDays=10 --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
+      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" -PdependencyCacheDays=1 --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   echo $buildcmd
   $buildcmd > build.log 2>&1 &
   pid=$!
