@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,6 +80,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .map(RegisteredServiceConsentPolicy::getExcludedAttributes)
+            .filter(Objects::nonNull)
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 

@@ -106,7 +106,7 @@ public class OAuth20UtilsTests extends AbstractOAuth20Tests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
-        request.addParameter("scope", "s1", "s2");
+        request.addParameter("scope", "openid", "profile");
         assertFalse(oauthRequestParameterResolver.resolveRequestedScopes(context).isEmpty());
         assertTrue(oauthRequestParameterResolver.resolveRequestedScopes(new JEEContext(new MockHttpServletRequest(), response)).isEmpty());
     }

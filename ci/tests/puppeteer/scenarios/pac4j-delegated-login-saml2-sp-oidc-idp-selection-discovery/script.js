@@ -14,6 +14,7 @@ const assert = require("assert");
 async function startWithCasSp(page) {
     const service = "https://apereo.github.io";
     await page.goto("https://localhost:8443/cas/logout");
+    await page.waitForTimeout(1000)
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await cas.assertVisibility(page, '#selectProviderButton')
     await cas.submitForm(page, "#providerDiscoveryForm")

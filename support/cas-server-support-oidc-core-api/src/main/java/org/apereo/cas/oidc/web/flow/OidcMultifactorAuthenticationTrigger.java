@@ -66,7 +66,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
         val supportedAcrValues = casProperties.getAuthn().getOidc().getDiscovery().getAcrValuesSupported();
         if (StringUtils.isBlank(acr) || !supportedAcrValues.contains(acr)) {
             LOGGER.debug("No ACR provided in the authentication request, or ACR is not "
-                         + "supported via supported ACR values in CAS configuration, [{}]", supportedAcrValues);
+                         + "supported via defined ACR values in CAS configuration, [{}]", supportedAcrValues);
             return Optional.empty();
         }
         val values = List.of(org.springframework.util.StringUtils.delimitedListToStringArray(acr, " "));
