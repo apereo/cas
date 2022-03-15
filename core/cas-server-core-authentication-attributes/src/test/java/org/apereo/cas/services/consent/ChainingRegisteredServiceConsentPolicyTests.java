@@ -61,7 +61,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     public void verifyExcludedServices() {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
-            new DefaultRegisteredServiceConsentPolicy().setExcludedServices(Set.of("application1")),
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.TRUE).setExcludedServices(Set.of("application1")),
             new DefaultRegisteredServiceConsentPolicy().setExcludedServices(Set.of("application2"))));
         assertTrue(chain.getStatus().isTrue());
         assertEquals(2, chain.getExcludedServices().size());

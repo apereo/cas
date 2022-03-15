@@ -52,8 +52,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public OAuth20ResponseTypes resolveResponseType(final WebContext context) {
+        val responseTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf)
+            .filter(responseTypesSupport::contains)
+            .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
@@ -64,8 +67,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public OAuth20GrantTypes resolveGrantType(final WebContext context) {
+        val grantTypesSupport = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
         val grantType = resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf)
+            .filter(grantTypesSupport::contains)
+            .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20GrantTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(grantType))
             .findFirst()
@@ -131,7 +137,9 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> Optional<T> resolveRequestParameter(final WebContext context,
                                                    final String name,
                                                    final Class<T> clazz) {
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isRequestParameterSupported();
         return context.getRequestParameter(OAuth20Constants.REQUEST)
+            .filter(parameterValue -> supported)
             .map(Unchecked.function(jwtRequest -> resolveJwtRequestParameter(context, jwtRequest, name, clazz)))
             .or(() -> {
                 val values = context.getRequestParameters().get(name);
@@ -154,7 +162,10 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         if (map == null || map.isEmpty()) {
             return new ArrayList<>(0);
         }
-        return new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
+        val results = new LinkedHashSet<>((Collection<String>) map.get(OAuth20Constants.SCOPE));
+        results.retainAll(supported);
+        return results;
     }
 
     @Override
@@ -206,13 +217,21 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         if (parameterValues.isEmpty()) {
             return new HashSet<>(0);
         }
-        return CollectionUtils.wrapSet(parameterValues.get().split(" "));
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
+        val results = CollectionUtils.wrapSet(parameterValues.get().split(" "));
+        results.retainAll(supported);
+        return results;
     }
 
 
     @Override
     public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) throws Exception {
-        val claims = resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();
+
+        val claims = FunctionUtils.doIf(supported,
+            () -> resolveRequestParameter(context, OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY),
+            () -> StringUtils.EMPTY).get();
+        
         if (StringUtils.isBlank(claims)) {
             return new HashMap<>(0);
         }

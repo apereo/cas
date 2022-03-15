@@ -54,9 +54,10 @@ The following items are new improvements and enhancements presented in this rele
 
 SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
 
-### OpenID Connect Algorithms & Scopes
+### OpenID Connect Compliance
 
-The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now takes into account when CAS responses are produced for ID token and user profile requests. Furthremore, supported scopes defined in CAS configuration are now considered when building attribute release policies for each OpenID Connect scope.
+The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now takes into account when CAS responses are produced for ID token and user profile requests. Furthermore, settings and values declared in CAS configuration for OpenID Connect discovery are now taken into account when responding or validating
+requests. These include supported scopes when building attribute release policies for each OpenID Connect scope, supported ACR values, response types and grant types.
 
 ### Puppeteer Testing Strategy
 

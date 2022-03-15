@@ -284,8 +284,12 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
         val scopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
         val codeChallenge = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
+
+        val challengeMethodsSupported = getConfigurationContext().getCasProperties().getAuthn().getOidc().getDiscovery().getCodeChallengeMethodsSupported();
         val codeChallengeMethod = context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD)
-            .map(String::valueOf).orElse(StringUtils.EMPTY)
+            .map(String::valueOf)
+            .filter(challengeMethodsSupported::contains)
+            .orElse(StringUtils.EMPTY)
             .toUpperCase();
 
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(context, getConfigurationContext().getSessionStore());

@@ -20,7 +20,12 @@ async function fetchCode(page, acr, params) {
     let scratch = await cas.fetchGoogleAuthenticatorScratchCode();
     console.log(`Using scratch code ${scratch} to login...`);
     await cas.screenshot(page);
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await page.waitForNavigation();
+        await page.waitForTimeout(2000)
+    }
     await cas.type(page, '#token', scratch);
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
@@ -28,6 +33,7 @@ async function fetchCode(page, acr, params) {
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
+        await page.waitForTimeout(2000)
     }
 
     let code = await cas.assertParameter(page, "code");
