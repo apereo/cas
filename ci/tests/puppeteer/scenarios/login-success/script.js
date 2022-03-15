@@ -13,7 +13,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#halbrowser");
     await cas.click(page, "#halbrowser")
     await page.waitForTimeout(3000)
-
+    await cas.screenshot(page)
     await cas.assertVisibility(page, "div.container-fluid");
     await cas.assertVisibility(page, "div#HttpRequestTrigger");
 

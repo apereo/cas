@@ -9,6 +9,7 @@ const cas = require('../../cas.js');
     const service = "https://example.com";
     await page.goto(`https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
+    await page.waitForTimeout(2000)
     let ticket = await cas.assertTicketParameter(page);
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     assert(body === "yes\ncasuser\n")

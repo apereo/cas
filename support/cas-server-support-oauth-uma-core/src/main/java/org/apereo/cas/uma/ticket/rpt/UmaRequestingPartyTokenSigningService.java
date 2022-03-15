@@ -18,7 +18,6 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Set;
 
 /**

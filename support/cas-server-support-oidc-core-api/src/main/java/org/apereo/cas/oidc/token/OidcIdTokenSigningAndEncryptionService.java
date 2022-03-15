@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

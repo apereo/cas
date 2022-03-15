@@ -73,6 +73,8 @@ async function exchangeCode(page, code, successHandler) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
+    await page.goto("https://localhost:8443/cas/logout");
+
     console.log("Fetching code for MFA based on ACR mfa-gauth")
     let code = await fetchCode(page, "mfa-gauth", "login=prompt");
     await exchangeCode(page, code, idToken => {
