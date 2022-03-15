@@ -212,8 +212,8 @@ exports.assertTicketParameter = async (page) => {
     return ticket;
 }
 
-exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) => {
-    return new Promise((resolve, reject) => {
+exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, requestBody = undefined) =>
+    new Promise((resolve, reject) => {
         let options = {
             method: method,
             rejectUnauthorized: false,
@@ -232,17 +232,12 @@ exports.doRequest = async (url, method = "GET", headers = {}, statusCode = 200, 
         };
 
         if (requestBody !== undefined) {
-            let request = https.request(url, options, res => {
-                handler(res);
-            }).on("error", reject);
+            let request = https.request(url, options, res => handler(res)).on("error", reject);
             request.write(requestBody);
         } else {
-            https.get(url, options, res => {
-                handler(res);
-            }).on("error", reject);
+            https.get(url, options, res => handler(res)).on("error", reject);
         }
-    });
-}
+    })
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({

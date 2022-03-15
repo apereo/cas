@@ -93,7 +93,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "   \"userinfo_encrypted_response_alg\": \"RSA1_5\","
             + "   \"userinfo_encrypted_response_enc\": \"A128CBC-HS256\","
             + "   \"contacts\": [\"ve7jtb@example.org\", \"mary@example.org\"],"
-            + "   \"request_uris\":"
+            + "   \"redirect_uris\":"
             + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
             + "  }";
 
@@ -132,7 +132,7 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
             + "   \"id_token_encrypted_response_enc\": \"A128CBC-HS256\","
             + "   \"userinfo_encrypted_response_alg\": \"RSA1_5\","
             + "   \"contacts\": [\"ve7jtb@example.org\", \"mary@example.org\"],"
-            + "   \"request_uris\":"
+            + "   \"redirect_uris\":"
             + "     [\"https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA\"]"
             + "  }";
 

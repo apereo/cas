@@ -37,7 +37,6 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
             .decode(tokenCredentials.getToken());
     }
 
-    @SneakyThrows
     @Override
     public void validate(final Credentials credentials, final WebContext webContext, final SessionStore sessionStore) {
         val tokenCredentials = (TokenCredentials) credentials;
