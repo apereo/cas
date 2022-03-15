@@ -50,12 +50,19 @@ cas.version=6.6.0-RC2
 
 The following items are new improvements and enhancements presented in this release.
  
-### Integration Tests
+### SAML2 Integration Tests
 
 SAML2 integration tests managed by [Puppeteer](../developer/Test-Process.html) have switched to using simpleSAMLphp Docker containers for easier management and maintenance.
 
-## Other Stuff
+### OpenID Connect Algorithms & Scopes
 
+The collection of algorithms specified in the CAS configuration for signing and encryption operations of ID tokens are now takes into account when CAS responses are produced for ID token and user profile requests. Furthremore, supported scopes defined in CAS configuration are now considered when building attribute release policies for each OpenID Connect scope.
+
+### Puppeteer Testing Strategy
+
+The collection of end-to-end browser tests based on Puppeteer are now split into separate categories to allow the GitHub Actions job matrix to support more than `256` jobs. At the moment, total number of jobs stands at approximately `260` distinct scenarios. Furthermore, the GitHub Actions builds are now modified and improved to support running Puppeteer-based tests on Windows and MacOS.
+
+## Other Stuff
 
 ## Library Upgrades
       

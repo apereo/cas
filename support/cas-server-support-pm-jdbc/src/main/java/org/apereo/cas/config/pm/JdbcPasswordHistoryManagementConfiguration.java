@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryService;
 import org.apereo.cas.util.CollectionUtils;
@@ -124,7 +125,7 @@ public class JdbcPasswordHistoryManagementConfiguration {
             return BeanSupplier.of(PasswordHistoryService.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(JdbcPasswordHistoryService::new)
-                .otherwiseProxy()
+                .otherwise(AmnesiacPasswordHistoryService::new)
                 .get();
         }
     }

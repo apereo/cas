@@ -17,7 +17,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
         await cas.click(page, "#allow");
         await page.waitForNavigation();
     }
-
+    await page.waitForTimeout(2000)
     let code = await cas.assertParameter(page, "code");
     console.log(`OAuth code ${code}`);
 

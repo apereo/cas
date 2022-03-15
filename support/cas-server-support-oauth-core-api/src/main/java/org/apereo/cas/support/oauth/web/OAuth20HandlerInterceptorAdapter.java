@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -222,6 +223,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
     protected boolean isValidAuthorizeRequest(final JEEContext context) throws Exception {
         val validator = oauthAuthorizationRequestValidators.getObject()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(b -> b.supports(context)))
             .findFirst()
             .orElse(null);
@@ -232,6 +234,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
         final WebContext context) {
         return accessTokenGrantRequestExtractors.getObject()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(ext -> ext.supports(context))
             .findFirst();
     }
