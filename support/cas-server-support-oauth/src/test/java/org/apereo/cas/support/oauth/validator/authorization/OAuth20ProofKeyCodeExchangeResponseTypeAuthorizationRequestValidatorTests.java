@@ -49,7 +49,7 @@ public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidato
         val v = new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
             serviceManager, new WebApplicationServiceFactory(),
             new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()),
-            new DefaultOAuth20RequestParameterResolver(mock(JwtBuilder.class)));
+            new DefaultOAuth20RequestParameterResolver(mock(JwtBuilder.class), new CasConfigurationProperties()));
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

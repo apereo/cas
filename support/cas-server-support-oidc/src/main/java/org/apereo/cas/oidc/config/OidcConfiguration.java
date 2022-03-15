@@ -515,16 +515,16 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
         public JwtBuilder accessTokenJwtBuilder(
+            final CasConfigurationProperties casProperties,
             @Qualifier("oidcAccessTokenJwtCipherExecutor")
             final CipherExecutor<Serializable, String> oidcAccessTokenJwtCipherExecutor,
             @Qualifier("oidcRegisteredServiceJwtAccessTokenCipherExecutor")
             final RegisteredServiceCipherExecutor oidcRegisteredServiceJwtAccessTokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager, oidcRegisteredServiceJwtAccessTokenCipherExecutor);
+            return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, servicesManager,
+                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties);
         }
-
-
     }
 
     @Configuration(value = "OidcContextConfiguration", proxyBeanMethods = false)

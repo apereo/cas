@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
@@ -19,7 +20,6 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,8 @@ public class JwtBuilder {
     private final ServicesManager servicesManager;
 
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
+
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Parse jwt.

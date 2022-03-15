@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -167,6 +168,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
     private boolean verifyRevocationRequest(final WebContext context) throws Exception {
         val validator = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject()
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(b -> b.supports(context)))
             .findFirst()
             .orElse(null);
