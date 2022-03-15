@@ -42,7 +42,9 @@ exports.removeDirectory = async (directory) => {
 
 exports.click = async (page, button) => {
     await page.evaluate((button) => {
-        document.querySelector(button).click();
+        let buttonNode = document.querySelector(button);
+        console.log(`Clicking element ${button} with link ${buttonNode.href}`);
+        buttonNode.click();
     }, button);
 }
 
@@ -83,13 +85,13 @@ exports.uploadImage = async (imagePath) => {
     let clientId = process.env.IMGUR_CLIENT_ID;
     if (clientId !== null && clientId !== undefined) {
         const client = new ImgurClient({clientId: clientId});
-        console.log(`Uploading image ${imagePath}`);
+        console.log(`Uploading image ${colors.green(imagePath)}`);
         client.on('uploadProgress', (progress) => console.log(progress));
         const response = await client.upload({
             image: fs.createReadStream(imagePath),
             type: 'stream',
         });
-        console.log(response.data.link);
+        console.log(`Uploaded image is at ${colors.green(response.data.link)}`);
     }
 }
 
@@ -408,13 +410,15 @@ exports.base64Decode = async(data) => {
 }
 
 exports.screenshot = async (page) => {
-    let index = Math.floor(Math.random() * 10000);
+    let index = Math.floor(Math.random() * 90000);
     let filePath = path.join(__dirname, `/screenshot${index}.png`)
     try {
+        let url = await page.url()
+        console.log(`Page URL when capturing screenshot: ${url}`)
         console.log(`Attempting to take a screenshot and save at ${filePath}`)
         await page.setViewport({width: 1920, height: 1080});
         await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true});
-        await this.logg(`Screenshot saved at ${filePath}`);
+        console.log(`Screenshot saved at ${colors.green(filePath)}`);
         await this.uploadImage(filePath);
     } catch (e)  {
         console.log(colors.red(`Unable to capture screenshot ${filePath}: ${e}`));
