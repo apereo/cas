@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
@@ -9,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 import org.junit.jupiter.api.Tag;
@@ -19,7 +17,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
