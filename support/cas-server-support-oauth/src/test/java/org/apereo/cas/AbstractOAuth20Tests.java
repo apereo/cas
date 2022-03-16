@@ -244,7 +244,6 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("oauthAuthorizationCodeResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder;
 
-
     @Autowired
     @Qualifier("oauthTokenResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder;

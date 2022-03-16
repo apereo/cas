@@ -184,6 +184,19 @@ public class OAuth20Utils {
                || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }
 
+    /**
+     * Is response mode type fragment?.
+     *
+     * @param registeredService the registered service
+     * @param responseType      the response type
+     * @return the boolean
+     */
+    public static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
+                                                     final OAuth20ResponseModeTypes responseType) {
+        return responseType == OAuth20ResponseModeTypes.FRAGMENT
+               || (registeredService != null && StringUtils.equalsIgnoreCase(
+            OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseType()));
+    }
 
     /**
      * Check the grant type against an expected grant type.
@@ -217,8 +230,6 @@ public class OAuth20Utils {
     public static boolean isResponseModeType(final String type, final OAuth20ResponseModeTypes expectedType) {
         return expectedType.getType().equalsIgnoreCase(type);
     }
-
-
 
 
     /**
