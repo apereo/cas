@@ -82,8 +82,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
 
     @Override
     public OAuth20ResponseModeTypes resolveResponseModeType(final WebContext context) {
+        val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getResponseModesSupported();
         val responseType = resolveRequestParameter(context, OAuth20Constants.RESPONSE_MODE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
+            .map(String::valueOf)
+            .filter(supported::contains)
+            .orElse(StringUtils.EMPTY);
         val type = Arrays.stream(OAuth20ResponseModeTypes.values())
             .filter(t -> t.getType().equalsIgnoreCase(responseType))
             .findFirst()
