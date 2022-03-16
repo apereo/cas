@@ -65,7 +65,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
             val ticket = encodeTicket(ticketToAdd);
             LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]",
                 ticketToAdd, couchbase.getBucket());
-            this.couchbase.bucketUpsertDefaultCollection(ticket.getId(), ticket,
+            couchbase.bucketUpsertDefaultCollection(ticket.getId(), ticket,
                 UpsertOptions.upsertOptions()
                     .expiry(getTimeToLive(ticketToAdd))
                     .transcoder(JsonTranscoder.create(JacksonJsonSerializer.create(MAPPER))));

@@ -487,25 +487,22 @@ exports.killProcess = async(command, arguments) => {
 }
 
 exports.goto = async (page, url, retryCount = 5) => {
-    const attemptGoto = async (page) => {
-        try {
-            await page.goto(url);
-            return page.evaluate(() => document.title);
-        } catch (err) {
-            console.log(colors.red(err.message));
-            return false;
-        }
-    }
-
-    let data = false;
+    let response = null;
     let attempts = 0;
-    while(data === false && attempts < retryCount) {
-        data = await attemptGoto(page);
+    const timeout = 2000;
+
+    while(response === null && attempts < retryCount) {
         attempts += 1;
-        if (data === false) {
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+        try {
+            response = await page.goto(url);
+            assert (await page.evaluate(() => document.title) !== null);
+        } catch (err) {
+            console.log(colors.red(`#${attempts}: Failed to goto to ${url}.`));
+            console.log(colors.red(err.message));
+            await this.sleep(timeout);
         }
     }
+    return response;
 }
 
 exports.loginDuoSecurityBypassCode = async (page, type) => {
