@@ -11,7 +11,7 @@ for scenario in `find $SCENARIOS_FOLDER -mindepth 1 -maxdepth 1 -type d -printf 
     echo "Skipping $scenario because of previous success "
     continue;
   fi
-  echo Running scenario $f in ${SCENARIOS_FOLDER}/$scenario
+  echo Running scenario $scenario in ${SCENARIOS_FOLDER}/$scenario
   $PUPPETEER_DIR/run.sh --nc --headless --rebuild --scenario ${SCENARIOS_FOLDER}/$scenario 2>&1 | tee $PUPPETEER_DIR/logs/$scenario.log
   RC=$?
   echo "Scenario ${scenario} completed with return code ${RC}"
