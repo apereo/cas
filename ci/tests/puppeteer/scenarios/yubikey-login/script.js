@@ -16,11 +16,11 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#yubiKeyForm")
 
     const endpoints = ["yubikeyAccountRepository/casuser"];
-    const baseUrl = "https://localhost:8443/cas/actuator/"
+    const baseUrl = "https://localhost:8443/cas/actuator/";
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
-        console.log(`${response.status()} ${response.statusText()}`)
+        await cas.logg(`Status: ${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }
 

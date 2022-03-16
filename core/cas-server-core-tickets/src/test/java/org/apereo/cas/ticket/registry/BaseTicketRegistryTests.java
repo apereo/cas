@@ -401,7 +401,9 @@ public abstract class BaseTicketRegistryTests {
                 tgts.add(ticketGrantingTicket);
                 sts.add(st);
                 ticketRegistry.addTicket(ticketGrantingTicket);
+                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(ticketGrantingTicket.getId()) != null));
                 ticketRegistry.addTicket(st);
+                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(st.getId()) != null));
             }
             await().untilAsserted(() -> {
                 val sessionCount = ticketRegistry.sessionCount();
@@ -414,7 +416,7 @@ public abstract class BaseTicketRegistryTests {
                 assertEquals(sts.size(), ticketCount,
                     () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
             });
-            
+
             return null;
         });
     }
