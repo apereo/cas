@@ -91,7 +91,6 @@ public class PathWatcherService implements WatcherService, Runnable, Closeable, 
     }
 
     @Override
-    @SneakyThrows
     public void start(final String name) {
         LOGGER.trace("Starting watcher thread");
         thread = new Thread(this);

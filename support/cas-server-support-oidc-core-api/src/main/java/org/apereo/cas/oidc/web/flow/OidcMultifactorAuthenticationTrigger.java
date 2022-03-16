@@ -10,11 +10,13 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.JEEContext;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +58,8 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
     private final OAuth20RequestParameterResolver oauthRequestParameterResolver;
 
+    private final FactoryBean<OidcServerDiscoverySettings> discoverySettingsFactory;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
@@ -63,13 +69,17 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
                                                                    final HttpServletResponse response,
                                                                    final Service service) {
         val acr = getAuthenticationClassReference(request, response);
-        val supportedAcrValues = casProperties.getAuthn().getOidc().getDiscovery().getAcrValuesSupported();
-        if (StringUtils.isBlank(acr) || !supportedAcrValues.contains(acr)) {
-            LOGGER.debug("No ACR provided in the authentication request, or ACR is not "
-                         + "supported via defined ACR values in CAS configuration, [{}]", supportedAcrValues);
+        if (StringUtils.isBlank(acr)) {
+            LOGGER.debug("No ACR provided in the authentication request");
             return Optional.empty();
         }
+        val supportedAcrValues = getSupportedAcrValues(authentication, registeredService, request);
         val values = List.of(org.springframework.util.StringUtils.delimitedListToStringArray(acr, " "));
+        if (values.stream().noneMatch(supportedAcrValues::contains)) {
+            LOGGER.warn("ACR [{}] is not defined as a supported ACR in CAS configuration, [{}]", acr, supportedAcrValues);
+            return Optional.empty();
+        }
+
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
@@ -89,8 +99,14 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
             .findAny();
     }
 
-    private String getAuthenticationClassReference(final HttpServletRequest request,
-                                                   final HttpServletResponse response) {
+    protected Set<String> getSupportedAcrValues(final Authentication authentication,
+                                                final RegisteredService registeredService,
+                                                final HttpServletRequest request) {
+        return FunctionUtils.doUnchecked(() -> discoverySettingsFactory.getObject().getAcrValuesSupported());
+    }
+
+    protected String getAuthenticationClassReference(final HttpServletRequest request,
+                                                     final HttpServletResponse response) {
         val context = new JEEContext(request, response);
         val acr = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.ACR_VALUES)
             .orElse(StringUtils.EMPTY);

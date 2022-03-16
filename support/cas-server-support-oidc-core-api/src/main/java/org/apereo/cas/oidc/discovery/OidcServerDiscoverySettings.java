@@ -20,6 +20,11 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettings {
+    /**
+     * Bean name of the factory that creates this instance.
+     */
+    public static final String BEAN_NAME_FACTORY = "oidcServerDiscoverySettingsFactory";
+
     @JsonProperty
     private final String issuer;
 
@@ -28,6 +33,9 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("response_types_supported")
     private Set<String> responseTypesSupported;
+
+    @JsonProperty("response_modes_supported")
+    private Set<String> responseModesSupported;
 
     @JsonProperty("subject_types_supported")
     private Set<String> subjectTypesSupported;

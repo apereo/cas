@@ -40,6 +40,7 @@ public class OidcMultifactorAuthenticationTriggerTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
+    @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=unknown")
     public class NoMultifactorProvidersTests extends AbstractOidcTests {
         @Test
         public void verifyAcrMissingMfa() {
@@ -57,7 +58,10 @@ public class OidcMultifactorAuthenticationTriggerTests {
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @Import(OidcMultifactorAuthenticationTriggerTests.OidcAuthenticationContextTestConfiguration.class)
-    @TestPropertySource(properties = "cas.authn.oidc.core.authentication-context-reference-mappings=1->mfa-dummy")
+    @TestPropertySource(properties = {
+        "cas.authn.oidc.discovery.acr-values-supported=1,2",
+        "cas.authn.oidc.core.authentication-context-reference-mappings=1->mfa-dummy"
+    })
     public class WithMappedMultifactorProvidersTests extends AbstractOidcTests {
         @Test
         public void verifyAcrMfa() {
@@ -69,6 +73,19 @@ public class OidcMultifactorAuthenticationTriggerTests {
             val authn = RegisteredServiceTestUtils.getAuthentication();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             assertTrue(oidcMultifactorAuthenticationTrigger.isActivated(authn,
+                registeredService, request, new MockHttpServletResponse(), service).isPresent());
+        }
+
+        @Test
+        public void verifyUnsupportedAcr() {
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
+            val service = RegisteredServiceTestUtils.getService();
+            val request = new MockHttpServletRequest();
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE,
+                String.format("https://app.org?%s=mfa-dummy", OAuth20Constants.ACR_VALUES));
+            val authn = RegisteredServiceTestUtils.getAuthentication();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+            assertFalse(oidcMultifactorAuthenticationTrigger.isActivated(authn,
                 registeredService, request, new MockHttpServletResponse(), service).isPresent());
         }
     }

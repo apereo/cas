@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -168,25 +168,26 @@ public class MultifactorAuthenticationUtils {
      * @param predicate              the predicate
      * @return the set
      */
-    @SneakyThrows
     public static Set<Event> resolveEventViaSingleAttribute(final Principal principal,
                                                             final Object providedAttributeValue,
                                                             final RegisteredService service,
                                                             final Optional<RequestContext> context,
                                                             final MultifactorAuthenticationProvider provider,
                                                             final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
-        val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
-        if (processSingleValue) {
-            val attributeValue = CollectionUtils.firstElement(providedAttributeValue).map(Object::toString).orElse(StringUtils.EMPTY);
-            LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-            if (predicate.test(attributeValue, provider)) {
-                LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
-                return evaluateEventForProviderInContext(principal, service, context, provider);
+        return FunctionUtils.doUnchecked(() -> {
+            val processSingleValue = !(providedAttributeValue instanceof Collection) || CollectionUtils.toCollection(providedAttributeValue).size() == 1;
+            if (processSingleValue) {
+                val attributeValue = CollectionUtils.firstElement(providedAttributeValue).map(Object::toString).orElse(StringUtils.EMPTY);
+                LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
+                if (predicate.test(attributeValue, provider)) {
+                    LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
+                    return evaluateEventForProviderInContext(principal, service, context, provider);
+                }
+                LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
             }
-            LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
-        }
-        LOGGER.debug("Attribute value [{}] is not a single-valued attribute", providedAttributeValue);
-        return null;
+            LOGGER.debug("Attribute value [{}] is not a single-valued attribute", providedAttributeValue);
+            return null;
+        });
     }
 
 

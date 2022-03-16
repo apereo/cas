@@ -211,7 +211,7 @@ public class RadiusConfiguration {
     public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("multifactorAuthenticationProviderResolver")
+        @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
         final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) throws Exception {
         return BeanSupplier.of(MultifactorAuthenticationTrigger.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

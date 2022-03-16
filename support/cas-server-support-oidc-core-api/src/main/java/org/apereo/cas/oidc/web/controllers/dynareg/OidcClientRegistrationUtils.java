@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.services.RegisteredServiceContact;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.CollectionUtils;

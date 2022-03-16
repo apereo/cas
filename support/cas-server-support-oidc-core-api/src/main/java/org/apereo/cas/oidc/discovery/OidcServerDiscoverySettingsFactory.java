@@ -38,6 +38,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setClaimsSupported(new LinkedHashSet<>(discoveryConfig.getClaims()));
         discovery.setScopesSupported(new LinkedHashSet<>(discoveryConfig.getScopes()));
         discovery.setResponseTypesSupported(new LinkedHashSet<>(discoveryConfig.getResponseTypesSupported()));
+        discovery.setResponseModesSupported(new LinkedHashSet<>(discoveryConfig.getResponseModesSupported()));
         discovery.setSubjectTypesSupported(new LinkedHashSet<>(discoveryConfig.getSubjectTypes()));
         discovery.setClaimTypesSupported(new LinkedHashSet<>(discoveryConfig.getClaimTypesSupported()));
         discovery.setIntrospectionSupportedAuthenticationMethods(
