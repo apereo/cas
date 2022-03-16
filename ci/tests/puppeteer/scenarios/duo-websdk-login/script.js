@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     const service = "https://apereo.github.io";
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.assertVisibility(page, '#twitter-link')
     await cas.assertVisibility(page, '#youtube-link')
@@ -14,7 +14,7 @@ const cas = require('../../cas.js');
     await page.waitForTimeout(8000)
     await cas.assertTicketParameter(page);
 
-    await page.goto(`https://localhost:8443/cas/login`);
+    await cas.goto(page, `https://localhost:8443/cas/login`);
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     await cas.assertTicketGrantingCookie(page);
 
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     for (let i = 0; i < endpoints.length; i++) {
         let url = baseUrl + endpoints[i];
         console.log(`Calling endpoint ${url}`)
-        const response = await page.goto(url);
+        const response = await cas.goto(page, url);
         console.log(`${response.status()} ${response.statusText()}`)
         assert(response.ok())
     }

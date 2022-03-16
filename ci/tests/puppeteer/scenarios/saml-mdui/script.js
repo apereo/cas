@@ -17,13 +17,13 @@ const cas = require('../../cas.js');
 async function runTestsFor(page, entityId, hasInfoUrl = true) {
     let service = encodeURIComponent(`https://apereo.github.io?entityId=${entityId}`);
     console.log(`Using service ${service}`)
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(1000)
     await verify(page, hasInfoUrl);
 
     let url = `https://localhost:8443/cas/login?entityId=${encodeURIComponent(entityId)}&service=https://apereo.github.io`;
     console.log(`Using URL ${url}`)
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     await verify(page, hasInfoUrl);
 }

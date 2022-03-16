@@ -11,7 +11,7 @@ async function fetchCode(page, acr, params) {
     }
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     if (await cas.isVisible(page, "#username")) {
         await cas.loginWith(page, "casuser", "Mellon");
@@ -74,7 +74,7 @@ async function exchangeCode(page, code, successHandler) {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     console.log("===================================================================")
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth")
@@ -84,7 +84,7 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     })
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     console.log("===================================================================")
     await cas.logg("Fetching code for MFA based on ACR 1 mapped in configuration to mfa-gauth")
@@ -94,11 +94,11 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa")
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"))
     })
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
     console.log("===================================================================")
     await cas.logg("Fetching code for MFA based on ACR mfa-gauth for existing SSO")
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
 
     code = await fetchCode(page, "mfa-gauth");

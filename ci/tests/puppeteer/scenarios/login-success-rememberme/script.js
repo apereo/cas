@@ -5,9 +5,9 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.click(page, "#rememberMe")
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForTimeout(1000)
@@ -22,7 +22,7 @@ const assert = require("assert");
     await page.close()
 
     page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     tgc = await cas.assertTicketGrantingCookie(page);
     date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);

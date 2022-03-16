@@ -6,7 +6,7 @@ const path = require('path');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(1000)
     await cas.assertVisibility(page, 'li #OktaOidcClient')
     await cas.click(page, "li #OktaOidcClient")
@@ -21,7 +21,7 @@ const path = require('path');
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     console.log(authData);
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertTicketGrantingCookie(page);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

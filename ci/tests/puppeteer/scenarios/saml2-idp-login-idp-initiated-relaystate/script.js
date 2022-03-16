@@ -11,7 +11,7 @@ async function unsolicited(page, target) {
     url += `&target=${target}`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(3000)
     const result = await page.url()
     console.log(`Page url: ${result}`)

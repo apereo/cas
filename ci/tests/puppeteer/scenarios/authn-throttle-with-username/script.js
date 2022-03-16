@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
 
     const url = "https://localhost:8443/cas/actuator/throttles"
     console.log(`Trying ${url}`)
-    const response = await page.goto(url);
+    const response = await cas.goto(page, url);
     console.log(`${response.status()} ${response.statusText()}`)
     assert(response.ok())
 
@@ -21,7 +21,7 @@ const cas = require('../../cas.js');
 })();
 
 async function submitLoginFailure(page) {
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "BadPassword1");
 }
 

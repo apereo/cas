@@ -4,7 +4,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "mustchangepswd", "password");
     await page.waitForTimeout(2000)
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepswd. You must change your password.")
@@ -13,8 +13,8 @@ const cas = require('../../cas.js');
     await page.keyboard.press('Enter');
     await page.waitForNavigation();
     await cas.assertInnerText(page, "#content h2", "Password Change Successful")
-    await page.goto("https://localhost:8443/cas/logout");
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "mustchangepswd", "Jv!e0mKD&dCNl^Q");
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

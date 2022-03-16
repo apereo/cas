@@ -6,7 +6,7 @@ const path = require("path");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     let page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     await page.close();
 
@@ -23,7 +23,7 @@ const path = require("path");
         };
         request.continue(data);
     });
-    await page.goto('https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
+    await cas.goto(page, 'https://localhost:8443/cas/idp/profile/SAML2/POST/SLO');
     assert(page.url().startsWith('https://samltest.id/Shibboleth.sso/SLO/Redirect?SAMLResponse='));
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
     await browser.close();

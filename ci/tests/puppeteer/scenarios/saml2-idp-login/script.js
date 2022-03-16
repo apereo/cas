@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
 
     try {
-        await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+        await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
         await page.waitForTimeout(2000)
         await cas.screenshot(page);
         await cas.loginWith(page, "casuser", "Mellon");
@@ -25,11 +25,11 @@ const cas = require('../../cas.js');
         const baseUrl = "https://localhost:8443/cas/actuator/"
         for (let i = 0; i < endpoints.length; i++) {
             let url = baseUrl + endpoints[i];
-            const response = await page.goto(url);
+            const response = await cas.goto(page, url);
             console.log(`${response.status()} ${response.statusText()}`)
             assert(response.ok())
         }
-        const response = await page.goto("https://localhost:8443/cas/idp/error");
+        const response = await cas.goto(page, "https://localhost:8443/cas/idp/error");
         assert(response.ok())
         await cas.assertInnerText(page, '#content h2', "SAML2 Identity Provider Error");
 
