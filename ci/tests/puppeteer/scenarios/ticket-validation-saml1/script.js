@@ -8,7 +8,7 @@ const cas = require('../../cas.js');
     const page = await cas.newPage(browser);
     const service = "https://example.com";
 
-    await page.goto(`https://localhost:8443/cas/login?TARGET=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
 
     let ticket = await cas.assertParameter(page, "SAMLart");

@@ -25,7 +25,7 @@ const assert = require('assert');
 
 async function getPayload(page, redirectUri, clientId, clientSecret) {
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20profile%20email&redirect_uri=${redirectUri}`
-    await page.goto(url);
+    await cas.goto(page, url);
     console.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000)
     
@@ -42,7 +42,7 @@ async function getPayload(page, redirectUri, clientId, clientSecret) {
     console.log(`Current code is ${code}`);
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?grant_type=authorization_code`
         + `&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}`;
-    await page.goto(accessTokenUrl);
+    await cas.goto(page, accessTokenUrl);
     console.log(`Page URL: ${page.url()}`);
     await page.waitForTimeout(1000)
     let content = await cas.textContent(page, "body");

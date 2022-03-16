@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.screenshot(page);
     await page.waitForTimeout(4000)
     await cas.loginWith(page, "casuser", "Mellon");

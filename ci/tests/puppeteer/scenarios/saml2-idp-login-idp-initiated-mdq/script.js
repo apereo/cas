@@ -24,7 +24,7 @@ const path = require("path");
 
         console.log(`Navigating to ${url}`);
         let s = await performance.now();
-        await page.goto(url);
+        await cas.goto(page, url);
         await page.waitForTimeout(2000);
         await cas.screenshot(page);
         let e = await performance.now();

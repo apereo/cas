@@ -10,7 +10,7 @@ async function fetchIdToken(page, maxAge, successHandler) {
     }
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
 

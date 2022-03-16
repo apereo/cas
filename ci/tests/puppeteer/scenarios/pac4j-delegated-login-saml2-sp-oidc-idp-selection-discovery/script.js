@@ -13,9 +13,9 @@ const assert = require("assert");
 
 async function startWithCasSp(page) {
     const service = "https://apereo.github.io";
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
     await page.waitForTimeout(1000)
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.assertVisibility(page, '#selectProviderButton')
     await cas.submitForm(page, "#providerDiscoveryForm")
     await page.waitForTimeout(1000)
@@ -31,9 +31,9 @@ async function startWithCasSp(page) {
 }
 
 async function startWithSamlSp(page) {
-    await page.goto("https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
 
-    await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(1000)
     
     await cas.assertVisibility(page, '#selectProviderButton')
@@ -51,7 +51,7 @@ async function startWithSamlSp(page) {
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     console.log(authData);
     
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertTicketGrantingCookie(page);
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
 }

@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await page.goto("http://localhost:8080/cas/login");
+    await cas.goto(page, "http://localhost:8080/cas/login");
     await cas.assertVisibility(page, "#drawerButton");
     await cas.click(page, "#drawerButton")
     await page.waitForTimeout(1000)
@@ -17,7 +17,7 @@ const assert = require("assert");
     await cas.assertVisibility(page, "div.container-fluid");
     await cas.assertVisibility(page, "div#HttpRequestTrigger");
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await page.focus("#username");
     await page.keyboard.press("Tab");
     await page.focus("#password");

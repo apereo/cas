@@ -19,7 +19,7 @@ async function cleanUp(exec) {
         const page = await cas.newPage(browser);
 
         console.log("Trying without an exising SSO session...")
-        page.goto("https://localhost:9876/sp")
+        cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
@@ -36,11 +36,11 @@ async function cleanUp(exec) {
         assert(payload.form.SAMLResponse !== null);
         
         console.log("Trying with an exising SSO session...")
-        await page.goto("https://localhost:8443/cas/logout");
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
-        page.goto("https://localhost:9876/sp")
+        cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");

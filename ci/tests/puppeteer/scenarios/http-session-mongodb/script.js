@@ -5,14 +5,14 @@ const assert = require("assert");
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
 
     await cas.loginWith(page, "casuser", "Mellon");
     const url = await page.url()
     console.log(`Page url: ${url}`)
     await cas.assertTicketParameter(page);
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     const sessionCookie = (await page.cookies()).filter(value => {
         console.log(`Checking cookie ${value.name}`)
         return value.name === "SESSION"

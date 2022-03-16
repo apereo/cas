@@ -15,7 +15,7 @@ const assert = require("assert");
         "nonce=vn4qulthnx";
     
     let url = `${authzUrl}?${params}`;
-    let response = await page.goto(url);
+    let response = await cas.goto(page, url);
     await page.waitForTimeout(1000)
     console.log(`Status: ${response.status()} ${response.statusText()}`)
     assert(403 === response.status())
@@ -36,7 +36,7 @@ const assert = require("assert");
 
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
     console.log(`Going to ${url}`)
-    response = await page.goto(url);
+    response = await cas.goto(page, url);
     await page.waitForTimeout(1000)
     console.log(`Status: ${response.status()} ${response.statusText()}`)
 
@@ -51,7 +51,7 @@ const assert = require("assert");
     console.log(`Attempting to use request_uri ${requestUri}`)
     url = `${authzUrl}?client_id=client&request_uri=${requestUri}`;
     console.log(`Going to ${url}`)
-    response = await page.goto(url);
+    response = await cas.goto(page, url);
     await page.waitForTimeout(1000)
     console.log(`Status: ${response.status()} ${response.statusText()}`)
     assert(403 === response.status())

@@ -45,7 +45,7 @@ const request = require('request');
 
     });
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(5000)
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

@@ -5,8 +5,8 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     for (let i = 0; i < 5; i++) {
-        await page.goto("https://localhost:8443/cas/logout");
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     }

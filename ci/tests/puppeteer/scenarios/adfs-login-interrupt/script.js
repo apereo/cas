@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     console.log(`Navigating to ${service}`);
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await page.waitForTimeout(2000)
     await cas.click(page, "div .idp span");
     await page.waitForTimeout(4000)
@@ -22,7 +22,7 @@ const cas = require('../../cas.js');
     await cas.submitForm(page, "#fm1");
 
     let ticket = await cas.assertTicketParameter(page);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.assertTicketGrantingCookie(page);
     await page.waitForTimeout(3000);
     body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);

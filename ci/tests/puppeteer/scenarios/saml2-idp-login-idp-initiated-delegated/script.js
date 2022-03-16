@@ -12,7 +12,7 @@ const assert = require("assert");
     url += `?providerId=${entityId}&CName=CasClient`;
 
     console.log(`Navigating to ${url}`);
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");
     console.log(await page.url())

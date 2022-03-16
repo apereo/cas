@@ -12,7 +12,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     console.log("Establishing SSO session...");
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
 
@@ -20,7 +20,7 @@ const assert = require("assert");
     let url = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
     url += `?providerId=${entityId}`;
     url += "&target=https%3A%2F%2Flocalhost%3A8443%2Fcas%2Flogin";
-    await page.goto(url);
+    await cas.goto(page, url);
     await page.waitForTimeout(1000)
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
@@ -29,7 +29,7 @@ const assert = require("assert");
     console.log(page.url());
     assert(page.url().startsWith("https://httpbin.org/post"))
 
-    await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(1000)
     await cas.assertTextContent(page, '#content h2', "Attribute Consent");
     await cas.screenshot(page);
