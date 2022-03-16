@@ -51,7 +51,7 @@ public class OidcHandlerInterceptorAdapterTests {
 
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
-    @TestPropertySource(properties = "cas.authn.oidc.dynamic-client-registration-mode=PROTECTED")
+    @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED")
     public class DefaultTests extends AbstractOidcTests {
         @Test
         public void verifyNothing() throws Exception {
