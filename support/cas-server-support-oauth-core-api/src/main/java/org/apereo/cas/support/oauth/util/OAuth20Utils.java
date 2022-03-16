@@ -178,7 +178,8 @@ public class OAuth20Utils {
      * @param responseType      the response type
      * @return true/false
      */
-    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
+    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService,
+                                                     final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST
                || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
     }

@@ -13,6 +13,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -195,19 +196,20 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
-        val f = getRegisteredServiceFileName(service);
-        publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-        val result = !f.exists() || f.delete();
-        if (!result) {
-            LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
-        } else {
-            removeRegisteredService(service);
-            LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
-        }
-        publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
-        return result;
+        return FunctionUtils.doUnchecked(() -> {
+            val f = getRegisteredServiceFileName(service);
+            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+            val result = !f.exists() || f.delete();
+            if (!result) {
+                LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
+            } else {
+                removeRegisteredService(service);
+                LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
+            }
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+            return result;
+        });
     }
 
     @Override

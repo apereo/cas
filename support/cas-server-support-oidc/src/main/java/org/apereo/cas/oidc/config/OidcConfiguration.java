@@ -198,7 +198,7 @@ public class OidcConfiguration {
         public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(
             @Qualifier("oidcWebFingerUserInfoRepository")
             final OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository,
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory) throws Exception {
             return new OidcWebFingerDiscoveryService(oidcWebFingerUserInfoRepository, oidcServerDiscoverySettingsFactory.getObject());
         }
@@ -351,7 +351,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService(
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
@@ -369,7 +369,7 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcUserProfileSigningAndEncryptionService")
         public OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService(
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             @Qualifier("oidcServiceJsonWebKeystoreCache")
             final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache,
@@ -609,7 +609,7 @@ public class OidcConfiguration {
             @Qualifier("oidcPrincipalFactory")
             final PrincipalFactory oidcPrincipalFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier("oidcServerDiscoverySettingsFactory")
+            @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
@@ -759,7 +759,7 @@ public class OidcConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "oidcServerDiscoverySettingsFactory")
+        @ConditionalOnMissingBean(name = OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory(
             @Qualifier(OidcIssuerService.BEAN_NAME)

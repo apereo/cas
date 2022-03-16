@@ -1,7 +1,8 @@
 package org.apereo.cas.throttle;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,17 +24,18 @@ public class DefaultThrottledRequestResponseHandler implements ThrottledRequestR
     private final String usernameParameter;
 
     @Override
-    @SneakyThrows
     public boolean handle(final HttpServletRequest request, final HttpServletResponse response) {
-        val username = StringUtils.isNotBlank(this.usernameParameter)
-            ? StringUtils.defaultString(request.getParameter(this.usernameParameter), "N/A")
-            : "N/A";
-        val msg = "Access Denied for user ["
-            + StringEscapeUtils.escapeHtml4(username) + "] from IP Address ["
-            + request.getRemoteAddr() + ']';
-        response.sendError(HttpStatus.SC_LOCKED, msg);
-        LOGGER.warn(msg);
-        
-        return false;
+        return FunctionUtils.doUnchecked(() -> {
+            val username = StringUtils.isNotBlank(this.usernameParameter)
+                ? StringUtils.defaultString(request.getParameter(this.usernameParameter), "N/A")
+                : "N/A";
+            val msg = "Access Denied for user ["
+                      + StringEscapeUtils.escapeHtml4(username) + "] from IP Address ["
+                      + request.getRemoteAddr() + ']';
+            response.sendError(HttpStatus.SC_LOCKED, msg);
+            LOGGER.warn(msg);
+
+            return false;
+        });
     }
 }

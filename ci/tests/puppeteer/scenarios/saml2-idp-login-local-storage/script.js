@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     try {
-        await page.goto("http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
+        await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
         await page.waitForTimeout(4000)
         await cas.screenshot(page);
         await cas.loginWith(page, "casuser", "Mellon");

@@ -283,7 +283,7 @@ public abstract class AbstractOidcTests {
     protected Action oidcRegisteredServiceUIAction;
 
     @Autowired
-    @Qualifier("oidcServerDiscoverySettingsFactory")
+    @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
     protected OidcServerDiscoverySettings oidcServerDiscoverySettings;
 
     @Autowired

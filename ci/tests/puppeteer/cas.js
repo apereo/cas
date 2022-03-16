@@ -486,6 +486,28 @@ exports.killProcess = async(command, arguments) => {
     });
 }
 
+exports.goto = async (page, url, retryCount = 5) => {
+    const attemptGoto = async (page) => {
+        try {
+            await page.goto(url);
+            return page.evaluate(() => document.title);
+        } catch (err) {
+            console.log(colors.red(err.message));
+            return false;
+        }
+    }
+
+    let data = false;
+    let attempts = 0;
+    while(data === false && attempts < retryCount) {
+        data = await attemptGoto(page);
+        attempts += 1;
+        if (data === false) {
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+        }
+    }
+}
+
 exports.loginDuoSecurityBypassCode = async (page, type) => {
     await page.waitForTimeout(12000);
     if (type === "websdk") {
