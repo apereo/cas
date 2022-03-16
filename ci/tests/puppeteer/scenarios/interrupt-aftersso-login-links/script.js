@@ -14,6 +14,7 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, '#interruptLinks')
     await page.waitForTimeout(1000)
     await cas.click(page, "#casapplication");
+    await page.waitForNavigation();
     await cas.assertTicketParameter(page);
     await browser.close();
 })();
