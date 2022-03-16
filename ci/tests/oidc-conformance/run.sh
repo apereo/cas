@@ -32,7 +32,7 @@ java -Xdebug -Xrunjdwp:transport=dt_socket,address=*:5000,server=y,suspend=n\
   --cas.authn.oidc.jwks.file-system.jwks-file=file:"$PWD"/ci/tests/oidc-conformance/cas-config/keystore.jwks \
   --cas.service-registry.core.init-from-json=true \
   --cas.service-registry.json.location=file:"$PWD"/ci/tests/oidc-conformance/cas-config/services \
-  --cas.authn.oidc.core.dynamic-client-registration-mode=OPEN \
+  --cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN \
   --cas.authn.oauth.core.user-profile-view-type=FLAT \
   --cas.server.name=https://localhost:8446 \
   --cas.server.prefix=https://localhost:8446/cas \

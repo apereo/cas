@@ -9,7 +9,7 @@
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
 
-    "--cas.authn.oidc.core.dynamic-client-registration-mode=OPEN",
+    "--cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN",
     
     "--cas.service-registry.core.init-from-json=false"
   ]
