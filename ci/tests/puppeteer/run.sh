@@ -39,7 +39,7 @@ function printred() {
   printf "${RED}$1${ENDCOLOR}\n"
 }
 
-casVersion=(`cat $PWD/gradle.properties | grep "version" | cut -d= -f2`)
+casVersion=($(cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2))
 echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVersion}"
 
 DEBUG_PORT="5000"
@@ -173,13 +173,13 @@ dockerInstalled=$?
 
 dockerRequired=$(jq -j '.conditions.docker // empty' "${config}")
 if [[ "${dockerRequired}" == "true" ]]; then
-  echo "Docker required, checking if available"
+  echo "Checking if Docker is available..."
   if [[ "$CI" == "true" && "${RUNNER_OS}" != "Linux" ]]; then
-    echo "Not running test in CI that requires docker, because non-linux github runner can't run docker"
+    printyellow "Not running test in CI that requires docker, because non-linux GitHub runner can't run Docker."
     exit 0
   fi
   if [[ $dockerInstalled -ne 0 ]] ; then
-    echo "Not running test because init script requires docker"
+    printred "Not running test because test scenario configuration requires Docker"
     exit 0
   fi
 fi
@@ -217,7 +217,7 @@ random=$(openssl rand -hex 8)
 
 if [[ ! -d "${PUPPETEER_DIR}/node_modules/puppeteer" || "${INSTALL_PUPPETEER}" == "true" ]]; then
   printgreen "Installing Puppeteer"
-  cd $PUPPETEER_DIR
+  cd "$PUPPETEER_DIR"
   npm_install_cmd="npm install"
   eval $npm_install_cmd || eval $npm_install_cmd || eval $npm_install_cmd
   cd -
@@ -244,7 +244,6 @@ if [[ "${RERUN}" != "true" ]]; then
   [ -f "${keystore}" ] && echo "Created ${keystore}"
 fi
 
-echo "Checking project"
 project=$(jq -j '.project // "tomcat"' "${config}")
 projectType=war
 if [[ $project == starter* ]]; then
@@ -273,7 +272,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
   printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-  printcyan "Launching build in background to make observing slow builds easier"
+  printcyan "Launching build in background to make observing slow builds easier..."
   targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
     rm -rf ./webapp/cas-server-webapp-${project}/build/libs
@@ -286,6 +285,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   $buildcmd > build.log 2>&1 &
   pid=$!
   sleep 20
+  printgreen "Current Java processes found for PID ${pid}"
   ps -ef | grep $pid | grep java
   if [[ $? -ne 0 ]]; then
     # This check is mainly for running on windows in CI
@@ -318,6 +318,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   else
     printgreen "\nBackground build successful. Build output was:"
     cat build.log
+    rm build.log
   fi
 fi
 

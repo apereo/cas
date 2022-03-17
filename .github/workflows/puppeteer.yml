@@ -48,8 +48,7 @@ jobs:
       - uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
-          
-
+  ##########################################################################
   initialize:
     needs: [cancel-previous-runs]
     runs-on: ubuntu-latest
@@ -134,8 +133,11 @@ jobs:
         run: chmod -R +x ./ci/**/*.sh
 #      - name: Setup tmate session
 #        uses: mxschmitt/action-tmate@v3
-      - name: Run Tests 
-        run: ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Tests
+        shell: bash
+        run: |
+          export RUNNER_OS=${{ runner.os }}
+          ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
 ##########################################################################
   puppeteer-tests-511:
     runs-on: ubuntu-latest
@@ -144,7 +146,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
     name: ${{matrix.scenario}}
     timeout-minutes: 15
