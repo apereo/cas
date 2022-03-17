@@ -24,6 +24,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.google.common.collect.Multimap;
 import lombok.RequiredArgsConstructor;
@@ -824,18 +825,22 @@ public class LdapUtils {
             cc.setSslConfig(new SslConfig(cfg));
         } else if (properties.getTrustStore() != null || properties.getKeystore() != null) {
             val cfg = new KeyStoreCredentialConfig();
-            if (properties.getTrustStore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", properties.getTrustStore());
-                cfg.setTrustStore(properties.getTrustStore());
+            FunctionUtils.doIfNotNull(properties.getTrustStore(), store -> {
+                val activeTrustStore = SpringExpressionLanguageValueResolver.getInstance().resolve(store);
+                LOGGER.trace("Creating LDAP SSL configuration with truststore [{}]", activeTrustStore);
+                cfg.setTrustStore(activeTrustStore);
                 cfg.setTrustStoreType(properties.getTrustStoreType());
-                cfg.setTrustStorePassword(properties.getTrustStorePassword());
-            }
-            if (properties.getKeystore() != null) {
-                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", properties.getKeystore());
-                cfg.setKeyStore(properties.getKeystore());
+                val password = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getTrustStorePassword());
+                cfg.setTrustStorePassword(password);
+            });
+            FunctionUtils.doIfNotNull(properties.getKeystore(), store -> {
+                val activeStore = SpringExpressionLanguageValueResolver.getInstance().resolve(store);
+                LOGGER.trace("Creating LDAP SSL configuration via keystore [{}]", activeStore);
+                cfg.setKeyStore(activeStore);
                 cfg.setKeyStoreType(properties.getKeystoreType());
-                cfg.setKeyStorePassword(properties.getKeystorePassword());
-            }
+                val password = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKeystorePassword());
+                cfg.setKeyStorePassword(password);
+            });
             cc.setSslConfig(new SslConfig(cfg));
         } else {
             LOGGER.debug("Creating LDAP SSL configuration via the native JVM truststore");

@@ -7,7 +7,7 @@
     "--cas.audit.engine.enabled=false",
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN",
     "--cas.authn.oidc.registration.client-secret-expiration=P14D",

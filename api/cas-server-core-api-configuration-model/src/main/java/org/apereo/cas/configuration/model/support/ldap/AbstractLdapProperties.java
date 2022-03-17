@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -40,11 +41,13 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Path to the keystore used for SSL connections.
      * Typically contains SSL certificates for the LDAP server.
      */
+    @ExpressionLanguageCapable
     private String keystore;
 
     /**
      * Keystore password.
      */
+    @ExpressionLanguageCapable
     private String keystorePassword;
 
     /**
@@ -60,11 +63,13 @@ public abstract class AbstractLdapProperties implements Serializable {
      * Used when connecting to an LDAP server via LDAPS or startTLS connection.
      * If left blank, the default truststore for the Java runtime is used.
      */
+    @ExpressionLanguageCapable
     private String trustStore;
 
     /**
      * Password needed to open the truststore.
      */
+    @ExpressionLanguageCapable
     private String trustStorePassword;
 
     /**
