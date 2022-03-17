@@ -37,6 +37,8 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.DefaultOAuth20ClientSecretValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator;
@@ -228,18 +230,16 @@ public class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier("defaultDeviceUserCodeFactory")
-            final OAuth20DeviceUserCodeFactory defaultDeviceUserCodeFactory,
             @Qualifier("registeredServiceAccessStrategyEnforcer")
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("defaultDeviceTokenFactory")
-            final OAuth20DeviceTokenFactory defaultDeviceTokenFactory,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
             final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -315,9 +315,9 @@ public class CasOAuth20Configuration {
                 .oauthInvalidAuthorizationResponseBuilder(oauthInvalidAuthorizationBuilder)
                 .oauthAuthorizationResponseBuilders(oauthAuthorizationResponseBuilders)
                 .oauthRequestValidators(oauthAuthorizationRequestValidators)
+                .clientSecretValidator(oauth20ClientSecretValidator)
                 .build();
         }
-
     }
 
     @Configuration(value = "CasOAuth20WebConfiguration", proxyBeanMethods = false)
@@ -724,7 +724,6 @@ public class CasOAuth20Configuration {
             return OAuth20CallbackAuthorizeViewResolver.asDefault();
         }
 
-
         @ConditionalOnMissingBean(name = "profileScopeToAttributesFilter")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -798,16 +797,26 @@ public class CasOAuth20Configuration {
     @Configuration(value = "CasOAuth20ValidatorsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class CasOAuth20ValidatorsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oauth20ClientSecretValidator")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20ClientSecretValidator oauth20ClientSecretValidator(
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            return new DefaultOAuth20ClientSecretValidator(oauthRegisteredServiceCipherExecutor);
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(
             @Qualifier("oauth20ConfigurationContext")
-            final OAuth20ConfigurationContext oauth20ConfigurationContext) {
-            val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
+            final OAuth20ConfigurationContext context) {
+            val grantTypesSupported = context.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
                 .when(grantTypesSupported.contains(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()))
-                .supply(() -> new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(oauth20ConfigurationContext))
+                .supply(() -> new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(context))
                 .otherwiseProxy()
                 .get();
         }
@@ -959,7 +968,7 @@ public class CasOAuth20Configuration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            
+
             val responseTypesSupported = casProperties.getAuthn().getOidc().getDiscovery().getResponseTypesSupported();
             return BeanSupplier.of(OAuth20AuthorizationRequestValidator.class)
                 .when(() -> responseTypesSupported.contains(OAuth20ResponseTypes.TOKEN.getType()))
@@ -1302,15 +1311,15 @@ public class CasOAuth20Configuration {
             final TicketRegistry ticketRegistry,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20ClientIdClientSecretAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
-                oauthRegisteredServiceCipherExecutor,
                 ticketRegistry,
                 defaultPrincipalResolver,
-                oauthRequestParameterResolver);
+                oauthRequestParameterResolver,
+                oauth20ClientSecretValidator);
         }
 
         @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
@@ -1329,15 +1338,15 @@ public class CasOAuth20Configuration {
             final TicketRegistry ticketRegistry,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20ProofKeyCodeExchangeAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
                 ticketRegistry,
-                oauthRegisteredServiceCipherExecutor,
                 defaultPrincipalResolver,
-                oauthRequestParameterResolver);
+                oauthRequestParameterResolver,
+                oauth20ClientSecretValidator);
         }
 
         @ConditionalOnMissingBean(name = "oAuthRefreshTokenAuthenticator")
@@ -1356,15 +1365,15 @@ public class CasOAuth20Configuration {
             final TicketRegistry ticketRegistry,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20RefreshTokenAuthenticator(servicesManager,
                 webApplicationServiceFactory,
                 registeredServiceAccessStrategyEnforcer,
                 ticketRegistry,
-                oauthRegisteredServiceCipherExecutor,
                 defaultPrincipalResolver,
-                oauthRequestParameterResolver);
+                oauthRequestParameterResolver,
+                oauth20ClientSecretValidator);
         }
 
         @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
@@ -1381,15 +1390,15 @@ public class CasOAuth20Configuration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            @Qualifier("oauthRegisteredServiceCipherExecutor")
-            final CipherExecutor oauthRegisteredServiceCipherExecutor) {
+            @Qualifier("oauth20ClientSecretValidator")
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
             return new OAuth20UsernamePasswordAuthenticator(
                 authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
-                oauthRegisteredServiceCipherExecutor,
                 oauthDistributedSessionStore,
-                oauthRequestParameterResolver);
+                oauthRequestParameterResolver,
+                oauth20ClientSecretValidator);
         }
 
         @ConditionalOnMissingBean(name = "oAuthAccessTokenAuthenticator")

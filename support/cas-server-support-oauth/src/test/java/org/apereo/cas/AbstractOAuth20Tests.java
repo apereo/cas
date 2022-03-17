@@ -55,6 +55,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20TestAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
@@ -247,6 +248,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthTokenResponseBuilder")
     protected OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder;
+
+    @Autowired
+    @Qualifier("oauth20ClientSecretValidator")
+    protected OAuth20ClientSecretValidator oauth20ClientSecretValidator;
 
     @Autowired
     @Qualifier("accessTokenResponseGenerator")
@@ -522,7 +527,7 @@ public abstract class AbstractOAuth20Tests {
 
         val tgt = new MockTicketGrantingTicket("casuser");
         this.ticketRegistry.addTicket(tgt);
-        
+
         val code = oAuthCodeFactory.create(service, authentication,
             tgt, new ArrayList<>(),
             codeChallenge, codeChallengeMethod, CLIENT_ID, new HashMap<>(),

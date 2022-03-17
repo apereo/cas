@@ -8,8 +8,8 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,11 +41,11 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
 
     private final ServiceFactory webApplicationServiceFactory;
 
-    private final CipherExecutor<Serializable, String> registeredServiceCipherExecutor;
-
     private final SessionStore sessionStore;
 
     private final OAuth20RequestParameterResolver requestParameterResolver;
+
+    private final OAuth20ClientSecretValidator clientSecretValidator;
 
     @Override
     public void validate(final Credentials credentials, final WebContext webContext,
@@ -64,7 +63,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             val clientSecret = clientIdAndSecret.getRight();
-            if (!OAuth20Utils.checkClientSecret(registeredService, clientSecret, registeredServiceCipherExecutor)) {
+            if (!clientSecretValidator.validate(registeredService, clientSecret)) {
                 throw new CredentialsException("Client Credentials provided is not valid for registered service: "
                                                + Objects.requireNonNull(registeredService).getName());
             }

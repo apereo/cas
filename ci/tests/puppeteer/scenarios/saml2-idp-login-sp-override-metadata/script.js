@@ -7,7 +7,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp",{waitUntil: 'networkidle2'});
+    await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await page.waitForTimeout(2000)
     await cas.loginWith(page, "casuser", "Mellon");
     await page.waitForSelector('#table_with_attributes', {visible: true});
@@ -15,7 +15,6 @@ const cas = require('../../cas.js');
     await cas.assertVisibility(page, "#table_with_attributes");
     let authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     console.log(authData);
-
     let artifacts = [
         "idp-metadata.xml",
         "idp-encryption.key",
