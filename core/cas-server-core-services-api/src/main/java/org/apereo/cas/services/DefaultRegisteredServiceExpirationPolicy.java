@@ -47,6 +47,10 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
 
     private String expirationDate;
 
+    public DefaultRegisteredServiceExpirationPolicy(final String expirationDate) {
+        this(false, false, false, expirationDate);
+    }
+
     public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final String expirationDate) {
         this(deleteWhenExpired, false, false, expirationDate);
     }

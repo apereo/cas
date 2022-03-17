@@ -1,30 +1,19 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
-import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
-import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.JEEContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests}.
@@ -33,37 +22,29 @@ import static org.mockito.Mockito.when;
  * @since 6.4.0
  */
 @Tag("OAuth")
-public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests {
+public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidatorTests extends AbstractOAuth20Tests {
+    @Autowired
+    @Qualifier("oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator")
+    private OAuth20AuthorizationRequestValidator validator;
+
     @Test
     public void verifySupports() throws Exception {
-        val serviceManager = mock(ServicesManager.class);
-
-        val service = new OAuthRegisteredService();
-        service.setName("OAuth");
-        service.setClientId("client");
-        service.setClientSecret("secret");
-        service.setServiceId("https://callback.example.org");
-
-        when(serviceManager.getAllServices()).thenReturn((Collection) CollectionUtils.toCollection(service));
-        when(serviceManager.getAllServicesOfType(any())).thenReturn((Collection) CollectionUtils.toCollection(service));
-        val v = new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(
-            serviceManager, new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(new CasConfigurationProperties()),
-            new DefaultOAuth20RequestParameterResolver(mock(JwtBuilder.class)));
+        val service = getRegisteredService("client", "secret");
+        servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
 
-        assertFalse(v.supports(context));
+        assertFalse(validator.supports(context));
 
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");
         request.setParameter(OAuth20Constants.REDIRECT_URI, service.getServiceId());
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.getType());
         request.setParameter(OAuth20Constants.CODE_VERIFIER, "abcd");
-        assertFalse(v.supports(context));
+        assertFalse(validator.supports(context));
 
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
-        assertTrue(v.supports(context));
+        assertTrue(validator.supports(context));
     }
 }

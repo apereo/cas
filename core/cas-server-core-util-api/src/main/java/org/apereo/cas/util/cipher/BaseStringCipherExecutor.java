@@ -5,6 +5,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -299,8 +300,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         val encoded = FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(encryptionKey, value,
-                    this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
+                return encryptValueAsJwt(encryptionKey, value);
             },
             value::toString).get();
 
@@ -325,9 +325,18 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(encryptionKey, value,
-                    this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
+                return encryptValueAsJwt(encryptionKey, value);
             },
             () -> encoded).get();
+    }
+
+    private String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+        return JsonWebTokenEncryptor.builder()
+            .key(encryptionKey)
+            .algorithm(encryptionAlgorithm)
+            .encryptionMethod(contentEncryptionAlgorithmIdentifier)
+            .headers(getCustomHeaders())
+            .build()
+            .encrypt(value);
     }
 }

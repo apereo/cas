@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -80,13 +81,14 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     }
 
     @Override
-    @SneakyThrows
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
-        val criterions = new CriteriaSet(new EntityIdCriterion(entityId));
-        if (this.metadataResolver != null) {
-            return this.metadataResolver.resolveSingle(criterions);
-        }
-        return null;
+        return FunctionUtils.doUnchecked(() -> {
+            val criterions = new CriteriaSet(new EntityIdCriterion(entityId));
+            if (this.metadataResolver != null) {
+                return this.metadataResolver.resolveSingle(criterions);
+            }
+            return null;
+        });
     }
 
     /**

@@ -53,9 +53,9 @@ public class InterruptWebflowConfigurerTests {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
-            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT_ACTION));
+            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));
-            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT_ACTION));
+            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INTERRUPT_VIEW));
         }
     }
@@ -74,9 +74,9 @@ public class InterruptWebflowConfigurerTests {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
-            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT_ACTION));
+            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));
-            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT_ACTION));
+            assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INQUIRE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INTERRUPT_VIEW));
         }
     }

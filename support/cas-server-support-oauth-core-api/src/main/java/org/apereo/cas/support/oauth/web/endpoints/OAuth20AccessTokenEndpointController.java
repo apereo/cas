@@ -17,6 +17,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import com.google.common.base.Supplier;
 import lombok.Getter;
@@ -181,7 +182,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
     private boolean verifyAccessTokenRequest(final WebContext context) throws Exception {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
-        return validators.stream()
+        return validators
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(ext -> ext.supports(context)))
             .findFirst()
             .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))

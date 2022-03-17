@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
 
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTicketGrantingCookie(page);
@@ -14,7 +14,8 @@ const cas = require('../../cas.js');
 
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");
     // hit strapi endpoint that triggers CAS login to get JWT
-    await page.goto("http://localhost:1337/api/connect/cas", {waitUntil: 'networkidle2'});
+    await cas.goto(page, "http://localhost:1337/api/connect/cas");
+    await page.waitForTimeout(2000)
     let element = await page.$('body pre');
     if (element == null) {
         let errorpage = await cas.textContent(page, 'body div main');

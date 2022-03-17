@@ -12,8 +12,8 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     console.log("Starting out with acceptable usage policy feature disabled...")
-    await page.goto(`https://localhost:8443/cas/logout`);
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTicketParameter(page);
 
@@ -27,8 +27,8 @@ const assert = require("assert");
     let response = await cas.doRequest("https://localhost:8443/cas/actuator/refresh", "POST");
     console.log(response)
     console.log("Starting out with acceptable usage policy feature enabled...")
-    await page.goto(`https://localhost:8443/cas/logout`);
-    await page.goto(`https://localhost:8443/cas/login?service=${service}`);
+    await cas.goto(page, `https://localhost:8443/cas/logout`);
+    await cas.goto(page, `https://localhost:8443/cas/login?service=${service}`);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy")
     await cas.assertVisibility(page, 'button[name=submit]')

@@ -27,8 +27,8 @@ const path = require("path");
 
 
 async function doLogin(page, uid, psw, email) {
-    await page.goto("https://localhost:8443/cas/logout");
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page,uid, psw);
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

@@ -3,11 +3,13 @@ const path = require('path');
 const cas = require('../../cas.js');
 const assert = require("assert");
 
-async function cleanUp(samlSpDir) {
+async function cleanUp(exec) {
     console.log("Killing SAML2 SP process...");
-    await cas.stopSamlSp(samlSpDir);
+    exec.kill();
     await cas.removeDirectory(path.join(__dirname, '/saml-md'));
+    await cas.removeDirectory(path.join(__dirname, '/saml-sp'));
 }
+
 
 (async () => {
     let samlSpDir = path.join(__dirname, '/saml-sp');
@@ -18,7 +20,7 @@ async function cleanUp(samlSpDir) {
         const page = await cas.newPage(browser);
 
         console.log("Trying without an exising SSO session...")
-        page.goto("https://localhost:9876/sp")
+        await cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
@@ -35,12 +37,11 @@ async function cleanUp(samlSpDir) {
         console.log(payload);
         assert(payload.form.SAMLResponse !== null);
         console.log("Trying with an exising SSO session...")
-        await page.goto("https://localhost:8443/cas/logout");
-        console.log("sleep during debug...")
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await cas.loginWith(page, "casuser", "Mellon");
         await cas.assertTicketGrantingCookie(page);
-        page.goto("https://localhost:9876/sp")
+        cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");
@@ -53,9 +54,9 @@ async function cleanUp(samlSpDir) {
         assert(payload.form.SAMLResponse !== null);
 
         await browser.close();
-        await cleanUp(samlSpDir);
+        await cleanUp(exec);
     }, async error => {
-        await cleanUp(samlSpDir);
+        await cleanUp(exec);
         console.log(error);
         throw error;
     })

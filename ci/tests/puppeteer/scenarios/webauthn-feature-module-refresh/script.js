@@ -9,7 +9,7 @@ const path = require("path");
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     let url = "https://localhost:8443/cas/login?authn_method=mfa-webauthn";
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed")
 
@@ -25,8 +25,8 @@ const path = require("path");
         console.log(response)
         await page.waitForTimeout(2000)
 
-        await page.goto("https://localhost:8443/cas/logout");
-        await page.goto(url);
+        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.goto(page, url);
         await cas.loginWith(page, "casuser", "Mellon");
         await page.waitForTimeout(4000)
         await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
@@ -45,7 +45,7 @@ const path = require("path");
         for (let i = 0; i < endpoints.length; i++) {
             let url = baseUrl + endpoints[i];
             console.log(`Checking response status from ${url}`)
-            const response = await page.goto(url);
+            const response = await cas.goto(page, url);
             console.log(`${response.status()} ${response.statusText()}`)
             assert(response.ok())
         }

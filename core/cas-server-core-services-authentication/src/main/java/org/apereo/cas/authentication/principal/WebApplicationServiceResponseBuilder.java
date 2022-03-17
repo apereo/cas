@@ -57,7 +57,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             return buildHeader(finalService, parameters);
         }
 
-        throw new IllegalArgumentException("Response type is valid. Only " + Arrays.toString(ResponseType.values()) + " are supported");
+        throw new IllegalArgumentException("Response type is invalid. Only " + Arrays.toString(ResponseType.values()) + " are supported");
     }
 
     /**

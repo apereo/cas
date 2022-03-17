@@ -51,7 +51,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
             return ConditionOutcome.noMatch(message);
         }
         val message = "CAS feature " + property + " is set to true.";
-        LOGGER.debug(message);
+        LOGGER.trace(message);
         return ConditionOutcome.match(message);
     }
 }

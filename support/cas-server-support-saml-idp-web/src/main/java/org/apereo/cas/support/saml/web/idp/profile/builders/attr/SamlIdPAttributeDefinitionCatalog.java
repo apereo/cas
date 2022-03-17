@@ -13,6 +13,7 @@ class SamlIdPAttributeDefinitionCatalog {
     public static Stream<SamlIdPAttributeDefinition> load() {
         return Stream.of(
             SamlIdPAttributeDefinition.builder().urn("urn:oid:0.9.2342.19200300.100.1.1").friendlyName("uid").key("urn:oid:0.9.2342.19200300.100.1.1").build(),
+            SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.12").friendlyName("title").key("urn:oid:2.5.4.12").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.4").friendlyName("sn").key("urn:oid:2.5.4.4").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.4").friendlyName("surname").key("urn:oid:2.5.4.4").build(),
             SamlIdPAttributeDefinition.builder().urn("urn:oid:2.5.4.42").friendlyName("givenName").key("urn:oid:2.5.4.42").build(),

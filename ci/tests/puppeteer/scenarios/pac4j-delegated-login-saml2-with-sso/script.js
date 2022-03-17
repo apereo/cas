@@ -7,14 +7,14 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
     try {
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(1000)
 
-        await page.goto("https://localhost:8443/cas/login");
+        await cas.goto(page, "https://localhost:8443/cas/login");
         await page.waitForTimeout(1000);
         await cas.loginWith(page, "casuser", "Mellon");
 
-        await page.goto("https://localhost:8443/cas/login?service=https://github.com");
+        await cas.goto(page, "https://localhost:8443/cas/login?service=https://github.com");
         await page.waitForTimeout(1000);
 
         await cas.assertVisibility(page, '#loginProviders')

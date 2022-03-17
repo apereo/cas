@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.support;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -39,15 +40,16 @@ public class JpaBeans {
      * @param url         the url
      * @return the data source
      */
-    @SneakyThrows
     public static DataSource newDataSource(final String driverClass, final String username,
                                            final String password, final String url) {
-        val ds = new SimpleDriverDataSource();
-        ds.setDriverClass((Class<Driver>) Class.forName(driverClass));
-        ds.setUsername(username);
-        ds.setPassword(password);
-        ds.setUrl(url);
-        return ds;
+        return FunctionUtils.doUnchecked(() -> {
+            val ds = new SimpleDriverDataSource();
+            ds.setDriverClass((Class<Driver>) Class.forName(driverClass));
+            ds.setUsername(username);
+            ds.setPassword(password);
+            ds.setUrl(url);
+            return ds;
+        });
     }
 
     /**

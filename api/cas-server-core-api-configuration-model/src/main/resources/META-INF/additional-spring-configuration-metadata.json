@@ -460,6 +460,15 @@
       }
     },
     {
+      "name": "cas.authn.oidc.core.dynamic-client-registration-mode",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.registration.dynamic-client-registration-mode",
+        "reason": "dynamic-client-registration-mode is now moved into the registration namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.authn.oidc.user-defined-scopes",
       "type": "java.lang.String",
       "deprecation": {

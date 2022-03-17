@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,17 +41,16 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestContext extract(final WebContext context) {
-        val grantType = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
+        val grantType = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = getOAuthRegisteredServiceBy(context);
-
-        if (registeredService == null) {
-            throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
-        }
-
+        FunctionUtils.throwIf(registeredService == null,
+            () -> new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri));
         val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
+        LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
         ensureThatTheTicketGrantingTicketIsNotExpired(token);
 
@@ -68,7 +68,6 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .token(token)
             .claims(token.getClaims())
             .ticketGrantingTicket(token.getTicketGrantingTicket());
-
         return extractInternal(context, builder);
     }
 
@@ -181,11 +180,9 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val registeredService = StringUtils.isNotBlank(clientId)
             ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId)
             : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getConfigurationContext().getServicesManager(), redirectUri);
-        if (registeredService == null) {
-            LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri);
-        } else {
-            LOGGER.debug("Located registered service [{}]", registeredService);
-        }
+        FunctionUtils.doIf(registeredService == null,
+            param -> LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri),
+            ex -> LOGGER.debug("Located registered service [{}]", registeredService)).accept(registeredService);
         return registeredService;
     }
 }

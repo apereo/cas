@@ -11,7 +11,7 @@ const cas = require('../../cas.js');
         "response_type=id_token%20token&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    await page.goto(url);
+    await cas.goto(page, url);
     await cas.loginWith(page, "casuser", "Mellon");
     await cas.click(page, "#allow");
     await page.waitForNavigation();

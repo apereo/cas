@@ -13,7 +13,7 @@ const cas = require('../../cas.js');
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    await page.goto(url);
+    await cas.goto(page, url);
 
     await cas.assertVisibility(page, 'li #CasClient')
     await cas.click(page, "li #CasClient")

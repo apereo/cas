@@ -10,7 +10,7 @@ const cas = require('../../cas.js');
     const redirectUri = "https%3A%2F%2Fapereo.github.io";
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
-    await page.goto(url);
+    await cas.goto(page, url);
     console.log(`Page URL: ${page.url()}`)
     await page.waitForTimeout(1000)
     await cas.loginWith(page, "casuser", "Mellon");

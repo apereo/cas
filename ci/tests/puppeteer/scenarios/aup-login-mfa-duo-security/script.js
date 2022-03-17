@@ -5,7 +5,7 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login?service=https://apereo.github.io");
+    await cas.goto(page, "https://localhost:8443/cas/login?service=https://apereo.github.io");
 
     await cas.loginWith(page, "duobypass", "Mellon");
     await page.waitForTimeout(8000)
@@ -23,7 +23,7 @@ const cas = require('../../cas.js');
     let result = new URL(page.url());
     assert(result.host === "apereo.github.io");
 
-    await page.goto("https://localhost:8443/cas/login")
+    await cas.goto(page, "https://localhost:8443/cas/login")
     await page.waitForTimeout(2000)
     await cas.assertTicketGrantingCookie(page);
     

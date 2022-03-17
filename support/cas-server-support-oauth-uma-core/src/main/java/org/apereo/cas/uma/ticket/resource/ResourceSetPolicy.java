@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
@@ -53,8 +53,7 @@ public class ResourceSetPolicy implements Serializable {
      * @return the string
      */
     @JsonIgnore
-    @SneakyThrows
     public String toJson() {
-        return MAPPER.writeValueAsString(this);
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
     }
 }

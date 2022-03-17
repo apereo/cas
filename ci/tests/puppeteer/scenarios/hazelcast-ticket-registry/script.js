@@ -5,9 +5,9 @@ const cas = require('../../cas.js');
 (async () => {
     const browser = await puppeteer.launch(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
-    await page.goto("https://localhost:8443/cas/actuator/health");
+    await cas.goto(page, "https://localhost:8443/cas/actuator/health");
     await page.waitForTimeout(1000)
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         res => {
@@ -30,7 +30,7 @@ const cas = require('../../cas.js');
         }, { 'Content-Type': "application/json" })
 
 
-    await page.goto("https://localhost:8444/cas/login");
+    await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.assertTicketGrantingCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, '#content div h2', "Log In Successful");

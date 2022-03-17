@@ -15,7 +15,7 @@ async function cleanUp(samlSpDir) {
     await cas.waitFor('https://localhost:9876/sp/saml/status', async () => {
         const browser = await puppeteer.launch(cas.browserOptions());
         const page = await cas.newPage(browser);
-        page.goto("https://localhost:9876/sp")
+        cas.goto(page, "https://localhost:9876/sp")
         await page.waitForTimeout(3000)
         await page.waitForSelector('#idpForm', {visible: true});
         await cas.submitForm(page, "#idpForm");

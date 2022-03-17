@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -30,9 +31,10 @@ public class HttpServletRequestXMLMessageDecodersMap extends EnumMap<HttpMethod,
      * @param method the method
      * @return the instance
      */
-    @SneakyThrows
     public BaseHttpServletRequestXMLMessageDecoder getInstance(final HttpMethod method) {
-        val decoder = get(method);
-        return (BaseHttpServletRequestXMLMessageDecoder) BeanUtils.cloneBean(decoder);
+        return FunctionUtils.doUnchecked(() -> {
+            val decoder = get(method);
+            return (BaseHttpServletRequestXMLMessageDecoder) BeanUtils.cloneBean(decoder);
+        });
     }
 }

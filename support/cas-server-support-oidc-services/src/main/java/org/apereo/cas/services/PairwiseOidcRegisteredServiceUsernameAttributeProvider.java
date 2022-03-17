@@ -47,7 +47,8 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 
     @Override
-    public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
+    public String resolveUsernameInternal(final Principal principal, final Service service,
+                                          final RegisteredService registeredService) {
         if (registeredService == null || !OidcRegisteredService.class.isAssignableFrom(registeredService.getClass())) {
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
@@ -65,7 +66,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     }
 
     private static String getSectorIdentifier(final OidcRegisteredService client) {
-        if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
+        if (StringUtils.isNotBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
         }

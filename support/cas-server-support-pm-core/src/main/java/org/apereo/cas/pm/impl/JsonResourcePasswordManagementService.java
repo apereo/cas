@@ -8,6 +8,7 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -126,11 +127,12 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         private Map<String, String> securityQuestions = new HashMap<>(0);
     }
 
-    @SneakyThrows
     private boolean writeAccountToJsonResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
-        readAccountsFromJsonResource();
-        return true;
+        return FunctionUtils.doUnchecked(() -> {
+            MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
+            readAccountsFromJsonResource();
+            return true;
+        });
     }
 
     @SneakyThrows

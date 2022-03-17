@@ -6,7 +6,7 @@ const cas = require('../../cas.js');
     const browser = await puppeteer.launch(cas.browserOptions({args: ['--incognito']}));
     const page = await cas.newPage(browser);
 
-    await page.goto("https://localhost:8443/cas/login");
+    await cas.goto(page, "https://localhost:8443/cas/login");
     await cas.loginWith(page, "casuser", "Mellon");
     let tgc = await cas.assertTicketGrantingCookie(page);
 
