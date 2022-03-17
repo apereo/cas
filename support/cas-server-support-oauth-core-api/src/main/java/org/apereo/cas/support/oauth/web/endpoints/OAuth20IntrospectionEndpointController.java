@@ -51,8 +51,9 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      * @param code the code
      * @return the response entity
      */
-    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildUnauthorizedResponseEntity(final String code,
-                                                                                                           final boolean isAuthenticationFailure) {
+    private static ResponseEntity<OAuth20IntrospectionAccessTokenResponse> buildUnauthorizedResponseEntity(
+        final String code,
+        final boolean isAuthenticationFailure) {
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
         val value = OAuth20Utils.toJson(map);
@@ -194,15 +195,14 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         final UsernamePasswordCredentials credentials,
         final HttpServletRequest request) {
         val tokenExists = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.TOKEN)
-            || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
+                          || HttpRequestUtils.doesParameterExist(request, OAuth20Constants.ACCESS_TOKEN);
 
         if (!tokenExists) {
             LOGGER.warn("Access token cannot be found in the request");
             return Optional.of(buildBadRequestResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN));
         }
 
-        if (OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword(),
-            getConfigurationContext().getRegisteredServiceCipherExecutor())) {
+        if (getConfigurationContext().getClientSecretValidator().validate(registeredService, credentials.getPassword())) {
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
             val audit = AuditableContext.builder()
                 .service(service)
