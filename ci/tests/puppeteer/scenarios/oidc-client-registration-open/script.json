@@ -10,6 +10,7 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:/tmp/keystore.jwks",
 
     "--cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN",
+    "--cas.authn.oidc.registration.client-secret-expiration=P14D",
     
     "--cas.service-registry.core.init-from-json=false"
   ]

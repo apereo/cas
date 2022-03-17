@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -73,7 +72,6 @@ public class WebflowExecutorFactory {
         return new FlowExecutorImpl(this.flowDefinitionRegistry, factory, repository);
     }
 
-    @SneakyThrows
     private Transcoder getWebflowStateTranscoder() {
         val cipherBean = new WebflowCipherBean(this.webflowCipherExecutor);
         return new EncryptedTranscoder(cipherBean);

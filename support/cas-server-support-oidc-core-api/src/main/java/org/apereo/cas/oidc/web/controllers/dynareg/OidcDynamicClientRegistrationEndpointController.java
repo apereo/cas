@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
@@ -41,6 +42,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -218,6 +221,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 registeredService.setEncryptIdToken(true);
             }
 
+            registeredService.getContacts().clear();
             registrationRequest.getContacts().forEach(c -> {
                 val contact = new DefaultRegisteredServiceContact();
                 if (c.contains("@")) {
@@ -228,14 +232,21 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 }
                 registeredService.getContacts().add(contact);
             });
-
+            val clientSecretExp = Beans.newDuration(getConfigurationContext().getCasProperties()
+                .getAuthn().getOidc().getRegistration().getClientSecretExpiration()).toSeconds();
+            if (clientSecretExp > 0) {
+                val expirationDate = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(clientSecretExp);
+                LOGGER.debug("Client secret shall expire at [{}]", expirationDate);
+                registeredService.setClientSecretExpiration(expirationDate.toEpochSecond());
+            }
+            
             registeredService.setDescription("Registered service ".concat(registeredService.getName()));
             registeredService.setDynamicallyRegistered(true);
 
             validate(registrationRequest, registeredService);
             val savedService = (OidcRegisteredService) getConfigurationContext().getServicesManager().save(registeredService);
-            val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(savedService, prefix);
-            clientResponse.setClientSecretExpiresAt(0);
+            val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(registeredService, prefix);
+
             val accessToken = generateRegistrationAccessToken(request, response, savedService, registrationRequest);
             val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
                 .accessToken(accessToken)

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=P14D")
 public class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
@@ -139,7 +141,8 @@ public class OidcDynamicClientRegistrationEndpointControllerTests extends Abstra
         try (val webServer = new MockWebServer(7711,
             new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), org.springframework.http.HttpStatus.OK)) {
             webServer.start();
-            assertEquals(HttpStatus.SC_CREATED, controller.handleRequestInternal(registrationReq, request, response).getStatusCodeValue());
+            assertEquals(HttpStatus.SC_CREATED, controller.handleRequestInternal(registrationReq, request, response)
+                .getStatusCodeValue());
         }
     }
 }

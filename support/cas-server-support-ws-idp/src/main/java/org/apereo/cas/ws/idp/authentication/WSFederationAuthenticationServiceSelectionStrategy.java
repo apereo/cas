@@ -5,11 +5,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.NameValuePair;
@@ -35,13 +35,14 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
         super(servicesManager, webApplicationServiceFactory);
     }
 
-    @SneakyThrows
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
-            .findFirst();
+        return FunctionUtils.doUnchecked(() -> {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
+                .findFirst();
+        });
     }
 
     private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
