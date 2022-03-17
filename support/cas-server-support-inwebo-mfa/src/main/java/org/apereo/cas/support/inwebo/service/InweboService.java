@@ -88,25 +88,27 @@ public class InweboService {
      * @return the inwebo push authenticate response
      */
     public InweboPushAuthenticateResponse pushAuthenticate(final String login) {
-        val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
-            .queryParam("action", "pushAuthenticate")
-            .queryParam("serviceId", inwebo.getServiceId())
-            .queryParam("userId", login)
-            .queryParam("format", "json")
-            .toUriString();
+        return FunctionUtils.doUnchecked(() -> {
+            val inwebo = casProperties.getAuthn().getMfa().getInwebo();
+            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+                .queryParam("action", "pushAuthenticate")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("format", "json")
+                .toUriString();
 
-        val json = call(url);
-        val err = json.get("err").asText("OK");
-        val response = (InweboPushAuthenticateResponse) buildResponse(
-            new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ')', err);
-        if (response.isOk()) {
-            val sessionId = json.get("sessionId");
-            if (sessionId != null) {
-                response.setSessionId(sessionId.asText());
+            val json = call(url);
+            val err = json.get("err").asText("OK");
+            val response = (InweboPushAuthenticateResponse) buildResponse(
+                new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ')', err);
+            if (response.isOk()) {
+                val sessionId = json.get("sessionId");
+                if (sessionId != null) {
+                    response.setSessionId(sessionId.asText());
+                }
             }
-        }
-        return response;
+            return response;
+        });
     }
 
     /**
@@ -117,21 +119,23 @@ public class InweboService {
      * @return the inwebo device name response
      */
     public InweboDeviceNameResponse checkPushResult(final String login, final String sessionId) {
-        val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
-            .queryParam("action", "checkPushResult")
-            .queryParam("serviceId", inwebo.getServiceId())
-            .queryParam("userId", login)
-            .queryParam("sessionId", sessionId)
-            .queryParam("format", "json")
-            .toUriString();
+        return FunctionUtils.doUnchecked(() -> {
+            val inwebo = casProperties.getAuthn().getMfa().getInwebo();
+            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+                .queryParam("action", "checkPushResult")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("sessionId", sessionId)
+                .queryParam("format", "json")
+                .toUriString();
 
-        val json = call(url);
-        val err = json.get("err").asText("OK");
-        val response = (InweboDeviceNameResponse) buildResponse(new InweboDeviceNameResponse(),
-            "checkPushResult(" + login + ')', err);
-        retrieveDeviceName(json, response);
-        return response;
+            val json = call(url);
+            val err = json.get("err").asText("OK");
+            val response = (InweboDeviceNameResponse) buildResponse(new InweboDeviceNameResponse(),
+                "checkPushResult(" + login + ')', err);
+            retrieveDeviceName(json, response);
+            return response;
+        });
     }
 
     /**
@@ -142,21 +146,23 @@ public class InweboService {
      * @return the inwebo device name response
      */
     public InweboDeviceNameResponse authenticateExtended(final String login, final String token) {
-        val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-        val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
-            .queryParam("action", "authenticateExtended")
-            .queryParam("serviceId", inwebo.getServiceId())
-            .queryParam("userId", login)
-            .queryParam("token", token)
-            .queryParam("format", "json")
-            .toUriString();
+        return FunctionUtils.doUnchecked(() -> {
+            val inwebo = casProperties.getAuthn().getMfa().getInwebo();
+            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+                .queryParam("action", "authenticateExtended")
+                .queryParam("serviceId", inwebo.getServiceId())
+                .queryParam("userId", login)
+                .queryParam("token", token)
+                .queryParam("format", "json")
+                .toUriString();
 
-        val json = call(url);
-        val err = json.get("err").asText("OK");
-        val response = (InweboDeviceNameResponse) buildResponse(
-            new InweboDeviceNameResponse(), "authenticateExtended(" + login + ')', err);
-        retrieveDeviceName(json, response);
-        return response;
+            val json = call(url);
+            val err = json.get("err").asText("OK");
+            val response = (InweboDeviceNameResponse) buildResponse(
+                new InweboDeviceNameResponse(), "authenticateExtended(" + login + ')', err);
+            retrieveDeviceName(json, response);
+            return response;
+        });
     }
 
     /**
@@ -164,17 +170,16 @@ public class InweboService {
      *
      * @param url the url
      * @return the json node
+     * @throws Exception the exception
      */
-    protected JsonNode call(final String url) {
-        return FunctionUtils.doUnchecked(() -> {
-            val conn = (HttpURLConnection) new URL(url).openConnection();
-            if (conn instanceof HttpsURLConnection) {
-                HttpsURLConnection.class.cast(conn)
-                    .setSSLSocketFactory(this.context.getSocketFactory());
-            }
-            conn.setRequestMethod(HttpMethod.GET.name());
-            return MAPPER.readTree(conn.getInputStream());
-        });
+    protected JsonNode call(final String url) throws Exception {
+        val conn = (HttpURLConnection) new URL(url).openConnection();
+        if (conn instanceof HttpsURLConnection) {
+            HttpsURLConnection.class.cast(conn)
+                .setSSLSocketFactory(this.context.getSocketFactory());
+        }
+        conn.setRequestMethod(HttpMethod.GET.name());
+        return MAPPER.readTree(conn.getInputStream());
     }
 
     /**
