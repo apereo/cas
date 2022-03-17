@@ -1,5 +1,8 @@
 {
   "dependencies": "jdbc,pm-jdbc,pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.authn.pm.core.enabled=true",
     "--cas.authn.pm.core.password-policy-pattern=.+",
