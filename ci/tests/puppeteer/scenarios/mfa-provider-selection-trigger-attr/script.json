@@ -1,0 +1,18 @@
+{
+  "dependencies": "gauth,webauthn",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.attribute-repository.stub.attributes.memberof=staff"
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.authn.mfa.gauth.core.issuer=CASIssuer",
+    "--cas.authn.mfa.gauth.core.label=CASLabel",
+    "--cas.authn.mfa.core.provider-selection-enabled=true",
+    "--cas.audit.engine.enabled=false"
+  ]
+}
+
+
+
